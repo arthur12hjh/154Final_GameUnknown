@@ -76,18 +76,18 @@
     <Filter Include="02.GameObjects\Effect\Sprite">
       <UniqueIdentifier>{bce2693b-8e32-446c-a473-09f285cbb08c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="100.ETC">
+      <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
       <Filter>98.Default</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
       <Filter>98.Default</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MainApp.h">
@@ -144,19 +144,23 @@
     <ClInclude Include="..\Public\SpriteEffect.h">
       <Filter>02.GameObjects\Effect\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
-      <Filter>98.Default</Filter>
+      <Filter>100.ETC</Filter>
     </Image>
     <Image Include="small.ico">
-      <Filter>98.Default</Filter>
+      <Filter>100.ETC</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Client.rc">
-      <Filter>98.Default</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -213,6 +217,9 @@
     <ClCompile Include="..\Private\SpriteEffect.cpp">
       <Filter>02.GameObjects\Effect\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -236,5 +243,10 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>100.ETC</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

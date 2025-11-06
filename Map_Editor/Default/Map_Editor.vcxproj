@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5254bc21-3b29-412c-b6f0-13fddde237b9}</ProjectGuid>
-    <RootNamespace>Client</RootNamespace>
+    <ProjectGuid>{7489f065-2623-473c-8802-37fcb2d6c957}</ProjectGuid>
+    <RootNamespace>MapEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,10 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\Bin\Debug\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\Bin\Release\</OutDir>
+    <OutDir>../Bin/Debug/</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,8 +107,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -121,10 +116,6 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/Debug/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -135,7 +126,6 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -144,75 +134,25 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../EngineSDK/Lib/Release/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Public\BackGround.h" />
-    <ClInclude Include="..\Public\Body_Player.h" />
-    <ClInclude Include="..\Public\Camera_Free.h" />
-    <ClInclude Include="..\Public\Client_Defines.h" />
-    <ClInclude Include="..\Public\Explosion.h" />
-    <ClInclude Include="..\Public\ForkLift.h" />
-    <ClInclude Include="..\Public\Level_GamePlay.h" />
-    <ClInclude Include="..\Public\Level_Loading.h" />
-    <ClInclude Include="..\Public\Level_Logo.h" />
-    <ClInclude Include="..\Public\Loader.h" />
-    <ClInclude Include="..\Public\MainApp.h" />
-    <ClInclude Include="..\Public\Monster.h" />
-    <ClInclude Include="..\public\Player.h" />
-    <ClInclude Include="..\Public\Sky.h" />
-    <ClInclude Include="..\Public\Snow.h" />
-    <ClInclude Include="..\Public\SpriteEffect.h" />
-    <ClInclude Include="..\Public\Terrain.h" />
-    <ClInclude Include="..\Public\Weapon.h" />
-    <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Map_Editor.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Private\BackGround.cpp" />
-    <ClCompile Include="..\Private\Body_Player.cpp" />
-    <ClCompile Include="..\Private\Camera_Free.cpp" />
-    <ClCompile Include="..\Private\Explosion.cpp" />
-    <ClCompile Include="..\Private\ForkLift.cpp" />
-    <ClCompile Include="..\Private\Level_GamePlay.cpp" />
-    <ClCompile Include="..\Private\Level_Loading.cpp" />
-    <ClCompile Include="..\Private\Level_Logo.cpp" />
-    <ClCompile Include="..\Private\Loader.cpp" />
-    <ClCompile Include="..\Private\MainApp.cpp" />
-    <ClCompile Include="..\Private\Monster.cpp" />
-    <ClCompile Include="..\private\Player.cpp" />
-    <ClCompile Include="..\Private\Sky.cpp" />
-    <ClCompile Include="..\Private\Snow.cpp" />
-    <ClCompile Include="..\Private\SpriteEffect.cpp" />
-    <ClCompile Include="..\Private\Terrain.cpp" />
-    <ClCompile Include="..\Private\Weapon.cpp" />
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Map_Editor.cpp" />
     <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Client.rc" />
+    <ResourceCompile Include="Map_Editor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Client.ico" />
+    <Image Include="Map_Editor.ico" />
     <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

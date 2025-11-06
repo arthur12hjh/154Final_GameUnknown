@@ -173,7 +173,7 @@
       <Filter>01.Utility\100. Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StringHelper.h">
-      <Filter>101. String</Filter>
+      <Filter>101.String</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sound_Manager.h">
       <Filter>01.Utility\13. Sound</Filter>
@@ -358,7 +358,7 @@
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StringHelper.cpp">
-      <Filter>101. String</Filter>
+      <Filter>101.String</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sound_Manager.cpp">
       <Filter>01.Utility\13. Sound</Filter>
@@ -566,9 +566,6 @@
     <Filter Include="01.Utility\100. Math">
       <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="101. String">
-      <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\13. Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
     </Filter>
@@ -598,6 +595,9 @@
     </Filter>
     <Filter Include="01.Utility\15. ResourceManager">
       <UniqueIdentifier>{2791130a-94ec-49f9-a7b2-c06c2231ae66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="101.String">
+      <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{6c5b2804-596e-4609-9f10-6f7976f07e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{de8e6fd8-bd26-4a97-a09c-1341d4dd0900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="100.ETC">
+      <UniqueIdentifier>{a739dc7e-cad1-47e5-b46a-d912dc326c55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{b4770944-1ade-465a-8d68-0d99365a6b2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{c7db1a89-7bfd-4f0c-8b15-92e50e65fd9b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Effect_Editor.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Effect_Editor.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Effect_Editor.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Effect_Editor.rc">
+      <Filter>100.ETC</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
