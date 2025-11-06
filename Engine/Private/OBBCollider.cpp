@@ -1,0 +1,190 @@
+#include "OBBCollider.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+
+#include "Transform.h"
+
+#include "DebugDraw.h"
+#include "GameObject.h"
+
+COBBCollider::COBBCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+    CCollider(pDevice, pContext)
+{
+}
+
+COBBCollider::COBBCollider(const COBBCollider& rhs) :
+    CCollider(rhs)
+{
+}
+
+HRESULT COBBCollider::Initialize_Prototype()
+{
+    __super::Initialize_Prototype();
+    m_CollisionType = COLLIDER::OBB;
+    return S_OK;
+}
+
+HRESULT COBBCollider::Initialize(void* pArg)
+{
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
+    OBB_COLLIDER_DESC* Desc = static_cast<OBB_COLLIDER_DESC*>(pArg);
+
+    _float4		vQuaternion = {};
+    XMStoreFloat4(&vQuaternion, XMQuaternionRotationRollPitchYaw(Desc->vAngles.x, Desc->vAngles.y, Desc->vAngles.z));
+
+    m_OriginOrientBox = new BoundingOrientedBox(Desc->vCenter, Desc->vSize, vQuaternion);
+    m_Bounding = new BoundingOrientedBox(*m_OriginOrientBox);
+
+    return S_OK;
+}
+
+void COBBCollider::UpdateColiision(_matrix WorldMatrix)
+{
+    m_bIsHit = false;
+    m_OriginOrientBox->Transform(*m_Bounding, WorldMatrix);
+}
+
+_bool COBBCollider::Intersect(COLLIDER eType, CCollider* pTarget)
+{
+    _bool bIsHit = false;
+    
+    if (HIT_TYPE::END == m_eOnlyHitType)
+    {
+        if (!IntersectAble(pTarget->GetCollisionHitType()))
+            return false;
+    }
+    else
+    {
+        if (m_eOnlyHitType != pTarget->GetCollisionHitType())
+            return false;
+    }
+
+    _vector OwnerPosition = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+    _vector TargetPosition = pTarget->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+    _vector vDireaction = XMVector3Normalize(TargetPosition - OwnerPosition);
+
+    _vector vCenter = XMLoadFloat3(&m_Bounding->Center);
+    _float fDistance = XMVectorGetX(XMVector3Length(TargetPosition - OwnerPosition));
+
+    switch (eType)
+    {
+    case COLLIDER::AABB:
+        bIsHit = m_Bounding->Intersects(static_cast<CBoxCollider*>(pTarget)->GetBounding());
+        break;
+    case COLLIDER::SPHERE:
+        bIsHit = m_Bounding->Intersects(static_cast<CSphereCollider*>(pTarget)->GetBounding());
+        break;
+    case COLLIDER::OBB:
+        bIsHit = m_Bounding->Intersects(static_cast<COBBCollider*>(pTarget)->GetBounding());
+        break;
+    }
+
+    XMStoreFloat3(&m_HitDesc.vHitPoint, vCenter + vDireaction * fDistance);
+    m_HitDesc.vfDistance = fDistance;
+    XMStoreFloat3(&m_HitDesc.vDireaction, vDireaction);
+    XMStoreFloat3(&m_HitDesc.vNormal, XMVector3Normalize(XMLoadFloat3(&m_HitDesc.vHitPoint) - TargetPosition));
+
+    return bIsHit;
+}
+
+_bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT_DESC& OutDesc)
+{
+    _bool bIsHit = false;
+
+    _vector OwnerPosition = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+    _vector TargetPosition = pTarget->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+    _vector vDireaction = XMVector3Normalize(TargetPosition - OwnerPosition);
+
+    _vector vCenter = XMLoadFloat3(&m_Bounding->Center);
+    _float fDistance = { -1 };
+    switch (eType) 
+    {
+    case COLLIDER::AABB:
+        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
+        break;
+    case COLLIDER::SPHERE:
+        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
+        break;
+    case COLLIDER::OBB:
+        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
+        break;
+    }
+
+    XMStoreFloat3(&OutDesc.vHitPoint, vCenter + vDireaction * fDistance);
+    OutDesc.vfDistance = fDistance;
+    XMStoreFloat3(&OutDesc.vDireaction, vDireaction);
+    XMStoreFloat3(&OutDesc.vNormal, XMVector3Normalize(XMLoadFloat3(&OutDesc.vHitPoint) - TargetPosition));
+    m_HitDesc = OutDesc;
+
+    return bIsHit;
+}
+
+_bool COBBCollider::RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC& OutDesc)
+{
+    _bool bIsHit = false;
+    _float fDistance = {};
+    bIsHit = m_Bounding->Intersects(vOrizin, vDiraction, fDistance);
+
+    XMStoreFloat3(&OutDesc.vHitPoint, vOrizin + vDiraction * fDistance);
+    OutDesc.vfDistance = fDistance;
+    XMStoreFloat3(&OutDesc.vDireaction, vDiraction);
+    XMStoreFloat3(&OutDesc.vNormal, XMVector3Normalize(XMLoadFloat3(&OutDesc.vHitPoint) - vOrizin));
+    return bIsHit;
+}
+
+ContainmentType COBBCollider::Contains(_vector vPoint)
+{
+    return m_Bounding->Contains(vPoint);
+}
+
+void COBBCollider::SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtents)
+{
+    m_OriginOrientBox->Center = vCenter;
+    m_OriginOrientBox->Extents = vExtents;
+
+    _float4		vQuaternion = {};
+    XMStoreFloat4(&vQuaternion, XMQuaternionRotationRollPitchYaw(vAngle.x, vAngle.y, vAngle.z));
+    m_OriginOrientBox->Orientation = vQuaternion;
+}
+
+HRESULT COBBCollider::Render()
+{
+    __super::Render();
+    m_pBatch->Begin();
+
+    DX::Draw(m_pBatch, *m_Bounding, false == m_bIsHit ? XMVectorSet(0.f, 1.f, 0.f, 1.f) : XMVectorSet(1.f, 0.f, 0.f, 1.f));
+
+    m_pBatch->End();
+    return S_OK;
+}
+
+COBBCollider* COBBCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+    COBBCollider* pOBBColiision = new COBBCollider(pDevice, pContext);
+    if (FAILED(pOBBColiision->Initialize_Prototype()))
+    {
+        Safe_Release(pOBBColiision);
+        MSG_BOX("CREATE FAIL : OBB COLLISION");
+    }
+    return pOBBColiision;
+}
+
+CComponent* COBBCollider::Clone(void* pArg)
+{
+    COBBCollider* pOBBColiision = new COBBCollider(*this);
+    if (FAILED(pOBBColiision->Initialize(pArg)))
+    {
+        Safe_Release(pOBBColiision);
+        MSG_BOX("CLONE FAIL : OBB COLLISION");
+    }
+    return pOBBColiision;
+}
+
+void COBBCollider::Free()
+{
+    __super::Free();
+    Safe_Delete(m_OriginOrientBox);
+    Safe_Delete(m_Bounding);
+}
