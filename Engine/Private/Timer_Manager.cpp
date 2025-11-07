@@ -7,6 +7,12 @@ CTimer_Manager::CTimer_Manager()
 
 }
 
+HRESULT CTimer_Manager::Initialize()
+{
+
+	return S_OK;
+}
+
 _float CTimer_Manager::Get_TimeDelta(const _wstring& strTimerTag)
 {
 	CTimer* pTimer = Find_Timer(strTimerTag);
@@ -16,6 +22,16 @@ _float CTimer_Manager::Get_TimeDelta(const _wstring& strTimerTag)
 	return pTimer->Get_TimeDelta();
 }
 
+void CTimer_Manager::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTime, function<void()> Function)
+{
+	auto iter = m_TimerTime.find(szTimerName);
+	if (iter != m_TimerTime.end())
+		return;
+
+	m_TimerTime.emplace(szTimerName, fAfterTime);
+	m_TimerFunction.emplace(szTimerName, Function);
+}
+
 void CTimer_Manager::Compute_TimeDelta(const _wstring& strTimerTag)
 {
 	CTimer* pTimer = Find_Timer(strTimerTag);
@@ -23,6 +39,31 @@ void CTimer_Manager::Compute_TimeDelta(const _wstring& strTimerTag)
 		return;
 
 	pTimer->Update_Timer();
+}
+
+void CTimer_Manager::Update_Timer(_float fDeletaTime)
+{
+	for (auto TimerTimeiter = m_TimerTime.begin(); TimerTimeiter != m_TimerTime.end();)
+	{
+		_bool bIsTimerAction = false;
+
+		TimerTimeiter->second -= fDeletaTime;
+		if (0.f >= TimerTimeiter->second)
+		{
+			auto pTimeriter = m_TimerFunction.find(TimerTimeiter->first);
+			if (pTimeriter == m_TimerFunction.end())
+				continue;
+
+			pTimeriter->second();
+			bIsTimerAction = true;
+			m_TimerFunction.erase(pTimeriter);
+		}
+
+		if (bIsTimerAction)
+			TimerTimeiter = m_TimerTime.erase(TimerTimeiter);
+		else
+			TimerTimeiter++;
+	}
 }
 
 HRESULT CTimer_Manager::Add_Timer(const _wstring& strTimerTag)
@@ -56,7 +97,13 @@ CTimer* CTimer_Manager::Find_Timer(const _wstring& strTimerTag)
 
 CTimer_Manager* CTimer_Manager::Create()
 {
-	return new CTimer_Manager();
+	CTimer_Manager* pTimerManager = new CTimer_Manager();
+	if (FAILED(pTimerManager->Initialize()))
+	{
+		Safe_Release(pTimerManager);
+		MSG_BOX("Create Fail : Timer Manager");
+	}
+	return pTimerManager;
 }
 
 void CTimer_Manager::Free()

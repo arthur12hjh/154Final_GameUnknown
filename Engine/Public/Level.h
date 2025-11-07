@@ -29,7 +29,6 @@ public:
 	// 안에서 레퍼런스 카운트 증가합니다 내려주세요
 	// 제발 내려주세요
 	CGameHUD*					GetHUD();
-	_int						GetLevelID() { return m_iID; }
 
 protected:
 	_uint						m_iID = {};
