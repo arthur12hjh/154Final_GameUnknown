@@ -3,6 +3,7 @@
 #include "MainApp.h"
 
 #include "GameInstance.h"
+#include "Level_Loading.h"
 
 #include "GUIManager.h"
 
@@ -42,6 +43,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 
+	if (FAILED(Start_Level(LEVEL::LOGO)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -76,13 +80,16 @@ HRESULT CMainApp::Ready_Default_Setting()
 	return S_OK;
 }
 
-HRESULT CMainApp::Ready_Prototypes()
+HRESULT CMainApp::Start_Level(LEVEL eLevelID)
 {
-	/* For.Prototype_Component_Texture_BackGround */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Backgrounds/Background_%d.png"), 2))))
+	if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, eLevelID))))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Prototypes()
+{
 	/* For.Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
