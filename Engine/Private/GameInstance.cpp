@@ -255,6 +255,10 @@ LONG CGameInstance::GetMouseAxis(_uint iAxis)
 {
 	return m_pInput_Device->GetMouseAxis(iAxis);
 }
+void CGameInstance::SetInputFoucs(_bool bFlag)
+{
+	m_pInput_Device->SetInputFoucs(bFlag);
+}
 #pragma endregion
 
 
@@ -287,6 +291,11 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
 {
 	return m_pLevel_Manager->Change_Level(pNewLevel);
+}
+
+_uint CGameInstance::GetCurrentLevelID()
+{
+	return m_pLevel_Manager->GetCurrentLevelID();
 }
 
 #pragma endregion
@@ -469,6 +478,11 @@ _bool CGameInstance::isPicking(_float3* pOut)
 	// 포커스 들어갔을때만 
 
 	return m_pPicking->isPicking(pOut);
+}
+
+const POINT& CGameInstance::GetMousePoint()
+{
+	return m_pPicking->GetMousePoint();
 }
 
 HRESULT CGameInstance::Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc)

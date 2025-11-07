@@ -13,7 +13,9 @@ private:
 public:
 	HRESULT					Initialize(HWND hWnd, _uint iSizeX, _uint iSizeY);
 	void					Update();
+
 	_bool					isPicking(_float3* pOut);
+	const POINT&			GetMousePoint() { return m_ptMouse; }
 
 private:
 	HWND					m_hWnd = { };
@@ -22,6 +24,7 @@ private:
 	ID3D11Texture2D*		m_pTexture2D = { nullptr };
 	class CGameInstance*	m_pGameInstance = { nullptr };
 
+	POINT					m_ptMouse = {};
 	_uint					m_iNumPixels = {};
 	_float4*				m_pPixels = { nullptr };
 	

@@ -37,6 +37,9 @@ public:
 
 	// 마우스 이동방향 0 : X 축    1  : Y 축    2 : Z축
 	LONG		GetMouseAxis(_uint iAxis);
+
+	// 인풋 포커스 세팅
+	void		SetInputFoucs(_bool bFlag);
 #pragma endregion
 
 #pragma region TIMER_MANAGER
@@ -51,7 +54,9 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
-	HRESULT Change_Level(class CLevel* pNewLevel);
+	HRESULT				Change_Level(class CLevel* pNewLevel);
+	_uint				GetCurrentLevelID();
+
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -117,8 +122,8 @@ public:
 #pragma endregion
 
 #pragma region PICKING
-	_bool isPicking(_float3* pOut);
-
+	_bool						isPicking(_float3* pOut);
+	const POINT&				GetMousePoint();
 #pragma endregion
 
 #pragma region SHADOW
