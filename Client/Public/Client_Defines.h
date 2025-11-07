@@ -5,8 +5,8 @@
 
 namespace Client
 {
-	const unsigned int			g_iWinSizeX = 1600;
-	const unsigned int			g_iWinSizeY = 900;
+	const unsigned int			g_iWinSizeX = 1280;
+	const unsigned int			g_iWinSizeY = 720;
 
 	const unsigned int			g_iHalfWinSizeX = 800;
 	const unsigned int			g_iHalfWinSizeY = 450;
@@ -16,5 +16,10 @@ namespace Client
 
 using namespace Client;
 
-extern HINSTANCE g_hInstance;
-extern HWND g_hWnd;
+extern HINSTANCE		g_hInstance;
+extern float			g_fGameFrame;
+
+extern bool				g_bIsFocus;
+extern bool				g_bIsMouseLock;
+
+extern HWND				g_hWnd;

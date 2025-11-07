@@ -25,6 +25,10 @@
 #include <string>
 #include <bitset>
 
+#include <thread>
+#include <condition_variable>
+#include <mutex>
+
 using namespace std;
 
 //Dx11

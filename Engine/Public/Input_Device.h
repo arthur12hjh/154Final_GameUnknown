@@ -25,10 +25,15 @@ public:
 	// 마우스 이동방향 0 : X 축    1  : Y 축    2 : Z축
 	LONG		GetMouseAxis(_uint iAxis);
 
+	void		SetInputFoucs(_bool bFlag);
+	_bool		GetInputFoucs() { return m_bIsInputFoucs; }
+
 private:
 	LPDIRECTINPUT8					m_pDirectInput = nullptr;
 	LPDIRECTINPUTDEVICE8			m_pKeyboard = nullptr;
 	LPDIRECTINPUTDEVICE8			m_pMouse = nullptr;
+
+	_bool							m_bIsInputFoucs = false;
 
 	//키보드 입력 상태 배열
 	BYTE							m_CurKeyState[MAX_KEY] = {};
