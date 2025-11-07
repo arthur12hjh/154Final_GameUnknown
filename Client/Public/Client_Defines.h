@@ -16,5 +16,10 @@ namespace Client
 
 using namespace Client;
 
-extern HINSTANCE g_hInstance;
-extern HWND g_hWnd;
+extern HINSTANCE		g_hInstance;
+extern float			g_fGameFrame;
+
+extern bool				g_bIsFocus;
+extern bool				g_bIsMouseLock;
+
+extern HWND				g_hWnd;

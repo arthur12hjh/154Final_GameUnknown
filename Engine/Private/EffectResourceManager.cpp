@@ -87,7 +87,7 @@ HRESULT CEffectResourceManager::LoadTexture()
 	intptr_t handle = _findfirst64("../Bin/Resources/Static/Textures/*.png*", &fd);
 
 	if (handle == -1)
-		return E_FAIL;
+		return S_OK;
 
 	int iResult = 0;
 	_wstring FrontPath = TEXT("../Bin/Resources/Static/Textures/");
@@ -122,7 +122,7 @@ HRESULT CEffectResourceManager::LoadVIBuffer()
 	intptr_t handle = _findfirst64("../Bin/Resources/Static/Models/*.fbx*", &fd);
 
 	if (handle == -1)
-		return E_FAIL;
+		return S_OK;
 
 	int iResult = 0;
 
