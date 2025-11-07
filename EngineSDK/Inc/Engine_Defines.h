@@ -83,12 +83,6 @@ using namespace DirectX;
 namespace Engine
 {
 	const static wstring g_strTransformTag = { TEXT("Com_Transform")};
-
-	//const unsigned int g_iMaxWidth = 16384;
-	//const unsigned int g_iMaxHeight = 9216;	
-
-	const unsigned int g_iMaxWidth = 8192;
-	const unsigned int g_iMaxHeight = 4608;
 }
 
 #ifdef _DEBUG

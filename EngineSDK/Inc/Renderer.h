@@ -11,12 +11,35 @@ NS_BEGIN(Engine)
 
 class CRenderer final : public CBase
 {
+public:
+	enum class SHADER_DEFERRED_IDX {
+		//여기까진 조명처리
+		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		//후처리 셰이딩. 일단 블러만 추가
+		BLUR_X, BLUR_FINAL, DISTORTION,
+
+		// 최종적으로 백버퍼에 렌더타겟 넘기는 과정.
+		SCENE
+	};
+public:
+	/* 블러 데스크. 블러 사이즈 세팅 */
+	typedef struct tagBlurDesc {
+		_float fSizeX = {};
+	} BLUR_DESC;
+
+	/* 디스토션 데스크. 강도 세팅 */
+	typedef struct tagDistortionDesc {
+		_float fIntensity = {};
+	} DISTORTION_DESC;
+
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
 
 public:
 	HRESULT Initialize();
+	HRESULT Ready_RenderTargets();
+	HRESULT Ready_MRTs();
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	void Render();
 
@@ -42,29 +65,32 @@ private:
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
 private:
+	_bool								m_isDebugVisible = { false };
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
-
+	_uint2								m_vScreenSize = {};
+	//8192, 4608 혹은 16384, 9216
+	_uint2								m_vShadowMapSize = {};
 
 private:
 	void Render_Priority();
 	void Render_Shadow();
 	void Render_NonBlend();
 	void Render_LightAcc();
+	/* 기록은 Combined 이전에. */
+	void Render_Blur();
+	void Render_Distortion();
 	void Render_Combined();
 	void Render_NonLight();
-	void Render_Blur();
 	void Render_Blend();
+	void Apply_Deferred();
 	void Render_UI();
-
+	void Composite_RT_ToBackBuffer();
 private:
 	HRESULT Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
-
-
 
 #ifdef _DEBUG
 private:
 	void Render_Debug();
-
 #endif
 
 public:
