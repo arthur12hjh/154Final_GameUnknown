@@ -19,6 +19,9 @@ public:
 	void					Update(_float fTimeDeleta);
 	HRESULT					Render();
 
+protected :
+	static	const char*		m_szFpsComboText[3];
+
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };
@@ -32,7 +35,6 @@ private :
 
 	_uint					m_iDrawCnt = {};
 	_float					m_fTimeAcc = {};
-
 	_bool					m_bIsGamePause = false;
 
 private:

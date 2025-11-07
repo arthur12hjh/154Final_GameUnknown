@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "StringHelper.h"
 
+const char* CImGuiMain::m_szFpsComboText[] = {"30", "60", "144"};
+
 CImGuiMain::CImGuiMain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
 	m_pContext(pContext),
@@ -34,16 +36,25 @@ void CImGuiMain::Update(_float fTimeDelta)
 		CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
 		ImGui::Text(m_szFPS);
 		ImGui::SameLine();
+
+		ImGui::PushItemWidth(100.f);
+		ImGui::SetNextWindowSize({ 100, 50 });
 		if (ImGui::BeginCombo("Frame", m_szFramePreivew))
 		{
-
+			for (_uint i = 0; i < 3; ++i)
+			{
+				if (ImGui::Selectable(m_szFpsComboText[i], false))
+				{
+					strcpy_s(m_szFramePreivew, m_szFpsComboText[i]);
+					g_fGameFrame = atoi(m_szFramePreivew);
+				}
+			}
+			ImGui::EndCombo();
 		}
-
 
 		if (ImGui::Checkbox("GamePause", &m_bIsGamePause))
 			m_pGameInstance->SetGamePause(m_bIsGamePause);
 
-		
 
 
 	}

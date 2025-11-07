@@ -45,7 +45,9 @@ HRESULT CPicking::Initialize(HWND hWnd, _uint iSizeX, _uint iSizeY)
 
 void CPicking::Update()
 {
-	
+	GetCursorPos(&m_ptMouse);
+	ScreenToClient(m_hWnd, &m_ptMouse);
+
 	m_pGameInstance->Copy_RenderTarget(TEXT("Target_Depth"), m_pTexture2D);
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource{};
@@ -60,13 +62,7 @@ void CPicking::Update()
 
 _bool CPicking::isPicking(_float3* pOut)
 {
-	POINT		ptMouse{};
-
-	GetCursorPos(&ptMouse);
-	ScreenToClient(m_hWnd, &ptMouse);
-
-	_uint iMouseIndex = ptMouse.y * m_iNumPixelW + ptMouse.x;
-
+	_uint iMouseIndex = m_ptMouse.y * m_iNumPixelW + m_ptMouse.x;
 	if (0 > iMouseIndex || m_iNumPixels <= iMouseIndex)
 		return false;
 
@@ -75,8 +71,8 @@ _bool CPicking::isPicking(_float3* pOut)
 
 	_float3 vMousePos = _float3(0.f, 0.f, 0.f);
 
-	vMousePos.x = ptMouse.x / (m_iNumPixelW * 0.5f) - 1.f;
-	vMousePos.y = ptMouse.y / (m_iNumPixelH * -0.5f) + 1.f;
+	vMousePos.x = m_ptMouse.x / (m_iNumPixelW * 0.5f) - 1.f;
+	vMousePos.y = m_ptMouse.y / (m_iNumPixelH * -0.5f) + 1.f;
 	vMousePos.z = m_pPixels[iMouseIndex].x;
 
 	XMStoreFloat3(&vMousePos, XMVector3TransformCoord(XMLoadFloat3(&vMousePos), m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ)));
