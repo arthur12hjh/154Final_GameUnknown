@@ -6,33 +6,14 @@
 #include "Level_Loading.h"
 #include "Camera_Free.h"
 
+#ifdef _DEBUG
+#include "ImGuiMain.h"
+#endif
+
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 {
-	// D3D11_SAMPLER_DESC
-	//ID3D11RasterizerState* pRSState = { nullptr };
-
-	//D3D11_RASTERIZER_DESC		RSDesc{};
-	//m_pDevice->CreateRasterizerState(&RSDesc, &pRSState);
-	//m_pContext->RSSetState(pRSState);
-
-	// D3D11_DEPTH_STENCIL_DESC
-	//m_pContext->OMSetDepthStencilState();
-
-	//D3D11_BLEND_DESC
-
-	//m_pGraphic_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-	//ID3D11RasterizerState* pRSState = { nullptr };
-	//ID3D11DepthStencilState*;
-	//ID3D11BlendState*
-
-	//m_pContext->RSSetState();
-	//m_pContext->OMSetDepthStencilState();
-	//m_pContext->OMSetBlendState();
-	
-	
 
 	Safe_AddRef(m_pGameInstance);
 }
@@ -62,6 +43,12 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
 
+#ifdef _DEBUG
+	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pImGuiDebug)
+		return E_FAIL;
+#endif
+
 	return S_OK;
 }
 
@@ -70,7 +57,7 @@ void CMainApp::Update(_float fTimeDelta)
 	m_pGameInstance->Update_Engine(fTimeDelta);
 
 #ifdef _DEBUG
-	m_fTimeAcc += fTimeDelta;
+	m_pImGuiDebug->Update(fTimeDelta);
 #endif
 }
 
@@ -83,20 +70,8 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Draw();
 
 #ifdef _DEBUG
-	++m_iDrawCnt;
-
-	if (m_fTimeAcc >= 1.f)
-	{
-		wsprintf(m_szFPS, TEXT("FPS : %d"), m_iDrawCnt);
-
-		m_iDrawCnt = 0;
-		m_fTimeAcc = 0.f;
-	}
-
-	m_pGameInstance->Render_Text(TEXT("Font_154"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));
-
+	m_pImGuiDebug->Render();
 #endif
-
 
 	m_pGameInstance->Render_End();
 
@@ -181,7 +156,6 @@ HRESULT CMainApp::Ready_Gara()
 		return E_FAIL;
 
 	Safe_Delete_Array(pPixel);
-
 	Safe_Release(pTexture2D);
 
 	_ulong			dwByte = {};
@@ -262,6 +236,10 @@ void CMainApp::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+
+#ifdef _DEBUG
+	Safe_Release(m_pImGuiDebug);
+#endif
 
 	m_pGameInstance->Release_Engine();
 

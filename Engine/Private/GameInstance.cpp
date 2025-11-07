@@ -16,6 +16,7 @@
 #include "Renderer.h"
 #include "PipeLine.h"
 #include "Frustum.h"
+#include "ThreadPool.h"
 #include "Picking.h"
 #include "Shadow.h"
 
@@ -99,6 +100,18 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pEffect_ResourceManager)
 		return E_FAIL;
 
+	m_pThreadPool = CThreadPool::Create(4);
+	if (nullptr == m_pThreadPool)
+		return E_FAIL;
+
+#ifdef _DEBUG
+	m_pTimer_Manager->Add_Timer(TEXT("Priority_Time"));
+	m_pTimer_Manager->Add_Timer(TEXT("Update_Time"));
+	m_pTimer_Manager->Add_Timer(TEXT("LateUpdate_Time"));
+	m_pTimer_Manager->Add_Timer(TEXT("Collision_Time"));
+	m_pTimer_Manager->Add_Timer(TEXT("Render_Time"));
+#endif // _DEBUG
+
 	return S_OK;
 }
 
@@ -107,33 +120,87 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	if (false == m_bIsPause)
 	{
 		m_pInput_Device->UpdateKeyFrame();
-
 		m_pPicking->Update();
 
+		//Priority Update 디버그
+#ifdef _DEBUG
+		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] = GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
 		m_pObject_Manager->Priority_Update(fTimeDelta);
+		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] -= GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
+#else
+		m_pObject_Manager->Priority_Update(fTimeDelta);
+#endif
 
 		m_pPipeLine->Update();
-
+		m_pTimer_Manager->Update_Timer(fTimeDelta);
 		m_pFrustum->Update();
 
+		//Update 디버그
+#ifdef _DEBUG
+		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
 		m_pObject_Manager->Update(fTimeDelta);
+		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
+#else
+		m_pObject_Manager->Update(fTimeDelta);
+
+#endif
 	}
 
+	//Late_Update 디버그
+#ifdef _DEBUG
+	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
+	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_pObject_Manager->Late_Update(fTimeDelta);
+	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
+	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
+#else
+	m_pObject_Manager->Late_Update(fTimeDelta);
+#endif
 
+	//충돌 로직 디버그
+#ifdef _DEBUG
+		ComputeLoopTime(GAMELOOP_TYPE::COLLISION);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::COLLISION)] = GetLoopDurationTime(GAMELOOP_TYPE::COLLISION);
+		m_pCollisionManager->Compute_Collision();
+		ComputeLoopTime(GAMELOOP_TYPE::COLLISION);
+		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::COLLISION)] -= GetLoopDurationTime(GAMELOOP_TYPE::COLLISION);
+#else
 	m_pCollisionManager->Compute_Collision();
+#endif
 
 	m_pObject_Manager->Clear_DeadObj();
-
 	m_pLevel_Manager->Update(fTimeDelta);
+
+	m_fTimeAcc += fTimeDelta;
 }
 
 HRESULT CGameInstance::Draw()
 {
+	//랜더 로직 디버그
+#ifdef _DEBUG
+	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
+	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
 	m_pRenderer->Render();
+	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
+	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] -= GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
+#else
+	m_pRenderer->Render();
+#endif
+
+	++m_iDrawCnt;
+	if (m_fTimeAcc >= 1.f)
+	{
+		wsprintf(m_szFPS, TEXT("FPS : %d"), m_iDrawCnt);
+
+		m_iDrawCnt = 0;
+		m_fTimeAcc = 0.f;
+	}
 
 	m_pLevel_Manager->Render();
-
 	return S_OK;
 }
 
@@ -206,6 +273,11 @@ HRESULT CGameInstance::Add_Timer(const _wstring& strTimerTag)
 void CGameInstance::Compute_TimeDelta(const _wstring& strTimerTag)
 {
 	m_pTimer_Manager->Compute_TimeDelta(strTimerTag);
+}
+
+void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTime, function<void()> Function)
+{
+	m_pTimer_Manager->ADD_DelayFunction(szTimerName, fAfterTime, Function);
 }
 
 #pragma endregion
@@ -298,6 +370,16 @@ _matrix CGameInstance::Get_Transform_Matrix_Inverse(D3DTS eState)
 const _float4* CGameInstance::Get_CamPosition()
 {
 	return m_pPipeLine->Get_CamPosition();
+}
+
+_matrix CGameInstance::GetIdentityMatrix()
+{
+	return m_pPipeLine->GetIdentityMatrix();
+}
+
+const _float4x4* CGameInstance::GetIdentityMatrixPtr()
+{
+	return m_pPipeLine->GetIdentityMatrixPtr();
 }
 
 #pragma endregion
@@ -501,7 +583,18 @@ void CGameInstance::ADD_Collider(CCollider* pCollider)
 {
 	m_pCollisionManager->ADD_CollisionList(pCollider);
 }
+#pragma endregion
 
+#pragma region Thread Pool
+ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void()> function)
+{
+	return m_pThreadPool->Add_jobList(function);
+}
+
+_bool CGameInstance::IsThreadPoolStop()
+{
+	return m_pThreadPool->IsThreadPoolStop();
+}
 #pragma endregion
 
 const _uint2& CGameInstance::GetScreenSize()
@@ -513,6 +606,50 @@ const _uint2& CGameInstance::GetHalfScreenSize()
 {
 	return m_vHalfScreenSize;
 }
+
+const WCHAR* CGameInstance::GetFrameText()
+{
+	return m_szFPS;
+}
+
+#ifdef _DEBUG
+_float CGameInstance::GetLoopDurationTime(GAMELOOP_TYPE eType)
+{
+	switch (eType)
+	{
+	case GAMELOOP_TYPE::PRIORITY:
+		return m_pTimer_Manager->Get_TimeDelta(TEXT("Priority_Time"));
+	case GAMELOOP_TYPE::UPDATE:
+		return m_pTimer_Manager->Get_TimeDelta(TEXT("Update_Time"));;
+	case GAMELOOP_TYPE::LATE_UPDATE:
+		return m_pTimer_Manager->Get_TimeDelta(TEXT("LateUpdate_Time"));;
+	case GAMELOOP_TYPE::COLLISION:
+		return m_pTimer_Manager->Get_TimeDelta(TEXT("Collision_Time"));;
+	case GAMELOOP_TYPE::RENDER:
+		return m_pTimer_Manager->Get_TimeDelta(TEXT("Render_Time"));;
+	}
+
+	return -1.f;
+}
+
+void CGameInstance::ComputeLoopTime(GAMELOOP_TYPE eType)
+{
+	switch (eType)
+	{
+	case GAMELOOP_TYPE::PRIORITY:
+		return m_pTimer_Manager->Compute_TimeDelta(TEXT("Priority_Time"));
+	case GAMELOOP_TYPE::UPDATE:
+		return m_pTimer_Manager->Compute_TimeDelta(TEXT("Update_Time"));;
+	case GAMELOOP_TYPE::LATE_UPDATE:
+		return m_pTimer_Manager->Compute_TimeDelta(TEXT("LateUpdate_Time"));;
+	case GAMELOOP_TYPE::COLLISION:
+		return m_pTimer_Manager->Compute_TimeDelta(TEXT("Collision_Time"));;
+	case GAMELOOP_TYPE::RENDER:
+		return m_pTimer_Manager->Compute_TimeDelta(TEXT("Render_Time"));;
+	}
+}
+#endif
+
 void CGameInstance::Release_Engine()
 {
 	DestroyInstance();
@@ -521,6 +658,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
+	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pPipeLine);

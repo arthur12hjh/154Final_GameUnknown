@@ -32,9 +32,12 @@ HRESULT CCell::Initialize(const _float3* vPoints, _uint iIndex)
 
 	m_iIndex = iIndex;
 
+#ifdef _DEBUG
 	m_pVIBuffer = CVIBuffer_Cell::Create(m_pDevice, m_pContext, vPoints);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
+
+#endif // _DEBUG
 
 	XMStoreFloat4(&m_vPlane,
 		XMPlaneFromPoints(XMLoadFloat3(&m_vPoints[0]), XMLoadFloat3(&m_vPoints[1]), XMLoadFloat3(&m_vPoints[2])));
@@ -98,6 +101,7 @@ _float CCell::Compute_Height(_fvector vPoint)
 	return (-m_vPlane.x * XMVectorGetX(vPoint) - m_vPlane.z * XMVectorGetZ(vPoint) - m_vPlane.w) / m_vPlane.y;
 }
 
+#ifdef _DEBUG
 HRESULT CCell::Render()
 {
 	m_pVIBuffer->Bind_Resources();
@@ -106,6 +110,7 @@ HRESULT CCell::Render()
 
 	return S_OK;
 }
+#endif // _DEBUG
 
 CCell* CCell::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _float3* vPoints, _uint iIndex)
 {

@@ -33,6 +33,11 @@ HRESULT CComponent::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CComponent::SetOwner(CGameObject* pGameObject)
+{
+	m_pOwner = pGameObject;
+}
+
 void CComponent::Free()
 {
 	__super::Free();
