@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CSpriteEffect::CSpriteEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CBlendObject { pDevice, pContext }
+	: CBlendObject{ pDevice, pContext }
 {
 }
 
-CSpriteEffect::CSpriteEffect(const CSpriteEffect& Prototype) 
-	: CBlendObject { Prototype }
+CSpriteEffect::CSpriteEffect(const CSpriteEffect& Prototype)
+	: CBlendObject{ Prototype }
 {
 }
 
@@ -19,7 +19,7 @@ HRESULT CSpriteEffect::Initialize_Prototype()
 }
 
 HRESULT CSpriteEffect::Initialize(void* pArg)
-{	
+{
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -45,16 +45,18 @@ void CSpriteEffect::Update(_float fTimeDelta)
 {
 	m_fFrame += 90.f * fTimeDelta;
 	if (m_fFrame >= 90.f)
-		m_fFrame = 0.f;	
+		m_fFrame = 0.f;
 }
 
 void CSpriteEffect::Late_Update(_float fTimeDelta)
 {
 	Compute_Depth();
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	// m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
+	// m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::BLUR, this);
+
+	m_pGameInstance->Add_RenderGroup(RENDER::DISTORTION, this);
 }
 
 HRESULT CSpriteEffect::Render()
@@ -62,7 +64,8 @@ HRESULT CSpriteEffect::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(2)))
+	//현재 인덱스 3이 Distortion, 인덱스 2가 Blur야.
+	if (FAILED(m_pShaderCom->Begin(3)))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -104,12 +107,12 @@ HRESULT CSpriteEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
+	_float fDistortionIntensity = { 1.f };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDistortionIntensity", &fDistortionIntensity, sizeof(_float))))
+		return E_FAIL;
+
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", static_cast<_uint>(0))))
 		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShaderCom, "g_DepthTexture")))
-		return E_FAIL;
-
 
 	return S_OK;
 }

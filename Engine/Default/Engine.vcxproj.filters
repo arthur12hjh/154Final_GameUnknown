@@ -621,5 +621,11 @@
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
       <Filter>98.ShaderFiles</Filter>
     </None>
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Defines.hlsli">
+      <Filter>98.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Functions.hlsli">
+      <Filter>98.ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>

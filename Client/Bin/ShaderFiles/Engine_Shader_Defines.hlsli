@@ -41,6 +41,13 @@ RasterizerState RS_Cull_Front
     CullMode = Front;
 };
 
+/* Cull 모드 끄기. */
+RasterizerState RS_Cull_None
+{
+    CullMode = None;
+};
+
+/* DSS 기본 설정 */
 DepthStencilState DSS_Default
 {
     DepthEnable = true;
@@ -48,18 +55,29 @@ DepthStencilState DSS_Default
     DepthFunc = less_equal;
 };
 
+/* 깊이 쓰기 & 깊이 테스트 끄기  */
 DepthStencilState DSS_None
 {
     DepthEnable = false;
     DepthWriteMask = zero;    
 };
 
+/* 깊이쓰기만 끄기*/
+DepthStencilState DSS_DepthNonWrite
+{
+    DepthEnable = true;
+    DepthWriteMask = zero;
+    DepthFunc = less_equal;
+};
+
+/* 블렌더 끄기. 어떤 렌더타겟에 블렌드 스테이트를 넘겨줄 것인지 설정. */
 BlendState BS_None
 {
     BlendEnable[0] = false;
  
 };
 
+/* 블렌더 켜기. 어떤 렌더타겟에 블렌드 스테이트를 넘겨줄 것인지 설정. */
 BlendState BS_AlphaBlend
 {
     BlendEnable[0] = true;
@@ -70,6 +88,7 @@ BlendState BS_AlphaBlend
     BlendOp = Add;
 };
 
+/* One, One, Add 모드로 블렌드 켜기.*/
 BlendState BS_Blend
 {
     BlendEnable[0] = true;    
