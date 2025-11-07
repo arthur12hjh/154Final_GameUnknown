@@ -44,8 +44,10 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
             pCharacter->GetTransform()->Set_State(STATE::POSITION, vPos);
             Safe_Release(pCharacter);
         }
-     
     }
+
+    if (!bIsOpen)
+        m_eVisibility = VISIBILITY::HIDDEN;
 }
 
 HRESULT CDebugCheatUI::Render()
