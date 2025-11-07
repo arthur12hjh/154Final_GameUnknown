@@ -18,6 +18,12 @@
     <Filter Include="99.Defines\PCH">
       <UniqueIdentifier>{5c295bd9-df16-47bc-b775-527b94a06aa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.GUIManager">
+      <UniqueIdentifier>{72d1c617-da2a-4f2b-8e8d-d6adc02aa0ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.GUIManager\backend">
+      <UniqueIdentifier>{99a606e7-1914-4234-963b-021ea75ec4b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -32,16 +38,76 @@
     <ClInclude Include="framework.h">
       <Filter>98. Default</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="..\Public\Tool_UI_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
       <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\GUIManager.h">
+      <Filter>97.GUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imconfig.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_impl_dx11.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_impl_win32.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_internal.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_rectpack.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_textedit.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_truetype.h">
+      <Filter>97.GUIManager\backend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UI_Editor.cpp">
       <Filter>98. Default</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\GUIManager.cpp">
+      <Filter>97.GUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_demo.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_draw.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_impl_dx11.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_impl_win32.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_tables.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
+      <Filter>97.GUIManager\backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
