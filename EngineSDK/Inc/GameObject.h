@@ -41,8 +41,7 @@ public:
 	}
 
 	const VISIBILITY&			GetVisibility() { return m_eVisibility;	}
-	const	CTransform*			GetTransform() { return m_pTransformCom; }
-
+	CTransform*					GetTransform() { return m_pTransformCom; }
 
 protected:
 	int							m_iObjectID;
