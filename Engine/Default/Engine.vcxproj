@@ -306,6 +306,8 @@ popd</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Functions.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
