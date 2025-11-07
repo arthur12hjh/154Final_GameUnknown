@@ -28,6 +28,10 @@ namespace Engine
 	typedef		XMINT3						_int3;
 	typedef		XMINT4						_int4;
 
+	typedef		XMUINT2						_uint2;
+	typedef		XMUINT3						_uint3;
+	typedef		XMUINT4						_uint4;
+
 	typedef		XMFLOAT2					_float2;
 	typedef		XMFLOAT3					_float3;
 	typedef		XMFLOAT4					_float4;

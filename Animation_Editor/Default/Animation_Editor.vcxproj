@@ -24,6 +24,7 @@
     <ProjectGuid>{60731c37-f97f-4500-9339-0576e9f4942a}</ProjectGuid>
     <RootNamespace>AnimationEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Tool_Animation</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

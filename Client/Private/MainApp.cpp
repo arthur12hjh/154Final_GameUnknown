@@ -7,7 +7,7 @@
 #include "Camera_Free.h"
 
 
-Client::CMainApp::CMainApp()	
+CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 {
 	// D3D11_SAMPLER_DESC
@@ -37,7 +37,7 @@ Client::CMainApp::CMainApp()
 	Safe_AddRef(m_pGameInstance);
 }
 
-HRESULT Client::CMainApp::Initialize()
+HRESULT CMainApp::Initialize()
 {
 	ENGINE_DESC				EngineDesc{};
 	EngineDesc.hInstance = g_hInstance;
@@ -65,7 +65,7 @@ HRESULT Client::CMainApp::Initialize()
 	return S_OK;
 }
 
-void Client::CMainApp::Update(_float fTimeDelta)
+void CMainApp::Update(_float fTimeDelta)
 {
 	m_pGameInstance->Update_Engine(fTimeDelta);
 
@@ -74,7 +74,7 @@ void Client::CMainApp::Update(_float fTimeDelta)
 #endif
 }
 
-HRESULT Client::CMainApp::Render()
+HRESULT CMainApp::Render()
 {
 	_float4			vClearColor = _float4(0.f, 0.f, 1.f, 1.f);
 
@@ -243,7 +243,7 @@ HRESULT CMainApp::Ready_Prototypes()
 	return S_OK;
 }
 
-CMainApp* Client::CMainApp::Create()
+CMainApp* CMainApp::Create()
 {
 	CMainApp* pInstance = new CMainApp();
 
@@ -256,7 +256,7 @@ CMainApp* Client::CMainApp::Create()
 	return pInstance;
 }
 
-void Client::CMainApp::Free()
+void CMainApp::Free()
 {
 	__super::Free();
 

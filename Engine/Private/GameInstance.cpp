@@ -32,6 +32,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
+	m_vScreenSize = { EngineDesc.iWinSizeX, EngineDesc.iWinSizeY };
+	m_vHalfScreenSize = { m_vScreenSize.x >> 1 , m_vScreenSize.y >> 1};
+
 	m_pLight_Manager = CLight_Manager::Create();
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
@@ -498,8 +501,18 @@ void CGameInstance::ADD_Collider(CCollider* pCollider)
 {
 	m_pCollisionManager->ADD_CollisionList(pCollider);
 }
+
 #pragma endregion
 
+const _uint2& CGameInstance::GetScreenSize()
+{
+	return m_vScreenSize;
+
+}
+const _uint2& CGameInstance::GetHalfScreenSize()
+{
+	return m_vHalfScreenSize;
+}
 void CGameInstance::Release_Engine()
 {
 	DestroyInstance();

@@ -24,6 +24,7 @@
     <ProjectGuid>{876b89ab-3920-4ed8-975e-9129704d1e1d}</ProjectGuid>
     <RootNamespace>EffectEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Tool_Effect</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

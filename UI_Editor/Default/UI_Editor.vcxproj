@@ -24,6 +24,7 @@
     <ProjectGuid>{9d17fc59-0abb-4a9f-b6ad-bb1d031a0b71}</ProjectGuid>
     <RootNamespace>UIEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Tool_UI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

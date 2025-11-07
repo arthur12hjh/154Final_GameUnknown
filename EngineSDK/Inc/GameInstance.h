@@ -165,6 +165,9 @@ public:
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
+	const _uint2&					GetScreenSize();
+	const _uint2&					GetHalfScreenSize();
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -185,7 +188,8 @@ private:
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 
 	_bool							m_bIsPause = false;
-	
+	_uint2							m_vScreenSize = {};
+	_uint2							m_vHalfScreenSize = {};
 
 public:
 	void							Release_Engine();
