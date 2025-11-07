@@ -3,6 +3,14 @@
 
 namespace Engine
 {
+	typedef struct ThreadJob
+	{
+		unsigned int		iJobID;
+		function<void()>	JobFunction;
+		bool				bIsCanceled;
+	}THREAD_JOB;
+	using ThreadJobHandle = THREAD_JOB;
+
 	typedef struct tagEngineDesc
 	{
 		HINSTANCE			hInstance;

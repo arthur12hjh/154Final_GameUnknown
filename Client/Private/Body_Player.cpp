@@ -88,13 +88,8 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 
 HRESULT CBody_Player::Render()
 {
-	
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
-
-
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 

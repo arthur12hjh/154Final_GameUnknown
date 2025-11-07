@@ -43,7 +43,9 @@ public:
 	_float					Get_TimeDelta(const _wstring& strTimerTag);
 	HRESULT					Add_Timer(const _wstring& strTimerTag);
 	void					Compute_TimeDelta(const _wstring& strTimerTag);
+
 	// 특정 시간 이후에 호출
+	void					ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTime, function<void()> Function);
 
 #pragma endregion
 
@@ -80,6 +82,12 @@ public:
 	const _float4x4*			Get_Transform_Float4x4_Inverse(D3DTS eState);
 	_matrix						Get_Transform_Matrix_Inverse(D3DTS eState);
 	const _float4*				Get_CamPosition();
+	// 항등행렬 꺼내오기
+	_matrix						GetIdentityMatrix();
+
+	// 항등행렬 포인터 꺼내오기
+	const _float4x4*			GetIdentityMatrixPtr();
+
 #pragma endregion
 
 #pragma region LIGHT_MANAGER
@@ -161,6 +169,14 @@ public:
 	void		ADD_Collider(class CCollider* pCollider);
 #pragma endregion
 
+#pragma region Thread Pool
+	// 스레드 풀에 등록하면 등록 번호를 반환함
+	// 이걸로 나중에 취소하거나 할수있음
+	// Handle 받은거 작업 호출되면 nullptr로 바꿔주세요
+	// 작업수행되서 작업리스트에서 빠지면 댕글링 포인터입니다.
+	ThreadJobHandle*				Add_ThreadjobList(function<void()> function);
+	_bool							IsThreadPoolStop();
+#pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
@@ -170,6 +186,12 @@ public:
 
 	// 스크린 반절 사이즈
 	const _uint2&					GetHalfScreenSize();
+	const WCHAR*					GetFrameText();
+
+#ifdef _DEBUG
+	_float							GetLoopDurationTime(GAMELOOP_TYPE eType);
+	void							ComputeLoopTime(GAMELOOP_TYPE eType);
+#endif
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
@@ -189,10 +211,19 @@ private:
 	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
+	class CThreadPool*				m_pThreadPool = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
+
+	_uint							m_iDrawCnt = {};
+	_float							m_fTimeAcc = {};
+	_tchar							m_szFPS[MAX_PATH] = {};
+
+#ifdef _DEBUG
+	_float							m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::END)];
+#endif // _DEBUG
 
 public:
 	void							Release_Engine();
