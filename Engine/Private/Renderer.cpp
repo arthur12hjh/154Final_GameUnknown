@@ -475,9 +475,11 @@ void CRenderer::Free()
 {
     __super::Free();
 
+#ifdef _DEBUG
 	for (auto& pDebugCom : m_DebugComponents)
 		Safe_Release(pDebugCom);
 	m_DebugComponents.clear();
+#endif // _DEBUG
 
 	for (auto& RenderObjects : m_RenderObjects)
 	{
