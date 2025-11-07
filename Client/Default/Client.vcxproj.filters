@@ -150,7 +150,7 @@
     <ClInclude Include="Resource.h">
       <Filter>100.ETC</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="..\Public\pch.h">
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
   </ItemGroup>
@@ -217,7 +217,7 @@
     <ClCompile Include="..\Private\SpriteEffect.cpp">
       <Filter>02.GameObjects\Effect\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
     </ClCompile>
   </ItemGroup>

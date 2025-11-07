@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Sky.h"
+
 #include "GameInstance.h"
 
 CSky::CSky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

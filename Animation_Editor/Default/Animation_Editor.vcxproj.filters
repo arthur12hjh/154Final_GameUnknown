@@ -16,12 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="98. Default\Animation_Editor.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
-    <ClInclude Include="98. Default\framework.h">
-      <Filter>98.Default</Filter>
-    </ClInclude>
     <ClInclude Include="98. Default\targetver.h">
       <Filter>100.ETC</Filter>
     </ClInclude>
@@ -31,13 +25,19 @@
     <ClInclude Include="pch.h">
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
+    <ClInclude Include="Animation_Editor.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="98. Default\Animation_Editor.cpp">
-      <Filter>98.Default</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation_Editor.cpp">
+      <Filter>98.Default</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

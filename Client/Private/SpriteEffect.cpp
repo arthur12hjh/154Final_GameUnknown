@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SpriteEffect.h"
 
 #include "GameInstance.h"

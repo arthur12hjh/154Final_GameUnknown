@@ -135,14 +135,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="98. Default\Animation_Editor.h" />
-    <ClInclude Include="98. Default\framework.h" />
     <ClInclude Include="98. Default\Resource.h" />
     <ClInclude Include="98. Default\targetver.h" />
+    <ClInclude Include="Animation_Editor.h" />
+    <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="98. Default\Animation_Editor.cpp" />
+    <ClCompile Include="Animation_Editor.cpp" />
     <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>

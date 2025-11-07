@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Snow.h"
+
 #include "GameInstance.h"
 
 CSnow::CSnow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Explosion.h"
+
 #include "GameInstance.h"
 
 CExplosion::CExplosion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
