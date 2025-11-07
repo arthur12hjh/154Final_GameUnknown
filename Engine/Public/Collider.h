@@ -35,7 +35,9 @@ public:
 	virtual _bool			RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC& OutDesc);
 	virtual	ContainmentType	Contains(_vector Point);
 	
+#ifdef _DEBUG
 	virtual HRESULT			Render() override;
+#endif // _DEBUG
 
 	void					BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent);
 	void					BindOverlappingEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> OverlappingEvent);

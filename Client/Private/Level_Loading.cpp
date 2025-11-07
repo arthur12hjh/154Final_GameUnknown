@@ -32,7 +32,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 void CLevel_Loading::Update(_float fTimeDelta)
 {
 	if (true == m_pLoader->isFinished() &&
-		GetKeyState(VK_F1) & 0x8000)
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))
 	{
 		CLevel* pNewLevel = { nullptr };
 
