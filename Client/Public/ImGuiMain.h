@@ -27,7 +27,9 @@ private:
 private :
 	ImGuiWindowFlags		m_ImGuiWindowFlags = {};
 
-	_tchar					m_szFPS[MAX_PATH] = {};
+	_char					m_szFPS[MAX_PATH] = {};
+	_char					m_szFramePreivew[MAX_PATH] = { "60" };
+
 	_uint					m_iDrawCnt = {};
 	_float					m_fTimeAcc = {};
 

@@ -10,10 +10,11 @@
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
-HINSTANCE g_hInstance;                                // 현재 인스턴스입니다.
-HWND g_hWnd;
-WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
-WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+HINSTANCE           g_hInstance;                                // 현재 인스턴스입니다.
+HWND                g_hWnd;
+float		        g_GameFrame;
+WCHAR               szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
+WCHAR               szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -58,10 +59,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
+    g_GameFrame = 60.f;
     if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
         return E_FAIL;
 
-    if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_60"))))
+    if (FAILED(pGameInstance->Add_Timer(TEXT("GameLoopTime"))))
         return E_FAIL;
 
     _float      fTimeAcc = { };
@@ -81,11 +83,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-        if (fTimeAcc >= 1.f / 60.f)
+        if (fTimeAcc >= 1.f / g_GameFrame)
         {
-            pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));
+            pGameInstance->Compute_TimeDelta(TEXT("GameLoopTime"));
 
-            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
             pMainApp->Render();
 
             fTimeAcc = 0.f;

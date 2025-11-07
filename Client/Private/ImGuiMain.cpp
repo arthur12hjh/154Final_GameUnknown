@@ -2,6 +2,7 @@
 #include "ImGuiMain.h"
 
 #include "GameInstance.h"
+#include "StringHelper.h"
 
 CImGuiMain::CImGuiMain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
@@ -30,8 +31,21 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	if (ImGui::Begin("Debug Tool"))
 	{
+		CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
+		ImGui::Text(m_szFPS);
+		ImGui::SameLine();
+		if (ImGui::BeginCombo("Frame", m_szFramePreivew))
+		{
+
+		}
+
+
 		if (ImGui::Checkbox("GamePause", &m_bIsGamePause))
 			m_pGameInstance->SetGamePause(m_bIsGamePause);
+
+		
+
+
 	}
 	ImGui::End();
 }
