@@ -33,14 +33,18 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
 
     if (m_bIsTeleport)
     {
-        auto pCharacter = m_pGameManager->GetGameCharacter();
+        
         _float3 vPickingPoint = {};
         if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0) &&
             m_pGameInstance->isPicking(&vPickingPoint))
         {
-            //pCharacter->GetTransform()->Set_State(STATE::POSITION, XMLoadFloat3(&vPickingPoint));
+            auto pCharacter = m_pGameManager->GetGameCharacter();
+            _vector vPos = XMLoadFloat3(&vPickingPoint);
+            vPos.m128_f32[3] = 1.f;
+            pCharacter->GetTransform()->Set_State(STATE::POSITION, vPos);
+            Safe_Release(pCharacter);
         }
-        Safe_Release(pCharacter);
+     
     }
 }
 
