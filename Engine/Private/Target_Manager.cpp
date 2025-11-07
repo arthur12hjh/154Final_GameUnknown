@@ -74,6 +74,33 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     return S_OK;
 }
 
+HRESULT CTarget_Manager::Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+{
+    m_pContext->OMGetRenderTargets(1, &m_pBackBufferRTV, &m_pOriginalDSV);
+
+    list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+
+    if (nullptr == pMRTList)
+        return E_FAIL;
+
+    _uint iNumRenderTargets = {};
+    ID3D11RenderTargetView* pRenderTargets[8] = {};
+
+    for (auto& pRenderTarget : *pMRTList)
+    {
+        pRenderTargets[iNumRenderTargets++] = pRenderTarget->Get_RTV();
+    }
+
+
+    if (nullptr != pDSV)
+        m_pContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+
+
+    m_pContext->OMSetRenderTargets(iNumRenderTargets, pRenderTargets, nullptr == pDSV ? m_pOriginalDSV : pDSV);
+
+    return S_OK;
+}
+
 /* 백버퍼가 바인딩된 상태로 돌려주낟. */
 HRESULT CTarget_Manager::End_MRT()
 {
