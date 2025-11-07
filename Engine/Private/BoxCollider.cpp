@@ -143,6 +143,7 @@ ContainmentType CBoxCollider::Contains(_vector vPoint)
     return m_Bounding->Contains(vPoint);
 }
 
+#ifdef _DEBUG
 HRESULT CBoxCollider::Render()
 {
     __super::Render();
@@ -153,6 +154,7 @@ HRESULT CBoxCollider::Render()
     m_pBatch->End();
     return S_OK;
 }
+#endif // _DEBUG
 
 CBoxCollider* CBoxCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

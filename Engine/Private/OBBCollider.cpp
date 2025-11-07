@@ -149,6 +149,7 @@ void COBBCollider::SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtent
     m_OriginOrientBox->Orientation = vQuaternion;
 }
 
+#ifdef _DEBUG
 HRESULT COBBCollider::Render()
 {
     __super::Render();
@@ -159,6 +160,7 @@ HRESULT COBBCollider::Render()
     m_pBatch->End();
     return S_OK;
 }
+#endif // _DEBUG
 
 COBBCollider* COBBCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

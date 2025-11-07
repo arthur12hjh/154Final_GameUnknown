@@ -140,6 +140,7 @@ void CSphereCollider::SetCollision(_float3 vCenter, _float fRadius)
 	m_OriginBounding->Radius = fRadius;
 }
 
+#ifdef _DEBUG
 HRESULT CSphereCollider::Render()
 {
 	__super::Render();
@@ -150,6 +151,7 @@ HRESULT CSphereCollider::Render()
 	m_pBatch->End();
 	return S_OK;
 }
+#endif // _DEBUG
 
 CSphereCollider* CSphereCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

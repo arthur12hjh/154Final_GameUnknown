@@ -2,6 +2,7 @@
 
 CPipeLine::CPipeLine()
 {
+	XMStoreFloat4x4(&m_IdentityMatrix, XMMatrixIdentity());
 }
 
 void CPipeLine::Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix)

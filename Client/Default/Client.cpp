@@ -60,11 +60,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
         return E_FAIL;
+
     if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_60"))))
         return E_FAIL;
 
     _float      fTimeAcc = { };
-
     while (true)
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -79,10 +79,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
 
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
-
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-        if (/*fTimeAcc >= 1.f / 60.f*/1)
+        if (fTimeAcc >= 1.f / 60.f)
         {
             pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));
 
@@ -137,6 +136,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
 //        주 프로그램 창을 만든 다음 표시합니다.
 //
+
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    g_hInstance = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
@@ -171,8 +172,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+#ifdef _DEBUG
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (FAILED(ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)))
+        return E_FAIL;
+
     switch (message)
     {
     case WM_COMMAND:

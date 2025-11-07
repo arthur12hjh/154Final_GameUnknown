@@ -63,6 +63,7 @@ ContainmentType CCollider::Contains(_vector Point)
     return ContainmentType();
 }
 
+#ifdef _DEBUG
 HRESULT CCollider::Render()
 {
     m_pEffect->SetWorld(XMMatrixIdentity());
@@ -73,6 +74,7 @@ HRESULT CCollider::Render()
     m_pEffect->Apply(m_pContext);
     return S_OK;
 }
+#endif // _DEBUG
 
 void CCollider::BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent)
 {
@@ -165,13 +167,13 @@ void CCollider::Free()
 {
     __super::Free();
 
+#ifdef _DEBUG
     if (false == m_isCloned)
     {
         Safe_Delete(m_pBatch);
         Safe_Delete(m_pEffect);
     }
 
-#ifdef _DEBUG
     Safe_Release(m_pInputLayout);
 #endif // _DEBUG
 

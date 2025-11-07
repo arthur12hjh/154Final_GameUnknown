@@ -9,6 +9,10 @@ NS_END
 
 NS_BEGIN(Client)
 
+#ifdef _DEBUG
+class CImGuiMain;
+#endif
+
 class CMainApp final : public CBase
 {	
 private:
@@ -16,9 +20,9 @@ private:
 	virtual ~CMainApp() = default;
 
 public:
-	HRESULT Initialize();
-	void Update(_float fTimeDelta);
-	HRESULT Render();
+	HRESULT					Initialize();
+	void					Update(_float fTimeDelta);
+	HRESULT					Render();
 
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };
@@ -26,11 +30,7 @@ private:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 #ifdef _DEBUG
-private:
-	_tchar					m_szFPS[MAX_PATH] = {};
-	_uint					m_iDrawCnt = {};
-	_float					m_fTimeAcc = {};
-
+	CImGuiMain*				m_pImGuiDebug = nullptr;
 #endif
 
 private:

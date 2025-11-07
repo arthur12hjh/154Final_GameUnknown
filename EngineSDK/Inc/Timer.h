@@ -15,8 +15,8 @@ public:
 		return m_fTimeDelta; }
 
 public:
-	HRESULT	Initialize();
-	void Update_Timer();
+	HRESULT				Initialize();
+	void				Update_Timer();
 
 private:
 	LARGE_INTEGER		m_FrameTime{};
@@ -32,4 +32,3 @@ public:
 };
 
 NS_END
-
