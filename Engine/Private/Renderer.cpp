@@ -127,10 +127,6 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Distortion"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
-	/* Target_Debug.*/
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Debug"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -180,10 +176,6 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
 		return E_FAIL;
 
-	/* MRT_Debug */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Debug"), TEXT("Target_Debug"))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -215,14 +207,14 @@ void CRenderer::Render()
 	Render_NonLight();
 	Render_Blend();
 
+	Composite_RT_ToBackBuffer();
 	Apply_Deferred();
-
+	
 	Render_UI();
 
 #ifdef _DEBUG
 	Render_Debug();
 #endif
-	Composite_RT_ToBackBuffer();
 }
 
 #ifdef _DEBUG
@@ -505,23 +497,18 @@ void CRenderer::Render_Blend()
 
 void CRenderer::Apply_Deferred()
 {
-	//if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-	//	return;
-	//
-	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-	//	return;
+	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
-	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Distortion"), m_pShader, "g_DistortionTexture")))
-	//	return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
+		return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Distortion"), m_pShader, "g_DistortionTexture")))
+		return;
 
-	//m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DISTORTION));
-
-	//m_pVIBuffer->Bind_Resources();
-
-	//m_pVIBuffer->Render();
-
-	//if (FAILED(m_pGameInstance->End_MRT()))
-	//	return;
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DISTORTION));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
 }
 
 void CRenderer::Render_UI()
