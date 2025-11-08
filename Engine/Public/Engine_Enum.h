@@ -64,6 +64,7 @@ namespace Engine
 		NONBLEND,
 		NONLIGHT,
 		BLUR,
+		DISTORTION,
 		BLEND,
 		UI,
 		END
