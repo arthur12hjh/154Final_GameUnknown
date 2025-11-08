@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{c97b62e1-26b8-437d-b3de-0d9d5445f414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98.Default">
       <UniqueIdentifier>{728a900b-3685-4452-a6ae-b82a17c7e63f}</UniqueIdentifier>
     </Filter>
@@ -79,9 +76,6 @@
     <Filter Include="100.ETC">
       <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines\PCH">
-      <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="30.ImGui">
       <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
     </Filter>
@@ -96,6 +90,24 @@
     </Filter>
     <Filter Include="30.ImGui\Profiler">
       <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Manager">
+      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager">
+      <UniqueIdentifier>{b6aef18f-1b7e-4a2a-ad79-9041e705e206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{c97b62e1-26b8-437d-b3de-0d9d5445f414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\GameStruct">
+      <UniqueIdentifier>{6ab8c8b9-5402-4939-896e-b82f458230bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\DebugCheat">
+      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +210,18 @@
     <ClInclude Include="..\public\DebugProfiler.h">
       <Filter>30.ImGui\Profiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGuiManager.h">
+      <Filter>30.ImGui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameManager.h">
+      <Filter>10.GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientStruct.h">
+      <Filter>99.Defines\GameStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugCheatUI.h">
+      <Filter>30.ImGui\DebugCheat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -288,6 +312,15 @@
     </ClCompile>
     <ClCompile Include="..\private\DebugProfiler.cpp">
       <Filter>30.ImGui\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGuiManager.cpp">
+      <Filter>30.ImGui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameManager.cpp">
+      <Filter>10.GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DebugCheatUI.cpp">
+      <Filter>30.ImGui\DebugCheat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
