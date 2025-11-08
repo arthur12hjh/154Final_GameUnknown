@@ -36,3 +36,22 @@ public:
 
 };
 NS_END
+
+/* [±¸Á¶]
+<HUD>
+	<Layer LayerTag="">
+		<Wrapper>
+			<Img></Img>
+
+			<FlexBox>
+				<Button>Button</Button>
+				<Button>Button</Button>
+				<Button>Button</Button>
+				<Button>Button</Button>
+			</FlexBox>
+		</Wrapper>
+	</Layer>
+</HUD>
+
+
+*/
