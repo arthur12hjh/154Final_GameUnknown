@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Effect", "Effect_Edito
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Map", "Map_Editor\Default\Map_Editor.vcxproj", "{7489F065-2623-473C-8802-37FCB2D6C957}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UI_Editor", "UI_Editor\Default\UI_Editor.vcxproj", "{9D17FC59-0ABB-4A9F-B6AD-BB1D031A0B71}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_UI", "UI_Editor\Default\UI_Editor.vcxproj", "{9D17FC59-0ABB-4A9F-B6AD-BB1D031A0B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
