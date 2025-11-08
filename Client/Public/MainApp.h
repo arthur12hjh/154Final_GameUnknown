@@ -25,23 +25,24 @@ public:
 	HRESULT					Render();
 
 private:
+#ifdef _DEBUG
+	CImGuiMain* m_pImGuiDebug = nullptr;
+#endif
+
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
-#ifdef _DEBUG
-	CImGuiMain*				m_pImGuiDebug = nullptr;
-#endif
-
 private:
-	HRESULT Ready_Default_Setting();
-	HRESULT Start_Level(LEVEL eLevelID);
-	HRESULT Ready_Gara();
-	HRESULT Ready_Prototypes();
+	HRESULT					Ready_Default_Setting();
+	HRESULT					Ready_Manager_Setting();
+	HRESULT					Start_Level(LEVEL eLevelID);
+	HRESULT					Ready_Gara();
+	HRESULT					Ready_Prototypes();
 
 public:
-	static CMainApp* Create();
-	virtual void Free() override;
+	static CMainApp*		Create();
+	virtual void			Free() override;
 };
 
 NS_END
