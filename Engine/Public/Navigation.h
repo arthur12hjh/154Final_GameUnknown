@@ -26,6 +26,19 @@ public:
 	_bool isMove(_fvector vPosition);
 	void Compute_Height(class CTransform* pTransform);
 
+	HRESULT Add_Cell_From_Editor(const _float3* vPoints);
+
+	//  현재 로드된 모든 셀 목록 반환
+	const vector<class CCell*>* Get_Cells() const { return &m_Cells; }
+
+	// 현재 셀의 개수를 반환
+	_uint Get_CellCount() const { return (_uint)m_Cells.size(); }
+
+	_bool Find_Closest_Point(_fvector vPickedPos, _float fRadius, _vector* vOutPoint);
+
+	void Reset_Line();
+	void Delete_Line();
+
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;
@@ -41,7 +54,7 @@ private:
 	class CShader* m_pShader = { nullptr };
 #endif
 
-private:
+public:
 	void SetUp_Neighbors();
 
 public:
