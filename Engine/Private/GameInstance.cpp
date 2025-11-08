@@ -17,6 +17,7 @@
 #include "PipeLine.h"
 #include "Frustum.h"
 #include "ThreadPool.h"
+#include "CameraManager.h"
 #include "Picking.h"
 #include "Shadow.h"
 
@@ -613,6 +614,46 @@ ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void()> function)
 _bool CGameInstance::IsThreadPoolStop()
 {
 	return m_pThreadPool->IsThreadPoolStop();
+}
+
+#pragma endregion
+
+#pragma region Camera Manager
+HRESULT CGameInstance::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
+{
+	return m_pCameraManager->Add_Camera(szCameraTag, pCamera);
+}
+HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->Remove_Camera(szCameraTag);
+}
+HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+{
+	return m_pCameraManager->SetMainCamera(szCameraTag, ppPreCameraMatrix);
+}
+CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCamrea(szCameraTag);
+}
+CCamera* CGameInstance::GetMainCamera()
+{
+	return m_pCameraManager->GetMainCamera();
+}
+_matrix CGameInstance::GetMainCameraWorldMatrix()
+{
+	return m_pCameraManager->GetMainCameraWorldMatrix();
+}
+const _float4x4* CGameInstance::GetMainCameraWorldMatrixPtr()
+{
+	return m_pCameraManager->GetMainCameraWorldMatrixPtr();
+}
+_matrix CGameInstance::GetCameraWorldMatrix(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCameraWorldMatrix(szCameraTag);
+}
+const _float4x4* CGameInstance::GetCameraWorldMatrixPtr(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCameraWorldMatrixPtr(szCameraTag);
 }
 #pragma endregion
 
