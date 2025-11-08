@@ -159,9 +159,6 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\Tool_UI_Defines.h" />
-    <ClInclude Include="..\Xml\tinystr.h" />
-    <ClInclude Include="..\Xml\tinyxml.h" />
-    <ClInclude Include="..\Xml\XmlManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -199,19 +196,6 @@
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Xml\tinystr.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxml.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxmlerror.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxmlparser.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Xml\XmlManager.cpp" />
     <ClCompile Include="UI_Editor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
@@ -222,9 +206,6 @@
   <ItemGroup>
     <Image Include="small.ico" />
     <Image Include="UI_Editor.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\Bin\DataFiles\Xml\Default.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

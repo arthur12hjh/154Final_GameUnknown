@@ -208,6 +208,12 @@
     <ClInclude Include="..\public\ThreadPool.h">
       <Filter>01.Utility\16.ThreadPool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\XmlParser.h">
+      <Filter>102.XmlParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\tinyxml2.h">
+      <Filter>102.XmlParser\backend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -392,6 +398,15 @@
     </ClCompile>
     <ClCompile Include="..\private\ThreadPool.cpp">
       <Filter>01.Utility\16.ThreadPool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\XmlParser.cpp">
+      <Filter>102.XmlParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\tinyxml2.cpp">
+      <Filter>102.XmlParser\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\xmltest.cpp">
+      <Filter>102.XmlParser\backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -607,6 +622,12 @@
     </Filter>
     <Filter Include="01.Utility\100.Math">
       <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="102.XmlParser">
+      <UniqueIdentifier>{67e2eb45-0cb8-4061-b930-66d257f11bc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="102.XmlParser\backend">
+      <UniqueIdentifier>{289a1975-c879-40f3-acad-ed8aa45fecd0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
