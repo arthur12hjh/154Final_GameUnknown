@@ -24,18 +24,6 @@
     <Filter Include="97.GUIManager\backend">
       <UniqueIdentifier>{99a606e7-1914-4234-963b-021ea75ec4b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="70.Xml">
-      <UniqueIdentifier>{1ae7cd50-19d5-4b82-9679-dbe76f4d646b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="70.Xml\backend">
-      <UniqueIdentifier>{f32e0000-b241-4391-85f4-b808b6163fe7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="70.Xml\Data">
-      <UniqueIdentifier>{15f2c32c-5ab6-4c76-a18c-a07bef02b584}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="70.Xml\Data\00.Default">
-      <UniqueIdentifier>{4d6f3df8-ad25-4162-bc09-394b2c9ddd88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.UI">
       <UniqueIdentifier>{12df442a-4443-4d7b-b774-738cb8def1c4}</UniqueIdentifier>
     </Filter>
@@ -116,15 +104,6 @@
     <ClInclude Include="..\ImgUI\imstb_truetype.h">
       <Filter>97.GUIManager\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\Xml\tinystr.h">
-      <Filter>70.Xml\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Xml\tinyxml.h">
-      <Filter>70.Xml\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Xml\XmlManager.h">
-      <Filter>70.Xml</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\HUD.h">
       <Filter>02.UI\HUD</Filter>
     </ClInclude>
@@ -175,21 +154,6 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <Filter>97.GUIManager\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\Xml\tinystr.cpp">
-      <Filter>70.Xml\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxml.cpp">
-      <Filter>70.Xml\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxmlerror.cpp">
-      <Filter>70.Xml\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Xml\tinyxmlparser.cpp">
-      <Filter>70.Xml\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Xml\XmlManager.cpp">
-      <Filter>70.Xml</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\HUD.cpp">
       <Filter>02.UI\HUD</Filter>
     </ClCompile>
@@ -218,10 +182,5 @@
     <ResourceCompile Include="UI_Editor.rc">
       <Filter>100. ETC</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\Bin\DataFiles\Xml\Default.xml">
-      <Filter>70.Xml\Data\00.Default</Filter>
-    </Xml>
   </ItemGroup>
 </Project>
