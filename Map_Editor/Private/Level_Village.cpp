@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Camera_Free.h"
 
+#include "Imgui_Manager.h"
+
 CLevel_Village::CLevel_Village(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel{ pDevice, pContext, ENUM_CLASS(eLevelID) }
 
@@ -18,19 +20,28 @@ HRESULT CLevel_Village::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Village_Mou(TEXT("Layer_Village_Mou"))))
+		return E_FAIL;
+
+	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }
 
 void CLevel_Village::Update(_float fTimeDelta)
 {
+	CImgui_Manager::GetInstance()->Update(fTimeDelta);
 }
 
 HRESULT CLevel_Village::Render()
 {
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
+
+	CImgui_Manager::GetInstance()->Render();
+
 	return S_OK;
 }
 
@@ -41,13 +52,13 @@ HRESULT CLevel_Village::Ready_Lights()
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 0.2f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
+	/*LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
@@ -65,10 +76,10 @@ HRESULT CLevel_Village::Ready_Lights()
 	LightDesc.fRange = 10.f;
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
-	SHADOW_LIGHT_DESC		ShadowDesc{};
+	/*SHADOW_LIGHT_DESC		ShadowDesc{};
 	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
 	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
 	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
@@ -77,16 +88,16 @@ HRESULT CLevel_Village::Ready_Lights()
 	ShadowDesc.fFar = 500.f;
 
 	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }
 
 HRESULT CLevel_Village::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Terrain"),
+	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Terrain"),
 		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Sky"),
@@ -116,6 +127,15 @@ HRESULT CLevel_Village::Ready_Layer_Camera(const _wstring& strLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Village::Ready_Village_Mou(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Village_Mou"),
+		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 
 CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
@@ -138,5 +158,5 @@ void CLevel_Village::Free()
 {
 	__super::Free();
 
-
+	CImgui_Manager::GetInstance()->DestroyInstance();
 }

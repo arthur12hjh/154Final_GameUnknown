@@ -2,11 +2,11 @@
 #include "Loader.h"
 
 //#include "Terrain.h"
-//#include "Sky.h"
+#include "Sky.h"
 #include "BackGround.h"
 
 #include "GameInstance.h"
-
+#include "Village.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -114,9 +114,9 @@ HRESULT CLoader::Loading_For_Village()
 	//	return E_FAIL;
 
 	///* For.Prototype_Component_Texture_Sky */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Sky"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Sky"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
+		return E_FAIL;
 
 	m_strMessage = TEXT("네비게이션를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_Navigation */
@@ -145,10 +145,10 @@ HRESULT CLoader::Loading_For_Village()
 	//	return E_FAIL;
 
 	///* For.Prototype_Component_Model_ForkLift */
-	//PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_ForkLift"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", PreTransformMatrix))))
-	//	return E_FAIL;
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Village_Mou"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Village_Mou/Village_Mou.fbx", PreTransformMatrix))))
+		return E_FAIL;
 
 
 
@@ -207,10 +207,14 @@ HRESULT CLoader::Loading_For_Village()
 	//	CTerrain::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 
-	///* For.Prototype_GameObject_Sky */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Sky"),
-	//	CSky::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	/* For.Prototype_GameObject_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Village_Mou"),
+		CVillage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strMessage = TEXT("로딩이 완료되었습니다..");
 
