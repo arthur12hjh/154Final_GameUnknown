@@ -5,5 +5,4 @@
 #include "imgui_impl_dx11.h"
 
 #include <process.h>
-#include "tinyxml.h"
 #include "../Default/framework.h"

@@ -24,21 +24,6 @@
     <Filter Include="97.GUIManager\backend">
       <UniqueIdentifier>{99a606e7-1914-4234-963b-021ea75ec4b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.UI">
-      <UniqueIdentifier>{12df442a-4443-4d7b-b774-738cb8def1c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.UI\HUD">
-      <UniqueIdentifier>{491c084e-2663-4d77-99ad-58e54a6dd509}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.UI\Layers">
-      <UniqueIdentifier>{6cbaa11b-5a49-489b-93ab-1a3e1313972f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.UI\UIObjects">
-      <UniqueIdentifier>{99e30f21-4848-4b1a-b06f-db2c1a40f939}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.UI\UIComponents">
-      <UniqueIdentifier>{799cfbe8-7e6c-4292-8a6c-f6219ad767ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Level">
       <UniqueIdentifier>{50248469-472e-4128-9d26-7d5e390b0b93}</UniqueIdentifier>
     </Filter>
@@ -51,8 +36,11 @@
     <Filter Include="01.Level\Logo">
       <UniqueIdentifier>{e1d92d81-538d-44d6-b496-4a0d45e2c7c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Level\Loading\Logo">
+    <Filter Include="01.Level\Loading\Loader">
       <UniqueIdentifier>{fd9ae4b7-953d-46a2-a313-e36c1894e3b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. Client CPP">
+      <UniqueIdentifier>{c2123a54-d70f-4664-93dc-084127495837}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -104,9 +92,6 @@
     <ClInclude Include="..\ImgUI\imstb_truetype.h">
       <Filter>97.GUIManager\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\HUD.h">
-      <Filter>02.UI\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_GamePlay.h">
       <Filter>01.Level\GamePlay</Filter>
     </ClInclude>
@@ -117,7 +102,7 @@
       <Filter>01.Level\Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Loader.h">
-      <Filter>01.Level\Loading\Logo</Filter>
+      <Filter>01.Level\Loading\Loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,9 +139,6 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <Filter>97.GUIManager\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\HUD.cpp">
-      <Filter>02.UI\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_GamePlay.cpp">
       <Filter>01.Level\GamePlay</Filter>
     </ClCompile>
@@ -167,7 +149,16 @@
       <Filter>01.Level\Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Loader.cpp">
-      <Filter>01.Level\Loading\Logo</Filter>
+      <Filter>01.Level\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBase.cpp">
+      <Filter>999. Client CPP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIButton.cpp">
+      <Filter>999. Client CPP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIHUD.cpp">
+      <Filter>999. Client CPP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

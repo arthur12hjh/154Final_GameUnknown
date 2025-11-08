@@ -110,7 +110,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../Public/;../../EngineSDK/Inc/;../ImgUI/;../Xml/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../../EngineSDK/Inc/;../ImgUI/;../Xml/;../../Client/Public/;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -151,7 +151,6 @@
     <ClInclude Include="..\ImgUI\imstb_rectpack.h" />
     <ClInclude Include="..\ImgUI\imstb_textedit.h" />
     <ClInclude Include="..\ImgUI\imstb_truetype.h" />
-    <ClInclude Include="..\Public\HUD.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -165,6 +164,9 @@
     <ClInclude Include="UI_Editor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Client\Private\UIBase.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />
     <ClCompile Include="..\ImgUI\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -187,7 +189,6 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Private\HUD.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
