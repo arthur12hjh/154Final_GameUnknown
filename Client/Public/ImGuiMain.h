@@ -7,6 +7,8 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
+class CImGuiManager;
+
 class CImGuiMain : public CBase
 {
 private:
@@ -26,6 +28,7 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
+	CImGuiManager*			m_pImGuiManager = { nullptr };
 
 private :
 	ImGuiWindowFlags		m_ImGuiWindowFlags = {};
