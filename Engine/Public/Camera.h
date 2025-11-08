@@ -32,8 +32,8 @@ public:
 	// ex) 10 : Near ¿Í Aspect ¼öÁ¤
 	//	0001(1) : FOV Only Edit			0010(2) : Near Only Edit				
 	//	0100(4) : Far Only Edit			1000(8) : Aspect Only Edit
-
 	void						SetCameraInfo(const CAMERA_INFO& CameraInfo, bitset<4> bitFlag = 15);
+
 	const CAMERA_INFO&			GetCameraInfo() { return m_pCameraInfo; }
 
 protected:

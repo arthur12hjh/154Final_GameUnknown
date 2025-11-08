@@ -413,9 +413,6 @@
     <Filter Include="01.Utility">
       <UniqueIdentifier>{b96ac28b-812c-4488-9b7a-915ac186c966}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
     </Filter>
@@ -625,6 +622,9 @@
     </Filter>
     <Filter Include="01.Utility\101.String">
       <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
