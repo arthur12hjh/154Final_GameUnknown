@@ -181,6 +181,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Village.h" />
     <ClInclude Include="framework.h" />
@@ -225,6 +226,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Village.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
