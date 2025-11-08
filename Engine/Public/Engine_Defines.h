@@ -1,6 +1,9 @@
 #ifndef Engine_Define_h__
 #define Engine_Define_h__
 
+#include "json.hpp"
+using Json = nlohmann::json;
+
 //WIN
 #include <Windows.h>
 #include <assert.h>

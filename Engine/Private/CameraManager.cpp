@@ -33,8 +33,8 @@ void CCameraManager::Late_Update(_float fTimeDelta)
 
 HRESULT CCameraManager::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 {
-    CCamera* pCamera = Find_Camera(szCameraTag);
-    if (nullptr == pCamera)
+    CCamera* pFindCamera = Find_Camera(szCameraTag);
+    if (nullptr == pFindCamera)
         m_pCameras.emplace(szCameraTag, pCamera);
     else
         return E_FAIL;
