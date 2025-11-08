@@ -31,9 +31,12 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
     }
     ImGui::End();
 
+
+
+
+
     if (m_bIsTeleport)
     {
-        
         _float3 vPickingPoint = {};
         if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0) &&
             m_pGameInstance->isPicking(&vPickingPoint))

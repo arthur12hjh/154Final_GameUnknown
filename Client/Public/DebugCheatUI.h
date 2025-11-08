@@ -19,6 +19,10 @@ public:
 
 private:
 	CGameManager*				m_pGameManager = nullptr;
+
+
+
+
 	_bool						m_bIsTeleport = false;
 
 public:

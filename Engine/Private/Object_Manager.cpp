@@ -37,6 +37,13 @@ list<CGameObject *>* CObject_Manager::Get_LayerObjects(_uint iLevelIndex, const 
 	return pLayer->GetObjects();
 }
 
+map<const _wstring, class CLayer*>* CObject_Manager::GetLayer()
+{
+	_uint LevelID = m_pGameInstance->GetCurrentLevelID();
+
+	return &m_pLayers[LevelID];
+}
+
 HRESULT CObject_Manager::Initialize(_uint iNumLevels)
 {
 	m_iNumLevels = iNumLevels;

@@ -18,6 +18,7 @@
 #include "Frustum.h"
 #include "ThreadPool.h"
 #include "CameraManager.h"
+#include "Level.h"
 #include "Picking.h"
 #include "Shadow.h"
 
@@ -101,6 +102,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pEffect_ResourceManager)
 		return E_FAIL;
 
+	m_pCameraManager = CCameraManager::Create();
+	if (nullptr == m_pCameraManager)
+		return E_FAIL;
+
+
 	m_pThreadPool = CThreadPool::Create(4);
 	if (nullptr == m_pThreadPool)
 		return E_FAIL;
@@ -122,6 +128,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	{
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
+		m_pCameraManager->Priority_Update(fTimeDelta);
 
 		//Priority Update 디버그
 #ifdef _DEBUG
@@ -136,7 +143,9 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 		m_pPipeLine->Update();
 		m_pTimer_Manager->Update_Timer(fTimeDelta);
+	
 		m_pFrustum->Update();
+		m_pCameraManager->Update(fTimeDelta);
 
 		//Update 디버그
 #ifdef _DEBUG
@@ -151,6 +160,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 #endif
 	}
 
+	m_pCameraManager->Late_Update(fTimeDelta);
 	//Late_Update 디버그
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
@@ -213,8 +223,9 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	random_device	rd;
-	return rd() / RAND_MAX;
+	std::random_device	rd;
+
+	return static_cast<_float>(rd()) / (rd.max)();
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)
@@ -300,6 +311,11 @@ _uint CGameInstance::GetCurrentLevelID()
 	return m_pLevel_Manager->GetCurrentLevelID();
 }
 
+CGameHUD* CGameInstance::GetCurrentLevelHUD()
+{
+	return m_pLevel_Manager->GetCurrentLevel()->GetHUD();
+}
+
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -331,6 +347,11 @@ HRESULT CGameInstance::Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const 
 list<CGameObject*>* CGameInstance::GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag)
 {
 	return m_pObject_Manager->Get_LayerObjects(iLayerIndex, szLayerTag);
+}
+
+map<const _wstring, class CLayer*>* CGameInstance::GetCurrentLevelLayer()
+{
+	return m_pObject_Manager->GetLayer();
 }
 
 #pragma endregion
@@ -716,6 +737,7 @@ void CGameInstance::Release_Engine()
 	DestroyInstance();
 
 	Safe_Release(m_pFrustum);
+	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
