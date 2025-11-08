@@ -82,6 +82,21 @@
     <Filter Include="99.Defines\PCH">
       <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="30.ImGui">
+      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt">
+      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Header">
+      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Code">
+      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Profiler">
+      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -153,6 +168,36 @@
     <ClInclude Include="..\Public\pch.h">
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGuiMain.h">
+      <Filter>30.ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imconfig.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_internal.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_rectpack.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_textedit.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugProfiler.h">
+      <Filter>30.ImGui\Profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -219,6 +264,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGuiMain.cpp">
+      <Filter>30.ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_draw.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_dx11.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_win32.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_tables.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_widgets.cpp">
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DebugProfiler.cpp">
+      <Filter>30.ImGui\Profiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

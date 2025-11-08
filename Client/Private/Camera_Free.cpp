@@ -36,15 +36,16 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 		m_pTransformCom->Go_Straight(fTimeDelta);
 
-	if (GetKeyState('S') & 0x8000)
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
 		m_pTransformCom->Go_Backward(fTimeDelta);
-	if (GetKeyState('A') & 0x8000)
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 		m_pTransformCom->Go_Left(fTimeDelta);
-	if (GetKeyState('D') & 0x8000)
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
 
 	_long		MouseMove = {};
-
 	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
@@ -54,7 +55,6 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 	{
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
 	}
-
 
 	__super::Bind_Matrices();
 }

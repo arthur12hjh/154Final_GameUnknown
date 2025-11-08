@@ -29,6 +29,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
+	//	{
+	//		Ready_Layer_Effect(TEXT("Layer_Effect"));
+	//	});
+
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
@@ -37,12 +42,25 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
+	{
+		m_pGameInstance->Add_ThreadjobList([&]()
+			{
+				FontRender();
+			});
+	}
+
 }
 
 HRESULT CLevel_GamePlay::Render()
 {
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
 	return S_OK;
+}
+
+void CLevel_GamePlay::FontRender()
+{
+	SetWindowText(g_hWnd, TEXT("쓰레드 풀 동작"));
 }
 
 HRESULT CLevel_GamePlay::Ready_Lights()

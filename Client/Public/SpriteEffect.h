@@ -27,13 +27,13 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
-	CTexture*			m_pTextureCom = { nullptr };
-	CShader*			m_pShaderCom = { nullptr };
+	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
+	CTexture* m_pTextureCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
 
 private:
 	_float				m_fFrame = {  };
-	
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

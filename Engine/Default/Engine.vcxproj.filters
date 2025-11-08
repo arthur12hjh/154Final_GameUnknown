@@ -170,13 +170,13 @@
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Engine_Math.h">
-      <Filter>01.Utility\100. Math</Filter>
+      <Filter>01.Utility\100.Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StringHelper.h">
       <Filter>101.String</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sound_Manager.h">
-      <Filter>01.Utility\13. Sound</Filter>
+      <Filter>01.Utility\13.Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Collider.h">
       <Filter>01.Utility\03.Components\Collider</Filter>
@@ -194,16 +194,19 @@
       <Filter>01.Utility\03.Components\Collider\Box</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameHUD.h">
-      <Filter>01.Utility\14. HUD</Filter>
+      <Filter>01.Utility\14.HUD</Filter>
     </ClInclude>
     <ClInclude Include="..\public\HUDLayer.h">
-      <Filter>01.Utility\14. HUD\Layer</Filter>
+      <Filter>01.Utility\14.HUD\Layer</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Engine_Component.h">
       <Filter>99.Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EffectResourceManager.h">
-      <Filter>01.Utility\15. ResourceManager</Filter>
+      <Filter>01.Utility\15.ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThreadPool.h">
+      <Filter>01.Utility\16.ThreadPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -361,7 +364,7 @@
       <Filter>101.String</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sound_Manager.cpp">
-      <Filter>01.Utility\13. Sound</Filter>
+      <Filter>01.Utility\13.Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Collider.cpp">
       <Filter>01.Utility\03.Components\Collider</Filter>
@@ -379,13 +382,16 @@
       <Filter>01.Utility\03.Components\Collider\OBB</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameHUD.cpp">
-      <Filter>01.Utility\14. HUD</Filter>
+      <Filter>01.Utility\14.HUD</Filter>
     </ClCompile>
     <ClCompile Include="..\private\HUDLayer.cpp">
-      <Filter>01.Utility\14. HUD\Layer</Filter>
+      <Filter>01.Utility\14.HUD\Layer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EffectResourceManager.cpp">
-      <Filter>01.Utility\15. ResourceManager</Filter>
+      <Filter>01.Utility\15.ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThreadPool.cpp">
+      <Filter>01.Utility\16.ThreadPool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -397,9 +403,6 @@
     </Filter>
     <Filter Include="99.Defines">
       <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\00.GameInstance">
-      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
@@ -563,18 +566,6 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\100. Math">
-      <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\13. Sound">
-      <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD">
-      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD\Layer">
-      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Collider">
       <UniqueIdentifier>{72d6d7ff-05c7-4e9e-994f-be7cd7b4685e}</UniqueIdentifier>
     </Filter>
@@ -593,11 +584,29 @@
     <Filter Include="01.Utility\03.Components\Collider\Manager">
       <UniqueIdentifier>{ec64baad-3e2d-4981-a8d6-b65bd11ba6dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\15. ResourceManager">
-      <UniqueIdentifier>{2791130a-94ec-49f9-a7b2-c06c2231ae66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="101.String">
       <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\00.GameInstance">
+      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13.Sound">
+      <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14.HUD">
+      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14.HUD\Layer">
+      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\15.ResourceManager">
+      <UniqueIdentifier>{2791130a-94ec-49f9-a7b2-c06c2231ae66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\16.ThreadPool">
+      <UniqueIdentifier>{6ef2e6e0-1fb0-446c-835a-c42d85b55db8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\100.Math">
+      <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +619,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
+      <Filter>98.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Defines.hlsli">
+      <Filter>98.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_Deferred_Functions.hlsli">
       <Filter>98.ShaderFiles</Filter>
     </None>
   </ItemGroup>

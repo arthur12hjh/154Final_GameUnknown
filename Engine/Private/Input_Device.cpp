@@ -48,6 +48,9 @@ HRESULT CInput_Device::Initialize(HINSTANCE Instance, HWND hWnd)
 
 void CInput_Device::UpdateKeyFrame()
 {
+	if (false == m_bIsInputFoucs)
+		return;
+
 	//매프레임 키보드와 마우스에 대한 입력 포커스를 받아와야만 Input Data가 갱신된다.
 	while (m_pKeyboard->Acquire() == DIERR_INPUTLOST);
 	while (m_pMouse->Acquire() == DIERR_INPUTLOST);
@@ -63,6 +66,9 @@ void CInput_Device::UpdateKeyFrame()
 
 _bool CInput_Device::KeyDown(KEY_INPUT eType, _uint KeyState)
 {
+	if (false == m_bIsInputFoucs)
+		return false;
+
 	if (KEY_INPUT::KEYBOARD == eType)
 		return  (m_CurKeyState[KeyState] & 0x80) && !(m_PreKeyState[KeyState] & 0x80);
 	else
@@ -71,6 +77,9 @@ _bool CInput_Device::KeyDown(KEY_INPUT eType, _uint KeyState)
 
 _bool CInput_Device::KeyPressed(KEY_INPUT eType, _uint KeyState)
 {
+	if (false == m_bIsInputFoucs)
+		return false;
+
 	if (KEY_INPUT::KEYBOARD == eType)
 		return  (m_CurKeyState[KeyState] & 0x80) && (m_PreKeyState[KeyState] & 0x80);
 	else
@@ -79,6 +88,9 @@ _bool CInput_Device::KeyPressed(KEY_INPUT eType, _uint KeyState)
 
 _bool CInput_Device::KeyUp(KEY_INPUT eType, _uint KeyState)
 {
+	if (false == m_bIsInputFoucs)
+		return false;
+
 	if (KEY_INPUT::KEYBOARD == eType)
 		return !(m_CurKeyState[KeyState] & 0x80) && (m_PreKeyState[KeyState] & 0x80);
 	else
@@ -87,12 +99,20 @@ _bool CInput_Device::KeyUp(KEY_INPUT eType, _uint KeyState)
 
 LONG CInput_Device::GetMouseAxis(_uint iAxis)
 {
+	if (false == m_bIsInputFoucs)
+		return false;
+
 	if (0 == iAxis)
 		return m_DIMouseSate.lX;
 	else if (1 == iAxis)
 		return m_DIMouseSate.lY;
 	else
 		return m_DIMouseSate.lZ;
+}
+
+void CInput_Device::SetInputFoucs(_bool bFlag)
+{
+	m_bIsInputFoucs = bFlag;
 }
 
 CInput_Device* CInput_Device::Create(HINSTANCE Instance, HWND hWnd)
