@@ -39,6 +39,7 @@ inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTextur
     // 0 ~ 1 -> -0.5 ~ 0.5
     float2 vCenteredUV = vTexcoord - float2(0.5f, 0.5f);
     float fDistortionFactor = 1 + vDistortion.g * vDistortion.r * vDistortion.r;
+    //너무 낮은값 쓰면 찢어지는 효과 남. (같은 픽셀 계속 디스토션 돌려서)
     fDistortionFactor = clamp(fDistortionFactor, 0.5f, 1.5f);
 
     vCenteredUV *= fDistortionFactor;
