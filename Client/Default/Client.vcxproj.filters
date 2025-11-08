@@ -109,6 +109,9 @@
     <Filter Include="30.ImGui\DebugCheat">
       <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -222,6 +225,9 @@
     <ClInclude Include="..\public\DebugCheatUI.h">
       <Filter>30.ImGui\DebugCheat</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DebugHierarchy.h">
+      <Filter>30.ImGui\Hierarchy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -321,6 +327,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DebugCheatUI.cpp">
       <Filter>30.ImGui\DebugCheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DebugHierarchy.cpp">
+      <Filter>30.ImGui\Hierarchy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@ using Json = nlohmann::json;
 
 //WIN
 #include <Windows.h>
+#include <random>
+
 #include <assert.h>
 #include <iostream>
 #include <wincodec.h>
@@ -16,7 +18,7 @@ using Json = nlohmann::json;
 
 //STL
 #include <set>
-#include <random>
+
 #include <unordered_set>
 
 #include <stack>

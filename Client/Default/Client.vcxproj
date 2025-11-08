@@ -158,6 +158,7 @@
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\public\DebugCheatUI.h" />
+    <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
     <ClInclude Include="..\Public\Explosion.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
+    <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
     <ClCompile Include="..\Private\Explosion.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
