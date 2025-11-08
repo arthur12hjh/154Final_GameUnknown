@@ -223,11 +223,11 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     return Out;
 }
 
-PS_OUT_DISTORTION PS_MAIN_DISTORTION(PS_IN In)
+PS_OUT_BACKBUFFER PS_MAIN_DISTORTION(PS_IN In)
 {
-    PS_OUT_DISTORTION Out;
+    PS_OUT_BACKBUFFER Out;
     
-    Out.vDistortion = Calc_Distortion(g_SceneTexture, g_DistortionTexture, In.vTexcoord);
+    Out.vBackBuffer = Calc_Distortion(g_SceneTexture, g_DistortionTexture, In.vTexcoord);
     //원본 씬 텍스쳐 & 디스토션 텍스쳐. 현재 텍스쿠드까지 필요.
     
     return Out;

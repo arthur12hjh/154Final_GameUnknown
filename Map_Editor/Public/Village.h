@@ -7,12 +7,19 @@ NS_BEGIN(Engine)
 class CModel;
 class CShader;
 class CCollider;
+class CNavigation;
 NS_END
 
 NS_BEGIN(Tool_Map)
 
 class CVillage final : public CGameObject
 {
+public:
+	class CNavigation* Get_Navigation() const
+	{
+		return m_pNavigationCom;
+	}
+
 private:
 	CVillage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVillage(const CVillage& Prototype);
@@ -29,6 +36,7 @@ public:
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();

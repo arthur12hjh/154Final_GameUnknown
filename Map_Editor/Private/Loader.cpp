@@ -4,6 +4,7 @@
 //#include "Terrain.h"
 #include "Sky.h"
 #include "BackGround.h"
+#include "Player.h"
 
 #include "GameInstance.h"
 #include "Village.h"
@@ -120,9 +121,9 @@ HRESULT CLoader::Loading_For_Village()
 
 	m_strMessage = TEXT("네비게이션를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_Navigation */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
-		return E_FAIL;*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
+		return E_FAIL;
 
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_VIBuffer_Terrain */
@@ -139,15 +140,15 @@ HRESULT CLoader::Loading_For_Village()
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
 
 	/* For.Prototype_Component_Model_Fiona */
-	//PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Fiona"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
-	//	return E_FAIL;
+	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Fiona"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_ForkLift */
+	///* For.Prototype_Component_Model_Village */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Village_Mou"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Village_Mou/Village_Mou.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Village_Mou/Village_Mou2.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 
@@ -214,6 +215,10 @@ HRESULT CLoader::Loading_For_Village()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Village_Mou"),
 		CVillage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Player"),
+		CPlayer::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("로딩이 완료되었습니다..");

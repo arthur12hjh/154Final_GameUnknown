@@ -20,8 +20,11 @@ HRESULT CLevel_Village::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;*/
+
+	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Village_Mou(TEXT("Layer_Village_Mou"))))
 		return E_FAIL;
@@ -122,6 +125,15 @@ HRESULT CLevel_Village::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
 		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag, &CameraDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Village::Ready_Layer_Player(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Player"),
+		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
 		return E_FAIL;
 
 	return S_OK;
