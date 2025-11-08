@@ -173,7 +173,7 @@
       <Filter>01.Utility\100.Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StringHelper.h">
-      <Filter>101.String</Filter>
+      <Filter>01.Utility\101.String</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sound_Manager.h">
       <Filter>01.Utility\13.Sound</Filter>
@@ -373,7 +373,7 @@
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StringHelper.cpp">
-      <Filter>101.String</Filter>
+      <Filter>01.Utility\101.String</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sound_Manager.cpp">
       <Filter>01.Utility\13.Sound</Filter>
@@ -427,9 +427,6 @@
     </Filter>
     <Filter Include="01.Utility">
       <UniqueIdentifier>{b96ac28b-812c-4488-9b7a-915ac186c966}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
@@ -605,9 +602,6 @@
     <Filter Include="01.Utility\03.Components\Collider\Manager">
       <UniqueIdentifier>{ec64baad-3e2d-4981-a8d6-b65bd11ba6dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="101.String">
-      <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\00.GameInstance">
       <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
     </Filter>
@@ -640,6 +634,12 @@
     </Filter>
     <Filter Include="01.Utility\104.Json">
       <UniqueIdentifier>{b2198d98-c3a9-469b-8b34-5335d2f28f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\101.String">
+      <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
     <Filter Include="102.XmlParser">
       <UniqueIdentifier>{67e2eb45-0cb8-4061-b930-66d257f11bc1}</UniqueIdentifier>

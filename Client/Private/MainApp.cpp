@@ -1,4 +1,4 @@
- #include "pch.h"
+#include "pch.h"
 #include "MainApp.h"
 
 #include "GameInstance.h"
@@ -7,9 +7,12 @@
 #include "Camera_Free.h"
 
 #include "GameManager.h"
+#include "JsonParser.h"
+
 #ifdef _DEBUG
 #include "ImGuiMain.h"
 #endif
+
 
 
 CMainApp::CMainApp()	
@@ -46,6 +49,11 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
+
+	Json json;
+	CJsonParser::ReadJsonData("../Bin/DataFiles/Dungeon_0.json", json);
+
+	CJsonParser::SaveJsonData("../Bin/DataFiles/Test.json", json);
 
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
