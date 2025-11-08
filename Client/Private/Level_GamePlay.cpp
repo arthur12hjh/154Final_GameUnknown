@@ -29,13 +29,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
-		{
-			Ready_Layer_Effect(TEXT("Layer_Effect"));
-		});
+	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
+	//	{
+	//		Ready_Layer_Effect(TEXT("Layer_Effect"));
+	//	});
 
-	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
 
 	return S_OK;
 }
