@@ -2,6 +2,8 @@
 #include "ImGuiMain.h"
 
 #include "GameInstance.h"
+
+#include "ImGuiManager.h"
 #include "StringHelper.h"
 
 const char* CImGuiMain::m_szFpsComboText[] = {"30", "60", "144"};
@@ -21,6 +23,10 @@ HRESULT CImGuiMain::Initialize()
 	if (FAILED(Ready_Default_Setting()))
 		return E_FAIL;
 
+	m_pImGuiManager = CImGuiManager::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pImGuiManager)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -31,34 +37,38 @@ void CImGuiMain::Update(_float fTimeDelta)
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
 
-	if (ImGui::Begin("Debug Tool"))
+	ImGui::Begin("Debug Tool", nullptr, m_ImGuiWindowFlags);
+	CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
+	ImGui::Text(m_szFPS);
+	ImGui::SameLine();
+
+	ImGui::PushItemWidth(100.f);
+	ImGui::SetNextWindowSize({ 100, 50 });
+	if (ImGui::BeginCombo("Frame", m_szFramePreivew))
 	{
-		CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
-		ImGui::Text(m_szFPS);
-		ImGui::SameLine();
-
-		ImGui::PushItemWidth(100.f);
-		ImGui::SetNextWindowSize({ 100, 50 });
-		if (ImGui::BeginCombo("Frame", m_szFramePreivew))
+		for (_uint i = 0; i < 3; ++i)
 		{
-			for (_uint i = 0; i < 3; ++i)
+			if (ImGui::Selectable(m_szFpsComboText[i], false))
 			{
-				if (ImGui::Selectable(m_szFpsComboText[i], false))
-				{
-					strcpy_s(m_szFramePreivew, m_szFpsComboText[i]);
-					g_fGameFrame = atoi(m_szFramePreivew);
-				}
+				strcpy_s(m_szFramePreivew, m_szFpsComboText[i]);
+				g_fGameFrame = atoi(m_szFramePreivew);
 			}
-			ImGui::EndCombo();
 		}
-
-		if (ImGui::Checkbox("GamePause", &m_bIsGamePause))
-			m_pGameInstance->SetGamePause(m_bIsGamePause);
-
-
-
+		ImGui::EndCombo();
 	}
+
+	if (ImGui::Checkbox("GamePause", &m_bIsGamePause))
+		m_pGameInstance->SetGamePause(m_bIsGamePause);
+	
+	if (ImGui::Button("Show Profiler"))
+		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_Profiler"), VISIBILITY::VISIBLE);
+
+	if (ImGui::Button("Show Cheat List"))
+		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_CheatUI"), VISIBILITY::VISIBLE);
+
+	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();
+	ImGui::EndFrame();
 }
 
 HRESULT CImGuiMain::Render()
@@ -82,7 +92,11 @@ HRESULT CImGuiMain::Ready_Default_Setting()
 	//ImGui::SetNextWindowViewport(vp->ID);
 	// Setup Dear ImGui style
 
-	m_ImGuiWindowFlags = ImGuiWindowFlags_NoBringToFrontOnFocus;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigDockingAlwaysTabBar = true;  // 창 1개여도 탭바 유지
+	io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/gulim.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+
+	m_ImGuiWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing;
 
 	ImGui::StyleColorsDark();
 
@@ -108,6 +122,7 @@ void CImGuiMain::Free()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
+	Safe_Release(m_pImGuiManager);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pGameInstance);

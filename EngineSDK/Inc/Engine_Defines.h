@@ -72,6 +72,11 @@ using namespace DirectX;
 #include "FMOD/fmod_errors.h"
 #include <io.h>
 
+//TinyXML
+#include "tinyxml2.h"
+
+#define XML tinyxml2
+
 #include "Engine_Enum.h"
 #include "Engine_Macro.h"
 #include "Engine_Struct.h"

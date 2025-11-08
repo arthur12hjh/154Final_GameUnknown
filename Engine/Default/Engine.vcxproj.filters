@@ -83,7 +83,7 @@
       <Filter>01.Utility\06.PipeLine</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera.h">
-      <Filter>01.Utility\02.GameObjects\Camera</Filter>
+      <Filter>01.Utility\12.CameraManager\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Input_Device.h">
       <Filter>00.System\02.Input</Filter>
@@ -164,7 +164,7 @@
       <Filter>01.Utility\11.Shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
-      <Filter>01.Utility\12.Frustum</Filter>
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\QuadTree.h">
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
@@ -207,6 +207,12 @@
     </ClInclude>
     <ClInclude Include="..\public\ThreadPool.h">
       <Filter>01.Utility\16.ThreadPool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraManager.h">
+      <Filter>01.Utility\12.CameraManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JsonParser.h">
+      <Filter>01.Utility\104.Json</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\XmlParser.h">
       <Filter>102.XmlParser</Filter>
@@ -280,7 +286,7 @@
       <Filter>01.Utility\06.PipeLine</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera.cpp">
-      <Filter>01.Utility\02.GameObjects\Camera</Filter>
+      <Filter>01.Utility\12.CameraManager\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Input_Device.cpp">
       <Filter>00.System\02.Input</Filter>
@@ -361,7 +367,7 @@
       <Filter>01.Utility\11.Shadow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
-      <Filter>01.Utility\12.Frustum</Filter>
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\QuadTree.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
@@ -398,6 +404,12 @@
     </ClCompile>
     <ClCompile Include="..\private\ThreadPool.cpp">
       <Filter>01.Utility\16.ThreadPool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CameraManager.cpp">
+      <Filter>01.Utility\12.CameraManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JsonParser.cpp">
+      <Filter>01.Utility\104.Json</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\XmlParser.cpp">
       <Filter>102.XmlParser</Filter>
@@ -484,9 +496,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain">
       <UniqueIdentifier>{d62a61ca-12a7-4d7e-be15-4f06582e5051}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\Camera">
-      <UniqueIdentifier>{a0bbb332-ef6e-4b51-a55c-330a5f3e32a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\06.PipeLine">
       <UniqueIdentifier>{00bb1f39-0400-4781-b607-94cd184f43ca}</UniqueIdentifier>
@@ -575,9 +584,6 @@
     <Filter Include="01.Utility\11.Shadow">
       <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\12.Frustum">
-      <UniqueIdentifier>{9605c891-7027-47c8-a76e-3fda5c8ecfd8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
     </Filter>
@@ -622,6 +628,18 @@
     </Filter>
     <Filter Include="01.Utility\100.Math">
       <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.CameraManager">
+      <UniqueIdentifier>{1c4dff72-68f8-4e56-9ea2-a6f6aa6e1a28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.CameraManager\Frustum">
+      <UniqueIdentifier>{9605c891-7027-47c8-a76e-3fda5c8ecfd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.CameraManager\Camera">
+      <UniqueIdentifier>{a0bbb332-ef6e-4b51-a55c-330a5f3e32a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\104.Json">
+      <UniqueIdentifier>{b2198d98-c3a9-469b-8b34-5335d2f28f3f}</UniqueIdentifier>
     </Filter>
     <Filter Include="102.XmlParser">
       <UniqueIdentifier>{67e2eb45-0cb8-4061-b930-66d257f11bc1}</UniqueIdentifier>
