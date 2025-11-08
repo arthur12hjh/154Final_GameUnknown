@@ -49,6 +49,17 @@ CGameObject* CHUDLayer::Find_GameObject(const WCHAR* UITag)
     return iter->second;
 }
 
+CHUDLayer* CHUDLayer::Create()
+{
+    CHUDLayer* pLayer = new CHUDLayer();
+    if (FAILED(pLayer->Initialize_Layer()))
+    {
+        Safe_Release(pLayer);
+        MSG_BOX("Create Fail : HUD Layer");
+    }
+    return pLayer;
+}
+
 void CHUDLayer::Free()
 {
     __super::Free();

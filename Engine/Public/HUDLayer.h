@@ -4,7 +4,7 @@
 NS_BEGIN(Engine)
 class CGameObject;
 
-class ENGINE_DLL CHUDLayer abstract : public CBase
+class CHUDLayer final : public CBase
 {
 private:
 	CHUDLayer() = default;
@@ -27,6 +27,7 @@ private:
 	unordered_map<_wstring, CGameObject*>		m_UserInterfaces = {};
 
 public:
+	static		CHUDLayer*		Create();
 	virtual		void			Free()		override;
 
 };
