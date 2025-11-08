@@ -15,6 +15,9 @@ HWND g_hWnd;
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -81,7 +84,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
 
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-
+        pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
         if (/*fTimeAcc >= 1.f / 60.f*/1)
         {
             pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));

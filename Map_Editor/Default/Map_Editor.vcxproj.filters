@@ -46,11 +46,26 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{d88618d5-5dcf-4231-a398-8a104678dadc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.IMGUI">
+      <UniqueIdentifier>{ddc77552-d125-4dce-8d41-ae5b11feca83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.IMGUI\Default">
+      <UniqueIdentifier>{85aaf59c-6d50-486f-8928-848c546e4506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.IMGUI\Manager">
+      <UniqueIdentifier>{665a37fa-70aa-460d-92ef-86ed58c8a591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps">
+      <UniqueIdentifier>{d1245ae4-19f9-4a86-8ec3-ec39bcddeab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object">
+      <UniqueIdentifier>{313fc503-b039-4490-ba97-34578d0120d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Sky">
+      <UniqueIdentifier>{ee195eed-9e6b-4bb8-aed5-7d90f164620a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MapTool_Defines.h">
-      <Filter>99.Defines</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MainApp.h">
       <Filter>00.MainApp</Filter>
     </ClInclude>
@@ -90,6 +105,42 @@
     <ClInclude Include="..\Public\pch.h">
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imconfig.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imgui_internal.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_rectpack.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_textedit.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_Manager.h">
+      <Filter>96.IMGUI\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapTool_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Village.h">
+      <Filter>02.GameObjects\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -118,6 +169,33 @@
     </ClCompile>
     <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_Manager.cpp">
+      <Filter>96.IMGUI\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_draw.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_dx11.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_tables.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_widgets.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_win32.cpp">
+      <Filter>96.IMGUI\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Village.cpp">
+      <Filter>02.GameObjects\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

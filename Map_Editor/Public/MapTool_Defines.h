@@ -12,6 +12,9 @@ namespace Tool_Map
 	const unsigned int			g_iHalfWinSizeY = 450;
 
 	enum class LEVEL { STATIC, LOADING, LOGO, VILLAGE, ICELAKE, BOSS1, BOSS2, END };
+
+	enum class NAVI_MODE { NONE, ADD_POINT, ADD_CELL, DELETE_CELL, RESET_ALL, END };
+	enum class ADD_OBJECT { END };
 }
 
 using namespace Tool_Map;
