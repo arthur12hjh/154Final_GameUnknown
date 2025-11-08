@@ -677,6 +677,10 @@ const _float4x4* CGameInstance::GetCameraWorldMatrixPtr(const WCHAR* szCameraTag
 {
 	return m_pCameraManager->GetCameraWorldMatrixPtr(szCameraTag);
 }
+const unordered_map<_wstring, CCamera*>* CGameInstance::GetAllCamera()
+{
+	return m_pCameraManager->GetAllCamera();
+}
 #pragma endregion
 
 const _uint2& CGameInstance::GetScreenSize()

@@ -211,6 +211,8 @@ public:
 	_matrix							GetCameraWorldMatrix(const WCHAR* szCameraTag);
 	const _float4x4*				GetCameraWorldMatrixPtr(const WCHAR* szCameraTag);
 
+	const unordered_map<_wstring, CCamera*>* GetAllCamera();
+
 #pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }

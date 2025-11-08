@@ -27,6 +27,8 @@ public :
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요
 	CCamera*			GetCamrea(const WCHAR* szCameraTag);
+	const unordered_map<_wstring, CCamera*>* GetAllCamera() { return &m_pCameras; }
+	
 
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요

@@ -4,6 +4,7 @@
 
 NS_BEGIN(Client)
 class CGameManager;
+class CImGuiManager;
 
 class CDebugCheatUI : public CGameObject
 {
@@ -18,12 +19,15 @@ public:
 	HRESULT						Render();
 
 private:
+#ifdef _DEBUG
 	CGameManager*				m_pGameManager = nullptr;
 
-
-
+	CImGuiManager*				m_pImGuiManager = nullptr;
+	char						m_szSelectCamera[MAX_PATH] = {};
+	char						m_szCameraComboTag[MAX_PATH] = {};
 
 	_bool						m_bIsTeleport = false;
+#endif // _DEBUG
 
 public:
 	static	CDebugCheatUI*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

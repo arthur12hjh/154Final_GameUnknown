@@ -19,11 +19,15 @@ public:
 	void						Update(_float fTimeDeleta);
 	HRESULT						Render();
 
+	void						UpdateTransform(_float3 vPosition);
+
+
 private:
 	ImGuiTreeNodeFlags			m_TreeNodeFlag = {};
 
 	char						m_szLayerPreview[MAX_PATH] = {};
 	char						m_szLayerView[MAX_PATH] = {};
+	char						m_szObjectTag[MAX_PATH] = {};
 
 	list<CGameObject*>*			m_pSelectLayerObject = {};
 	list<CGameObject*>			m_pSelectList = {};

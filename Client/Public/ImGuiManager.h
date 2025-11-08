@@ -11,17 +11,19 @@ NS_END
 NS_BEGIN(Client)
 class CImGuiManager : public CBase
 {
-private:
-	CImGuiManager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	DECLARE_SINGLETON(CImGuiManager);
+
+private :
+	CImGuiManager() = default;
 	virtual ~CImGuiManager() = default;
 
 public:
-	HRESULT									Initialize();
+	HRESULT									Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 	void									Update(_float fTimeDeleta);
 	HRESULT									Render();
 
-	
+	CGameObject*							Find_ImGuiObject(const WCHAR* ImGuiTag);
 	void									SetImGuiObjectVisiblilty(const WCHAR* ImGuiTag, VISIBILITY eVisiblility);
 
 private :
@@ -33,10 +35,8 @@ private :
 
 private :
 	HRESULT									ADD_ImGuiObject();
-	CGameObject*							Find_ImGuiObject(const WCHAR* ImGuiTag);
-
+	
 public:
-	static CImGuiManager*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void							Free() override;
 
 };
