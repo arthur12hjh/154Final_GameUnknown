@@ -3,12 +3,15 @@
 xcopy			/y/s	.\Engine\Public\*.*							.\EngineSDK\Inc\
 
 xcopy			/y		.\Engine\Bin\Debug\Engine.dll					.\Client\Bin\Debug\
+xcopy			/y		.\Engine\Bin\Debug\Engine.dll					.\Animation_Editor\Bin\Debug\
 xcopy			/y		.\Engine\Bin\Debug\Engine.lib					.\EngineSDK\Lib\Debug\
 
 xcopy			/y		.\Engine\Bin\Release\Engine.dll					.\Client\Bin\Release\
+xcopy			/y		.\Engine\Bin\Release\Engine.dll					.\Animation_Editor\Bin\Release\
 xcopy			/y		.\Engine\Bin\Release\Engine.lib					.\EngineSDK\Lib\Release\
 
 xcopy			/y		.\Engine\ThirdPartyLib\Debug\*.lib				.\EngineSDK\Lib\Debug\
 xcopy			/y		.\Engine\ThirdPartyLib\Release\*.lib			.\EngineSDK\Lib\Release\
 
 xcopy			/y		.\Engine\Bin\ShaderFiles\*.*				.\Client\Bin\ShaderFiles\
+xcopy			/y		.\Engine\Bin\ShaderFiles\*.*				.\Animation_Editor\Bin\ShaderFiles\

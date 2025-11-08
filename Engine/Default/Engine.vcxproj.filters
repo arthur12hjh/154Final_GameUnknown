@@ -566,6 +566,15 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\100. Math">
+      <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14. HUD">
+      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14. HUD\Layer">
+      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\03.Components\Collider">
       <UniqueIdentifier>{72d6d7ff-05c7-4e9e-994f-be7cd7b4685e}</UniqueIdentifier>
     </Filter>
@@ -607,6 +616,18 @@
     </Filter>
     <Filter Include="01.Utility\100.Math">
       <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13.Sound">
+      <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\16.Files">
+      <UniqueIdentifier>{0deedc01-9d0a-4657-a7ae-1936aaa04761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\16.Files\FbxParser">
+      <UniqueIdentifier>{347ba364-09f1-4c17-8e3b-2f32a9164b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\16.Files\BinParser">
+      <UniqueIdentifier>{fd85af6f-ebb8-40b7-9e43-09a7cb10fec9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

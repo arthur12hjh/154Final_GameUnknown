@@ -58,7 +58,7 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const aiMaterial* pAI
 				hr = CreateWICTextureFromFile(m_pDevice, szPerfectPath, nullptr, &pSRV);
 
 			if(FAILED(hr))
-				return E_FAIL;		
+				return E_FAIL;
 
 			m_SRVs[i].push_back(pSRV);
 		}
