@@ -228,7 +228,6 @@ popd</Command>
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
-    <ClInclude Include="..\Public\tinyxml2.h" />
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\UIObject.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
@@ -239,7 +238,6 @@ popd</Command>
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
-    <ClInclude Include="..\Public\XmlParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BlendObject.cpp" />
@@ -295,7 +293,6 @@ popd</Command>
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
-    <ClCompile Include="..\Private\tinyxml2.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
     <ClCompile Include="..\private\UIObject.cpp" />
     <ClCompile Include="..\private\VIBuffer.cpp" />
@@ -306,8 +303,6 @@ popd</Command>
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
-    <ClCompile Include="..\Private\XmlParser.cpp" />
-    <ClCompile Include="..\Private\xmltest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />

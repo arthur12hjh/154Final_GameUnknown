@@ -135,7 +135,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
-	CameraDesc.fFovy = XMConvertToRadians(60.0f);
+	CameraDesc.fFov = XMConvertToRadians(60.0f);
 	CameraDesc.fNear = 0.1f;
 	CameraDesc.fFar = 500.f;
 	CameraDesc.vEye = _float3(0.f, 10.f, -10.f);
