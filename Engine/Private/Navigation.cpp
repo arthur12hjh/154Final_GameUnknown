@@ -120,7 +120,94 @@ void CNavigation::Compute_Height(CTransform* pTransform)
 	pTransform->Set_State(STATE::POSITION, XMVector3TransformCoord(vLocalPos, XMLoadFloat4x4(&m_WorldMatrix)));
 }
 
+HRESULT CNavigation::Add_Cell_From_Editor(const _float3* vPoints)
+{
+	_float3 vCorrectedPoints[3];
+	// vPoints에서 vCorrectedPoints로 값을 복사
+	vCorrectedPoints[0] = vPoints[0];
+	vCorrectedPoints[1] = vPoints[1];
+	vCorrectedPoints[2] = vPoints[2];
+
+
+	// 벡터 AB와 AC를 정의합니다.
+	_vector vA = XMLoadFloat3(&vCorrectedPoints[0]);
+	_vector vB = XMLoadFloat3(&vCorrectedPoints[1]);
+	_vector vC = XMLoadFloat3(&vCorrectedPoints[2]);
+
+	_vector vAB = XMVectorSubtract(vB, vA); // B - A
+	_vector vAC = XMVectorSubtract(vC, vA); // C - A
+
+	_vector vNormal = XMVector3Cross(vAB, vAC);
+	_float fNormalY = XMVectorGetY(vNormal);
+
+	if (fNormalY < 0.0f)
+	{
+		vCorrectedPoints[1] = vPoints[2];
+		vCorrectedPoints[2] = vPoints[1];
+
+	}
+
+	// 1. 시계 방향 검사 및 조정 로직 끝
+
+	CCell* pNewCell = CCell::Create(m_pDevice, m_pContext, vCorrectedPoints, Get_CellCount());
+	if (nullptr == pNewCell)
+	{
+		MSG_BOX("Failed to Create CCell from Editor.");
+		return E_FAIL;
+	}
+
+	m_Cells.push_back(pNewCell);
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
+
+_bool CNavigation::Find_Closest_Point(_fvector vPickedPos, _float fRadius, _vector* vOutPoint)
+{
+	_float fClosestDistSq = fRadius * fRadius; // 거리 제곱 비교 (최적화)
+	_bool bFound = false;
+
+	// 모든 셀을 순회하며 각 셀의 3개 정점을 확인합니다.
+	for (auto& pCell : m_Cells)
+	{
+		for (_uint i = 0; i < 3; ++i)
+		{
+			_vector vCellPoint = pCell->Get_Point((NAVI_POINT)i);
+
+			// 픽킹된 위치와 셀 정점 간의 거리 제곱 계산
+			_vector vDist = XMVectorSubtract(vCellPoint, vPickedPos);
+			_float fDistSq = XMVectorGetX(XMVector3LengthSq(vDist));
+
+			if (fDistSq < fClosestDistSq)
+			{
+				fClosestDistSq = fDistSq;
+				*vOutPoint = vCellPoint;
+				bFound = true;
+			}
+		}
+	}
+
+	return bFound;
+}
+
+void CNavigation::Reset_Line()
+{
+	for (auto& pCell : m_Cells)
+	{
+		Safe_Release(pCell);
+	}
+	m_Cells.clear();
+}
+
+void CNavigation::Delete_Line()
+{
+	if(m_Cells.empty())
+		return;
+
+	Safe_Release(m_Cells.back());
+	m_Cells.pop_back();
+}
 
 HRESULT CNavigation::Render()
 {

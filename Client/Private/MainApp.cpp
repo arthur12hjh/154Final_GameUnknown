@@ -1,4 +1,4 @@
- #include "pch.h"
+#include "pch.h"
 #include "MainApp.h"
 
 #include "GameInstance.h"
@@ -6,9 +6,13 @@
 #include "Level_Loading.h"
 #include "Camera_Free.h"
 
+#include "GameManager.h"
+#include "JsonParser.h"
+
 #ifdef _DEBUG
 #include "ImGuiMain.h"
 #endif
+
 
 
 CMainApp::CMainApp()	
@@ -37,11 +41,19 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Default_Setting()))
 		return E_FAIL;
 
+	if (FAILED(Ready_Manager_Setting()))
+		return E_FAIL;
+
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
+
+	Json json;
+	CJsonParser::ReadJsonData("../Bin/DataFiles/Dungeon_0.json", json);
+
+	CJsonParser::SaveJsonData("../Bin/DataFiles/Test.json", json);
 
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
@@ -83,6 +95,14 @@ HRESULT CMainApp::Ready_Default_Setting()
 	/*MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 155ex.spritefont */
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_154"), TEXT("../Bin/Resources/Fonts/154ex.spritefont"))))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Manager_Setting()
+{
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -234,6 +254,7 @@ void CMainApp::Free()
 {
 	__super::Free();
 
+	CGameManager::DestroyInstance();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
