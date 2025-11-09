@@ -21,7 +21,7 @@
 #include "Level.h"
 #include "Picking.h"
 #include "Shadow.h"
-
+#include "Physx_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -37,6 +37,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 	m_vScreenSize = { EngineDesc.iWinSizeX, EngineDesc.iWinSizeY };
 	m_vHalfScreenSize = { m_vScreenSize.x >> 1 , m_vScreenSize.y >> 1};
+
+	m_pPhysx_Manager = CPhysx_Manager::Create();
+	if (nullptr == m_pPhysx_Manager)
+		return E_FAIL;
 
 	m_pLight_Manager = CLight_Manager::Create();
 	if (nullptr == m_pLight_Manager)
@@ -185,6 +189,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Clear_DeadObj();
 	m_pLevel_Manager->Update(fTimeDelta);
+
+	m_pPhysx_Manager->Update(fTimeDelta);
 
 	m_fTimeAcc += fTimeDelta;
 }
@@ -764,6 +770,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
+	Safe_Release(m_pPhysx_Manager);
 }
 
 void CGameInstance::Free()

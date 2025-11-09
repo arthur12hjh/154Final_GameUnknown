@@ -216,6 +216,11 @@ public:
 
 #pragma endregion
 
+#pragma region Physx_Manager
+	// 피직스 매니저 자리인데 당장 함수 없다고 치우지말아주세요 
+	// 조만간 많이 들어갈거임
+#pragma endregion
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -251,6 +256,7 @@ private:
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };
+	class CPhysx_Manager*			m_pPhysx_Manager = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_uint2							m_vScreenSize = {};
