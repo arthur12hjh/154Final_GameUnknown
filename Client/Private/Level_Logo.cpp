@@ -31,13 +31,13 @@ HRESULT CLevel_Logo::Initialize()
 
 void CLevel_Logo::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
-
-	__super::Update(fTimeDelta);
 }
 
 HRESULT CLevel_Logo::Render()
@@ -78,10 +78,10 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
 
-	SetHUD(pUIHUD);
-
 	if (pUIHUD == nullptr)
 		return E_FAIL;
+
+	SetHUD(pUIHUD);
 
 	if(FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Button"))))
 		return E_FAIL;
