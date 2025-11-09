@@ -217,6 +217,9 @@
     <ClInclude Include="..\public\ComputeShader.h">
       <Filter>01.Utility\03.Components\Shader\Compute</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Physx_Manager.h">
+      <Filter>01.Utility\17.Physx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -410,6 +413,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ComputeShader.cpp">
       <Filter>01.Utility\03.Components\Shader\Compute</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Physx_Manager.cpp">
+      <Filter>01.Utility\17.Physx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -634,6 +640,9 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Shader\Compute">
       <UniqueIdentifier>{f70290d7-8069-4762-8383-23523b3cf611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx">
+      <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
