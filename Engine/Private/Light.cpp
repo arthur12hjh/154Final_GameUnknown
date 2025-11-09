@@ -87,6 +87,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 #ifdef _DEBUG
 void CLight::Debug_Render()
 {
+	m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
 	m_pCollider->Render();
 }
 #endif // _DEBUG
@@ -94,16 +95,18 @@ void CLight::Debug_Render()
 #ifdef _DEBUG
 HRESULT CLight::CreateDebugCollider()
 {
-	
+	_float3 vPosition = {};
+	memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
+
 	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
 	{
 		m_pCollider = COBBCollider::Create(m_pDevice, m_pContext);
 		if (nullptr == m_pCollider)
 			return E_FAIL;
 
-		_float3 vPosition = {};
-		memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
-		static_cast<COBBCollider*>(m_pCollider)->SetCollision(vPosition, {}, {1.f, 0.3f, 1.f});
+		COBBCollider::OBB_COLLIDER_DESC OBBDesc = {};
+		OBBDesc.vSize = { 1.f, 0.3f, 1.f };
+		static_cast<COBBCollider*>(m_pCollider)->Initialize(&OBBDesc);
 	}
 	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
 	{
@@ -115,11 +118,13 @@ HRESULT CLight::CreateDebugCollider()
 		if (nullptr == m_pCollider)
 			return E_FAIL;
 
-		_float3 vPosition = {};
-		memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
-		static_cast<CSphereCollider*>(m_pCollider)->SetCollision(vPosition, m_LightDesc.fRange);
+		CSphereCollider::SPHERE_COLLIDER_DESC SphereDesc = {};
+		SphereDesc.fRadius = 1.f;
+		static_cast<CSphereCollider*>(m_pCollider)->Initialize(&SphereDesc);
+		m_WorldMat._11 = m_WorldMat._22 = m_WorldMat._33 = m_LightDesc.fRange;
 	}
 
+	
 	m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
 	return S_OK;
 }

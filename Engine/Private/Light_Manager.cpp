@@ -48,8 +48,10 @@ void CLight_Manager::Debug_LightRender()
         m_pShader->Bind_Matrix("g_WorldMatrix", pLight->GetWorldMatrix());
         m_pShader->Begin(0);
 
-        pLight->Debug_Render();
+        m_pVIBuffer->Bind_Resources();
         m_pVIBuffer->Render();
+        pLight->Debug_Render();
+        
     }
 }
 #elif
@@ -130,6 +132,10 @@ void CLight_Manager::Free()
     m_Lights.clear();
 
 #ifdef _DEBUG
+    Safe_Release(m_pTexture);
+    Safe_Release(m_pVIBuffer);
+    Safe_Release(m_pShader);
+
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);
