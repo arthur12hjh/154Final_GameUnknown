@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "Loader.h"
+#include "UI_Loader.h"
 
 #include "UIButton.h"
 
 #include "GameInstance.h"
 
-CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Loader::CUI_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
 	, m_pContext { pContext }
 	, m_pGameInstance { CGameInstance::GetInstance() }
@@ -17,15 +17,15 @@ CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 unsigned int APIENTRY LoadingMain(void* pArg)
 {
-	CLoader*		pLoader = static_cast<CLoader*>(pArg);
+	CUI_Loader*		pUI_Loader = static_cast<CUI_Loader*>(pArg);
 
-	if (FAILED(pLoader->Loading()))
+	if (FAILED(pUI_Loader->Loading()))
 		return 1;
 
 	return 0;
 }
 
-HRESULT CLoader::Initialize(LEVEL eNextLevelID)
+HRESULT CUI_Loader::Initialize(LEVEL eNextLevelID)
 {	
 	m_eNextLevelID = eNextLevelID;
 
@@ -39,10 +39,12 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	if (0 == m_hThread)
 		return E_FAIL;
 
+	//m_pCli_Loader = CLoader::Create(m_pDevice, m_pContext, static_cast<Client::LEVEL>(m_eNextLevelID));
+
 	return S_OK;
 }
 
-HRESULT CLoader::Loading()
+HRESULT CUI_Loader::Loading()
 {
 	CoInitializeEx(nullptr, 0);
 
@@ -68,17 +70,17 @@ HRESULT CLoader::Loading()
 	return S_OK;
 }
 
-void CLoader::Output()
+void CUI_Loader::Output()
 {
 	SetWindowText(g_hWnd, m_strMessage.c_str());
 }
 
-HRESULT CLoader::Loading_For_Logo()
+HRESULT CUI_Loader::Loading_For_Logo()
 {
 	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_Texture_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default%d.jpg"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2))))
 		return E_FAIL;
 	
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
@@ -97,7 +99,7 @@ HRESULT CLoader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_For_GamePlay()
+HRESULT CUI_Loader::Loading_For_GamePlay()
 {
 	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 
@@ -126,13 +128,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	return S_OK;
 }
 
-CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
+CUI_Loader* CUI_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
 {
-	CLoader* pInstance = new CLoader(pDevice, pContext);
+	CUI_Loader* pInstance = new CUI_Loader(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(eNextLevelID)))
 	{
-		MSG_BOX("Failed to Created : CLoader");
+		MSG_BOX("Failed to Created : CUI_Loader");
 		Safe_Release(pInstance);
 	}
 
@@ -140,7 +142,7 @@ CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 }
 
 
-void CLoader::Free()
+void CUI_Loader::Free()
 {
 	__super::Free();
 

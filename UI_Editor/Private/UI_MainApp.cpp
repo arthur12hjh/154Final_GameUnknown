@@ -1,9 +1,9 @@
 #include "pch.h"
 
-#include "MainApp.h"
+#include "UI_MainApp.h"
 
 #include "GameInstance.h"
-#include "Level_Loading.h"
+#include "UI_Level_Loading.h"
 
 #include "GUIManager.h"
 
@@ -12,13 +12,13 @@
 * ´ë¹Î¼®ÀÇ ÀºÃÑ ÀÌ ¾ó¸¶³ª Âù¶õÇÑ°¡ *
 ********************************/
 
-CMainApp::CMainApp()	
+CUI_MainApp::CUI_MainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
 
-HRESULT CMainApp::Initialize()
+HRESULT CUI_MainApp::Initialize()
 {
 	ENGINE_DESC				EngineDesc{};
 	EngineDesc.hInstance = g_hInstance;
@@ -49,14 +49,14 @@ HRESULT CMainApp::Initialize()
 	return S_OK;
 }
 
-void CMainApp::Update(_float fTimeDelta)
+void CUI_MainApp::Update(_float fTimeDelta)
 {
 	m_pGameInstance->Update_Engine(fTimeDelta);
 
 	m_pGuiManager->Update(fTimeDelta);
 }
 
-HRESULT CMainApp::Render()
+HRESULT CUI_MainApp::Render()
 {
 	_float4			vClearColor = _float4(0.02f, 0.02f, 0.02f, 1.f);
 	
@@ -71,7 +71,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-HRESULT CMainApp::Ready_Default_Setting()
+HRESULT CUI_MainApp::Ready_Default_Setting()
 {
 	/* [Âü°í] MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 154ex.spritefont */
 	/*if (FAILED(m_pGameInstance->Add_Font(TEXT("Spoqa_16"), TEXT("../Bin/Resources/Fonts/Spoqa_Han_Sans_Neo_Medium16.spritefont"))))
@@ -80,15 +80,15 @@ HRESULT CMainApp::Ready_Default_Setting()
 	return S_OK;
 }
 
-HRESULT CMainApp::Start_Level(LEVEL eLevelID)
+HRESULT CUI_MainApp::Start_Level(LEVEL eLevelID)
 {
-	if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, eLevelID))))
+	if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, eLevelID))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CMainApp::Ready_Prototypes()
+HRESULT CUI_MainApp::Ready_Prototypes()
 {
 	/* For.Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -97,26 +97,26 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CMainApp* CMainApp::Create()
+CUI_MainApp* CUI_MainApp::Create()
 {
-	CMainApp* pInstance = new CMainApp();
+	CUI_MainApp* pInstance = new CUI_MainApp();
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Created : CMainApp");
+		MSG_BOX("Failed to Created : CUI_MainApp");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CMainApp::Free()
+void CUI_MainApp::Free()
 {
 	__super::Free();
 

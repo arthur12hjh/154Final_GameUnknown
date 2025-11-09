@@ -1,21 +1,21 @@
 #include "pch.h"
-#include "Level_Logo.h"
+#include "UI_Level_Logo.h"
 
 #include "GameInstance.h"
-#include "Level_Loading.h"
+#include "UI_Level_Loading.h"
 
 #include "UIHUD.h"
 
 #include "GUIManager.h"
 
-CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
+CUI_Level_Logo::CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
 	
 {
 
 }
 
-HRESULT CLevel_Logo::Initialize()
+HRESULT CUI_Level_Logo::Initialize()
 {
 	m_pGuiManager = CGUIManager::GetInstance();
 
@@ -24,30 +24,28 @@ HRESULT CLevel_Logo::Initialize()
 
 	//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
 
-	m_pGuiManager->Set_Current_HUD(dynamic_cast<CUIHUD*>(GetHUD()));
-
 	return S_OK;
 }
 
-void CLevel_Logo::Update(_float fTimeDelta)
+void CUI_Level_Logo::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
-		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
+		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
-
-	__super::Update(fTimeDelta);
 }
 
-HRESULT CLevel_Logo::Render()
+HRESULT CUI_Level_Logo::Render()
 {
 	SetWindowText(g_hWnd, TEXT("로고레벨이빈다"));
 
 	return S_OK;
 }
 
-HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
+HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
 
@@ -62,13 +60,13 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-CLevel_Logo* CLevel_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
+CUI_Level_Logo* CUI_Level_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
-	CLevel_Logo* pInstance = new CLevel_Logo(pDevice, pContext, eLevelID);
+	CUI_Level_Logo* pInstance = new CUI_Level_Logo(pDevice, pContext, eLevelID);
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Created : CLevel_Logo");
+		MSG_BOX("Failed to Created : CUI_Level_Logo");
 		Safe_Release(pInstance);
 	}
 
@@ -77,7 +75,7 @@ CLevel_Logo* CLevel_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 
 
-void CLevel_Logo::Free()
+void CUI_Level_Logo::Free()
 {
 	__super::Free();
 

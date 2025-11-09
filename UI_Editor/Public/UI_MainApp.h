@@ -9,11 +9,11 @@ NS_END
 
 NS_BEGIN(Tool_UI)
 
-class CMainApp final : public CBase
+class CUI_MainApp final : public CBase
 {	
 private:
-	CMainApp();
-	virtual ~CMainApp() = default;
+	CUI_MainApp();
+	virtual ~CUI_MainApp() = default;
 
 public:
 	HRESULT Initialize();
@@ -33,7 +33,7 @@ private:
 	HRESULT Ready_Prototypes();
 
 public:
-	static CMainApp* Create();
+	static CUI_MainApp* Create();
 	virtual void Free() override;
 };
 

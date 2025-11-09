@@ -8,11 +8,11 @@
 
 NS_BEGIN(Tool_UI)
 
-class CLevel_Loading final : public CLevel
+class CUI_Level_Loading final : public CLevel
 {
 private:
-	CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
-	virtual ~CLevel_Loading() = default;
+	CUI_Level_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
+	virtual ~CUI_Level_Loading() = default;
 
 public:
 	virtual HRESULT Initialize(LEVEL eNextLevelID);
@@ -21,7 +21,7 @@ public:
 
 private:
 	LEVEL				m_eNextLevelID = { LEVEL::END };
-	class CLoader*		m_pLoader = { nullptr };
+	class CUI_Loader*		m_pLoader = { nullptr };
 
 private:
 	HRESULT Ready_Layer_BackGround();
@@ -29,7 +29,7 @@ private:
 
 
 public:
-	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID);
+	static CUI_Level_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID);
 	virtual void Free() override;
 };
 

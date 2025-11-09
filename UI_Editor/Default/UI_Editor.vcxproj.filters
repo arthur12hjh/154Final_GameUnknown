@@ -39,8 +39,14 @@
     <Filter Include="01.Level\Loading\Loader">
       <UniqueIdentifier>{fd9ae4b7-953d-46a2-a313-e36c1894e3b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="999. Client CPP">
+    <Filter Include="999. CPP From Client">
       <UniqueIdentifier>{c2123a54-d70f-4664-93dc-084127495837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\00. UIObjects">
+      <UniqueIdentifier>{9326214e-d79f-491f-878d-ddbe7ea10857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\01. Loader">
+      <UniqueIdentifier>{1b124910-c097-4562-8c69-c52e7327c015}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,7 +68,7 @@
     <ClInclude Include="..\Public\pch.h">
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MainApp.h">
+    <ClInclude Include="..\Public\UI_MainApp.h">
       <Filter>00.MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\ImgUI\GUIManager.h">
@@ -92,16 +98,16 @@
     <ClInclude Include="..\ImgUI\imstb_truetype.h">
       <Filter>97.GUIManager\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_GamePlay.h">
+    <ClInclude Include="..\Public\UI_Level_GamePlay.h">
       <Filter>01.Level\GamePlay</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_Loading.h">
+    <ClInclude Include="..\Public\UI_Level_Loading.h">
       <Filter>01.Level\Loading</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_Logo.h">
+    <ClInclude Include="..\Public\UI_Level_Logo.h">
       <Filter>01.Level\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Loader.h">
+    <ClInclude Include="..\Public\UI_Loader.h">
       <Filter>01.Level\Loading\Loader</Filter>
     </ClInclude>
   </ItemGroup>
@@ -112,7 +118,7 @@
     <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MainApp.cpp">
+    <ClCompile Include="..\Private\UI_MainApp.cpp">
       <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\ImgUI\GUIManager.cpp">
@@ -139,26 +145,26 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <Filter>97.GUIManager\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_GamePlay.cpp">
+    <ClCompile Include="..\Private\UI_Level_GamePlay.cpp">
       <Filter>01.Level\GamePlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_Loading.cpp">
+    <ClCompile Include="..\Private\UI_Level_Loading.cpp">
       <Filter>01.Level\Loading</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_Logo.cpp">
+    <ClCompile Include="..\Private\UI_Level_Logo.cpp">
       <Filter>01.Level\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Loader.cpp">
+    <ClCompile Include="..\Private\UI_Loader.cpp">
       <Filter>01.Level\Loading\Loader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIBase.cpp">
-      <Filter>999. Client CPP</Filter>
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIButton.cpp">
-      <Filter>999. Client CPP</Filter>
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp">
-      <Filter>999. Client CPP</Filter>
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -11,11 +11,11 @@ NS_END
 
 NS_BEGIN(Tool_UI)
 
-class CLoader final : public CBase
+class CUI_Loader final : public CBase
 {
 private:
-	CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CLoader() = default;
+	CUI_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CUI_Loader() = default;
 
 public:
 	HRESULT Initialize(LEVEL eNextLevelID);
@@ -46,7 +46,7 @@ private:
 	HRESULT Loading_For_GamePlay();
 
 public:
-	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
+	static CUI_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
 	virtual void Free() override;
 
 };
