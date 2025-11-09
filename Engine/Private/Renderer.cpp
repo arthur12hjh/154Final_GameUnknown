@@ -438,7 +438,7 @@ void CRenderer::Render_NonLight()
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
 
-	m_pGameInstance->Debug_LightRender();
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
 		if (nullptr != pRenderObject)
@@ -659,6 +659,7 @@ void CRenderer::Render_Debug()
 		Safe_Release(pDebugCom);
 	}
 	m_DebugComponents.clear();
+	m_pGameInstance->Debug_LightRender();
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return;

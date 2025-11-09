@@ -56,6 +56,35 @@ HRESULT CVIBuffer_Point::Initialize(void* pArg)
     return S_OK;
 }
 
+HRESULT CVIBuffer_Point::Bind_Resources()
+{
+	ID3D11Buffer* VertexBuffers[] = {
+	m_pVB,
+
+	};
+
+	_uint		VertexStrides[] = {
+		m_iVertexStride,
+
+
+	};
+
+	_uint		Offsets[] = {
+		0,
+	};
+
+	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, VertexBuffers, VertexStrides, Offsets);
+	m_pContext->IASetPrimitiveTopology(m_ePrimitive);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point::Render()
+{
+	m_pContext->Draw(m_iNumVertices, 0);
+	return S_OK;
+}
+
 CVIBuffer_Point* CVIBuffer_Point::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CVIBuffer_Point* pVIBuffer_Point = new CVIBuffer_Point(pDevice, pContext);

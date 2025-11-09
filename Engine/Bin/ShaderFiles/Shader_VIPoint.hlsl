@@ -21,7 +21,7 @@ VS_OUT VS_MAIN(VS_IN In)
     VS_OUT Out;   
   
     Out.vPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
-    Out.fSize = 10.f;
+    Out.fSize = 1.f;
     return Out;
 }
 
