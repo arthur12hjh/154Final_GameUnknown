@@ -14,7 +14,7 @@ namespace Tool_Map
 	enum class LEVEL { STATIC, LOADING, LOGO, VILLAGE, ICELAKE, BOSS1, BOSS2, END };
 
 	enum class NAVI_MODE { NONE, ADD_POINT, ADD_CELL, DELETE_CELL, RESET_ALL, END };
-	enum class ADD_OBJECT { PLAYER, END };
+	enum class ADD_OBJECT { VIL_BUI03_04, PLAYER, END };
 }
 
 using namespace Tool_Map;
