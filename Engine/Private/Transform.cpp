@@ -25,6 +25,22 @@ _float3 CTransform::Get_Scale() const
 	);
 }
 
+void CTransform::Set_State(STATE eState, _vector vState)
+{
+	switch (eState)
+	{
+	case Engine::STATE::RIGHT:
+	case Engine::STATE::UP:
+	case Engine::STATE::LOOK:
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
+	case Engine::STATE::POSITION:
+		vState.m128_f32[3] = 1.f;
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
+	}
+}
+
 void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 {
 	Set_State(STATE::RIGHT, XMVector3Normalize(Get_State(STATE::RIGHT)) * fX);

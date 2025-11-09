@@ -7,6 +7,9 @@ NS_BEGIN(Engine)
 class CGameInstance;
 NS_END
 
+NS_BEGIN(Client)
+class CUIHUD;
+NS_END
 
 NS_BEGIN(Tool_UI)
 class CGUIManager : public CBase
@@ -24,7 +27,10 @@ public:
 	void Release_GUI_Manager();
 
 public:
-	
+	void Set_Current_HUD(class CUIHUD* pHUD)
+	{
+		m_pUIHUD = pHUD;
+	}
 
 private:
 	ID3D11Device* m_pDevice{ nullptr };
@@ -33,7 +39,13 @@ private:
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 
+	CUIHUD* m_pUIHUD{ nullptr };
+
+	vector<_wstring> m_ViewModes{};
+	_wstring m_szCurViewMode{ TEXT("Edit") };
+
 private:
+	void ViewMode();
 
 public:
 	virtual void Free() override;

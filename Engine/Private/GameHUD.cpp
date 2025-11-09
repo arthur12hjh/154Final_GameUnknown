@@ -16,7 +16,6 @@ CGameHUD::CGameHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 
 HRESULT CGameHUD::Initialize()
 {
-
     return S_OK;
 }
 
@@ -34,7 +33,10 @@ HRESULT CGameHUD::Add_UserInterface(_uint iLevel, const WCHAR* PrototypeTag, con
 {
     auto pLayer = Find_Layer(LayerTag);
     if (nullptr == pLayer)
-        return E_FAIL;
+    {
+        pLayer = CHUDLayer::Create();
+        m_pLayers.emplace(LayerTag, pLayer);
+    }
 
     CGameObject* pGameObject = static_cast<CGameObject *>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, iLevel, PrototypeTag, pArg));
     if (nullptr == pGameObject)

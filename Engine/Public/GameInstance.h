@@ -4,6 +4,8 @@
 
 NS_BEGIN(Engine)
 
+class CCamera;
+
 class ENGINE_DLL CGameInstance final : public CBase
 {
 	DECLARE_SINGLETON(CGameInstance);
@@ -57,6 +59,8 @@ public:
 	HRESULT				Change_Level(class CLevel* pNewLevel);
 	_uint				GetCurrentLevelID();
 
+	// 이거 레퍼런스 카운트 증가합니다.
+	class CGameHUD*		GetCurrentLevelHUD();
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -65,12 +69,12 @@ public:
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
-	CComponent*					Get_PartObject_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPartTag, const _wstring& strComponentTag, _uint iIndex = 0);
-	HRESULT						Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
+	CComponent*								Get_PartObject_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPartTag, const _wstring& strComponentTag, _uint iIndex = 0);
+	HRESULT									Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	
-	// Layer에 있는 모든 오브젝트를 가져옴
-	list<CGameObject*>*			GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag);
-
+	// Layer에 있는 모든 오브젝트를 가져옴	
+	list<CGameObject*>*						GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag);
+	map<const _wstring, class CLayer*>*		GetCurrentLevelLayer();
 #pragma endregion
 
 #pragma region RENDERER
@@ -184,6 +188,33 @@ public:
 	_bool							IsThreadPoolStop();
 #pragma endregion
 
+#pragma region Camera Manager
+	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
+	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
+
+	// Defaut 매개변수 있습니다.
+	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
+	HRESULT							SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix = nullptr);
+
+	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
+	//  가져갔으면 내려주세요
+	CCamera*						GetCamrea(const WCHAR* szCameraTag);
+
+	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
+	//  가져갔으면 내려주세요
+	CCamera*						GetMainCamera();
+
+	//메인카메라 월드 행렬 가져오기
+	_matrix							GetMainCameraWorldMatrix();
+	const _float4x4*				GetMainCameraWorldMatrixPtr();
+
+	_matrix							GetCameraWorldMatrix(const WCHAR* szCameraTag);
+	const _float4x4*				GetCameraWorldMatrixPtr(const WCHAR* szCameraTag);
+
+	const unordered_map<_wstring, CCamera*>* GetAllCamera();
+
+#pragma endregion
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -217,6 +248,7 @@ private:
 	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
+	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };
 
 	_bool							m_bIsPause = false;

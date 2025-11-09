@@ -6,19 +6,20 @@
 
 #include "DebugProfiler.h"
 #include "DebugCheatUI.h"
+#include "DebugHierarchy.h"
 
-CImGuiManager::CImGuiManager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	m_pDevice(pDevice),
-	m_pContext(pContext),
-	m_pGameInstance(CGameInstance::GetInstance())
+IMPLEMENT_SINGLETON(CImGuiManager);
+
+HRESULT CImGuiManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+	m_pDevice = pDevice;
+	m_pContext = pContext;
+	m_pGameInstance = CGameInstance::GetInstance();
+
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
-}
 
-HRESULT CImGuiManager::Initialize()
-{
 	if (FAILED(ADD_ImGuiObject()))
 		return E_FAIL;
 
@@ -78,19 +79,15 @@ HRESULT CImGuiManager::ADD_ImGuiObject()
 	m_ImGuis.emplace(TEXT("ImGui_CheatUI"), pDebugCheatUI);
 #pragma endregion
 
+#pragma region Hirerarchy
+	auto pDebugHierarchy = CDebugHierarchy::Create(m_pDevice, m_pContext);
+	if (nullptr == pDebugHierarchy)
+		return E_FAIL;
+
+	m_ImGuis.emplace(TEXT("ImGui_Hierarchy"), pDebugHierarchy);
+#pragma endregion
 
 	return S_OK;
-}
-
-CImGuiManager* CImGuiManager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CImGuiManager* pImGuiManager = new CImGuiManager(pDevice, pContext);
-	if (FAILED(pImGuiManager->Initialize()))
-	{
-		Safe_Release(pImGuiManager);
-		MSG_BOX("Create Fail : ImGui Manager");
-	}
-	return pImGuiManager;
 }
 
 void CImGuiManager::Free()

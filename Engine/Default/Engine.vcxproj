@@ -173,6 +173,7 @@ popd</Command>
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\CameraManager.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\Channel.h" />
     <ClInclude Include="..\Public\Collider.h" />
@@ -197,6 +198,7 @@ popd</Command>
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\public\HUDLayer.h" />
     <ClInclude Include="..\Public\Input_Device.h" />
+    <ClInclude Include="..\public\JsonParser.h" />
     <ClInclude Include="..\Public\Layer.h" />
     <ClInclude Include="..\Public\Level.h" />
     <ClInclude Include="..\Public\Level_Manager.h" />
@@ -244,6 +246,7 @@ popd</Command>
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\CameraManager.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
@@ -260,6 +263,7 @@ popd</Command>
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\HUDLayer.cpp" />
     <ClCompile Include="..\Private\Input_Device.cpp" />
+    <ClCompile Include="..\private\JsonParser.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\Level_Manager.cpp" />
