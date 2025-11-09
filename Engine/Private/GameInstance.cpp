@@ -330,6 +330,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, c
 	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;
 }
 
+const map<const _wstring, class CBase*>* CGameInstance::Get_Prototypes_InLevel(_uint iLevelIndex)
+{
+	return m_pPrototype_Manager->Get_Prototypes_InLevel(iLevelIndex);
+}
+
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
