@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "UI_Loader.h"
 
+#include "UIPanel.h"
+#include "UIWrapper.h"
 #include "UIButton.h"
 
 #include "GameInstance.h"
@@ -116,12 +118,20 @@ HRESULT CUI_Loader::Loading_For_GamePlay()
 HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 {
 	m_strMessage = TEXT("UI텍스쳐들 로딩 중 입니다.");
-	/* For.Prototype_Component_Texture_BackGround */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_Texture_BackGround"),
+	/* For.Prototype_Component_UI_Texture_BackGround */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
+		CUIPanel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"),
+		CUIWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"),
 		CUIButton::Create(m_pDevice, m_pContext))))
 		return E_FAIL;

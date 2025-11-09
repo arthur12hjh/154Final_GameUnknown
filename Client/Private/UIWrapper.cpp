@@ -1,33 +1,33 @@
 #include "pch.h"
-#include "UIButton.h"
+#include "UIWrapper.h"
 
 #include "GameInstance.h"
 
-CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIWrapper::CUIWrapper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUIButton::CUIButton(const CUIButton& Prototype) 
+CUIWrapper::CUIWrapper(const CUIWrapper& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUIButton::Initialize_Prototype()
+HRESULT CUIWrapper::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUIButton::Initialize(void* pArg)
+HRESULT CUIWrapper::Initialize(void* pArg)
 {
-	//CUIObject::UIOBJECT_DESC	Desc = *static_cast<CUIObject::UIOBJECT_DESC*>(pArg);
+	CUIObject::UIOBJECT_DESC	Desc{};
 
-	/*Desc.fX = g_iWinSizeX >> 1;
+	Desc.fX = g_iWinSizeX >> 1;
 	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = 100.f;
-	Desc.fSizeY = 100.f;*/
+	Desc.fSizeX = g_iWinSizeX;
+	Desc.fSizeY = g_iWinSizeY;
 	
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
@@ -36,27 +36,27 @@ HRESULT CUIButton::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUIButton::Priority_Update(_float fTimeDelta)
+void CUIWrapper::Priority_Update(_float fTimeDelta)
 {
 	
 }
 
-void CUIButton::Update(_float fTimeDelta)
+void CUIWrapper::Update(_float fTimeDelta)
 {
 	
 }
 
-void CUIButton::Late_Update(_float fTimeDelta)
+void CUIWrapper::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(static_cast<RENDER>(m_tUIDesc.iRenderGroup), this);
+	m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
 }
 
-HRESULT CUIButton::Render()
+HRESULT CUIWrapper::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(m_tUIDesc.iPass)))
+	if (FAILED(m_pShaderCom->Begin(0)))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -68,7 +68,7 @@ HRESULT CUIButton::Render()
 	return S_OK;
 }
 
-HRESULT CUIButton::Ready_Components()
+HRESULT CUIWrapper::Ready_Components()
 {
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -76,7 +76,7 @@ HRESULT CUIButton::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Texture */
-	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
@@ -88,7 +88,7 @@ HRESULT CUIButton::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUIButton::Bind_ShaderResources()
+HRESULT CUIWrapper::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -96,15 +96,15 @@ HRESULT CUIButton::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.iTextureIndex)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CUIButton* CUIButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIWrapper* CUIWrapper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUIButton* pInstance = new CUIButton(pDevice, pContext);
+	CUIWrapper* pInstance = new CUIWrapper(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -115,20 +115,20 @@ CUIButton* CUIButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CUIButton::Clone(void* pArg)
+CGameObject* CUIWrapper::Clone(void* pArg)
 {
-	CUIButton* pInstance = new CUIButton(*this);
+	CUIWrapper* pInstance = new CUIWrapper(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUIButton");
+		MSG_BOX("Failed to Cloned : CUIWrapper");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUIButton::Free()
+void CUIWrapper::Free()
 {
 	__super::Free();
 }

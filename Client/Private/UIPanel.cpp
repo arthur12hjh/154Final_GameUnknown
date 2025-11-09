@@ -1,31 +1,31 @@
 #include "pch.h"
-#include "UIButton.h"
+#include "UIPanel.h"
 
 #include "GameInstance.h"
 
-CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIPanel::CUIPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUIButton::CUIButton(const CUIButton& Prototype) 
+CUIPanel::CUIPanel(const CUIPanel& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUIButton::Initialize_Prototype()
+HRESULT CUIPanel::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUIButton::Initialize(void* pArg)
+HRESULT CUIPanel::Initialize(void* pArg)
 {
-	//CUIObject::UIOBJECT_DESC	Desc = *static_cast<CUIObject::UIOBJECT_DESC*>(pArg);
+	/*CUIObject::UIOBJECT_DESC	Desc{};
 
-	/*Desc.fX = g_iWinSizeX >> 1;
+	Desc.fX = g_iWinSizeX >> 1;
 	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = 100.f;
-	Desc.fSizeY = 100.f;*/
+	Desc.fSizeX = g_iWinSizeX;
+	Desc.fSizeY = g_iWinSizeY;*/
 	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -36,22 +36,22 @@ HRESULT CUIButton::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUIButton::Priority_Update(_float fTimeDelta)
+void CUIPanel::Priority_Update(_float fTimeDelta)
 {
 	
 }
 
-void CUIButton::Update(_float fTimeDelta)
+void CUIPanel::Update(_float fTimeDelta)
 {
 	
 }
 
-void CUIButton::Late_Update(_float fTimeDelta)
+void CUIPanel::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(static_cast<RENDER>(m_tUIDesc.iRenderGroup), this);
 }
 
-HRESULT CUIButton::Render()
+HRESULT CUIPanel::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -68,7 +68,7 @@ HRESULT CUIButton::Render()
 	return S_OK;
 }
 
-HRESULT CUIButton::Ready_Components()
+HRESULT CUIPanel::Ready_Components()
 {
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -88,7 +88,7 @@ HRESULT CUIButton::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUIButton::Bind_ShaderResources()
+HRESULT CUIPanel::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -102,9 +102,9 @@ HRESULT CUIButton::Bind_ShaderResources()
 	return S_OK;
 }
 
-CUIButton* CUIButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIPanel* CUIPanel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUIButton* pInstance = new CUIButton(pDevice, pContext);
+	CUIPanel* pInstance = new CUIPanel(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -115,20 +115,20 @@ CUIButton* CUIButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CUIButton::Clone(void* pArg)
+CGameObject* CUIPanel::Clone(void* pArg)
 {
-	CUIButton* pInstance = new CUIButton(*this);
+	CUIPanel* pInstance = new CUIPanel(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUIButton");
+		MSG_BOX("Failed to Cloned : CUIPanel");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUIButton::Free()
+void CUIPanel::Free()
 {
 	__super::Free();
 }

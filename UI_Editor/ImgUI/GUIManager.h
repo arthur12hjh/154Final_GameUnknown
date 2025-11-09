@@ -10,6 +10,9 @@ class CHUDLayer;
 NS_END
 
 NS_BEGIN(Client)
+class CUIBase;
+class CUIPanel;
+class CUIWrapper;
 class CUIHUD;
 NS_END
 
@@ -48,14 +51,14 @@ private:
 	unordered_map<_wstring, CHUDLayer*>	m_pLayers;
 
 	_char m_szCloneProtoTag[MAX_PATH]{};
-	_char m_szCloneLayerTag[MAX_PATH]{};
-	_uint m_iCloneProtoLevel = { 0 };
-	_uint m_iCloneLayerLevel = { 0 };
+	_char m_szCloneTextureComTag[MAX_PATH]{};
+	_uint m_iCloneProtoLevel{ 0 };
+	//_uint m_iCloneLayerLevel = { 0 };
 
-	vector<_wstring> m_ProtoTags = {};
-	vector<_wstring> m_LayerTags = {};
+	vector<_wstring> m_ProtoTags{};
+	vector<_wstring> m_TextureComTags{};
 	_wstring m_szCurrentProtoTag{};
-	_wstring m_szCurrentLayerTag{};
+	_wstring m_szCurrentTextureComTag{};
 
 private:
 	void ViewMode();
@@ -63,7 +66,8 @@ private:
 	void Editor_Window();
 	void Show_UIObject_List();
 
-	void Clone_UI();
+	void Create_Layer();
+	void Add_Child(class Client::CUIBase* pObj);
 
 public:
 	virtual void Free() override;

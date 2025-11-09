@@ -20,9 +20,9 @@ HRESULT CUIBase::Initialize_Prototype()
 
 HRESULT CUIBase::Initialize(void* pArg)
 {	
-	m_pUIDesc = static_cast<UIBASE_DESC*>(pArg);
+	m_tUIDesc = *static_cast<UIBASE_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(m_pUIDesc)))
+	if (FAILED(__super::Initialize(&m_tUIDesc)))
 		return E_FAIL;
 
 	return S_OK;

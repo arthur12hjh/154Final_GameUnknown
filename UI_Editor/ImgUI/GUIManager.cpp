@@ -8,6 +8,9 @@
 #include "GameObject.h"
 
 #include "UIHUD.h"
+#include "UIPanel.h"
+#include "UIWrapper.h"
+#include "UIButton.h"
 #include "UIBase.h"
 
 // GUI 매니저 싱글톤 구현
@@ -148,51 +151,16 @@ void CGUIManager::Editor_Window()
     GUI::Begin("EDITOR WINDOW");
     GUI::SetWindowSize(ImVec2(400, g_iWinSizeY - 200));
 
-    if (GUI::Button("Clone Object"))
+    if (GUI::Button("Create Layer"))
     {
-        m_ProtoTags.clear();
-        m_LayerTags.clear();
+        strcpy_s(m_szCloneTextureComTag, sizeof(m_szCloneTextureComTag), "");
 
-        m_ProtoTags.push_back(TEXT("Select Prototype"));
-        _wstring prefix = TEXT("Prototype_GameObject_UI_");
-
-        for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
-        {
-            if (pProto.first.find(prefix) == 0)
-            {
-                size_t pos = pProto.first.find(prefix);
-                m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
-            }
-        }
-
-        for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
-        {
-            if (pProto.first.find(prefix) == 0)
-            {
-                size_t pos = pProto.first.find(prefix);
-                m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
-            }
-        }
-
-        m_LayerTags.push_back(TEXT("Add Layer"));
-
-        for (auto& pLayer : m_pLayers)
-        {
-            m_LayerTags.push_back(pLayer.first);
-        }
-
-        m_szCurrentProtoTag = m_ProtoTags[0];
-        m_szCurrentLayerTag = m_LayerTags[0];
-
-        strcpy_s(m_szCloneProtoTag, sizeof(m_szCloneProtoTag), "");
-        strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), "");
-
-        GUI::OpenPopup("Clone Object");
+        GUI::OpenPopup("Create Layer");
     }
 
-    if (GUI::BeginPopup("Clone Object"))
+    if (GUI::BeginPopup("Create Layer"))
     {
-        Clone_UI();
+        Create_Layer();
 
         if (GUI::Button("Close")) {
             GUI::CloseCurrentPopup();
@@ -243,6 +211,70 @@ void CGUIManager::Show_UIObject_List()
                             int a = 10;
                         }
 
+                        if (GUI::Button("Add Child"))
+                        {
+                            m_ProtoTags.clear();
+                            m_TextureComTags.clear();
+
+                            m_ProtoTags.push_back(TEXT("Select Prototype"));
+                            _wstring prefix = TEXT("Prototype_GameObject_UI_");
+
+                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+                            {
+                                if (pProto.first.find(prefix) == 0)
+                                {
+                                    size_t pos = pProto.first.find(prefix);
+                                    m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
+                                }
+                            }
+
+                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
+                            {
+                                if (pProto.first.find(prefix) == 0)
+                                {
+                                    size_t pos = pProto.first.find(prefix);
+                                    m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
+                                }
+                            }
+
+                            m_TextureComTags.push_back(TEXT("Select Texture"));
+                            _wstring prefix2 = TEXT("Prototype_Component_UI_Texture_");
+                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+                            {
+                                if (pProto.first.find(prefix2) == 0)
+                                {
+                                    size_t pos = pProto.first.find(prefix2);
+                                    m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
+                                }
+                            }
+
+                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
+                            {
+                                if (pProto.first.find(prefix2) == 0)
+                                {
+                                    size_t pos = pProto.first.find(prefix2);
+                                    m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
+                                }
+                            }
+
+                            m_szCurrentProtoTag = m_ProtoTags[0];
+                            m_szCurrentTextureComTag = m_TextureComTags[0];
+
+                            strcpy_s(m_szCloneTextureComTag, sizeof(m_szCloneTextureComTag), "");
+
+                            GUI::OpenPopup("Add Child");
+                        }
+
+                        if (GUI::BeginPopup("Add Child"))
+                        {
+                            Add_Child(dynamic_cast<Client::CUIBase*>(pObj.second));
+
+                            if (GUI::Button("Close")) {
+                                GUI::CloseCurrentPopup();
+                            }
+                            GUI::EndPopup();
+                        }
+
                         GUI::TreePop();
                     }
                 }
@@ -252,12 +284,46 @@ void CGUIManager::Show_UIObject_List()
     }
 }
 
-void CGUIManager::Clone_UI()
+void CGUIManager::Create_Layer()
+{
+    GUI::InputText("Input Layer Tag", m_szCloneTextureComTag, IM_ARRAYSIZE(m_szCloneTextureComTag));
+
+    if (GUI::Button("Create"))
+    {
+        WCHAR szLayerTag[MAX_PATH];
+        CStringHelper::ConvertUTFToWide(m_szCloneTextureComTag, szLayerTag);
+
+        WCHAR szUITag[MAX_PATH];
+        swprintf_s(szUITag, TEXT("UI_%s_Panel_%d"), szLayerTag, 0);
+
+        WCHAR szTextureComTag[MAX_PATH];
+        CStringHelper::ConvertUTFToWide("Prototype_Component_UI_Texture_BackGround", szTextureComTag);
+
+        CUIBase::UIBASE_DESC Desc{};
+        Desc.fSizeX = g_iWinSizeX;
+        Desc.fSizeY = g_iWinSizeY;
+        Desc.fX = g_iHalfWinSizeX;
+        Desc.fY = g_iHalfWinSizeY;
+        Desc.iDepth = 0;
+        Desc.iLevel = m_iCurrentLevel;
+        Desc.iObjectID = 0;
+        Desc.iPass = 0;
+        Desc.iTextureIndex = 0;
+        Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
+        Desc.szLayerTag = szLayerTag;
+        Desc.szTextureComTag = szTextureComTag;
+
+        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, TEXT("Prototype_GameObject_UI_Panel"), szLayerTag, szUITag, nullptr, &Desc)))
+            return;
+    }
+}
+
+void CGUIManager::Add_Child(Client::CUIBase* pObj)
 {
     _char szCurProtoTag[MAX_PATH]{};
     CStringHelper::ConvertWideToUTF(m_szCurrentProtoTag.c_str(), szCurProtoTag);
 
-    if (GUI::BeginCombo("Proto Tag", szCurProtoTag)) // 드롭다운 시작
+    if (GUI::BeginCombo("UI Proto Tag", szCurProtoTag)) // 드롭다운 시작
     {
         for (int i = 1; i < m_ProtoTags.size(); ++i)
         {
@@ -277,26 +343,21 @@ void CGUIManager::Clone_UI()
         GUI::EndCombo();
     }
 
-    _char szCurLayerTag[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(m_szCurrentLayerTag.c_str(), szCurLayerTag);
+    _char szCurTextureComTag[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(m_szCurrentTextureComTag.c_str(), szCurTextureComTag);
 
-    if (GUI::BeginCombo("Layer Tag", szCurLayerTag)) // 드롭다운 시작
+    if (GUI::BeginCombo("TextureCom Tag", szCurTextureComTag)) // 드롭다운 시작
     {
-        for (int i = 1; i < m_LayerTags.size(); ++i)
+        for (int i = 1; i < m_TextureComTags.size(); ++i)
         {
-            bool is_selected = (m_szCurrentLayerTag == m_LayerTags[i]);
+            bool is_selected = (m_szCurrentTextureComTag == m_TextureComTags[i]);
 
             _char szTag[MAX_PATH]{};
-            CStringHelper::ConvertWideToUTF(m_LayerTags[i].c_str(), szTag);
+            CStringHelper::ConvertWideToUTF(m_TextureComTags[i].c_str(), szTag);
 
             if (GUI::Selectable(szTag, is_selected))
             {
-                m_szCurrentLayerTag = m_LayerTags[i];
-
-                if (i == 0)
-                    strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), "");
-                else
-                    strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), szTag);
+                m_szCurrentTextureComTag = m_TextureComTags[i];
             }
 
             if (is_selected)
@@ -305,53 +366,37 @@ void CGUIManager::Clone_UI()
         GUI::EndCombo();
     }
 
-    if (m_szCurrentLayerTag == TEXT("Add Layer"))
+    if (GUI::Button("Create"))
     {
-        GUI::InputText("Input Layer Tag", m_szCloneLayerTag, IM_ARRAYSIZE(m_szCloneLayerTag));
-    }
+        wstring szProto{};
+        szProto = TEXT("Prototype_GameObject_UI_") + m_szCurrentProtoTag;
 
-    if (GUI::Button("Clone"))
-    {
-        if (!(m_iCurrentLevel < 0 || m_iCurrentLevel >= ENUM_CLASS(LEVEL::END))
-            && !(m_szCloneLayerTag == ""))
-        {
-            _wstring szProto{};
-            szProto = TEXT("Prototype_GameObject_UI_") + m_szCurrentProtoTag;
+        wstring szTextureComTag{};
+        szTextureComTag = TEXT("Prototype_Component_UI_Texture_") + m_szCurrentTextureComTag;
 
-           
-            _tchar szLayerTag[MAX_PATH];
-            CStringHelper::ConvertUTFToWide(m_szCloneLayerTag, szLayerTag);
+        _uint iObjectId = pObj->Get_UIBase_Desc().iObjectID + 1;
 
-            _uint iObjectId = 0;
+        WCHAR szUITag[MAX_PATH];
+        swprintf_s(szUITag, TEXT("UI_%s_%d"), m_szCurrentProtoTag.c_str(), iObjectId);
 
-            auto pLayer = m_pUIHUD->Find_Layer(szLayerTag);
+        WCHAR szLayerTag[MAX_PATH];
+        swprintf_s(szLayerTag, pObj->Get_UIBase_Desc().szLayerTag.c_str());
 
-            if (pLayer != nullptr)
-                iObjectId = pLayer->Get_UserInterfaces()->size();
+        CUIBase::UIBASE_DESC Desc{};
+        Desc.fSizeX = 100.f;
+        Desc.fSizeY = 20.f;
+        Desc.fX = pObj->Get_UIBase_Desc().fX;
+        Desc.fY = pObj->Get_UIBase_Desc().fY;
+        Desc.iDepth = pObj->Get_UIBase_Desc().iDepth + 1;
+        Desc.iLevel = m_iCurrentLevel;
+        Desc.iObjectID = iObjectId;
+        Desc.iPass = 0;
+        Desc.iTextureIndex = 1;
+        Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
+        Desc.szLayerTag = pObj->Get_UIBase_Desc().szLayerTag.c_str();
+        Desc.szTextureComTag = szTextureComTag;
 
-            _wstring szUITag{};
-            szUITag = TEXT("UI_") + m_szCurrentProtoTag + TEXT("_") + to_wstring(iObjectId);
-
-            /*
-            CUIBase* pUIObject = nullptr;
-
-            if (pLayer != nullptr)
-                pUIObject = dynamic_cast<CUIBase*>(pLayer->Find_GameObject(szUITag.c_str()));
-
-            CUIBase::UIBASE_DESC* pDesc{};
-            pDesc->iObjectID = m_iUICnt;
-            */
-
-            if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto.c_str(), szLayerTag, szUITag.c_str())))
-                return;
-
-            if (szLayerTag != TEXT(""))
-                m_szCurrentLayerTag = szLayerTag;
-
-           /* if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(m_iCloneProtoLevel, szProto, m_iCloneLayerLevel, m_szCloneLayerTag, &Desc)))
-                return;*/
-        }
-        else
+        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto.c_str(), pObj->Get_UIBase_Desc().szLayerTag.c_str(), szUITag, nullptr, &Desc)))
         {
             GUI::OpenPopup("Clone Error");
             if (GUI::BeginPopup("Clone Error"))
@@ -364,6 +409,8 @@ void CGUIManager::Clone_UI()
                 GUI::PopID();
                 GUI::EndPopup();
             }
+
+            return;
         }
 
         GUI::CloseCurrentPopup();

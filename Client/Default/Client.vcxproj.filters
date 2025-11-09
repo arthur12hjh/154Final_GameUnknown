@@ -135,9 +135,15 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
       <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02.GameObjects\ShaderTestModel">
       <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIWrapper">
+      <UniqueIdentifier>{075bcaa0-7ae0-481d-a694-78d3124386f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
+      <UniqueIdentifier>{c338c24c-aa7b-4787-a598-ba61f0bf479c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -263,9 +269,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIButton.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\ShaderTestModel.h">
       <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPanel.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -378,9 +390,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIButton.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\ShaderTestModel.cpp">
       <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPanel.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
