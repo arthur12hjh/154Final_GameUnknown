@@ -45,6 +45,8 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();
 
+public:
+	HRESULT Loading_For_UI_Logo_Level();
 
 
 public:

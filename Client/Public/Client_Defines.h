@@ -5,8 +5,8 @@
 
 namespace Client
 {
-	const unsigned int			g_iWinSizeX = 1280;
-	const unsigned int			g_iWinSizeY = 720;
+	const unsigned int			g_iWinSizeX = 1660;
+	const unsigned int			g_iWinSizeY = 900;
 
 	const unsigned int			g_iHalfWinSizeX = 800;
 	const unsigned int			g_iHalfWinSizeY = 450;
