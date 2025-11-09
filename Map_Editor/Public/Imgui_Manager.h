@@ -74,11 +74,16 @@ private:
 	ADD_OBJECT m_eCurrentObject = {};
 
 	const _tchar* m_CurrentLayerName = {};
+	list<class CGameObject*>* m_pObjects = { nullptr };
+	class CGameObject* m_pObject = { nullptr };
 
 private:
-
 	CNavigation*		m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
+	
 	class CVillage*		m_pVillage = { nullptr };
+	class CPlayer*		m_pPlayer = { nullptr };
+	class CTerrain*		m_pTerrain = { nullptr };
+
 	_vector				m_vNaviPoints[3] = {}; 
 	_float				m_fNaviSnapRadius = { 1.5f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)

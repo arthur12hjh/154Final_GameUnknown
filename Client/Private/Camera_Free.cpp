@@ -34,16 +34,16 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta * 5.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta);
+		m_pTransformCom->Go_Backward(fTimeDelta * 5.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta);
+		m_pTransformCom->Go_Left(fTimeDelta * 5.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta);
+		m_pTransformCom->Go_Right(fTimeDelta * 5.f);
 
 	_long		MouseMove = {};
 	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
