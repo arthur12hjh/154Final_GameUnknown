@@ -3,6 +3,14 @@
 
 namespace Engine
 {
+	typedef struct CameraInfo
+	{
+		float			fFov;
+		float			fNear;
+		float			fFar;
+		float			fAspect;
+	}CAMERA_INFO;
+
 	typedef struct ThreadJob
 	{
 		unsigned int		iJobID;
