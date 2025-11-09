@@ -1,6 +1,7 @@
 #include "Light.h"
 #include "Shader.h"
 #include "VIBuffer.h"
+#include "SphereCollider.h"
 
 CLight::CLight()
 {
@@ -9,6 +10,23 @@ CLight::CLight()
 HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 {
     m_LightDesc = LightDesc;
+
+#ifdef _DEBUG
+	_matrix WorldMat = XMMatrixIdentity();
+	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
+	{
+		WorldMat.r[0] = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 1.f), XMLoadFloat4(&m_LightDesc.vDirection)));
+		WorldMat.r[1] = XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&m_LightDesc.vDirection), WorldMat.r[0]));
+		WorldMat.r[2] = XMLoadFloat4(&m_LightDesc.vDirection);
+	}
+	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
+	{
+
+	}
+
+	WorldMat.r[3] = XMLoadFloat4(&m_LightDesc.vPosition);
+	XMStoreFloat4x4(&m_WorldMat, WorldMat);
+#endif // _DEBUG
 
     return S_OK;
 }
@@ -45,6 +63,14 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 
 	return pVIBuffer->Render();
 }
+
+#ifdef _DEBUG
+void CLight::Debug_Render()
+{
+	m_pCollier->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
+	m_pCollier->Render();
+}
+#endif // _DEBUG
 
 CLight* CLight::Create(const LIGHT_DESC& LightDesc)
 {

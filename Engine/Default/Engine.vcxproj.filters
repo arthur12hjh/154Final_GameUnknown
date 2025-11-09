@@ -220,6 +220,9 @@
     <ClInclude Include="..\Public\Physx_Manager.h">
       <Filter>01.Utility\17.Physx</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Point.h">
+      <Filter>01.Utility\03.Components\VIBuffer\Point</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -416,6 +419,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Physx_Manager.cpp">
       <Filter>01.Utility\17.Physx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Point.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer\Point</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -644,6 +650,15 @@
     <Filter Include="01.Utility\17.Physx">
       <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Point">
+      <UniqueIdentifier>{e3992711-2893-4620-b2e4-e2a09e2ac50e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ShaderFiles\VIBuffer">
+      <UniqueIdentifier>{434b643b-122d-46ff-bbe4-9e1e9de03a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ShaderFiles\VIBuffer\Point">
+      <UniqueIdentifier>{656dfd05-f455-4091-b61b-089fef8ba0e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -651,6 +666,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VIPoint.hlsl">
+      <Filter>98.ShaderFiles\VIBuffer\Point</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
