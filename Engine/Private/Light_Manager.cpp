@@ -1,17 +1,22 @@
 #include "Light_Manager.h"
 #include "Light.h"
 
+#ifdef _DEBUG
+#include "GameInstance.h"
 #include "VIBuffer_Point.h"
 #include "Shader.h"
 #include "Texture.h"
+#endif
 
 #ifdef _DEBUG
 CLight_Manager::CLight_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     m_pDevice(pDevice),
-    m_pContext(pContext)
+    m_pContext(pContext),
+    m_pGameInstance(CGameInstance::GetInstance())
 {
     Safe_AddRef(m_pDevice);
     Safe_AddRef(m_pContext);
+    Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CLight_Manager::Initialize()
@@ -33,9 +38,18 @@ HRESULT CLight_Manager::Initialize()
 
 void CLight_Manager::Debug_LightRender()
 {
+    m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture", 0);
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+    m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
+
     for (auto& pLight : m_Lights)
     {
+        m_pShader->Bind_Matrix("g_WorldMatrix", pLight->GetWorldMatrix());
+        m_pShader->Begin(0);
+
         pLight->Debug_Render();
+        m_pVIBuffer->Render();
     }
 }
 #elif
@@ -56,12 +70,16 @@ const LIGHT_DESC* CLight_Manager::Get_LightDesc(_uint iIndex) const
 
 HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc)
 {
-    CLight* pLight = CLight::Create(LightDesc);
+    CLight* pLight = nullptr;
+#ifdef _DEBUG
+    pLight = CLight::Create(m_pDevice, m_pContext, LightDesc);
+#elif
+    pLight = CLight::Create(LightDesc);
+#endif // _DEBUG
     if (nullptr == pLight)
         return E_FAIL;
 
     m_Lights.push_back(pLight);
-
     return S_OK;
 }
 
@@ -114,6 +132,7 @@ void CLight_Manager::Free()
 #ifdef _DEBUG
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
+    Safe_Release(m_pGameInstance);
 #endif // _DEBUG
 
 }

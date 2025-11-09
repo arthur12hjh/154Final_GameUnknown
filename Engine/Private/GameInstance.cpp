@@ -42,7 +42,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pPhysx_Manager)
 		return E_FAIL;
 
+#ifdef _DEBUG
+	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
+#elif
 	m_pLight_Manager = CLight_Manager::Create();
+#endif // DEBUG
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
@@ -436,6 +440,11 @@ HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc)
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
+}
+
+void CGameInstance::Debug_LightRender()
+{
+	m_pLight_Manager->Debug_LightRender();
 }
 #pragma endregion
 

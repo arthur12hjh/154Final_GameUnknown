@@ -103,6 +103,11 @@ public:
 	const LIGHT_DESC*			Get_LightDesc(_uint iIndex) const;
 	HRESULT						Add_Light(const LIGHT_DESC& LightDesc);
 	HRESULT						Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+
+#ifdef _DEBUG
+	void						Debug_LightRender();
+#endif
+
 #pragma endregion
 
 #pragma region FONT_MANAGER

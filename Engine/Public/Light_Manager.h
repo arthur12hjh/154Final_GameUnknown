@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 class CTexture;
 class CVIBuffer;
 class CLight;
+class CGameInstance;
 
 class CLight_Manager final : public CBase
 {
@@ -36,6 +37,7 @@ private:
 #ifdef _DEBUG
 	ID3D11Device*					m_pDevice = nullptr;
 	ID3D11DeviceContext*			m_pContext = nullptr;
+	CGameInstance*					m_pGameInstance = nullptr;
 
 	CVIBuffer*						m_pVIBuffer = nullptr;
 	CTexture*						m_pTexture = nullptr;

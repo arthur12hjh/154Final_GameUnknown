@@ -438,6 +438,7 @@ void CRenderer::Render_NonLight()
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
 
+	m_pGameInstance->Debug_LightRender();
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
 		if (nullptr != pRenderObject)
