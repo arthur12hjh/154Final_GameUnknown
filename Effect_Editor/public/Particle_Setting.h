@@ -2,7 +2,9 @@
 #include "ImgBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Instance;
+class CVIBuffer_Point_Instance;
+class CShader;
+class CTransform;
 NS_END
 
 NS_BEGIN(Tool_Effect)
@@ -10,6 +12,12 @@ NS_BEGIN(Tool_Effect)
 class CParticle_Setting : public CImgBase
 {
 public:
+    struct DiagramData
+    {
+        _float fTime;
+        _float fX;
+        _float fValue;
+    };
     struct ShaderData {
         wstring     szShaderTag;
         vector<wstring> TextureTags;
@@ -20,6 +28,7 @@ public:
         _float2     fStartDelay;
         _float2     fStartLifeTime;
         _float2     fStartSize;
+        vector<DiagramData> SizeDiagrams;
         _float      fGravity;
         _uint       iMaxParticles;
         _uint       iRateOverTime;
@@ -44,10 +53,21 @@ public:
     virtual void    Update(_float fDeltaTime) override;
     virtual HRESULT    Render() override;
     virtual void    Free() override;
+    CShader* m_pShaderCom = { nullptr };
+    CVIBuffer_Point_Instance* m_pVIBufferCom;
+    class CTransform* m_pTransformCom = { nullptr };
 
 private:
     _uint   m_iLevel = { 0 };
-    CVIBuffer_Instance* m_pVIBufferCom;
+    _int   m_iNumInstance;
+    _float3 m_fCenter;
+    _float3 m_fRange;
+    _float2 m_fSize;
+    _float2 m_fLifeTime;
+    _float2 m_fSpeed;
+    _bool m_bisLoop;
+
+    _float4 m_fColor = {};
 private:
 
 public:

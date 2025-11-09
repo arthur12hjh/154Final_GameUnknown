@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\ImgBase.h" />
     <ClInclude Include="..\public\ImGui\imconfig.h" />
     <ClInclude Include="..\public\ImGui\imgui.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="..\..\Client\Private\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\ImgBase.cpp" />
     <ClCompile Include="..\private\Img_Manager.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
@@ -200,6 +202,11 @@
   <ItemGroup>
     <Image Include="Effect_Editor.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

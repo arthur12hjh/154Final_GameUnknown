@@ -1,8 +1,8 @@
 #include "pch.h"
+#include "GameObject.h"
 #include "Particle_Setting.h"
 #include "GameInstance.h"
 
-//static CVIBuffer_Rect_Instance* pVIBufferCom = { nullptr };
 CParticle_Setting::CParticle_Setting(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CImgBase{ pDevice, pContext } {}
 
 CParticle_Setting* CParticle_Setting::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -19,352 +19,276 @@ CParticle_Setting* CParticle_Setting::Create(ID3D11Device* pDevice, ID3D11Device
 
 HRESULT CParticle_Setting::Initialize()
 {
-    //CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		desc{};
-    //desc.iNumInstance = 7;
-    //desc.vCenter = _float3(0.0f, 0.f, 0.f);
-    //desc.vRange = _float3(0.5f, 0.5f, 1.f);
-    //desc.vSize = _float2(0.05f, 0.1f);
-    //desc.vLifeTime = _float2(0.1f, 0.4f);
-    //desc.vSpeed = _float2(1.f, 2.f);
-    //desc.isLoop = false;
-    //pVIBufferCom = CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &desc);
+    m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+    m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
+    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0, 0, 0, 1));
+
+
+    m_iNumInstance = 100;
+    m_fCenter = _float3(0.0f, 0.f, 0.f);
+    m_fRange = _float3(1.f, 1.f, 1.f);
+    m_fSize = _float2(0.05f, 0.1f);
+    m_fLifeTime = _float2(0.5f, 1.f);
+    m_fSpeed = _float2(1.f, 0.5f);
+    m_bisLoop = true;
+
+    CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		desc{};
+    desc.iNumInstance = m_iNumInstance;
+    desc.vCenter = m_fCenter;
+    desc.vRange = m_fRange;
+    desc.vSize = m_fSize;
+    desc.vLifeTime = m_fLifeTime;
+    desc.vSpeed = m_fSpeed;
+    desc.isLoop = m_bisLoop;
+    m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &desc);
+    m_pVIBufferCom->Initialize(nullptr);
     return S_OK;
 }
 
 HRESULT CParticle_Setting::Save_Binary(const _tchar* pFilePath)
 {
-    //HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    //if (!hFile)
-    //    return E_FAIL;
-    //
-    //DWORD dwByte = 0;
-    //
-    //_uint iCount = (_uint)m_Placed.size();
-    //if (!WriteFile(hFile, &iCount, sizeof(_uint), &dwByte, nullptr)) {
-    //    CloseHandle(hFile);
-    //    return E_FAIL;
-    //}
-    //
-    //for (const auto& r : m_Placed)
-    //{
-    //    int protoLenA = 0;
-    //    if (!r.protoTag.empty())
-    //        protoLenA = WideCharToMultiByte(CP_ACP, 0, r.protoTag.c_str(), (int)r.protoTag.size(), nullptr, 0, nullptr, nullptr);
-    //    string protoA;
-    //    protoA.resize(protoLenA);
-    //    if (protoLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.protoTag.c_str(), (int)r.protoTag.size(), &protoA[0], protoLenA, nullptr, nullptr);
-    //
-    //    _uint lenProto = (_uint)protoA.size();
-    //    if (!WriteFile(hFile, &lenProto, sizeof(lenProto), &dwByte, nullptr) || dwByte != sizeof(lenProto))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenProto)
-    //    {
-    //        if (!WriteFile(hFile, protoA.data(), lenProto, &dwByte, nullptr) || dwByte != lenProto)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //
-    //    // pos/rot/scale
-    //    float p[3] = { r.pos.x,     r.pos.y,     r.pos.z };
-    //    float rx[3] = { r.rotDeg.x,  r.rotDeg.y,  r.rotDeg.z };
-    //    float sc[3] = { r.scale.x,   r.scale.y,   r.scale.z };
-    //
-    //    if (!WriteFile(hFile, p, sizeof(p), &dwByte, nullptr) || dwByte != sizeof(p))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, rx, sizeof(rx), &dwByte, nullptr) || dwByte != sizeof(rx))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, sc, sizeof(sc), &dwByte, nullptr) || dwByte != sizeof(sc))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //    int layerLenA = 0;
-    //    if (!r.layerTag.empty())
-    //        layerLenA = WideCharToMultiByte(CP_ACP, 0, r.layerTag.c_str(), (int)r.layerTag.size(), nullptr, 0, nullptr, nullptr);
-    //    string layerA;
-    //    layerA.resize(layerLenA);
-    //    if (layerLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.layerTag.c_str(), (int)r.layerTag.size(), &layerA[0], layerLenA, nullptr, nullptr);
-    //
-    //    _uint lenLayer = (_uint)layerA.size();
-    //    if (!WriteFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenLayer) {
-    //        if (!WriteFile(hFile, layerA.data(), lenLayer, &dwByte, nullptr) || dwByte != lenLayer) {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //
-    //    if (!WriteFile(hFile, &r.layerLevel, sizeof(r.layerLevel), &dwByte, nullptr) || dwByte != sizeof(r.layerLevel)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, &r.protoLevel, sizeof(r.protoLevel), &dwByte, nullptr) || dwByte != sizeof(r.protoLevel)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //    if (!WriteFile(hFile, &r.cell, sizeof(r.cell), &dwByte, nullptr) || dwByte != sizeof(r.cell)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //
-    //    layerLenA = 0;
-    //    if (!r.NavigaionTag.empty())
-    //        layerLenA = WideCharToMultiByte(CP_ACP, 0, r.NavigaionTag.c_str(), (int)r.NavigaionTag.size(), nullptr, 0, nullptr, nullptr);
-    //    layerA = {};
-    //    layerA.resize(layerLenA);
-    //    if (layerLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.NavigaionTag.c_str(), (int)r.NavigaionTag.size(), &layerA[0], layerLenA, nullptr, nullptr);
-    //
-    //    lenLayer = (_uint)layerA.size();
-    //    if (!WriteFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenLayer) {
-    //        if (!WriteFile(hFile, layerA.data(), lenLayer, &dwByte, nullptr) || dwByte != lenLayer) {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //}
-    //
-    //CloseHandle(hFile);
     return S_OK;
 }
 
 HRESULT CParticle_Setting::Load_Binary(const _tchar* pFilePath)
 {
-    //HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    //if (hFile == INVALID_HANDLE_VALUE) return E_FAIL;
-    //
-    //DWORD dwByte = 0;
-    //
-    //_uint iCount;
-    //if (!ReadFile(hFile, &iCount, sizeof(_uint), &dwByte, nullptr)) {
-    //    CloseHandle(hFile);
-    //    return E_FAIL;
-    //}
-    //m_pNavigation = nullptr;
-    //vector<PlacedRecord> loaded;
-    //loaded.reserve(iCount);
-    //
-    //for (_uint i = 0; i < iCount; ++i)
-    //{
-    //    _uint lenProto = 0;
-    //    if (!ReadFile(hFile, &lenProto, sizeof(lenProto), &dwByte, nullptr) || dwByte != sizeof(lenProto))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string protoA;
-    //    protoA.resize(lenProto);
-    //    if (lenProto) {
-    //        if (!ReadFile(hFile, &protoA[0], lenProto, &dwByte, nullptr) || dwByte != lenProto)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring protoW;
-    //    if (lenProto) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, protoA.data(), (int)protoA.size(), nullptr, 0);
-    //        protoW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, protoA.data(), (int)protoA.size(), &protoW[0], needW);
-    //    }
-    //
-    //    // pos/rot/scale
-    //    float p[3]{}, rx[3]{}, sc[3]{};
-    //    if (!ReadFile(hFile, p, sizeof(p), &dwByte, nullptr) || dwByte != sizeof(p))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, rx, sizeof(rx), &dwByte, nullptr) || dwByte != sizeof(rx))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, sc, sizeof(sc), &dwByte, nullptr) || dwByte != sizeof(sc))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //    _uint lenLayer = 0;
-    //    if (!ReadFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string layerA;
-    //    layerA.resize(lenLayer);
-    //    if (lenLayer) {
-    //        if (!ReadFile(hFile, &layerA[0], lenLayer, &dwByte, nullptr) || dwByte != lenLayer)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring layerW;
-    //    if (lenLayer) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, layerA.data(), (int)layerA.size(), nullptr, 0);
-    //        layerW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, layerA.data(), (int)layerA.size(), &layerW[0], needW);
-    //    }
-    //
-    //    _uint lv = 0, pv = 0, cell = 0;
-    //    if (!ReadFile(hFile, &lv, sizeof(lv), &dwByte, nullptr) || dwByte != sizeof(lv))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, &pv, sizeof(pv), &dwByte, nullptr) || dwByte != sizeof(pv))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, &cell, sizeof(cell), &dwByte, nullptr) || dwByte != sizeof(cell))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //
-    //
-    //    _uint lenNavigation = 0;
-    //    if (!ReadFile(hFile, &lenNavigation, sizeof(lenNavigation), &dwByte, nullptr) || dwByte != sizeof(lenNavigation))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string navigationA;
-    //    navigationA.resize(lenNavigation);
-    //    if (lenNavigation) {
-    //        if (!ReadFile(hFile, &navigationA[0], lenNavigation, &dwByte, nullptr) || dwByte != lenNavigation)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring navigationW = {};
-    //    if (lenNavigation) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, navigationA.data(), (int)navigationA.size(), nullptr, 0);
-    //        navigationW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, navigationA.data(), (int)navigationA.size(), &navigationW[0], needW);
-    //    }
-    //
-    //
-    //
-    //    PlacedRecord r{};
-    //    r.protoTag = protoW;
-    //    r.pos = _float3{ p[0],  p[1],  p[2] };
-    //    r.rotDeg = _float3{ rx[0], rx[1], rx[2] };
-    //    r.scale = _float3{ sc[0], sc[1], sc[2] };
-    //    r.layerTag = layerW;
-    //    r.layerLevel = lv;
-    //    r.protoLevel = pv;
-    //    r.cell = cell;
-    //    r.NavigaionTag = navigationW;
-    //
-    //    loaded.push_back(r);
-    //}
-    //
-    //CloseHandle(hFile);
-    //
-    //_bool isMap = true;
-    //for (auto& r : loaded) {
-    //    _vector P = XMVectorSet(r.pos.x, r.pos.y, r.pos.z, 1.0f);
-    //    CGameObject::GAMEOBJECT_DESC desc;
-    //    desc.fSpeedPerSec = 0.f;
-    //    desc.fRotationPerSec = 0.f;
-    //    desc.strName = r.protoTag;
-    //    desc.pos = P;
-    //    desc.fRot = r.rotDeg;
-    //    isMap = r.layerTag == L"Layer_Map";
-    //    desc.fScale = isMap ? _float3(r.scale.x * 100, r.scale.y * 100, r.scale.z * 100) : r.scale;
-    //    desc.iMapIndex = r.cell;
-    //    desc.strNavigation = r.NavigaionTag;
-    //
-    //    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(r.protoLevel, r.protoTag, r.layerLevel, r.layerTag, &desc))) {
-    //        MSG_BOX("faileditem.");
-    //    }
-    //    else {
-    //        m_Placed.push_back(r);
-    //    }
-    //}
-
     return S_OK;
 }
 
 void CParticle_Setting::Update(_float fTimeDelta)
 {
-
     ImGui::Begin("Tools", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImVec2 btn = { 120, ImGui::GetFrameHeight() };
     if (ImGui::Button("Particle", btn)) {
         m_iLevel = 0;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Emission", btn)) {
+    if (ImGui::Button("Shader", btn)) {
         m_iLevel = 1;
     }
-    ImGui::SameLine();
-    if (ImGui::Button("Shape", btn)) {
-        m_iLevel = 2;
-    }
 
-    static _float fMaxTime = 0;
-    struct MyStruct
+    switch (m_iLevel)
     {
-        _float fTime;
-        _float fX;
-        _float fValue;
-    };
-    static vector<MyStruct> value;
-    static _float values[100] = {};
-    static _int values_offset = 0;
-    static _float refresh_time = 0.0f;
+    case 0:
+    {
+        _float3 f;
 
-    if (ImGui::GetTime() > refresh_time) {
-        values[values_offset] = cosf(ImGui::GetTime() * 2.0f);
-        values_offset = (values_offset + 1) % IM_ARRAYSIZE(values);
-        refresh_time = ImGui::GetTime() + 1.0f / 60.0f;
+        static _float fTime = 10;
+        static _uint  iSelect = 0;
+        static vector<DiagramData> value;
+        static _float values[100] = {};
+
+        CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		desc{};
+        desc.iNumInstance = m_iNumInstance;
+        desc.vCenter = m_fCenter;
+        desc.vRange = m_fRange;
+        desc.vSize = m_fSize;
+        desc.vLifeTime = m_fLifeTime;
+        desc.vSpeed = m_fSpeed;
+        desc.isLoop = m_bisLoop;
+        ImGui::DragInt("NumInstance", &m_iNumInstance, 1, 0, 0);
+        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_fCenter), 0.1f, -100.f, 100.f);
+        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_fRange), 0.1f, -100.f, 100.f);
+        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_fSize), 0.1f, 0.f, 100.f);
+        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_fLifeTime), 0.1f, 0.f, 100.f);
+        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_fSpeed), 0.1f, 0.f, 100.f);
+        ImGui::Checkbox("Loop", &m_bisLoop);
+        if (desc.iNumInstance != m_iNumInstance ||
+            desc.vCenter.x != m_fCenter.x ||
+            desc.vCenter.y != m_fCenter.y ||
+            desc.vCenter.z != m_fCenter.z ||
+            desc.vRange.x != m_fRange.x ||
+            desc.vRange.y != m_fRange.y ||
+            desc.vRange.z != m_fRange.z ||
+            desc.vSize.x != m_fSize.x ||
+            desc.vSize.y != m_fSize.y ||
+            desc.vLifeTime.x != m_fLifeTime.x ||
+            desc.vLifeTime.y != m_fLifeTime.y ||
+            desc.vSpeed.x != m_fSpeed.x ||
+            desc.vSpeed.y != m_fSpeed.y ||
+            desc.isLoop != m_bisLoop) {
+            desc.iNumInstance = m_iNumInstance;
+            desc.vCenter = m_fCenter;
+            desc.vRange = m_fRange;
+            desc.vSize = m_fSize;
+            desc.vLifeTime = m_fLifeTime;
+            desc.vSpeed = m_fSpeed;
+            desc.isLoop = m_bisLoop;
+            Safe_Release(m_pVIBufferCom);
+            m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &desc);
+            m_pVIBufferCom->Initialize(nullptr);
+        }
+
+        _float3 pos;
+        XMStoreFloat3(&pos, m_pTransformCom->Get_State(STATE::POSITION));
+        ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&pos), 0.1f, -1000.f, 1000.f);
+        m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&pos));
+        ImGui::SetNextItemWidth(180);
+
+        _float pitch, yaw, roll;
+        _vector vRight = XMVector4Normalize(m_pTransformCom->Get_State(STATE::RIGHT) / m_pTransformCom->Get_Scale().x);
+        _vector vUp = XMVector4Normalize(m_pTransformCom->Get_State(STATE::UP) / m_pTransformCom->Get_Scale().y);
+        _vector vLook = XMVector4Normalize(m_pTransformCom->Get_State(STATE::LOOK) / m_pTransformCom->Get_Scale().z);
+        _float _11 = XMVectorGetX(vRight);
+        _float _12 = XMVectorGetY(vRight);
+        _float _13 = XMVectorGetZ(vRight);
+
+        _float _21 = XMVectorGetX(vUp);
+        _float _22 = XMVectorGetY(vUp);
+        _float _23 = XMVectorGetZ(vUp);
+
+        _float _31 = XMVectorGetX(vLook);
+        _float _32 = XMVectorGetY(vLook);
+        _float _33 = XMVectorGetZ(vLook);
+
+        pitch = asinf(-_32);
+        if (cosf(pitch) > 0.0001f)
+        {
+            yaw = atan2f(_31, _33);
+            roll = atan2f(_12, _22);
+        }
+        else
+        {
+            yaw = atan2f(-_13, _11);
+            roll = 0.0f;
+        }
+        _float3 rot = { XMConvertToDegrees(pitch),XMConvertToDegrees(yaw), XMConvertToDegrees(roll) };
+        ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&rot), 1.f, 0.f, 360.f);
+        m_pTransformCom->Rotation(XMConvertToRadians(rot.x), XMConvertToRadians(rot.y), XMConvertToRadians(rot.z));
+
+
+        if (iSelect < value.size()) {
+            _float time = 1.f / 100;
+            _float fMax = 5;
+            for (_uint i = 0; i < 100; ++i) {
+                DiagramData* in = {};
+                DiagramData* out = {};
+                for (_uint j = 0; j < (_uint)value.size(); ++j) {
+                    if (value[j].fTime <= time * i) {
+                        in = &value[j];
+                    }
+                    if (value[j].fTime > time * i) {
+                        out = &value[j];
+                        break;
+                    }
+                }
+                if (nullptr == out)
+                    values[i] = in->fValue;
+                else {
+                    _float t = (time * i - in->fTime) / (out->fTime - in->fTime);
+                    if (fabsf(in->fX) >= 90.f || fabsf(out->fX) >= 90.f) {
+                        values[i] = in->fValue;
+                    }
+                    else {
+                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->fValue
+                            + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->fX)) * (out->fTime - in->fTime) * 100)
+                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->fValue
+                            + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->fX)) * (out->fTime - in->fTime) * 100);
+                    }
+                }
+                fMax = max(fMax, fabsf(values[i]));
+            }
+            ImGui::PlotLines("Sine Wave", values, IM_ARRAYSIZE(values), 0,
+                "sample data", -fMax, fMax, ImVec2(0, 100));
+
+
+            char str[10];
+            snprintf(str, sizeof(str), "%d. %.2f", iSelect + 1, value[iSelect].fTime);
+
+            if (ImGui::BeginCombo("TimeValue", str))
+            {
+                for (_uint i = 0; i < (_uint)value.size(); ++i) {
+                    _bool sel = i == iSelect;
+                    snprintf(str, sizeof(str), "%d. %.2f", i + 1, value[i].fTime);
+                    if (ImGui::Selectable(str, sel))
+                        iSelect = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+        }
+        if (ImGui::Button("AddTime", btn)) {
+            if (0 < value.size()) {
+                DiagramData val = value.back();
+                val.fX = 0;
+                value.push_back(val);
+            }
+            else {
+                DiagramData val = { 0,0,0 };
+                value.push_back(val);
+            }
+            iSelect = value.size() - 1;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("DeleteTime", btn)) {
+            _uint iCount = 0;
+            for (auto i = value.begin(); i != value.end();) {
+                if (iCount == iSelect) {
+                    value.erase(i);
+                    break;
+                }
+                ++i;
+                ++iCount;
+            }
+            iSelect = max(iSelect - 1, 0);
+        }
+
+        if (iSelect < value.size()) {
+            if (0 < iSelect)
+                ImGui::DragFloat("Time", &value[iSelect].fTime, 0.01f, value[iSelect - 1].fTime, iSelect != value.size() - 1 ? value[iSelect + 1].fTime : 1);
+            ImGui::DragFloat("fx", &value[iSelect].fX, 1.f, -90.f, 90.f);
+            ImGui::DragFloat("fValue", &value[iSelect].fValue, 0.01f, -100.f, 100.f);
+        }
+    }
+    break;
+    case 1:
+    {
+        _float4 fColor = m_fColor;
+        fColor.x *= 255.f;
+        fColor.y *= 255.f;
+        fColor.z *= 255.f;
+        fColor.w *= 255.f;
+        ImGui::DragFloat4("Color", reinterpret_cast<_float*>(&fColor), 1.f, 0.f, 255.f);
+        m_fColor.x = fColor.x / 255.f;
+        m_fColor.y = fColor.y / 255.f;
+        m_fColor.z = fColor.z / 255.f;
+        m_fColor.w = fColor.w / 255.f;
+    }
+    break;
     }
 
-    ImGui::PlotLines("Sine Wave", values, IM_ARRAYSIZE(values), values_offset,
-        "sample data", -1.0f, 1.0f, ImVec2(0, 80));
     ImGui::End();
-    //pVIBufferCom->Drop(fTimeDelta);
+
+    m_pVIBufferCom->Spread(fTimeDelta);
 }
 
 HRESULT CParticle_Setting::Render()
 {
+    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_fColor, sizeof(_float4))))
+        return E_FAIL;
+
+    m_pShaderCom->Begin(0);
+
+
+    m_pVIBufferCom->Bind_Resources();
+
+    m_pVIBufferCom->Render();
     return S_OK;
 }
 
 void CParticle_Setting::Free()
 {
     __super::Free();
+    Safe_Release(m_pVIBufferCom);
 }
