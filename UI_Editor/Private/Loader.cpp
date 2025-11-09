@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Loader.h"
 
-#include "HUD.h"
+#include "UIButton.h"
 
 #include "GameInstance.h"
 
@@ -86,8 +86,8 @@ HRESULT CLoader::Loading_For_Logo()
 	m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");
 	
 	m_strMessage = TEXT("객체원형를(을) 로딩 중 입니다.");
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_HUD"),
-		CHUD::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"),
+		CUIButton::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("로딩이 완료되었습니다..");
