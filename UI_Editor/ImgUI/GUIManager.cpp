@@ -8,6 +8,7 @@
 #include "GameObject.h"
 
 #include "UIHUD.h"
+#include "UIBase.h"
 
 // GUI 매니저 싱글톤 구현
 IMPLEMENT_SINGLETON(CGUIManager);
@@ -66,14 +67,12 @@ void CGUIManager::Update(_float fTimeDelta)
 
     if (m_iPrevLevel != m_iCurrentLevel)
     {
-        //m_pLayers.clear();
+        m_pLayers.clear();
 
         m_pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
         if (m_pUIHUD == nullptr)
             return;
-
-        m_pLayers = m_pUIHUD->Get_Layers();
 
         m_iPrevLevel = m_iCurrentLevel;
     }
@@ -116,20 +115,20 @@ void CGUIManager::ViewMode()
 
     GUI::PushID("ViewMode");
 
-    _char str[MAX_PATH]{};
+    _char sz[MAX_PATH]{};
 
-    CStringHelper::ConvertWideToUTF(m_szCurViewMode.c_str(), str);
+    CStringHelper::ConvertWideToUTF(m_szCurViewMode.c_str(), sz);
 
-    if (GUI::BeginCombo("", str))
+    if (GUI::BeginCombo("", sz))
     {
         for (size_t i = 0; i < m_ViewModes.size(); ++i)
         {
-            _char strCur[MAX_PATH]{};
+            _char szCur[MAX_PATH]{};
 
-            CStringHelper::ConvertWideToUTF(m_ViewModes[i].c_str(), strCur);
+            CStringHelper::ConvertWideToUTF(m_ViewModes[i].c_str(), szCur);
 
-            const bool is_selected = (strCur == str);
-            if (GUI::Selectable(strCur, is_selected))
+            const bool is_selected = (szCur == sz);
+            if (GUI::Selectable(szCur, is_selected))
                 m_szCurViewMode = m_ViewModes[i];
 
             if (is_selected)
@@ -175,15 +174,18 @@ void CGUIManager::Editor_Window()
             }
         }
 
-        m_LayerTags.push_back(TEXT("Select Layer"));
+        m_LayerTags.push_back(TEXT("Add Layer"));
 
         for (auto& pLayer : m_pLayers)
         {
             m_LayerTags.push_back(pLayer.first);
         }
 
-        m_strCurrentProtoTag = m_ProtoTags[0];
-        m_strCurrentLayerTag = m_LayerTags[0];
+        m_szCurrentProtoTag = m_ProtoTags[0];
+        m_szCurrentLayerTag = m_LayerTags[0];
+
+        strcpy_s(m_szCloneProtoTag, sizeof(m_szCloneProtoTag), "");
+        strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), "");
 
         GUI::OpenPopup("Clone Object");
     }
@@ -216,24 +218,25 @@ void CGUIManager::Editor_Window()
 
 void CGUIManager::Show_UIObject_List()
 {
+    m_pLayers = m_pUIHUD->Get_Layers();
+
     for (auto& pLayer : m_pLayers)
     {
-        _char strLayerTag[MAX_PATH]{};
-        CStringHelper::ConvertWideToUTF(pLayer.first.c_str(), strLayerTag);
+        _char szLayerTag[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(pLayer.first.c_str(), szLayerTag);
 
-        if (GUI::TreeNode(strLayerTag))
+        if (GUI::TreeNode(szLayerTag))
         {
             const auto* pUIObjects = pLayer.second->Get_UserInterfaces();
 
             if (pUIObjects)
             {
-                _int i = 0;
                 for (const auto& pObj : *pUIObjects)
                 {
-                    _char strUITag[MAX_PATH]{};
-                    CStringHelper::ConvertWideToUTF((pObj.first + TEXT(" - ") + to_wstring(i)).c_str(), strUITag);
+                    _char szUITag[MAX_PATH]{};
+                    CStringHelper::ConvertWideToUTF(pObj.first.c_str(), szUITag);
 
-                    if (GUI::TreeNode(strUITag))
+                    if (GUI::TreeNode(szUITag))
                     {
                         if (GUI::IsItemClicked())
                         {
@@ -251,21 +254,21 @@ void CGUIManager::Show_UIObject_List()
 
 void CGUIManager::Clone_UI()
 {
-    _char strCurProtoTag[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(m_strCurrentProtoTag.c_str(), strCurProtoTag);
+    _char szCurProtoTag[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(m_szCurrentProtoTag.c_str(), szCurProtoTag);
 
-    if (GUI::BeginCombo("Proto Tag", strCurProtoTag)) // 드롭다운 시작
+    if (GUI::BeginCombo("Proto Tag", szCurProtoTag)) // 드롭다운 시작
     {
         for (int i = 1; i < m_ProtoTags.size(); ++i)
         {
-            bool is_selected = (m_strCurrentProtoTag == m_ProtoTags[i]);
+            bool is_selected = (m_szCurrentProtoTag == m_ProtoTags[i]);
 
-            _char str[MAX_PATH]{};
-            CStringHelper::ConvertWideToUTF(m_ProtoTags[i].c_str(), str);
+            _char szTag[MAX_PATH]{};
+            CStringHelper::ConvertWideToUTF(m_ProtoTags[i].c_str(), szTag);
 
-            if (GUI::Selectable(str, is_selected))
+            if (GUI::Selectable(szTag, is_selected))
             {
-                m_strCurrentProtoTag = m_ProtoTags[i];
+                m_szCurrentProtoTag = m_ProtoTags[i];
             }
 
             if (is_selected)
@@ -274,27 +277,96 @@ void CGUIManager::Clone_UI()
         GUI::EndCombo();
     }
 
-    _char strCurLayerTag[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(m_strCurrentLayerTag.c_str(), strCurLayerTag);
+    _char szCurLayerTag[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(m_szCurrentLayerTag.c_str(), szCurLayerTag);
 
-    if (GUI::BeginCombo("Layer Tag", strCurLayerTag)) // 드롭다운 시작
+    if (GUI::BeginCombo("Layer Tag", szCurLayerTag)) // 드롭다운 시작
     {
         for (int i = 1; i < m_LayerTags.size(); ++i)
         {
-            bool is_selected = (m_strCurrentLayerTag == m_LayerTags[i]);
+            bool is_selected = (m_szCurrentLayerTag == m_LayerTags[i]);
 
-            _char str[MAX_PATH]{};
-            CStringHelper::ConvertWideToUTF(m_LayerTags[i].c_str(), str);
+            _char szTag[MAX_PATH]{};
+            CStringHelper::ConvertWideToUTF(m_LayerTags[i].c_str(), szTag);
 
-            if (GUI::Selectable(str, is_selected))
+            if (GUI::Selectable(szTag, is_selected))
             {
-                m_strCurrentLayerTag = m_LayerTags[i];
+                m_szCurrentLayerTag = m_LayerTags[i];
+
+                if (i == 0)
+                    strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), "");
+                else
+                    strcpy_s(m_szCloneLayerTag, sizeof(m_szCloneLayerTag), szTag);
             }
 
             if (is_selected)
                 GUI::SetItemDefaultFocus(); // 기본 포커스 설정
         }
         GUI::EndCombo();
+    }
+
+    if (m_szCurrentLayerTag == TEXT("Add Layer"))
+    {
+        GUI::InputText("Input Layer Tag", m_szCloneLayerTag, IM_ARRAYSIZE(m_szCloneLayerTag));
+    }
+
+    if (GUI::Button("Clone"))
+    {
+        if (!(m_iCurrentLevel < 0 || m_iCurrentLevel >= ENUM_CLASS(LEVEL::END))
+            && !(m_szCloneLayerTag == ""))
+        {
+            _wstring szProto{};
+            szProto = TEXT("Prototype_GameObject_UI_") + m_szCurrentProtoTag;
+
+           
+            _tchar szLayerTag[MAX_PATH];
+            CStringHelper::ConvertUTFToWide(m_szCloneLayerTag, szLayerTag);
+
+            _uint iObjectId = 0;
+
+            auto pLayer = m_pUIHUD->Find_Layer(szLayerTag);
+
+            if (pLayer != nullptr)
+                iObjectId = pLayer->Get_UserInterfaces()->size();
+
+            _wstring szUITag{};
+            szUITag = TEXT("UI_") + m_szCurrentProtoTag + TEXT("_") + to_wstring(iObjectId);
+
+            /*
+            CUIBase* pUIObject = nullptr;
+
+            if (pLayer != nullptr)
+                pUIObject = dynamic_cast<CUIBase*>(pLayer->Find_GameObject(szUITag.c_str()));
+
+            CUIBase::UIBASE_DESC* pDesc{};
+            pDesc->iObjectID = m_iUICnt;
+            */
+
+            if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto.c_str(), szLayerTag, szUITag.c_str())))
+                return;
+
+            if (szLayerTag != TEXT(""))
+                m_szCurrentLayerTag = szLayerTag;
+
+           /* if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(m_iCloneProtoLevel, szProto, m_iCloneLayerLevel, m_szCloneLayerTag, &Desc)))
+                return;*/
+        }
+        else
+        {
+            GUI::OpenPopup("Clone Error");
+            if (GUI::BeginPopup("Clone Error"))
+            {
+                GUI::Text("클론 생성 실패");
+                GUI::PushID("Clone Error");
+                if (GUI::Button("확인")) {
+                    GUI::CloseCurrentPopup();
+                }
+                GUI::PopID();
+                GUI::EndPopup();
+            }
+        }
+
+        GUI::CloseCurrentPopup();
     }
 }
 #pragma endregion

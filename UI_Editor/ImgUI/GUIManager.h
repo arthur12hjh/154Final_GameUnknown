@@ -38,6 +38,8 @@ private:
 	_uint m_iCurrentLevel = 0;
 	_uint m_iPrevLevel = 0;
 
+	_uint m_iUICnt = 0;
+
 	class Client::CUIHUD* m_pUIHUD{ nullptr };
 
 	vector<_wstring> m_ViewModes{};
@@ -45,10 +47,15 @@ private:
 
 	unordered_map<_wstring, CHUDLayer*>	m_pLayers;
 
+	_char m_szCloneProtoTag[MAX_PATH]{};
+	_char m_szCloneLayerTag[MAX_PATH]{};
+	_uint m_iCloneProtoLevel = { 0 };
+	_uint m_iCloneLayerLevel = { 0 };
+
 	vector<_wstring> m_ProtoTags = {};
 	vector<_wstring> m_LayerTags = {};
-	_wstring m_strCurrentProtoTag{};
-	_wstring m_strCurrentLayerTag{};
+	_wstring m_szCurrentProtoTag{};
+	_wstring m_szCurrentLayerTag{};
 
 private:
 	void ViewMode();

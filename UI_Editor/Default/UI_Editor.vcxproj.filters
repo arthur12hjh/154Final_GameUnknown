@@ -45,9 +45,6 @@
     <Filter Include="999. CPP From Client\00. UIObjects">
       <UniqueIdentifier>{9326214e-d79f-491f-878d-ddbe7ea10857}</UniqueIdentifier>
     </Filter>
-    <Filter Include="999. CPP From Client\01. Loader">
-      <UniqueIdentifier>{1b124910-c097-4562-8c69-c52e7327c015}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
