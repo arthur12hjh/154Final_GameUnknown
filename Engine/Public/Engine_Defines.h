@@ -91,6 +91,11 @@ namespace Engine
 	const static wstring g_strTransformTag = { TEXT("Com_Transform")};
 }
 
+#include "Physx/PxPhysics.h"
+#include "Physx/PxPhysicsAPI.h"
+
+using namespace physx;
+
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
