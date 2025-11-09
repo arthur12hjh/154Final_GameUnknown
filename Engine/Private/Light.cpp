@@ -1,11 +1,25 @@
 #include "Light.h"
 #include "Shader.h"
+
 #include "VIBuffer.h"
 #include "SphereCollider.h"
+#include "OBBCollider.h"
 
+#ifdef _DEBUG
+CLight::CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	m_pDevice(pDevice),
+	m_pContext(pContext)
+{
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pContext);
+}
+#elif
 CLight::CLight()
 {
+
 }
+#endif // _DEBUG
+
 
 HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 {
@@ -26,6 +40,12 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 
 	WorldMat.r[3] = XMLoadFloat4(&m_LightDesc.vPosition);
 	XMStoreFloat4x4(&m_WorldMat, WorldMat);
+
+	if(FAILED(CreateDebugCollider()))
+		return E_FAIL;
+	
+	
+
 #endif // _DEBUG
 
     return S_OK;
@@ -67,11 +87,55 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 #ifdef _DEBUG
 void CLight::Debug_Render()
 {
-	m_pCollier->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
-	m_pCollier->Render();
+	m_pCollider->Render();
 }
 #endif // _DEBUG
 
+#ifdef _DEBUG
+HRESULT CLight::CreateDebugCollider()
+{
+	
+	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
+	{
+		m_pCollider = COBBCollider::Create(m_pDevice, m_pContext);
+		if (nullptr == m_pCollider)
+			return E_FAIL;
+
+		_float3 vPosition = {};
+		memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
+		static_cast<COBBCollider*>(m_pCollider)->SetCollision(vPosition, {}, {1.f, 0.3f, 1.f});
+	}
+	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
+	{
+
+	}
+	else
+	{
+		m_pCollider = CSphereCollider::Create(m_pDevice, m_pContext);
+		if (nullptr == m_pCollider)
+			return E_FAIL;
+
+		_float3 vPosition = {};
+		memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
+		static_cast<CSphereCollider*>(m_pCollider)->SetCollision(vPosition, m_LightDesc.fRange);
+	}
+
+	m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
+	return S_OK;
+}
+CLight* CLight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHT_DESC& LightDesc)
+{
+	CLight* pInstance = new CLight(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize(LightDesc)))
+	{
+		MSG_BOX("Failed to Created : CLight");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+#elif
 CLight* CLight::Create(const LIGHT_DESC& LightDesc)
 {
 	CLight* pInstance = new CLight();
@@ -84,10 +148,16 @@ CLight* CLight::Create(const LIGHT_DESC& LightDesc)
 
 	return pInstance;
 }
+#endif // _DEBUG
 
 void CLight::Free()
 {
     __super::Free();
 
+#ifdef _DEBUG
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
+	Safe_Release(m_pCollider);
+#endif
 
 }
