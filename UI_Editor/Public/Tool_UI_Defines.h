@@ -1,6 +1,5 @@
 #pragma once
 
-#define JSON nlohmann::json
 #define GUI ImGui
 
 namespace Tool_UI

@@ -513,9 +513,6 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{
 		if (nullptr != pRenderObject)
@@ -525,9 +522,6 @@ void CRenderer::Render_UI()
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::UI)].clear();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Composite_RT_ToBackBuffer()
