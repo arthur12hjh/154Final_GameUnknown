@@ -109,6 +109,36 @@
     <Filter Include="30.ImGui\DebugCheat">
       <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader">
+      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
+      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Point">
+      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
+      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects">
+      <UniqueIdentifier>{ce60062b-bb86-4f43-9bbc-c1a57894613e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIHUD">
+      <UniqueIdentifier>{17efc4d9-b602-4cc7-a028-b97a2072599b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase">
+      <UniqueIdentifier>{a4a4febc-5696-48b7-b472-edb18597c008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
+      <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel">
+      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -222,6 +252,21 @@
     <ClInclude Include="..\public\DebugCheatUI.h">
       <Filter>30.ImGui\DebugCheat</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DebugHierarchy.h">
+      <Filter>30.ImGui\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIHUD.h">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBase.h">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIButton.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\ShaderTestModel.h">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -322,6 +367,21 @@
     <ClCompile Include="..\private\DebugCheatUI.cpp">
       <Filter>30.ImGui\DebugCheat</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DebugHierarchy.cpp">
+      <Filter>30.ImGui\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHUD.cpp">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBase.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIButton.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\ShaderTestModel.cpp">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -344,6 +404,15 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Point</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Rect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Spread</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

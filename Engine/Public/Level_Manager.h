@@ -18,6 +18,7 @@ public:
 	HRESULT				Render();
 
 	_uint				GetCurrentLevelID();
+	CLevel*				GetCurrentLevel();
 
 private:
 	class CLevel*			m_pCurrentLevel = { nullptr };

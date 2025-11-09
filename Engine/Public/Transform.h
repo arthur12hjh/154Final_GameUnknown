@@ -30,9 +30,7 @@ public:
 		return &m_WorldMatrix;
 	}
 
-	void Set_State(STATE eState, _fvector vState) {
-		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
-	}
+	void Set_State(STATE eState, _vector vState);
 
 	void Set_Scale(_float fX, _float fY, _float fZ);
 

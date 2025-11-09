@@ -185,8 +185,10 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
     if (FAILED(ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)))
         return E_FAIL;
+#endif // _DEBUG
 
     switch (message)
     {

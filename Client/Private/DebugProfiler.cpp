@@ -17,6 +17,7 @@ HRESULT CDebugProfiler::Initialize()
 
 void CDebugProfiler::Update(_float fTimeDeleta)
 {
+#ifdef _DEBUG
 	_bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
 	_float fLoopTime = 0.f;
 	ImGui::Begin("Profiler", &bIsOpen);
@@ -54,7 +55,8 @@ void CDebugProfiler::Update(_float fTimeDeleta)
 	ImGui::End();
 
 	if (!bIsOpen)
-		m_eVisibility = VISIBILITY::HIDDEN;
+		m_eVisibility = VISIBILITY::HIDDEN; 
+#endif // _DEBUG
 }
 
 HRESULT CDebugProfiler::Render()

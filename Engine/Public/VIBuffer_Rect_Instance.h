@@ -11,8 +11,17 @@ public:
 	{		
 		_float2			vLifeTime;
 		_float2			vSpeed;
-		_bool			isLoop;
 	}RECT_INSTANCE_DESC;
+	typedef struct tagVertexRectInstance_Particle final : public VTX_INSTANCE_PARTICLE
+	{
+		_float2 vSpeeds;
+	}VTX_INSTANCE_RECT_PARTICLE;
+
+	struct RectConstBufferData
+	{
+		_float2 fTimeDelta;
+		XMINT2	iLoopAndCount;
+	};
 private:
 	CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Rect_Instance(const CVIBuffer_Rect_Instance& Prototype);
@@ -21,15 +30,21 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(const INSTANCE_DESC* pInstanceDesc) override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Bind_Resources() override;
 public:
 	virtual void Drop(_float fTimeDelta) override;
 
 
 private:
-	VTX_INSTANCE_PARTICLE* m_pInstanceVertices = { nullptr };
+	VTX_INSTANCE_RECT_PARTICLE* m_pInstanceVertices = { nullptr };
+	ID3D11ComputeShader* m_pDropShaderCom = nullptr;
+	RectConstBufferData	m_CBData = {};
 
-	_float* m_pSpeeds = { nullptr };
-	_bool	m_isLoop = { false };
+	ID3D11Buffer* m_pResourceBuffer[2] = { nullptr, nullptr };
+	ID3D11ShaderResourceView* m_pPointInputSRV[2] = { nullptr, nullptr };
+	ID3D11UnorderedAccessView* m_pPointOutUAV[2] = { nullptr, nullptr };
+	ID3D11Buffer* m_pConstPointBuffer = nullptr;
+	_bool	m_bFlag = { true };
 
 
 public:

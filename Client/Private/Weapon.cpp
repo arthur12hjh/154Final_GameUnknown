@@ -146,6 +146,8 @@ HRESULT CWeapon::Ready_Components()
 HRESULT CWeapon::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;	
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
