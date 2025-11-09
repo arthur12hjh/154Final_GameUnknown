@@ -13,6 +13,7 @@ vector g_vLightPos;
 float g_fLightRange;
 vector g_vCamPosition;
 
+texture2D g_RimLightTexture;
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
@@ -22,6 +23,7 @@ texture2D g_ShadowTexture;
 texture2D g_BlurTexture;
 texture2D g_BlurXTexture;
 texture2D g_BlurFinalTexture;
+texture2D g_OutlineTexture;
 
 texture2D g_SceneTexture;
 texture2D g_DistortionTexture;
@@ -145,8 +147,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
     
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vRimLight = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vBackBuffer = vDiffuse * vShade + vSpecular;
+    Out.vBackBuffer = vDiffuse * vShade + vRimLight;
+    //vSpecular + vRimLight;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
@@ -176,12 +180,50 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    //블러 연산
+    
+    //외곽선 연산
+    Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
+    
+    //블러 연산. 얜 무조건 마지막에 있는게 맞는거같아서 여기 뒀는데 바꾸고싶으면 디코 ㄱ.
     Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
     
     return Out;
 }
 
+PS_OUT_BACKBUFFER PS_MAIN_OUTLINE(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+  
+    Out.vBackBuffer = float4(0.f, 0.f, 0.f, 0.f);
+    
+    for (int iIdxY = 0; iIdxY < 3; ++iIdxY)
+    {
+        for (int iIdxX = 0; iIdxX < 3; ++iIdxX)
+        {
+            Out.vBackBuffer += g_fLaplacianMask[iIdxY * 3 + iIdxX] * (g_NormalTexture.Sample(DefaultSampler, In.vTexcoord +
+            float2(g_fPixelsX[iIdxY * 3 + iIdxX] * 1.f / 1280.f, g_fPixelsY[iIdxY * 3 + iIdxX] * 1.f / 720.f)));
+        }
+    }
+    
+    /*
+    
+    */
+    // float3(0.3f, 0.59f, 0.11f)) 가 가지는 의미 
+    // -> 인간이 느끼는 색상 별 예민도. 이 값으로 내적하면 그레이스케일 형태의 (rgb가 같은) 색이 뽑혀나온다고 한다.
+    float fGrayColor = 1 - dot(Out.vBackBuffer.rgb, float3(0.3f, 0.59f, 0.11f));
+
+    // 다 살리면 너무 민감하니까 성분이 약한 부분은 바로 죽여주기.
+    if (fGrayColor > 1.f)
+        fGrayColor = 1.f;
+    
+    if(fGrayColor < 0.f)
+        fGrayColor = 0.f;
+    
+    
+    Out.vBackBuffer = float4(fGrayColor, fGrayColor, fGrayColor, 1.f);
+
+    return Out;
+}
 
 PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
 {
@@ -285,6 +327,16 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
     // idx 4
+    pass Outline
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
+    }
+    // idx 5
     pass Blur_X
     {
         SetRasterizerState(RS_Default);
@@ -294,7 +346,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_X();
     }
-    // idx 5 
+    // idx 6
     pass Blur_Final
     {
         SetRasterizerState(RS_Default);
@@ -304,7 +356,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();
     }
-    // idx 6
+    // idx 7
     pass Distortion
     {
         SetRasterizerState(RS_Default);
@@ -315,7 +367,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
     }
 
-    // idx 7
+    // idx 8
     pass Scene
     {
         SetRasterizerState(RS_Default);

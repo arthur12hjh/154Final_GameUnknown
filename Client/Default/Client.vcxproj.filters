@@ -91,6 +91,7 @@
     <Filter Include="30.ImGui\Profiler">
       <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
     </Filter>
+<<<<<<< Updated upstream
     <Filter Include="30.ImGui\Manager">
       <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
     </Filter>
@@ -120,6 +121,10 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
       <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
+=======
+    <Filter Include="02.GameObjects\ShaderTestModel">
+      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+>>>>>>> Stashed changes
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +227,7 @@
     <ClInclude Include="..\public\DebugProfiler.h">
       <Filter>30.ImGui\Profiler</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
     <ClInclude Include="..\public\ImGuiManager.h">
       <Filter>30.ImGui\Manager</Filter>
     </ClInclude>
@@ -242,6 +248,10 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIButton.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+=======
+    <ClInclude Include="..\Public\ShaderTestModel.h">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+>>>>>>> Stashed changes
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +344,7 @@
     <ClCompile Include="..\private\DebugProfiler.cpp">
       <Filter>30.ImGui\Profiler</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
     <ClCompile Include="..\private\ImGuiManager.cpp">
       <Filter>30.ImGui\Manager</Filter>
     </ClCompile>
@@ -351,6 +362,10 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIButton.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+=======
+    <ClCompile Include="..\Private\ShaderTestModel.cpp">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+>>>>>>> Stashed changes
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
