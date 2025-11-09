@@ -55,6 +55,14 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
 
             if (opened)
             {
+                // 忙式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式忖
+                // 弛  class Logic                        弛
+                // 弛  1. ImGui TreeNode Debug            弛
+                // 弛  2. JH Here Code                    弛
+                // 弛  3. JH Here Code                    弛
+                // 弛  4. JH Here Code                    弛
+                // 弛  5. JH Here Code                    弛
+                // 戌式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式戎
 
                 ImGui::TreePop();
             }

@@ -44,14 +44,14 @@ public:
 	CTransform*					GetTransform() { return m_pTransformCom; }
 
 protected:
-	int							m_iObjectID;
-	ID3D11Device*				m_pDevice = { nullptr };
-	ID3D11DeviceContext*		m_pContext = { nullptr };
-	class CGameInstance*		m_pGameInstance = { nullptr };
-	VISIBILITY					m_eVisibility = { VISIBILITY::VISIBLE };
+	int											m_iObjectID;
+	ID3D11Device*								m_pDevice = { nullptr };
+	ID3D11DeviceContext*						m_pContext = { nullptr };
+	class CGameInstance*						m_pGameInstance = { nullptr };
+	VISIBILITY									m_eVisibility = { VISIBILITY::VISIBLE };
 
-	CTransform*					m_pTransformCom = { nullptr };
-	_bool						m_isDead = { false };
+	CTransform*									m_pTransformCom = { nullptr };
+	_bool										m_isDead = { false };
 
 	map<const _wstring, class CComponent*>		m_Components;
 

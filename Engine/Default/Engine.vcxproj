@@ -179,6 +179,7 @@ popd</Command>
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionManager.h" />
     <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\public\ComputeShader.h" />
     <ClInclude Include="..\public\ContainerObject.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
@@ -252,6 +253,7 @@ popd</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionManager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\private\ComputeShader.cpp" />
     <ClCompile Include="..\private\ContainerObject.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
