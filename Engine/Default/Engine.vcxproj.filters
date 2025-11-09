@@ -214,6 +214,9 @@
     <ClInclude Include="..\public\JsonParser.h">
       <Filter>01.Utility\104.Json</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ComputeShader.h">
+      <Filter>01.Utility\03.Components\Shader\Compute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -404,6 +407,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JsonParser.cpp">
       <Filter>01.Utility\104.Json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ComputeShader.cpp">
+      <Filter>01.Utility\03.Components\Shader\Compute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -625,6 +631,9 @@
     </Filter>
     <Filter Include="99.Defines">
       <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Shader\Compute">
+      <UniqueIdentifier>{f70290d7-8069-4762-8383-23523b3cf611}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

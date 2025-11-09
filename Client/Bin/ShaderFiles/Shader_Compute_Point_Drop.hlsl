@@ -38,7 +38,7 @@ void CS(uint3 Gid : SV_GroupID,
 
     if (1 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
     {
-        g_Out[DTid.x].vTranslation.y -= Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
+        g_Out[DTid.x].vTranslation.y += Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
         g_Out[DTid.x].vLifeTime.x = 0;
     }
 }
