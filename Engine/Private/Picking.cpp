@@ -75,9 +75,16 @@ _bool CPicking::isPicking(_float3* pOut)
 	vMousePos.y = m_ptMouse.y / (m_iNumPixelH * -0.5f) + 1.f;
 	vMousePos.z = m_pPixels[iMouseIndex].x;
 
+	wchar_t szBuffer[256];
+	wsprintfW(szBuffer, L"Screen Z (Depth): %.5f\n", vMousePos.z);
+	OutputDebugStringW(szBuffer);
+
 	XMStoreFloat3(&vMousePos, XMVector3TransformCoord(XMLoadFloat3(&vMousePos), m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ)));
 	XMStoreFloat3(&vMousePos, XMVector3TransformCoord(XMLoadFloat3(&vMousePos), m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW)));
 	*pOut = vMousePos;
+
+	wsprintfW(szBuffer, L"World Picked: (%.2f, %.2f, %.2f)\n", pOut->x, pOut->y, pOut->z);
+	OutputDebugStringW(szBuffer);
 
 	return true;
 }

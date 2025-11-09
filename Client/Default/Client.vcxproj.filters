@@ -124,6 +124,21 @@
     <Filter Include="97.ShaderFiles\ComputeShader\Spread">
       <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects">
+      <UniqueIdentifier>{ce60062b-bb86-4f43-9bbc-c1a57894613e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIHUD">
+      <UniqueIdentifier>{17efc4d9-b602-4cc7-a028-b97a2072599b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase">
+      <UniqueIdentifier>{a4a4febc-5696-48b7-b472-edb18597c008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
+      <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel">
+      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -240,6 +255,18 @@
     <ClInclude Include="..\public\DebugHierarchy.h">
       <Filter>30.ImGui\Hierarchy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIHUD.h">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBase.h">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIButton.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\ShaderTestModel.h">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -342,6 +369,18 @@
     </ClCompile>
     <ClCompile Include="..\private\DebugHierarchy.cpp">
       <Filter>30.ImGui\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHUD.cpp">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBase.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIButton.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\ShaderTestModel.cpp">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

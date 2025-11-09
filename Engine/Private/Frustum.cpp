@@ -28,7 +28,7 @@ void CFrustum::Update()
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
 
-
+	/* 투영 스페이스 (3차원공간) 에서 월드로 내려줌. 절두체의 형태로 바뀐다.*/
 	for (size_t i = 0; i < 8; i++)
 	{
 		XMStoreFloat4(&m_vWorldPoints[i], 

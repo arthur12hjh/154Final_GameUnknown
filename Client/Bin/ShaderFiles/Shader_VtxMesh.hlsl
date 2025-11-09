@@ -2,9 +2,10 @@
 #include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+float4 g_vCamPosition;
+
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
-
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -46,6 +47,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     return Out;
 }
+
 struct VS_OUT_SHADOW
 {
     float4 vPosition : SV_POSITION;
@@ -88,6 +90,7 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
+    float4 vRimLight : SV_TARGET3;
 };
 
 

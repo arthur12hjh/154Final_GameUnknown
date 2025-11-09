@@ -9,14 +9,26 @@ HRESULT CHUDLayer::Initialize_Layer()
 
 void CHUDLayer::Priority_Update(_float fDeletaTime)
 {
+    for (auto& iter : m_UserInterfaces)
+    {
+        iter.second->Priority_Update(fDeletaTime);
+    }
 }
 
 void CHUDLayer::Update(_float fDeletaTime)
 {
+    for (auto& iter : m_UserInterfaces)
+    {
+        iter.second->Update(fDeletaTime);
+    }
 }
 
 void CHUDLayer::Late_Update(_float fDeletaTime)
 {
+    for (auto& iter : m_UserInterfaces)
+    {
+        iter.second->Late_Update(fDeletaTime);
+    }
 }
 
 HRESULT CHUDLayer::ADD_GameObject(const WCHAR* UITag, CGameObject* pUserInterface)

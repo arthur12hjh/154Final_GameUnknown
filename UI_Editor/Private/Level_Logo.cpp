@@ -4,6 +4,9 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#include "UIHUD.h"
+
+#include "GUIManager.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -14,10 +17,14 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 
 HRESULT CLevel_Logo::Initialize()
 {
+	m_pGuiManager = CGUIManager::GetInstance();
+
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
 	//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
+
+	m_pGuiManager->Set_Current_HUD(dynamic_cast<CUIHUD*>(GetHUD()));
 
 	return S_OK;
 }
@@ -29,6 +36,8 @@ void CLevel_Logo::Update(_float fTimeDelta)
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
+
+	__super::Update(fTimeDelta);
 }
 
 HRESULT CLevel_Logo::Render()
@@ -40,8 +49,14 @@ HRESULT CLevel_Logo::Render()
 
 HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_HUD"),
-		ENUM_CLASS(LEVEL::LOGO), strLayerTag)))
+	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
+
+	SetHUD(pUIHUD);
+
+	if (pUIHUD == nullptr)
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Button"))))
 		return E_FAIL;
 
 	return S_OK;
