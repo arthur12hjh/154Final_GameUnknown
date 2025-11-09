@@ -23,6 +23,10 @@
 
 #include "Body_Player.h"
 
+#ifdef _DEBUG
+#include "ShaderTestModel.h"
+#endif
+
 #include "UIButton.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -332,6 +336,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sprite_Explosion"),
 		CSpriteEffect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+#ifdef _DEBUG
+	/* For.Prototype_GameObject_ShaderTestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+		CShaderTestModel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#endif
 
 	m_strMessage = TEXT("로딩이 완료되었습니다..");
 
