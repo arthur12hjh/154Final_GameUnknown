@@ -15,6 +15,8 @@ public:
 	enum class SHADER_DEFERRED_IDX {
 		//여기까진 조명처리
 		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		OUTLINE,
+
 		//후처리 셰이딩. 일단 블러만 추가
 		BLUR_X, BLUR_FINAL, DISTORTION,
 
@@ -27,11 +29,6 @@ public:
 		_float fSizeX = {};
 	} BLUR_DESC;
 
-	/* 디스토션 데스크. 강도 세팅 */
-	typedef struct tagDistortionDesc {
-		_float fIntensity = {};
-	} DISTORTION_DESC;
-
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
@@ -41,7 +38,7 @@ public:
 	HRESULT Ready_RenderTargets();
 	HRESULT Ready_MRTs();
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	void Render();
+	void	Render();
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
@@ -51,10 +48,12 @@ private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
+	/* 사실적인 림라이트를 구현하려면 조명 연산 도중에 들어가는게 맞긴한데.. */
+	/* NonBlend에 대해서 Desc하나 만들것 */
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
-	ID3D11DepthStencilView* m_pShadowDSV = { nullptr };
-
+	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
+	ID3D11DepthStencilView*				m_pOutlineDSV = { nullptr };
 #ifdef _DEBUG
 private:
 	list<class CComponent*>				m_DebugComponents;
