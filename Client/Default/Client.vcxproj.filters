@@ -112,6 +112,18 @@
     <Filter Include="30.ImGui\Hierarchy">
       <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader">
+      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
+      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Point">
+      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
+      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -353,6 +365,15 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Point</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Rect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Spread</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

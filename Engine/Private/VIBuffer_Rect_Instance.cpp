@@ -9,8 +9,8 @@ CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11De
 CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(const CVIBuffer_Rect_Instance& Prototype)
 	: CVIBuffer_Instance { Prototype }
 	, m_pInstanceVertices { Prototype.m_pInstanceVertices }
-	, m_pSpeeds { Prototype.m_pSpeeds } 
-	, m_isLoop { Prototype.m_isLoop }
+	, m_CBData{ Prototype.m_CBData }
+	, m_pDropShaderCom{ Prototype.m_pDropShaderCom }
 {
 
 }
@@ -100,21 +100,18 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 
 	m_isLoop = pDesc->isLoop;
 	m_iNumInstance = pDesc->iNumInstance;
-	m_iInstanceStride = sizeof(VTX_INSTANCE_PARTICLE);
+	m_iInstanceStride = sizeof(VTX_INSTANCE_RECT_PARTICLE);
 	m_iNumIndexPerInstance = 6;
 
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
-	m_InstanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_InstanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_InstanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	m_InstanceBufferDesc.StructureByteStride = m_iInstanceStride;
-	m_InstanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//m_InstanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_InstanceBufferDesc.MiscFlags = 0;
 
-	m_pInstanceVertices = new VTX_INSTANCE_PARTICLE[m_iNumInstance];
-	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_PARTICLE) * m_iNumInstance);
-
-	m_pSpeeds = new _float[m_iNumInstance];
-	ZeroMemory(m_pSpeeds, sizeof(_float) * m_iNumInstance);
+	m_pInstanceVertices = new VTX_INSTANCE_RECT_PARTICLE[m_iNumInstance];
+	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_RECT_PARTICLE) * m_iNumInstance);
 
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
@@ -132,15 +129,48 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 
 		m_pInstanceVertices[i].vLifeTime = _float2(0.0f, m_pGameInstance->Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y));
 
-
-
-		m_pSpeeds[i] = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
+		m_pInstanceVertices[i].vSpeeds.x = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
 	}
 
 	m_InstanceInitialDesc.pSysMem = m_pInstanceVertices;
 
+	m_CBData.iLoopAndCount.x = pDesc->isLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.y = m_iNumInstance;
+
 #pragma endregion
 
+	_uint HLSLFlags = {};
+	ID3DBlob* pBlobVS = nullptr;
+	ID3DBlob* pBlobCode = nullptr;
+#ifdef _DEBUG
+	HLSLFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	HLSLFlags = D3DCOMPILE_OPTIMIZATION_LEVEL3;
+#endif
+
+	if (FAILED(D3DCompileFromFile(
+		TEXT("../Bin/ShaderFiles/Shader_Compute_Rect_Drop.hlsl"),
+		nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		"CS",
+		"cs_5_0",
+		HLSLFlags,
+		0,
+		&pBlobCode,
+		&pBlobVS)))
+	{
+		if (pBlobVS) {
+			OutputDebugStringA((char*)pBlobVS->GetBufferPointer());
+			pBlobVS->Release();
+		}
+		return E_FAIL;
+	}
+	if (FAILED(m_pDevice->CreateComputeShader(
+		pBlobCode->GetBufferPointer(),
+		pBlobCode->GetBufferSize(),
+		nullptr,
+		&m_pDropShaderCom)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -148,33 +178,89 @@ HRESULT CVIBuffer_Rect_Instance::Initialize(void* pArg)
 {
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
-	
 
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.ByteWidth = (sizeof(RectConstBufferData) + 15) / 16 * 16;
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = &m_CBData;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &m_pConstPointBuffer)))
+		return E_FAIL;
+
+	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
+	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	TrialInitBufferDesc.ByteWidth = sizeof(VTX_INSTANCE_RECT_PARTICLE) * m_iNumInstance;
+	TrialInitBufferDesc.StructureByteStride = sizeof(VTX_INSTANCE_RECT_PARTICLE);
+	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA SubResource = {};
+	SubResource.pSysMem = m_pInstanceVertices;
+	if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &m_pResourceBuffer[0])))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, nullptr, &m_pResourceBuffer[1])))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.NumElements = m_iNumInstance;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pResourceBuffer[0], &SRVDesc, &m_pPointInputSRV[0])))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pResourceBuffer[1], &SRVDesc, &m_pPointInputSRV[1])))
+		return E_FAIL;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc = {};
+	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UAVDesc.Buffer.NumElements = m_iNumInstance;
+
+	if (FAILED(m_pDevice->CreateUnorderedAccessView(m_pResourceBuffer[0], &UAVDesc, &m_pPointOutUAV[0])))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateUnorderedAccessView(m_pResourceBuffer[1], &UAVDesc, &m_pPointOutUAV[1])))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect_Instance::Bind_Resources()
+{
+	m_pContext->CopyResource(m_pVBInstance, m_pResourceBuffer[m_bFlag ? 0 : 1]);
+	__super::Bind_Resources();
 	return S_OK;
 }
 
 void CVIBuffer_Rect_Instance::Drop(_float fTimeDelta)
 {
-	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+	m_CBData.iLoopAndCount.x = m_isLoop ? 1 : 0;
+	m_CBData.fTimeDelta.x = fTimeDelta;
+	m_pContext->UpdateSubresource(m_pConstPointBuffer, 0, nullptr, &m_CBData, 0, 0);
+	ID3D11ShaderResourceView* pViewNULL = NULL;
 
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	ID3D11ShaderResourceView* inputSRV = m_pPointInputSRV[m_bFlag ? 0 : 1];
+	ID3D11UnorderedAccessView* outputUAV = m_pPointOutUAV[m_bFlag ? 1 : 0];
+	m_bFlag = !m_bFlag;
 
-	VTX_INSTANCE_PARTICLE*		pVertices = static_cast<VTX_INSTANCE_PARTICLE*>(SubResource.pData);
+	m_pContext->CSSetShaderResources(0, 1, &inputSRV);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, &outputUAV, nullptr);
+	m_pContext->CSSetConstantBuffers(0, 1, &m_pConstPointBuffer);
 
-	for (size_t i = 0; i < m_iNumInstance; i++)
-	{
-		pVertices[i].vTranslation.y -= m_pSpeeds[i] * fTimeDelta;
-		pVertices[i].vLifeTime.x += fTimeDelta;
+	unsigned int groupCount = (m_iNumInstance + 255) / 256;
+	m_pContext->CSSetShader(m_pDropShaderCom, nullptr, 0);
+	m_pContext->Dispatch(groupCount, 1, 1);
 
-		if (true == m_isLoop && 
-			pVertices[i].vLifeTime.x >= pVertices[i].vLifeTime.y)
-		{			
-			pVertices[i].vLifeTime.x = 0.f;
-			pVertices[i].vTranslation = m_pInstanceVertices[i].vTranslation;
-		}
-	}
-
-	m_pContext->Unmap(m_pVBInstance, 0);
+	ID3D11ShaderResourceView* nullSRV = { nullptr };
+	ID3D11UnorderedAccessView* nullUAV = { nullptr };
+	m_pContext->CSSetShader(nullptr, nullptr, 0);
+	m_pContext->CSSetShaderResources(0, 1, &nullSRV);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
 }
 
 CVIBuffer_Rect_Instance* CVIBuffer_Rect_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCE_DESC* pInstanceDesc)
@@ -209,6 +295,13 @@ void CVIBuffer_Rect_Instance::Free()
 	if (false == m_isCloned)
 	{
 		Safe_Delete_Array(m_pInstanceVertices);
-		Safe_Delete_Array(m_pSpeeds);
+		Safe_Release(m_pDropShaderCom);
 	}
+	Safe_Release(m_pResourceBuffer[0]);
+	Safe_Release(m_pResourceBuffer[1]);
+	Safe_Release(m_pPointInputSRV[0]);
+	Safe_Release(m_pPointInputSRV[1]);
+	Safe_Release(m_pPointOutUAV[0]);
+	Safe_Release(m_pPointOutUAV[1]);
+	Safe_Release(m_pConstPointBuffer);
 }

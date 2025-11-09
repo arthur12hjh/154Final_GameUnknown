@@ -13,6 +13,7 @@ public:
 		_float2		vSize = {};
 		_float3		vCenter = {};
 		_float3		vRange = {};
+		_bool			isLoop;
 	}INSTANCE_DESC;
 protected:
 	CVIBuffer_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -27,6 +28,7 @@ public:
 
 public:
 	virtual void Drop(_float fTimeDelta) {}
+	void	StopEffect();
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };
@@ -35,6 +37,7 @@ protected:
 	_uint					m_iInstanceStride = {};
 	_uint					m_iNumInstance = {};
 	_uint					m_iNumIndexPerInstance = {};
+	_bool					m_isLoop = { false };
 public:
 	virtual CComponent* Clone(void* pArg) = 0;
 	virtual void Free() override;
