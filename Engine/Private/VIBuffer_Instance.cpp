@@ -13,6 +13,7 @@ CVIBuffer_Instance::CVIBuffer_Instance(const CVIBuffer_Instance& Prototype)
 	, m_iInstanceStride{ Prototype.m_iInstanceStride }
 	, m_iNumInstance{ Prototype.m_iNumInstance }
 	, m_iNumIndexPerInstance{ Prototype.m_iNumIndexPerInstance }
+	, m_isLoop{ Prototype.m_isLoop}
 {
 	Safe_AddRef(m_pVBInstance);
 }
@@ -59,6 +60,10 @@ HRESULT CVIBuffer_Instance::Render()
 	return S_OK;
 }
 
+void CVIBuffer_Instance::StopEffect()
+{
+	m_isLoop = false;
+}
 
 
 void CVIBuffer_Instance::Free()
