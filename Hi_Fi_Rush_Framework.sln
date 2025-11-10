@@ -7,13 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Default\Cl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Default\Engine.vcxproj", "{2FED70D4-541F-4B7F-A3F7-6C11F60C770B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Animation_Editor", "Animation_Editor\Default\Animation_Editor.vcxproj", "{60731C37-F97F-4500-9339-0576E9F4942A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Animation", "Animation_Editor\Default\Animation_Editor.vcxproj", "{60731C37-F97F-4500-9339-0576E9F4942A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Effect_Editor", "Effect_Editor\Default\Effect_Editor.vcxproj", "{876B89AB-3920-4ED8-975E-9129704D1E1D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Effect", "Effect_Editor\Default\Effect_Editor.vcxproj", "{876B89AB-3920-4ED8-975E-9129704D1E1D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Map_Editor", "Map_Editor\Default\Map_Editor.vcxproj", "{7489F065-2623-473C-8802-37FCB2D6C957}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Map", "Map_Editor\Default\Map_Editor.vcxproj", "{7489F065-2623-473C-8802-37FCB2D6C957}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UI_Editor", "UI_Editor\Default\UI_Editor.vcxproj", "{9D17FC59-0ABB-4A9F-B6AD-BB1D031A0B71}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_UI", "UI_Editor\Default\UI_Editor.vcxproj", "{9D17FC59-0ABB-4A9F-B6AD-BB1D031A0B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

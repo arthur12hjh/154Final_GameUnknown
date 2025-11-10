@@ -9,8 +9,8 @@ CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11De
 CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(const CVIBuffer_Rect_Instance& Prototype)
 	: CVIBuffer_Instance { Prototype }
 	, m_pInstanceVertices { Prototype.m_pInstanceVertices }
-	, m_pSpeeds { Prototype.m_pSpeeds } 
-	, m_isLoop { Prototype.m_isLoop }
+	//, m_CBData{ Prototype.m_CBData }
+	//, m_pDropShaderCom{ Prototype.m_pDropShaderCom }
 {
 
 }
@@ -98,9 +98,9 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 #pragma region INSTANCE_BUFFER
 	const RECT_INSTANCE_DESC* pDesc = static_cast<const RECT_INSTANCE_DESC*>(pInstanceDesc);
 
-	m_isLoop = pDesc->isLoop;
+	m_bIsLoop = pDesc->isLoop;
 	m_iNumInstance = pDesc->iNumInstance;
-	m_iInstanceStride = sizeof(VTX_INSTANCE_PARTICLE);
+	m_iInstanceStride = sizeof(VTX_INSTANCE_RECT_PARTICLE);
 	m_iNumIndexPerInstance = 6;
 
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
@@ -110,11 +110,8 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 	m_InstanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_InstanceBufferDesc.MiscFlags = 0;
 
-	m_pInstanceVertices = new VTX_INSTANCE_PARTICLE[m_iNumInstance];
-	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_PARTICLE) * m_iNumInstance);
-
-	m_pSpeeds = new _float[m_iNumInstance];
-	ZeroMemory(m_pSpeeds, sizeof(_float) * m_iNumInstance);
+	m_pInstanceVertices = new VTX_INSTANCE_RECT_PARTICLE[m_iNumInstance];
+	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_RECT_PARTICLE) * m_iNumInstance);
 
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
@@ -131,10 +128,7 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 			1.f );
 
 		m_pInstanceVertices[i].vLifeTime = _float2(0.0f, m_pGameInstance->Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y));
-
-
-
-		m_pSpeeds[i] = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
+		m_pInstanceVertices[i].vSpeeds.x = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
 	}
 
 	m_InstanceInitialDesc.pSysMem = m_pInstanceVertices;
@@ -148,33 +142,41 @@ HRESULT CVIBuffer_Rect_Instance::Initialize(void* pArg)
 {
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
-	
 
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect_Instance::Bind_Resources()
+{
+	 //m_pContext->CopyResource(m_pVBInstance, m_pResourceBuffer[m_bFlag ? 0 : 1]);
+	__super::Bind_Resources();
 	return S_OK;
 }
 
 void CVIBuffer_Rect_Instance::Drop(_float fTimeDelta)
 {
-	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+	/*m_CBData.iLoopAndCount.x = m_isLoop ? 1 : 0;
+	m_CBData.fTimeDelta.x = fTimeDelta;
+	m_pContext->UpdateSubresource(m_pConstPointBuffer, 0, nullptr, &m_CBData, 0, 0);
+	ID3D11ShaderResourceView* pViewNULL = NULL;
 
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	ID3D11ShaderResourceView* inputSRV = m_pPointInputSRV[m_bFlag ? 0 : 1];
+	ID3D11UnorderedAccessView* outputUAV = m_pPointOutUAV[m_bFlag ? 1 : 0];
+	m_bFlag = !m_bFlag;
 
-	VTX_INSTANCE_PARTICLE*		pVertices = static_cast<VTX_INSTANCE_PARTICLE*>(SubResource.pData);
+	m_pContext->CSSetShaderResources(0, 1, &inputSRV);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, &outputUAV, nullptr);
+	m_pContext->CSSetConstantBuffers(0, 1, &m_pConstPointBuffer);
 
-	for (size_t i = 0; i < m_iNumInstance; i++)
-	{
-		pVertices[i].vTranslation.y -= m_pSpeeds[i] * fTimeDelta;
-		pVertices[i].vLifeTime.x += fTimeDelta;
+	unsigned int groupCount = (m_iNumInstance + 255) / 256;
+	m_pContext->CSSetShader(m_pDropShaderCom, nullptr, 0);
+	m_pContext->Dispatch(groupCount, 1, 1);
 
-		if (true == m_isLoop && 
-			pVertices[i].vLifeTime.x >= pVertices[i].vLifeTime.y)
-		{			
-			pVertices[i].vLifeTime.x = 0.f;
-			pVertices[i].vTranslation = m_pInstanceVertices[i].vTranslation;
-		}
-	}
-
-	m_pContext->Unmap(m_pVBInstance, 0);
+	ID3D11ShaderResourceView* nullSRV = { nullptr };
+	ID3D11UnorderedAccessView* nullUAV = { nullptr };
+	m_pContext->CSSetShader(nullptr, nullptr, 0);
+	m_pContext->CSSetShaderResources(0, 1, &nullSRV);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);*/
 }
 
 CVIBuffer_Rect_Instance* CVIBuffer_Rect_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCE_DESC* pInstanceDesc)
@@ -209,6 +211,6 @@ void CVIBuffer_Rect_Instance::Free()
 	if (false == m_isCloned)
 	{
 		Safe_Delete_Array(m_pInstanceVertices);
-		Safe_Delete_Array(m_pSpeeds);
 	}
+
 }

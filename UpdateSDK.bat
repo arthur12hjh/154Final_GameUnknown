@@ -13,5 +13,5 @@ xcopy			/y		.\Engine\Bin\Release\Engine.lib					.\EngineSDK\Lib\Release\
 xcopy			/y		.\Engine\ThirdPartyLib\Debug\*.lib				.\EngineSDK\Lib\Debug\
 xcopy			/y		.\Engine\ThirdPartyLib\Release\*.lib			.\EngineSDK\Lib\Release\
 
-xcopy			/y		.\Engine\Bin\ShaderFiles\*.*				.\Client\Bin\ShaderFiles\
-xcopy			/y		.\Engine\Bin\ShaderFiles\*.*				.\Animation_Editor\Bin\ShaderFiles\
+xcopy			/y		.\Engine\Bin\ShaderFiles\*.*					.\Client\Bin\ShaderFiles\
+xcopy			/y/s		.\Engine\Bin\EngineResource\*.*					.\Client\Bin\EngineResource\

@@ -44,6 +44,11 @@ _uint CLevel_Manager::GetCurrentLevelID()
 	return m_pCurrentLevel->Get_LevelID();
 }
 
+CLevel* CLevel_Manager::GetCurrentLevel()
+{
+	return m_pCurrentLevel;
+}
+
 CLevel_Manager* CLevel_Manager::Create()
 {
 	return new CLevel_Manager();

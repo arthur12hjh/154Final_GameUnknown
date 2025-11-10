@@ -30,9 +30,7 @@ public:
 		return &m_WorldMatrix;
 	}
 
-	void Set_State(STATE eState, _fvector vState) {
-		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
-	}
+	void Set_State(STATE eState, _vector vState);
 
 	void Set_Scale(_float fX, _float fY, _float fZ);
 
@@ -52,6 +50,7 @@ public:
 	void					Turn(_fvector vAxis, _float fTimeDelta);
 	void					Rotation(_fvector vAxis, _float fRadian);
 	void					Rotation(_float fRadianX, _float fRadianY, _float fRadianZ);
+	void					Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQuatW);
 
 	void					LookAt(_fvector vAt);
 

@@ -1,8 +1,13 @@
 #ifndef Engine_Define_h__
 #define Engine_Define_h__
 
+#include "json.hpp"
+using Json = nlohmann::json;
+
 //WIN
 #include <Windows.h>
+#include <random>
+
 #include <assert.h>
 #include <iostream>
 #include <wincodec.h>
@@ -13,6 +18,7 @@
 
 //STL
 #include <set>
+
 #include <unordered_set>
 
 #include <stack>
@@ -37,6 +43,8 @@ using namespace std;
 #include <dinput.h>
 
 #pragma warning(disable : 4251)
+#pragma warning(disable : 4275)
+
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 #include <d3dcompiler.h>
@@ -84,6 +92,12 @@ namespace Engine
 {
 	const static wstring g_strTransformTag = { TEXT("Com_Transform")};
 }
+
+#include "Physx/PxPhysics.h"
+#include "Physx/PxPhysicsAPI.h"
+#include "PxUserData.h"
+
+using namespace physx;
 
 #ifdef _DEBUG
 

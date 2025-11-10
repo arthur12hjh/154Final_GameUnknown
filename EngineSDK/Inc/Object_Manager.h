@@ -16,7 +16,9 @@ private:
 public:
 	class CComponent*			Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CComponent*			Get_PartObject_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPartTag, const _wstring& strComponentTag, _uint iIndex = 0);
+	
 	list<CGameObject*>*			Get_LayerObjects(_uint iLevelIndex, const WCHAR* szLayerTag);
+	map<const _wstring, class CLayer*>*	GetLayer();
 
 public:
 	HRESULT				Initialize(_uint iNumLevels);
@@ -24,9 +26,11 @@ public:
 	/* 원형을 찾고 복제하여 레이어에 추가한다. */
 	HRESULT				Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg);
 
+
 	void				Priority_Update(_float fTimeDelta);
 	void				Update(_float fTimeDelta);
 	void				Late_Update(_float fTimeDelta);	
+
 	void				Clear(_uint iLevelIndex);
 	void				Clear_DeadObj();
 

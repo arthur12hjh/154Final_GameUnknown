@@ -17,9 +17,11 @@
 #include "PipeLine.h"
 #include "Frustum.h"
 #include "ThreadPool.h"
+#include "CameraManager.h"
+#include "Level.h"
 #include "Picking.h"
 #include "Shadow.h"
-
+#include "Physx_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -36,7 +38,15 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	m_vScreenSize = { EngineDesc.iWinSizeX, EngineDesc.iWinSizeY };
 	m_vHalfScreenSize = { m_vScreenSize.x >> 1 , m_vScreenSize.y >> 1};
 
+	m_pPhysx_Manager = CPhysx_Manager::Create();
+	if (nullptr == m_pPhysx_Manager)
+		return E_FAIL;
+
+#ifdef _DEBUG
+	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
+#elif
 	m_pLight_Manager = CLight_Manager::Create();
+#endif // DEBUG
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
@@ -100,6 +110,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pEffect_ResourceManager)
 		return E_FAIL;
 
+	m_pCameraManager = CCameraManager::Create();
+	if (nullptr == m_pCameraManager)
+		return E_FAIL;
+
+
 	m_pThreadPool = CThreadPool::Create(4);
 	if (nullptr == m_pThreadPool)
 		return E_FAIL;
@@ -121,6 +136,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	{
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
+		m_pCameraManager->Priority_Update(fTimeDelta);
 
 		//Priority Update 디버그
 #ifdef _DEBUG
@@ -135,7 +151,9 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 		m_pPipeLine->Update();
 		m_pTimer_Manager->Update_Timer(fTimeDelta);
+	
 		m_pFrustum->Update();
+		m_pCameraManager->Update(fTimeDelta);
 
 		//Update 디버그
 #ifdef _DEBUG
@@ -150,6 +168,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 #endif
 	}
 
+	m_pCameraManager->Late_Update(fTimeDelta);
 	//Late_Update 디버그
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
@@ -172,7 +191,10 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pCollisionManager->Compute_Collision();
 #endif
 
-	m_pObject_Manager->Clear_DeadObj();
+	m_pPhysx_Manager->Update(fTimeDelta); // isdead 체크해서 뺴고
+
+	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
+
 	m_pLevel_Manager->Update(fTimeDelta);
 
 	m_fTimeAcc += fTimeDelta;
@@ -212,7 +234,9 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	return static_cast<_float>(rand()) / RAND_MAX;	
+	std::random_device	rd;
+
+	return static_cast<_float>(rd()) / (rd.max)();
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)
@@ -298,6 +322,11 @@ _uint CGameInstance::GetCurrentLevelID()
 	return m_pLevel_Manager->GetCurrentLevelID();
 }
 
+CGameHUD* CGameInstance::GetCurrentLevelHUD()
+{
+	return m_pLevel_Manager->GetCurrentLevel()->GetHUD();
+}
+
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -329,6 +358,11 @@ HRESULT CGameInstance::Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const 
 list<CGameObject*>* CGameInstance::GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag)
 {
 	return m_pObject_Manager->Get_LayerObjects(iLayerIndex, szLayerTag);
+}
+
+map<const _wstring, class CLayer*>* CGameInstance::GetCurrentLevelLayer()
+{
+	return m_pObject_Manager->GetLayer();
 }
 
 #pragma endregion
@@ -395,18 +429,24 @@ const _float4x4* CGameInstance::GetIdentityMatrixPtr()
 
 #pragma region LIGHT_MANAGER
 
-const LIGHT_DESC* CGameInstance::Get_LightDesc(_uint iIndex) const
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOutLight)
 {
-	return m_pLight_Manager->Get_LightDesc(iIndex);
+	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
 
-HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc)
+const list<class CLight*>* CGameInstance::GetAllLight()
 {
-	return m_pLight_Manager->Add_Light(LightDesc);
+	return m_pLight_Manager->GetAllLight();
 }
+
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
+}
+
+void CGameInstance::Debug_LightRender()
+{
+	m_pLight_Manager->Debug_LightRender();
 }
 #pragma endregion
 
@@ -614,6 +654,78 @@ _bool CGameInstance::IsThreadPoolStop()
 {
 	return m_pThreadPool->IsThreadPoolStop();
 }
+
+#pragma endregion
+
+#pragma region Camera Manager
+HRESULT CGameInstance::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
+{
+	return m_pCameraManager->Add_Camera(szCameraTag, pCamera);
+}
+HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->Remove_Camera(szCameraTag);
+}
+HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+{
+	return m_pCameraManager->SetMainCamera(szCameraTag, ppPreCameraMatrix);
+}
+CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCamrea(szCameraTag);
+}
+CCamera* CGameInstance::GetMainCamera()
+{
+	return m_pCameraManager->GetMainCamera();
+}
+_matrix CGameInstance::GetMainCameraWorldMatrix()
+{
+	return m_pCameraManager->GetMainCameraWorldMatrix();
+}
+const _float4x4* CGameInstance::GetMainCameraWorldMatrixPtr()
+{
+	return m_pCameraManager->GetMainCameraWorldMatrixPtr();
+}
+_matrix CGameInstance::GetCameraWorldMatrix(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCameraWorldMatrix(szCameraTag);
+}
+const _float4x4* CGameInstance::GetCameraWorldMatrixPtr(const WCHAR* szCameraTag)
+{
+	return m_pCameraManager->GetCameraWorldMatrixPtr(szCameraTag);
+}
+const unordered_map<_wstring, CCamera*>* CGameInstance::GetAllCamera()
+{
+	return m_pCameraManager->GetAllCamera();
+}
+
+#pragma region Physx_Manager
+
+PxControllerManager* CGameInstance::Get_PxCCTManager()
+{
+	return m_pPhysx_Manager->Get_PxCCTManager();
+}
+
+PxPhysics* CGameInstance::Get_PxPhysics()
+{
+	return m_pPhysx_Manager->Get_PxPhysics();
+}
+
+PxTransform CGameInstance::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
+{
+	return m_pPhysx_Manager->Convert_Matrix_ToPxTransform(WorldMatrix);
+}
+
+_matrix CGameInstance::Convert_PxTransform_ToMatrix(PxTransform Transform)
+{
+	return m_pPhysx_Manager->Convert_PxTransform_ToMatrix(Transform);
+}
+
+HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)
+{
+	return m_pPhysx_Manager->Add_RigidBody_ToPhysx(pGameObject, pRigidBody);
+}
+
 #pragma endregion
 
 const _uint2& CGameInstance::GetScreenSize()
@@ -674,6 +786,7 @@ void CGameInstance::Release_Engine()
 	DestroyInstance();
 
 	Safe_Release(m_pFrustum);
+	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
@@ -691,6 +804,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
+	Safe_Release(m_pPhysx_Manager);
 }
 
 void CGameInstance::Free()

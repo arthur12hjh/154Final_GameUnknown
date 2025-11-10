@@ -12,3 +12,4 @@ xcopy			/y		.\Engine\ThirdPartyLib\Debug\*.lib				.\EngineSDK\Lib\Debug\
 xcopy			/y		.\Engine\ThirdPartyLib\Release\*.lib			.\EngineSDK\Lib\Release\
 
 xcopy			/y		.\Engine\Bin\ShaderFiles\*.*				.\UI_Editor\Bin\ShaderFiles\
+xcopy			/y/s		.\Engine\Bin\EngineResource\*.*					.\UI_Editor\Bin\EngineResource\
