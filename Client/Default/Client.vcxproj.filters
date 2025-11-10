@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{c97b62e1-26b8-437d-b3de-0d9d5445f414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98.Default">
       <UniqueIdentifier>{728a900b-3685-4452-a6ae-b82a17c7e63f}</UniqueIdentifier>
     </Filter>
@@ -79,9 +76,6 @@
     <Filter Include="100.ETC">
       <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines\PCH">
-      <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="30.ImGui">
       <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
     </Filter>
@@ -96,6 +90,75 @@
     </Filter>
     <Filter Include="30.ImGui\Profiler">
       <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Manager">
+      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager">
+      <UniqueIdentifier>{b6aef18f-1b7e-4a2a-ad79-9041e705e206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{c97b62e1-26b8-437d-b3de-0d9d5445f414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{aaa08137-62b4-4800-97b4-0532f8cae35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\GameStruct">
+      <UniqueIdentifier>{6ab8c8b9-5402-4939-896e-b82f458230bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\DebugCheat">
+      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader">
+      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
+      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Point">
+      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
+      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects">
+      <UniqueIdentifier>{ce60062b-bb86-4f43-9bbc-c1a57894613e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIHUD">
+      <UniqueIdentifier>{17efc4d9-b602-4cc7-a028-b97a2072599b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase">
+      <UniqueIdentifier>{a4a4febc-5696-48b7-b472-edb18597c008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
+      <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel">
+      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel\ControllerHitReporter">
+      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel\TestProp">
+      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps">
+      <UniqueIdentifier>{71ce41b5-d270-4f95-b0bc-6632eb48cc33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village">
+      <UniqueIdentifier>{9a273159-9a7d-486a-b86b-706a7dda7cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Obj">
+      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Mou">
+      <UniqueIdentifier>{84947ce9-bc4e-4724-8f21-50e915ee60b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Obj\Vil_Bui03_04">
+      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +261,45 @@
     <ClInclude Include="..\public\DebugProfiler.h">
       <Filter>30.ImGui\Profiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGuiManager.h">
+      <Filter>30.ImGui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameManager.h">
+      <Filter>10.GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientStruct.h">
+      <Filter>99.Defines\GameStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugCheatUI.h">
+      <Filter>30.ImGui\DebugCheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugHierarchy.h">
+      <Filter>30.ImGui\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIHUD.h">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBase.h">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIButton.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShaderTestModel.h">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerCCTHitReporter.h">
+      <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PxTestProp.h">
+      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Village_Mou.h">
+      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Vil_Bui03_04.h">
+      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -289,6 +391,42 @@
     <ClCompile Include="..\private\DebugProfiler.cpp">
       <Filter>30.ImGui\Profiler</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ImGuiManager.cpp">
+      <Filter>30.ImGui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameManager.cpp">
+      <Filter>10.GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DebugCheatUI.cpp">
+      <Filter>30.ImGui\DebugCheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DebugHierarchy.cpp">
+      <Filter>30.ImGui\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHUD.cpp">
+      <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBase.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIButton.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShaderTestModel.cpp">
+      <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp">
+      <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PxTestProp.cpp">
+      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Village_Mou.cpp">
+      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Vil_Bui03_04.cpp">
+      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -311,6 +449,15 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Point</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Rect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Spread</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

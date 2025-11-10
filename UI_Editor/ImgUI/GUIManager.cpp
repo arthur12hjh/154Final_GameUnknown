@@ -2,6 +2,9 @@
 
 #include "GUIManager.h"
 #include "GameInstance.h"
+#include "StringHelper.h"
+
+#include "UIHUD.h"
 
 // GUI 매니저 싱글톤 구현
 IMPLEMENT_SINGLETON(CGUIManager);
@@ -37,6 +40,12 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     if (!ImGui_ImplDX11_Init(m_pDevice, m_pContext))
         return E_FAIL;
 
+    // 뷰 모드
+    m_ViewModes.reserve(3);
+    m_ViewModes.push_back(TEXT("Default"));
+    m_ViewModes.push_back(TEXT("Edit"));
+    m_ViewModes.push_back(TEXT("Debug"));
+
     return S_OK;
 }
 
@@ -54,11 +63,8 @@ void CGUIManager::Update(_float fTimeDelta)
     //if (m_strCurViewMode == TEXT("Default"))
     //    GUI::ShowDemoWindow(); // ImGui 데모 윈도우 표시
 
-    GUI::Begin("VIEW MODE");
-    GUI::End();
-
     //가장 마지막에 렌더
-    //ViewMode();
+    ViewMode();
 }
 
 // 에디터 윈도우에 ImGui UI를 실제로 그리는 함수
@@ -82,6 +88,39 @@ void CGUIManager::Release_GUI_Manager()
     DestroyInstance();
 }
 
+void CGUIManager::ViewMode()
+{
+    GUI::Begin("VIEW MODE");
+
+    GUI::PushID("ViewMode");
+
+    _char str[MAX_PATH]{};
+
+    CStringHelper::ConvertWideToUTF(m_szCurViewMode.c_str(), str);
+
+    if (GUI::BeginCombo("", str))
+    {
+        for (size_t i = 0; i < m_ViewModes.size(); ++i)
+        {
+            _char strCur[MAX_PATH]{};
+
+            CStringHelper::ConvertWideToUTF(m_ViewModes[i].c_str(), strCur);
+
+            const bool is_selected = (strCur == str);
+            if (GUI::Selectable(strCur, is_selected))
+                m_szCurViewMode = m_ViewModes[i];
+
+            if (is_selected)
+                GUI::SetItemDefaultFocus();
+        }
+        GUI::EndCombo();
+    }
+    GUI::PopID();
+
+    GUI::End();
+
+}
+
 void CGUIManager::Free()
 {
     __super::Free();
@@ -92,6 +131,8 @@ void CGUIManager::Free()
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
+
+    //Safe_Release(m_pUIHUD);
 
     Safe_Release(m_pGameInstance);
 }

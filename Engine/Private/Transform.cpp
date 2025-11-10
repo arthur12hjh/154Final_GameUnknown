@@ -25,6 +25,22 @@ _float3 CTransform::Get_Scale() const
 	);
 }
 
+void CTransform::Set_State(STATE eState, _vector vState)
+{
+	switch (eState)
+	{
+	case Engine::STATE::RIGHT:
+	case Engine::STATE::UP:
+	case Engine::STATE::LOOK:
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
+	case Engine::STATE::POSITION:
+		vState.m128_f32[3] = 1.f;
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
+	}
+}
+
 void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 {
 	Set_State(STATE::RIGHT, XMVector3Normalize(Get_State(STATE::RIGHT)) * fX);
@@ -160,6 +176,24 @@ void CTransform::Rotation(_float fRadianX, _float fRadianY, _float fRadianZ)
 	_vector		vQuternion = XMQuaternionRotationRollPitchYaw(fRadianX, fRadianY, fRadianZ);
 	_matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
 
+	vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+	vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+	vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+	Set_State(STATE::RIGHT, vRight);
+	Set_State(STATE::UP, vUp);
+	Set_State(STATE::LOOK, vLook);
+}
+
+void CTransform::Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQuatW)
+{
+	_float3		vScale = Get_Scale();
+
+	_vector		vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
+	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+	_vector		vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
+
+	_matrix		RotationMatrix = XMMatrixRotationQuaternion(XMVectorSet(fQuatX, fQuatY, fQuatZ, fQuatW));
 	vRight = XMVector3TransformNormal(vRight, RotationMatrix);
 	vUp = XMVector3TransformNormal(vUp, RotationMatrix);
 	vLook = XMVector3TransformNormal(vLook, RotationMatrix);

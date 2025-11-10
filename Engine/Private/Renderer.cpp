@@ -65,14 +65,13 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Distortion"), m_vScreenSize.x - 150.0f, 150.0f, 300.0f, 300.0f)))
 		return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Blur"), m_vScreenSize.x - 150.0f, 150.0f, 300.0f, 300.0f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Outline"), m_vScreenSize.x - 150.0f, 450.f, 300.f, 300.f)))
+		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Outline"), m_vScreenSize.x /2.f, m_vScreenSize.y /2.f, m_vScreenSize.x, m_vScreenSize.y)))
 	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Blur_X"), m_vScreenSize.x - 150.0f, 450.0f, 300.0f, 300.0f)))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Blur_Final"), m_vScreenSize.x - 450.0f, 150.f, 300.0f, 300.0f)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_RimLight"), m_vScreenSize.x - 450.0f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
 #endif
-
     return S_OK;
 }
 
@@ -96,8 +95,16 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* Target_RimLight.*/
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_RimLight"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+		return E_FAIL;
+
 	/* Target_Shade */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shade"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+	/* Target_Outline. 툰 셰이딩을 위해 Normal 값을 기록해낼 예정임. */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Outline"), m_vScreenSize.x * 2.f, m_vScreenSize.y * 2.f, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	/* Target_Specular */
@@ -136,12 +143,14 @@ HRESULT CRenderer::Ready_MRTs()
 	/* MRT_GameObjects */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
+	//림라이트는 GameObject단에서 찍어서 전처리.
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_RimLight"))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region MRT_LIGHTACC
@@ -152,6 +161,10 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 #pragma endregion
+	/* MRT_Outline */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Outline"), TEXT("Target_Outline"))))
+		return E_FAIL;
+
 	/* MRT_Scene*/
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
 		return E_FAIL;
@@ -221,7 +234,6 @@ void CRenderer::Render()
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 {
 	m_DebugComponents.push_back(pDebugCom);
-
 	Safe_AddRef(pDebugCom);
 
 	return S_OK;
@@ -307,6 +319,46 @@ void CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+
+	/* normal 정보 가져왔을때 바로 outline 세팅하기. */
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Outline"), m_pOutlineDSV)))
+		return;
+
+	D3D11_VIEWPORT			ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = (_float)m_vScreenSize.x * 2.f;
+	ViewPortDesc.Height = (_float)m_vScreenSize.y * 2.f;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
+
+	m_pContext->RSSetViewports(1, &ViewPortDesc);
+	
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
+		return;
+
+	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::OUTLINE));
+
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = (_float)m_vScreenSize.x;
+	ViewPortDesc.Height = (_float)m_vScreenSize.y;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
+
+	m_pContext->RSSetViewports(1, &ViewPortDesc);
 }
 
 void CRenderer::Render_LightAcc()
@@ -366,6 +418,10 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final"), m_pShader, "g_BlurFinalTexture")))
 		return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Outline"), m_pShader, "g_OutlineTexture")))
+		return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_RimLight"), m_pShader, "g_RimLightTexture")))
+		return;
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
@@ -380,6 +436,7 @@ void CRenderer::Render_NonLight()
 {
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
+
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
@@ -513,8 +570,6 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{
@@ -525,9 +580,6 @@ void CRenderer::Render_UI()
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::UI)].clear();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Composite_RT_ToBackBuffer()
@@ -550,7 +602,6 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 		return E_FAIL;
 
 	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -576,8 +627,19 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
 		return E_FAIL;
 
-
 	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pShadowDSV)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
+	/* 아웃라인 DSV도 생성. */
+	TextureDesc.Width = m_vScreenSize.x * 2.f;
+	TextureDesc.Height = m_vScreenSize.y * 2.f;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pOutlineDSV)))
 		return E_FAIL;
 
 	Safe_Release(pDepthStencilTexture);
@@ -589,9 +651,7 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 
 void CRenderer::Render_Debug()
 {
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
+	m_pGameInstance->Debug_LightRender();
 	for (auto& pDebugCom : m_DebugComponents)
 	{
 		if (nullptr != pDebugCom)
@@ -607,12 +667,7 @@ void CRenderer::Render_Debug()
 		return;
 
 	if (false == m_isDebugVisible)
-	{
-		if (FAILED(m_pGameInstance->End_MRT()))
-			return;
-
 		return;
-	}
 
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
@@ -623,14 +678,7 @@ void CRenderer::Render_Debug()
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Distortion"), m_pShader, m_pVIBuffer)))
 		return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Blur"), m_pShader, m_pVIBuffer)))
-	//	return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Blur_X"), m_pShader, m_pVIBuffer)))
-	//	return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Blur_Final"), m_pShader, m_pVIBuffer)))
-	//	return;
-
-	if (FAILED(m_pGameInstance->End_MRT()))
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Outline"), m_pShader, m_pVIBuffer)))
 		return;
 }
 
@@ -667,12 +715,11 @@ void CRenderer::Free()
 	}
 
 	Safe_Release(m_pShadowDSV);
+	Safe_Release(m_pOutlineDSV);
 	Safe_Release(m_pGameInstance);
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
-
-
 }

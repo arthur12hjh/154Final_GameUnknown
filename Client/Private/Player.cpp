@@ -4,6 +4,7 @@
 #include "Body_Player.h"
 #include "Weapon.h"
 #include "GameInstance.h"
+#include "GameManager.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{pDevice, pContext}
@@ -36,6 +37,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
+
+	CGameManager::GetInstance()->Bind_GameCharacter(this);
 	return S_OK;
 }
 
@@ -47,16 +50,6 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	if (GetKeyState(VK_LBUTTON) & 0x8000)
-	{
-		_float3		vPickPos = {};
-		if (true == m_pGameInstance->isPicking(&vPickPos))
-		{
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vPickPos), 1.f));
-		}
-	}
-
-
 	if (GetKeyState(VK_DOWN) & 0x8000)
 	{
 		m_pTransformCom->Go_Backward(fTimeDelta);
@@ -97,7 +90,7 @@ void CPlayer::Update(_float fTimeDelta)
 		m_iState = STATE::STATE_ATTACK;
 	}
 
-//	m_pNavigationCom->Compute_Height(m_pTransformCom);
+	m_pNavigationCom->Compute_Height(m_pTransformCom);
 
 Progress:
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));

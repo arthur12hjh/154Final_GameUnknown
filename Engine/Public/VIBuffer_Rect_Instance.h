@@ -11,8 +11,14 @@ public:
 	{		
 		_float2			vLifeTime;
 		_float2			vSpeed;
-		_bool			isLoop;
 	}RECT_INSTANCE_DESC;
+
+	typedef struct tagVertexRectInstance_Particle final : public VTX_INSTANCE_PARTICLE
+	{
+		_float2 vSpeeds;
+	}VTX_INSTANCE_RECT_PARTICLE;
+
+
 private:
 	CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Rect_Instance(const CVIBuffer_Rect_Instance& Prototype);
@@ -21,15 +27,14 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(const INSTANCE_DESC* pInstanceDesc) override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Bind_Resources() override;
 public:
 	virtual void Drop(_float fTimeDelta) override;
 
 
 private:
-	VTX_INSTANCE_PARTICLE* m_pInstanceVertices = { nullptr };
-
-	_float* m_pSpeeds = { nullptr };
-	_bool	m_isLoop = { false };
+	VTX_INSTANCE_RECT_PARTICLE* m_pInstanceVertices = { nullptr };
+	_bool						m_bFlag = { true };
 
 
 public:
