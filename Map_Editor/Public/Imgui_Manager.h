@@ -45,7 +45,10 @@ public:
 	HRESULT Add_NaviCell(); // 3개의 점으로 네비게이션 셀을 생성 및 CNavigation에 추가
 	HRESULT Save_NavigationData(); // 현재 CNavigation 데이터를 파일로 저장
 	void Delete_Latest_NaviCell(); // 가장 마지막에 추가된 셀 삭제
-	_bool Picking(_float3 vPickPos);
+
+	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
+	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
+	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -55,6 +58,7 @@ private:
 	CTransform* m_pTransform = { nullptr };
 
 	CGameObject* m_pLastAddedObject = { nullptr };
+	CGameObject* m_pPickedObject = { nullptr };
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
@@ -91,6 +95,8 @@ private:
 	_bool				m_bIsNaviEditMode = { false }; // 네비게이션 편집 모드
 
 
+	_bool				m_bIsDeplayMode = { false };
+	_bool				m_bIsDragging = { false };
 
 public:
 	virtual void Free() override;
