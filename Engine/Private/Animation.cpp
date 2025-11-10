@@ -19,18 +19,20 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 
 }
 
-HRESULT CAnimation::Initialize(class CModel* pModel, const aiAnimation* pAIAnimation)
+HRESULT CAnimation::Initialize(class CModel* pModel, binAnimation* pAnimation)
 {
-	m_fDuration = pAIAnimation->mDuration;
-	m_fTickPerSecond = pAIAnimation->mTicksPerSecond;
+	m_fDuration = pAnimation->fDuration;
+	m_fTickPerSecond = pAnimation->fTicksPerSecond;
 
-	m_iNumChannels = pAIAnimation->mNumChannels;
+	m_iNumChannels = pAnimation->iNumChannels;
 
 	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 
+	strcpy_s(m_szName, pAnimation->szName);
+
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
-		CChannel* pChannel = CChannel::Create(pModel, pAIAnimation->mChannels[i]);
+		CChannel* pChannel = CChannel::Create(pModel, &pAnimation->vChannels[i]);
 		if (nullptr == pChannel)
 			return E_FAIL;
 
@@ -74,11 +76,11 @@ void CAnimation::Reset()
 		iKeyFrameIndex = 0;
 }
 
-CAnimation* CAnimation::Create(CModel* pModel, const aiAnimation* pAIAnimation)
+CAnimation* CAnimation::Create(CModel* pModel, binAnimation* pAnimation)
 {
 	CAnimation* pInstance = new CAnimation();
 
-	if (FAILED(pInstance->Initialize(pModel, pAIAnimation)))
+	if (FAILED(pInstance->Initialize(pModel, pAnimation)))
 	{
 		MSG_BOX("Failed to Created : CAnimation");
 		Safe_Release(pInstance);

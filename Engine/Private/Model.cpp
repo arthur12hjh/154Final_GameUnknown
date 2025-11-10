@@ -6,6 +6,8 @@
 #include "Material.h"
 #include "Animation.h"
 
+#include "GameInstance.h"
+
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent { pDevice, pContext }
 {
@@ -54,6 +56,16 @@ _int CModel::Get_BoneIndex(const _char* pBoneName) const
 	return iBoneIndex;
 }
 
+vector<class CBone*>* CModel::Get_Bones()
+{
+	return &m_Bones;
+}
+
+_uint CModel::Get_AnimationKeyFrameIndex() const
+{
+	return m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex();
+}
+
 const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
 {
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
@@ -68,23 +80,75 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
 	return (*iter)->Get_CombinedTransformationMatrixPtr();		
 }
 
+void CModel::Attach_CombinedTransformationMatrix()
+{
+	for (auto& pBone : m_Bones)
+	{
+		pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+	}
+}
+
+
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
-	_uint			iFlag = {};	
+	_uint			iFlag = {};
 
 	iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 
 	if (MODEL_TYPE::NONANIM == eType)
 		iFlag |= aiProcess_PreTransformVertices;
 
-	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
-	if (nullptr == m_pAIScene)
+	char szEXT[MAX_PATH] = {};
+	_splitpath_s(pModelFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+	if (false == strcmp(".fbx", szEXT))
+	{
+		m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel);
+		char szBinModelFilePath[MAX_PATH] = {};
+		char szDrive[MAX_PATH] = {};
+		char szDir[MAX_PATH] = {};
+		char szFileName[MAX_PATH] = {};
+		char szBinExtractor[MAX_PATH] = { ".bin" };
+		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+		strcat_s(szBinModelFilePath, szDrive);
+		strcat_s(szBinModelFilePath, szDir);
+		strcat_s(szBinModelFilePath, szFileName);
+		strcat_s(szBinModelFilePath, szBinExtractor);
+
+		m_pGameInstance->WriteBin(szBinModelFilePath, eType, &m_pModel);
+
+		//m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+		//if (nullptr == m_pAIScene)
+		//	return E_FAIL;
+
+
+
+	}
+	else if (false == strcmp(".bin", szEXT))
+	{
+		m_pGameInstance->ReadBin(pModelFilePath, eType, &m_pModel);
+
+		char szFbxModelFilePath[MAX_PATH] = {};
+		char szDrive[MAX_PATH] = {};
+		char szDir[MAX_PATH] = {};
+		char szFileName[MAX_PATH] = {};
+		char szFbxExtractor[MAX_PATH] = { ".fbx" };
+		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+		strcat_s(szFbxModelFilePath, szDrive);
+		strcat_s(szFbxModelFilePath, szDir);
+		strcat_s(szFbxModelFilePath, szFileName);
+		strcat_s(szFbxModelFilePath, szFbxExtractor);
+
+		//m_pAIScene = m_Importer.ReadFile(szFbxModelFilePath, iFlag);
+		//if (nullptr == m_pAIScene)
+		//	return E_FAIL;
+	}
+	else
 		return E_FAIL;
 
 	m_eType = eType;
 	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
 
-	Ready_Bones(m_pAIScene->mRootNode, -1);
+	Ready_Bones(&m_pModel->vNodes[m_pModel->iRootNodeIndex], -1);
 
 	if (FAILED(Ready_Meshes()))
 		return E_FAIL;
@@ -94,6 +158,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
 	if (FAILED(Ready_Animations()))
 		return E_FAIL;
+
+	Safe_Delete(m_pModel);
 
     return S_OK;
 }
@@ -155,11 +221,11 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 HRESULT CModel::Ready_Meshes()
 {
-	m_iNumMeshes = m_pAIScene->mNumMeshes;
+	m_iNumMeshes = m_pModel->iNumMeshes;
 
 	for (size_t i = 0; i < m_iNumMeshes; i++)
 	{
-		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, this, m_pAIScene->mMeshes[i], XMLoadFloat4x4(&m_PreTransformMatrix));
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, this, &m_pModel->vMeshes[i], XMLoadFloat4x4(&m_PreTransformMatrix));
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -172,11 +238,11 @@ HRESULT CModel::Ready_Meshes()
 HRESULT CModel::Ready_Materials(const _char* pModelFilePath)
 {
 	/*  텍스쳐를 로드한다 .*/
-	m_iNumMaterials = m_pAIScene->mNumMaterials;
+	m_iNumMaterials = m_pModel->iNumMaterials;
 
 	for (size_t i = 0; i < m_iNumMaterials; i++)
 	{
-		CMaterial* pMaterial = CMaterial::Create(m_pDevice, m_pContext, pModelFilePath, m_pAIScene->mMaterials[i]);
+		CMaterial* pMaterial = CMaterial::Create(m_pDevice, m_pContext, pModelFilePath, &m_pModel->vMaterials[i]);
 		if (nullptr == pMaterial)
 			return E_FAIL;
 
@@ -186,32 +252,31 @@ HRESULT CModel::Ready_Materials(const _char* pModelFilePath)
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bones(const aiNode* pAINode, _int iParentIndex)
+HRESULT CModel::Ready_Bones(binNode* pNode, _int iParentIndex)
 {
-	CBone* pBone = CBone::Create(pAINode, iParentIndex);
+	CBone* pBone = CBone::Create(pNode, iParentIndex);
 	if (nullptr == pBone)
 		return E_FAIL;
 
 	m_Bones.push_back(pBone);
+	// 부모 본에서 자식 본으로, 전체 본의 개수에서 -1을 하며 계속 객체를 생성한다.
+	_int iParent = m_Bones.size() - 1;
 
-	_int	iParent = m_Bones.size() - 1;
-
-	for (size_t i = 0; i < pAINode->mNumChildren; i++)
+	for (size_t i = 0; i < pNode->iNumChildren; ++i)
 	{
-		Ready_Bones(pAINode->mChildren[i], iParent);
+		Ready_Bones(&m_pModel->vNodes[pNode->vChildrenIndex[i]], iParent);
 	}
-
 
 	return S_OK;
 }
 
 HRESULT CModel::Ready_Animations()
 {
-	m_iNumAnimations = m_pAIScene->mNumAnimations;
+	m_iNumAnimations = m_pModel->iNumAnimations;
 
 	for (size_t i = 0; i < m_iNumAnimations; i++)
 	{
-		CAnimation* pAnimation = CAnimation::Create(this, m_pAIScene->mAnimations[i]);
+		CAnimation* pAnimation = CAnimation::Create(this, &m_pModel->vAnimations[i]);
 		if (nullptr == pAnimation)
 			return E_FAIL;
 
@@ -269,5 +334,4 @@ void CModel::Free()
 		Safe_Release(pMesh);
 	m_Meshes.clear();
     
-    m_Importer.FreeScene();
 }

@@ -14,7 +14,7 @@ private:
 	virtual ~CChannel() = default;
 
 public:
-	HRESULT Initialize(const class CModel* pModel, const aiNodeAnim* pAIChannel);
+	HRESULT Initialize(const class CModel* pModel, binChannel* pChannel);
 	void Update_TransformationMatrix(const vector<class CBone*>& Bones, _float fCurrentTrackPosition, _uint* pCurrentKeyFrameIndex);
 private:
 	_char					m_szName[MAX_PATH] = {};
@@ -24,7 +24,7 @@ private:
 	vector<KEYFRAME>		m_KeyFrames;
 
 public:
-	static CChannel* Create(const class CModel* pModel, const aiNodeAnim* pAIChannel);
+	static CChannel* Create(const class CModel* pModel, binChannel* pChannel);
 	virtual void Free() override;
 };
 
