@@ -71,8 +71,8 @@ HRESULT CLevel_Village::Ready_Lights()
 	LightDesc.fRange = 10.f;
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
-
+		return E_FAIL;*/
+	/*
 	LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
