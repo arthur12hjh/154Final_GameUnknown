@@ -5,6 +5,7 @@ NS_BEGIN(Engine)
 class CVIBuffer_Point_Instance;
 class CShader;
 class CTransform;
+class CTexture;
 NS_END
 
 NS_BEGIN(Tool_Effect)
@@ -68,6 +69,15 @@ private:
     _bool m_bisLoop;
 
     _float4 m_fColor = {};
+
+    vector<string> m_ImageFiles;
+    vector<string> m_ShaderFiles;
+    vector<CTexture*> m_pTextures;
+    vector<ID3D11ShaderResourceView*>	m_SRVs;
+    CTexture* m_pTexture[3] = {};
+    string      szFile[3];
+    _uint       m_iImageType = { 0 };
+    _int       m_iShaderBegine = { 0 };
 private:
 
 public:

@@ -40,8 +40,66 @@ HRESULT CParticle_Setting::Initialize()
     desc.vLifeTime = m_fLifeTime;
     desc.vSpeed = m_fSpeed;
     desc.isLoop = m_bisLoop;
+    m_fColor = { 0,0,0,1 };
     m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &desc);
     m_pVIBufferCom->Initialize(nullptr);
+
+
+
+    m_ImageFiles.clear();
+
+    vector<string> ImageFiles;
+    char pattern[MAX_PATH] = {};
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
+
+    WIN32_FIND_DATAA fd{};
+    HANDLE h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                char szFilePath[MAX_PATH] = {};
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
+                strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+                ImageFiles.emplace_back(szFilePath);
+                m_ImageFiles.emplace_back(fd.cFileName);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
+    }
+    for (auto Texture : m_pTextures) {
+        Safe_Release(Texture);
+    }
+    m_pTextures.clear();
+    m_SRVs.clear();
+    for (auto ImageFile : ImageFiles) {
+        _tchar szPath[256] = { 0, };
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
+        m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
+
+        _tchar			szEXT[MAX_PATH] = {};
+
+        _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+
+        _tchar			szFullPath[MAX_PATH] = {};
+
+        ID3D11ShaderResourceView* pSRV = { nullptr };
+
+        HRESULT			hr = { };
+        if (false == lstrcmp(szEXT, TEXT(".dds")))
+            hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+        else if (false == lstrcmp(szEXT, TEXT(".tga")))
+            hr = E_FAIL;
+        else
+            hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+        if (FAILED(hr))
+            return E_FAIL;
+        m_SRVs.push_back(pSRV);
+    }
+
+    for (_uint i = 0; i < 3; ++i) {
+        m_pTexture[i] = m_pTextures[0];
+        szFile[i] = m_ImageFiles[0];
+    }
     return S_OK;
 }
 
@@ -57,6 +115,10 @@ HRESULT CParticle_Setting::Load_Binary(const _tchar* pFilePath)
 
 void CParticle_Setting::Update(_float fTimeDelta)
 {
+    ImGui::SetNextWindowSizeConstraints(
+        ImVec2(100, 100),
+        ImVec2(400, 600) 
+    );
     ImGui::Begin("Tools", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImVec2 btn = { 120, ImGui::GetFrameHeight() };
     if (ImGui::Button("Particle", btn)) {
@@ -245,15 +307,111 @@ void CParticle_Setting::Update(_float fTimeDelta)
     case 1:
     {
         _float4 fColor = m_fColor;
-        fColor.x *= 255.f;
-        fColor.y *= 255.f;
-        fColor.z *= 255.f;
-        fColor.w *= 255.f;
-        ImGui::DragFloat4("Color", reinterpret_cast<_float*>(&fColor), 1.f, 0.f, 255.f);
-        m_fColor.x = fColor.x / 255.f;
-        m_fColor.y = fColor.y / 255.f;
-        m_fColor.z = fColor.z / 255.f;
-        m_fColor.w = fColor.w / 255.f;
+        ImGui::ColorPicker4("MyColor", (_float*)&m_fColor, ImGuiColorEditFlags_PickerHueWheel);
+
+        if (ImGui::Button("Refresh", btn)) {
+            m_ImageFiles.clear();
+
+            vector<string> ImageFiles;
+            char pattern[MAX_PATH] = {};
+            strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
+
+            WIN32_FIND_DATAA fd{};
+            HANDLE h = FindFirstFileA(pattern, &fd);
+            if (h != INVALID_HANDLE_VALUE) {
+                do {
+                    if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                        char szFilePath[MAX_PATH] = {};
+                        strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
+                        strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+                        ImageFiles.emplace_back(szFilePath);
+                        m_ImageFiles.emplace_back(fd.cFileName);
+                    }
+                } while (FindNextFileA(h, &fd));
+                FindClose(h);
+            }
+            for (auto Texture : m_pTextures) {
+                Safe_Release(Texture);
+            }
+            m_pTextures.clear();
+            m_SRVs.clear();
+            for (_uint i = 0; i < 3; ++i) {
+                m_pTexture[i] = nullptr;
+            }
+            _uint i = 0;
+            for (auto ImageFile : ImageFiles) {
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
+                m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
+
+                _tchar			szEXT[MAX_PATH] = {};
+
+                _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+
+                _tchar			szFullPath[MAX_PATH] = {};
+
+                ID3D11ShaderResourceView* pSRV = { nullptr };
+
+                HRESULT			hr = { };
+                if (false == lstrcmp(szEXT, TEXT(".dds")))
+                    hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                else if (false == lstrcmp(szEXT, TEXT(".tga")))
+                    hr = E_FAIL;
+                else
+                    hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                if (FAILED(hr))
+                    return;
+                m_SRVs.push_back(pSRV);
+
+                for (_uint j = 0; j < 3; ++j) {
+                    if (szFile[j] == m_ImageFiles[i]) {
+                        m_pTexture[j] = m_pTextures[i];
+                    }
+                }
+                ++i;
+            }
+
+            for (_uint j = 0; j < 3; ++j) {
+                if (nullptr == m_pTexture[i]) {
+                    szFile[j] = m_ImageFiles[0];
+                    m_pTexture[j] = m_pTextures[0];
+                }
+            }
+        }
+
+        if (ImGui::Button("Refresh Shader", btn)) {
+            Safe_Release(m_pShaderCom);
+            m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+        }
+        ImGui::InputInt("Shader Begine", &m_iShaderBegine);
+
+        if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+        {
+            for (_uint i = 0; i < 3; ++i) {
+                _bool sel = i == m_iImageType;
+                if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                    m_iImageType = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::Separator();
+
+        ImVec2 child_size = ImVec2(250, 200);
+        ImGui::BeginChild("ImageScroll", child_size, true);
+        if (0 < m_SRVs.size()) {
+            _uint i = 0;
+            for (auto SRV : m_SRVs) {
+                if (ImGui::ImageButton(m_ImageFiles[i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                    m_pTexture[m_iImageType] = m_pTextures[i];
+                    szFile[m_iImageType] = m_ImageFiles[i];
+                }
+                if(1 == ++i % 2)
+                    ImGui::SameLine();
+            }
+        }
+        ImGui::EndChild();
     }
     break;
     }
@@ -278,7 +436,17 @@ HRESULT CParticle_Setting::Render()
     if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_fColor, sizeof(_float4))))
         return E_FAIL;
 
-    m_pShaderCom->Begin(0);
+    if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+        return E_FAIL;
+
+    if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
+        return E_FAIL;
+
+    if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+        return E_FAIL;
+
+
+    m_pShaderCom->Begin(m_iShaderBegine);
 
 
     m_pVIBufferCom->Bind_Resources();
@@ -291,4 +459,12 @@ void CParticle_Setting::Free()
 {
     __super::Free();
     Safe_Release(m_pVIBufferCom);
+    Safe_Release(m_pShaderCom);
+    Safe_Release(m_pTransformCom);
+    for (auto texture : m_pTextures)
+        Safe_Release(texture);
+    for (auto SRV : m_SRVs)
+        Safe_Release(SRV);
+    for (int i = 0; i < 3; ++i)
+        Safe_Release(m_pTexture[i]);
 }

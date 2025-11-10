@@ -36,14 +36,14 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	_long		MouseMove = {};
-	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::W))){
-		m_pTransformCom->Go_Straight(fTimeDelta * MouseMove * 0.01);
-	}
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
 		if (m_bIsCursor) {
 			ShowCursor(m_bIsCursor = false);
 		}
 		SetCursorPos(823, 463);
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::W))) {
+			m_pTransformCom->Go_Straight(fTimeDelta * MouseMove * 0.01);
+		}
 		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
 		{
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
