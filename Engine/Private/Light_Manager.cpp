@@ -6,6 +6,7 @@
 #include "VIBuffer_Point.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Model.h"
 #endif
 
 #ifdef _DEBUG
@@ -21,13 +22,27 @@ CLight_Manager::CLight_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CLight_Manager::Initialize()
 {
-    m_pVIBuffer = CVIBuffer_Point::Create(m_pDevice, m_pContext);
-    if (nullptr == m_pVIBuffer)
+#pragma region VIBuffer
+    m_pVIBuffer[0] = CVIBuffer_Point::Create(m_pDevice, m_pContext);
+    if (nullptr == m_pVIBuffer[0])
         return E_FAIL;
 
-    m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VIPoint.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
-    if (nullptr == m_pShader)
+    _matrix PreMatrix = XMMatrixScaling(0.01f, 0.005f, 0.01f) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+    m_pVIBuffer[1] = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/EngineResource/Model/Light/arrow.fbx", PreMatrix);
+    if (nullptr == m_pVIBuffer[1])
         return E_FAIL;
+#pragma endregion
+
+
+#pragma region Shader
+    m_pShader[0] = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/EngineShader_VIPoint.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
+    if (nullptr == m_pShader[0])
+        return E_FAIL;
+
+    m_pShader[1] = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/EngineShader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+    if (nullptr == m_pShader[1])
+        return E_FAIL;
+#pragma endregion
 
     m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/EngineResource/Texture/Light.png"), 1);
     if (nullptr == m_pTexture)
@@ -38,20 +53,41 @@ HRESULT CLight_Manager::Initialize()
 
 void CLight_Manager::Debug_LightRender()
 {
-    m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture", 0);
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
-    m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
-
+    _uint iIndex = 0;
+   
     for (auto& pLight : m_Lights)
     {
-        m_pShader->Bind_Matrix("g_WorldMatrix", pLight->GetWorldMatrix());
-        m_pShader->Begin(0);
+        m_pTexture->Bind_ShaderResource(m_pShader[0], "g_Texture", 0);
+        m_pShader[0]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+        m_pShader[0]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+        m_pShader[0]->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
 
-        m_pVIBuffer->Bind_Resources();
-        m_pVIBuffer->Render();
-        pLight->Debug_Render();
-        
+        m_pShader[0]->Bind_Matrix("g_WorldMatrix", pLight->GetWorldMatrix());
+        m_pShader[0]->Begin(0);
+
+        CVIBuffer_Point* pVIPointBuffer = static_cast<CVIBuffer_Point*>(m_pVIBuffer[0]);
+        pVIPointBuffer->Bind_Resources();
+        pVIPointBuffer->Render();
+
+        if (LIGHT_TYPE::DIRECTIONAL == pLight->Get_LightDesc()->eType)
+        {
+            m_pShader[1]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+            m_pShader[1]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+            m_pShader[1]->Bind_Matrix("g_WorldMatrix", pLight->GetWorldMatrix());
+
+            CModel* pModel = static_cast<CModel*>(m_pVIBuffer[1]);
+            _uint iNumMeshes = pModel->Get_NumMeshes();
+            m_pShader[1]->Begin(0);
+
+            for (_uint i = 0; i < iNumMeshes; ++i)
+            {
+                pModel->Render(i);
+            }
+        }
+        else if (LIGHT_TYPE::POINT == pLight->Get_LightDesc()->eType)
+        {
+            pLight->Debug_Render();
+        }
     }
 }
 #elif
@@ -70,7 +106,7 @@ const LIGHT_DESC* CLight_Manager::Get_LightDesc(_uint iIndex) const
     return (*iter)->Get_LightDesc();    
 }
 
-HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc)
+HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight)
 {
     CLight* pLight = nullptr;
 #ifdef _DEBUG
@@ -81,16 +117,27 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc)
     if (nullptr == pLight)
         return E_FAIL;
 
+    if (pOutLight)
+    {
+        pOutLight = pLight;
+        Safe_AddRef(pOutLight);
+    }
+
     m_Lights.push_back(pLight);
     return S_OK;
 }
 
-void CLight_Manager::Remove_Light(CLight* pLight)
+void CLight_Manager::Clear_DeadLight()
 {
-    auto iter = find(m_Lights.begin(), m_Lights.end(), pLight);
-    if (iter != m_Lights.end())
+    for (auto iter = m_Lights.begin(); iter != m_Lights.end();)
     {
-        m_Lights.erase(iter);
+        if ((*iter)->IsDead())
+        {
+            Safe_Release(*iter);
+            iter = m_Lights.erase(iter);
+        }
+        else
+            iter++;
     }
 }
 
@@ -133,8 +180,11 @@ void CLight_Manager::Free()
 
 #ifdef _DEBUG
     Safe_Release(m_pTexture);
-    Safe_Release(m_pVIBuffer);
-    Safe_Release(m_pShader);
+    for (_uint i = 0; i < 2; ++i)
+    {
+        Safe_Release(m_pVIBuffer[i]);
+        Safe_Release(m_pShader[i]);
+    }
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);

@@ -234,7 +234,6 @@ void CRenderer::Render()
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 {
 	m_DebugComponents.push_back(pDebugCom);
-
 	Safe_AddRef(pDebugCom);
 
 	return S_OK;
@@ -571,6 +570,7 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{
 		if (nullptr != pRenderObject)
@@ -651,6 +651,7 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 
 void CRenderer::Render_Debug()
 {
+	m_pGameInstance->Debug_LightRender();
 	for (auto& pDebugCom : m_DebugComponents)
 	{
 		if (nullptr != pDebugCom)
@@ -659,7 +660,6 @@ void CRenderer::Render_Debug()
 		Safe_Release(pDebugCom);
 	}
 	m_DebugComponents.clear();
-	m_pGameInstance->Debug_LightRender();
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return;

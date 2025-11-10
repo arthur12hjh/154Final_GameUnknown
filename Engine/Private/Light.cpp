@@ -6,12 +6,16 @@
 #include "OBBCollider.h"
 
 #ifdef _DEBUG
+#include "GameInstance.h"
+
 CLight::CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
-	m_pContext(pContext)
+	m_pContext(pContext),
+	m_pGameInstance(CGameInstance::GetInstance())
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pGameInstance);
 }
 #elif
 CLight::CLight()
@@ -29,7 +33,7 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 	_matrix WorldMat = XMMatrixIdentity();
 	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
 	{
-		WorldMat.r[0] = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 1.f), XMLoadFloat4(&m_LightDesc.vDirection)));
+		WorldMat.r[0] = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMLoadFloat4(&m_LightDesc.vDirection)));
 		WorldMat.r[1] = XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&m_LightDesc.vDirection), WorldMat.r[0]));
 		WorldMat.r[2] = XMLoadFloat4(&m_LightDesc.vDirection);
 	}
@@ -38,6 +42,7 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 
 	}
 
+	m_LightDesc.vPosition.w = 1.f;
 	WorldMat.r[3] = XMLoadFloat4(&m_LightDesc.vPosition);
 	XMStoreFloat4x4(&m_WorldMat, WorldMat);
 
@@ -51,9 +56,17 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
     return S_OK;
 }
 
+void CLight::SetDead(_bool bIsDead)
+{
+	m_bIsDead = bIsDead;
+}
+
 HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	_uint			iPassIndex = { 0 };
+
+	if (VISIBILITY::HIDDEN == m_eVisible)
+		return S_OK;
 
 	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
 	{
@@ -84,11 +97,15 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 	return pVIBuffer->Render();
 }
 
+void CLight::SetVisibility(VISIBILITY eVisibility)
+{
+}
+
 #ifdef _DEBUG
 void CLight::Debug_Render()
 {
 	m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
-	m_pCollider->Render();
+	m_pGameInstance->Add_DebugComponent(m_pCollider);
 }
 #endif // _DEBUG
 
@@ -100,13 +117,7 @@ HRESULT CLight::CreateDebugCollider()
 
 	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
 	{
-		m_pCollider = COBBCollider::Create(m_pDevice, m_pContext);
-		if (nullptr == m_pCollider)
-			return E_FAIL;
-
-		COBBCollider::OBB_COLLIDER_DESC OBBDesc = {};
-		OBBDesc.vSize = { 1.f, 0.3f, 1.f };
-		static_cast<COBBCollider*>(m_pCollider)->Initialize(&OBBDesc);
+		
 	}
 	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
 	{
@@ -119,13 +130,13 @@ HRESULT CLight::CreateDebugCollider()
 			return E_FAIL;
 
 		CSphereCollider::SPHERE_COLLIDER_DESC SphereDesc = {};
-		SphereDesc.fRadius = 1.f;
+		SphereDesc.fRadius = m_LightDesc.fRange;
 		static_cast<CSphereCollider*>(m_pCollider)->Initialize(&SphereDesc);
-		m_WorldMat._11 = m_WorldMat._22 = m_WorldMat._33 = m_LightDesc.fRange;
+		
 	}
-
 	
-	m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
+	if(m_pCollider)
+		m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
 	return S_OK;
 }
 CLight* CLight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHT_DESC& LightDesc)
@@ -163,6 +174,7 @@ void CLight::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pGameInstance);
 #endif
 
 }

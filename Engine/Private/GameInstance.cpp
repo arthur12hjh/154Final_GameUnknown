@@ -428,15 +428,16 @@ const _float4x4* CGameInstance::GetIdentityMatrixPtr()
 
 #pragma region LIGHT_MANAGER
 
-const LIGHT_DESC* CGameInstance::Get_LightDesc(_uint iIndex) const
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight)
 {
-	return m_pLight_Manager->Get_LightDesc(iIndex);
+	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
 
-HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc)
+const list<class CLight*>* CGameInstance::GetAllLight()
 {
-	return m_pLight_Manager->Add_Light(LightDesc);
+	return m_pLight_Manager->GetAllLight();
 }
+
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);

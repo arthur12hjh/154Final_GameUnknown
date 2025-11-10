@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 class CTexture;
-class CVIBuffer;
+class CComponent;
 class CLight;
 class CGameInstance;
 
@@ -16,7 +16,6 @@ private:
 #elif
 	CLight_Manager();
 #endif
-
 	virtual ~CLight_Manager() = default;
 
 public:
@@ -24,14 +23,13 @@ public:
 	HRESULT					Initialize();
 	void					Debug_LightRender();
 #endif
-	
-	const LIGHT_DESC*		Get_LightDesc(_uint iIndex) const;
 
 public:
-	HRESULT					Add_Light(const LIGHT_DESC& LightDesc);
-	
-	void					Remove_Light(CLight* pLight);
+	HRESULT					Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight);
+	void					Clear_DeadLight();
+
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	const	list<CLight*>*	GetAllLight() { return &m_Lights; }
 
 private:
 #ifdef _DEBUG
@@ -39,11 +37,10 @@ private:
 	ID3D11DeviceContext*			m_pContext = nullptr;
 	CGameInstance*					m_pGameInstance = nullptr;
 
-	CVIBuffer*						m_pVIBuffer = nullptr;
+	CComponent*						m_pVIBuffer[2] = { nullptr , nullptr };
 	CTexture*						m_pTexture = nullptr;
-	CShader*						m_pShader = nullptr;
+	CShader*						m_pShader[2] = { nullptr , nullptr };
 #endif
-	
 	list<CLight*>					m_Lights;
 
 public:
