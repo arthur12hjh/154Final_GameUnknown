@@ -349,6 +349,11 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_UI_Texture_Default */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
+		return E_FAIL;
+
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))

@@ -22,6 +22,9 @@ HRESULT CUI_Level_Logo::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
+	//if (FAILED(Ready_Textures()))
+	//	return E_FAIL;
+
 	//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
 
 	return S_OK;
@@ -57,8 +60,65 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	/*if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Logo_Wrapper"))))
 		return E_FAIL;*/
 
+	_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
+	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+	{
+		if (pTexture.first.find(prefix) == 0)
+		{
+			size_t pos = pTexture.first.find(prefix);
+			_wstring szTextureTag{};
+			szTextureTag = TEXT("Com_Texture_") + pTexture.first.substr(pos + prefix.length());
+
+			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::STATIC), pTexture.first, szTextureTag)))
+				return E_FAIL;
+		}
+	}
+	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::LOGO)))
+	{
+		if (pTexture.first.find(prefix) == 0)
+		{
+			size_t pos = pTexture.first.find(prefix);
+			_wstring szTextureTag{};
+			szTextureTag = TEXT("Com_Texture_") + pTexture.first.substr(pos + prefix.length());
+
+			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::LOGO), pTexture.first, szTextureTag)))
+				return E_FAIL;
+		}
+	}
+
 	return S_OK;
 }
+
+//HRESULT CUI_Level_Logo::Ready_Textures()
+//{
+//	CUIHUD* pUIHUD = dynamic_cast<Client::CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+//
+//	_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
+//	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+//	{
+//		if (pTexture.first.find(prefix) == 0)
+//		{
+//			size_t pos = pTexture.first.find(prefix);
+//			_wstring szTextureTag = pTexture.first.substr(pos + prefix.length());
+//
+//			if(FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::STATIC), pTexture.first, szTextureTag)))
+//				return E_FAIL;
+//		}
+//	}
+//	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::LOGO)))
+//	{
+//		if (pTexture.first.find(prefix) == 0)
+//		{
+//			size_t pos = pTexture.first.find(prefix);
+//			_wstring szTextureTag = pTexture.first.substr(pos + prefix.length());
+//
+//			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::LOGO), pTexture.first, szTextureTag)))
+//				return E_FAIL;
+//		}
+//	}
+//
+//	return S_OK;
+//}
 
 CUI_Level_Logo* CUI_Level_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {

@@ -48,11 +48,15 @@ void CUIWrapper::Update(_float fTimeDelta)
 
 void CUIWrapper::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
+	if (m_bRender)
+		m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
 }
 
 HRESULT CUIWrapper::Render()
 {
+	if (!m_bRender)
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -75,10 +79,10 @@ HRESULT CUIWrapper::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	///* Com_Texture */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
+	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	//	return E_FAIL;
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),

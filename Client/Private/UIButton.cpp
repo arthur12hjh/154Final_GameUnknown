@@ -48,11 +48,15 @@ void CUIButton::Update(_float fTimeDelta)
 
 void CUIButton::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(static_cast<RENDER>(m_tUIDesc.iRenderGroup), this);
+	if (m_bRender)
+		m_pGameInstance->Add_RenderGroup(static_cast<RENDER>(m_tUIDesc.iRenderGroup), this);
 }
 
 HRESULT CUIButton::Render()
 {
+	if (!m_bRender)
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -75,10 +79,10 @@ HRESULT CUIButton::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	///* Com_Texture */
+	//if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
+	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	//	return E_FAIL;
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),

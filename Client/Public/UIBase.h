@@ -16,7 +16,6 @@ class CUIBase abstract : public CUIObject
 public:
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
 	{
-		_uint iObjectID{ 0 };
 		_uint iLevel{ 0 };
 		_uint iDepth{ 0 };
 		_uint iPass{ 0 };
@@ -45,6 +44,12 @@ public:
 		m_tUIDesc = tDesc;
 	}
 
+	UIBASE_DESC Get_UIBase_OriginDesc() { return m_tOriginUIDesc; }
+	void Set_UIBase_OriginDesc(UIBASE_DESC tDesc) {
+		m_tOriginUIDesc = tDesc;
+		m_tUIDesc = m_tOriginUIDesc;
+	}
+
 	_uint Get_Depth() { return m_tUIDesc.iDepth; }
 	void Set_Depth(_uint iDepth) {
 		m_tUIDesc.iDepth = iDepth;
@@ -63,15 +68,25 @@ public:
 		return &m_Children;
 	}
 
+	void Set_Position(_float fX, _float fY);
+	void Set_Size(_float fSizeX, _float fSizeY);
+	HRESULT Set_TextureCom(_wstring szTextureTag, _uint iTextureIndex);
+
 protected:
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 	CTexture*			m_pTextureCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
 
+	UIBASE_DESC m_tOriginUIDesc{};
 	UIBASE_DESC m_tUIDesc{};
 
 	vector<CUIBase*>		m_Children = {};
 	
+	_bool m_bRender = false;
+
+private:
+	HRESULT Ready_Texture();
+
 protected:
 	virtual HRESULT Ready_Components();
 	virtual HRESULT Bind_ShaderResources();
