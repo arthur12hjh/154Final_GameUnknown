@@ -213,7 +213,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
 
-	ExplosionDesc.iNumInstance = 1000000;
+	ExplosionDesc.iNumInstance = 1000;
 	ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
 	ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
 	ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
