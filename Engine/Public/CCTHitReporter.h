@@ -16,14 +16,14 @@ public:
 	virtual void onObstacleHit(const PxControllerObstacleHit& hit) override {}
 
 public:
-	void Set_Controller(PxController* pController, const _wstring& szControllerTag) {
+	void Set_Controller(PxController* pController, PxUserData tUserData) {
 		m_pController = pController; 
-		m_szControllerTag = szControllerTag;
+		m_tUserData = tUserData;
 	}
 
 protected:
-	PxController* m_pController = { nullptr };
-	_wstring	  m_szControllerTag = { TEXT("") };
+	PxController*	m_pController = { nullptr };
+	PxUserData		m_tUserData = {};
 
 public:
 	virtual void Free() override;

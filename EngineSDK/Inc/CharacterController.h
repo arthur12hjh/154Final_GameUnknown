@@ -31,8 +31,8 @@ public:
 		_float3			vMaterial = { 0.5f, 0.5f, 0.6f };
 		/* 시작할때 세팅할 위치. 반드시 채워줘야돼요. */
 		_float4			vStartPos = { 0.f, 0.f, 0.f, 1.f };
-		_wstring		szControllerTag = { TEXT("") };
 		class CCTHitReporter* pHitReporter = { nullptr };
+		PxUserData		tUserData = {};
 	} CCT_DESC;
 
 private:
@@ -64,7 +64,7 @@ private:
 	_float3				 m_vSize = { -1.f, -1.f, -1.f };
 	PxVec3				 m_vPrePosition = { 0.f, 0.f, 0.f };
 	PxVec3				 m_vPosition = { 0.f, 0.f, 0.f };
-	_wstring			 m_szControllerTag = { TEXT("") };
+	PxUserData			 m_tUserData = {};
 
 private:
 	HRESULT Ready_CapsuleController(CCT_DESC* pDesc);
