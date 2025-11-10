@@ -68,7 +68,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 		}
 		else
 		{
-			// ¿©±â¼­ lerp ÇÏÀÚ
+			// ï¿½ï¿½ï¿½â¼­ lerp ï¿½ï¿½ï¿½ï¿½
 			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
 			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
 

@@ -233,6 +233,14 @@ public:
 
 #pragma endregion
 
+#pragma region MODEL_PARSER
+	HRESULT ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+
+#pragma endregion
+
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -269,6 +277,8 @@ private:
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };
 	class CPhysx_Manager*			m_pPhysx_Manager = { nullptr };
+	class CBinParser*				m_pBinParser = { nullptr };
+	class CFbxParser*				m_pFbxParser = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_uint2							m_vScreenSize = {};

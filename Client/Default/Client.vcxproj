@@ -195,6 +195,8 @@
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
+    <ClInclude Include="..\public\Village_Mou.h" />
+    <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -258,6 +260,8 @@
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
+    <ClCompile Include="..\private\Village_Mou.cpp" />
+    <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

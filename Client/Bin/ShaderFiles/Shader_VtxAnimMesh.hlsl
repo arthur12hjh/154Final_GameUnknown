@@ -136,7 +136,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vPosToCam = normalize(g_vCamPosition - In.vWorldPos);
     float fStrength = 1.5f;
     float fPower = 5.f;
-    float4 vColor = float4(1.f, 0.f, 0.f, 1.f);
+    float4 vColor = float4(1.f, 1.f, 1.f, 1.f);
     vector vRimLight = (1 - dot(normalize(In.vNormal), vPosToCam));
     
     vRimLight = pow(vRimLight, fPower) * fStrength * vColor; 

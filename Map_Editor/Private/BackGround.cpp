@@ -2,7 +2,6 @@
 #include "BackGround.h"
 
 #include "GameInstance.h"
-#include "Village.h"
 
 CBackGround::CBackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }

@@ -14,17 +14,17 @@ CMesh::CMesh(const CMesh& Prototype)
 {
 }
 
-HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const aiMesh* pAIMesh, _fmatrix PreTransformMatrix)
+HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
 {
-	strcpy_s(m_szName, pAIMesh->mName.data);
+	strcpy_s(m_szName, pBinMesh->szName);
 
-	m_iMaterialIndex = pAIMesh->mMaterialIndex;
+	m_iMaterialIndex = pBinMesh->iMaterialIndex;
 	m_iNumVertexBuffers = 1;
-	m_iNumVertices = pAIMesh->mNumVertices;
+	m_iNumVertices = pBinMesh->iNumVertices;
 
 
 	
-	m_iNumIndices = pAIMesh->mNumFaces * 3;
+	m_iNumIndices = pBinMesh->iNumFaces * 3;
 	m_iIndexStride = 4;
 	
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
@@ -33,8 +33,8 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 #pragma region VERTEX_BUFFER
 
 	HRESULT hr = MODEL_TYPE::NONANIM == eType ?
-		Ready_VertexBuffer_For_NonAnim(pAIMesh, PreTransformMatrix) :
-		Ready_VertexBuffer_For_Anim(pModel, pAIMesh);
+		Ready_VertexBuffer_For_NonAnim(pBinMesh, PreTransformMatrix) :
+		Ready_VertexBuffer_For_Anim(pModel, pBinMesh);
 
 	if (FAILED(hr))
 		return E_FAIL;
@@ -56,11 +56,11 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 
 	_uint	iNumIndices = {};
 
-	for (size_t i = 0; i < pAIMesh->mNumFaces; i++)
+	for (size_t i = 0; i < pBinMesh->iNumFaces; i++)
 	{		
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[0];
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[1];
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[2];
+		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[0];
+		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[1];
+		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[2];
 	}
 
 
@@ -103,7 +103,7 @@ HRESULT CMesh::Bind_BoneMatrices(const vector<CBone*>& Bones, CShader* pShader, 
 	
 }
 
-HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix)
+HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
 {
 	m_iVertexStride = sizeof(VTXMESH);
 	D3D11_BUFFER_DESC		VBDesc{};
@@ -122,19 +122,22 @@ HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* pAIMesh, _fmatrix Pr
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		memcpy(&pVertices[i].vPosition, &pAIMesh->mVertices[i], sizeof(_float3));
+		memcpy(&pVertices[i].vPosition, &pBinMesh->vPositions[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PreTransformMatrix));
 
-		memcpy(&pVertices[i].vNormal, &pAIMesh->mNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &pBinMesh->vNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PreTransformMatrix)));
 
-		memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTangent, &pBinMesh->vTangents[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vTangent, XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vTangent), PreTransformMatrix)));
 
-		memcpy(&pVertices[i].vBinormal, &pAIMesh->mBitangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vBinormal, &pBinMesh->vBinormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vBinormal, XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vBinormal), PreTransformMatrix)));
 
-		memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+
+		
+
+		memcpy(&pVertices[i].vTexcoord, &pBinMesh->vTextureCoords[0][i], sizeof(_float2));
 	}
 
 	D3D11_SUBRESOURCE_DATA	InitialVBData{};
@@ -148,7 +151,7 @@ HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* pAIMesh, _fmatrix Pr
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const aiMesh* pAIMesh)
+HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const binMesh* pBinMesh)
 {
 	m_iVertexStride = sizeof(VTXANIMMESH);
 	D3D11_BUFFER_DESC		VBDesc{};
@@ -167,13 +170,14 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const aiMesh* p
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		memcpy(&pVertices[i].vPosition, &pAIMesh->mVertices[i], sizeof(_float3));
-		memcpy(&pVertices[i].vNormal, &pAIMesh->mNormals[i], sizeof(_float3));
-		memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
-		memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));		
+		memcpy(&pVertices[i].vPosition, &pBinMesh->vPositions[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &pBinMesh->vNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTangent, &pBinMesh->vTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vBinormal, &pBinMesh->vBinormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexcoord, &pBinMesh->vTextureCoords[0][i], sizeof(_float2));
 	}
 
-	m_iNumBones = pAIMesh->mNumBones;
+	m_iNumBones = pBinMesh->iNumBones;
 
 	m_OffsetMatrices.reserve(m_iNumBones);
 
@@ -185,12 +189,12 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const aiMesh* p
 
 	for (size_t i = 0; i < m_iNumBones; i++)
 	{
-		aiBone*		pAIBone = pAIMesh->mBones[i];	
+		binBone		binBoneTmp = pBinMesh->vBones[i];
 
-		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+		memcpy(&OffsetMatrix, &binBoneTmp.OffsetMatrix, sizeof(_float4x4));
 		XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));		
 
-		_int		iBoneIndex = pModel->Get_BoneIndex(pAIBone->mName.data);
+		_int		iBoneIndex = pModel->Get_BoneIndex(binBoneTmp.szName);
 
 		if (-1 == iBoneIndex)
 			return E_FAIL;
@@ -199,32 +203,37 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const aiMesh* p
 		m_BoneIndices.push_back(iBoneIndex);
 
 		/* 이 뼈는 몇개의 정점에게 영향을 주는가? */
-		for (size_t j = 0; j < pAIBone->mNumWeights; j++)
+		for (size_t j = 0; j < binBoneTmp.iNumWeights; j++)
 		{
-			aiVertexWeight	AIWeight = pAIBone->mWeights[j];
+			binVertexWeight	binWeight = binBoneTmp.vWeights[j];
 
-			if(0.f == pVertices[AIWeight.mVertexId].vBlendWeight.x)
+			if(0.f == pVertices[binWeight.iVertexId].vBlendWeight.x)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndex.x = i;
-				pVertices[AIWeight.mVertexId].vBlendWeight.x = AIWeight.mWeight;
+				pVertices[binWeight.iVertexId].vBlendIndex.x = i;
+				pVertices[binWeight.iVertexId].vBlendWeight.x = binWeight.fWeight;
 			}
 
-			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeight.y)
+			else if (0.f == pVertices[binWeight.iVertexId].vBlendWeight.y)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndex.y = i;
-				pVertices[AIWeight.mVertexId].vBlendWeight.y = AIWeight.mWeight;
+				pVertices[binWeight.iVertexId].vBlendIndex.y = i;
+				pVertices[binWeight.iVertexId].vBlendWeight.y = binWeight.fWeight;
 			}
 
-			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeight.z)
+			else if (0.f == pVertices[binWeight.iVertexId].vBlendWeight.z)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndex.z = i;
-				pVertices[AIWeight.mVertexId].vBlendWeight.z = AIWeight.mWeight;
+				pVertices[binWeight.iVertexId].vBlendIndex.z = i;
+				pVertices[binWeight.iVertexId].vBlendWeight.z = binWeight.fWeight;
 			}
 
-			else
+			else if(0.f == pVertices[binWeight.iVertexId].vBlendWeight.w)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndex.w = i;
-				pVertices[AIWeight.mVertexId].vBlendWeight.w = AIWeight.mWeight;
+				pVertices[binWeight.iVertexId].vBlendIndex.w = i;
+				pVertices[binWeight.iVertexId].vBlendWeight.w = binWeight.fWeight;
+			}
+			else if (0.f != pVertices[binWeight.iVertexId].vBlendWeight.w)
+			{
+				pVertices[binWeight.iVertexId].vBlendIndex.w = i;
+				pVertices[binWeight.iVertexId].vBlendWeight.w = binWeight.fWeight;
 			}
 		}
 	}
@@ -249,11 +258,11 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const aiMesh* p
 	return S_OK;
 }
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const CModel* pModel, const aiMesh* pAIMesh, _fmatrix PreTransformMatrix)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModel, pAIMesh, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModel, pBinMesh, PreTransformMatrix)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);
