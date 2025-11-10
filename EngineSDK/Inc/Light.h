@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 class CCollider;
+class CGameInstance;
 
 class CLight final : public CBase
 {
@@ -35,6 +36,7 @@ private:
 #ifdef _DEBUG
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
+	CGameInstance*			m_pGameInstance = nullptr;
 
 	CCollider*				m_pCollider = nullptr;
 	_float4x4				m_WorldMat = {};

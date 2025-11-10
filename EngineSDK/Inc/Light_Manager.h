@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 class CTexture;
-class CVIBuffer;
+class CComponent;
 class CLight;
 class CGameInstance;
 
@@ -39,9 +39,9 @@ private:
 	ID3D11DeviceContext*			m_pContext = nullptr;
 	CGameInstance*					m_pGameInstance = nullptr;
 
-	CVIBuffer*						m_pVIBuffer = nullptr;
+	CComponent*						m_pVIBuffer[2] = { nullptr , nullptr };
 	CTexture*						m_pTexture = nullptr;
-	CShader*						m_pShader = nullptr;
+	CShader*						m_pShader[2] = { nullptr , nullptr };
 #endif
 	
 	list<CLight*>					m_Lights;
