@@ -25,6 +25,7 @@
 
 #ifdef _DEBUG
 #include "ShaderTestModel.h"
+#include "PxTestProp.h"
 #endif
 
 #include "UIButton.h"
@@ -205,10 +206,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &SnowDesc))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Snow"),
+		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Rect_Drop.hlsl"), "CS", SnowDesc.iNumInstance))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
 
-	ExplosionDesc.iNumInstance = 300;
+	ExplosionDesc.iNumInstance = 1000000;
 	ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
 	ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
 	ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
@@ -221,6 +226,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Expolosion"),
+		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance))))
+		return E_FAIL;
 
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
 
@@ -358,6 +366,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_ShaderTestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
 		CShaderTestModel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_PxTestProp */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
+		CPxTestProp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #endif
 

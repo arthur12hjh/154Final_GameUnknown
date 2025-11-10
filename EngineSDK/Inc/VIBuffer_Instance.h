@@ -9,12 +9,13 @@ class ENGINE_DLL CVIBuffer_Instance abstract : public CVIBuffer
 public:
 	typedef struct tagInstanceDesc
 	{
-		_uint		iNumInstance = {};
-		_float2		vSize = {};
-		_float3		vCenter = {};
-		_float3		vRange = {};
+		_uint			iNumInstance = {};
+		_float2			vSize = {};
+		_float3			vCenter = {};
+		_float3			vRange = {};
 		_bool			isLoop;
 	}INSTANCE_DESC;
+
 protected:
 	CVIBuffer_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Instance(const CVIBuffer_Instance& Prototype);
@@ -26,9 +27,17 @@ public:
 	virtual HRESULT Bind_Resources() override;
 	virtual HRESULT Render() override;
 
+	void			Lock(D3D11_MAP eLockType, D3D11_MAPPED_SUBRESOURCE* pOutData);
+	void			UnLock();
+
+	void			CopyResource(ID3D11Buffer* pResource);
+	void			PasteResource(ID3D11Buffer* pResource);
+
+	_bool			IsLoop() { return m_bIsLoop; }
+
 public:
-	virtual void Drop(_float fTimeDelta) {}
-	void	StopEffect();
+	virtual void	Drop(_float fTimeDelta) {}
+	void			StopEffect();
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };
@@ -37,7 +46,8 @@ protected:
 	_uint					m_iInstanceStride = {};
 	_uint					m_iNumInstance = {};
 	_uint					m_iNumIndexPerInstance = {};
-	_bool					m_isLoop = { false };
+	_bool					m_bIsLoop = { false };
+
 public:
 	virtual CComponent* Clone(void* pArg) = 0;
 	virtual void Free() override;
