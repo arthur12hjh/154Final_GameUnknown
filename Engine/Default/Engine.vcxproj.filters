@@ -226,6 +226,9 @@
     <ClInclude Include="..\Public\CCTHitReporter.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PxUserData.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\PxUserData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -664,6 +667,9 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter">
       <UniqueIdentifier>{e2676f0c-92da-4fd5-b645-9b1c62215ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\PxUserData">
+      <UniqueIdentifier>{21be063d-19c8-4368-9fcb-820e3f35dfb4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

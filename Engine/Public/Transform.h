@@ -50,6 +50,7 @@ public:
 	void					Turn(_fvector vAxis, _float fTimeDelta);
 	void					Rotation(_fvector vAxis, _float fRadian);
 	void					Rotation(_float fRadianX, _float fRadianY, _float fRadianZ);
+	void					Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQuatW);
 
 	void					LookAt(_fvector vAt);
 

@@ -26,9 +26,6 @@ HRESULT CCharacterController::Initialize(void* pArg)
 {
 	CCT_DESC* pDesc = static_cast<CCT_DESC*>(pArg);
 
-	/* 식별용 아이디. 추후 콜백 이벤트에서 던져주면 식별가능. */
-	m_szControllerTag = pDesc->szControllerTag;
-
 	switch (pDesc->eCharacterControllerType)
 	{
 	case CCT_SHAPE::BOX:
@@ -84,6 +81,9 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.climbingMode = PxCapsuleClimbingMode::eCONSTRAINED;
 	CCTDesc.upDirection = PxVec3(0, 1, 0); // 기본 up
 
+	m_tUserData = pDesc->tUserData;
+	CCTDesc.userData = &m_tUserData;
+
 	if (!CCTDesc.isValid())
 		return E_FAIL;
 
@@ -91,7 +91,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
-	m_pHitReporter->Set_Controller(m_pController, pDesc->szControllerTag);
+	m_pHitReporter->Set_Controller(m_pController, pDesc->tUserData);
 
 	return S_OK;
 }
@@ -121,6 +121,9 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	CCTDesc.nonWalkableMode		= PxControllerNonWalkableMode::ePREVENT_CLIMBING;
 	CCTDesc.upDirection			= PxVec3(0, 1, 0); // 기본 up
 
+	m_tUserData					= pDesc->tUserData;
+	CCTDesc.userData			= &m_tUserData;
+
 	if (!CCTDesc.isValid())
 		return E_FAIL;
 
@@ -128,7 +131,7 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
-	m_pHitReporter->Set_Controller(m_pController, pDesc->szControllerTag);
+	m_pHitReporter->Set_Controller(m_pController, pDesc->tUserData);
 
 	return S_OK;
 }
