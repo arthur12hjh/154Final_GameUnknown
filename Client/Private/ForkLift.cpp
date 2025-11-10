@@ -43,9 +43,6 @@ void CForkLift::Priority_Update(_float fTimeDelta)
 
 void CForkLift::Update(_float fTimeDelta)
 {
-
-
-
 }
 
 void CForkLift::Late_Update(_float fTimeDelta)
@@ -56,12 +53,8 @@ void CForkLift::Late_Update(_float fTimeDelta)
 
 HRESULT CForkLift::Render()
 {
-	
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
-
 
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();

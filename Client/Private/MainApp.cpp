@@ -12,6 +12,8 @@
 #ifdef _DEBUG
 #include "ImGuiMain.h"
 #include "Model.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
 #endif
 
 
@@ -225,10 +227,17 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 
 
+#pragma region Shader
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
+
+
+
+#pragma endregion
+
+	
 
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
@@ -239,6 +248,16 @@ HRESULT CMainApp::Ready_Prototypes()
 	/* For.Prototype_Component_Model_ShaderTestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/Nvzhu_SM_PlayerTest.fbx"))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_RigidBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_CharacterController */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+		CCharacterController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #endif
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Player.h"
 #include "GameInstance.h"
+#include "Terrain.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -19,13 +20,19 @@ HRESULT CPlayer::Initialize_Prototype()
 
 HRESULT CPlayer::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+
+	CGameObject::GAMEOBJECT_DESC	Desc{};
+	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
+	Desc.fSpeedPerSec = 10.f;
+
+
+	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(50.f, 4.f, 50.f, 1.f));
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 	return S_OK;
 }
@@ -37,24 +44,53 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 void CPlayer::Update(_float fTimeDelta)
 {
 
-	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
+	if (GetKeyState(VK_DOWN) & 0x8000)
 	{
-		_float3		vPickPos = {};
-		if (true == m_pGameInstance->isPicking(&vPickPos))
-		{
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vPickPos), 1.f));
-		}
-	}*/
+		m_pTransformCom->Go_Backward(fTimeDelta);
+	}
 
+	if (GetKeyState(VK_LEFT) & 0x8000)
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
 
-	//m_pNavigationCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	if (GetKeyState(VK_RIGHT) & 0x8000)
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
 
+	if (GetKeyState(VK_UP) & 0x8000)
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
+	}
+
+	_vector vPosition = m_pTransformCom->Get_State(STATE::POSITION);
+
+	// 2. _vector를 _float3 (x, y, z) 구조체로 저장합니다.
+	_float3 vPosFloat3;
+	XMStoreFloat3(&vPosFloat3, vPosition);
+
+	// 3. swprintf_s를 사용하여 문자열을 포맷팅합니다.
+	wchar_t szBuffer[256];
+	swprintf_s(szBuffer, 256, L"Position: (%.2f, %.2f, %.2f)\n",
+		vPosFloat3.x,
+		vPosFloat3.y,
+		vPosFloat3.z);
+
+	// 4. 디버그 창에 출력합니다.
+	OutputDebugStringW(szBuffer);
+
+	m_pNavigationCom->Compute_Height(m_pTransformCom);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
+#endif
 }
 
 HRESULT CPlayer::Render()
@@ -88,6 +124,13 @@ HRESULT CPlayer::Render()
 
 HRESULT CPlayer::Ready_Components()
 {
+	/* Com_Navigation */
+	CNavigation::NAVIGATION_DESC		NavigationDesc{};
+	NavigationDesc.iCurrentCellIndex = 0;
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+		return E_FAIL;
+
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Fiona"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -145,6 +188,7 @@ void CPlayer::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

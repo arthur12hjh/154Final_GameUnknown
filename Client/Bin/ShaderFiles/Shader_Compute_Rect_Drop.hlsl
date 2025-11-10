@@ -26,6 +26,7 @@ void CS(uint3 Gid : SV_GroupID,
 {
     if (DTid.x >= viLoopAndCount.y)
         return;
+    
     g_Out[DTid.x].vRight = Input[DTid.x].vRight;
     g_Out[DTid.x].vUp = Input[DTid.x].vUp;
     g_Out[DTid.x].vLook = Input[DTid.x].vLook;
@@ -34,9 +35,9 @@ void CS(uint3 Gid : SV_GroupID,
     g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
     g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
 
-    //if (1 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
-    //{
-    //    g_Out[DTid.x].vTranslation.y -= Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
-    //    g_Out[DTid.x].vLifeTime.x = 0;
-    //}
+    if (1 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
+    {
+        g_Out[DTid.x].vTranslation.y += Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
+        g_Out[DTid.x].vLifeTime.x = 0;
+    }
 }

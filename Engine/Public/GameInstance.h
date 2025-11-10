@@ -100,9 +100,13 @@ public:
 #pragma endregion
 
 #pragma region LIGHT_MANAGER
-	const LIGHT_DESC*			Get_LightDesc(_uint iIndex) const;
-	HRESULT						Add_Light(const LIGHT_DESC& LightDesc);
-	HRESULT						Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
+	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	const	list<class CLight*>*		GetAllLight();
+#ifdef _DEBUG
+	void								Debug_LightRender();
+#endif
+
 #pragma endregion
 
 #pragma region FONT_MANAGER
@@ -215,6 +219,18 @@ public:
 
 #pragma endregion
 
+#pragma region Physx_Manager
+	/* 피직스 싱글턴 객체 얻어오는 함수. */
+	PxControllerManager* Get_PxCCTManager();
+	PxPhysics*  Get_PxPhysics();
+	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
+	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
+	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
+	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
+	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
+
+#pragma endregion
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -250,6 +266,7 @@ private:
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };
+	class CPhysx_Manager*			m_pPhysx_Manager = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_uint2							m_vScreenSize = {};
