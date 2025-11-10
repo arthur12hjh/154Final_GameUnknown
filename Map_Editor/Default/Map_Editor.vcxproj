@@ -183,7 +183,8 @@
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Sky.h" />
-    <ClInclude Include="..\public\Village.h" />
+    <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Map_Editor.h" />
     <ClInclude Include="Resource.h" />
@@ -228,7 +229,8 @@
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
-    <ClCompile Include="..\private\Village.cpp" />
+    <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
   </ItemGroup>
   <ItemGroup>

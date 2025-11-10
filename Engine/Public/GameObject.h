@@ -34,6 +34,8 @@ public:
 		return m_isDead;
 	}
 
+	void Set_Dead(_bool isDead) { m_isDead = isDead; }
+
 	class CComponent*			Find_Component(const _wstring& strComponentTag);
 
 	void						SetVisibility(VISIBILITY eVisiblility) {

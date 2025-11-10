@@ -90,7 +90,7 @@ void CPlayer::Update(_float fTimeDelta)
 		m_iState = STATE::STATE_ATTACK;
 	}
 
-//	m_pNavigationCom->Compute_Height(m_pTransformCom);
+	m_pNavigationCom->Compute_Height(m_pTransformCom);
 
 Progress:
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
