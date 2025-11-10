@@ -7,7 +7,13 @@ NS_BEGIN(Engine)
 class CModel;
 class CCollider;
 class CNavigation;
+class CRigidBody;
+class CCharacterController;
 NS_END
+
+/*
+이 객체 건드리고싶으면 서민석한테 디코 ㄱㄱ
+*/
 
 NS_BEGIN(Client)
 
@@ -26,9 +32,11 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
+
 private:
-	CModel*  m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
+	CCharacterController* m_pCCT = { nullptr };
+	CModel*				  m_pModelCom = { nullptr };
+	CShader*			  m_pShaderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();
