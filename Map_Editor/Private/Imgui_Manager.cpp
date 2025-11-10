@@ -507,8 +507,6 @@ HRESULT CImgui_Manager::Render()
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-	
-
 	return S_OK;
 }
 
