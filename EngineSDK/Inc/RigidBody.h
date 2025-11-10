@@ -31,6 +31,10 @@ public:
 		_float3			vMaterial = { 0.5f, 0.5f, 0.6f };
 		/* 시작할때 세팅할 월드 매트릭스. 반드시 채워줘야돼요. */
 		_float4x4		StartWorldMatrix = {};
+		/* 질량 */
+		_float			fMass = {};
+		/* 현재는 식별용 문자열만 넣을 수 있습니다. */
+		PxUserData		tUserData = {};
 	} RIGIDBODY_DESC;
 
 private:
@@ -40,8 +44,7 @@ private:
 
 public:
 	PxRigidActor* Get_PxRigidBody() { return m_pPxRigidBody; }
-	PxTransform*  Get_PxTransform() { return m_pPxTransform; }
-	void		  Set_PxTransform(PxTransform& Transform) { *m_pPxTransform = Transform; }
+	const PxTransform&  Get_PxTransform() { return m_pPxRigidBody->getGlobalPose(); }
 	
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -56,16 +59,16 @@ private:
 	/* RigidBody -> RigidDynamic & RigidArticulationLink */
 	PxPhysics*		m_pPxPhysics = { nullptr };
 	PxRigidActor*	m_pPxRigidBody = { nullptr };
-	PxTransform*	m_pPxTransform = { nullptr };
 	PxMaterial*		m_pMaterial = { nullptr };
 	PxShape*		m_pShape = { nullptr };
 
 	RIGIDBODY_TYPE	m_eType = {};
 	RIGIDBODY_SHAPE m_eShape = {};
 	_float3			m_vSize = { -1.f, -1.f, -1.f };
+	PxUserData		m_tUserData = {};
+	_float			m_fMass = {};
 
 private:
-	HRESULT Ready_PxTransform(RIGIDBODY_DESC* pDesc);
 	HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);
 	HRESULT Ready_PxShape(RIGIDBODY_DESC* pDesc);
 	HRESULT Ready_PxRigidBody(RIGIDBODY_DESC* pDesc);

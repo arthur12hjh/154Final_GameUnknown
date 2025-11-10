@@ -182,6 +182,7 @@
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
+    <ClInclude Include="..\Public\PxTestProp.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
@@ -245,6 +246,7 @@
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
+    <ClCompile Include="..\Private\PxTestProp.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />
