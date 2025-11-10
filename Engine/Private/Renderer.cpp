@@ -234,7 +234,6 @@ void CRenderer::Render()
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 {
 	m_DebugComponents.push_back(pDebugCom);
-
 	Safe_AddRef(pDebugCom);
 
 	return S_OK;
@@ -438,6 +437,7 @@ void CRenderer::Render_NonLight()
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
 
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
 		if (nullptr != pRenderObject)
@@ -570,6 +570,7 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{
 		if (nullptr != pRenderObject)
@@ -650,6 +651,7 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 
 void CRenderer::Render_Debug()
 {
+	m_pGameInstance->Debug_LightRender();
 	for (auto& pDebugCom : m_DebugComponents)
 	{
 		if (nullptr != pDebugCom)

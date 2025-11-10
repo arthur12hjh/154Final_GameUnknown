@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "Navigation.h"
 #include "Cell.h"
-#include "Village.h"
+#include "Terrain.h"
 #include <fstream>
 
 IMPLEMENT_SINGLETON(CImgui_Manager)
@@ -31,7 +31,18 @@ HRESULT CImgui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	ImGui_ImplWin32_Init(g_hWnd);
 	ImGui_ImplDX11_Init(m_pDevice, m_pContext);
 
-	m_pVillage = dynamic_cast<CVillage*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Village_Mou"))->front());
+	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
+
+	if (pTerrainList != nullptr && !pTerrainList->empty())
+	{
+		m_pTerrain = dynamic_cast<CTerrain*>(pTerrainList->back());
+	}
+	else
+	{
+		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
+	}
+	
+
 
 	return S_OK;
 }
@@ -49,6 +60,7 @@ void CImgui_Manager::Update(_float fTimeDelta)
 
 	if (m_bIsNaviEditMode && m_eNaviMode == NAVI_MODE::ADD_POINT)
 	{
+
 		// 마우스 좌클릭 이벤트 체크
 		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 		{
@@ -71,7 +83,7 @@ void CImgui_Manager::Update(_float fTimeDelta)
 		return; // 네비게이션 모드일 때는 다른 오브젝트 추가 로직은 건너뜁니다.
 	}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+	if (!m_bIsDeplayMode && m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 	{
 		if (m_eCurrentObject == ADD_OBJECT::END)
 			return;
@@ -87,6 +99,11 @@ void CImgui_Manager::Update(_float fTimeDelta)
 			if (m_eCurrentObject == ADD_OBJECT::PLAYER)
 			{
 				protoTag = TEXT("Prototype_GameObject_Player"); layerTag = TEXT("Layer_Player");
+			}
+
+			else if (m_eCurrentObject == ADD_OBJECT::VIL_BUI03_04)
+			{
+				protoTag = TEXT("Prototype_GameObject_Vil_Bui03_04"); layerTag = TEXT("Layer_Vil_Bui03_04");
 			}
 
 			hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag, ENUM_CLASS(LEVEL::VILLAGE), layerTag, nullptr);
@@ -110,13 +127,49 @@ void CImgui_Manager::Update(_float fTimeDelta)
 			{
 				OutputDebugStringW(L"Failed to add GameObject to layer!\n");
 			}
-
 		}
-
-
-		
 	}
 
+	if (m_bIsDeplayMode)
+	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+		{
+			_float3 vPickedPoint = {};
+			m_pPickedObject = Find_Object_To_Pick(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName, &vPickedPoint);
+
+			if (m_pPickedObject)
+			{
+				m_bIsDragging = true;
+				m_pLastAddedObject = m_pPickedObject;
+			}
+			else
+			{
+				m_bIsDragging = false;
+			}
+		}
+		else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+		{
+			if (m_bIsDragging && m_pPickedObject)
+			{
+				_float3 vNewPickedPoint = {};
+
+				// Terrain에 찍은 새로운 월드 좌표를 가져옵니다.
+				if (true == m_pGameInstance->isPicking(&vNewPickedPoint))
+				{
+
+					_vector vPickedPoint = XMVectorSet(vNewPickedPoint.x, vNewPickedPoint.y, vNewPickedPoint.z, 1.f);
+
+					CTransform* pTransform = dynamic_cast<CTransform*>(m_pPickedObject->Find_Component(TEXT("Com_Transform")));
+					if (pTransform)
+					{
+
+						pTransform->Set_State(STATE::POSITION, vPickedPoint);
+
+					}
+				}
+			}
+		}
+	}
 }
 
 void CImgui_Manager::Late_Update(_float fTimeDelta)
@@ -138,9 +191,7 @@ HRESULT CImgui_Manager::Render()
     ImGui::Spacing();
 
 
-    // =========================================================================
     // 4. 네비게이션 편집 메뉴
-    // =========================================================================
     ImGui::Text("Navigation Editor");
     if (ImGui::Checkbox("Navi Edit Mode", &m_bIsNaviEditMode))
     {
@@ -216,8 +267,8 @@ HRESULT CImgui_Manager::Render()
     _int nSelectedEnvironment = -1;
 
     const _char* modelNames[] = { "Player" };
-    const _char* buildingNames[] = { "BlackSmithShop", "Forge", "Gate", "TowerGate", "LUMBERYARD_WHEEL", "QUARRY1", "RAMP", "FENCE1", "WALL1", "WALLSTRAIGHT1" };
-    const _char* environmentNames[] = { "BirchTree1", "RowanTree3", "YewTree1", "Stick", "Iron", "Rock", "Flint", "WoormWood", "MergedTree" };
+    const _char* buildingNames[] = { "Vil_Bui03_04" };
+    const _char* environmentNames[] = { "BirchTree1" };
 
     if (ImGui::CollapsingHeader("Models"))
     {
@@ -232,8 +283,49 @@ HRESULT CImgui_Manager::Render()
         }
     }
 
+	if (ImGui::CollapsingHeader("Buildings"))
+	{
+		if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(modelNames), 7))
+		{
+			if (nSelectedBuilding == 0) // Vil_Bui03_04
+			{
+				m_eCurrentObject = ADD_OBJECT::VIL_BUI03_04;
+				m_CurrentLayerName = TEXT("Layer_Vil_Bui03_04");
+			}
+
+		}
+	}
+
     // 삭제 버튼
-   
+	if (ImGui::Button("Delete All"))
+	{
+		if (m_eCurrentObject == ADD_OBJECT::END) return E_FAIL;
+
+		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
+
+		if (m_pObjects)
+		{
+			for (auto pObject : *m_pObjects)
+			{
+				pObject->Set_Dead(true);
+			}
+		}
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete Latest"))
+	{
+		if (m_eCurrentObject == ADD_OBJECT::END) return E_FAIL;
+
+		m_pObject = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName)->back();
+
+		m_pObject->Set_Dead(true);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("NONE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::END;
+	}
 
 
     ImGui::Spacing(); // 메뉴 사이의 간격
@@ -255,6 +347,27 @@ HRESULT CImgui_Manager::Render()
     {
         m_pCameraTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
     }
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	ImGui::Text("Object Control");
+	if (ImGui::Checkbox("Object Deplay Mode", &m_bIsDeplayMode))
+	{
+		// 모드가 켜지면 배치 모드(m_eCurrentObject)를 해제하고,
+		// 모드가 꺼지면 드래그 상태를 초기화합니다.
+		if (m_bIsDeplayMode)
+		{
+			m_eCurrentObject = ADD_OBJECT::END;
+		}
+		else
+		{
+			m_bIsDragging = false;
+			m_pPickedObject = nullptr;
+		}
+	}
+	ImGui::Text("Instruction: Select object on screen to drag.");
 
     // 오브젝트 스케일링, 회전하기
     ImGui::Spacing(); // 메뉴 사이의 간격
@@ -310,6 +423,59 @@ HRESULT CImgui_Manager::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+	ImGui::Text("Object Scale");
+	ImGui::Text("X");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(50.f);
+	ImGui::InputFloat("##ScaleX", &m_fScaleX);
+	ImGui::SameLine();
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(50.f);
+	ImGui::InputFloat("##ScaleY", &m_fScaleY);
+	ImGui::SameLine();
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(50.f);
+	ImGui::InputFloat("##ScaleZ", &m_fScaleZ);
+
+	if (ImGui::Button("Scale_All_Layer"))
+	{
+		if (m_eCurrentObject == ADD_OBJECT::END) return E_FAIL;
+
+		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
+
+		if (m_pObjects)
+		{
+			for (auto pObject : *m_pObjects)
+			{
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+				if (pTransform)
+				{
+					pTransform->Set_Scale(m_fScaleX, m_fScaleY, m_fScaleZ);
+				}
+			}
+		}
+	}
+
+	if (ImGui::Button("Scale_Latest_Layer"))
+	{
+		if (m_pLastAddedObject)
+		{
+			// 유효하다면 해당 객체의 Transform 컴포넌트를 찾음
+			CTransform* pTransform = dynamic_cast<CTransform*>(m_pLastAddedObject->Find_Component(TEXT("Com_Transform")));
+			if (pTransform)
+			{
+				pTransform->Set_Scale(m_fScaleX, m_fScaleY, m_fScaleZ);
+			}
+		}
+
+	}
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
 	// 에디터 세이브 / 로드
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
@@ -348,6 +514,16 @@ HRESULT CImgui_Manager::Render()
 
 void CImgui_Manager::Update_Rotation()
 {
+	if (m_pLastAddedObject)
+	{
+		// 유효하다면 해당 객체의 Transform 컴포넌트를 찾음
+		CTransform* pTransform = dynamic_cast<CTransform*>(m_pLastAddedObject->Find_Component(TEXT("Com_Transform")));
+		if (pTransform)
+		{
+			// Transform 컴포넌트가 있다면 회전 적용
+			pTransform->Rotation(XMConvertToRadians(m_fRotX), XMConvertToRadians(m_fRotY), XMConvertToRadians(m_fRotZ));
+		}
+	}
 }
 
 HRESULT CImgui_Manager::Save_Map_Objects()
@@ -360,14 +536,14 @@ HRESULT CImgui_Manager::Save_Map_Objects()
 		return E_FAIL;
 	}
 
-	// village_mou 객체 정보 저장
-	list<CGameObject*>* pPlayer = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Player"));
-	_uint iNumMonsters = (pPlayer) ? (_uint)pPlayer->size() : 0;
+	// vil_bui03_04 객체 정보 저장
+	list<CGameObject*>* pVil_Bui03_04 = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
+	_uint iNumMonsters = (pVil_Bui03_04) ? (_uint)pVil_Bui03_04->size() : 0;
 	ofs.write(reinterpret_cast<const char*>(&iNumMonsters), sizeof(_uint));
 
-	if (pPlayer)
+	if (pVil_Bui03_04)
 	{
-		for (auto pObject : *pPlayer)
+		for (auto pObject : *pVil_Bui03_04)
 		{
 			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
 			if (pTransform)
@@ -395,25 +571,25 @@ HRESULT CImgui_Manager::Load_Map_Objects()
 		return E_FAIL;
 	}
 
-	_uint iNumPlayers = 0;
-	ifs.read(reinterpret_cast<char*>(&iNumPlayers), sizeof(_uint));
+	_uint iNumVil_Bui03_04s = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumVil_Bui03_04s), sizeof(_uint));
 
-	for (_uint i = 0; i < iNumPlayers; ++i)
+	for (_uint i = 0; i < iNumVil_Bui03_04s; ++i)
 	{
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE),TEXT("Prototype_GameObject_Player"),
-			ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Player"));
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE),TEXT("Prototype_GameObject_Vil_Bui03_04"),
+			ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
 
 		if (SUCCEEDED(hr))
 		{
 			// Add_GameObject_ToLayer 호출 직후, 전체 리스트에서 마지막에 추가된 객체 가져오기
-			list<CGameObject*>* pPlayers = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Player"));
-			if (pPlayers && !pPlayers->empty())
+			list<CGameObject*>* pVil_Bui03_04s = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
+			if (pVil_Bui03_04s && !pVil_Bui03_04s->empty())
 			{
-				CGameObject* pPlayer = pPlayers->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pPlayer->Find_Component(TEXT("Com_Transform")));
+				CGameObject* pVil_Bui03_04 = pVil_Bui03_04s->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pVil_Bui03_04->Find_Component(TEXT("Com_Transform")));
 				if (pTransform)
 				{
 					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
@@ -454,14 +630,18 @@ void CImgui_Manager::Set_NaviEditMode(_bool bMode)
 
 	if (m_bIsNaviEditMode)
 	{
-		if (m_pVillage)
+		// 터레인에서 CNavigation 컴포넌트를 가져옵니다.
+		if (m_pTerrain)
 		{
-			m_pNavigation = m_pVillage->Get_Navigation();
-			m_eNaviMode = NAVI_MODE::ADD_POINT;
+			// CNavigation* m_pNavigationCom를 가져오는 함수가 CTerrain에 없으므로, 
+			// 임시로 Get_Component를 사용한다고 가정합니다. 실제 엔진 환경에 맞게 수정해야 합니다.
+			m_pNavigation = m_pTerrain->Get_NavigationComponent();
+			//Safe_AddRef(m_pNavigation); // 가져왔으면 참조 카운트 증가
 		}
 		else
 		{
-			m_bIsNaviEditMode = false; // 실패 시 다시 끔
+			MSG_BOX("Failed to Get CNavigation from Terrain");
+			m_bIsNaviEditMode = false;
 		}
 	}
 	else
@@ -469,6 +649,7 @@ void CImgui_Manager::Set_NaviEditMode(_bool bMode)
 		// 모드가 꺼질 때 리셋 및 해제
 		Reset_NaviPoints();
 		m_eNaviMode = NAVI_MODE::NONE;
+		//Safe_Release(m_pNavigation);
 	}
 }
 
@@ -476,35 +657,14 @@ void CImgui_Manager::Add_NaviPoint(_fvector vPickedPoint)
 {
 	if (m_iNaviPointCount < 3)
 	{
-		_vector vVillageWorldPos = XMVectorZero();
-
-		CTransform* pVillageTransform = nullptr;
-
-		if (m_pVillage)
-		{
-			// m_pVillage에서 Transform 컴포넌트를 찾습니다.
-			pVillageTransform = dynamic_cast<CTransform*>(m_pVillage->Find_Component(TEXT("Com_Transform")));
-			if (pVillageTransform)
-			{
-				vVillageWorldPos = pVillageTransform->Get_State(STATE::POSITION);
-			}
-		}
-
-		// 픽킹된 world 좌표를 village의 local좌표로 변환
-		_vector vLocalPickedPoint = XMVectorSubtract(vPickedPoint, vVillageWorldPos);
-		_vector vFinalPoint = vLocalPickedPoint;
+		_vector vFinalPoint = vPickedPoint;
 
 		// 1. 반경 m_fNaviSnapRadius 내에 기존 정점이 있는지 검색
 		_vector vClosestPoint = XMVectorZero();
-		if (m_pNavigation->Find_Closest_Point(vLocalPickedPoint, m_fNaviSnapRadius, &vClosestPoint))
+		if (m_pNavigation->Find_Closest_Point(vPickedPoint, m_fNaviSnapRadius, &vClosestPoint))
 		{
-			// 2. 기존 정점이 있다면, 그 정점의 좌표를 사용합니다. (정점 스냅핑)
 			vFinalPoint = vClosestPoint;
 
-		}
-		else
-		{
-			vFinalPoint = vLocalPickedPoint;
 		}
 
 		m_vNaviPoints[m_iNaviPointCount] = vFinalPoint;
@@ -513,8 +673,7 @@ void CImgui_Manager::Add_NaviPoint(_fvector vPickedPoint)
 		_float3 vP;
 		XMStoreFloat3(&vP, vFinalPoint); // vFinalPoint를 사용하도록 수정
 		wchar_t szBuffer[256];
-		swprintf_s(szBuffer, 256, L"Navi Point %d added: (%.2f, %.2f, %.2f)\n", m_iNaviPointCount, vP.x, vP.y, vP.z);
-
+		wsprintfW(szBuffer, L"Navi Point %d added: (%.2f, %.2f, %.2f)\n", m_iNaviPointCount, vP.x, vP.y, vP.z);
 		OutputDebugStringW(szBuffer);
 	}
 }
@@ -544,6 +703,7 @@ HRESULT CImgui_Manager::Add_NaviCell()
 
 	// 셀 추가가 성공했으면 이웃 정보를 새로고침합니다.
 	m_pNavigation->SetUp_Neighbors();
+
 
 	Reset_NaviPoints(); // 셀 생성 후 포인트 리셋
 	m_eNaviMode = NAVI_MODE::ADD_POINT;
@@ -582,6 +742,7 @@ HRESULT CImgui_Manager::Save_NavigationData()
 	}
 
 	ofs.close();
+
 	OutputDebugStringW(L"Navigation Data Saved to Navigation.bin\n");
 
 	return S_OK;
@@ -597,11 +758,129 @@ void CImgui_Manager::Delete_Latest_NaviCell()
 	}
 }
 
-_bool CImgui_Manager::Picking(_float3 vPickPos)
+CGameObject* CImgui_Manager::Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint)
 {
-	m_pGameInstance->isPicking(&vPickPos);
+	list<CGameObject*>* pObjects = m_pGameInstance->GetAllObejctToLayer(iLevelIndex, strLayerTag.c_str());
+	if (pObjects == nullptr || pObjects->empty())
+		return nullptr;
 
-	return false;
+	CGameObject* pClosestObject = nullptr;
+	_float fMinDistance = FLT_MAX;
+
+	_float3 vRayOrigin_f, vRayDir_f;
+	Compute_Picking_Ray(&vRayOrigin_f, &vRayDir_f);
+
+	XMVECTOR vRayOrigin = XMLoadFloat3(&vRayOrigin_f);
+	XMVECTOR vRayDir = XMLoadFloat3(&vRayDir_f);
+
+
+	for (auto pObject : *pObjects)
+	{
+		// 1. Transform 컴포넌트와 바운딩 스피어 반지름을 가져옵니다.
+		CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+		_float fRadius = 5.f; 
+
+		if (pTransform == nullptr) continue; // Transform이 없으면 패스
+
+		XMVECTOR vSphereCenter = pTransform->Get_State(STATE::POSITION);
+
+		_float fDistance = 0.f;
+
+		if (Intersect_Ray_Sphere(vRayOrigin, vRayDir, vSphereCenter, fRadius, &fDistance))
+		{
+			// Ray Origin 뒤쪽 충돌은 무시
+			if (fDistance < fMinDistance)
+			{
+				fMinDistance = fDistance;
+				pClosestObject = pObject;
+			}
+		}
+	}
+
+	if (pClosestObject != nullptr && pPickedPoint != nullptr)
+	{
+		// Terrain 피킹으로 World 좌표를 얻어옵니다.
+		_float3 vTempPoint = {};
+		m_pGameInstance->isPicking(&vTempPoint);
+		*pPickedPoint = vTempPoint;
+
+		return pClosestObject;
+	}
+
+	return pClosestObject;
+}
+
+void CImgui_Manager::Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir)
+{
+	_float fWinWidth = (_float)g_iWinSizeX;
+	_float fWinHeight = (_float)g_iWinSizeY;
+
+	POINT ptMouse;
+	GetCursorPos(&ptMouse); // 화면 좌표
+	ScreenToClient(g_hWnd, &ptMouse); // 클라이언트 윈도우 좌표
+
+	_float fX = (2.0f * ptMouse.x / fWinWidth) - 1.0f;
+	_float fY = 1.0f - (2.0f * ptMouse.y / fWinHeight);
+	XMMATRIX ViewMatrix = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+	XMMATRIX ProjMatrix = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+
+	XMMATRIX matInv = XMMatrixInverse(nullptr, ViewMatrix * ProjMatrix);
+
+	// 5. Ray의 시작점 (Near Plane)과 끝점 (Far Plane) 계산
+	// Near Plane의 NDC 좌표 (Z=0.0f)
+	XMVECTOR vNear = XMVectorSet(fX, fY, 0.0f, 1.0f);
+	// Far Plane의 NDC 좌표 (Z=1.0f)
+	XMVECTOR vFar = XMVectorSet(fX, fY, 1.0f, 1.0f);
+
+	// NDC 좌표를 World 좌표로 변환
+	vNear = XMVector3TransformCoord(vNear, matInv);
+	vFar = XMVector3TransformCoord(vFar, matInv);
+
+	// 6. Ray Origin (시작점) 설정
+	// Ray Origin은 Near Plane의 World 좌표입니다.
+	XMStoreFloat3(pRayOrigin, vNear);
+
+	// 7. Ray Direction (방향) 설정
+	// 방향은 (Far - Near) 벡터를 정규화하여 얻습니다.
+	XMVECTOR vRayDir = XMVector3Normalize(vFar - vNear);
+	XMStoreFloat3(pRayDir, vRayDir);
+}
+
+_bool CImgui_Manager::Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance)
+{
+	// C = Sphere Center, R = Radius
+	// L = C - O (Sphere Center에서 Ray Origin으로 향하는 벡터)
+	XMVECTOR vL = vSphereCenter - vRayOrigin;
+
+	// t_ca = Ray 방향 D와 L의 내적 (Ray 방향으로의 L의 투영 길이)
+	// t_ca가 음수이면 Ray가 Sphere의 반대 방향을 향하고 있음 (이미 지나침)
+	_float t_ca = XMVectorGetX(XMVector3Dot(vL, vRayDir));
+	if (t_ca < 0.0f)
+		return false;
+
+	// d^2 = L의 길이 제곱 - t_ca의 제곱 (Ray와 Sphere 중심 C 사이의 최단 거리 제곱)
+	XMVECTOR vL_Sq = XMVector3LengthSq(vL);
+	_float d_sq = XMVectorGetX(vL_Sq) - (t_ca * t_ca);
+
+	_float fRadiusSq = fRadius * fRadius;
+
+	// d^2 > R^2 이면 충돌하지 않음
+	if (d_sq > fRadiusSq)
+		return false;
+
+	// t_hc = Ray가 Sphere 내부를 지나가는 반 현(Half-Chord)의 길이
+	// t_hc = sqrt(R^2 - d^2)
+	_float t_hc = sqrtf(fRadiusSq - d_sq);
+
+	// t는 Ray Origin에서 충돌 지점까지의 거리
+	// t = t_ca - t_hc (Ray가 Sphere에 처음 진입하는 지점)
+	_float t = t_ca - t_hc;
+
+	
+	*pDistance = t;
+	
+
+	return true;
 }
 
 void CImgui_Manager::Free()

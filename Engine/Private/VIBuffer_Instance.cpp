@@ -13,7 +13,7 @@ CVIBuffer_Instance::CVIBuffer_Instance(const CVIBuffer_Instance& Prototype)
 	, m_iInstanceStride{ Prototype.m_iInstanceStride }
 	, m_iNumInstance{ Prototype.m_iNumInstance }
 	, m_iNumIndexPerInstance{ Prototype.m_iNumIndexPerInstance }
-	, m_isLoop{ Prototype.m_isLoop}
+	, m_bIsLoop{ Prototype.m_bIsLoop }
 {
 	Safe_AddRef(m_pVBInstance);
 }
@@ -60,9 +60,29 @@ HRESULT CVIBuffer_Instance::Render()
 	return S_OK;
 }
 
+void CVIBuffer_Instance::Lock(D3D11_MAP eLockType, D3D11_MAPPED_SUBRESOURCE* pOutData)
+{
+	m_pContext->Map(m_pVBInstance, 0, eLockType, 0, pOutData);
+}
+
+void CVIBuffer_Instance::UnLock()
+{
+	m_pContext->Unmap(m_pVBInstance, 0);
+}
+
+void CVIBuffer_Instance::CopyResource(ID3D11Buffer* pResource)
+{
+	m_pContext->CopyResource(pResource, m_pVBInstance);
+}
+
+void CVIBuffer_Instance::PasteResource(ID3D11Buffer* pResource)
+{
+	m_pContext->CopyResource(m_pVBInstance, pResource);
+}
+
 void CVIBuffer_Instance::StopEffect()
 {
-	m_isLoop = false;
+	m_bIsLoop = false;
 }
 
 
