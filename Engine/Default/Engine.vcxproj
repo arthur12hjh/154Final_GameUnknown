@@ -167,6 +167,7 @@ popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\BinParser.h" />
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -193,6 +194,7 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Math.h" />
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\Public\FbxParser.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\GameHUD.h" />
@@ -250,6 +252,7 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\BinParser.cpp" />
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -268,6 +271,7 @@ popd</Command>
     <ClCompile Include="..\private\ContainerObject.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
+    <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameHUD.cpp" />

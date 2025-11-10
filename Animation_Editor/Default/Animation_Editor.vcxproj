@@ -148,6 +148,9 @@
     <ClInclude Include="..\Public\Body_Character.h" />
     <ClInclude Include="..\Public\Camera_AnimationEditor.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\Character_Manager.h" />
+    <ClInclude Include="..\Public\Face_Character.h" />
+    <ClInclude Include="..\Public\Hair_Character.h" />
     <ClInclude Include="..\Public\imconfig.h" />
     <ClInclude Include="..\Public\imgui.h" />
     <ClInclude Include="..\Public\imgui_impl_dx11.h" />
@@ -161,6 +164,8 @@
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\ModelTerrain.h" />
+    <ClInclude Include="..\Public\PonyTail_Character.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Tool_Manager.h" />
     <ClInclude Include="..\Public\Weapon.h" />
@@ -175,6 +180,9 @@
     <ClCompile Include="..\Private\Body_Character.cpp" />
     <ClCompile Include="..\Private\Camera_AnimationEditor.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\Private\Character_Manager.cpp" />
+    <ClCompile Include="..\Private\Face_Character.cpp" />
+    <ClCompile Include="..\Private\Hair_Character.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -208,6 +216,8 @@
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\ModelTerrain.cpp" />
+    <ClCompile Include="..\Private\PonyTail_Character.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Tool_Manager.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />

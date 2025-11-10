@@ -15,6 +15,7 @@ public:
 	typedef struct tagCamera_AnimationEditor : public CCamera::CAMERA_DESC
 	{
 		_float fMouseSensor;		// 마우스 회전 감도
+		const _matrix* pSocketMatrix; // 캐릭터 루트본 위치
 	}CAMERA_DESC;
 private:
 	CCamera_AnimationEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

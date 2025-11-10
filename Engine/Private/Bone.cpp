@@ -4,20 +4,15 @@ CBone::CBone()
 {
 }
 
-void CBone::Set_TransformationMatrix(_fmatrix TransformationMatrix)
+HRESULT CBone::Initialize(binNode* pNode, _int iParentIndex)
 {
-	XMStoreFloat4x4(&m_TransformationMatrix, TransformationMatrix);
-}
-
-HRESULT CBone::Initialize(const aiNode* pAINode, _int iParentIndex)
-{
-	strcpy_s(m_szName, pAINode->mName.data);
+	strcpy_s(m_szName, pNode->szName);
 
 	m_iParentBoneIndex = iParentIndex;
 
 	/* m_TransformationMatrix : 뼈만의 상태 */
 	/* 갱신이 필요할거야! -> 어심프로부터 애니메이션이 이용하고 있는 특정 뼈대들만 정보를 받아와서 갱신 */
-	memcpy(&m_TransformationMatrix, &pAINode->mTransformation, sizeof(_float4x4));
+	memcpy(&m_TransformationMatrix, &pNode->matTransformation, sizeof(_float4x4));
 	XMStoreFloat4x4(&m_TransformationMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_TransformationMatrix)));
 		 
 	/* 추후 최초 렌더링시에도 반드시 전체뼈를 갱신하여 생성하고 렌더링할 것이다. */
@@ -37,11 +32,11 @@ void CBone::Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fm
 			XMLoadFloat4x4(&m_TransformationMatrix) * Bones[m_iParentBoneIndex]->Get_CombinedTransformationMatrix());
 }
 
-CBone* CBone::Create(const aiNode* pAINode, _int iParentIndex)
+CBone* CBone::Create(binNode* pNode, _int iParentIndex)
 {
 	CBone* pInstance = new CBone();
 
-	if (FAILED(pInstance->Initialize(pAINode, iParentIndex)))
+	if (FAILED(pInstance->Initialize(pNode, iParentIndex)))
 	{
 		MSG_BOX("Failed to Created : CBone");
 		Safe_Release(pInstance);

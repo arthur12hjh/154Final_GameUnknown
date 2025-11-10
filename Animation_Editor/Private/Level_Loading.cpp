@@ -30,8 +30,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 void CLevel_Loading::Update(_float fTimeDelta)
 {
-	if (true == m_pLoader->isFinished() &&
-		GetKeyState(VK_F1) & 0x8000)
+	if (true == m_pLoader->isFinished())
 	{
 		CLevel* pNewLevel = { nullptr };
 
@@ -56,6 +55,10 @@ HRESULT CLevel_Loading::Render()
 
 HRESULT CLevel_Loading::Ready_Layer_BackGround()
 {
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_BackGround"),
+		ENUM_CLASS(LEVEL::LOADING), TEXT("Layer_BackGround"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

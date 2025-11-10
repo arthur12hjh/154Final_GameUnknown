@@ -2,6 +2,9 @@
 #include "Character.h"
 
 #include "Body_Character.h"
+#include "Face_Character.h"
+#include "Hair_Character.h"
+#include "PonyTail_Character.h"
 #include "Weapon.h"
 #include "GameInstance.h"
 
@@ -161,6 +164,38 @@ HRESULT CCharacter::Ready_PartObjects()
 		return E_FAIL;
 
 	CBody_Character* pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
+	
+	CFace_Character::FACE_CHARACTER_DESC FaceDesc{};
+	FaceDesc.pParentState = &m_iState;
+	FaceDesc.pParentTransform = m_pTransformCom;
+	FaceDesc.pBodyPtr = pPart_Body;
+	
+	/* Part_Face */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Face_Character"),
+		TEXT("Part_Face"), &FaceDesc)))
+		return E_FAIL;
+	
+	CHair_Character::HAIR_CHARACTER_DESC HairDesc{};
+	HairDesc.pParentState = &m_iState;
+	HairDesc.pParentTransform = m_pTransformCom;
+	HairDesc.pBodyPtr = pPart_Body;
+
+	/* Part_Hair */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Hair_Character"),
+		TEXT("Part_Hair"), &HairDesc)))
+		return E_FAIL;
+	
+	CPonyTail_Character::PONYTAIL_CHARACTER_DESC PonyTailDesc{};
+	PonyTailDesc.pParentState = &m_iState;
+	PonyTailDesc.pParentTransform = m_pTransformCom;
+	PonyTailDesc.pBodyPtr = pPart_Body;
+
+	/* Part_PonyTail */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_PonyTail_Character"),
+		TEXT("Part_PonyTail"), &PonyTailDesc)))
+		return E_FAIL;
+
+	//CBody_Character* pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
 
 	//CWeapon::WEAPON_DESC	WeaponDesc{};
 	//WeaponDesc.pParentState = &m_iState;

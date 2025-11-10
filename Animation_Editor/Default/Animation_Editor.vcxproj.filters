@@ -68,6 +68,21 @@
     <Filter Include="03.Manager\ImGui_Manager\ImGui">
       <UniqueIdentifier>{c4842145-b227-46e4-9c84-f6c4a53d9153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\ModelTerrain">
+      <UniqueIdentifier>{68097011-e71f-4e65-94df-a49a1d1ba37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Character_Manager">
+      <UniqueIdentifier>{3ffabc8c-5ca1-460f-8b5c-f50877ef616e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Face_Character">
+      <UniqueIdentifier>{138f0071-e657-4861-956b-919900fc5cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Hair_Character">
+      <UniqueIdentifier>{689c4976-06c3-41b9-b315-a7f8f03df40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\PonyTail_Character">
+      <UniqueIdentifier>{87a9ca88-1cbf-4aca-9258-a4e79458f76c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -148,6 +163,21 @@
     <ClInclude Include="..\Public\imstb_truetype.h">
       <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ModelTerrain.h">
+      <Filter>02.GameObjects\ModelTerrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character_Manager.h">
+      <Filter>03.Manager\Character_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Face_Character.h">
+      <Filter>02.GameObjects\Character\Face_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hair_Character.h">
+      <Filter>02.GameObjects\Character\Hair_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PonyTail_Character.h">
+      <Filter>02.GameObjects\Character\PonyTail_Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -212,6 +242,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\imgui_widgets.cpp">
       <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelTerrain.cpp">
+      <Filter>02.GameObjects\ModelTerrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character_Manager.cpp">
+      <Filter>03.Manager\Character_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Face_Character.cpp">
+      <Filter>02.GameObjects\Character\Face_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hair_Character.cpp">
+      <Filter>02.GameObjects\Character\Hair_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PonyTail_Character.cpp">
+      <Filter>02.GameObjects\Character\PonyTail_Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

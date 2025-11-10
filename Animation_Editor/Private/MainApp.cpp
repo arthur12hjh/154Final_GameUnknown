@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Tool_Manager.h"
 
+#include "BackGround.h"
+
 #include "Level_Loading.h"
 
 #include "Camera_AnimationEditor.h"
@@ -108,6 +110,15 @@ HRESULT CMainApp::Ready_Prototypes()
 	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Atl_Cursor.png"), 1))))
 	//	return E_FAIL;
 
+	/* For.Prototype_Component_Texture_BackGround */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_BackGround"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BackGround.png"), 1))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_BackGround"),
+		CBackGround::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
@@ -146,7 +157,7 @@ void Animation_Editor::CMainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
-	m_pTool_Manager->DestroyInstance();
+	m_pTool_Manager->Release_Manager();
 	Safe_Release(m_pTool_Manager);
 
 	m_pGameInstance->Release_Engine();

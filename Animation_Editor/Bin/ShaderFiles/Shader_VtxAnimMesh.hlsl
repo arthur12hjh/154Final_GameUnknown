@@ -2,7 +2,8 @@
 #include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D g_DiffuseTexture;
+Texture2D g_DiffuseTexture;
+Texture2D g_NormalTexture;
 
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_BoneMatrices[512];
@@ -17,6 +18,7 @@ struct VS_IN
     float3 vPosition : POSITION;
     float3 vNormal : NORMAL;
     float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
     float2 vTexcoord : TEXCOORD0;
     
     uint4 vBlendIndex : BLENDINDEX;
@@ -27,6 +29,8 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float4 vNormal : NORMAL;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
@@ -58,6 +62,8 @@ VS_OUT VS_MAIN(VS_IN In)
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */   
     Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTexcoord = In.vTexcoord;    
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
@@ -101,6 +107,8 @@ struct PS_IN
 {
     float4 vPosition : SV_POSITION;
     float4 vNormal : NORMAL;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
@@ -124,9 +132,13 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
     
-   
+    vector vNormalDesc = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
+    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal * -1.f, In.vNormal.xyz);
+    
+    float3 vNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
+         
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = float4(vNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     
     return Out;
@@ -173,8 +185,6 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
-
-   
 
 
  

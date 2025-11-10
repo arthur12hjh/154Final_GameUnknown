@@ -244,6 +244,12 @@
     <ClInclude Include="..\Public\PxUserData.h">
       <Filter>01.Utility\03.Components\PhysxComponent\PxUserData</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FbxParser.h">
+      <Filter>01.Utility\103.ModelParser\FbxParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BinParser.h">
+      <Filter>01.Utility\103.ModelParser\BinParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -461,6 +467,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CCTHitReporter.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FbxParser.cpp">
+      <Filter>01.Utility\103.ModelParser\FbxParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BinParser.cpp">
+      <Filter>01.Utility\103.ModelParser\BinParser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -745,6 +757,15 @@
     </Filter>
     <Filter Include="01.Utility\16.Files\BinParser">
       <UniqueIdentifier>{fd85af6f-ebb8-40b7-9e43-09a7cb10fec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\103.ModelParser">
+      <UniqueIdentifier>{5bd79515-c00d-4493-8550-4f9e400d8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\103.ModelParser\FbxParser">
+      <UniqueIdentifier>{544a78bc-6ed0-462b-a7cd-1475925699c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\103.ModelParser\BinParser">
+      <UniqueIdentifier>{fa16b9ca-9cf2-469e-9b0c-b312eebc8037}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

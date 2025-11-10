@@ -51,7 +51,7 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
 	}
-
+	
 	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
 	{
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
@@ -80,10 +80,10 @@ HRESULT CCamera_AnimationEditor::Render()
 
 void CCamera_AnimationEditor::Initialize_Position()
 {
-	m_pTransformCom->Set_State(STATE::RIGHT, XMVectorSet(1.f, 0.f, 0.1f, 0.f));
+	m_pTransformCom->Set_State(STATE::RIGHT, XMVectorSet(1.f, 0.f, 0.f, 0.f));
 	m_pTransformCom->Set_State(STATE::UP, XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	m_pTransformCom->Set_State(STATE::LOOK, XMVectorSet(-0.1f, 0.f, 1.f, 0.f));
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(8.7f, 2.4f, -23.3f, 1.f));
+	m_pTransformCom->Set_State(STATE::LOOK, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(2.f, 3.f, -2.f, 1.f));
 }
 
 

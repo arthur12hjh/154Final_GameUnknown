@@ -21,6 +21,7 @@ HRESULT CTool_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 	Safe_AddRef(m_pContext);
 
 	m_pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(m_pGameInstance);
 
 	m_pImGuiManager = CImGui_Manager::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiManager)

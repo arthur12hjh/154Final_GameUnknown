@@ -52,7 +52,7 @@ HRESULT CLevel_AnimationEditor::Ready_Lights()
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
@@ -74,10 +74,10 @@ HRESULT CLevel_AnimationEditor::Ready_Lights()
 
 HRESULT CLevel_AnimationEditor::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Terrain"),
-	//	ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
-	//	return E_FAIL;
-	//
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_ModelTerrain"),
+		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
+		return E_FAIL;
+	
 	//for (size_t i = 0; i < 10; i++)
 	//{
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_ForkLift"),
@@ -98,7 +98,7 @@ HRESULT CLevel_AnimationEditor::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CCamera_AnimationEditor::CAMERA_DESC			CameraDesc{};
 	CameraDesc.fFov = XMConvertToRadians(60.0f);
 	CameraDesc.fNear = 0.1f;
-	CameraDesc.fFar = 500.f;
+	CameraDesc.fFar = 50000.f;
 	CameraDesc.vEye = _float3(0.f, 10.f, -10.f);
 	CameraDesc.vAt = _float3(0.f, 0.f, 0.f);
 	CameraDesc.fSpeedPerSec = 5.f;

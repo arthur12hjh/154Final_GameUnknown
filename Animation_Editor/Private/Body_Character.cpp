@@ -48,6 +48,8 @@ HRESULT CBody_Character::Initialize(void* pArg)
 	m_iAnimationIndex = 0;
 	m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
 
+
+
 	return S_OK;
 }
 
@@ -82,7 +84,7 @@ void CBody_Character::Update(_float fTimeDelta)
 
 void CBody_Character::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
@@ -104,12 +106,12 @@ HRESULT CBody_Character::Render()
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;*/
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -143,7 +145,7 @@ HRESULT CBody_Character::Render_Shadow()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;
+			return E_FAIL;	
 	}
 	return S_OK;
 }
@@ -151,7 +153,7 @@ HRESULT CBody_Character::Render_Shadow()
 HRESULT CBody_Character::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Nvzhu"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Body_Eve"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

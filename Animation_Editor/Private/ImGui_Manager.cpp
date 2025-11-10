@@ -128,4 +128,5 @@ void CImGui_Manager::Free()
 	Safe_Release(m_pContext);
 
 	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pTool_Manager);
 }
