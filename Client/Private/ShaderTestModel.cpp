@@ -137,9 +137,11 @@ HRESULT CShaderTestModel::Ready_Components()
 	
 	/* Com_CCT */
 	CCharacterController::CCT_DESC Desc;
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("Player_CCT");
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
-	Desc.szControllerTag = TEXT("Player_Controller");
+	Desc.tUserData = tUserData; 
 	//캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
 	Desc.vSize = _float3(1.f, 1.f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));

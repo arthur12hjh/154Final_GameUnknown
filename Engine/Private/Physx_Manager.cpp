@@ -50,10 +50,38 @@ HRESULT CPhysx_Manager::Initialize()
 
 void CPhysx_Manager::Update(_float fTimeDelta)
 {
+    /* Dead 오브젝트 제거 */
+    _int iCnt = 0;
+    for (auto Pair : m_RigidBodies)
+    {
+        if (true == Pair.first->isDead())
+        {
+            Safe_Release(Pair.first);
+            Safe_Release(Pair.second);
+
+            m_RigidBodies.erase( m_RigidBodies.begin() + iCnt );
+        }
+        iCnt++;
+    }
+
+    /* 씬 시뮬레이션 */
     if (nullptr != m_PxScene)
     {
         m_PxScene->simulate(fTimeDelta);      // 시뮬레이션 시작
         m_PxScene->fetchResults(true);        // 결과 가져오기, PVD에 전송됨
+
+        /* 위치 동기화 */
+        for (auto Pair : m_RigidBodies)
+        {
+            CTransform* pTransform = Pair.first->GetTransform();
+            PxTransform pPxTransform = Pair.second->Get_PxTransform();
+
+            const PxVec3& vPxPosition = pPxTransform.p;
+            pTransform->Set_State(STATE::POSITION, XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.f));
+
+            const PxQuat& vPxRotation = pPxTransform.q;
+            pTransform->Rotation(vPxRotation.x, vPxRotation.y, vPxRotation.z, vPxRotation.w);
+        }
     }
 }
 
@@ -64,21 +92,6 @@ void CPhysx_Manager::TestSetting()
     mMaterial = m_PxPhysics->createMaterial(0.1f, 0.1f, 0.6f);
     physx::PxRigidStatic* groundPlane = PxCreatePlane(*m_PxPhysics, physx::PxPlane(0, 1, 0, 0), *mMaterial);
     m_PxScene->addActor(*groundPlane);
-
-    float halfExtent = .5f;
-    physx::PxShape* shape = m_PxPhysics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
-    physx::PxU32 size = 30;
-    physx::PxTransform t(physx::PxVec3(0));
-    for (physx::PxU32 i = 0; i < size; i++) {
-        for (physx::PxU32 j = 0; j < size - i; j++) {
-            physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
-            physx::PxRigidDynamic* body = m_PxPhysics->createRigidDynamic(t.transform(localTm));
-            body->attachShape(*shape);
-            physx::PxRigidBodyExt::updateMassAndInertia(*body, 0.25f);
-            m_PxScene->addActor(*body);
-        }
-    }
-    //shape->release();
 }
 
 void CPhysx_Manager::Clear()
@@ -141,9 +154,9 @@ HRESULT CPhysx_Manager::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBo
 PxTransform CPhysx_Manager::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 {
     /* 월드매트릭스 PxTransform으로 변경. */
-    _vector vPos, vRotation, vScale;
+    _vector vScale, vRotation, vPos;
 
-    XMMatrixDecompose(&vPos, &vRotation, &vScale, WorldMatrix);
+    XMMatrixDecompose(&vScale ,&vRotation, &vPos, WorldMatrix);
 
     PxVec3 vPxPosition = PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos));
     PxQuat vPxQuaternion = PxQuat(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
@@ -159,7 +172,7 @@ _matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
 
     // 회전 (Quaternion)
     PxQuat  vPxQuaternion = Transform.q;
-    _matrix vQuaternion = XMMatrixRotationQuaternion(XMVectorSet(vPxQuaternion.x, vPxQuaternion.y, vPxQuaternion.z, vPxQuaternion.w));
+    _matrix vQuaternion = XMMatrixRotationQuaternion(XMVectorSet(vPxQuaternion.x, vPxQuaternion.y, -1.f * vPxQuaternion.z, -1.f * vPxQuaternion.w));
 
     // 스케일은 1로
     _vector vScale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
