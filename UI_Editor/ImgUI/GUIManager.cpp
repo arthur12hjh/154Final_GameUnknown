@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 
 #include "GUIManager.h"
 #include "GameInstance.h"
@@ -13,13 +13,13 @@
 #include "UIButton.h"
 #include "UIBase.h"
 
-// GUI ¸Å´ÏÀú ½Ì±ÛÅæ ±¸Çö
+// GUI ë§¤ë‹ˆì € ì‹±ê¸€í†¤ êµ¬í˜„
 IMPLEMENT_SINGLETON(CGUIManager);
 
-// GUI ¸Å´ÏÀú ÃÊ±âÈ­: µð¹ÙÀÌ½º, ÄÁÅØ½ºÆ®, ImGui, ¿¡µðÅÍ À©µµ¿ì µî »ý¼º
+// GUI ë§¤ë‹ˆì € ì´ˆê¸°í™”: ë””ë°”ì´ìŠ¤, ì»¨í…ìŠ¤íŠ¸, ImGui, ì—ë””í„° ìœˆë„ìš° ë“± ìƒì„±
 HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    // °ÔÀÓ ÀÎ½ºÅÏ½º ÂüÁ¶ È¹µæ ¹× ÂüÁ¶ Ä«¿îÆ® Áõ°¡
+    // ê²Œìž„ ì¸ìŠ¤í„´ìŠ¤ ì°¸ì¡° íšë“ ë° ì°¸ì¡° ì¹´ìš´íŠ¸ ì¦ê°€
     m_pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(m_pGameInstance);
 
@@ -29,7 +29,7 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
 	m_pContext = pContext;
     Safe_AddRef(m_pContext);
 
-    // ImGui ¹öÀü Ã¼Å© ¹× ÄÁÅØ½ºÆ® »ý¼º
+    // ImGui ë²„ì „ ì²´í¬ ë° ì»¨í…ìŠ¤íŠ¸ ìƒì„±
     IMGUI_CHECKVERSION();
     GUI::CreateContext();
 
@@ -39,15 +39,15 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    GUI::StyleColorsDark(); // ´ÙÅ© Å×¸¶ Àû¿ë
+    GUI::StyleColorsDark(); // ë‹¤í¬ í…Œë§ˆ ì ìš©
 
-    // ImGui Win32/DX11 ÃÊ±âÈ­
+    // ImGui Win32/DX11 ì´ˆê¸°í™”
     if (!ImGui_ImplWin32_Init(g_hWnd))
         return E_FAIL;
     if (!ImGui_ImplDX11_Init(m_pDevice, m_pContext))
         return E_FAIL;
 
-    // ºä ¸ðµå
+    // ë·° ëª¨ë“œ
     m_ViewModes.reserve(3);
     m_ViewModes.push_back(TEXT("Default"));
     m_ViewModes.push_back(TEXT("Edit"));
@@ -80,23 +80,23 @@ void CGUIManager::Update(_float fTimeDelta)
         m_iPrevLevel = m_iCurrentLevel;
     }
 
-    // ½ÇÁ¦ ¿¡µðÅÍ UI ¹× ÀÔ·Â Ã³¸®
+    // ì‹¤ì œ ì—ë””í„° UI ë° ìž…ë ¥ ì²˜ë¦¬
     if (m_szCurViewMode == TEXT("Default"))
-        GUI::ShowDemoWindow(); // ImGui µ¥¸ð À©µµ¿ì Ç¥½Ã
+        GUI::ShowDemoWindow(); // ImGui ë°ëª¨ ìœˆë„ìš° í‘œì‹œ
 
     if (m_szCurViewMode == TEXT("Editor"))
         Editor_Window();
 
-    //°¡Àå ¸¶Áö¸·¿¡ ·»´õ
+    //ê°€ìž¥ ë§ˆì§€ë§‰ì— ë Œë”
     ViewMode();
 }
 
-// ¿¡µðÅÍ À©µµ¿ì¿¡ ImGui UI¸¦ ½ÇÁ¦·Î ±×¸®´Â ÇÔ¼ö
+// ì—ë””í„° ìœˆë„ìš°ì— ImGui UIë¥¼ ì‹¤ì œë¡œ ê·¸ë¦¬ëŠ” í•¨ìˆ˜
 void CGUIManager::Render()
 {
-    // 4. ImGui UI ·»´õ¸µ
-    GUI::Render(); // ImGui ³»ºÎÀûÀ¸·Î DrawData »ý¼º
-    ImGui_ImplDX11_RenderDrawData(GUI::GetDrawData()); // DX11·Î ½ÇÁ¦ ±×¸®±â
+    // 4. ImGui UI ë Œë”ë§
+    GUI::Render(); // ImGui ë‚´ë¶€ì ìœ¼ë¡œ DrawData ìƒì„±
+    ImGui_ImplDX11_RenderDrawData(GUI::GetDrawData()); // DX11ë¡œ ì‹¤ì œ ê·¸ë¦¬ê¸°
 
     // Update and Render additional Platform Windows
     ImGuiIO& io = GUI::GetIO();
@@ -196,87 +196,15 @@ void CGUIManager::Show_UIObject_List()
         if (GUI::TreeNode(szLayerTag))
         {
             const auto* pUIObjects = pLayer.second->Get_UserInterfaces();
-
             if (pUIObjects)
             {
-                for (const auto& pObj : *pUIObjects)
+                for (const auto& pObjPair : *pUIObjects)
                 {
-                    _char szUITag[MAX_PATH]{};
-                    CStringHelper::ConvertWideToUTF(pObj.first.c_str(), szUITag);
-
-                    if (GUI::TreeNode(szUITag))
-                    {
-                        if (GUI::IsItemClicked())
-                        {
-                            int a = 10;
-                        }
-
-                        if (GUI::Button("Add Child"))
-                        {
-                            m_ProtoTags.clear();
-                            m_TextureComTags.clear();
-
-                            m_ProtoTags.push_back(TEXT("Select Prototype"));
-                            _wstring prefix = TEXT("Prototype_GameObject_UI_");
-
-                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
-                            {
-                                if (pProto.first.find(prefix) == 0)
-                                {
-                                    size_t pos = pProto.first.find(prefix);
-                                    m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
-                                }
-                            }
-
-                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
-                            {
-                                if (pProto.first.find(prefix) == 0)
-                                {
-                                    size_t pos = pProto.first.find(prefix);
-                                    m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
-                                }
-                            }
-
-                            m_TextureComTags.push_back(TEXT("Select Texture"));
-                            _wstring prefix2 = TEXT("Prototype_Component_UI_Texture_");
-                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
-                            {
-                                if (pProto.first.find(prefix2) == 0)
-                                {
-                                    size_t pos = pProto.first.find(prefix2);
-                                    m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
-                                }
-                            }
-
-                            for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
-                            {
-                                if (pProto.first.find(prefix2) == 0)
-                                {
-                                    size_t pos = pProto.first.find(prefix2);
-                                    m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
-                                }
-                            }
-
-                            m_szCurrentProtoTag = m_ProtoTags[0];
-                            m_szCurrentTextureComTag = m_TextureComTags[0];
-
-                            strcpy_s(m_szCloneTextureComTag, sizeof(m_szCloneTextureComTag), "");
-
-                            GUI::OpenPopup("Add Child");
-                        }
-
-                        if (GUI::BeginPopup("Add Child"))
-                        {
-                            Add_Child(dynamic_cast<Client::CUIBase*>(pObj.second));
-
-                            if (GUI::Button("Close")) {
-                                GUI::CloseCurrentPopup();
-                            }
-                            GUI::EndPopup();
-                        }
-
-                        GUI::TreePop();
-                    }
+                    Client::CUIBase* pObj = dynamic_cast<Client::CUIBase*>(pObjPair.second);
+                    if (!pObj->Get_Parent()) // ë£¨íŠ¸ë§Œ ê·¸ë¦°ë‹¤ (ë¶€ëª¨ ì—†ëŠ” ê°ì²´)
+                        Draw_Hierarchy(pObj);
+                    else
+                        continue;
                 }
             }
             GUI::TreePop();
@@ -311,6 +239,7 @@ void CGUIManager::Create_Layer()
         Desc.iTextureIndex = 0;
         Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
         Desc.szLayerTag = szLayerTag;
+        Desc.szUITag = szUITag;
         Desc.szTextureComTag = szTextureComTag;
 
         if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, TEXT("Prototype_GameObject_UI_Panel"), szLayerTag, szUITag, nullptr, &Desc)))
@@ -318,12 +247,12 @@ void CGUIManager::Create_Layer()
     }
 }
 
-void CGUIManager::Add_Child(Client::CUIBase* pObj)
+void CGUIManager::Add_Child(Client::CUIBase* pParent)
 {
     _char szCurProtoTag[MAX_PATH]{};
     CStringHelper::ConvertWideToUTF(m_szCurrentProtoTag.c_str(), szCurProtoTag);
 
-    if (GUI::BeginCombo("UI Proto Tag", szCurProtoTag)) // µå·Ó´Ù¿î ½ÃÀÛ
+    if (GUI::BeginCombo("UI Proto Tag", szCurProtoTag)) // ë“œë¡­ë‹¤ìš´ ì‹œìž‘
     {
         for (int i = 1; i < m_ProtoTags.size(); ++i)
         {
@@ -338,7 +267,7 @@ void CGUIManager::Add_Child(Client::CUIBase* pObj)
             }
 
             if (is_selected)
-                GUI::SetItemDefaultFocus(); // ±âº» Æ÷Ä¿½º ¼³Á¤
+                GUI::SetItemDefaultFocus(); // ê¸°ë³¸ í¬ì»¤ìŠ¤ ì„¤ì •
         }
         GUI::EndCombo();
     }
@@ -346,7 +275,7 @@ void CGUIManager::Add_Child(Client::CUIBase* pObj)
     _char szCurTextureComTag[MAX_PATH]{};
     CStringHelper::ConvertWideToUTF(m_szCurrentTextureComTag.c_str(), szCurTextureComTag);
 
-    if (GUI::BeginCombo("TextureCom Tag", szCurTextureComTag)) // µå·Ó´Ù¿î ½ÃÀÛ
+    if (GUI::BeginCombo("TextureCom Tag", szCurTextureComTag)) // ë“œë¡­ë‹¤ìš´ ì‹œìž‘
     {
         for (int i = 1; i < m_TextureComTags.size(); ++i)
         {
@@ -361,7 +290,7 @@ void CGUIManager::Add_Child(Client::CUIBase* pObj)
             }
 
             if (is_selected)
-                GUI::SetItemDefaultFocus(); // ±âº» Æ÷Ä¿½º ¼³Á¤
+                GUI::SetItemDefaultFocus(); // ê¸°ë³¸ í¬ì»¤ìŠ¤ ì„¤ì •
         }
         GUI::EndCombo();
     }
@@ -374,36 +303,40 @@ void CGUIManager::Add_Child(Client::CUIBase* pObj)
         wstring szTextureComTag{};
         szTextureComTag = TEXT("Prototype_Component_UI_Texture_") + m_szCurrentTextureComTag;
 
-        _uint iObjectId = pObj->Get_UIBase_Desc().iObjectID + 1;
+        //_uint iObjectId = pParent->Get_UIBase_Desc().iObjectID + 1;
+        _uint iObjectId = pParent->Get_Children()->size() + 1;
 
         WCHAR szUITag[MAX_PATH];
-        swprintf_s(szUITag, TEXT("UI_%s_%d"), m_szCurrentProtoTag.c_str(), iObjectId);
+        swprintf_s(szUITag, TEXT("UI_%s_%d-%d"), m_szCurrentProtoTag.c_str(), pParent->Get_UIBase_Desc().iDepth + 1, iObjectId);
 
         WCHAR szLayerTag[MAX_PATH];
-        swprintf_s(szLayerTag, pObj->Get_UIBase_Desc().szLayerTag.c_str());
+        swprintf_s(szLayerTag, pParent->Get_UIBase_Desc().szLayerTag.c_str());
+
+        CGameObject* pCreatedObj = nullptr;
 
         CUIBase::UIBASE_DESC Desc{};
         Desc.fSizeX = 100.f;
         Desc.fSizeY = 20.f;
-        Desc.fX = pObj->Get_UIBase_Desc().fX;
-        Desc.fY = pObj->Get_UIBase_Desc().fY;
-        Desc.iDepth = pObj->Get_UIBase_Desc().iDepth + 1;
+        Desc.fX = pParent->Get_UIBase_Desc().fX;
+        Desc.fY = pParent->Get_UIBase_Desc().fY;
+        Desc.iDepth = pParent->Get_UIBase_Desc().iDepth + 1;
         Desc.iLevel = m_iCurrentLevel;
         Desc.iObjectID = iObjectId;
         Desc.iPass = 0;
         Desc.iTextureIndex = 1;
         Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
-        Desc.szLayerTag = pObj->Get_UIBase_Desc().szLayerTag.c_str();
+        Desc.szUITag = szUITag;
+        Desc.szLayerTag = pParent->Get_UIBase_Desc().szLayerTag.c_str();
         Desc.szTextureComTag = szTextureComTag;
 
-        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto.c_str(), pObj->Get_UIBase_Desc().szLayerTag.c_str(), szUITag, nullptr, &Desc)))
+        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto.c_str(), pParent->Get_UIBase_Desc().szLayerTag.c_str(), szUITag, &pCreatedObj, &Desc)))
         {
             GUI::OpenPopup("Clone Error");
             if (GUI::BeginPopup("Clone Error"))
             {
-                GUI::Text("Å¬·Ð »ý¼º ½ÇÆÐ");
+                GUI::Text("í´ë¡  ìƒì„± ì‹¤íŒ¨");
                 GUI::PushID("Clone Error");
-                if (GUI::Button("È®ÀÎ")) {
+                if (GUI::Button("í™•ì¸")) {
                     GUI::CloseCurrentPopup();
                 }
                 GUI::PopID();
@@ -413,7 +346,111 @@ void CGUIManager::Add_Child(Client::CUIBase* pObj)
             return;
         }
 
+        pParent->Add_Child(pCreatedObj);
+
+        if (dynamic_cast<Client::CUIBase*>(pCreatedObj))
+        {
+            dynamic_cast<Client::CUIBase*>(pCreatedObj)->Set_Parent(pParent);
+        }
+
         GUI::CloseCurrentPopup();
+    }
+}
+
+void CGUIManager::SetUp_Tags_For_Add_Child()
+{
+    m_ProtoTags.clear();
+    m_TextureComTags.clear();
+
+    m_ProtoTags.push_back(TEXT("Select Prototype"));
+    _wstring prefix = TEXT("Prototype_GameObject_UI_");
+
+    for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+    {
+        if (pProto.first.find(prefix) == 0)
+        {
+            size_t pos = pProto.first.find(prefix);
+            m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
+        }
+    }
+
+    for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
+    {
+        if (pProto.first.find(prefix) == 0)
+        {
+            size_t pos = pProto.first.find(prefix);
+            m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
+        }
+    }
+
+    m_TextureComTags.push_back(TEXT("Select Texture"));
+    _wstring prefix2 = TEXT("Prototype_Component_UI_Texture_");
+    for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
+    {
+        if (pProto.first.find(prefix2) == 0)
+        {
+            size_t pos = pProto.first.find(prefix2);
+            m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
+        }
+    }
+
+    for (auto& pProto : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
+    {
+        if (pProto.first.find(prefix2) == 0)
+        {
+            size_t pos = pProto.first.find(prefix2);
+            m_TextureComTags.push_back(pProto.first.substr(pos + prefix2.length()));
+        }
+    }
+
+    m_szCurrentProtoTag = m_ProtoTags[0];
+    m_szCurrentTextureComTag = m_TextureComTags[0];
+
+    strcpy_s(m_szCloneTextureComTag, sizeof(m_szCloneTextureComTag), "");
+}
+
+void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
+{
+    if (!pObj)
+        return;
+
+    _char szUITag[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(pObj->Get_UIBase_Desc().szUITag.c_str(), szUITag);
+
+    if (GUI::TreeNode(szUITag))
+    {
+        if (GUI::IsItemClicked())
+        {
+            int a = 10;
+        }
+
+        if (GUI::Button("Add Child"))
+        {
+            SetUp_Tags_For_Add_Child();
+
+            GUI::OpenPopup("Add Child");
+        }
+
+        if (GUI::BeginPopup("Add Child"))
+        {
+            Add_Child(pObj);
+
+            if (GUI::Button("Close")) {
+                GUI::CloseCurrentPopup();
+            }
+            GUI::EndPopup();
+        }
+
+        const auto* children = pObj->Get_Children();
+        if (children)
+        {
+            for (auto* pChild : *children)
+            {
+                Draw_Hierarchy(pChild);
+            }
+        }
+
+        GUI::TreePop();
     }
 }
 #pragma endregion
@@ -430,7 +467,7 @@ void CGUIManager::Free()
     Safe_Release(m_pContext);
 
     //Safe_Release(m_pUIHUD);
-
+    //
     //for (auto& iter : m_pLayers)
     //    Safe_Release(iter);
 

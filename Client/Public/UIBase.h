@@ -22,6 +22,7 @@ public:
 		_uint iPass{ 0 };
 		_uint iRenderGroup{ 0 };
 		_uint iTextureIndex{ 0 };
+		_wstring szUITag;
 		_wstring szLayerTag;
 		_wstring szTextureComTag;
 	}UIBASE_DESC;
@@ -52,7 +53,15 @@ public:
 	void Set_Parent(CUIBase* pParent) {
 		m_pParent = pParent;
 	}
-	CUIBase* Get_Parent() { return dynamic_cast<CUIBase*>(m_pParent); }
+	CUIBase* Get_Parent() {
+		return dynamic_cast<CUIBase*>(m_pParent);
+	}
+
+	HRESULT Add_Child(CGameObject* pObj);
+
+	const vector<CUIBase*>* Get_Children() {
+		return &m_Children;
+	}
 
 protected:
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
@@ -61,7 +70,7 @@ protected:
 
 	UIBASE_DESC m_tUIDesc{};
 
-	//_uint m_iDepth = 0;
+	vector<CUIBase*>		m_Children = {};
 	
 protected:
 	virtual HRESULT Ready_Components();

@@ -69,6 +69,10 @@ private:
 	void Create_Layer();
 	void Add_Child(class Client::CUIBase* pObj);
 
+	void SetUp_Tags_For_Add_Child();
+
+	void Draw_Hierarchy(Client::CUIBase* pObj);
+
 public:
 	virtual void Free() override;
 };

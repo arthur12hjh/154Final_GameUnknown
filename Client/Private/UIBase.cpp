@@ -45,6 +45,16 @@ HRESULT CUIBase::Render()
 	return S_OK;
 }
 
+HRESULT CUIBase::Add_Child(CGameObject* pObj)
+{
+	CUIBase* pUIObject = dynamic_cast<CUIBase*>(pObj);
+
+	if (pUIObject == nullptr)
+		return E_FAIL;
+
+	m_Children.push_back(pUIObject);
+}
+
 HRESULT CUIBase::Ready_Components()
 {
 	return S_OK;
