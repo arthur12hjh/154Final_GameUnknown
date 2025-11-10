@@ -100,12 +100,11 @@ public:
 #pragma endregion
 
 #pragma region LIGHT_MANAGER
-	const LIGHT_DESC*			Get_LightDesc(_uint iIndex) const;
-	HRESULT						Add_Light(const LIGHT_DESC& LightDesc);
-	HRESULT						Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
-
+	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
+	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	const	list<class CLight*>*		GetAllLight();
 #ifdef _DEBUG
-	void						Debug_LightRender();
+	void								Debug_LightRender();
 #endif
 
 #pragma endregion
