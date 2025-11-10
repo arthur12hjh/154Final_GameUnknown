@@ -217,6 +217,15 @@
     <ClInclude Include="..\Public\Physx_Manager.h">
       <Filter>01.Utility\17.Physx</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RigidBody.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTHitReporter.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -410,6 +419,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Physx_Manager.cpp">
       <Filter>01.Utility\17.Physx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RigidBody.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTHitReporter.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -634,6 +652,18 @@
     </Filter>
     <Filter Include="01.Utility\17.Physx">
       <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent">
+      <UniqueIdentifier>{8da1091f-79d9-4902-911a-d0f2ddd3441b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController">
+      <UniqueIdentifier>{0630c47d-ed31-4731-a976-ec8fdfc6b276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody">
+      <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter">
+      <UniqueIdentifier>{e2676f0c-92da-4fd5-b645-9b1c62215ea4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

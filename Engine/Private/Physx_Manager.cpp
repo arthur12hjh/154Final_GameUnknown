@@ -1,7 +1,7 @@
 #include "Physx_Manager.h"
 
 #include "GameObject.h"
-#include "Engine_Defines.h"
+#include "GameInstance.h"
 
 CPhysx_Manager::CPhysx_Manager()
 {
@@ -17,23 +17,25 @@ HRESULT CPhysx_Manager::Initialize()
     m_PxTransport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_PxTransport, physx::PxPvdInstrumentationFlag::eALL);
 
-    m_PxPhysx = PxCreatePhysics(PX_PHYSICS_VERSION, *m_PxFoundation, physx::PxTolerancesScale(), true, m_Pvd);
-	if (nullptr == m_PxPhysx)
+    m_PxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_PxFoundation, physx::PxTolerancesScale(), true, m_Pvd);
+	if (nullptr == m_PxPhysics)
 		return E_FAIL;
 
-    PxInitExtensions(*m_PxPhysx, m_Pvd);
+    PxInitExtensions(*m_PxPhysics, m_Pvd);
 
-    physx::PxSceneDesc sceneDesc(m_PxPhysx->getTolerancesScale());
+    physx::PxSceneDesc sceneDesc(m_PxPhysics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 
     m_PxDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 
     sceneDesc.cpuDispatcher = m_PxDispatcher;
     sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-    m_PxScene = m_PxPhysx->createScene(sceneDesc);
+    m_PxScene = m_PxPhysics->createScene(sceneDesc);
+    m_pPxCCTManager = PxCreateControllerManager(*m_PxScene);
 
     physx::PxPvdSceneClient* pvdClient = m_PxScene->getScenePvdClient();
-    
+   
+
     if (pvdClient)
     {
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
@@ -50,7 +52,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 {
     if (nullptr != m_PxScene)
     {
-        m_PxScene->simulate(fTimeDelta);       // 시뮬레이션 시작
+        m_PxScene->simulate(fTimeDelta);      // 시뮬레이션 시작
         m_PxScene->fetchResults(true);        // 결과 가져오기, PVD에 전송됨
     }
 }
@@ -59,32 +61,35 @@ void CPhysx_Manager::TestSetting()
 {
     physx::PxMaterial* mMaterial = NULL;
     // create simulation
-    mMaterial = m_PxPhysx->createMaterial(0.5f, 0.5f, 0.6f);
-    physx::PxRigidStatic* groundPlane = PxCreatePlane(*m_PxPhysx, physx::PxPlane(0, 1, 0, 50), *mMaterial);
+    mMaterial = m_PxPhysics->createMaterial(0.1f, 0.1f, 0.6f);
+    physx::PxRigidStatic* groundPlane = PxCreatePlane(*m_PxPhysics, physx::PxPlane(0, 1, 0, 0), *mMaterial);
     m_PxScene->addActor(*groundPlane);
 
     float halfExtent = .5f;
-    physx::PxShape* shape = m_PxPhysx->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
+    physx::PxShape* shape = m_PxPhysics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *mMaterial);
     physx::PxU32 size = 30;
     physx::PxTransform t(physx::PxVec3(0));
     for (physx::PxU32 i = 0; i < size; i++) {
         for (physx::PxU32 j = 0; j < size - i; j++) {
             physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
-            physx::PxRigidDynamic* body = m_PxPhysx->createRigidDynamic(t.transform(localTm));
+            physx::PxRigidDynamic* body = m_PxPhysics->createRigidDynamic(t.transform(localTm));
             body->attachShape(*shape);
-            physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+            physx::PxRigidBodyExt::updateMassAndInertia(*body, 0.25f);
             m_PxScene->addActor(*body);
         }
     }
-    shape->release();
+    //shape->release();
 }
 
 void CPhysx_Manager::Clear()
 {
-    for (auto& Pair : m_DynamicActors)
-       Pair.second->release();
+    for (auto& Pair : m_RigidBodies)
+    {
+        Safe_Release(Pair.first);
+        Safe_Release(Pair.second);
+    }
 
-    m_DynamicActors.clear();
+    m_RigidBodies.clear();
 
     for (auto& Geometry : m_Geometries)
         Safe_Delete(Geometry);
@@ -97,42 +102,70 @@ void CPhysx_Manager::Clear()
     m_TriangleMeshes.clear();
 }
 
-void CPhysx_Manager::Add_GameObject_ToPhysx(CGameObject* pGameObject)
+HRESULT CPhysx_Manager::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterController* pCCT)
 {
-    /* 객체의 트랜스폼을 받아와서, 피직스에서 쓸 수 있는 상태로 변환한다. */
-    
-    /* 
-    공식 문서 상에선 피직스 상의 단위 개념은 따로 없고, 
-    사용자가 가져다 쓸때 하나의 단위계로만 통일해서 사용하면 
-    문제 없을거라고 했음.
-    */
-    _matrix matWorld = XMLoadFloat4x4(pGameObject->GetTransform()->Get_WorldMatrixPtr());
-	_vector vPos, vRotation, vScale;
+    if (nullptr == pGameObject || nullptr == pCCT)
+        return E_FAIL;
 
-    XMMatrixDecompose(&vPos, &vRotation, &vScale, matWorld);
+    //이건 SetOwner 되면 세팅
+    //if (pCCT->GetOwner() != pGameObject)
+    //    return E_FAIL;
+
+    m_CCTs.push_back(make_pair(pGameObject, pCCT));
+
+    Safe_AddRef(pGameObject);
+    Safe_AddRef(pCCT);
+
+    return S_OK;
+}
+
+HRESULT CPhysx_Manager::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)
+{
+    if (nullptr == pGameObject || nullptr == pRigidBody)
+        return E_FAIL;
+
+    //이건 SetOwner 되면 세팅
+    //if (pRigidBody->GetOwner() != pGameObject)
+    //    return E_FAIL;
+
+    m_RigidBodies.push_back(make_pair(pGameObject, pRigidBody));
+
+    m_PxScene->addActor(*pRigidBody->Get_PxRigidBody());
+
+    Safe_AddRef(pGameObject);
+    Safe_AddRef(pRigidBody);
+
+    return S_OK;
+}
+
+PxTransform CPhysx_Manager::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
+{
+    /* 월드매트릭스 PxTransform으로 변경. */
+    _vector vPos, vRotation, vScale;
+
+    XMMatrixDecompose(&vPos, &vRotation, &vScale, WorldMatrix);
 
     PxVec3 vPxPosition = PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos));
     PxQuat vPxQuaternion = PxQuat(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
 
-	PxTransform PxWorldMatrix = PxTransform(vPxPosition, vPxQuaternion);
-    PxRigidDynamic* pDynamicActor = m_PxPhysx->createRigidDynamic(PxWorldMatrix);
+    return PxTransform(vPxPosition, vPxQuaternion);
+}
 
-    /* 머테리얼은 튜토리얼 대로 세팅 */
-    PxMaterial* Material = m_PxPhysx->createMaterial(0.5f, 0.5f, 0.6f);
-    /* 0.5 반지름 (구), 0.5 반높이 (원통) 크기의 캡슐 콜라이더 세팅. */
-    PxShape* pShape = m_PxPhysx->createShape(PxCapsuleGeometry(0.5f, 0.5f), *Material);
+_matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
+{
+    // 위치
+    PxVec3  vPxPosition = Transform.p;
+    _vector vPosition = XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.0f);
 
-    pDynamicActor->attachShape(*pShape);
-    ///* 연속 충돌 활성화. 현재는 플레이어만 제어하므로 켜도 된다. */
-    //pDynamicActor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+    // 회전 (Quaternion)
+    PxQuat  vPxQuaternion = Transform.q;
+    _matrix vQuaternion = XMMatrixRotationQuaternion(XMVectorSet(vPxQuaternion.x, vPxQuaternion.y, vPxQuaternion.z, vPxQuaternion.w));
 
-    pShape->release();
-    Material->release();
+    // 스케일은 1로
+    _vector vScale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
 
-    m_DynamicActors.push_back(make_pair(pGameObject, pDynamicActor));
-    m_IsOnSlope.push_back(false);
-
-    m_PxScene->addActor(*pDynamicActor);
+    // 행렬 생성
+    return XMMatrixScalingFromVector(vScale) * vQuaternion * XMMatrixTranslationFromVector(vPosition);
 }
 
 CPhysx_Manager* CPhysx_Manager::Create()
@@ -153,8 +186,21 @@ void CPhysx_Manager::Free()
 
     PxCloseExtensions();
     
-    for (auto& Pair : m_DynamicActors)
-        Pair.second->release();
+    for (auto& RigidBodyPair : m_RigidBodies)
+    {
+        Safe_Release(RigidBodyPair.first);
+        Safe_Release(RigidBodyPair.second);
+    }
+
+    m_RigidBodies.clear();
+
+    for (auto& CCTPair : m_CCTs)
+    {
+        Safe_Release(CCTPair.first);
+        Safe_Release(CCTPair.second);
+    }
+
+    m_CCTs.clear();
     
     for (auto& Geometry : m_Geometries)
         Safe_Delete(Geometry);
@@ -162,14 +208,17 @@ void CPhysx_Manager::Free()
     for (auto& TriangleMesh : m_TriangleMeshes)
         TriangleMesh->release();
 
+    if (nullptr != m_pPxCCTManager)
+        m_pPxCCTManager->release();
+
     if (nullptr != m_PxScene)      
         m_PxScene->release();
 
     if (nullptr != m_PxDispatcher)
         m_PxDispatcher->release();
 
-    if (nullptr != m_PxPhysx)
-        m_PxPhysx->release();
+    if (nullptr != m_PxPhysics)
+        m_PxPhysics->release();
 
     if (nullptr != m_Pvd)
         m_Pvd->release();

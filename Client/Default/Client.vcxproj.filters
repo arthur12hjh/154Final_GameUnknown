@@ -139,6 +139,9 @@
     <Filter Include="02.GameObjects\ShaderTestModel">
       <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel\ControllerHitReporter">
+      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIWrapper">
       <UniqueIdentifier>{075bcaa0-7ae0-481d-a694-78d3124386f8}</UniqueIdentifier>
     </Filter>
@@ -273,6 +276,9 @@
     <ClInclude Include="..\Public\ShaderTestModel.h">
       <Filter>02.GameObjects\ShaderTestModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PlayerCCTHitReporter.h">
+      <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UIWrapper.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
@@ -393,6 +399,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ShaderTestModel.cpp">
       <Filter>02.GameObjects\ShaderTestModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp">
+      <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIWrapper.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
