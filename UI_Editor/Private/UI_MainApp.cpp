@@ -3,8 +3,9 @@
 #include "UI_MainApp.h"
 
 #include "GameInstance.h"
-#include "UI_Level_Loading.h"
+#include "GameManager.h"
 
+#include "UI_Level_Loading.h"
 #include "GUIManager.h"
 
 /********************************
@@ -38,6 +39,9 @@ HRESULT CUI_MainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Default_Setting()))
+		return E_FAIL;
+
+	if(FAILED(Ready_Manager_Setting()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototypes()))
@@ -76,6 +80,14 @@ HRESULT CUI_MainApp::Ready_Default_Setting()
 	/* [Âü°í] MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 154ex.spritefont */
 	/*if (FAILED(m_pGameInstance->Add_Font(TEXT("Spoqa_16"), TEXT("../Bin/Resources/Fonts/Spoqa_Han_Sans_Neo_Medium16.spritefont"))))
 		return E_FAIL;*/
+
+	return S_OK;
+}
+
+HRESULT CUI_MainApp::Ready_Manager_Setting()
+{
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }

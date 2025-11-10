@@ -60,7 +60,7 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	/*if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Logo_Wrapper"))))
 		return E_FAIL;*/
 
-	_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
+	/*_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
 	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
 	{
 		if (pTexture.first.find(prefix) == 0)
@@ -84,7 +84,7 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::LOGO), pTexture.first, szTextureTag)))
 				return E_FAIL;
 		}
-	}
+	}*/
 
 	return S_OK;
 }

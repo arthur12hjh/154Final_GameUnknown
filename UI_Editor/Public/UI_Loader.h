@@ -9,6 +9,10 @@ NS_BEGIN(Engine)
 class CGameInstance;
 NS_END
 
+NS_BEGIN(Client)
+class CGameManager;
+NS_END
+
 NS_BEGIN(Tool_UI)
 
 class CUI_Loader final : public CBase
@@ -40,6 +44,7 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
+	class Client::CGameManager*		m_pGameManager = { nullptr };
 
 private:
 	HRESULT Loading_For_Logo();

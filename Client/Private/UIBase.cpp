@@ -2,7 +2,7 @@
 #include "UIBase.h"
 
 #include "GameInstance.h"
-#include "UIHUD.h"
+#include "GameManager.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -27,6 +27,11 @@ HRESULT CUIBase::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_tUIDesc = m_tOriginUIDesc;
+
+	m_pGameManager = CGameManager::GetInstance();
+
+	if (!m_pGameManager)
+		return E_FAIL;
 
 	if (FAILED(Ready_Texture()))
 		return E_FAIL;
@@ -88,7 +93,7 @@ HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _uint iTextureIndex)
 		return S_OK;
 	}
 
-	m_pTextureCom = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_TextureCom(m_tUIDesc.szTextureComTag.c_str());
+	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.szTextureComTag.c_str()).pTexture;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
@@ -106,7 +111,7 @@ HRESULT CUIBase::Ready_Texture()
 		return S_OK;
 	}
 
-	m_pTextureCom = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_TextureCom(m_tUIDesc.szTextureComTag.c_str());
+	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.szTextureComTag.c_str()).pTexture;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
@@ -130,6 +135,7 @@ void CUIBase::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pGameManager);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

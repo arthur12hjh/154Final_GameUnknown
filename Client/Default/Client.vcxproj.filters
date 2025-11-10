@@ -166,6 +166,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
       <UniqueIdentifier>{c338c24c-aa7b-4787-a598-ba61f0bf479c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
+      <UniqueIdentifier>{b4090654-1827-4c1e-9a65-7159a0ca9ae2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -312,6 +315,9 @@
     <ClInclude Include="..\Public\UIPanel.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIResourceStore.h">
+      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -444,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIPanel.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIResourceStore.cpp">
+      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "UIButton.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
 CUI_Loader::CUI_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -39,6 +40,11 @@ HRESULT CUI_Loader::Initialize(LEVEL eNextLevelID)
 	/* 실제 로딩을 수행하기위한 스레드를 생성한다. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
+		return E_FAIL;
+
+	m_pGameManager = Client::CGameManager::GetInstance();
+
+	if (!m_pGameManager)
 		return E_FAIL;
 
 	return S_OK;
@@ -123,10 +129,16 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2))))
 		return E_FAIL;
 
+	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
+		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2);
+
 	/* For.Prototype_Component_UI_Texture_Default */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
 		return E_FAIL;
+
+	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
+		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),

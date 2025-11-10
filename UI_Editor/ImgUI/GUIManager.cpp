@@ -2,6 +2,7 @@
 
 #include "GUIManager.h"
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "StringHelper.h"
 
 #include "HUDLayer.h"
@@ -22,6 +23,11 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     // 게임 인스턴스 참조 획득 및 참조 카운트 증가
     m_pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(m_pGameInstance);
+
+    m_pGameManager = Client::CGameManager::GetInstance();
+
+    if (!m_pGameManager)
+        return E_FAIL;
 
 	m_pDevice = pDevice;
 	Safe_AddRef(m_pDevice);
@@ -403,8 +409,6 @@ void CGUIManager::SetUp_UI_Proto_Tags()
             m_ProtoTags.push_back(pProto.first.substr(pos + prefix.length()));
         }
     }
-
-    //m_szCurrentProtoTag = m_ProtoTags[0];
 }
 
 void CGUIManager::SetUp_Texture_Tags()
@@ -413,32 +417,69 @@ void CGUIManager::SetUp_Texture_Tags()
 
     m_TextureComTags.push_back(TEXT("Select Texture"));
     _wstring prefix = TEXT("Com_Texture_");
-    for (auto& pLayer : m_pUIHUD->Get_Textures())
+    for (auto& pTexture : *m_pGameManager->Get_UI_Texture_Descs())
     {
-        if (pLayer.first.find(prefix) == 0)
+        if (pTexture.first.find(prefix) == 0)
         {
-            size_t pos = pLayer.first.find(prefix);
-            m_TextureComTags.push_back(pLayer.first.substr(pos + prefix.length()));
+            size_t pos = pTexture.first.find(prefix);
+            m_TextureComTags.push_back(pTexture.first.substr(pos + prefix.length()));
         }
     }
-
-    int a = 0;
-
-    /*for (auto& pLayer : *m_pGameInstance->Get_Prototypes_InLevel(m_iCurrentLevel))
-    {
-        if (pLayer.first.find(prefix) == 0)
-        {
-            size_t pos = pLayer.first.find(prefix);
-            m_TextureComTags.push_back(pLayer.first.substr(pos + prefix.length()));
-        }
-    }*/
-    //m_szCurrentTextureComTag = m_TextureComTags[0];
-    //strcpy_s(m_szCloneTextureComTag, sizeof(m_szCloneTextureComTag), "");
 }
 
 void CGUIManager::SetUp_Texture_Index()
 {
 
+}
+
+void CGUIManager::View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc)
+{
+    GUI::Begin("Texture Browser");
+
+    const float thumbSize = 96.0f;
+    const float padding = 8.0f;
+    const int itemsPerRow = 4;
+
+    vector<ID3D11ShaderResourceView*> loadedSRVs(pDesc.iTextIndex, nullptr);
+
+    _tchar szFullPath[MAX_PATH]{};
+
+    for (size_t i = 0; i < pDesc.iTextIndex; ++i)
+    {
+        wsprintf(szFullPath, pDesc.szFilePath.c_str(), i);
+
+        // SRV 아직 로드 안됐으면 로드
+        if (!loadedSRVs[i])
+            loadedSRVs[i] = LoadTextureSRV(szFullPath);
+
+        ID3D11ShaderResourceView* pSRV = loadedSRVs[i];
+        if (!pSRV) continue;
+
+        GUI::PushID((int)i);
+        if (GUI::ImageButton("", (ImTextureID)pSRV, ImVec2(thumbSize, thumbSize)))
+        {
+            m_iCurrentTextureIndex = (int)i; // 선택된 텍스처 저장
+            m_pTargetUI->Set_TextureCom(szTag, m_iCurrentTextureIndex);
+        }
+
+        if (GUI::IsItemHovered())
+        {
+            _char szTextureComTag[MAX_PATH]{};
+            CStringHelper::ConvertWideToUTF(szTag.c_str(), szTextureComTag);
+
+            GUI::SetTooltip("%hs-%d", szTextureComTag, i);
+        }
+
+        GUI::PopID();
+
+        if ((i + 1) % itemsPerRow != 0)
+            GUI::SameLine();
+        else
+            GUI::Dummy(ImVec2(0, padding));
+    }
+
+
+    GUI::End();
 }
 
 void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
@@ -624,18 +665,24 @@ void CGUIManager::Set_Texture()
     WCHAR szTextureComTag[MAX_PATH]{};
     swprintf_s(szTextureComTag, TEXT("Com_Texture_%hs"), m_szCloneTextureComTag);
 
-    _uint iTextureIndex = 0;
+    //CTexture* pTextureCom = m_pGameManager->Get_UI_TextureCom(szTextureComTag);
+    //_uint iTextureIndex = m_pGameManager->Get_UI_Texture_Index(szTextureComTag);
 
-    //if (m_szCloneTextureComTag != "")
-    //{
-    //    SetUp_Texture_Index();
-    //    //Select_Texture_Index(m_szCloneTextureComTag);
-    //}
+    CUIResourceStore::UI_TEXTURE_DESC pDesc{};
 
-    if (GUI::Button("Apply"))
+    pDesc = m_pGameManager->Get_UI_Texture_Desc(szTextureComTag);
+
+    if(pDesc.pTexture)
     {
-        m_pTargetUI->Set_TextureCom(szTextureComTag, m_iCurrentTextureIndex);
+        View_Textures(szTextureComTag, pDesc);
+        //SetUp_Texture_Index();
+        //Select_Texture_Index(m_szCloneTextureComTag);
     }
+
+    /*if (GUI::Button("Apply"))
+    {
+        
+    }*/
 
     if (GUI::Button("Reset"))
     {
@@ -652,6 +699,16 @@ void CGUIManager::Set_Texture()
         m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }
     GUI::PopStyleColor();
+}
+
+ID3D11ShaderResourceView* CGUIManager::LoadTextureSRV(const _wstring& path)
+{
+    ID3D11ShaderResourceView* pSRV = nullptr;
+    //HRESULT hr = CreateWICTextureFromFile(m_pDevice, m_pContext, path.c_str(), nullptr, &pSRV);
+    HRESULT hr = CreateWICTextureFromFile(m_pDevice, path.c_str(), nullptr, &pSRV);
+    if (FAILED(hr))
+        return nullptr;
+    return pSRV;
 }
 #pragma endregion
 

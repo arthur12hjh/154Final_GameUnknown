@@ -7,7 +7,13 @@ NS_BEGIN(Engine)
 class CGameInstance;
 NS_END
 
+NS_BEGIN(Client)
+class CGameManager;
+NS_END
+
 NS_BEGIN(Tool_UI)
+
+class CGUIManager;
 
 class CUI_MainApp final : public CBase
 {	
@@ -25,10 +31,12 @@ private:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
-	class CGUIManager*		m_pGuiManager = { nullptr };
+	CGUIManager*			m_pGuiManager = { nullptr };
+	class Client::CGameManager*			m_pGameManager = { nullptr };
 
 private:
 	HRESULT Ready_Default_Setting();
+	HRESULT	Ready_Manager_Setting();
 	HRESULT Start_Level(LEVEL eLevelID);
 	HRESULT Ready_Prototypes();
 

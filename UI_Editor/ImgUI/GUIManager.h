@@ -2,11 +2,13 @@
 
 #include "Tool_UI_Defines.h"
 #include "Base.h"
+#include "UIResourceStore.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
 class CGameObject;
 class CHUDLayer;
+class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -14,6 +16,8 @@ class CUIBase;
 class CUIPanel;
 class CUIWrapper;
 class CUIHUD;
+class CGameManager;
+class CUIResourceManager;
 NS_END
 
 namespace GUI
@@ -68,6 +72,7 @@ private:
 
 private:
 	CGameInstance* m_pGameInstance{ nullptr };
+	class Client::CGameManager* m_pGameManager{ nullptr };
 
 	_uint m_iCurrentLevel = 0;
 	_uint m_iPrevLevel = 0;
@@ -118,6 +123,8 @@ private:
 	void SetUp_UI_Proto_Tags();
 	void SetUp_Texture_Tags();
 	void SetUp_Texture_Index();
+	
+	void View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc);
 
 	void Draw_Hierarchy(Client::CUIBase* pObj);
 
@@ -126,6 +133,8 @@ private:
 	void Set_Size();
 	void Set_Position();
 	void Set_Texture();
+
+	ID3D11ShaderResourceView* LoadTextureSRV(const _wstring& path);
 
 public:
 	virtual void Free() override;

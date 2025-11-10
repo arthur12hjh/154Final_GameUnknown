@@ -11,6 +11,8 @@ NS_END
 
 NS_BEGIN(Client)
 
+class CGameManager;
+
 class CUIBase abstract : public CUIObject
 {
 public:
@@ -76,6 +78,8 @@ protected:
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 	CTexture*			m_pTextureCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
+
+	CGameManager*		m_pGameManager = { nullptr };
 
 	UIBASE_DESC m_tOriginUIDesc{};
 	UIBASE_DESC m_tUIDesc{};
