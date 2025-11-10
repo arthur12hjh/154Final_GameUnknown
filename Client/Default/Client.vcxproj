@@ -125,6 +125,9 @@
       <ShaderType>Effect</ShaderType>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -181,6 +184,8 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
+    <ClInclude Include="..\Public\PxTestProp.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
@@ -245,6 +250,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
+    <ClCompile Include="..\Private\PxTestProp.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />
