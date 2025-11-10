@@ -2,6 +2,7 @@
 #include "ShaderTestModel.h"
 
 #include "GameInstance.h"
+#include "PlayerCCTHitReporter.h"
 
 CShaderTestModel::CShaderTestModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject { pDevice, pContext }
@@ -32,6 +33,8 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 
 	m_pModelCom->Set_AnimationIndex(0, true);
 
+	//m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+
 	return S_OK;
 }
 
@@ -58,6 +61,8 @@ void CShaderTestModel::Update(_float fTimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
+
+ 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 }
 
 void CShaderTestModel::Late_Update(_float fTimeDelta)
@@ -129,7 +134,24 @@ HRESULT CShaderTestModel::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+	
+	/* Com_CCT */
+	CCharacterController::CCT_DESC Desc;
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("Player_CCT");
 
+	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
+	Desc.tUserData = tUserData; 
+	//캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
+	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
+	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
+	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -180,4 +202,5 @@ void CShaderTestModel::Free()
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pCCT);
 }

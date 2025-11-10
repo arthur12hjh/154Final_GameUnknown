@@ -221,8 +221,15 @@ public:
 #pragma endregion
 
 #pragma region Physx_Manager
-	// 피직스 매니저 자리인데 당장 함수 없다고 치우지말아주세요 
-	// 조만간 많이 들어갈거임
+	/* 피직스 싱글턴 객체 얻어오는 함수. */
+	PxControllerManager* Get_PxCCTManager();
+	PxPhysics*  Get_PxPhysics();
+	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
+	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
+	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
+	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
+	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
+
 #pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }

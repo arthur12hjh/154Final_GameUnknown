@@ -43,6 +43,8 @@ using namespace std;
 #include <dinput.h>
 
 #pragma warning(disable : 4251)
+#pragma warning(disable : 4275)
+
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 #include <d3dcompiler.h>
@@ -93,6 +95,7 @@ namespace Engine
 
 #include "Physx/PxPhysics.h"
 #include "Physx/PxPhysicsAPI.h"
+#include "PxUserData.h"
 
 using namespace physx;
 
