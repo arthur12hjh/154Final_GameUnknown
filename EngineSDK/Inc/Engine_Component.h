@@ -14,7 +14,9 @@
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Point.h"
 #include "VIBuffer_Rect_Instance.h"
+#include "VIBuffer_Instance_Model.h"
 #include "VIBuffer_Point_Instance.h"
 
 #pragma endregion

@@ -19,17 +19,17 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 {
 	const MODEL_INSTANCE_DESC* pDesc = static_cast<const MODEL_INSTANCE_DESC*>(pInstanceDesc);
 	m_pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM,
-							  pDesc->pModelFilePath,
-							  pDesc->PreModelMatrix);
+							pDesc->pModelFilePath,
+							pDesc->PreModelMatrix);
 
 	if (nullptr == m_pModel)
 		return E_FAIL;
 
 	m_iNumVertexBuffers = 2;
-	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_iNumInstance = pDesc->iNumInstance;
-	m_iInstanceStride = sizeof(VTX_NONEANIM_INSTANCE_DESC);
+	m_iInstanceStride = sizeof(VTX_INSTANCE_MODEL);
 	m_iNumIndexPerInstance = 6;
 
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
@@ -42,22 +42,22 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 	m_pInstanceVertices = new VTX_INSTANCE_MODEL[m_iNumInstance];
 	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_MODEL) * m_iNumInstance);
 
+	_matrix			ScaleMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
-		_float			fScale = m_pGameInstance->Random(pDesc->vSize.x, pDesc->vSize.y);
+		_matrix			RotationY = XMMatrixRotationY(XMConvertToRadians(m_pGameInstance->Random(0.f, 360.f)));
+		_matrix			TransformMatrix = XMMatrixTranslation(m_pGameInstance->Random(pDesc->vCenter.x - pDesc->vRange.x * 0.5f, pDesc->vCenter.x + pDesc->vRange.x * 0.5f),
+															  m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
+															  m_pGameInstance->Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f));
 
-		m_pInstanceVertices[i].vRight = _float4(fScale, 0.f, 0.f, 0.f);
-		m_pInstanceVertices[i].vUp = _float4(0.f, fScale, 0.f, 0.f);
-		m_pInstanceVertices[i].vLook = _float4(0.f, 0.f, fScale, 0.f);
-		m_pInstanceVertices[i].vTranslation = _float4(
-			m_pGameInstance->Random(pDesc->vCenter.x - pDesc->vRange.x * 0.5f, pDesc->vCenter.x + pDesc->vRange.x * 0.5f),
-			m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
-			m_pGameInstance->Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f),
-			1.f);
+		_matrix			vWorldMat = ScaleMatrix * RotationY * TransformMatrix;
+		XMStoreFloat4(&m_pInstanceVertices[i].vRight, vWorldMat.r[0]);
+		XMStoreFloat4(&m_pInstanceVertices[i].vUp, vWorldMat.r[1]);
+		XMStoreFloat4(&m_pInstanceVertices[i].vLook, vWorldMat.r[2]);
+		XMStoreFloat4(&m_pInstanceVertices[i].vTranslation, vWorldMat.r[3]);
 	}
 
 	m_InstanceInitialDesc.pSysMem = m_pInstanceVertices;
-
 	return S_OK;
 }
 
@@ -72,6 +72,8 @@ HRESULT CVIBuffer_Instance_Model::Initialize(void* pArg)
 HRESULT CVIBuffer_Instance_Model::Render(_uint iIndex)
 {
 	Bind_Resource(iIndex);
+
+	m_iNumIndices = m_pModel->Get_MeshIndices(iIndex);
 	m_pContext->DrawIndexedInstanced(m_iNumIndices, m_iNumInstance, 0, 0, 0);
 
 	return S_OK;
@@ -85,30 +87,37 @@ HRESULT CVIBuffer_Instance_Model::Bind_MatrialTexture(CShader* pShader, _uint iM
 	return m_pModel->Bind_Material(iMeshIndex, pShader, pConstantName, aiTextureType(ENUM_CLASS(eTextureType)), TextureIndex);
 }
 
+_uint CVIBuffer_Instance_Model::GetModelNumMeshes()
+{
+	return m_pModel->Get_NumMeshes();
+}
+
 HRESULT CVIBuffer_Instance_Model::Bind_Resource(_uint iMeshIndex)
 {
 	if (nullptr == m_pModel)
 		return E_FAIL;
 
-	ID3D11Buffer* pModelVertexBuffer = m_pModel->GetMeshVertexBuffer(iMeshIndex, &m_iVertexStride);
+	ID3D11Buffer* pModelVertexBuffer = nullptr;
+	ID3D11Buffer* pMoelIndexBuffer = nullptr;
+
+	m_pModel->Copy_MeshBuffer(iMeshIndex, &pModelVertexBuffer, &pMoelIndexBuffer);
 	ID3D11Buffer* VertexBuffers[] = {
 			pModelVertexBuffer,
 			m_pVBInstance,
 	};
 
 	_uint		VertexStrides[] = {
-	m_iVertexStride,
+	m_pModel->Get_MeshVertexStride(iMeshIndex),
 	m_iInstanceStride,
 	};
 
-	ID3D11Buffer* pMoelIndexBuffer = m_pModel->GetMeshIndexBuffer(iMeshIndex, &m_eIndexFormat, &m_iNumIndices);
 	_uint		Offsets[] = {
 		0,
 		0
 	};
 
 	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, VertexBuffers, VertexStrides, Offsets);
-	m_pContext->IASetIndexBuffer(pMoelIndexBuffer, m_eIndexFormat, 0);
+	m_pContext->IASetIndexBuffer(pMoelIndexBuffer, m_pModel->Get_MeshIndexFormat(iMeshIndex), 0);
 	m_pContext->IASetPrimitiveTopology(m_ePrimitive);
 
 	Safe_Release(pModelVertexBuffer);
@@ -148,5 +157,4 @@ void CVIBuffer_Instance_Model::Free()
 	{
 		Safe_Delete_Array(m_pInstanceVertices);
 	}
-	Safe_Delete(m_pInstanceVertices);
 }

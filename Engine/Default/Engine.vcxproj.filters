@@ -638,9 +638,6 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\100. Math">
-      <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\14. HUD">
       <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
     </Filter>
