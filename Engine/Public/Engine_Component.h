@@ -20,3 +20,8 @@
 #include "BoxCollider.h"
 #include "OBBCollider.h"
 #pragma endregion
+
+#pragma region Physx
+#include "RigidBody.h"
+#include "CharacterController.h"
+#pragma endregion

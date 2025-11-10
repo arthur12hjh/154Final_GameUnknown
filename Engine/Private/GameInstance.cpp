@@ -187,10 +187,11 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pCollisionManager->Compute_Collision();
 #endif
 
-	m_pObject_Manager->Clear_DeadObj();
-	m_pLevel_Manager->Update(fTimeDelta);
+	m_pPhysx_Manager->Update(fTimeDelta); // isdead 체크해서 뺴고
 
-	m_pPhysx_Manager->Update(fTimeDelta);
+	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
+
+	m_pLevel_Manager->Update(fTimeDelta);
 
 	m_fTimeAcc += fTimeDelta;
 }
@@ -692,6 +693,34 @@ const unordered_map<_wstring, CCamera*>* CGameInstance::GetAllCamera()
 {
 	return m_pCameraManager->GetAllCamera();
 }
+
+#pragma region Physx_Manager
+
+PxControllerManager* CGameInstance::Get_PxCCTManager()
+{
+	return m_pPhysx_Manager->Get_PxCCTManager();
+}
+
+PxPhysics* CGameInstance::Get_PxPhysics()
+{
+	return m_pPhysx_Manager->Get_PxPhysics();
+}
+
+PxTransform CGameInstance::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
+{
+	return m_pPhysx_Manager->Convert_Matrix_ToPxTransform(WorldMatrix);
+}
+
+_matrix CGameInstance::Convert_PxTransform_ToMatrix(PxTransform Transform)
+{
+	return m_pPhysx_Manager->Convert_PxTransform_ToMatrix(Transform);
+}
+
+HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)
+{
+	return m_pPhysx_Manager->Add_RigidBody_ToPhysx(pGameObject, pRigidBody);
+}
+
 #pragma endregion
 
 const _uint2& CGameInstance::GetScreenSize()
