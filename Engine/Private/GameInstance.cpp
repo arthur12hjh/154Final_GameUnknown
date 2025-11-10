@@ -22,6 +22,8 @@
 #include "Picking.h"
 #include "Shadow.h"
 #include "Physx_Manager.h"
+#include "BinParser.h"
+#include "FbxParser.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -37,6 +39,14 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 	m_vScreenSize = { EngineDesc.iWinSizeX, EngineDesc.iWinSizeY };
 	m_vHalfScreenSize = { m_vScreenSize.x >> 1 , m_vScreenSize.y >> 1};
+
+	m_pBinParser = CBinParser::Create();
+	if (nullptr == m_pBinParser)
+		return E_FAIL;
+
+	m_pFbxParser = CFbxParser::Create();
+	if (nullptr == m_pFbxParser)
+		return E_FAIL;
 
 	m_pPhysx_Manager = CPhysx_Manager::Create();
 	if (nullptr == m_pPhysx_Manager)
@@ -733,6 +743,25 @@ HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBod
 
 #pragma endregion
 
+#pragma region BINPARSER
+
+HRESULT CGameInstance::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pFbxParser->ReadFbx(pModelFilePath, eType, ppOut);
+}
+
+HRESULT CGameInstance::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->ReadBin(pModelFilePath, eType, ppOut);
+}
+
+HRESULT CGameInstance::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->WriteBin(pModelFilePath, eType, ppOut);
+}
+
+#pragma endregion
+
 const _uint2& CGameInstance::GetScreenSize()
 {
 	return m_vScreenSize;
@@ -807,6 +836,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pBinParser);
+	Safe_Release(m_pFbxParser);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPhysx_Manager);

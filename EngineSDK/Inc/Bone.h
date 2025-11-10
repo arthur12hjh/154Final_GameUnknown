@@ -26,11 +26,19 @@ public:
 		return !strcmp(pBoneName, m_szName);
 	}
 
-public:
-	void Set_TransformationMatrix(_fmatrix TransformationMatrix);
+	_char* Get_Name() { return m_szName; }
 
 public:
-	HRESULT Initialize(const aiNode* pAINode, _int iParentIndex);
+	_matrix Get_TransformationMatrix() const {
+		return XMLoadFloat4x4(&m_TransformationMatrix);
+	}
+
+	void Set_TransformationMatrix(_fmatrix TransformationMatrix) {
+		XMStoreFloat4x4(&m_TransformationMatrix, TransformationMatrix);
+	}
+	
+public:
+	HRESULT Initialize(binNode* pNode, _int iParentIndex);
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);
 
 private:
@@ -41,7 +49,7 @@ private:
 	/*CBone*				m_pParent = { nullptr };*/
 
 public:
-	static CBone* Create(const aiNode* pAINode, _int iParentIndex);
+	static CBone* Create(binNode* pNode, _int iParentIndex);
 	CBone* Clone();
 	virtual void Free() override;
 };
