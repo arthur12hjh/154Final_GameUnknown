@@ -102,6 +102,8 @@ public:
 #pragma region LIGHT_MANAGER
 	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
 	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	
+	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
 #ifdef _DEBUG
 	void								Debug_LightRender();
@@ -198,7 +200,7 @@ public:
 
 	// Defaut 매개변수 있습니다.
 	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
-	HRESULT							SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix = nullptr);
+	HRESULT							SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix = nullptr);
 
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요

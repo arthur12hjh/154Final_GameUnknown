@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Model.h"
 
 #pragma region Shader
@@ -30,3 +29,5 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #pragma endregion
+
+#include "Light.h"

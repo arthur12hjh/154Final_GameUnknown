@@ -85,7 +85,6 @@ using namespace DirectX;
 #include "Engine_Struct.h"
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"
-
 #include "Engine_Math.h"
 
 namespace Engine

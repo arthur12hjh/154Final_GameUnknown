@@ -117,6 +117,17 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight
     return S_OK;
 }
 
+CLight* CLight_Manager::Find_Light(_uint iIndex)
+{
+    if (0 > iIndex || m_Lights.size() <= iIndex)
+        return nullptr;
+
+    auto iter = m_Lights.begin();
+    advance(iter, iIndex);
+
+    return *iter;
+}
+
 void CLight_Manager::Clear_DeadLight()
 {
     for (auto iter = m_Lights.begin(); iter != m_Lights.end();)

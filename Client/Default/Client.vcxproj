@@ -159,6 +159,7 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
+    <ClInclude Include="..\Public\ClientStruct.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\public\DebugCheatUI.h" />
     <ClInclude Include="..\public\DebugHierarchy.h" />
@@ -196,7 +197,6 @@
     <ClInclude Include="..\Public\UIHUD.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="ClientStruct.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />

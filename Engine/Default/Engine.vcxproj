@@ -229,7 +229,6 @@ popd</Command>
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\SphereCollider.h" />
     <ClInclude Include="..\public\State.h" />
-    <ClInclude Include="..\public\StateLayer.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\Public\StringHelper.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
@@ -243,6 +242,7 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Cell.h" />
     <ClInclude Include="..\Public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Instance_Model.h" />
     <ClInclude Include="..\public\VIBuffer_Point.h" />
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
@@ -303,7 +303,6 @@ popd</Command>
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\SphereCollider.cpp" />
     <ClCompile Include="..\private\State.cpp" />
-    <ClCompile Include="..\private\StateLayer.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StringHelper.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
@@ -317,6 +316,7 @@ popd</Command>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Instance_Model.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />

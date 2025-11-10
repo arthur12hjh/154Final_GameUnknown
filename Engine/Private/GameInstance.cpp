@@ -194,6 +194,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pPhysx_Manager->Update(fTimeDelta); // isdead Ã¼Å©ÇØ¼­ •û°í
 
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
+	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
 	m_pLevel_Manager->Update(fTimeDelta);
 
@@ -434,6 +435,11 @@ HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOut
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
 
+CLight* CGameInstance::Find_Light(_uint iIndex)
+{
+	return m_pLight_Manager->Find_Light(iIndex);
+}
+
 const list<class CLight*>* CGameInstance::GetAllLight()
 {
 	return m_pLight_Manager->GetAllLight();
@@ -666,9 +672,9 @@ HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
 }
-HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
-	return m_pCameraManager->SetMainCamera(szCameraTag, ppPreCameraMatrix);
+	return m_pCameraManager->SetMainCamera(szCameraTag, pPreCameraMatrix);
 }
 CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 {
