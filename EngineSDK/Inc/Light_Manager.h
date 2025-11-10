@@ -16,7 +16,6 @@ private:
 #elif
 	CLight_Manager();
 #endif
-
 	virtual ~CLight_Manager() = default;
 
 public:
@@ -24,14 +23,13 @@ public:
 	HRESULT					Initialize();
 	void					Debug_LightRender();
 #endif
-	
-	const LIGHT_DESC*		Get_LightDesc(_uint iIndex) const;
 
 public:
-	HRESULT					Add_Light(const LIGHT_DESC& LightDesc);
-	
-	void					Remove_Light(CLight* pLight);
+	HRESULT					Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight);
+	void					Clear_DeadLight();
+
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	const	list<CLight*>*	GetAllLight() { return &m_Lights; }
 
 private:
 #ifdef _DEBUG
@@ -43,7 +41,6 @@ private:
 	CTexture*						m_pTexture = nullptr;
 	CShader*						m_pShader[2] = { nullptr , nullptr };
 #endif
-	
 	list<CLight*>					m_Lights;
 
 public:

@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 class CCollider;
 class CGameInstance;
 
-class CLight final : public CBase
+class ENGINE_DLL CLight final : public CBase
 {
 private:
 #ifdef _DEBUG
@@ -25,7 +25,14 @@ public:
 
 public:
 	HRESULT					Initialize(const LIGHT_DESC& LightDesc);	
+
+	void					SetDead(_bool bIsDead);
+	_bool					IsDead() { return m_bIsDead; }
+
 	HRESULT					Render(class CShader* pShader, class CVIBuffer* pVIBuffer);
+
+	void					SetVisibility(VISIBILITY eVisibility);
+	VISIBILITY				GetVisbility() { return m_eVisible; }
 
 #ifdef _DEBUG
 	void					Debug_Render();
@@ -42,7 +49,9 @@ private:
 	_float4x4				m_WorldMat = {};
 #endif // _DEBUG
 
+	VISIBILITY				m_eVisible = {};
 	LIGHT_DESC				m_LightDesc{};
+	_bool					m_bIsDead = false;
 
 private :
 #ifdef _DEBUG
