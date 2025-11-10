@@ -18,8 +18,14 @@ public:
 	}
 
 	_int Get_BoneIndex(const _char* pBoneName) const;
+	
+	vector<class CBone*>* Get_Bones();
+	
+	_uint Get_AnimationKeyFrameIndex() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
+
+	void Attach_CombinedTransformationMatrix();
 
 public:
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {
@@ -40,15 +46,11 @@ public:
 	_bool Play_Animation(_float fTimeDelta);
 	virtual HRESULT Render(_uint iMeshIndex);
 	
-
-private:
-	
-	const aiScene*				m_pAIScene = { nullptr };
-	Assimp::Importer			m_Importer;
-
 private:
 	MODEL_TYPE					m_eType = {};
 	_float4x4					m_PreTransformMatrix = {};
+
+	binModel*					m_pModel;
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
@@ -66,7 +68,7 @@ private:
 private:
 	HRESULT Ready_Meshes();
 	HRESULT Ready_Materials(const _char* pModelFilePath);
-	HRESULT Ready_Bones(const aiNode* pAINode, _int iParentIndex);
+	HRESULT Ready_Bones(binNode* pNode, _int iParentIndex);
 	HRESULT Ready_Animations();
 
 

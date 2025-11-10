@@ -14,11 +14,14 @@ private:
 	virtual ~CAnimation() = default;
 
 public:
-	HRESULT Initialize(class CModel* pModel, const aiAnimation* pAIAnimation);
+	HRESULT Initialize(class CModel* pModel, binAnimation* pAnimation);
 	_bool Update_TransformationMatrices(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta);
+
+	_uint Get_AnimationKeyFrameIndex() { return m_CurrentKeyFrameIndices[0]; }
 
 	void Reset();
 private:
+	_char						m_szName[MAX_PATH] = {};
 	_float						m_fCurrentTrackPosition = {};
 	/* 애니메이션 재생을 위한 전체 길이 */
 	_float						m_fDuration = {};
@@ -30,7 +33,7 @@ private:
 	vector<_uint>				m_CurrentKeyFrameIndices;
 
 public:
-	static CAnimation* Create(class CModel* pModel, const aiAnimation* pAIAnimation);
+	static CAnimation* Create(class CModel* pModel, binAnimation* pAnimation);
 	CAnimation* Clone();
 	virtual void Free() override;
 };
