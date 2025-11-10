@@ -95,6 +95,7 @@ namespace Engine
 
 #include "Physx/PxPhysics.h"
 #include "Physx/PxPhysicsAPI.h"
+#include "PxUserData.h"
 
 using namespace physx;
 

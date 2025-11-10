@@ -142,6 +142,9 @@
     <Filter Include="02.GameObjects\ShaderTestModel\ControllerHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\ShaderTestModel\TestProp">
+      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -273,6 +276,9 @@
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h">
       <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PxTestProp.h">
+      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -390,6 +396,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp">
       <Filter>02.GameObjects\ShaderTestModel\ControllerHitReporter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PxTestProp.cpp">
+      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
