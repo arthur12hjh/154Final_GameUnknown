@@ -145,6 +145,21 @@
     <Filter Include="02.GameObjects\ShaderTestModel\TestProp">
       <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps">
+      <UniqueIdentifier>{71ce41b5-d270-4f95-b0bc-6632eb48cc33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village">
+      <UniqueIdentifier>{9a273159-9a7d-486a-b86b-706a7dda7cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Obj">
+      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Mou">
+      <UniqueIdentifier>{84947ce9-bc4e-4724-8f21-50e915ee60b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Village\Obj\Vil_Bui03_04">
+      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -279,6 +294,12 @@
     <ClInclude Include="..\Public\PxTestProp.h">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Village_Mou.h">
+      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Vil_Bui03_04.h">
+      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -399,6 +420,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\PxTestProp.cpp">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Village_Mou.cpp">
+      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Vil_Bui03_04.cpp">
+      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
