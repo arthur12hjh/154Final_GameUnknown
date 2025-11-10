@@ -7,16 +7,16 @@ CChannel::CChannel()
 {
 }
 
-HRESULT CChannel::Initialize(const CModel* pModel, const aiNodeAnim* pAIChannel)
+HRESULT CChannel::Initialize(const CModel* pModel, binChannel* pChannel)
 {
-	strcpy_s(m_szName, pAIChannel->mNodeName.data);
+	strcpy_s(m_szName, pChannel->szName);
 
 	m_iBoneIndex = pModel->Get_BoneIndex(m_szName);
 	if (-1 == m_iBoneIndex)
 		return E_FAIL;
 
-	m_iNumKeyFrames = max(pAIChannel->mNumScalingKeys, pAIChannel->mNumRotationKeys);
-	m_iNumKeyFrames = max(m_iNumKeyFrames, pAIChannel->mNumPositionKeys);
+	m_iNumKeyFrames = max(pChannel->iNumScalingKeys, pChannel->iNumRotationKeys);
+	m_iNumKeyFrames = max(m_iNumKeyFrames, pChannel->iNumPositionKeys);
 
 	_float3				vScale{};
 	_float4				vRotation{};
@@ -26,26 +26,26 @@ HRESULT CChannel::Initialize(const CModel* pModel, const aiNodeAnim* pAIChannel)
 	{
 		KEYFRAME		KeyFrame{};
 
-		if (i < pAIChannel->mNumScalingKeys)
+		if (i < pChannel->iNumScalingKeys)
 		{
-			memcpy(&vScale, &pAIChannel->mScalingKeys[i].mValue, sizeof(_float3));
-			KeyFrame.fTrackPosition = pAIChannel->mScalingKeys[i].mTime;
+			memcpy(&vScale, &pChannel->cScalingKeys[i].vValue, sizeof(_float3));
+			KeyFrame.fTrackPosition = pChannel->cScalingKeys[i].fTime;
 		}
 
-		if (i < pAIChannel->mNumRotationKeys)
+		if (i < pChannel->iNumRotationKeys)
 		{
-			vRotation.x = pAIChannel->mRotationKeys[i].mValue.x;
-			vRotation.y = pAIChannel->mRotationKeys[i].mValue.y;
-			vRotation.z = pAIChannel->mRotationKeys[i].mValue.z;
-			vRotation.w = pAIChannel->mRotationKeys[i].mValue.w;
+			vRotation.x = pChannel->cRotationKeys[i].vValue.x;
+			vRotation.y = pChannel->cRotationKeys[i].vValue.y;
+			vRotation.z = pChannel->cRotationKeys[i].vValue.z;
+			vRotation.w = pChannel->cRotationKeys[i].vValue.w;
 
-			KeyFrame.fTrackPosition = pAIChannel->mRotationKeys[i].mTime;
+			KeyFrame.fTrackPosition = pChannel->cRotationKeys[i].fTime;
 		}
 
-		if (i < pAIChannel->mNumPositionKeys)
+		if (i < pChannel->iNumPositionKeys)
 		{
-			memcpy(&vTranslation, &pAIChannel->mPositionKeys[i].mValue, sizeof(_float3));
-			KeyFrame.fTrackPosition = pAIChannel->mPositionKeys[i].mTime;
+			memcpy(&vTranslation, &pChannel->cPositionKeys[i].vValue, sizeof(_float3));
+			KeyFrame.fTrackPosition = pChannel->cPositionKeys[i].fTime;
 		}
 
 		KeyFrame.vScale = vScale;
@@ -111,11 +111,11 @@ void CChannel::Update_TransformationMatrix(const vector<class CBone*>& Bones, _f
 
 }
 
-CChannel* CChannel::Create(const CModel* pModel, const aiNodeAnim* pAIChannel)
+CChannel* CChannel::Create(const CModel* pModel, binChannel* pChannel)
 {
 	CChannel* pInstance = new CChannel();
 
-	if (FAILED(pInstance->Initialize(pModel, pAIChannel)))
+	if (FAILED(pInstance->Initialize(pModel, pChannel)))
 	{
 		MSG_BOX("Failed to Created : CChannel");
 		Safe_Release(pInstance);

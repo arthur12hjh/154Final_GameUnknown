@@ -132,6 +132,7 @@ namespace Engine
 		XMFLOAT3			vPosition;
 		XMFLOAT3			vNormal;
 		XMFLOAT3			vTangent;
+		XMFLOAT3			vBinormal;
 		XMFLOAT2			vTexcoord;
 
 		/* 이 정점이 어떤 뼈들의 상태를 받아야하는가? */
@@ -139,14 +140,15 @@ namespace Engine
 		/* 각 뼈의 상태가 어떤 비율로 적용되야할지? */
 		XMFLOAT4			vBlendWeight;
 
-		static constexpr unsigned int					iNumElements = { 6 };
+		static constexpr unsigned int					iNumElements = { 7 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}, 
-			{ "BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0}, 
+			{ "BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 	}VTXANIMMESH;
 
@@ -207,6 +209,110 @@ namespace Engine
 		XMFLOAT3		vTranslation;
 		float			fTrackPosition;
 	}KEYFRAME;
+
+#pragma region MODEL_IMPORT
+
+	typedef struct binFace
+	{
+		unsigned int				iNumIndices;
+		vector<unsigned int>		vIndices;
+	}BINFACE;
+
+	typedef struct binNode
+	{
+		unsigned int		iNumChildren;
+		XMFLOAT4X4			matTransformation;
+		char				szName[MAX_PATH];
+		vector<unsigned int>vChildrenIndex;
+	}BINNODE;
+
+	typedef struct binVertexWeight
+	{
+		unsigned int			iVertexId;
+		float					fWeight;
+	}BINVERTEXWEIGHT;
+
+	typedef struct binVectorKey
+	{
+		float					fTime;
+		XMFLOAT4				vValue;
+	}BINVECTORKEY;
+
+	typedef struct binBone
+	{
+		char					szName[MAX_PATH];
+		unsigned int			iNumWeights;
+		vector<binVertexWeight>	vWeights;
+		XMFLOAT4X4				OffsetMatrix;
+		//binNode*				pNode;
+	}BINBONE;
+
+	typedef struct binChannel
+	{
+		char szName[MAX_PATH];
+		unsigned int iNumScalingKeys;
+		unsigned int iNumRotationKeys;
+		unsigned int iNumPositionKeys;
+		vector<binVectorKey> cScalingKeys;
+		vector<binVectorKey> cRotationKeys;
+		vector<binVectorKey> cPositionKeys;
+	}BINCHANNEL;
+
+	typedef struct binAnimation
+	{
+		char					szName[MAX_PATH];
+		float					fDuration;
+		float					fTicksPerSecond;
+		unsigned int			iNumChannels;
+		vector<binChannel>		vChannels;
+	}BINANIMATION;
+
+	typedef struct binMesh
+	{
+		unsigned int				iNumVertices;
+		unsigned int				iNumFaces;
+		unsigned int				iNumBones;
+		unsigned int				iMaterialIndex;
+		vector<XMFLOAT3>			vPositions;
+		vector<XMFLOAT3>			vNormals;
+		vector<XMFLOAT3>			vTangents;
+		vector<XMFLOAT3>			vBinormals;
+		vector<vector<XMFLOAT2>>	vTextureCoords;
+		vector<binFace>				vFaces;
+		vector<binBone>				vBones;
+		char						szName[MAX_PATH];
+	}BINMESH;
+
+	typedef struct binMaterial
+	{
+		enum TEXTURETYPE {
+			NONE, DIFFUSE, SPECULAR, AMBIENT, EMISSIVE, HEIGHT,
+			NORMALS, SHININESS, OPACITY, DISPLACEMENT,
+			LIGHTMAP, REFLECTION, BASE_COLOR, NORMAL_CAMERA,
+			EMISSIVE_COLOR, METALNESS, DIFFUSE_ROUGHNESS,
+			AMBIENT_OCCLUSION, UNKNOWN, SHEEN, CLEARCOAT,
+			TRANSMISSION, MAYA_BASE, MAYA_SPECULAR,
+			MAYA_SPECULAR_COLOR, MAYA_SPECULAR_ROUGHNESS,
+			ANISOTROPY, GLTF_METALLIC_ROUGHNESS, END
+		};
+
+		vector<unsigned int> vNumSRVs;
+		vector<string> strTexturePaths[TEXTURETYPE::END];
+	}BINMATERIAL;
+
+	typedef struct binModel
+	{
+		unsigned int				iNumMeshes;
+		unsigned int				iNumMaterials;
+		unsigned int				iNumAnimations;
+		unsigned int				iRootNodeIndex; //RootNode unsigned int 인덱스로 해야함
+		vector<binNode>				vNodes;
+		vector<binMesh>				vMeshes;
+		vector<binMaterial>			vMaterials;
+		vector<binAnimation>		vAnimations;
+	}BINMODEL;
+
+#pragma endregion
 
 }
 
