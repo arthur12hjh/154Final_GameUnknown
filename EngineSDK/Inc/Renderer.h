@@ -45,7 +45,7 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-
+	unique_ptr<GeometricPrimitive> CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop);
 #endif
 
 private:
@@ -64,6 +64,14 @@ private:
 	class CShader*						m_pPhysxDebugShader = { nullptr };
 	list<class CComponent*>				m_DebugComponents = {};
 	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
+	BasicEffect* m_pEffect = {};
+	ID3D11InputLayout* m_pInputLayout = {};
+
+	// 외부 제공 모듈이라 어쩔수 없이 unique ptr 써야함..
+	unique_ptr<GeometricPrimitive> m_pBoxShape = { nullptr };
+	unique_ptr<GeometricPrimitive> m_pSphereShape = { nullptr };
+	unique_ptr<GeometricPrimitive> m_pCapsuleCylinderShape = { nullptr };
+	unique_ptr<GeometricPrimitive> m_pCapsuleHemiSphereShape = { nullptr };
 #endif
 
 private:

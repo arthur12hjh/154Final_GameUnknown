@@ -274,8 +274,6 @@ HRESULT CMainApp::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/Nvzhu_SM_PlayerTest.fbx"))))
 		return E_FAIL;
-
-	
 #endif
 
 	return S_OK;

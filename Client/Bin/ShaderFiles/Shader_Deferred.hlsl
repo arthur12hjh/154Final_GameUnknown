@@ -149,7 +149,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vBackBuffer = vDiffuse * vShade + vRimLight;
+    Out.vBackBuffer = vDiffuse * vShade + vSpecular + vRimLight;
     //vSpecular + vRimLight;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -182,7 +182,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
     
     //외곽선 연산
-    Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
+    //Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
     
     //블러 연산. 얜 무조건 마지막에 있는게 맞는거같아서 여기 뒀는데 바꾸고싶으면 디코 ㄱ.
     Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
