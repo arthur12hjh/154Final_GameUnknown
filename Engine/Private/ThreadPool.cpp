@@ -13,14 +13,14 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 	m_iNumThread = iNumThread;
 
 	m_bIsThreadStopAll = false;
-	m_Threads.reserve(m_iNumThread);
-
 	for (_uint i = 0; i < m_iNumThread; ++i)
 	{
-		m_Threads.emplace_back([&]() { Update_WorkThread(); }, i);
+		thread WorkThread([&]() { Update_WorkThread(); });
+		m_Threads.emplace(WorkThread.get_id(), move(WorkThread));
+
 		THREAD_DESC Desc;
 		m_pDevice->CreateDeferredContext(0, &Desc.pContext);
-		m_DefferdContexts.push_back(Desc);
+		m_DefferdContexts.emplace(WorkThread.get_id(), Desc);
 	}
 
 	return S_OK;
@@ -49,7 +49,7 @@ void CThreadPool::Update_WorkThread()
 			{
 				if (0 < m_iWorkdThread)
 				{
-					FinishedWorkThread(m_iWorkdThread - 1);
+					FinishedWorkThread(this_thread::get_id());
 					m_iWorkdThread--;
 				}
 				return true;
@@ -60,7 +60,7 @@ void CThreadPool::Update_WorkThread()
 		if (m_bIsThreadStopAll && m_ThreadJobs.empty())
 		{
 			for (auto Desc : m_DefferdContexts)
-				Safe_Release(Desc.pContext);
+				Safe_Release(Desc.second.pContext);
 			return;
 		}
 
@@ -73,8 +73,7 @@ void CThreadPool::Update_WorkThread()
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
-			thread::id current_thread_id = this_thread::get_id();
-			THREAD_DESC Desc = m_DefferdContexts[current_thread_id];
+			THREAD_DESC Desc = m_DefferdContexts[this_thread::get_id()];
 			job.JobFunction(&Desc);
 		}
 	}
@@ -99,9 +98,9 @@ void CThreadPool::StopAllThread()
 		m_ThreadJobs.pop();
 
 	m_cv_Jobs.notify_all();
-
 	for (auto& pThread : m_Threads)
-		pThread.first.join();
+		pThread.second.join();
+
 }
 
 size_t CThreadPool::GetThreadJobCount()
@@ -114,7 +113,7 @@ _bool CThreadPool::IsWorkThread()
 	return 0 < m_iWorkdThread;
 }
 
-void CThreadPool::FinishedWorkThread(_uint ThreadID)
+void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 {
 	auto Desc = m_DefferdContexts[ThreadID];
 	ID3D11CommandList* pCommandList = nullptr;

@@ -28,7 +28,7 @@ public:
 	_bool							IsWorkThread();
 
 	_bool							IsThreadPoolStop() { return m_bIsThreadStopAll; }
-	void							FinishedWorkThread(_uint ThreadID);
+	void							FinishedWorkThread(thread::id ThreadID);
 
 private:
 	ID3D11Device*					m_pDevice = { nullptr };
@@ -37,8 +37,8 @@ private:
 	_uint							m_iNumThread = {};
 	_uint							m_iWorkdThread = {};
 
-	vector<thread>					m_Threads;
-	vector<THREAD_DESC>				m_DefferdContexts;
+	map<thread::id, thread>			m_Threads;
+	map<thread::id, THREAD_DESC>	m_DefferdContexts;
 
 	condition_variable				m_cv_Jobs;
 	mutex							m_Worker;
