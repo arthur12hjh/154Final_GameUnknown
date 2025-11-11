@@ -17,21 +17,23 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Update(_float fTimeDelta) override;
-	virtual void Update(_float fTimeDelta) override;
-	virtual void Late_Update(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+
+	virtual void			Priority_Update(_float fTimeDelta) override;
+	virtual void			Update(_float fTimeDelta) override;
+	virtual void			Late_Update(_float fTimeDelta) override;
+
+	virtual HRESULT			Render() override;
 
 protected:
-	_float				m_fDepth = {};
+	_float					m_fDepth = {};
 
 protected:
-	void Compute_Depth();
+	void					Compute_Depth();
 public:
-	virtual CGameObject* Clone(void* pArg) = 0;
-	virtual void Free() override;
+	virtual CGameObject*	Clone(void* pArg) = 0;
+	virtual void			Free() override;
 
 };
 

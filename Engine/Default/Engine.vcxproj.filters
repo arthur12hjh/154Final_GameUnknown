@@ -509,9 +509,6 @@
     <Filter Include="01.Utility\01.Levels">
       <UniqueIdentifier>{69534a59-b5fe-42e4-98d2-d352d2d2a90b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObjects">
-      <UniqueIdentifier>{62d7d084-9acc-44d9-b9c2-856102250ce2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components">
       <UniqueIdentifier>{9232881a-7808-4c76-94cc-6226f3e6970c}</UniqueIdentifier>
     </Filter>
@@ -524,17 +521,8 @@
     <Filter Include="01.Utility\04.Prototypes\Manager">
       <UniqueIdentifier>{184fc138-0a87-4b86-9475-c02b96445bdf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObjects\Manager">
-      <UniqueIdentifier>{efc82929-890d-4b38-9012-b28e7cfd31b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\Manager\Layers">
-      <UniqueIdentifier>{71f86de6-d79b-4a5b-bd36-741a477b174d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\01.Levels\Manager">
       <UniqueIdentifier>{5551b45b-b6f2-4aae-b287-d99e83f12793}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\UIObject">
-      <UniqueIdentifier>{5afffd4c-fc13-4efe-81bd-ff8dd523a759}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Transform">
       <UniqueIdentifier>{f969d824-a1bc-4975-9fe6-4173dcece90e}</UniqueIdentifier>
@@ -577,12 +565,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Model\Animation\Channel">
       <UniqueIdentifier>{98095d25-33bd-4d64-8b5d-9d0a35dba342}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\ContainerObject">
-      <UniqueIdentifier>{0caac38f-1c83-42cb-bc4d-60419d229070}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\PartObject">
-      <UniqueIdentifier>{1f0dfad3-a936-4e4a-a45b-dbdde53ef1c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\07.Lights">
       <UniqueIdentifier>{5b406faa-f75b-4ab9-bd6c-8a033359432f}</UniqueIdentifier>
@@ -635,20 +617,11 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{ccaab4a9-3a94-4a6f-b842-d75b1077b29a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObjects\BlendObject">
-      <UniqueIdentifier>{bda12695-dadb-4680-8048-7cfe7808cfec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\11.Shadow">
       <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD">
-      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD\Layer">
-      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Collider">
       <UniqueIdentifier>{72d6d7ff-05c7-4e9e-994f-be7cd7b4685e}</UniqueIdentifier>
@@ -703,9 +676,6 @@
     </Filter>
     <Filter Include="01.Utility\101.String">
       <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Shader\Compute">
       <UniqueIdentifier>{f70290d7-8069-4762-8383-23523b3cf611}</UniqueIdentifier>
@@ -769,6 +739,30 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
       <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects">
+      <UniqueIdentifier>{62d7d084-9acc-44d9-b9c2-856102250ce2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Manager">
+      <UniqueIdentifier>{efc82929-890d-4b38-9012-b28e7cfd31b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Manager\Layers">
+      <UniqueIdentifier>{71f86de6-d79b-4a5b-bd36-741a477b174d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\UIObject">
+      <UniqueIdentifier>{5afffd4c-fc13-4efe-81bd-ff8dd523a759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\ContainerObject">
+      <UniqueIdentifier>{0caac38f-1c83-42cb-bc4d-60419d229070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\PartObject">
+      <UniqueIdentifier>{1f0dfad3-a936-4e4a-a45b-dbdde53ef1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\BlendObject">
+      <UniqueIdentifier>{bda12695-dadb-4680-8048-7cfe7808cfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

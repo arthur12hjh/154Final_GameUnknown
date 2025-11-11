@@ -20,6 +20,8 @@ public:
 	ThreadJobHandle*				Add_jobList(function<void()> function);
 	
 	void							StopAllThread();
+
+	size_t							GetThreadJobCount();
 	_bool							IsThreadPoolStop() { return m_bIsThreadStopAll; }
 
 private:
