@@ -12,11 +12,11 @@
 
 #ifdef _DEBUG
 #include "ImGuiMain.h"
+
+#endif
 #include "Model.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
-#endif
-
 
 
 CMainApp::CMainApp()	
@@ -259,12 +259,6 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-#ifdef _DEBUG
-	/* For.Prototype_Component_Model_ShaderTestModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/Nvzhu_SM_PlayerTest.fbx"))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
@@ -274,6 +268,14 @@ HRESULT CMainApp::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		CCharacterController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+#ifdef _DEBUG
+	/* For.Prototype_Component_Model_ShaderTestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/Nvzhu_SM_PlayerTest.fbx"))))
+		return E_FAIL;
+
+	
 #endif
 
 	return S_OK;

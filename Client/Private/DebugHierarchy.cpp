@@ -54,8 +54,8 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
             iIndex++;
 
             if (opened)
-            {
-                // 忙式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式忖
+            {   
+                // Ⅵ式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式忖
                 // 弛  class Logic                        弛
                 // 弛  1. ImGui TreeNode Debug            弛
                 // 弛  2. JH Here Code                    弛

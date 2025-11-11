@@ -16,6 +16,12 @@ public:
 		_bool			isLoop;
 	}INSTANCE_DESC;
 
+	typedef struct tagVertexInstance_Particle final : public VTX_INSTANCE_PARTICLE
+	{
+		_float4	vRoot;
+		_float2 vSpeeds;
+	}VTX_INSTANCE_VERTEX_PARTICLE;
+
 protected:
 	CVIBuffer_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Instance(const CVIBuffer_Instance& Prototype);

@@ -13,11 +13,6 @@ public:
 		_float2			vSpeed;
 	}RECT_INSTANCE_DESC;
 
-	typedef struct tagVertexRectInstance_Particle final : public VTX_INSTANCE_PARTICLE
-	{
-		_float2 vSpeeds;
-	}VTX_INSTANCE_RECT_PARTICLE;
-
 
 private:
 	CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,7 +28,7 @@ public:
 
 
 private:
-	VTX_INSTANCE_RECT_PARTICLE* m_pInstanceVertices = { nullptr };
+	VTX_INSTANCE_VERTEX_PARTICLE* m_pInstanceVertices = { nullptr };
 	_bool						m_bFlag = { true };
 
 

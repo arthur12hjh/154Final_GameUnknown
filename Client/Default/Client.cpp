@@ -16,6 +16,9 @@ float		        g_fGameFrame;
 
 bool				g_bIsFocus;
 bool				g_bIsMouseLock;
+unsigned int		g_iHalfWinSizeX;
+unsigned int		g_iHalfWinSizeY;
+
 
 WCHAR               szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR               szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
@@ -71,6 +74,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return E_FAIL;
 
     _float      fTimeAcc = { };
+    g_iHalfWinSizeX = g_iWinSizeX * 0.5f;
+    g_iHalfWinSizeY = g_iWinSizeY * 0.5f;
+
     while (true)
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))

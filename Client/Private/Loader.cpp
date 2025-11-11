@@ -18,10 +18,10 @@
 
 #include "Body_Player.h"
 #include "Instance_Model.h"
+#include "PxTestProp.h"
 
 #ifdef _DEBUG
 #include "ShaderTestModel.h"
-#include "PxTestProp.h"
 #endif
 
 #include "UIButton.h"
@@ -80,10 +80,18 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		hr = Loading_For_GamePlay();
-
+		m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 		m_pGameInstance->Add_ThreadjobList([&]() { this->Loading_For_GamePlay_Mesh(); });
+
+		m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");
 		m_pGameInstance->Add_ThreadjobList([&]() { this->Loading_For_GamePlay_Shader(); });
+
+		m_strMessage = TEXT("네비게이션를(을) 로딩 중 입니다.");
+		m_pGameInstance->Add_ThreadjobList([&]() { this->Loading_For_GamePlay_Navigation(); });
+
+		m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
+
+		hr = Loading_For_GamePlay();
 	}
 	
 		break;
@@ -127,17 +135,7 @@ HRESULT CLoader::Loading_For_Logo()
 
 HRESULT CLoader::Loading_For_GamePlay()
 {
-	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
-	
 
-	
-	m_strMessage = TEXT("네비게이션를(을) 로딩 중 입니다.");
-	/* For.Prototype_Component_Navigation */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
-		return E_FAIL;
-
-	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
@@ -155,7 +153,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	SnowDesc.vRange = _float3(128.f, 2.f, 128.f);
 	SnowDesc.vSize = _float2(0.2f, 0.6f);
 	SnowDesc.vLifeTime = _float2(3.f, 7.f);
-	SnowDesc.vSpeed = _float2(2.f, 5.f);
+	SnowDesc.vSpeed = _float2(0.f, 0.f);
 	SnowDesc.isLoop = true;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Particle_Snow"),
@@ -166,11 +164,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Rect_Drop.hlsl"), "CS", SnowDesc.iNumInstance))))
 		return E_FAIL;
 
-	
-
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
-
 	ExplosionDesc.iNumInstance = 1000;
 	ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
 	ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
@@ -189,7 +184,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
-
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
@@ -217,7 +211,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/VTX_InstnaceMesh.hlsl"), VTX_NONEANIM_INSTANCE_DESC::Elements, VTX_NONEANIM_INSTANCE_DESC::iNumElements))))
 		return E_FAIL;
-
+	
 	/* For.Prototype_Component_Model_ForkLift */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
@@ -301,28 +295,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Weapon */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-		CWeapon::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_ForkLift */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	
 
-#ifdef _DEBUG
-	/* For.Prototype_GameObject_ShaderTestModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		CShaderTestModel::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_PxTestProp */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
-		CPxTestProp::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-#endif
 
 	m_strMessage = TEXT("로딩이 완료되었습니다..");
 
@@ -373,6 +347,12 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -408,6 +388,43 @@ HRESULT CLoader::Loading_For_GamePlay_Shader()
 		CInstance_Model::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_ForkLift */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
+		CForkLift::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
+	/* For.Prototype_GameObject_PxTestProp */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
+		CPxTestProp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#ifdef _DEBUG
+	/* For.Prototype_GameObject_ShaderTestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+		CShaderTestModel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_PxTestProp */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
+		CPxTestProp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#endif
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_GamePlay_Navigation()
+{
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_GamePlay_InstanceMesh()
+{
+	
 	return S_OK;
 }
 
