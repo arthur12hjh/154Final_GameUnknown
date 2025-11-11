@@ -70,6 +70,10 @@ void CShaderTestModel::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
+#endif
 }
 
 HRESULT CShaderTestModel::Render()
