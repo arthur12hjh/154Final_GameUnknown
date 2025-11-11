@@ -68,6 +68,20 @@ namespace Engine
 
 	}VTXPOS;
 
+	//physx ¿ë
+	typedef struct tagVertexPositionColor
+	{
+		XMFLOAT3			vPosition;
+		XMFLOAT4			vColor;
+
+		static constexpr unsigned int					iNumElements = { 2 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+	}VTXPOSCOLOR;
+
 	typedef struct tagVertexPositionTexcoord
 	{
 		XMFLOAT3			vPosition;
@@ -161,6 +175,23 @@ namespace Engine
 
 	}VTX_INSTANCE_MODEL;
 
+	typedef struct tagVertexModelInstanceDesc
+	{
+		static constexpr unsigned int					iNumElements = { 9 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+			{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		};
+	}VTX_NONEANIM_INSTANCE_DESC;
+
 	typedef struct tagVertexInstance_Particle
 	{
 		XMFLOAT4			vRight;
@@ -170,8 +201,6 @@ namespace Engine
 
 		XMFLOAT2			vLifeTime;
 	}VTX_INSTANCE_PARTICLE;
-
-
 
 	typedef struct tagVertexPosTexInstanceParticleDesc
 	{		

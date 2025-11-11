@@ -28,7 +28,10 @@ public:
 private:
 	CModel*				m_pModelCom = { nullptr };	
 	CShader*			m_pShaderCom = { nullptr };
-	
+
+	_float				m_fAccTime = {};
+	_float3				m_pts[10] = {};
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

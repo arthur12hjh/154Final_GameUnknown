@@ -13,7 +13,7 @@ class CLight_Manager final : public CBase
 private:
 #ifdef _DEBUG
 	CLight_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#elif
+#else
 	CLight_Manager();
 #endif
 	virtual ~CLight_Manager() = default;
@@ -26,6 +26,7 @@ public:
 
 public:
 	HRESULT					Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight);
+	CLight*					Find_Light(_uint iIndex);
 	void					Clear_DeadLight();
 
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
@@ -46,7 +47,7 @@ private:
 public:
 #ifdef _DEBUG
 	static CLight_Manager*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#elif
+#else
 	static CLight_Manager*			Create();
 #endif // _DEBUG
 

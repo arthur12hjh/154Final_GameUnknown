@@ -17,7 +17,7 @@ CLight::CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
 }
-#elif
+#else
 CLight::CLight()
 {
 
@@ -99,6 +99,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 
 void CLight::SetVisibility(VISIBILITY eVisibility)
 {
+	m_eVisible = eVisibility;
 }
 
 #ifdef _DEBUG
@@ -151,7 +152,7 @@ CLight* CLight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, con
 
 	return pInstance;
 }
-#elif
+#else
 CLight* CLight::Create(const LIGHT_DESC& LightDesc)
 {
 	CLight* pInstance = new CLight();

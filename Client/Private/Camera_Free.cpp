@@ -33,27 +33,52 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta * 5.f);
-
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta * 5.f);
-
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta * 5.f);
-
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta * 5.f);
-
-	_long		MouseMove = {};
-	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+	if (false == m_bIsCameraAnimation)
 	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+			m_pTransformCom->Go_Straight(fTimeDelta);
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+			m_pTransformCom->Go_Backward(fTimeDelta);
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+			m_pTransformCom->Go_Left(fTimeDelta);
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pTransformCom->Go_Right(fTimeDelta);
+
+		_long		MouseMove = {};
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
 	}
-
-	if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+	else
 	{
-		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		m_fAccTime += fTimeDelta;
+		if (m_fAccTime >= m_fLerpTime)
+		{
+			m_fAccTime = 0.f;
+			m_bIsCameraAnimation = false;
+		}
+		else
+		{
+			// ���⼭ lerp ����
+			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
+			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
+
+			_float fRatio = m_fAccTime / m_fLerpTime;
+			_vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
+			_vector vLookPos = vPosition + XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);
+
+			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+			m_pTransformCom->LookAt(vLookPos);
+		}
 	}
 
 	__super::Bind_Matrices();
@@ -74,6 +99,16 @@ HRESULT CCamera_Free::Render()
 {
 	
 	return S_OK;
+}
+
+void CCamera_Free::SetCameraAnimation(const _float4x4* StartLerpMatrix, const _float4x4* EndLerpMatrix, _bool bIsLerp)
+{
+	m_bIsCameraAnimation = bIsLerp;
+	if (m_bIsCameraAnimation)
+	{
+		memcpy(&m_fStartLerpMatrix, StartLerpMatrix, sizeof(_float4x4));
+		memcpy(&m_fEndLerpMatrix, EndLerpMatrix, sizeof(_float4x4));
+	}
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

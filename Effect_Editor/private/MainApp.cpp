@@ -4,6 +4,7 @@
 
 #include "Level_Loading.h"
 #include "GameInstance.h"
+#include "Camera_Free.h"
 
 /********************************
 * 대재훈의 은총 이 얼마나 관대한가 *
@@ -49,7 +50,7 @@ void CMainApp::Update(_float fTimeDelta)
 
 HRESULT CMainApp::Render()
 {
-	_float4			vClearColor = _float4(0.02f, 0.02f, 0.02f, 1.f);
+	_float4			vClearColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	m_pGameInstance->Render_Begin(&vClearColor);
 
@@ -87,6 +88,11 @@ HRESULT CMainApp::Ready_Prototypes()
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
+		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
