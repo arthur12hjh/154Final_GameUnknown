@@ -54,7 +54,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
-#elif
+#else
 	m_pLight_Manager = CLight_Manager::Create();
 #endif // DEBUG
 	if (nullptr == m_pLight_Manager)
@@ -471,10 +471,12 @@ HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
 }
 
+#ifdef _DEBUG
 void CGameInstance::Debug_LightRender()
 {
 	m_pLight_Manager->Debug_LightRender();
 }
+#endif // _DEBUG
 #pragma endregion
 
 #pragma region FONT_MANAGER

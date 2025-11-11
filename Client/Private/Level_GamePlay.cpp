@@ -2,7 +2,6 @@
 #include "Level_GamePlay.h"
 
 #include "GameInstance.h"
-
 #include "Camera_Free.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -81,7 +80,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
+	Load_Light_Data();
+
+	/*LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
@@ -99,7 +100,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 10.f;
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
 	SHADOW_LIGHT_DESC		ShadowDesc{};
@@ -169,17 +170,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;	
 
-#ifdef _DEBUG
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-
 	for (size_t i = 0; i < 30; i++)
 	{
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 			return E_FAIL;
 	}
+
+#ifdef _DEBUG
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
 #endif
 
 	return S_OK;
@@ -296,6 +298,41 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 				}
 			}
 		}
+	}
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Light_Data()
+{
+	std::ifstream ifs("../Bin/DataFiles/LightData.bin", std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
+
+	if (pLights && !pLights->empty())
+	{
+		for (auto pLight : *pLights)
+		{
+			pLight->SetDead(true);
+		}
+	}
+
+	_uint iNumLights = 0;
+	ifs.read(reinterpret_cast<_char*>(&iNumLights), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumLights; ++i)
+	{
+		LIGHT_DESC LightDesc;
+		ifs.read(reinterpret_cast<_char*>(&LightDesc), sizeof(LIGHT_DESC));
+
+		m_pGameInstance->Add_Light(LightDesc);
 	}
 
 	ifs.close();

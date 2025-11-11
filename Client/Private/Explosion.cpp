@@ -120,6 +120,7 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vPivot = { 0, 0, 0, 1.f };
+	m_CBData.vGravity = { 0,0,-30,-30 };
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -139,8 +140,8 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Input & Output Base Buffer
 	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
 	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_POINT_PARTICLE) * iNumData;
-	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_POINT_PARTICLE);
+	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
@@ -156,8 +157,8 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Read Buffer
 	D3D11_BUFFER_DESC ReadBufferDesc = {};
 	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_POINT_PARTICLE) * iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_POINT_PARTICLE);
+	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 
 	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pReadSource)))

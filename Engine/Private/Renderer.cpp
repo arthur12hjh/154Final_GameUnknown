@@ -789,6 +789,7 @@ void CRenderer::Free()
 		Safe_Release(pDebugCom);
 	m_DebugComponents.clear();
 
+	Safe_Release(m_pPhysxDebugShader);
 #endif // _DEBUG
 
 	for (auto& RenderObjects : m_RenderObjects)
@@ -804,7 +805,7 @@ void CRenderer::Free()
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
-	Safe_Release(m_pPhysxDebugShader);
+	
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }

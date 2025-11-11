@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "Img_Manager.h"
+#include "Camera_Free.h"
 
 
 CLevel_Tool::CLevel_Tool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -15,8 +16,8 @@ CLevel_Tool::CLevel_Tool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 
 HRESULT CLevel_Tool::Initialize()
 {
-	//if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-	//	return E_FAIL;	
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+		return E_FAIL;	
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -48,18 +49,21 @@ HRESULT CLevel_Tool::Render()
 
 HRESULT CLevel_Tool::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
-	/*CCamera::CAMERA_DESC			CameraDesc{};
-	CameraDesc.fFov = D3DXToRadian(60.0f);
+	CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
+	CameraDesc.fFov = XMConvertToRadians(60.0f);
 	CameraDesc.fNear = 0.1f;
-	CameraDesc.fFar = 300.f;
-	CameraDesc.vEye = _float3(0.f, 1.f, -1.f);
+	CameraDesc.fFar = 500.f;
+	CameraDesc.vEye = _float3(0.f, 10.f, -10.f);
 	CameraDesc.vAt = _float3(0.f, 0.f, 0.f);
-	CameraDesc.fSpeedPerSec = 5.f;
-	CameraDesc.fRotationPerSec = D3DXToRadian(90.0f);
+	CameraDesc.fSpeedPerSec = 30.f;
+	CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	CameraDesc.fMouseSensor = 0.1f;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera"),
-		ENUM_CLASS(LEVEL::LOGO), strLayerTag, &CameraDesc)))
-		return E_FAIL;*/
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
+		ENUM_CLASS(LEVEL::STATIC), strLayerTag, &CameraDesc)))
+		return E_FAIL;
+
+	return S_OK;
 
 	return S_OK;
 }

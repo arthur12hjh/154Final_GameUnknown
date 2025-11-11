@@ -51,6 +51,8 @@ private:
 	HRESULT Loading_For_GamePlay();
 	HRESULT Loading_For_GamePlay_Mesh();
 	HRESULT Loading_For_GamePlay_Shader();
+	HRESULT Loading_For_GamePlay_Navigation();
+	HRESULT Loading_For_GamePlay_InstanceMesh();
 public:
 	HRESULT Loading_For_UI_Logo_Level();
 	HRESULT Loading_UI_For_Logo_Level();

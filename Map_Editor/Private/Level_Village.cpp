@@ -174,7 +174,7 @@ CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 void CLevel_Village::Free()
 {
+	CImgui_Manager::GetInstance()->DestroyInstance();
 	__super::Free();
 
-	CImgui_Manager::GetInstance()->DestroyInstance();
 }

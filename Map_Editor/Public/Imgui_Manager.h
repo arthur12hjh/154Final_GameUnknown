@@ -10,6 +10,7 @@ class CGameObject;
 class CNavigation;
 class CCell;
 class CModel;
+class CLight;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -33,6 +34,8 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
+
+	HRESULT Map_Tool_Render();
 
 	void Update_Rotation();
 	HRESULT Save_Map_Objects();
@@ -60,6 +63,9 @@ private:
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
 
+	class CLightTool* m_pLightTool = { nullptr };
+	class CMapTool* m_pMapTool = { nullptr };
+
 	// Ä«¸Þ¶ó ÀÌµ¿ÇÒ ÁÂÇ¥
 	_float m_fX = { 0.f };
 	_float m_fY = { 0.f };
@@ -75,11 +81,39 @@ private:
 	_float m_fScaleY = { 0.f };
 	_float m_fScaleZ = { 0.f };
 
+
+	// ºû diffuse
+	_float m_fDiffuseX = { 0.f };
+	_float m_fDiffuseY = { 0.f };
+	_float m_fDiffuseZ = { 0.f };
+
+	// ºû ambient
+	_float m_fAmbientX = { 0.f };
+	_float m_fAmbientY = { 0.f };
+	_float m_fAmbientZ = { 0.f };
+
+	// ºû specular
+	_float m_fSpecularX = { 0.f };
+	_float m_fSpecularY = { 0.f };
+	_float m_fSpecularZ = { 0.f };
+
+	// ºû Direction
+	_float m_fDirectionX = { 0.f };
+	_float m_fDirectionY = { 0.f };
+	_float m_fDirectionZ = { 0.f };
+
+	// ºû range
+	_float m_fRange = { 0.f };
+
 	ADD_OBJECT m_eCurrentObject = {};
 
-	const _tchar* m_CurrentLayerName = {};
-	list<class CGameObject*>* m_pObjects = { nullptr };
-	class CGameObject* m_pObject = { nullptr };
+	const _tchar*		m_CurrentLayerName = {};
+	list<CGameObject*>* m_pObjects = { nullptr };
+	CGameObject*		m_pObject = { nullptr };
+	const list<CLight*>* m_pLights = { nullptr };
+	list<string>		m_LightNames = {};
+
+	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 
 private:
 	CNavigation*		m_pNavigation = { nullptr }; // ÇöÀç ·¹º§ÀÇ ³×ºñ°ÔÀÌ¼Ç ÄÄÆ÷³ÍÆ®
@@ -96,7 +130,9 @@ private:
 
 
 	_bool				m_bIsDeplayMode = { false };
+	_bool				m_bIsMapMode = { false };
 	_bool				m_bIsDragging = { false };
+
 
 public:
 	virtual void Free() override;
