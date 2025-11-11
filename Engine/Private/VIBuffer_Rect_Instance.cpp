@@ -100,7 +100,7 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 
 	m_bIsLoop = pDesc->isLoop;
 	m_iNumInstance = pDesc->iNumInstance;
-	m_iInstanceStride = sizeof(VTX_INSTANCE_RECT_PARTICLE);
+	m_iInstanceStride = sizeof(VTX_INSTANCE_VERTEX_PARTICLE);
 	m_iNumIndexPerInstance = 6;
 
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
@@ -110,8 +110,8 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 	m_InstanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_InstanceBufferDesc.MiscFlags = 0;
 
-	m_pInstanceVertices = new VTX_INSTANCE_RECT_PARTICLE[m_iNumInstance];
-	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_RECT_PARTICLE) * m_iNumInstance);
+	m_pInstanceVertices = new VTX_INSTANCE_VERTEX_PARTICLE[m_iNumInstance];
+	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_VERTEX_PARTICLE) * m_iNumInstance);
 
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
@@ -126,8 +126,10 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pInst
 			m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
 			m_pGameInstance->Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f),
 			1.f );
-
+		m_pInstanceVertices[i].vRoot = m_pInstanceVertices[i].vTranslation;
 		m_pInstanceVertices[i].vLifeTime = _float2(0.0f, m_pGameInstance->Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y));
+		if (m_bIsLoop)
+			m_pInstanceVertices[i].vLifeTime.x = fmodf(pDesc->vLifeTime.y, m_pInstanceVertices[i].vLifeTime.y) - m_pInstanceVertices[i].vLifeTime.y;
 		m_pInstanceVertices[i].vSpeeds.x = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
 	}
 

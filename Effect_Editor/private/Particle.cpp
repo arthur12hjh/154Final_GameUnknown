@@ -1,58 +1,51 @@
 #include "pch.h"
-#include "Explosion.h"
+#include "Particle.h"
 
 #include "GameInstance.h"
 
-CExplosion::CExplosion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject { pDevice, pContext }
+CParticle::CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject{ pDevice, pContext }
 {
 }
 
-CExplosion::CExplosion(const CExplosion& Prototype) 
-	: CGameObject { Prototype }
+CParticle::CParticle(const CParticle& Prototype)
+	: CGameObject{ Prototype }
 {
 }
 
-HRESULT CExplosion::Initialize_Prototype()
+HRESULT CParticle::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CExplosion::Initialize(void* pArg)
-{		
+HRESULT CParticle::Initialize(void* pArg)
+{
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
-	if (FAILED(Ready_ComputeShader()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-void CExplosion::Priority_Update(_float fTimeDelta)
+void CParticle::Priority_Update(_float fTimeDelta)
 {
 
 }
 
-void CExplosion::Update(_float fTimeDelta)
+void CParticle::Update(_float fTimeDelta)
 {
 	Spread(fTimeDelta);
 }
 
-void CExplosion::Late_Update(_float fTimeDelta)
+void CParticle::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
 }
 
-HRESULT CExplosion::Render()
+HRESULT CParticle::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;	
+	//if (FAILED(Bind_ShaderResources()))
+	//	return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(m_iBegin);
 
 	m_pVIBufferCom->Bind_Resources();
 
@@ -61,48 +54,43 @@ HRESULT CExplosion::Render()
 	return S_OK;
 }
 
-HRESULT CExplosion::Ready_Components()
+void CParticle::Set_Components(CVIBuffer_Point_Instance* pViBufferCom, CComputeShader* pComputeShader, CShader* pShaderCom, _float4 fGravity, _float3 fPivot)
 {
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Snow"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	m_pVIBufferCom = pViBufferCom;
+	m_pComputeShader = pComputeShader;
+	m_pShaderCom = pShaderCom;
+	m_fGravity = fGravity;
+	m_fPivot = fPivot;
+	Ready_ComputeShader();
+}
 
-	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Particle_Explosion"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
-	
-	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxPointParticle"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
+HRESULT CParticle::Ready_Components()
+{
 	return S_OK;
 }
 
-HRESULT CExplosion::Bind_ShaderResources()
+HRESULT CParticle::Bind_ShaderResources()
 {
-	
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
-		return E_FAIL;
+	//if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+	//	return E_FAIL;
 
 
 	return S_OK;
 }
 
-HRESULT CExplosion::Ready_ComputeShader()
+HRESULT CParticle::Ready_ComputeShader()
 {
 	D3D11_MAPPED_SUBRESOURCE pIntanceData = {};
 	m_pVIBufferCom->Lock(D3D11_MAP_WRITE_NO_OVERWRITE, &pIntanceData);
@@ -110,17 +98,17 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Bind Compute Shader
 	// 이건 컴퓨트 셰이더를 바인딩한다.
 	/* ComputeShader_Snow */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Expolosion"),
-		TEXT("Com_ComputeShader"), reinterpret_cast<CComponent**>(&m_pComputeShader))))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_ComputeShader_Expolosion"),
+	//	TEXT("Com_ComputeShader"), reinterpret_cast<CComponent**>(&m_pComputeShader))))
+	//	return E_FAIL;
 #pragma endregion
 
 	ID3D11Buffer* pBuffer = nullptr;
 
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
-	m_CBData.vPivot = { 0, 0, 0, 1.f };
-	m_CBData.vGravity = { 0,0,-30,-30 };
+	m_CBData.vGravity = m_fGravity;
+	m_CBData.vPivot = { m_fPivot.x,  m_fPivot.y,  m_fPivot.z, 1.f};
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -140,8 +128,8 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Input & Output Base Buffer
 	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
 	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
@@ -157,8 +145,8 @@ HRESULT CExplosion::Ready_ComputeShader()
 #pragma region Read Buffer
 	D3D11_BUFFER_DESC ReadBufferDesc = {};
 	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 
 	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pReadSource)))
@@ -180,7 +168,7 @@ HRESULT CExplosion::Ready_ComputeShader()
 	return S_OK;
 }
 
-void CExplosion::Spread(_float fTimeDelta)
+void CParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
@@ -208,7 +196,7 @@ void CExplosion::Spread(_float fTimeDelta)
 
 	unsigned int groupCount = (m_pComputeShader->GetNumData() + 255) / 256;
 	m_pComputeShader->Update_Shader({ (_float)groupCount, 1, 1 });
-	
+
 	// 데이터 가져오는거
 	// GetBufferResource
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
@@ -220,9 +208,9 @@ void CExplosion::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CExplosion* CExplosion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CParticle* CParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CExplosion* pInstance = new CExplosion(pDevice, pContext);
+	CParticle* pInstance = new CParticle(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -233,26 +221,25 @@ CExplosion* CExplosion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CGameObject* CExplosion::Clone(void* pArg)
+CGameObject* CParticle::Clone(void* pArg)
 {
-	CExplosion* pInstance = new CExplosion(*this);
+	CParticle* pInstance = new CParticle(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CExplosion");
+		MSG_BOX("Failed to Cloned : CParticle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CExplosion::Free()
+void CParticle::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pReadSource);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
 }
