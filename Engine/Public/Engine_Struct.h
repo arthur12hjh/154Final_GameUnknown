@@ -68,6 +68,20 @@ namespace Engine
 
 	}VTXPOS;
 
+	//physx ¿ë
+	typedef struct tagVertexPositionColor
+	{
+		XMFLOAT3			vPosition;
+		XMFLOAT4			vColor;
+
+		static constexpr unsigned int					iNumElements = { 2 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+	}VTXPOSCOLOR;
+
 	typedef struct tagVertexPositionTexcoord
 	{
 		XMFLOAT3			vPosition;

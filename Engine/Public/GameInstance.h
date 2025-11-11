@@ -81,6 +81,7 @@ public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 #endif
 #pragma endregion
 
@@ -222,11 +223,13 @@ public:
 #pragma region Physx_Manager
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
+	PxScene*	Get_PxScene();
 	PxPhysics*  Get_PxPhysics();
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
+	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
 
 #pragma endregion

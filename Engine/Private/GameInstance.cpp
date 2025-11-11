@@ -216,7 +216,9 @@ HRESULT CGameInstance::Draw()
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
+	
 	m_pRenderer->Render();
+
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] -= GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
 #else
@@ -388,6 +390,10 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
+}
+HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+{
+	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 #endif
 
@@ -716,6 +722,11 @@ PxControllerManager* CGameInstance::Get_PxCCTManager()
 	return m_pPhysx_Manager->Get_PxCCTManager();
 }
 
+PxScene* CGameInstance::Get_PxScene()
+{
+	return m_pPhysx_Manager->Get_PxScene();
+}
+
 PxPhysics* CGameInstance::Get_PxPhysics()
 {
 	return m_pPhysx_Manager->Get_PxPhysics();
@@ -729,6 +740,11 @@ PxTransform CGameInstance::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 _matrix CGameInstance::Convert_PxTransform_ToMatrix(PxTransform Transform)
 {
 	return m_pPhysx_Manager->Convert_PxTransform_ToMatrix(Transform);
+}
+
+HRESULT CGameInstance::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterController* pCCT)
+{
+	return m_pPhysx_Manager->Add_CCT_ToPhysx(pGameObject, pCCT);
 }
 
 HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)

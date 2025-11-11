@@ -231,7 +231,7 @@
     </ClInclude>
     <ClInclude Include="..\public\State.h">
       <Filter>01.Utility\18.StateMachine\Layer\State</Filter>
-     </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
     </ClInclude>
@@ -243,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\PxUserData.h">
       <Filter>01.Utility\03.Components\PhysxComponent\PxUserData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTBehaviorCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FbxParser.h">
       <Filter>01.Utility\103.ModelParser\FbxParser</Filter>
@@ -473,6 +476,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BinParser.cpp">
       <Filter>01.Utility\103.ModelParser\BinParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTBehaviorCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -767,6 +773,9 @@
     <Filter Include="01.Utility\103.ModelParser\BinParser">
       <UniqueIdentifier>{fa16b9ca-9cf2-469e-9b0c-b312eebc8037}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
+      <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -780,6 +789,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl">
       <Filter>98.ShaderFiles\VIBuffer\Point</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

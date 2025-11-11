@@ -2,6 +2,7 @@
 
 #include "GameInstance.h"
 #include "CCTHitReporter.h"
+#include "CCTBehaviorCallback.h"
 
 CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent { pDevice, pContext }
@@ -15,6 +16,28 @@ CCharacterController::CCharacterController(const CCharacterController& Prototype
 	, m_pPxPhysics	  { m_pGameInstance->Get_PxPhysics() }
 	, m_pPxCCTManager { m_pGameInstance->Get_PxCCTManager() }
 {
+}
+
+PxShape* CCharacterController::Get_Shape()
+{
+	PxRigidDynamic* pPxActor = m_pController->getActor();
+	PxShape* pPxShapes[1];
+	PxU32 iNumShapes = pPxActor->getShapes(pPxShapes, 1); // 1은 배열 크기
+
+	if (iNumShapes > 0)
+	{
+		PxShape* pPxShape = pPxShapes[0];
+		return pPxShape;
+	}
+	else
+		return nullptr;
+}
+
+PxActor* CCharacterController::Get_Actor()
+{
+	PxRigidDynamic* pPxActor = m_pController->getActor();
+
+	return pPxActor;
 }
 
 HRESULT CCharacterController::Initialize_Prototype()
@@ -43,31 +66,45 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
+{
+	///* 이전 프레임의 위치 갱신. */
+	_float3 vPos;
+	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
+	m_vPrePosition = PxVec3(vPos.x, vPos.y, vPos.z);
+}
+
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
-	m_vPrePosition = PxVec3(m_vPosition.x, m_vPosition.y, m_vPosition.z);
-
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
 
+	///* 현재 프레임의 위치*/
 	m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
 
-	m_pController->move(m_vPosition - m_vPrePosition, 0.001f, fTimeDelta, PxControllerFilters());
+	//무브 자체는 시뮬레이션에서 돌아간다고함. 밥먹고나서 시뮬레이션 이후 값보정 하도록 변경할 것.
+	m_pController->move(m_vPosition - m_vPrePosition, 0.f, fTimeDelta, PxControllerFilters());
 
-	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet(m_vPosition.x, m_vPosition.y, m_vPosition.z, 1.f));
+  	m_pController->setFootPosition(PxExtendedVec3(m_vPosition.x, m_vPosition.y, m_vPosition.z));
+}
+
+void CCharacterController::Update_ControllerTransform()
+{
+	m_pController->setFootPosition(PxExtendedVec3(m_vPosition.x, m_vPosition.y, m_vPosition.z));
+	int a = 10;
 }
 
 HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 {
 	m_pMaterial = m_pPxPhysics->createMaterial(pDesc->vMaterial.x, pDesc->vMaterial.y, pDesc->vMaterial.z);
 	m_pHitReporter = pDesc->pHitReporter;
+	m_pBehaviorCallback = pDesc->pBehaviorCallback;
 
 	PxCapsuleControllerDesc CCTDesc;
 	CCTDesc.radius = pDesc->vSize.x / 2.f;      // 반지름
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-
 	CCTDesc.contactOffset = 0.05f;                // 충돌 감지 오프셋
 	CCTDesc.stepOffset = 0.35f;                // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3);      // 오르막 각도 제한
@@ -76,7 +113,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.invisibleWallHeight = 0.0f;
 	CCTDesc.maxJumpHeight = 0.0f;
 	CCTDesc.reportCallback = m_pHitReporter;
-	CCTDesc.behaviorCallback = nullptr;
+	CCTDesc.behaviorCallback = m_pBehaviorCallback;
 	CCTDesc.nonWalkableMode = PxControllerNonWalkableMode::ePREVENT_CLIMBING;
 	CCTDesc.climbingMode = PxCapsuleClimbingMode::eCONSTRAINED;
 	CCTDesc.upDirection = PxVec3(0, 1, 0); // 기본 up
@@ -100,6 +137,7 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 {
 	m_pMaterial = m_pPxPhysics->createMaterial(pDesc->vMaterial.x, pDesc->vMaterial.y, pDesc->vMaterial.z);
 	m_pHitReporter = pDesc->pHitReporter;
+	m_pBehaviorCallback = pDesc->pBehaviorCallback;
 
 	PxBoxControllerDesc CCTDesc;
 	CCTDesc.halfHeight			= pDesc->vSize.x / 2.0f;
@@ -116,7 +154,8 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	CCTDesc.scaleCoeff			= 0.9f;
 	CCTDesc.invisibleWallHeight = 0.0f;
 	CCTDesc.maxJumpHeight		= 0.0f;
-	CCTDesc.reportCallback		= pDesc->pHitReporter;
+	CCTDesc.reportCallback		= m_pHitReporter;
+	CCTDesc.behaviorCallback	= m_pBehaviorCallback;
 	CCTDesc.behaviorCallback	= nullptr;
 	CCTDesc.nonWalkableMode		= PxControllerNonWalkableMode::ePREVENT_CLIMBING;
 	CCTDesc.upDirection			= PxVec3(0, 1, 0); // 기본 up

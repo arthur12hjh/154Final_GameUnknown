@@ -28,7 +28,6 @@ void CPlayerCCTHitReporter::onShapeHit(const PxControllerShapeHit& HitInfo)
             vPushDir.normalize();
             _float fPushStrength = 15.0f; // 원하는 힘 크기
 
-            pDynamicActor->wakeUp(); // 반드시 깨워야 CCT 밀림이 적용됨
             // Force 또는 Impulse 적용
             pDynamicActor->addForce(vPushDir * fPushStrength, PxForceMode::eIMPULSE);
         }
