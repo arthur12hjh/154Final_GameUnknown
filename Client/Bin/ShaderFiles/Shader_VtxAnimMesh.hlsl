@@ -114,7 +114,7 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
-    float4 vRimLight : SV_TARGET3;
+    //float4 vRimLight : SV_TARGET3;
 };
 
 
@@ -134,14 +134,14 @@ PS_OUT PS_MAIN(PS_IN In)
 
     /* 림라이트 구현부. 수정 필요. */
     vector vPosToCam = normalize(g_vCamPosition - In.vWorldPos);
-    float fStrength = 1.5f;
-    float fPower = 5.f;
+    float fStrength = 2.f;
+    float fPower = 3.f;
     float4 vColor = float4(1.f, 1.f, 1.f, 1.f);
     vector vRimLight = (1 - dot(normalize(In.vNormal), vPosToCam));
     
     vRimLight = pow(vRimLight, fPower) * fStrength * vColor; 
     
-    Out.vRimLight = vRimLight;
+    Out.vDiffuse += vRimLight;
 
     return Out;
 }
