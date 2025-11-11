@@ -49,6 +49,9 @@ using namespace std;
 #include <DirectXCollision.h>
 #include <d3dcompiler.h>
 
+//Dx11 Geometry Shapes
+#include "DirectXTK/GeometricPrimitive.h"
+
 //Dx11 Texture Headers
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
