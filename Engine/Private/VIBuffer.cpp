@@ -95,6 +95,33 @@ HRESULT CVIBuffer::Render()
 	return S_OK;
 }
 
+ID3D11Buffer* CVIBuffer::GetVIBuffer()
+{
+	Safe_AddRef(m_pVB);
+	return m_pVB;
+}
+
+ID3D11Buffer* CVIBuffer::GetIBBuffer()
+{
+	Safe_AddRef(m_pIB);
+	return m_pIB;
+}
+
+_uint CVIBuffer::GetVertexStride()
+{
+	return m_iVertexStride;
+}
+
+_uint CVIBuffer::GetIndices()
+{
+	return m_iNumIndices;
+}
+
+DXGI_FORMAT CVIBuffer::GetIndexFormat()
+{
+	return m_eIndexFormat;
+}
+
 void CVIBuffer::Free()
 {
 	__super::Free();

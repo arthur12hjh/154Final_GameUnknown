@@ -82,6 +82,7 @@ public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 #endif
 #pragma endregion
 
@@ -103,6 +104,8 @@ public:
 #pragma region LIGHT_MANAGER
 	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
 	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	
+	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
 #ifdef _DEBUG
 	void								Debug_LightRender();
@@ -199,7 +202,7 @@ public:
 
 	// Defaut 매개변수 있습니다.
 	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
-	HRESULT							SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix = nullptr);
+	HRESULT							SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix = nullptr);
 
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요
@@ -223,11 +226,13 @@ public:
 #pragma region Physx_Manager
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
+	PxScene*	Get_PxScene();
 	PxPhysics*  Get_PxPhysics();
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
+	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
 
 #pragma endregion

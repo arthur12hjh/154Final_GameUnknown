@@ -21,7 +21,9 @@ public:
 		BLUR_X, BLUR_FINAL, DISTORTION,
 
 		// 최종적으로 백버퍼에 렌더타겟 넘기는 과정.
-		SCENE
+		SCENE,
+		// 디버깅용 패스. 당장은 릴리즈모드에서도 둠
+		PHYSX
 	};
 public:
 	/* 블러 데스크. 블러 사이즈 세팅 */
@@ -42,6 +44,8 @@ public:
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+
 #endif
 
 private:
@@ -54,9 +58,12 @@ private:
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
 	ID3D11DepthStencilView*				m_pOutlineDSV = { nullptr };
+
 #ifdef _DEBUG
 private:
-	list<class CComponent*>				m_DebugComponents;
+	class CShader*						m_pPhysxDebugShader = { nullptr };
+	list<class CComponent*>				m_DebugComponents = {};
+	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
 #endif
 
 private:
@@ -69,7 +76,7 @@ private:
 	_uint2								m_vScreenSize = {};
 	//8192, 4608 혹은 16384, 9216
 	_uint2								m_vShadowMapSize = {};
-
+	
 private:
 	void Render_Priority();
 	void Render_Shadow();
@@ -90,6 +97,9 @@ private:
 #ifdef _DEBUG
 private:
 	void Render_Debug();
+	void Render_PhysxDebug();
+public:
+	_float4 Convert_PxColor_ToVector(PxU32 iColor);
 #endif
 
 public:

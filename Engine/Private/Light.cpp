@@ -99,6 +99,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 
 void CLight::SetVisibility(VISIBILITY eVisibility)
 {
+	m_eVisible = eVisibility;
 }
 
 #ifdef _DEBUG

@@ -6,6 +6,7 @@ float4 g_vCamPosition;
 
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
+
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
