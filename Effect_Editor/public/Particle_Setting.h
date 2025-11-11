@@ -1,9 +1,11 @@
 #pragma once
 #include "ImgBase.h"
+#include "Particle.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Point_Instance;
 class CShader;
+class CComputeShader;
 class CTransform;
 class CTexture;
 NS_END
@@ -55,6 +57,7 @@ public:
     virtual HRESULT    Render() override;
     virtual void    Free() override;
     CShader* m_pShaderCom = { nullptr };
+    CComputeShader* m_pComputeShader = { nullptr };
     CVIBuffer_Point_Instance* m_pVIBufferCom;
     class CTransform* m_pTransformCom = { nullptr };
 
@@ -62,10 +65,12 @@ private:
     _uint   m_iLevel = { 0 };
     _int   m_iNumInstance;
     _float3 m_fCenter;
+    _float3 m_fPivot;
     _float3 m_fRange;
     _float2 m_fSize;
     _float2 m_fLifeTime;
     _float2 m_fSpeed;
+    _float4 m_fGravity = {};
     _bool m_bisLoop;
 
     _float4 m_fColor = {};
@@ -75,6 +80,7 @@ private:
     vector<CTexture*> m_pTextures;
     vector<ID3D11ShaderResourceView*>	m_SRVs;
     CTexture* m_pTexture[3] = {};
+    CParticle* m_pParticle = { nullptr };
     string      szFile[3];
     _uint       m_iImageType = { 0 };
     _int       m_iShaderBegine = { 0 };

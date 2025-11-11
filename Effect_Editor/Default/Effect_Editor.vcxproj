@@ -156,6 +156,7 @@
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\Particle.h" />
     <ClInclude Include="..\public\Particle_Setting.h" />
     <ClInclude Include="..\public\pch.h" />
     <ClInclude Include="..\public\Tool_Effect_Defines.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\Particle.cpp" />
     <ClCompile Include="..\private\Particle_Setting.cpp" />
     <ClCompile Include="..\private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -204,6 +206,9 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

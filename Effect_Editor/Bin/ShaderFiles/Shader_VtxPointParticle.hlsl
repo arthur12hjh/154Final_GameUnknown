@@ -30,7 +30,7 @@ VS_OUT VS_MAIN(VS_IN In)
     vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
     
     Out.vPosition = mul(vPosition, g_WorldMatrix);   
-    Out.fSize = length(In.TransformMatrix._11_12_13);
+    Out.fSize = length(In.TransformMatrix._11_12_13) * In.vLifeTime.x / In.vLifeTime.y; // * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
     Out.vLifeTime = In.vLifeTime;
 
     return Out;
@@ -154,11 +154,12 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     float4 fireFront = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
-    Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
-    Out.vColor.a = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    Out.vColor.a *= (fireFront.r + fireBack.r) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
+    Out.vColor = g_vColor;// * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
+    Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    Out.vColor.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
     
-    if (Out.vColor.a <= 0.1f)
+    if (Out.vColor.a <= 0.1f || 0 > In.vLifeTime.x)
         discard;
     return Out;
 }
@@ -189,7 +190,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_VANILLA();
-        PixelShader = compile ps_5_0 PS_PIXEL();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 
     //pass Frame

@@ -199,7 +199,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	SnowDesc.vRange = _float3(128.f, 2.f, 128.f);
 	SnowDesc.vSize = _float2(0.2f, 0.6f);
 	SnowDesc.vLifeTime = _float2(3.f, 7.f);
-	SnowDesc.vSpeed = _float2(2.f, 5.f);
+	SnowDesc.vSpeed = _float2(0.f, 0.f);
 	SnowDesc.isLoop = true;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Particle_Snow"),

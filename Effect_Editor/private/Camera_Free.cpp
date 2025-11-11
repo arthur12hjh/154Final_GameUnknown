@@ -36,6 +36,24 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	_long		MouseMove = {};
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_R)) {
+		m_pTransformCom->Rotation(0, 0, 0);
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::W))) {
+			m_pTransformCom->Go_Straight(fTimeDelta * MouseMove * 0.01);
+		}
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+		_float fLength = XMVectorGetX(XMVector3Length(XMVectorSubtract(XMVectorSet(0, 0, 0, 1), m_pTransformCom->Get_State(STATE::POSITION))));
+		_vector dir = m_pTransformCom->Get_State(STATE::LOOK);
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0, 0, 0, 1) - dir * fLength);
+	}
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
 		if (m_bIsCursor) {
 			ShowCursor(m_bIsCursor = false);

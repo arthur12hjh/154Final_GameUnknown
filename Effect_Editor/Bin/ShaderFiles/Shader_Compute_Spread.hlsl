@@ -6,12 +6,14 @@ struct ParticleVertices
     float4 vTranslation;
 
     float2 vLifeTime;
+    float4 vfRoot;
     float2 vfSpeed;
 };
 
 cbuffer ParticleBuffer : register(b0)
 {
     float4 vfPivot;
+    float4 vfGravity;
     float2 vfTimeDelta;
     int2   viLoopAndCount;
 }
@@ -28,17 +30,31 @@ void CS(uint3 Gid : SV_GroupID,
 {
     if (DTid.x >= viLoopAndCount.y)
         return;
+    if (0 > Input[DTid.x].vLifeTime.x)
+    {
+        g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
+        g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
+        return;
+    }
     g_Out[DTid.x].vRight = Input[DTid.x].vRight;
     g_Out[DTid.x].vUp = Input[DTid.x].vUp;
     g_Out[DTid.x].vLook = Input[DTid.x].vLook;
     float4 vDir = normalize(float4(Input[DTid.x].vTranslation.xyz - vfPivot.xyz, 0));
+    float t = Input[DTid.x].vLifeTime.x / Input[DTid.x].vLifeTime.y;
+    float fGravity = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * vfGravity.x
+                        + (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(vfGravity.y)) * 100
+ + (-2 * pow(t, 3) + 3 * pow(t, 2)) * vfGravity.z
+                        + (pow(t, 3) - pow(t, 2)) * tan(radians(vfGravity.w)) * 100;
+    
+    
     g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * vfTimeDelta.x;
+    g_Out[DTid.x].vTranslation.y += fGravity * vfTimeDelta.x;
     g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
     g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
 
     if (1 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
     {
-        g_Out[DTid.x].vTranslation.xyz = vfPivot.xyz + vDir.xyz;
-        g_Out[DTid.x].vLifeTime.x = 0;
+        g_Out[DTid.x].vTranslation = Input[DTid.x].vfRoot;
+        g_Out[DTid.x].vLifeTime.x = fmod(g_Out[DTid.x].vLifeTime.x, g_Out[DTid.x].vLifeTime.y);
     }
 }
