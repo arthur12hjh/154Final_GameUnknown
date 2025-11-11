@@ -40,6 +40,17 @@ HRESULT CRenderer::Initialize()
 	m_pPhysxDebugShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Physx_Debug.hlsl"), VTXPOSCOLOR::Elements, VTXPOSCOLOR::iNumElements);
 	if (nullptr == m_pPhysxDebugShader)
 		return E_FAIL;
+
+    m_pEffect =	new BasicEffect(m_pDevice);
+
+	const void* pShaderByteCode = { nullptr };
+	size_t		iShaderByteCodeLength = {};
+
+	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
+
+	if (m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
+		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout))
+		return E_FAIL;
 #endif
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
@@ -54,9 +65,9 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 
 	/* 직교용 월드 뷰 투영 세팅 */
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(m_vScreenSize.x, m_vScreenSize.y, 1.f));
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 1.f));
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vScreenSize.x, m_vScreenSize.y, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 0.f, 1.f));
 
 	/* 디버그 렌더링 준비 */
 #ifdef _DEBUG
@@ -78,6 +89,12 @@ HRESULT CRenderer::Initialize()
 	//	return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_RimLight"), m_vScreenSize.x - 450.0f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
+
+	//반지름이 1인 객체로 생성.
+	m_pSphereShape = GeometricPrimitive::CreateSphere(m_pContext, 1.f, 6);
+	m_pBoxShape = GeometricPrimitive::CreateBox(m_pContext, _float3(0.5f, 0.5f, 0.5f));
+	m_pCapsuleCylinderShape = GeometricPrimitive::CreateCylinder(m_pContext, 1.f, 1.f, 6);
+	m_pCapsuleHemiSphereShape = CreateHemisphere(m_pContext, 0.5f, 6, true);
 #endif
 
     return S_OK;
@@ -111,7 +128,7 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shade"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
-	/* Target_Outline. 툰 셰이딩을 위해 Normal 값을 기록해낼 예정임. */
+	/* Target_Outline. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Outline"), m_vScreenSize.x * 2.f, m_vScreenSize.y * 2.f, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
@@ -119,14 +136,14 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	/* Target_Shadow. 섀도우 맵은 추후 렌더러에서 크기 설정 가능하게 할 예정 */
+	/* Target_Shadow. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
 		return E_FAIL;
 
-	/* Target_Blur. 블러 처리할 녀석들만 골라담는 렌더타겟 */
+	/* Target_Blur. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
@@ -255,6 +272,49 @@ HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 	return S_OK;
 }
 
+unique_ptr<GeometricPrimitive> CRenderer::CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop)
+{   
+	GeometricPrimitive::VertexCollection Vertices;
+	GeometricPrimitive::IndexCollection Indices;
+
+	// 반구 정점 생성
+	for (_int i = 0; i <= iTessellation / 2; ++i)
+	{
+		_float fPhi = (i / _float(iTessellation / 2)) * XM_PIDIV2; // 0 ~ PI/2
+		if (!isTop) // 하단
+		{
+			fPhi = XM_PIDIV2 + fPhi;
+		}
+
+		for (_int j = 0; j <= iTessellation; ++j)
+		{
+			_float fTheta = j / _float(iTessellation) * XM_2PI;
+			_float fX = fRadius * sinf(fPhi) * cosf(fTheta);
+			_float fY = fRadius * cosf(fPhi);
+			_float fZ = fRadius * sinf(fPhi) * sinf(fTheta);
+
+			Vertices.push_back({ XMFLOAT3(fX, fY, fZ), XMFLOAT3(0,1,0), XMFLOAT2(0,0) });
+		}
+	}
+
+	// Index 생성 (삼각형)
+	for (int i = 0; i < iTessellation / 2; ++i)
+	{
+		for (int j = 0; j < iTessellation; ++j)
+		{
+			_uint iIdx0 = i * (iTessellation + 1) + j;
+			_uint iIdx1 = iIdx0 + iTessellation + 1;
+			_uint iIdx2 = iIdx0 + 1;
+			_uint iIdx3 = iIdx1 + 1;
+
+			Indices.push_back(iIdx0); Indices.push_back(iIdx1); Indices.push_back(iIdx2);
+			Indices.push_back(iIdx0); Indices.push_back(iIdx2); Indices.push_back(iIdx3);
+		}
+	}
+
+	return GeometricPrimitive::CreateCustom(pContext, Vertices, Indices);
+}
+
 #endif
 
 void CRenderer::Render_Priority()
@@ -335,46 +395,6 @@ void CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
-
-	/* normal 정보 가져왔을때 바로 outline 세팅하기. */
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Outline"), m_pOutlineDSV)))
-		return;
-
-	D3D11_VIEWPORT			ViewPortDesc;
-	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-	ViewPortDesc.TopLeftX = 0;
-	ViewPortDesc.TopLeftY = 0;
-	ViewPortDesc.Width = (_float)m_vScreenSize.x * 2.f;
-	ViewPortDesc.Height = (_float)m_vScreenSize.y * 2.f;
-	ViewPortDesc.MinDepth = 0.f;
-	ViewPortDesc.MaxDepth = 1.f;
-
-	m_pContext->RSSetViewports(1, &ViewPortDesc);
-	
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
-		return;
-
-	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
-	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
-	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
-
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::OUTLINE));
-
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
-
-	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-	ViewPortDesc.TopLeftX = 0;
-	ViewPortDesc.TopLeftY = 0;
-	ViewPortDesc.Width = (_float)m_vScreenSize.x;
-	ViewPortDesc.Height = (_float)m_vScreenSize.y;
-	ViewPortDesc.MinDepth = 0.f;
-	ViewPortDesc.MaxDepth = 1.f;
-
-	m_pContext->RSSetViewports(1, &ViewPortDesc);
 }
 
 void CRenderer::Render_LightAcc()
@@ -434,10 +454,10 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final"), m_pShader, "g_BlurFinalTexture")))
 		return;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Outline"), m_pShader, "g_OutlineTexture")))
-		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_RimLight"), m_pShader, "g_RimLightTexture")))
 		return;
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Outline"), m_pShader, "g_OutlineTexture")))
+	//	return;
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
@@ -703,57 +723,68 @@ void CRenderer::Render_Debug()
 
 void CRenderer::Render_PhysxDebug()
 {
-
-	BasicEffect* m_pEffect = new BasicEffect(m_pDevice);
-	ID3D11InputLayout* m_pInputLayout = {};
-
-	const void* pShaderByteCode = { nullptr };
-	size_t		iShaderByteCodeLength = {};
-
-	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
-
-	if (m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
-		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout))
-		return;
-
-	auto BoxShape = GeometricPrimitive::CreateBox(m_pContext, _float3(0.5f, 0.5f, 0.5f));
-	auto SphereShape = GeometricPrimitive::CreateSphere(m_pContext, 1.0f);
-	//auto CapsuleShape = GeometricPrimitive::CreateCy(m_pContext, _float2(0.5f, 0.5f));
-	
 	for (auto& Pair : m_PxShapes)
 	{
 		PxGeometryHolder Geometry = Pair.second->getGeometry();
- 		PxTransform PxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);
+ 		PxTransform PhysxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);
 
-		_matrix ConvertMatrix = m_pGameInstance->Convert_PxTransform_ToMatrix(PxTransform);
-
-		m_pEffect->SetWorld(ConvertMatrix);
 		m_pEffect->SetView(m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW));
 		m_pEffect->SetProjection(m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ));
-		m_pEffect->SetColorAndAlpha(XMVectorSet(0.f, 0.7f, 1.f, 1.f));
+		m_pEffect->SetColorAndAlpha(XMVectorSet(0.f, 1.0f, 0.f, 1.f));
 
-		switch (Geometry.getType())
+		if (PxGeometryType::eBOX == Geometry.getType())
 		{
-		case PxGeometryType::eBOX:
-			BoxShape->Draw(m_pEffect, m_pInputLayout, false, true);
-			break;
-		case PxGeometryType::eSPHERE:
-			SphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
-			break;
-		case PxGeometryType::eCAPSULE:
-			//Shape->Draw(ConvertMatrix, m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW), m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ),
-			//	XMVectorSet(0.f, 0.f, 1.f, 1.f));
-			break;
-		//충돌용 메시는 고려 X. 나중에 해보던가.. 아니면 pvd로 디버깅만 하던가 ㅎ..
-		default:
-			break;
+			PxBoxGeometry BoxGeom = Geometry.box();
+			_matrix ScalingMatrix = XMMatrixScaling(BoxGeom.halfExtents.x, BoxGeom.halfExtents.y, BoxGeom.halfExtents.z);
+			_matrix ConvertMatrix = ScalingMatrix * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
+
+			m_pEffect->SetWorld(ConvertMatrix);
+			m_pBoxShape->Draw(m_pEffect, m_pInputLayout, false, true);
+		}
+		else if (PxGeometryType::eSPHERE == Geometry.getType())
+		{
+			PxSphereGeometry SphereGeom = Geometry.sphere();
+			_matrix ScalingMatrix = XMMatrixScaling(SphereGeom.radius * 2.f, SphereGeom.radius * 2.f, SphereGeom.radius * 2.f);
+			_matrix ConvertMatrix = m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
+
+			m_pEffect->SetWorld(ScalingMatrix * ConvertMatrix);
+			m_pSphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
+		}
+		else if (PxGeometryType::eCAPSULE == Geometry.getType())
+		{
+			PxCapsuleGeometry CapsuleGeom = Geometry.capsule();
+			_matrix ConvertMatrix = XMMatrixRotationAxis(XMVectorSet(0.f, 0.f, 1.f, 0.f ), XMConvertToRadians(-90.f)) * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
+			
+			/* 실린더 출력 */
+			m_pEffect->SetWorld(ConvertMatrix);
+			m_pCapsuleCylinderShape->Draw(m_pEffect, m_pInputLayout, false, true);
+			
+			/* 상반구 출력 */
+			_vector		vQuternion = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(30.f), 0.f, XMConvertToRadians(-90.f));
+			_matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
+
+			PhysxTransform.p.y += CapsuleGeom.halfHeight;
+			ConvertMatrix = RotationMatrix * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
+			m_pEffect->SetWorld(ConvertMatrix);
+			m_pCapsuleHemiSphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
+	
+
+			/* 하반구 출력*/
+			vQuternion = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(30.f), 0.f, XMConvertToRadians(90.f));
+			RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
+
+			PhysxTransform.p.y -= 2.f * CapsuleGeom.halfHeight;
+			ConvertMatrix = RotationMatrix * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
+			m_pEffect->SetWorld(ConvertMatrix);
+			m_pCapsuleHemiSphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
+		}
+		//box, sphere, capsule만 드로우 지원. 나머진 고려해볼게요 ㅎ..
+		else
+		{
 		}
 	}
 
 	m_PxShapes.clear();
-
-	Safe_Delete(m_pEffect);
-	Safe_Release(m_pInputLayout);
 }
 
 _float4 CRenderer::Convert_PxColor_ToVector(PxU32 iColor)
@@ -790,6 +821,14 @@ void CRenderer::Free()
 	m_DebugComponents.clear();
 
 	Safe_Release(m_pPhysxDebugShader);
+	Safe_Delete(m_pEffect);
+	Safe_Release(m_pInputLayout);
+
+	/* 혹시모를 null 대입. 원본이 스마트 포인터라 따로 해제 안해도 돼요*/
+	m_pSphereShape = nullptr;
+	m_pBoxShape = nullptr;
+	m_pCapsuleCylinderShape = nullptr;
+	m_pCapsuleHemiSphereShape = nullptr;
 #endif // _DEBUG
 
 	for (auto& RenderObjects : m_RenderObjects)
@@ -809,114 +848,3 @@ void CRenderer::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }
-
-//임시 보관용 코드. 11월 11일 이후로 이 코드 보면 지워주세요
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
-//return;
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-//return;
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-//return;
-//
-//PxScene* pScene = m_pGameInstance->Get_PxScene();
-//const PxRenderBuffer& PxBuffer = pScene->getRenderBuffer();
-//
-///* 라인 담기 */
-//for (_uint i = 0; i < PxBuffer.getNbLines(); ++i)
-//{
-//	const PxDebugLine& tLine = PxBuffer.getLines()[i];
-//	m_PhysxDebugLines.push_back({ {tLine.pos0.x, tLine.pos0.y, tLine.pos0.z}, Convert_PxColor_ToVector(tLine.color0) });
-//	m_PhysxDebugLines.push_back({ {tLine.pos1.x, tLine.pos1.y, tLine.pos1.z}, Convert_PxColor_ToVector(tLine.color1) });
-//}
-//
-///* 트라이앵글 담기 */
-//for (_int i = 0; i < PxBuffer.getNbTriangles(); ++i)
-//{
-//	const PxDebugTriangle& tTriangle = PxBuffer.getTriangles()[i];
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos0.x, tTriangle.pos0.y, tTriangle.pos0.z}, Convert_PxColor_ToVector(tTriangle.color0) });
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos1.x, tTriangle.pos1.y, tTriangle.pos1.z}, Convert_PxColor_ToVector(tTriangle.color1) });
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos2.x, tTriangle.pos2.y, tTriangle.pos2.z}, Convert_PxColor_ToVector(tTriangle.color2) });
-//}
-//
-///* 포인트 담기 */
-//for (_int i = 0; i < PxBuffer.getNbPoints(); ++i)
-//{
-//	const PxDebugPoint& tPoint = PxBuffer.getPoints()[i];
-//	m_PhysxDebugPoints.push_back({ {tPoint.pos.x, tPoint.pos.y, tPoint.pos.z}, Convert_PxColor_ToVector(tPoint.color) });
-//}
-//
-///* 일단 라인만 출력 */
-//if (false == m_PhysxDebugLines.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugLines.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugLines.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugLines.size()), 0);
-//}
-//
-//// 트라이앵글 출력
-//if (false == m_PhysxDebugTriangles.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugTriangles.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugTriangles.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugTriangles.size()), 0);
-//}
-//
-///* 점 출력 */
-//if (false == m_PhysxDebugPoints.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugPoints.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugPoints.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugPoints.size()), 0);
-//}
-//
-//m_PhysxDebugLines.clear();
-//m_PhysxDebugTriangles.clear();
-//m_PhysxDebugPoints.clear();

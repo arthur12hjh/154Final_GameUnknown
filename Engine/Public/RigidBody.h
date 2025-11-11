@@ -45,7 +45,7 @@ private:
 public:
 	PxRigidActor* Get_PxRigidBody() { return m_pPxRigidBody; }
 	const PxTransform& Get_PxTransform() { m_PxTransform = m_pPxRigidBody->getGlobalPose(); return m_PxTransform; }
-	PxShape* Get_Shape() { return m_pShape; }
+	PxShape* Get_PxShape() { return m_pShape; }
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
