@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\ImgBase.h" />
     <ClInclude Include="..\public\ImGui\imconfig.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="..\..\Client\Private\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\ImgBase.cpp" />
     <ClCompile Include="..\private\Img_Manager.cpp" />

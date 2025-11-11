@@ -37,15 +37,15 @@ void CParticle::Update(_float fTimeDelta)
 
 void CParticle::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
+	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.m_iSelectRender), this);
 }
 
 HRESULT CParticle::Render()
 {
-	//if (FAILED(Bind_ShaderResources()))
-	//	return E_FAIL;
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
-	m_pShaderCom->Begin(m_iBegin);
+	m_pShaderCom->Begin(m_tData.iBegin);
 
 	m_pVIBufferCom->Bind_Resources();
 
@@ -54,13 +54,29 @@ HRESULT CParticle::Render()
 	return S_OK;
 }
 
-void CParticle::Set_Components(CVIBuffer_Point_Instance* pViBufferCom, CComputeShader* pComputeShader, CShader* pShaderCom, _float4 fGravity, _float3 fPivot)
+void CParticle::Set_Components(PARTICLE_DATA tData)
 {
-	m_pVIBufferCom = pViBufferCom;
-	m_pComputeShader = pComputeShader;
-	m_pShaderCom = pShaderCom;
-	m_fGravity = fGravity;
-	m_fPivot = fPivot;
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pComputeShader);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pReadSource);
+	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+	Desc.iNumInstance = tData.iNumInstance;
+	Desc.vCenter = tData.fCenter;
+	Desc.vPivot = tData.fPivot;
+	Desc.vRange = tData.fRange;
+	Desc.vSize = tData.fSize;
+	Desc.vLifeTime = tData.fLifeTime;
+	Desc.vSpeed = tData.fSpeed;
+	Desc.isLoop = tData.bisLoop;
+
+	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom->Initialize(nullptr);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	//m_pComputeShader = pComputeShader;
+	//m_pShaderCom = pShaderCom;
+	m_tData = tData;
 	Ready_ComputeShader();
 }
 
@@ -72,21 +88,26 @@ HRESULT CParticle::Ready_Components()
 HRESULT CParticle::Bind_ShaderResources()
 {
 
-	//if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
-	//	return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
 
+	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -107,8 +128,8 @@ HRESULT CParticle::Ready_ComputeShader()
 
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
-	m_CBData.vGravity = m_fGravity;
-	m_CBData.vPivot = { m_fPivot.x,  m_fPivot.y,  m_fPivot.z, 1.f};
+	m_CBData.vGravity = m_tData.fGravity;
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f};
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -172,7 +193,7 @@ void CParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
-
+	m_CBData.matWorld = *m_pTransformCom->Get_WorldMatrixPtr();
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
@@ -237,9 +258,10 @@ CGameObject* CParticle::Clone(void* pArg)
 void CParticle::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pShaderCom);
+	for (_uint i = 0; i < 3; ++i)
+		Safe_Release(m_pTexture[i]);
 }
