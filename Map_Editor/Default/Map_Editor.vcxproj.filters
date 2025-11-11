@@ -76,6 +76,12 @@
     <Filter Include="02.GameObjects\Terrain">
       <UniqueIdentifier>{05ef4852-d155-481f-803e-0ca7300804f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.IMGUI\Light">
+      <UniqueIdentifier>{9dcd74e3-a482-46b3-b5c8-e30be4801d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.IMGUI\Map">
+      <UniqueIdentifier>{1a5628f3-4bd2-4fb2-a5af-b60f742e12cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -159,6 +165,12 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02.GameObjects\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightTool.h">
+      <Filter>96.IMGUI\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTool.h">
+      <Filter>96.IMGUI\Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -220,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightTool.cpp">
+      <Filter>96.IMGUI\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapTool.cpp">
+      <Filter>96.IMGUI\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
