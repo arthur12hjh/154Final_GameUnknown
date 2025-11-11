@@ -34,6 +34,7 @@ private:
 	HRESULT Ready_Layer_Village_Mou(const _wstring& strLayerTag);
 
 	HRESULT Load_Map_Data();
+	HRESULT Load_Light_Data();
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
