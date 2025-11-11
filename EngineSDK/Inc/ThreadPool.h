@@ -35,7 +35,7 @@ private:
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 
 	_uint							m_iNumThread = {};
-	_uint							m_iWorkdThread = {};
+	atomic<_uint>					m_iWorkdThread = {};
 
 	map<thread::id, thread>			m_Threads;
 	map<thread::id, THREAD_DESC>	m_DefferdContexts;

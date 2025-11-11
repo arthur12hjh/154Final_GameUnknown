@@ -239,17 +239,17 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Terrain_Mask */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain_Mask"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Snow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Snow"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Texture_Player */
@@ -264,25 +264,25 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Explosion*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Explosion"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Explosion_Test*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Explosion_Test"),
-		CTexture::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-		CWeapon::Create(m_pDevice, Desc->pContext))))
+		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -292,55 +292,52 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
-		CSky::Create(m_pDevice, Desc->pContext))))
+		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Vil_Bui03_04 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Vil_Bui03_04"),
-		CVil_Bui03_04::Create(m_pDevice, Desc->pContext))))
+		CVil_Bui03_04::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Snow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Snow"),
-		CSnow::Create(m_pDevice, Desc->pContext))))
+		CSnow::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Explosion */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Explosion"),
-		CExplosion::Create(m_pDevice, Desc->pContext))))
+		CExplosion::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Sprite_Explosion */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sprite_Explosion"),
-		CSpriteEffect::Create(m_pDevice, Desc->pContext))))
+		CSpriteEffect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
-		CInstance_Model::Create(m_pDevice, Desc->pContext))))
+		CInstance_Model::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_ForkLift */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, Desc->pContext))))
+		CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 
 	/* For.Prototype_GameObject_PxTestProp */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
-		CPxTestProp::Create(m_pDevice, Desc->pContext))))
+		CPxTestProp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #ifdef _DEBUG
 	/* For.Prototype_GameObject_ShaderTestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		CShaderTestModel::Create(m_pDevice, Desc->pContext))))
-		return E_FAIL;
-	/* For.Prototype_GameObject_PxTestProp */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
-		CPxTestProp::Create(m_pDevice, Desc->pContext))))
+		CShaderTestModel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #endif
 
+	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -350,9 +347,10 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, Desc->pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
 		return E_FAIL;
 
+	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -362,12 +360,12 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, Desc->pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, Desc->pContext))))
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Particle_Snow */
@@ -381,11 +379,11 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	SnowDesc.isLoop = true;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Particle_Snow"),
-		CVIBuffer_Rect_Instance::Create(m_pDevice, Desc->pContext, &SnowDesc))))
+		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &SnowDesc))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Snow"),
-		CComputeShader::Create(m_pDevice, Desc->pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Rect_Drop.hlsl"), "CS", SnowDesc.iNumInstance))))
+		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Rect_Drop.hlsl"), "CS", SnowDesc.iNumInstance))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
@@ -400,24 +398,24 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	ExplosionDesc.isLoop = true;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Particle_Explosion"),
-		CVIBuffer_Point_Instance::Create(m_pDevice, Desc->pContext, &ExplosionDesc))))
+		CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Expolosion"),
-		CComputeShader::Create(m_pDevice, Desc->pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance))))
+		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance))))
 		return E_FAIL;
 
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, Desc->pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Fiona/Fiona.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Fiona/Fiona.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Eve */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve"),
-		CModel::Create(m_pDevice, Desc->pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
@@ -428,8 +426,10 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	ModelDesc.PreModelMatrix = PreTransformMatrix;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Instance_Model_Dororong"),
-		CVIBuffer_Instance_Model::Create(m_pDevice, Desc->pContext, &ModelDesc))))
+		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
 		return E_FAIL;
+
+	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 

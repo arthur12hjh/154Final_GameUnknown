@@ -13,7 +13,8 @@ namespace Engine
 
 	typedef struct ThreadDesc
 	{
-		ID3D11DeviceContext*	pContext;
+		ID3D11DeviceContext*			pContext = nullptr;
+		function<void(thread::id)>		OnCompleted;
 	
 	}THREAD_DESC;
 
