@@ -15,18 +15,16 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CImgui_Manager final : public CBase
+class CMapTool final : public CBase
 {
-	DECLARE_SINGLETON(CImgui_Manager)
+typedef struct SavedObjectInfo
+{
+	_float4x4	    worldMatrix;
+}SAVEDOBJECTINFO;
 
-	typedef struct SavedObjectInfo
-	{
-		_float4x4	    worldMatrix;
-	}SAVEDOBJECTINFO;
-
-private:
-	CImgui_Manager();
-	virtual ~CImgui_Manager() = default;
+public:
+	CMapTool();
+	virtual ~CMapTool() = default;
 
 public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,12 +33,9 @@ public:
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
 
-	HRESULT Map_Tool_Render();
-
 	void Update_Rotation();
 	HRESULT Save_Map_Objects();
 	HRESULT Load_Map_Objects();
-
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -63,9 +58,6 @@ private:
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
 
-	class CLightTool* m_pLightTool = { nullptr };
-	class CMapTool* m_pMapTool = { nullptr };
-
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
 	_float m_fY = { 0.f };
@@ -81,48 +73,24 @@ private:
 	_float m_fScaleY = { 0.f };
 	_float m_fScaleZ = { 0.f };
 
-
-	// 빛 diffuse
-	_float m_fDiffuseX = { 0.f };
-	_float m_fDiffuseY = { 0.f };
-	_float m_fDiffuseZ = { 0.f };
-
-	// 빛 ambient
-	_float m_fAmbientX = { 0.f };
-	_float m_fAmbientY = { 0.f };
-	_float m_fAmbientZ = { 0.f };
-
-	// 빛 specular
-	_float m_fSpecularX = { 0.f };
-	_float m_fSpecularY = { 0.f };
-	_float m_fSpecularZ = { 0.f };
-
-	// 빛 Direction
-	_float m_fDirectionX = { 0.f };
-	_float m_fDirectionY = { 0.f };
-	_float m_fDirectionZ = { 0.f };
-
-	// 빛 range
-	_float m_fRange = { 0.f };
-
 	ADD_OBJECT m_eCurrentObject = {};
 
-	const _tchar*		m_CurrentLayerName = {};
+	const _tchar* m_CurrentLayerName = {};
 	list<CGameObject*>* m_pObjects = { nullptr };
-	CGameObject*		m_pObject = { nullptr };
+	CGameObject* m_pObject = { nullptr };
 	const list<CLight*>* m_pLights = { nullptr };
 	list<string>		m_LightNames = {};
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 
 private:
-	CNavigation*		m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
-	
-	class CVillage*		m_pVillage = { nullptr };
-	class CPlayer*		m_pPlayer = { nullptr };
-	class CTerrain*		m_pTerrain = { nullptr };
+	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
 
-	_vector				m_vNaviPoints[3] = {}; 
+	class CVillage* m_pVillage = { nullptr };
+	class CPlayer* m_pPlayer = { nullptr };
+	class CTerrain* m_pTerrain = { nullptr };
+
+	_vector				m_vNaviPoints[3] = {};
 	_float				m_fNaviSnapRadius = { 1.5f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)
 	NAVI_MODE			m_eNaviMode = { NAVI_MODE::NONE }; // 현재 네비게이션 작업 모드

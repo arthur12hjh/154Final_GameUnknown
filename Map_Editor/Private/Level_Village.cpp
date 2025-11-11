@@ -52,7 +52,7 @@ HRESULT CLevel_Village::Render()
 
 HRESULT CLevel_Village::Ready_Lights()
 {
-	LIGHT_DESC			LightDesc{};
+	/*LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
@@ -61,7 +61,7 @@ HRESULT CLevel_Village::Ready_Lights()
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/*LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
@@ -174,7 +174,7 @@ CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 void CLevel_Village::Free()
 {
+	CImgui_Manager::GetInstance()->DestroyInstance();
 	__super::Free();
 
-	CImgui_Manager::GetInstance()->DestroyInstance();
 }
