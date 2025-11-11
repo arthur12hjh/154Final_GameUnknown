@@ -67,6 +67,7 @@ HRESULT CDebugCheatUI::Render()
 
 void CDebugCheatUI::DrawObjectDebug()
 {
+#ifdef _DEBUG
     ImGui::Checkbox("Object Teleport Picking", &m_bIsTeleport);
     if (ImGui::IsItemHovered())
     {
@@ -75,10 +76,12 @@ void CDebugCheatUI::DrawObjectDebug()
         ImGui::Text("Mesh or Terrian Picking Move Object");
         ImGui::EndTooltip();
     }
+#endif // _DEBUG
 }
 
 void CDebugCheatUI::DrawCaemraDebug()
 {
+#ifdef _DEBUG
     ImGui::Text("Camera Debug");
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
     if (ImGui::BeginCombo("Camera Change", m_szSelectCamera))
@@ -102,10 +105,12 @@ void CDebugCheatUI::DrawCaemraDebug()
 
         ImGui::EndCombo();
     }
+#endif // _DEBUG
 }
 
 void CDebugCheatUI::DrawLightDebug()
 {
+#ifdef _DEBUG
     auto pLights = m_pGameInstance->GetAllLight();
 
     ImGui::Text("Light Debug");
@@ -150,6 +155,7 @@ void CDebugCheatUI::DrawLightDebug()
             ImGui::EndCombo();
         }
     }
+#endif // _DEBUG
 }
 
 CDebugCheatUI* CDebugCheatUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

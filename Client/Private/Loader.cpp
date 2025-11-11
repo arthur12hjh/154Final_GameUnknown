@@ -18,10 +18,10 @@
 
 #include "Body_Player.h"
 #include "Instance_Model.h"
+#include "PxTestProp.h"
 
 #ifdef _DEBUG
 #include "ShaderTestModel.h"
-#include "PxTestProp.h"
 #endif
 
 #include "UIButton.h"
@@ -312,7 +312,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	
-
+	/* For.Prototype_GameObject_PxTestProp */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
+		CPxTestProp::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 #ifdef _DEBUG
 	/* For.Prototype_GameObject_ShaderTestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
