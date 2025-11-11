@@ -4,13 +4,13 @@
 
 NS_BEGIN(Engine)
 class CTransform;
+class CCollider;
 
 class ENGINE_DLL CGameObject abstract : public CBase
 {
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
-
 	}GAMEOBJECT_DESC;
 
 protected:
@@ -45,14 +45,22 @@ public:
 	const VISIBILITY&			GetVisibility() { return m_eVisibility;	}
 	CTransform*					GetTransform() { return m_pTransformCom; }
 
+	_bool						IsFrustomCulling();
+	_float						Get_Depth();
+	CCollider*					GetCullingCollider() { return m_pCullingCollider; }
+
 protected:
 	int											m_iObjectID;
+	_float										m_fDepth = {};
+
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
 	class CGameInstance*						m_pGameInstance = { nullptr };
 	VISIBILITY									m_eVisibility = { VISIBILITY::VISIBLE };
 
 	CTransform*									m_pTransformCom = { nullptr };
+	CCollider*									m_pCullingCollider = { nullptr };
+
 	_bool										m_isDead = { false };
 
 	map<const _wstring, class CComponent*>		m_Components;

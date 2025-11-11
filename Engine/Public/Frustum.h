@@ -15,17 +15,21 @@ public:
 	void Update();
 
 public:
-	void Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
-	_bool isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
+	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
+	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+
+	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
 
 private:
 	_float4				m_vOriginalPoints[8] = {};
 	_float4				m_vWorldPoints[8] = {};
 	
-
 	_float4				m_vWorldPlanes[6] = {};
 	_float4				m_vLocalPlanes[6] = {};
+
+	BoundingFrustum*	m_OrizinBoundingFrustom = {};
+	BoundingFrustum		m_BoundingFrustom = {};
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };

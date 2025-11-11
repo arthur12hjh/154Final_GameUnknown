@@ -30,12 +30,20 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* pArg)
 {
-	
 	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pTransformCom)
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Initialize(pArg)))
+		return E_FAIL;
+
+	m_pCullingCollider = COBBCollider::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pCullingCollider)
+		return E_FAIL;
+
+	COBBCollider::OBB_COLLIDER_DESC CollisionDesc = {};
+	CollisionDesc.vSize = { 1.f, 1.f, 1.f };
+	if (FAILED(m_pCullingCollider->Initialize(&CollisionDesc)))
 		return E_FAIL;
 
 	if (nullptr != pArg)
@@ -78,6 +86,19 @@ CComponent* CGameObject::Find_Component(const _wstring& strComponentTag)
 	return iter->second;
 }
 
+_bool CGameObject::IsFrustomCulling()
+{
+	return m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider);
+}
+
+_float CGameObject::Get_Depth()
+{
+	_vector vCamPos = XMLoadFloat4(m_pGameInstance->Get_CamPosition());
+	_vector vPos = m_pTransformCom->Get_State(STATE::POSITION);
+
+	return XMVectorGetX(XMVector3Length(vCamPos - vPos));
+}
+
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)
 {
 	if (nullptr != Find_Component(strComponentTag))
@@ -107,6 +128,8 @@ void CGameObject::Free()
 	m_Components.clear();
 
 	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pCullingCollider);
+
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

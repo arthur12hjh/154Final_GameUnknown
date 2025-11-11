@@ -1,5 +1,7 @@
 #include "Frustum.h"
+
 #include "GameInstance.h"
+#include "Collider.h"
 
 CFrustum::CFrustum()
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -20,6 +22,9 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[6] = _float4(1.f, -1.f, 1.f, 1.f);
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
 
+	m_OrizinBoundingFrustom = new BoundingFrustum();
+	m_OrizinBoundingFrustom->Near = 0.1f;
+
 	return S_OK;
 }
 
@@ -36,6 +41,10 @@ void CFrustum::Update()
 		XMStoreFloat4(&m_vWorldPoints[i],
 			XMVector3TransformCoord(XMLoadFloat4(&m_vWorldPoints[i]), ViewMatrixInverse));
 	}
+
+	BoundingFrustum tempFrustum = {};
+	m_OrizinBoundingFrustom->Transform(tempFrustum, ProjMatrixInverse);
+	tempFrustum.Transform(m_BoundingFrustom, ViewMatrixInverse);
 
 	Make_Planes(m_vWorldPoints, m_vWorldPlanes);
 }
@@ -62,6 +71,23 @@ _bool CFrustum::isIn_WorldFrustum(_fvector vWorldPos, _float fRange)
 	}
 
 	return true;
+}
+
+_bool CFrustum::isIn_WorldFrustum(CCollider* pCollider)
+{
+	if (nullptr == pCollider)
+		return false;
+
+	switch (pCollider->GetCollisionType())
+	{
+	case COLLIDER::AABB :
+		return static_cast<CBoxCollider*>(pCollider)->FrustomIntersect(m_BoundingFrustom);
+	case COLLIDER::SPHERE:
+		return static_cast<CSphereCollider*>(pCollider)->FrustomIntersect(m_BoundingFrustom);
+	case COLLIDER::OBB:
+		return static_cast<COBBCollider*>(pCollider)->FrustomIntersect(m_BoundingFrustom);
+	}
+	return  false;
 }
 
 _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
@@ -103,4 +129,5 @@ void CFrustum::Free()
 	__super::Free();
 
 	Safe_Release(m_pGameInstance);
+	Safe_Delete(m_OrizinBoundingFrustom);
 }

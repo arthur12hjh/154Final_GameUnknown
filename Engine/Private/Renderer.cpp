@@ -5,6 +5,7 @@
 #include "BlendObject.h"
 #include "UIObject.h"
 #include "GameInstance.h"
+#include "Occlusion.h";
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -205,11 +206,46 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 	if (nullptr == pRenderObject)
 		return E_FAIL;
 
+	/*if (RENDER::NONBLEND == eRenderGroup)
+		m_NonCulledObjects[ENUM_CLASS(eRenderGroup)].push_back(pRenderObject);
+	else*/
 	m_RenderObjects[ENUM_CLASS(eRenderGroup)].push_back(pRenderObject);
 
 	Safe_AddRef(pRenderObject);
-
 	return S_OK;
+}
+
+void CRenderer::UpdateOcclusion()
+{
+	m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].sort([](CGameObject* pSour, CGameObject* pDest)->_bool {
+		return pSour->Get_Depth() < pDest->Get_Depth();
+		});
+
+	ID3D11RasterizerState*		pOrizinRS = nullptr;
+	ID3D11DepthStencilState*	pOrizinOcclusionDSState = nullptr;
+	UINT						iOrizinStencilRef = {};
+	m_pContext->RSGetState(&pOrizinRS);
+	m_pContext->OMGetDepthStencilState(&m_pOcclusionDSState, &iOrizinStencilRef);
+
+	m_pContext->RSSetState(m_pOcclusionRSState);
+	m_pContext->OMSetDepthStencilState(m_pOcclusionDSState, 0);
+	
+
+	for (auto& pObject : m_NonCulledObjects[ENUM_CLASS(RENDER::NONBLEND)])
+	{
+		auto pFindObject = m_pOcclusionDatas[0].find(pObject);
+		if (pFindObject == m_pOcclusionDatas[0].end())
+		{
+			//m_pOcclusionDatas->emplace(this, COcclusion::Create(m_pDevice, m_pContext));
+		}
+
+	}
+
+	m_pContext->RSSetState(pOrizinRS);
+	m_pContext->OMSetDepthStencilState(pOrizinOcclusionDSState, iOrizinStencilRef);
+
+	Safe_Release(pOrizinRS);
+	Safe_Release(pOrizinOcclusionDSState);
 }
 
 void CRenderer::Render()
@@ -662,6 +698,34 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 		return E_FAIL;
 
 	Safe_Release(pDepthStencilTexture);
+	return S_OK;
+}
+
+HRESULT CRenderer::Ready_OcclusionDepthStencil()
+{
+	if (nullptr == m_pDevice)
+		return E_FAIL;
+
+	// 정확성을 위해 넣는다는거같음
+	// 1. D3D11_RASTERIZER_DESC 구조체 설정 (컬링 테스트용)
+	D3D11_RASTERIZER_DESC RSDesc_OcclusionTest = {};
+	RSDesc_OcclusionTest.FillMode = D3D11_FILL_SOLID;           // 솔리드 채우기
+	RSDesc_OcclusionTest.CullMode = D3D11_CULL_BACK;            // 뒷면 컬링 (일반적)
+
+	// 2. RS 객체 생성
+	if (FAILED(m_pDevice->CreateRasterizerState(&RSDesc_OcclusionTest, &m_pOcclusionRSState)))
+		return E_FAIL;
+
+	// 1. D3D11_DEPTH_STENCIL_DESC 구조체 설정 (컬링 테스트용)
+	D3D11_DEPTH_STENCIL_DESC DSDesc_OcclusionTest = {};
+	DSDesc_OcclusionTest.DepthEnable = true;
+	DSDesc_OcclusionTest.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	DSDesc_OcclusionTest.DepthFunc = D3D11_COMPARISON_LESS;
+	DSDesc_OcclusionTest.StencilEnable = false;
+
+	// 2. 뎁스 스텐실 상태 객체 생성
+	if (FAILED(m_pDevice->CreateDepthStencilState(&DSDesc_OcclusionTest, &m_pOcclusionDSState)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -807,116 +871,15 @@ void CRenderer::Free()
 	Safe_Release(m_pShader);
 	
 	Safe_Release(m_pDevice);
+	Safe_Release(m_pOcclusionDSState);
+	Safe_Release(m_pOcclusionRSState);
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		for (auto& iter : m_pOcclusionDatas[i])
+			Safe_Release(iter.second);
+
+		m_pOcclusionDatas[i].clear();
+	}
 	Safe_Release(m_pContext);
 }
-
-//임시 보관용 코드. 11월 11일 이후로 이 코드 보면 지워주세요
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
-//return;
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-//return;
-//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-//return;
-//
-//PxScene* pScene = m_pGameInstance->Get_PxScene();
-//const PxRenderBuffer& PxBuffer = pScene->getRenderBuffer();
-//
-///* 라인 담기 */
-//for (_uint i = 0; i < PxBuffer.getNbLines(); ++i)
-//{
-//	const PxDebugLine& tLine = PxBuffer.getLines()[i];
-//	m_PhysxDebugLines.push_back({ {tLine.pos0.x, tLine.pos0.y, tLine.pos0.z}, Convert_PxColor_ToVector(tLine.color0) });
-//	m_PhysxDebugLines.push_back({ {tLine.pos1.x, tLine.pos1.y, tLine.pos1.z}, Convert_PxColor_ToVector(tLine.color1) });
-//}
-//
-///* 트라이앵글 담기 */
-//for (_int i = 0; i < PxBuffer.getNbTriangles(); ++i)
-//{
-//	const PxDebugTriangle& tTriangle = PxBuffer.getTriangles()[i];
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos0.x, tTriangle.pos0.y, tTriangle.pos0.z}, Convert_PxColor_ToVector(tTriangle.color0) });
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos1.x, tTriangle.pos1.y, tTriangle.pos1.z}, Convert_PxColor_ToVector(tTriangle.color1) });
-//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos2.x, tTriangle.pos2.y, tTriangle.pos2.z}, Convert_PxColor_ToVector(tTriangle.color2) });
-//}
-//
-///* 포인트 담기 */
-//for (_int i = 0; i < PxBuffer.getNbPoints(); ++i)
-//{
-//	const PxDebugPoint& tPoint = PxBuffer.getPoints()[i];
-//	m_PhysxDebugPoints.push_back({ {tPoint.pos.x, tPoint.pos.y, tPoint.pos.z}, Convert_PxColor_ToVector(tPoint.color) });
-//}
-//
-///* 일단 라인만 출력 */
-//if (false == m_PhysxDebugLines.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugLines.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugLines.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugLines.size()), 0);
-//}
-//
-//// 트라이앵글 출력
-//if (false == m_PhysxDebugTriangles.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugTriangles.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugTriangles.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugTriangles.size()), 0);
-//}
-//
-///* 점 출력 */
-//if (false == m_PhysxDebugPoints.empty())
-//{
-//	//Shader Begin
-//	m_pPhysxDebugShader->Begin(0);
-//
-//	D3D11_MAPPED_SUBRESOURCE MapResource;
-//
-//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
-//	if (FAILED(hr))
-//		return;
-//
-//
-//	memcpy(MapResource.pData, m_PhysxDebugPoints.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugPoints.size());
-//	m_pContext->Unmap(m_pPxLinesVB, 0);
-//
-//	UINT iStride = sizeof(VTXPOSCOLOR);
-//	UINT iOffset = { 0 };
-//
-//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
-//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugPoints.size()), 0);
-//}
-//
-//m_PhysxDebugLines.clear();
-//m_PhysxDebugTriangles.clear();
-//m_PhysxDebugPoints.clear();

@@ -33,8 +33,10 @@ public:
 	virtual _bool			Intersect(COLLIDER eType, CCollider* pTarget) = 0;
 	virtual _bool			RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT_DESC& OutDesc) { return false; }
 	virtual _bool			RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC& OutDesc);
-	virtual	ContainmentType	Contains(_vector Point);
+	virtual _bool			FrustomIntersect(const BoundingFrustum& Frustom);
 	
+	virtual	ContainmentType	Contains(_vector Point);
+
 #ifdef _DEBUG
 	virtual HRESULT			Render() override;
 #endif // _DEBUG

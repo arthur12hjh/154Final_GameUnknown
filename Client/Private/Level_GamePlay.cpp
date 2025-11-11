@@ -46,13 +46,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
-	{
-		m_pGameInstance->Add_ThreadjobList([&]()
-			{
-				FontRender();
-			});
-	}*/
+	
 
 }
 

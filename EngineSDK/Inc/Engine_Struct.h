@@ -11,11 +11,17 @@ namespace Engine
 		float			fAspect;
 	}CAMERA_INFO;
 
+	typedef struct ThreadDesc
+	{
+		ID3D11DeviceContext*	pContext;
+	
+	}THREAD_DESC;
+
 	typedef struct ThreadJob
 	{
-		unsigned int		iJobID;
-		function<void()>	JobFunction;
-		bool				bIsCanceled;
+		unsigned int			iJobID;
+		function<void(void*)>	JobFunction;
+		bool					bIsCanceled;
 	}THREAD_JOB;
 	using ThreadJobHandle = THREAD_JOB;
 

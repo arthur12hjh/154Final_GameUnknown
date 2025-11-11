@@ -148,6 +148,7 @@ public:
 	void Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
 	_bool isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
+	_bool isIn_WorldFrustum(class CCollider* pCollider);
 
 #pragma endregion
 
@@ -172,14 +173,14 @@ public:
 	void								ADD_ResourceManagerShader(const WCHAR* ShaderTag, CShader* pShader);
 	void								ADD_ResourceManagerVIBuffer(const WCHAR* VIBufferTag, CComponent* pVIBuffer);
 
-	CTexture*							GetResourceManagerTextureResource(const WCHAR* TextureTag);
-	CShader*							GetResourceManagerShaderResource(const WCHAR* ShaderTag);
-	CComponent*							GetResourceManagerVIBufferResource(const WCHAR* VIBufferTag);
-
-#pragma region _DEBUG
-	map<const _wstring, CTexture*>*		GetALLResourceManagerTextureResource();
-	map<const _wstring, CShader*>*		GetALLResourceManagerShaderResource();
-	map<const _wstring, CComponent*>*	GetALLResourceManagerModelResource();
+	CTexture*							Get_ResourceManagerTextureResource(const WCHAR* TextureTag);
+	CShader*							Get_ResourceManagerShaderResource(const WCHAR* ShaderTag);
+	CComponent*							Get_ResourceManagerVIBufferResource(const WCHAR* VIBufferTag);
+										   
+#pragma region _DEBUG					   
+	map<const _wstring, CTexture*>*		Get_ALLResourceManagerTextureResource();
+	map<const _wstring, CShader*>*		Get_ALLResourceManagerShaderResource();
+	map<const _wstring, CComponent*>*	Get_ALLResourceManagerModelResource();
 #pragma endregion
 #pragma endregion
 
@@ -192,9 +193,10 @@ public:
 	// 이걸로 나중에 취소하거나 할수있음
 	// Handle 받은거 작업 호출되면 nullptr로 바꿔주세요
 	// 작업수행되서 작업리스트에서 빠지면 댕글링 포인터입니다.
-	ThreadJobHandle*				Add_ThreadjobList(function<void()> function);
+	ThreadJobHandle*				Add_ThreadjobList(function<void(void*)> function);
 	_bool							IsThreadPoolStop();
 	size_t							GetThreadJobCount();
+	_bool							IsWorkThread();
 #pragma endregion
 
 #pragma region Camera Manager

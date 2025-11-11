@@ -1,5 +1,13 @@
 #include "ThreadPool.h"
 
+CThreadPool::CThreadPool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	m_pDevice(pDevice),
+	m_pContext(pContext)
+{
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pContext);
+}
+
 HRESULT CThreadPool::Initialize(_uint iNumThread)
 {
 	m_iNumThread = iNumThread;
@@ -8,9 +16,26 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 	m_Threads.reserve(m_iNumThread);
 
 	for (_uint i = 0; i < m_iNumThread; ++i)
-		m_Threads.emplace_back([&]() { Update_WorkThread(); });
+	{
+		m_Threads.emplace_back([&]() { Update_WorkThread(); }, i);
+		THREAD_DESC Desc;
+		m_pDevice->CreateDeferredContext(0, &Desc.pContext);
+		m_DefferdContexts.push_back(Desc);
+	}
 
 	return S_OK;
+}
+
+void CThreadPool::Update_Async()
+{
+	while (!m_CommandList.empty())
+	{
+		auto pCommandList = m_CommandList.front();
+		m_CommandList.pop();
+
+		m_pContext->ExecuteCommandList(pCommandList, FALSE);
+	}
+
 }
 
 void CThreadPool::Update_WorkThread()
@@ -22,16 +47,22 @@ void CThreadPool::Update_WorkThread()
 		{
 			if (!m_ThreadJobs.empty() || m_bIsThreadStopAll)
 			{
-				if(0 < m_iWorkdThread)
+				if (0 < m_iWorkdThread)
+				{
+					FinishedWorkThread(m_iWorkdThread - 1);
 					m_iWorkdThread--;
-
+				}
 				return true;
 			}
 			return false;
 		});
 
 		if (m_bIsThreadStopAll && m_ThreadJobs.empty())
+		{
+			for (auto Desc : m_DefferdContexts)
+				Safe_Release(Desc.pContext);
 			return;
+		}
 
 		// 맨 앞의 job 을 뺀다.
 		THREAD_JOB job = move(m_ThreadJobs.front());
@@ -42,12 +73,14 @@ void CThreadPool::Update_WorkThread()
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
-			job.JobFunction();
+			thread::id current_thread_id = this_thread::get_id();
+			THREAD_DESC Desc = m_DefferdContexts[current_thread_id];
+			job.JobFunction(&Desc);
 		}
 	}
 }
 
-ThreadJobHandle* CThreadPool::Add_jobList(function<void()> function)
+ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 {
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
@@ -68,7 +101,7 @@ void CThreadPool::StopAllThread()
 	m_cv_Jobs.notify_all();
 
 	for (auto& pThread : m_Threads)
-		pThread.join();
+		pThread.first.join();
 }
 
 size_t CThreadPool::GetThreadJobCount()
@@ -76,9 +109,23 @@ size_t CThreadPool::GetThreadJobCount()
 	return m_ThreadJobs.size();
 }
 
-CThreadPool* CThreadPool::Create(_uint iNumThread)
+_bool CThreadPool::IsWorkThread()
 {
-	CThreadPool* pThreadPool = new CThreadPool();
+	return 0 < m_iWorkdThread;
+}
+
+void CThreadPool::FinishedWorkThread(_uint ThreadID)
+{
+	auto Desc = m_DefferdContexts[ThreadID];
+	ID3D11CommandList* pCommandList = nullptr;
+
+	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
+	m_CommandList.push(pCommandList);
+}
+
+CThreadPool* CThreadPool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, _uint iNumThread)
+{
+	CThreadPool* pThreadPool = new CThreadPool(pDevice, pDeviceContext);
 	if (FAILED(pThreadPool->Initialize(iNumThread)))
 	{
 		Safe_Release(pThreadPool);
@@ -90,5 +137,8 @@ CThreadPool* CThreadPool::Create(_uint iNumThread)
 void CThreadPool::Free()
 {
 	__super::Free();
+
 	StopAllThread();
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
 }
