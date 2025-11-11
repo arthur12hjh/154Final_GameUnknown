@@ -18,7 +18,7 @@ private:
 	virtual ~CLight() = default;
 
 public:
-	void			  SetLightInfo(const LIGHT_DESC& Desc) { m_LightDesc = Desc; }
+	void			  SetLightInfo(const LIGHT_DESC& Desc);
 	const LIGHT_DESC* Get_LightDesc() const {
 		return &m_LightDesc;
 	}
