@@ -22,12 +22,13 @@ public:
 	HRESULT Bind_BoneMatrices(const vector<class CBone*>& Bones, class CShader* pShader, const _char* pConstantName);
 
 private:
-	_char				m_szName[MAX_PATH] = {};
-	_uint				m_iMaterialIndex = {};			
-	_uint				m_iNumBones = { };
-	vector<_int>		m_BoneIndices;
-	_float4x4*			m_pBoneMatrices = { nullptr };
-	vector<_float4x4>	m_OffsetMatrices;
+	_char							m_szName[MAX_PATH] = {};
+	_uint							m_iMaterialIndex = {};			
+	_uint							m_iNumBones = { };
+	vector<_int>					m_BoneIndices;
+
+	_float4x4*						m_pBoneMatrices = { nullptr };
+	vector<_float4x4>				m_OffsetMatrices;
 
 private:
 	HRESULT Ready_VertexBuffer_For_NonAnim(const binMesh* pBinMesh, _fmatrix PreTransformMatrix);

@@ -72,7 +72,6 @@ HRESULT CBackGround::Render()
 
 HRESULT CBackGround::Ready_Components()
 {
-
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))

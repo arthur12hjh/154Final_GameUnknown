@@ -49,6 +49,10 @@ void CPxTestProp::Update(_float fTimeDelta)
 void CPxTestProp::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_Shape());
+#endif
 }
 
 HRESULT CPxTestProp::Render()
@@ -91,7 +95,7 @@ HRESULT CPxTestProp::Ready_Components()
 
 	//리지드 바디 Desc 세팅. 머테리얼이랑 질량, userdata 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
-	RigidBodyDesc.eRigidBodyShape	= CRigidBody::RIGIDBODY_SHAPE::BOX;
+	RigidBodyDesc.eRigidBodyShape	= CRigidBody::RIGIDBODY_SHAPE::SPHERE;
 	RigidBodyDesc.eRigidBodyType		= CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 	RigidBodyDesc.StartWorldMatrix	= *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData			= tUserData;

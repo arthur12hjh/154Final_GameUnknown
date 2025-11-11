@@ -2,6 +2,10 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 
+NS_BEGIN(Engine)
+class CLight;
+NS_END
+
 NS_BEGIN(Client)
 class CGameManager;
 class CImGuiManager;
@@ -26,8 +30,18 @@ private:
 	char						m_szSelectCamera[MAX_PATH] = {};
 	char						m_szCameraComboTag[MAX_PATH] = {};
 
+	char						m_szSelectLight[MAX_PATH] = {};
+	char						m_szVisbility[MAX_PATH] = {};
+	CLight*						m_pSelectLight = nullptr;
+
+	_bool						m_bIsCamLerp = false;
 	_bool						m_bIsTeleport = false;
 #endif // _DEBUG
+
+private :
+	void						DrawObjectDebug();
+	void						DrawCaemraDebug();
+	void						DrawLightDebug();
 
 public:
 	static	CDebugCheatUI*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

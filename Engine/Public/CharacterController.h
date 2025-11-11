@@ -32,6 +32,7 @@ public:
 		/* 시작할때 세팅할 위치. 반드시 채워줘야돼요. */
 		_float4			vStartPos = { 0.f, 0.f, 0.f, 1.f };
 		class CCTHitReporter* pHitReporter = { nullptr };
+		class CCTBehaviorCallback* pBehaviorCallback = { nullptr };
 		PxUserData		tUserData = {};
 	} CCT_DESC;
 
@@ -42,19 +43,25 @@ private:
 
 public:
 	PxController* Get_PxController() { return m_pController; }
-
+	PxShape*	  Get_Shape();
+	PxActor*	  Get_Actor();
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
 	/* 컨트롤러 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함 */
+	void Update_PrePxPosition(class CTransform* pOwnerTransform);
 	void Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform);
+	void Update_ControllerTransform();
+
 
 private:
 	/* RigidActor -> RigidBody & RigidStatic */
 	/* RigidBody -> RigidDynamic & RigidArticulationLink */
 	class CCTHitReporter* m_pHitReporter = { nullptr };
+	class CCTBehaviorCallback* m_pBehaviorCallback = { nullptr };
+
 	PxControllerManager* m_pPxCCTManager = { nullptr };
 	PxPhysics*			 m_pPxPhysics = { nullptr };
 	PxController*		 m_pController = { nullptr };

@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "Base.h"
 
-/* 1. ´ÙÀ½ ·¹º§¿¡ ´ëÇÑ ÀÚ¿øÀ» ·ÎµåÇÑ´Ù. */
+/* 1. ë‹¤ìŒ ë ˆë²¨ì— ëŒ€í•œ ìì›ì„ ë¡œë“œí•œë‹¤. */
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -43,8 +43,10 @@ private:
 
 private:
 	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_GamePlay();
 
+	HRESULT Loading_For_GamePlay();
+	HRESULT Loading_For_GamePlay_Mesh();
+	HRESULT Loading_For_GamePlay_Shader();
 public:
 	HRESULT Loading_For_UI_Logo_Level();
 

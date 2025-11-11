@@ -8,6 +8,7 @@
 
 #include "GameManager.h"
 #include "JsonParser.h"
+#include "MousePointer.h"
 
 #ifdef _DEBUG
 #include "ImGuiMain.h"
@@ -48,6 +49,9 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototypes()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL::LOGO)))
@@ -227,16 +231,27 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 
 
+	/* For.Prototype_Component_VIBuffer_Rect */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma region Shader
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
 
-
+	/* For.Prototype_Component_Shader_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_Mouse"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Mouse.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements))))
+		return E_FAIL;
 
 #pragma endregion
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_Mouse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Cursor/cursor_%d.png"), 4))))
+		return E_FAIL;
 	
 
 	/* For.Prototype_GameObject_Camera_Free */
@@ -260,6 +275,23 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCharacterController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #endif
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Mouse()
+{
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Mouse"),
+		CMousePointer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	CUIObject::UIOBJECT_DESC UIDesc = {};
+	UIDesc.fSizeX = 32.f;
+	UIDesc.fSizeY = 32.f;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Mouse"),
+		ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"), &UIDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }

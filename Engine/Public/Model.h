@@ -27,6 +27,12 @@ public:
 
 	void Attach_CombinedTransformationMatrix();
 
+	// 모델인스턴싱을 위한 최소한의 함수
+	void				Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** VIBuffer, ID3D11Buffer** IndexBuffer);
+	_uint				Get_MeshIndices(_uint iMeshNum);
+	_uint				Get_MeshVertexStride(_uint iMeshNum);
+	DXGI_FORMAT			Get_MeshIndexFormat(_uint iMeshNum);
+
 public:
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {
 		if (m_iCurrentAnimIndex == iAnimIndex)

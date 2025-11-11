@@ -1,7 +1,9 @@
 #include "Renderer.h"
 
 #include "GameObject.h"
+
 #include "BlendObject.h"
+#include "UIObject.h"
 #include "GameInstance.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -34,6 +36,11 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+#ifdef _DEBUG
+	m_pPhysxDebugShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Physx_Debug.hlsl"), VTXPOSCOLOR::Elements, VTXPOSCOLOR::iNumElements);
+	if (nullptr == m_pPhysxDebugShader)
+		return E_FAIL;
+#endif
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -72,6 +79,7 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_RimLight"), m_vScreenSize.x - 450.0f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
 #endif
+
     return S_OK;
 }
 
@@ -227,6 +235,7 @@ void CRenderer::Render()
 
 #ifdef _DEBUG
 	Render_Debug();
+	Render_PhysxDebug();
 #endif
 }
 
@@ -236,6 +245,13 @@ HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 	m_DebugComponents.push_back(pDebugCom);
 	Safe_AddRef(pDebugCom);
 
+	return S_OK;
+}
+
+HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+{
+	m_PxShapes.push_back(make_pair(pActor, pShape));
+	
 	return S_OK;
 }
 
@@ -570,6 +586,9 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
+	m_RenderObjects[ENUM_CLASS(RENDER::UI)].sort([](CGameObject* pSour, CGameObject* pDest)->_bool {
+		return static_cast<CUIObject*>(pSour)->GetZOrder() < static_cast<CUIObject*>(pDest)->GetZOrder();
+		});
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{
@@ -682,6 +701,70 @@ void CRenderer::Render_Debug()
 		return;
 }
 
+void CRenderer::Render_PhysxDebug()
+{
+
+	BasicEffect* m_pEffect = new BasicEffect(m_pDevice);
+	ID3D11InputLayout* m_pInputLayout = {};
+
+	const void* pShaderByteCode = { nullptr };
+	size_t		iShaderByteCodeLength = {};
+
+	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
+
+	if (m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
+		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout))
+		return;
+
+	auto BoxShape = GeometricPrimitive::CreateBox(m_pContext, _float3(0.5f, 0.5f, 0.5f));
+	auto SphereShape = GeometricPrimitive::CreateSphere(m_pContext, 1.0f);
+	//auto CapsuleShape = GeometricPrimitive::CreateCy(m_pContext, _float2(0.5f, 0.5f));
+	
+	for (auto& Pair : m_PxShapes)
+	{
+		PxGeometryHolder Geometry = Pair.second->getGeometry();
+ 		PxTransform PxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);
+
+		_matrix ConvertMatrix = m_pGameInstance->Convert_PxTransform_ToMatrix(PxTransform);
+
+		m_pEffect->SetWorld(ConvertMatrix);
+		m_pEffect->SetView(m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW));
+		m_pEffect->SetProjection(m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ));
+		m_pEffect->SetColorAndAlpha(XMVectorSet(0.f, 0.7f, 1.f, 1.f));
+
+		switch (Geometry.getType())
+		{
+		case PxGeometryType::eBOX:
+			BoxShape->Draw(m_pEffect, m_pInputLayout, false, true);
+			break;
+		case PxGeometryType::eSPHERE:
+			SphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
+			break;
+		case PxGeometryType::eCAPSULE:
+			//Shape->Draw(ConvertMatrix, m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW), m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ),
+			//	XMVectorSet(0.f, 0.f, 1.f, 1.f));
+			break;
+		//충돌용 메시는 고려 X. 나중에 해보던가.. 아니면 pvd로 디버깅만 하던가 ㅎ..
+		default:
+			break;
+		}
+	}
+
+	m_PxShapes.clear();
+
+	Safe_Delete(m_pEffect);
+	Safe_Release(m_pInputLayout);
+}
+
+_float4 CRenderer::Convert_PxColor_ToVector(PxU32 iColor)
+{
+	_float fAlpha = ((iColor >> 24) & 0xFF) / 255.0f;
+	_float fRed   = ((iColor >> 16) & 0xFF) / 255.0f;
+	_float fGreen = ((iColor >> 8) & 0xFF) / 255.0f;
+	_float fBlue  = (iColor & 0xFF) / 255.0f;
+
+	return _float4(fRed, fGreen, fBlue, fAlpha);
+}
 #endif
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -705,6 +788,7 @@ void CRenderer::Free()
 	for (auto& pDebugCom : m_DebugComponents)
 		Safe_Release(pDebugCom);
 	m_DebugComponents.clear();
+
 #endif // _DEBUG
 
 	for (auto& RenderObjects : m_RenderObjects)
@@ -720,6 +804,118 @@ void CRenderer::Free()
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pPhysxDebugShader);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }
+
+//임시 보관용 코드. 11월 11일 이후로 이 코드 보면 지워주세요
+//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
+//return;
+//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+//return;
+//if (FAILED(m_pPhysxDebugShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+//return;
+//
+//PxScene* pScene = m_pGameInstance->Get_PxScene();
+//const PxRenderBuffer& PxBuffer = pScene->getRenderBuffer();
+//
+///* 라인 담기 */
+//for (_uint i = 0; i < PxBuffer.getNbLines(); ++i)
+//{
+//	const PxDebugLine& tLine = PxBuffer.getLines()[i];
+//	m_PhysxDebugLines.push_back({ {tLine.pos0.x, tLine.pos0.y, tLine.pos0.z}, Convert_PxColor_ToVector(tLine.color0) });
+//	m_PhysxDebugLines.push_back({ {tLine.pos1.x, tLine.pos1.y, tLine.pos1.z}, Convert_PxColor_ToVector(tLine.color1) });
+//}
+//
+///* 트라이앵글 담기 */
+//for (_int i = 0; i < PxBuffer.getNbTriangles(); ++i)
+//{
+//	const PxDebugTriangle& tTriangle = PxBuffer.getTriangles()[i];
+//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos0.x, tTriangle.pos0.y, tTriangle.pos0.z}, Convert_PxColor_ToVector(tTriangle.color0) });
+//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos1.x, tTriangle.pos1.y, tTriangle.pos1.z}, Convert_PxColor_ToVector(tTriangle.color1) });
+//	m_PhysxDebugTriangles.push_back({ {tTriangle.pos2.x, tTriangle.pos2.y, tTriangle.pos2.z}, Convert_PxColor_ToVector(tTriangle.color2) });
+//}
+//
+///* 포인트 담기 */
+//for (_int i = 0; i < PxBuffer.getNbPoints(); ++i)
+//{
+//	const PxDebugPoint& tPoint = PxBuffer.getPoints()[i];
+//	m_PhysxDebugPoints.push_back({ {tPoint.pos.x, tPoint.pos.y, tPoint.pos.z}, Convert_PxColor_ToVector(tPoint.color) });
+//}
+//
+///* 일단 라인만 출력 */
+//if (false == m_PhysxDebugLines.empty())
+//{
+//	//Shader Begin
+//	m_pPhysxDebugShader->Begin(0);
+//
+//	D3D11_MAPPED_SUBRESOURCE MapResource;
+//
+//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
+//	if (FAILED(hr))
+//		return;
+//
+//
+//	memcpy(MapResource.pData, m_PhysxDebugLines.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugLines.size());
+//	m_pContext->Unmap(m_pPxLinesVB, 0);
+//
+//	UINT iStride = sizeof(VTXPOSCOLOR);
+//	UINT iOffset = { 0 };
+//
+//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
+//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugLines.size()), 0);
+//}
+//
+//// 트라이앵글 출력
+//if (false == m_PhysxDebugTriangles.empty())
+//{
+//	//Shader Begin
+//	m_pPhysxDebugShader->Begin(0);
+//
+//	D3D11_MAPPED_SUBRESOURCE MapResource;
+//
+//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
+//	if (FAILED(hr))
+//		return;
+//
+//
+//	memcpy(MapResource.pData, m_PhysxDebugTriangles.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugTriangles.size());
+//	m_pContext->Unmap(m_pPxLinesVB, 0);
+//
+//	UINT iStride = sizeof(VTXPOSCOLOR);
+//	UINT iOffset = { 0 };
+//
+//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
+//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugTriangles.size()), 0);
+//}
+//
+///* 점 출력 */
+//if (false == m_PhysxDebugPoints.empty())
+//{
+//	//Shader Begin
+//	m_pPhysxDebugShader->Begin(0);
+//
+//	D3D11_MAPPED_SUBRESOURCE MapResource;
+//
+//	HRESULT hr = m_pContext->Map(m_pPxLinesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MapResource);
+//	if (FAILED(hr))
+//		return;
+//
+//
+//	memcpy(MapResource.pData, m_PhysxDebugPoints.data(), sizeof(VTXPOSCOLOR) * m_PhysxDebugPoints.size());
+//	m_pContext->Unmap(m_pPxLinesVB, 0);
+//
+//	UINT iStride = sizeof(VTXPOSCOLOR);
+//	UINT iOffset = { 0 };
+//
+//	m_pContext->IASetVertexBuffers(0, 1, &m_pPxLinesVB, &iStride, &iOffset);
+//	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+//	m_pContext->Draw(static_cast<UINT>(m_PhysxDebugPoints.size()), 0);
+//}
+//
+//m_PhysxDebugLines.clear();
+//m_PhysxDebugTriangles.clear();
+//m_PhysxDebugPoints.clear();

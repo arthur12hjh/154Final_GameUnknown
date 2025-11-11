@@ -204,6 +204,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pPhysx_Manager->Update(fTimeDelta); // isdead Ã¼Å©ÇØ¼­ •û°í
 
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
+	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
 	m_pLevel_Manager->Update(fTimeDelta);
 
@@ -216,7 +217,9 @@ HRESULT CGameInstance::Draw()
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
+	
 	m_pRenderer->Render();
+
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] -= GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
 #else
@@ -394,6 +397,10 @@ HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
 }
+HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+{
+	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
+}
 #endif
 
 #pragma endregion
@@ -447,6 +454,11 @@ const _float4x4* CGameInstance::GetIdentityMatrixPtr()
 HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOutLight)
 {
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
+}
+
+CLight* CGameInstance::Find_Light(_uint iIndex)
+{
+	return m_pLight_Manager->Find_Light(iIndex);
 }
 
 const list<class CLight*>* CGameInstance::GetAllLight()
@@ -681,9 +693,9 @@ HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
 }
-HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
-	return m_pCameraManager->SetMainCamera(szCameraTag, ppPreCameraMatrix);
+	return m_pCameraManager->SetMainCamera(szCameraTag, pPreCameraMatrix);
 }
 CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 {
@@ -721,6 +733,11 @@ PxControllerManager* CGameInstance::Get_PxCCTManager()
 	return m_pPhysx_Manager->Get_PxCCTManager();
 }
 
+PxScene* CGameInstance::Get_PxScene()
+{
+	return m_pPhysx_Manager->Get_PxScene();
+}
+
 PxPhysics* CGameInstance::Get_PxPhysics()
 {
 	return m_pPhysx_Manager->Get_PxPhysics();
@@ -734,6 +751,11 @@ PxTransform CGameInstance::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 _matrix CGameInstance::Convert_PxTransform_ToMatrix(PxTransform Transform)
 {
 	return m_pPhysx_Manager->Convert_PxTransform_ToMatrix(Transform);
+}
+
+HRESULT CGameInstance::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterController* pCCT)
+{
+	return m_pPhysx_Manager->Add_CCT_ToPhysx(pGameObject, pCCT);
 }
 
 HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)
