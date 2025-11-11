@@ -32,6 +32,7 @@ public:
 public:
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
 	{
+		_float fOffsetX{ 0.f }, fOffsetY{ 0.f };
 		_uint iLevel{ 0 };
 		_uint iDepth{ 0 };
 		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };

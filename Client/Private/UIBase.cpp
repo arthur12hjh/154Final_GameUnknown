@@ -27,6 +27,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_tUIDesc = m_tOriginUIDesc;
+	m_iZOrder = m_tUIDesc.iDepth;
 
 	m_pGameManager = CGameManager::GetInstance();
 
@@ -45,6 +46,12 @@ void CUIBase::Priority_Update(_float fTimeDelta)
 
 void CUIBase::Update(_float fTimeDelta)
 {
+	if (m_pParent)
+	{
+		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
+		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
+	}
+	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
 }
 
 void CUIBase::Late_Update(_float fTimeDelta)
@@ -70,11 +77,8 @@ HRESULT CUIBase::Add_Child(CGameObject* pObj)
 
 void CUIBase::Set_Position(_float fX, _float fY)
 {
-	m_tUIDesc.fX = fX;
-	m_tUIDesc.fY = fY;
-
-	_uint2 ScreenSize = m_pGameInstance->GetScreenSize();
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_tUIDesc.fX - ScreenSize.x * 0.5f, -m_tUIDesc.fY + ScreenSize.y * 0.5f, 0.f, 1.f));
+	m_tUIDesc.fOffsetX = fX;
+	m_tUIDesc.fOffsetY = fY;
 }
 
 void CUIBase::Set_Size(_float fSizeX, _float fSizeY) {

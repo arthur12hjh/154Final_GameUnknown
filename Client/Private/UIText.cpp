@@ -58,10 +58,16 @@ HRESULT CUIText::Render()
 	if (m_tUIDesc.Get_UI_Text_Desc())
 	{
 		_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), m_tUIDesc.Get_UI_Text_Desc()->szText.c_str());
+
 		m_pGameInstance->Render_Text(TEXT("KoPub"),
 			m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
-			_float2(m_tUIDesc.fX - fTextSize.x * 0.5f, m_tUIDesc.fY - fTextSize.y * 0.5f),
+			_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f, m_tUIDesc.fY + m_tUIDesc.fOffsetY - fTextSize.y * 0.5f),
 			XMLoadFloat4(&m_tUIDesc.Get_UI_Text_Desc()->vColor));
+
+		/*m_pGameInstance->Render_Text(TEXT("KoPub"),
+			m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
+			_float2(m_tUIDesc.fX - fTextSize.x * 0.5f, m_tUIDesc.fY - fTextSize.y * 0.5f),
+			XMLoadFloat4(&m_tUIDesc.Get_UI_Text_Desc()->vColor));*/
 	}
 
 	return S_OK;

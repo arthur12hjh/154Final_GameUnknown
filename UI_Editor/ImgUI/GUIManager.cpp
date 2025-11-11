@@ -287,6 +287,8 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
         CUIBase::UIBASE_DESC Desc{};
         Desc.fSizeX = 100.f;
         Desc.fSizeY = 20.f;
+        //Desc.fX = 0.f;
+        //Desc.fY = 0.f;
         Desc.fX = pParent->Get_UIBase_OriginDesc().fX;
         Desc.fY = pParent->Get_UIBase_OriginDesc().fY;
         Desc.iDepth = pParent->Get_UIBase_OriginDesc().iDepth + 1;
@@ -489,8 +491,10 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
             m_bOpenViewOptions = true;
             m_pTargetUI = pObj;
 
-            m_vOldPos.x = m_pTargetUI->Get_UIBase_OriginDesc().fX;
-            m_vOldPos.y = m_pTargetUI->Get_UIBase_OriginDesc().fY;
+            //m_vOldPos.x = m_pTargetUI->Get_UIBase_OriginDesc().fX;
+            //m_vOldPos.y = m_pTargetUI->Get_UIBase_OriginDesc().fY;
+            m_vOldPos.x = m_pTargetUI->Get_UIBase_OriginDesc().fOffsetX;
+            m_vOldPos.y = m_pTargetUI->Get_UIBase_OriginDesc().fOffsetY;
             m_vEditedPos = m_vOldPos;
 
             m_vOldSize.x = m_pTargetUI->Get_UIBase_OriginDesc().fSizeX;
@@ -637,8 +641,18 @@ void CGUIManager::Set_Size(_float2* pOldSize, _float2* pEditedSize)
 
 void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
 {
+    string CurrentPos = "CurrentPos : " + to_string(m_pTargetUI->Get_UIBase_Desc().fX) + ", " + to_string(m_pTargetUI->Get_UIBase_Desc().fY);
+
+    _vector vPos = m_pTargetUI->GetTransform()->Get_State(STATE::POSITION);
+    _float2 vPosXY = { XMVectorGetX(vPos), XMVectorGetY(vPos) };
+
+    string TransformPos = "Transform : " + to_string(vPosXY.x) + ", " + to_string(vPosXY.y);
     string pos = "Origin : " + to_string(pOldPos->x) + ", " + to_string(pOldPos->y);
 
+    GUI::Text(TransformPos.c_str());
+    GUI::Separator();
+    GUI::Text(CurrentPos.c_str());
+    GUI::Separator();
     GUI::Text(pos.c_str());
     GUI::Separator();
 
@@ -659,8 +673,12 @@ void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
         *pOldPos = *pEditedPos;
 
         Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
-        Desc.fX = pOldPos->x;
-        Desc.fY = pOldPos->y;
+        //Desc.fX = pOldPos->x;
+        //Desc.fY = pOldPos->y;
+        Desc.fOffsetX = pOldPos->x;
+        Desc.fOffsetY = pOldPos->y;
+        //Desc.fX = Desc.fX + Desc.fOffsetX;
+        //Desc.fY = Desc.fY + Desc.fOffsetY;
 
         m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }
