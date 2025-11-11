@@ -43,8 +43,10 @@ private:
 
 private:
 	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_GamePlay();
 
+	HRESULT Loading_For_GamePlay();
+	HRESULT Loading_For_GamePlay_Mesh();
+	HRESULT Loading_For_GamePlay_Shader();
 
 
 public:

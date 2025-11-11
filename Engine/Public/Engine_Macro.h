@@ -5,6 +5,8 @@
 #define			MAX_KEY								256
 #define			MAX_MOUSEKEY						4
 
+#define			INF_MAX								987654321
+
 #define D3DCOLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((b)&0xff)<<16)|(((g)&0xff)<<8)|((r)&0xff)))
 

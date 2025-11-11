@@ -1,7 +1,9 @@
 #include "Renderer.h"
 
 #include "GameObject.h"
+
 #include "BlendObject.h"
+#include "UIObject.h"
 #include "GameInstance.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -584,6 +586,9 @@ void CRenderer::Apply_Deferred()
 
 void CRenderer::Render_UI()
 {
+	m_RenderObjects[ENUM_CLASS(RENDER::UI)].sort([](CGameObject* pSour, CGameObject* pDest)->_bool {
+		return static_cast<CUIObject*>(pSour)->GetZOrder() < static_cast<CUIObject*>(pDest)->GetZOrder();
+		});
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::UI)])
 	{

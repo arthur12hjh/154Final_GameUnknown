@@ -88,6 +88,26 @@ void CModel::Attach_CombinedTransformationMatrix()
 	}
 }
 
+void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
+{
+	*pVIBuffer = m_Meshes[iMeshNum]->GetVIBuffer();
+	*pIndexBuffer = m_Meshes[iMeshNum]->GetIBBuffer();
+}
+
+_uint CModel::Get_MeshIndices(_uint iMeshNum)
+{
+	return m_Meshes[iMeshNum]->GetIndices();
+}
+
+_uint CModel::Get_MeshVertexStride(_uint iMeshNum)
+{
+	return m_Meshes[iMeshNum]->GetVertexStride();
+}
+
+DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
+{
+	return m_Meshes[iMeshNum]->GetIndexFormat();
+}
 
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {

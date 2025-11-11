@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Model.h"
 
 #pragma region Shader
@@ -15,7 +14,9 @@
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Point.h"
 #include "VIBuffer_Rect_Instance.h"
+#include "VIBuffer_Instance_Model.h"
 #include "VIBuffer_Point_Instance.h"
 
 #pragma endregion
@@ -30,3 +31,5 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #pragma endregion
+
+#include "Light.h"
