@@ -684,6 +684,11 @@ _bool CGameInstance::IsThreadPoolStop()
 	return m_pThreadPool->IsThreadPoolStop();
 }
 
+size_t CGameInstance::GetThreadJobCount()
+{
+	return m_pThreadPool->GetThreadJobCount();
+}
+
 #pragma endregion
 
 #pragma region Camera Manager
