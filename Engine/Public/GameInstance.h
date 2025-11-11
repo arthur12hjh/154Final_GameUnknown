@@ -195,6 +195,7 @@ public:
 	// 작업수행되서 작업리스트에서 빠지면 댕글링 포인터입니다.
 	ThreadJobHandle*				Add_ThreadjobList(function<void()> function);
 	_bool							IsThreadPoolStop();
+	size_t							GetThreadJobCount();
 #pragma endregion
 
 #pragma region Camera Manager

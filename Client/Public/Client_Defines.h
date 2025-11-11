@@ -8,12 +8,6 @@ namespace Client
 	const unsigned int			g_iWinSizeX = 1600;
 	const unsigned int			g_iWinSizeY = 900;
 
-<<<<<<< HEAD
-	const unsigned int			g_iHalfWinSizeX = 800;
-	const unsigned int			g_iHalfWinSizeY = 450;
-=======
->>>>>>> adbb795150dfd6bf476ed25523ec24c731b3e995
-
 	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, END };
 }
 

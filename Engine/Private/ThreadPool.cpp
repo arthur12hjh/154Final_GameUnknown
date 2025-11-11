@@ -71,6 +71,11 @@ void CThreadPool::StopAllThread()
 		pThread.join();
 }
 
+size_t CThreadPool::GetThreadJobCount()
+{
+	return m_ThreadJobs.size();
+}
+
 CThreadPool* CThreadPool::Create(_uint iNumThread)
 {
 	CThreadPool* pThreadPool = new CThreadPool();
