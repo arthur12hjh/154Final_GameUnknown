@@ -154,7 +154,6 @@ HRESULT CLightTool::Render()
 
 		if (m_pLights && !m_pLights->empty())
 		{
-			size_t i = 0;
 			for (auto pLight : *m_pLights)
 			{
 				pLight->SetDead(true);
@@ -387,6 +386,16 @@ HRESULT CLightTool::Load_Light_Objects()
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);
 		return E_FAIL;
+	}
+
+	m_pLights = m_pGameInstance->GetAllLight();
+
+	if (m_pLights && !m_pLights->empty())
+	{
+		for (auto pLight : *m_pLights)
+		{
+			pLight->SetDead(true);
+		}
 	}
 
 	_uint iNumLights = 0;
