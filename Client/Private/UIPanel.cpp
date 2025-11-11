@@ -38,36 +38,37 @@ HRESULT CUIPanel::Initialize(void* pArg)
 
 void CUIPanel::Priority_Update(_float fTimeDelta)
 {
-	
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CUIPanel::Update(_float fTimeDelta)
 {
-	
+	__super::Update(fTimeDelta);
 }
 
 void CUIPanel::Late_Update(_float fTimeDelta)
 {
-	if (m_bRender)
-		m_pGameInstance->Add_RenderGroup(static_cast<RENDER>(m_tUIDesc.iRenderGroup), this);
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIPanel::Render()
 {
-	if (!m_bRender)
-		return S_OK;
+	if (m_tUIDesc.Get_UI_Texture_Desc())
+	{
+		if (FAILED(Bind_ShaderResources()))
+			return E_FAIL;
 
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
+		if (FAILED(m_pShaderCom->Begin(m_tUIDesc.Get_UI_Texture_Desc()->iPass)))
+			return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(m_tUIDesc.iPass)))
-		return E_FAIL;
+		if (FAILED(m_pVIBufferCom->Bind_Resources()))
+			return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Bind_Resources()))
-		return E_FAIL;
+		if (FAILED(m_pVIBufferCom->Render()))
+			return E_FAIL;
+	}
 
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
+	__super::Render();
 
 	return S_OK;
 }
@@ -100,7 +101,7 @@ HRESULT CUIPanel::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.iTextureIndex)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.Get_UI_Texture_Desc()->iTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;

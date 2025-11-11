@@ -45,31 +45,6 @@ CGameObject* CGameManager::GetGameCharacter()
 }
 
 #pragma region UIResourceManager
-//HRESULT CGameManager::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, _uint iTextureIndex, void* pArg)
-//{
-//    return m_pUIResourceStore->Add_UI_Texture(iProtoLevel, szTextureProtoTag, szTextureTag, iTextureIndex, pArg);
-//}
-//
-//CTexture* CGameManager::Get_UI_TextureCom(const WCHAR* szTextureTag)
-//{
-//    return m_pUIResourceStore->Get_UI_TextureCom(szTextureTag);
-//}
-//
-//_uint CGameManager::Get_UI_Texture_Index(const WCHAR* szTextureTag)
-//{
-//    return m_pUIResourceStore->Get_UI_Texture_Index(szTextureTag);
-//}
-//
-//const unordered_map<_wstring, CTexture*>* CGameManager::Get_UI_Textures()
-//{
-//    return m_pUIResourceStore->Get_UI_Textures();
-//}
-//
-//const unordered_map<_wstring, _uint>* CGameManager::Get_UI_TextureIndices()
-//{
-//    return m_pUIResourceStore->Get_UI_TextureIndices();
-//}
-
 HRESULT CGameManager::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex, void* pArg)
 {
     return m_pUIResourceStore->Add_UI_Texture(iProtoLevel, szTextureProtoTag, szTextureTag, szFilePath, iTextureIndex, pArg);
@@ -82,7 +57,6 @@ const unordered_map<_wstring, CUIResourceStore::UI_TEXTURE_DESC>* CGameManager::
 {
     return m_pUIResourceStore->Get_UI_Texture_Descs();
 }
-
 #pragma endregion
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

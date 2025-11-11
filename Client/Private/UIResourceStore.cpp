@@ -18,15 +18,6 @@ HRESULT CUIResourceStore::Initialize()
 	return S_OK;
 }
 
-//CTexture* CUIResourceStore::Find_Texture(const _wstring& szTextureTag)
-//{
-//	auto	iter = m_Textures.find(szTextureTag);
-//	if (iter == m_Textures.end())
-//		return nullptr;
-//
-//	return iter->second;
-//}
-
 HRESULT CUIResourceStore::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex, void* pArg)
 {
 	if (nullptr != Find_UI_Texture_Desc(szTextureTag).pTexture)
@@ -44,33 +35,8 @@ HRESULT CUIResourceStore::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTe
 
 	m_TextureDescs.emplace(szTextureTag, Desc);
 
-	//m_Textures.emplace(szTextureTag, pTexture);
-	//m_TextureIndices.emplace(szTextureTag, iTextureIndex);
-
-	//Safe_AddRef(pTexture);
-
 	return S_OK;
 }
-
-//CTexture* CUIResourceStore::Get_UI_TextureCom(const WCHAR* szTextureTag)
-//{
-//	auto pTexture = m_Textures.find(szTextureTag);
-//
-//	if (pTexture == m_Textures.end())
-//		return nullptr;
-//
-//	return pTexture->second;
-//}
-//
-//_uint CUIResourceStore::Get_UI_Texture_Index(const WCHAR* szTextureTag)
-//{
-//	auto pTextureIndex = m_TextureIndices.find(szTextureTag);
-//
-//	if (pTextureIndex == m_TextureIndices.end())
-//		return 0;
-//
-//	return pTextureIndex->second;
-//}
 
 CUIResourceStore::UI_TEXTURE_DESC CUIResourceStore::Get_UI_Texture_Desc(const WCHAR* szTextureTag)
 {

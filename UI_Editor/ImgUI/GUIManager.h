@@ -106,6 +106,9 @@ private:
 
 	_float2 m_vEditedPos = { };
 	_float2 m_vEditedSize = { };
+	
+	_char m_szInputText[MAX_PATH]{};
+	_float4 m_vColor{ 1.f, 1.f, 1.f, 1.f };
 
 private:
 	void ViewMode();
@@ -118,11 +121,9 @@ private:
 
 	void Select_UI_Proto_Tag(char* _Outstr);
 	void Select_Texture_Tag(char* _Outstr);
-	void Select_Texture_Index(_uint* _Out);
 
 	void SetUp_UI_Proto_Tags();
 	void SetUp_Texture_Tags();
-	void SetUp_Texture_Index();
 	
 	void View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc);
 
@@ -130,9 +131,10 @@ private:
 
 	void View_Options();
 
-	void Set_Size();
-	void Set_Position();
+	void Set_Size(_float2* pOldSize, _float2* pEditedSize);
+	void Set_Position(_float2* pOldPos, _float2* pEditedPos);
 	void Set_Texture();
+	void Set_Text();
 
 	ID3D11ShaderResourceView* LoadTextureSRV(const _wstring& path);
 

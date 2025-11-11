@@ -28,6 +28,8 @@
 #include "UIWrapper.h"
 #include "UIPanel.h"
 #include "UIButton.h"
+#include "UIText.h"
+
 // 로드 테스트
 #include "Vil_Bui03_04.h"
 
@@ -449,6 +451,10 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 	
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"),
 		CUIButton::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Text"),
+		CUIText::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

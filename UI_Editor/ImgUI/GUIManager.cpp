@@ -13,6 +13,7 @@
 #include "UIWrapper.h"
 #include "UIButton.h"
 #include "UIBase.h"
+#include "UIText.h"
 
 // GUI 매니저 싱글톤 구현
 IMPLEMENT_SINGLETON(CGUIManager);
@@ -243,9 +244,9 @@ void CGUIManager::Create_Layer()
         Desc.fY = g_iHalfWinSizeY;
         Desc.iDepth = 0;
         Desc.iLevel = m_iCurrentLevel;
-        Desc.iPass = 0;
-        Desc.iTextureIndex = 0;
-        Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
+        //Desc.iPass = 0;
+        //Desc.iTextureIndex = 0;
+        //Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
         Desc.szLayerTag = szLayerTag;
         Desc.szUITag = szUITag;
         //Desc.szTextureComTag = szTextureComTag;
@@ -290,9 +291,9 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
         Desc.fY = pParent->Get_UIBase_OriginDesc().fY;
         Desc.iDepth = pParent->Get_UIBase_OriginDesc().iDepth + 1;
         Desc.iLevel = m_iCurrentLevel;
-        Desc.iPass = 0;
-        Desc.iTextureIndex = 1;
-        Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
+        //Desc.iPass = 0;
+        //Desc.iTextureIndex = 1;
+        //Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
         Desc.szUITag = szUITag;
         Desc.szLayerTag = pParent->Get_UIBase_OriginDesc().szLayerTag.c_str();
         //Desc.szTextureComTag = szTextureComTag;
@@ -381,10 +382,6 @@ void CGUIManager::Select_Texture_Tag(char* _Outstr)
     }
 }
 
-void CGUIManager::Select_Texture_Index(_uint* _Out)
-{
-}
-
 void CGUIManager::SetUp_UI_Proto_Tags()
 {
     m_ProtoTags.clear();
@@ -425,11 +422,6 @@ void CGUIManager::SetUp_Texture_Tags()
             m_TextureComTags.push_back(pTexture.first.substr(pos + prefix.length()));
         }
     }
-}
-
-void CGUIManager::SetUp_Texture_Index()
-{
-
 }
 
 void CGUIManager::View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc)
@@ -504,6 +496,9 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
             m_vOldSize.x = m_pTargetUI->Get_UIBase_OriginDesc().fSizeX;
             m_vOldSize.y = m_pTargetUI->Get_UIBase_OriginDesc().fSizeY;
             m_vEditedSize = m_vOldSize;
+
+            if (m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Text_Desc())
+                m_vColor = m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Text_Desc()->vColor;
         }
         GUI::SameLine();
         if (GUI::Button("Add Child"))
@@ -547,13 +542,13 @@ void CGUIManager::View_Options()
     {
         if (GUI::BeginTabItem("Position"))
         {
-            Set_Position();
+            Set_Position(&m_vOldPos, &m_vEditedPos);
             GUI::EndTabItem();
         }
 
         if (GUI::BeginTabItem("Size"))
         {
-            Set_Size();
+            Set_Size(&m_vOldSize, &m_vEditedSize);
             GUI::EndTabItem();
         }
 
@@ -561,6 +556,15 @@ void CGUIManager::View_Options()
         {
             Set_Texture();
             GUI::EndTabItem();
+        }
+
+        if (dynamic_cast<Client::CUIText*>(m_pTargetUI))
+        {
+            if (GUI::BeginTabItem("Text"))
+            {
+                Set_Text();
+                GUI::EndTabItem();
+            }
         }
 
         GUI::EndTabBar();
@@ -599,58 +603,64 @@ void CGUIManager::View_Options()
     GUI::End();
 }
 
-void CGUIManager::Set_Size()
+void CGUIManager::Set_Size(_float2* pOldSize, _float2* pEditedSize)
 {
-    string scale = "Origin : " + to_string(m_vOldSize.x) + ", " + to_string(m_vOldSize.y);
+    string size = "Origin : " + to_string(pOldSize->x) + ", " + to_string(pOldSize->y);
 
-    GUI::InputFloat("Size_x", &m_vEditedSize.x);
-    GUI::InputFloat("Size_y", &m_vEditedSize.y);
+    GUI::Text(size.c_str());
+    GUI::Separator();
 
-    m_pTargetUI->Set_Size(m_vEditedSize.x, m_vEditedSize.y);
+    GUI::InputFloat("Size_x", &pEditedSize->x);
+    GUI::InputFloat("Size_y", &pEditedSize->y);
+
+    m_pTargetUI->Set_Size(pEditedSize->x, pEditedSize->y);
 
     if (GUI::Button("Reset"))
     {
-        m_pTargetUI->Set_Size(m_vOldSize.x, m_vOldSize.y);
-        m_vEditedSize = m_vOldSize;
+        m_pTargetUI->Set_Size(pOldSize->x, pOldSize->y);
+        *pEditedSize = *pOldSize;
     }
 
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
-    if (GUI::Button("Save"))
+    if (GUI::Button("Apply"))
     {
-        m_vOldSize = m_vEditedSize;
+        *pOldSize = *pEditedSize;
 
         Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
-        Desc.fSizeX = m_vOldSize.x;
-        Desc.fSizeY = m_vOldSize.y;
+        Desc.fSizeX = pOldSize->x;
+        Desc.fSizeY = pOldSize->y;
 
         m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }
     GUI::PopStyleColor();
 }
 
-void CGUIManager::Set_Position()
+void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
 {
-    string pos = "Origin : " + to_string(m_vOldPos.x) + ", " + to_string(m_vOldPos.y);
+    string pos = "Origin : " + to_string(pOldPos->x) + ", " + to_string(pOldPos->y);
 
-    GUI::DragFloat("Position_x", &m_vEditedPos.x, 1.f, 0.f, 0.f, "%.2f");
-    GUI::DragFloat("Position_y", &m_vEditedPos.y, 1.f, 0.f, 0.f, "%.2f");
+    GUI::Text(pos.c_str());
+    GUI::Separator();
 
-    m_pTargetUI->Set_Position(m_vEditedPos.x, m_vEditedPos.y);
+    GUI::DragFloat("Position_x", &pEditedPos->x, 1.f, 0.f, 0.f, "%.2f");
+    GUI::DragFloat("Position_y", &pEditedPos->y, 1.f, 0.f, 0.f, "%.2f");
+
+    m_pTargetUI->Set_Position(pEditedPos->x, pEditedPos->y);
 
     if (GUI::Button("Reset"))
     {
-        m_pTargetUI->Set_Position(m_vOldPos.x, m_vOldPos.y);
-        m_vEditedPos = m_vOldPos;
+        m_pTargetUI->Set_Position(pOldPos->x, pOldPos->y);
+        *pEditedPos = *pOldPos;
     }
 
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
-    if (GUI::Button("Save"))
+    if (GUI::Button("Apply"))
     {
-        m_vOldPos = m_vEditedPos;
+        *pOldPos = *pEditedPos;
 
         Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
-        Desc.fX = m_vOldPos.x;
-        Desc.fY = m_vOldPos.y;
+        Desc.fX = pOldPos->x;
+        Desc.fY = pOldPos->y;
 
         m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }
@@ -665,46 +675,67 @@ void CGUIManager::Set_Texture()
     WCHAR szTextureComTag[MAX_PATH]{};
     swprintf_s(szTextureComTag, TEXT("Com_Texture_%hs"), m_szCloneTextureComTag);
 
-    //CTexture* pTextureCom = m_pGameManager->Get_UI_TextureCom(szTextureComTag);
-    //_uint iTextureIndex = m_pGameManager->Get_UI_Texture_Index(szTextureComTag);
+    CUIResourceStore::UI_TEXTURE_DESC ResDesc{};
 
-    CUIResourceStore::UI_TEXTURE_DESC pDesc{};
+    ResDesc = m_pGameManager->Get_UI_Texture_Desc(szTextureComTag);
 
-    pDesc = m_pGameManager->Get_UI_Texture_Desc(szTextureComTag);
-
-    if(pDesc.pTexture)
+    if(ResDesc.pTexture)
     {
-        View_Textures(szTextureComTag, pDesc);
-        //SetUp_Texture_Index();
-        //Select_Texture_Index(m_szCloneTextureComTag);
+        View_Textures(szTextureComTag, ResDesc);
     }
-
-    /*if (GUI::Button("Apply"))
-    {
-        
-    }*/
 
     if (GUI::Button("Reset"))
     {
-        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_OriginDesc().szTextureComTag, m_pTargetUI->Get_UIBase_OriginDesc().iTextureIndex);
+        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Texture_Desc()->szTextureComTag, m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Texture_Desc()->iTextureIndex);
     }
     GUI::SameLine();
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
-    if (GUI::Button("Save"))
+    if (GUI::Button("Apply"))
     {
-        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
-        Desc.szTextureComTag = szTextureComTag;
-        Desc.iTextureIndex = m_iCurrentTextureIndex;
+        Client::CUIBase::UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
 
-        m_pTargetUI->Set_UIBase_OriginDesc(Desc);
+        m_pTargetUI->Set_UIBase_OriginDesc(UIDesc);
     }
     GUI::PopStyleColor();
+}
+
+void CGUIManager::Set_Text()
+{
+    Client::CUIBase::UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
+    Client::CUIBase::UI_TEXT_DESC TextDesc{};
+
+    GUI::InputText("Input Text", m_szInputText, IM_ARRAYSIZE(m_szInputText));
+
+    //ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
+
+    WCHAR szInputText[MAX_PATH]{};
+    CStringHelper::ConvertUTFToWide(m_szInputText, szInputText);
+
+    if (UIDesc.Get_UI_Text_Desc())
+    {
+        if (GUI::ColorPicker4("MyColorPicker", (float*)&m_vColor)) {
+            // 색상이 변경될 때 처리
+            TextDesc.vColor = m_vColor;
+            TextDesc.szText = szInputText;
+            UIDesc.Set_UI_Text_Desc(TextDesc);
+            m_pTargetUI->Set_UIBase_Desc(UIDesc);
+        }
+    }
+
+    if (GUI::Button("Apply"))
+    {
+        TextDesc.szText = szInputText;
+        TextDesc.vColor = m_vColor;
+
+        UIDesc.Set_UI_Text_Desc(TextDesc);
+
+        m_pTargetUI->Set_UIBase_OriginDesc(UIDesc);
+    }
 }
 
 ID3D11ShaderResourceView* CGUIManager::LoadTextureSRV(const _wstring& path)
 {
     ID3D11ShaderResourceView* pSRV = nullptr;
-    //HRESULT hr = CreateWICTextureFromFile(m_pDevice, m_pContext, path.c_str(), nullptr, &pSRV);
     HRESULT hr = CreateWICTextureFromFile(m_pDevice, path.c_str(), nullptr, &pSRV);
     if (FAILED(hr))
         return nullptr;

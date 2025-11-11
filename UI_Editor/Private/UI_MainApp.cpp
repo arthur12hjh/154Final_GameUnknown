@@ -81,6 +81,9 @@ HRESULT CUI_MainApp::Ready_Default_Setting()
 	/*if (FAILED(m_pGameInstance->Add_Font(TEXT("Spoqa_16"), TEXT("../Bin/Resources/Fonts/Spoqa_Han_Sans_Neo_Medium16.spritefont"))))
 		return E_FAIL;*/
 
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

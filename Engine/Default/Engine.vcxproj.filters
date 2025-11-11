@@ -142,9 +142,6 @@
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Font_Manager.h">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClInclude>
@@ -252,6 +249,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\BinParser.h">
       <Filter>01.Utility\103.ModelParser\BinParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Font_Manager.h">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -378,9 +378,6 @@
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Font_Manager.cpp">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClCompile>
@@ -479,6 +476,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CCTBehaviorCallback.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Font_Manager.cpp">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -643,12 +643,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD">
-      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD\Layer">
-      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Collider">
       <UniqueIdentifier>{72d6d7ff-05c7-4e9e-994f-be7cd7b4685e}</UniqueIdentifier>

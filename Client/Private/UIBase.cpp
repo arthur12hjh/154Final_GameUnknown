@@ -49,6 +49,8 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
+	if (m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc())
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
 }
 
 HRESULT CUIBase::Render()
@@ -84,39 +86,35 @@ void CUIBase::Set_Size(_float fSizeX, _float fSizeY) {
 
 HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _uint iTextureIndex)
 {
-	m_tUIDesc.iTextureIndex = iTextureIndex;
-	m_tUIDesc.szTextureComTag = szTextureTag;
+	CUIBase::UI_TEXTURE_DESC Desc{};
+	Desc.iTextureIndex = iTextureIndex;
+	Desc.szTextureComTag = szTextureTag;
 
-	if (m_tUIDesc.szTextureComTag == TEXT(""))
-	{
-		m_bRender = false;
+	m_tUIDesc.Set_UI_Texture_Desc(Desc);
+
+	if (m_tUIDesc.Get_UI_Texture_Desc() == nullptr)
 		return S_OK;
-	}
 
-	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.szTextureComTag.c_str()).pTexture;
+	/*m_tUIDesc.Get_UI_Texture_Desc()->iTextureIndex = iTextureIndex;
+	m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag = szTextureTag;*/
+
+	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
-
-	m_bRender = true;
 
 	return S_OK;
 }
 
 HRESULT CUIBase::Ready_Texture()
 {
-	if (m_tUIDesc.szTextureComTag == TEXT(""))
-	{
-		m_bRender = false;
+	if (m_tUIDesc.Get_UI_Texture_Desc() == nullptr)
 		return S_OK;
-	}
 
-	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.szTextureComTag.c_str()).pTexture;
+	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
-
-	m_bRender = true;
 
 	return S_OK;
 }

@@ -16,16 +16,63 @@ class CGameManager;
 class CUIBase abstract : public CUIObject
 {
 public:
+	typedef struct tagUITextDesc
+	{
+		_wstring szText;
+		_float4 vColor{ 1.f, 1.f, 1.f, 1.f };
+	}UI_TEXT_DESC;
+
+	typedef struct tagUITextureDesc
+	{
+		_wstring szTextureComTag;
+		_uint iTextureIndex{ 0 };
+		_uint iPass{ 0 };
+	}UI_TEXTURE_DESC;
+
+public:
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
 	{
 		_uint iLevel{ 0 };
 		_uint iDepth{ 0 };
-		_uint iPass{ 0 };
-		_uint iRenderGroup{ 0 };
-		_uint iTextureIndex{ 0 };
+		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };
+
 		_wstring szUITag;
 		_wstring szLayerTag;
-		_wstring szTextureComTag;
+
+		//~tagUIBaseDesc() {
+		//	// 안전한 해제
+		//	delete m_pUITextDesc;
+		//	delete m_pUITextureDesc;
+		//}
+
+	public:
+		// 텍스트
+		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
+			m_pUITextDesc = new UI_TEXT_DESC(Desc);
+		}
+
+		UI_TEXT_DESC* Get_UI_Text_Desc() {
+			return m_pUITextDesc;
+		}
+
+		// 텍스쳐
+		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
+			m_pUITextureDesc = new UI_TEXTURE_DESC(Desc);
+		}
+
+		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
+			return m_pUITextureDesc;
+		}		
+
+	private:
+		UI_TEXT_DESC* m_pUITextDesc{};
+		UI_TEXTURE_DESC* m_pUITextureDesc;
+
+		void Clear() {
+			delete m_pUITextDesc; m_pUITextDesc = nullptr;
+			delete m_pUITextureDesc; m_pUITextureDesc = nullptr;
+		}
+
 	}UIBASE_DESC;
 
 protected:
@@ -85,8 +132,6 @@ protected:
 	UIBASE_DESC m_tUIDesc{};
 
 	vector<CUIBase*>		m_Children = {};
-	
-	_bool m_bRender = false;
 
 private:
 	HRESULT Ready_Texture();

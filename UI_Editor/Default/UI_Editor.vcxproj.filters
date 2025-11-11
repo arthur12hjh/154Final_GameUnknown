@@ -178,6 +178,9 @@
     <ClCompile Include="..\..\Client\Private\UIResourceStore.cpp">
       <Filter>999. CPP From Client\01. GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIText.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
