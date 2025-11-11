@@ -5,11 +5,11 @@
 
 NS_BEGIN(Tool_UI)
 
-class CLevel_Logo final : public CLevel
+class CUI_Level_Logo final : public CLevel
 {
 private:
-	CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
-	virtual ~CLevel_Logo() = default;
+	CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
+	virtual ~CUI_Level_Logo() = default;
 
 public:
 	virtual HRESULT Initialize() override;
@@ -24,7 +24,7 @@ private:
 	class CGUIManager* m_pGuiManager{ nullptr };
 
 public:
-	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
+	static CUI_Level_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
 	virtual void Free() override;
 };
 

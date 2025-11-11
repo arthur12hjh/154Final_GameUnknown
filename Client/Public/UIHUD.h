@@ -15,6 +15,9 @@ private:
 	virtual ~CUIHUD() = default;
 
 public:
+	unordered_map<_wstring, CHUDLayer*> Get_Layers() { return m_pLayers; }
+
+public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };

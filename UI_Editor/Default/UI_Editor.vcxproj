@@ -151,11 +151,11 @@
     <ClInclude Include="..\ImgUI\imstb_rectpack.h" />
     <ClInclude Include="..\ImgUI\imstb_textedit.h" />
     <ClInclude Include="..\ImgUI\imstb_truetype.h" />
-    <ClInclude Include="..\Public\Level_GamePlay.h" />
-    <ClInclude Include="..\Public\Level_Loading.h" />
-    <ClInclude Include="..\Public\Level_Logo.h" />
-    <ClInclude Include="..\Public\Loader.h" />
-    <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\UI_Level_GamePlay.h" />
+    <ClInclude Include="..\Public\UI_Level_Loading.h" />
+    <ClInclude Include="..\Public\UI_Level_Logo.h" />
+    <ClInclude Include="..\Public\UI_Loader.h" />
+    <ClInclude Include="..\Public\UI_MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\Tool_UI_Defines.h" />
     <ClInclude Include="framework.h" />
@@ -189,11 +189,11 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_GamePlay.cpp" />
-    <ClCompile Include="..\Private\Level_Loading.cpp" />
-    <ClCompile Include="..\Private\Level_Logo.cpp" />
-    <ClCompile Include="..\Private\Loader.cpp" />
-    <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\UI_Level_GamePlay.cpp" />
+    <ClCompile Include="..\Private\UI_Level_Loading.cpp" />
+    <ClCompile Include="..\Private\UI_Level_Logo.cpp" />
+    <ClCompile Include="..\Private\UI_Loader.cpp" />
+    <ClCompile Include="..\Private\UI_MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

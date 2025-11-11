@@ -5,7 +5,7 @@
 #include "framework.h"
 #include "UI_Editor.h"
 
-#include "MainApp.h"
+#include "UI_MainApp.h"
 #include "GameInstance.h"
 
 #define MAX_LOADSTRING 100
@@ -33,7 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
-    CMainApp* pMainApp = { nullptr };
+    CUI_MainApp* pMainApp = { nullptr };
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -50,7 +50,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    pMainApp = CMainApp::Create();
+    pMainApp = CUI_MainApp::Create();
     if (nullptr == pMainApp)
         return FALSE;
 
@@ -140,8 +140,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     g_hInstance = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
+   RECT     rcWindow = { 0, 0, g_iWinSizeX, g_iWinSizeY };
+
+   AdjustWindowRect(&rcWindow, WS_OVERLAPPEDWINDOW, TRUE);
+
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {

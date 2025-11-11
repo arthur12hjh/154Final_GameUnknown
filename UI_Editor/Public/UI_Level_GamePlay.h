@@ -5,11 +5,11 @@
 
 NS_BEGIN(Tool_UI)
 
-class CLevel_GamePlay final : public CLevel
+class CUI_Level_GamePlay final : public CLevel
 {
 private:
-	CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
-	virtual ~CLevel_GamePlay() = default;
+	CUI_Level_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
+	virtual ~CUI_Level_GamePlay() = default;
 
 public:
 	virtual HRESULT Initialize() override;
@@ -20,7 +20,7 @@ private:
 	HRESULT Ready_UI(const _wstring& strLayerTag);
 
 public:
-	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
+	static CUI_Level_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
 	virtual void Free() override;
 };
 

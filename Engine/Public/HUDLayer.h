@@ -22,6 +22,7 @@ public:
 	HRESULT						Remove_GameObject(const WCHAR* UITag);
 	
 	CGameObject*				Find_GameObject(const WCHAR* UITag);
+	const unordered_map<_wstring, CGameObject*>* Get_UserInterfaces() { return &m_UserInterfaces; }
 
 private:
 	unordered_map<_wstring, CGameObject*>		m_UserInterfaces = {};

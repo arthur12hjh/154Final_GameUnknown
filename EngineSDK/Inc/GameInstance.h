@@ -66,6 +66,7 @@ public:
 #pragma region PROTOTYPE_MANAGER
 	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
