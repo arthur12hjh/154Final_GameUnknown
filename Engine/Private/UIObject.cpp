@@ -60,8 +60,7 @@ void CUIObject::SetZOrder(_uint iZOrder)
 void CUIObject::ComputeTransform(_vector vPosition)
 {
     _matrix     ParentWorldMatrix{}, WorldMatrix{};
-    ParentWorldMatrix = XMLoadFloat4x4(m_pParent->GetTransform()->Get_WorldMatrixPtr());
-
+    
     switch (m_eDrawType)
     {
     case CUIObject::DRAW_TPYE::WORLD:
@@ -78,7 +77,16 @@ void CUIObject::ComputeTransform(_vector vPosition)
     }
 
     WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    XMStoreFloat4x4(&m_CombinedMatrix, WorldMatrix * ParentWorldMatrix);
+    if (m_pParent)
+    {
+        ParentWorldMatrix = XMLoadFloat4x4(m_pParent->GetTransform()->Get_WorldMatrixPtr());
+        XMStoreFloat4x4(&m_CombinedMatrix, WorldMatrix * ParentWorldMatrix);
+    }
+    else
+    {
+        XMStoreFloat4x4(&m_CombinedMatrix, WorldMatrix);
+    }
+  
 }
 
 void CUIObject::Free()

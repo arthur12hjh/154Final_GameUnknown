@@ -35,7 +35,7 @@
       <Filter>01.Utility\03.Components</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameObject.h">
-      <Filter>00.System\02.GameObjects</Filter>
+      <Filter>01.Utility\02.GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level.h">
       <Filter>01.Utility\01.Levels</Filter>
@@ -44,10 +44,10 @@
       <Filter>01.Utility\05.Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Object_Manager.h">
-      <Filter>00.System\02.GameObjects\Manager</Filter>
+      <Filter>01.Utility\02.GameObjects\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Layer.h">
-      <Filter>00.System\02.GameObjects\Manager\Layers</Filter>
+      <Filter>01.Utility\02.GameObjects\Manager\Layers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Manager.h">
       <Filter>01.Utility\01.Levels\Manager</Filter>
@@ -59,7 +59,7 @@
       <Filter>01.Utility\04.Prototypes\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIObject.h">
-      <Filter>00.System\02.GameObjects\UIObject</Filter>
+      <Filter>01.Utility\02.GameObjects\UIObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Transform.h">
       <Filter>01.Utility\03.Components\Transform</Filter>
@@ -107,10 +107,10 @@
       <Filter>01.Utility\03.Components\Model\Animation\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ContainerObject.h">
-      <Filter>00.System\02.GameObjects\ContainerObject</Filter>
+      <Filter>01.Utility\02.GameObjects\ContainerObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PartObject.h">
-      <Filter>00.System\02.GameObjects\PartObject</Filter>
+      <Filter>01.Utility\02.GameObjects\PartObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Light_Manager.h">
       <Filter>01.Utility\07.Lights\Manager</Filter>
@@ -158,7 +158,7 @@
       <Filter>01.Utility\10.Picking</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BlendObject.h">
-      <Filter>00.System\02.GameObjects\BlendObject</Filter>
+      <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Shadow.h">
       <Filter>01.Utility\11.Shadow</Filter>
@@ -271,7 +271,7 @@
       <Filter>01.Utility\03.Components</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GameObject.cpp">
-      <Filter>00.System\02.GameObjects</Filter>
+      <Filter>01.Utility\02.GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level.cpp">
       <Filter>01.Utility\01.Levels</Filter>
@@ -280,10 +280,10 @@
       <Filter>01.Utility\05.Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Object_Manager.cpp">
-      <Filter>00.System\02.GameObjects\Manager</Filter>
+      <Filter>01.Utility\02.GameObjects\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Layer.cpp">
-      <Filter>00.System\02.GameObjects\Manager\Layers</Filter>
+      <Filter>01.Utility\02.GameObjects\Manager\Layers</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_Manager.cpp">
       <Filter>01.Utility\01.Levels\Manager</Filter>
@@ -295,7 +295,7 @@
       <Filter>01.Utility\04.Prototypes\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIObject.cpp">
-      <Filter>00.System\02.GameObjects\UIObject</Filter>
+      <Filter>01.Utility\02.GameObjects\UIObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Transform.cpp">
       <Filter>01.Utility\03.Components\Transform</Filter>
@@ -343,10 +343,10 @@
       <Filter>01.Utility\03.Components\Model\Animation\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ContainerObject.cpp">
-      <Filter>00.System\02.GameObjects\ContainerObject</Filter>
+      <Filter>01.Utility\02.GameObjects\ContainerObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PartObject.cpp">
-      <Filter>00.System\02.GameObjects\PartObject</Filter>
+      <Filter>01.Utility\02.GameObjects\PartObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Light_Manager.cpp">
       <Filter>01.Utility\07.Lights\Manager</Filter>
@@ -394,7 +394,7 @@
       <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BlendObject.cpp">
-      <Filter>00.System\02.GameObjects\BlendObject</Filter>
+      <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Shadow.cpp">
       <Filter>01.Utility\11.Shadow</Filter>
@@ -677,9 +677,6 @@
     <Filter Include="01.Utility\101.String">
       <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Shader\Compute">
       <UniqueIdentifier>{f70290d7-8069-4762-8383-23523b3cf611}</UniqueIdentifier>
     </Filter>
@@ -743,26 +740,29 @@
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
       <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects">
+    <Filter Include="01.Utility\02.GameObjects">
       <UniqueIdentifier>{62d7d084-9acc-44d9-b9c2-856102250ce2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\Manager">
+    <Filter Include="01.Utility\02.GameObjects\Manager">
       <UniqueIdentifier>{efc82929-890d-4b38-9012-b28e7cfd31b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\Manager\Layers">
+    <Filter Include="01.Utility\02.GameObjects\Manager\Layers">
       <UniqueIdentifier>{71f86de6-d79b-4a5b-bd36-741a477b174d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\UIObject">
+    <Filter Include="01.Utility\02.GameObjects\UIObject">
       <UniqueIdentifier>{5afffd4c-fc13-4efe-81bd-ff8dd523a759}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\ContainerObject">
+    <Filter Include="01.Utility\02.GameObjects\ContainerObject">
       <UniqueIdentifier>{0caac38f-1c83-42cb-bc4d-60419d229070}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\PartObject">
+    <Filter Include="01.Utility\02.GameObjects\PartObject">
       <UniqueIdentifier>{1f0dfad3-a936-4e4a-a45b-dbdde53ef1c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\02.GameObjects\BlendObject">
+    <Filter Include="01.Utility\02.GameObjects\BlendObject">
       <UniqueIdentifier>{bda12695-dadb-4680-8048-7cfe7808cfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
