@@ -112,6 +112,7 @@ void CColliderRenderer::Render(class CShader* pShader)
 
     Render_DebugCollider(pShader);
     Render_DebugPhysxCollider(pShader);
+    m_pGameInstance->FrustomRender();
 }
 
 void CColliderRenderer::Render_DebugCollider(class CShader* pShader)

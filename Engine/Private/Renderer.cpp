@@ -236,6 +236,7 @@ void CRenderer::Render_Debug()
 {
 	m_pColliderRenderer->Render(m_pShader);
 
+
 	if (false == m_isDebugVisible)
 		return;
 
