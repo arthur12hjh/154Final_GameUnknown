@@ -18,7 +18,6 @@ extern float			g_fGameFrame;
 
 extern unsigned int		g_iHalfWinSizeX;
 extern unsigned int		g_iHalfWinSizeY;
-extern float 			g_fTimeRatio;
 
 extern bool				g_bIsFocus;
 extern bool				g_bIsMouseLock;

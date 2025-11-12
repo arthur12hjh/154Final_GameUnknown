@@ -77,7 +77,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _float      fTimeAcc = { };
     g_iHalfWinSizeX = g_iWinSizeX * 0.5f;
     g_iHalfWinSizeY = g_iWinSizeY * 0.5f;
-    g_fTimeRatio = 1.0f;
 
     while (true)
     {
@@ -100,7 +99,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             pGameInstance->Compute_TimeDelta(TEXT("GameLoopTime"));
 
-            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")) * g_fTimeRatio);
+            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
             pMainApp->Render();
 
             fTimeAcc = 0.f;

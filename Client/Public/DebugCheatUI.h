@@ -33,10 +33,10 @@ private:
 	char						m_szCameraComboTag[MAX_PATH] = {};
 
 	char						m_szSelectLight[MAX_PATH] = {};
-	char						m_szSelectGameSpeed[MAX_PATH] = {};
 	char						m_szVisbility[MAX_PATH] = {};
 	CLight*						m_pSelectLight = nullptr;
 
+	_float						m_fGameSpeed = {1.f};
 	_bool						m_bIsCamLerp = false;
 	_bool						m_bIsTeleport = false;
 #endif // _DEBUG

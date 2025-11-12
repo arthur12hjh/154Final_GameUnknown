@@ -14,17 +14,6 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     return S_OK;
 }
 
-void CGameManager::ResetGameSpeed()
-{
-    g_fTimeRatio = 1.0f;
-}
-
-void CGameManager::SetGameSpeed(_float fRatio)
-{
-    fRatio = Clamp<_float>(fRatio, 0.01f, 3.f);
-    g_fTimeRatio = fRatio;
-}
-
 void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
 {
     if (m_pPlayer == pCharacter)
