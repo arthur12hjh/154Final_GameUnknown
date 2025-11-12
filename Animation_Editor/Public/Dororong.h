@@ -9,18 +9,12 @@ NS_END
 
 NS_BEGIN(Animation_Editor)
 
-class CCharacter final : public CContainerObject
+class CDororong final : public CContainerObject
 {
-public:
-	enum STATE {
-		STATE_IDLE = 0x00000001, // 0000 0000 0000 0000 0000 0000 0000 0001
-		STATE_WALK = 0x00000002, // 0000 0000 0000 0000 0000 0000 0000 0010
-		STATE_ATTACK = 0x00000004, // 0000 0000 0000 0000 0000 0000 0000 0100
-	};
 private:
-	CCharacter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CCharacter(const CCharacter& Prototype);
-	virtual ~CCharacter() = default;
+	CDororong(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CDororong(const CDororong& Prototype);
+	virtual ~CDororong() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -35,11 +29,9 @@ public:
 
 private:
 	class CTool_Manager* m_pToolManager = { nullptr };
-	class CBody_Character* m_pPart_Body = { nullptr };
+	class CBody_Dororong* m_pPart_Body = { nullptr };
 
 	CCollider* m_pColliderCom = { nullptr };
-
-	_uint				m_iState = {};
 
 
 private:
@@ -47,7 +39,7 @@ private:
 	HRESULT Ready_PartObjects();
 
 public:
-	static CCharacter* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CDororong* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

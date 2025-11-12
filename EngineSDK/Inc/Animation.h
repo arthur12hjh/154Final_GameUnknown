@@ -19,6 +19,14 @@ public:
 
 	_uint Get_AnimationKeyFrameIndex() { return m_CurrentKeyFrameIndices[0]; }
 
+	_bool CompareAnimationTag(const _char* szAnimationTag)
+	{
+		if (0 == strcmp(szAnimationTag, m_szName))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
 	void Reset();
 private:
 	_char						m_szName[MAX_PATH] = {};

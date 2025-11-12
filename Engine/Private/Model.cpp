@@ -109,6 +109,27 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 	return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
+void CModel::Set_Animation(const _char* szAnimationTag)
+{
+	_uint iAnimIndex = 0;
+	for (auto& pAnimation : m_Animations)
+	{
+		if (TRUE == pAnimation->CompareAnimationTag(szAnimationTag))
+		{
+			if (m_iCurrentAnimIndex == iAnimIndex)
+				return;
+
+			m_iCurrentAnimIndex = iAnimIndex;
+			m_isLoop = TRUE;
+
+			m_Animations[m_iCurrentAnimIndex]->Reset();
+			return;
+		}
+
+		++iAnimIndex;
+	}
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
 	_uint			iFlag = {};

@@ -1,43 +1,38 @@
 #include "pch.h"
-#include "Body_Character.h"
+#include "Body_Dororong.h"
 
 #include "GameInstance.h"
 
 #include "Character.h"
 
-CBody_Character::CBody_Character(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBody_Dororong::CBody_Dororong(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CBody_Character::CBody_Character(const CBody_Character& Prototype)
+CBody_Dororong::CBody_Dororong(const CBody_Dororong& Prototype)
 	: CPartObject{ Prototype }
 {
 }
 
-const _float4x4* CBody_Character::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CBody_Dororong::Get_BoneMatrixPtr(const _char* pBoneName) const
 {
 	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);
 }
 
-_bool CBody_Character::isFinish_Att()
+_bool CBody_Dororong::isFinish_Att()
 {
-	if (*m_pParentState & CCharacter::STATE_ATTACK)
-		return m_isAnimFinish;
-
 	return false;
 }
 
-HRESULT CBody_Character::Initialize_Prototype()
+HRESULT CBody_Dororong::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBody_Character::Initialize(void* pArg)
+HRESULT CBody_Dororong::Initialize(void* pArg)
 {
-	BODY_CHARACTER_DESC* pDesc = static_cast<BODY_CHARACTER_DESC*>(pArg);
-
-	m_pParentState = pDesc->pParentState;
+	BODY_DORORONG_DESC* pDesc = static_cast<BODY_DORORONG_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -51,12 +46,12 @@ HRESULT CBody_Character::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CBody_Character::Priority_Update(_float fTimeDelta)
+void CBody_Dororong::Priority_Update(_float fTimeDelta)
 {
 	int a = 10;
 }
 
-void CBody_Character::Update(_float fTimeDelta)
+void CBody_Dororong::Update(_float fTimeDelta)
 {
 	//if (*m_pParentState & CCharacter::STATE_ATTACK)
 	//	m_pModelCom->Set_AnimationIndex(0, false);
@@ -86,7 +81,7 @@ void CBody_Character::Update(_float fTimeDelta)
 
 }
 
-void CBody_Character::Late_Update(_float fTimeDelta)
+void CBody_Dororong::Late_Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -96,7 +91,7 @@ void CBody_Character::Late_Update(_float fTimeDelta)
 #endif
 }
 
-HRESULT CBody_Character::Render()
+HRESULT CBody_Dororong::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -127,7 +122,7 @@ HRESULT CBody_Character::Render()
 	return S_OK;
 }
 
-HRESULT CBody_Character::Render_Shadow()
+HRESULT CBody_Dororong::Render_Shadow()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -149,15 +144,15 @@ HRESULT CBody_Character::Render_Shadow()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;	
+			return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CBody_Character::Ready_Components()
+HRESULT CBody_Dororong::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Body_Eve"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Dororong"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -169,7 +164,7 @@ HRESULT CBody_Character::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CBody_Character::Bind_ShaderResources()
+HRESULT CBody_Dororong::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
@@ -182,33 +177,33 @@ HRESULT CBody_Character::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBody_Character* CBody_Character::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBody_Dororong* CBody_Dororong::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Character* pInstance = new CBody_Character(pDevice, pContext);
+	CBody_Dororong* pInstance = new CBody_Dororong(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CBody_Character");
+		MSG_BOX("Failed to Created : CBody_Dororong");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CBody_Character::Clone(void* pArg)
+CGameObject* CBody_Dororong::Clone(void* pArg)
 {
-	CBody_Character* pInstance = new CBody_Character(*this);
+	CBody_Dororong* pInstance = new CBody_Dororong(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBody_Character");
+		MSG_BOX("Failed to Cloned : CBody_Dororong");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CBody_Character::Free()
+void CBody_Dororong::Free()
 {
 	__super::Free();
 
