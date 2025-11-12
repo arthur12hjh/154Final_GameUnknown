@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CGameInstance;
 class CGameObject;
+class CAnimation;
 NS_END
 
 NS_BEGIN(Animation_Editor)
@@ -47,15 +48,16 @@ private:
 
 
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
-	class CGameInstance* m_pGameInstance = { nullptr };
-	class CTool_Manager* m_pTool_Manager = { nullptr };
+	ID3D11Device*						m_pDevice = { nullptr };
+	ID3D11DeviceContext*				m_pContext = { nullptr };
+	class CGameInstance*				m_pGameInstance = { nullptr };
+	class CTool_Manager*				m_pTool_Manager = { nullptr };
 
-	CGameObject* m_pSelectedObject = { nullptr };
+	CGameObject*						m_pSelectedObject = { nullptr };
+	vector<CAnimation*>*				m_pAnimationList = { nullptr };
 
-	_bool m_bIsActive;
-	_bool m_bIsActiveTrigger;
+	_bool								m_bIsActive;
+	_bool								m_bIsActiveTrigger;
 
 public:
 	static CImGui_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

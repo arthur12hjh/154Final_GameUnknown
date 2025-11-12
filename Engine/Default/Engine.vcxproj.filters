@@ -629,12 +629,6 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Instance\Point">
       <UniqueIdentifier>{2916da26-d415-4200-8555-6326dcf41c82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\09.RenderTargets">
-      <UniqueIdentifier>{ed656d07-78e2-4196-b653-01b1bcfb6a10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\09.RenderTargets\Manager">
-      <UniqueIdentifier>{b5390b66-5bf2-4f1e-a8c6-749a415f7031}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Navigation">
       <UniqueIdentifier>{468238c5-bdc9-4310-9599-9595da97b8b2}</UniqueIdentifier>
     </Filter>

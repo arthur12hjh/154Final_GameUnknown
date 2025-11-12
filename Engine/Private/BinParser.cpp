@@ -19,9 +19,9 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 
 	binModel* pModel = new binModel;
 
-	fileBinaryStream.read((char*)(&pModel->iNumMeshes), sizeof(pModel->iNumMeshes));
-	fileBinaryStream.read((char*)(&pModel->iNumMaterials), sizeof(pModel->iNumMaterials));
-	fileBinaryStream.read((char*)(&pModel->iNumAnimations), sizeof(pModel->iNumAnimations));
+	fileBinaryStream.read((_char*)(&pModel->iNumMeshes), sizeof(pModel->iNumMeshes));
+	fileBinaryStream.read((_char*)(&pModel->iNumMaterials), sizeof(pModel->iNumMaterials));
+	fileBinaryStream.read((_char*)(&pModel->iNumAnimations), sizeof(pModel->iNumAnimations));
 
 	char* szTemp;
 
@@ -29,13 +29,13 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	{
 		binNode RootNode;
 		// BINMODEL->BINNODE->iNumChildren
-		fileBinaryStream.read((char*)(&RootNode.iNumChildren), sizeof(RootNode.iNumChildren));
+		fileBinaryStream.read((_char*)(&RootNode.iNumChildren), sizeof(RootNode.iNumChildren));
 		// BINMODEL->BINNODE->matTransformation
-		fileBinaryStream.read((char*)(&RootNode.matTransformation), sizeof(XMFLOAT4X4));
+		fileBinaryStream.read((_char*)(&RootNode.matTransformation), sizeof(_float4x4));
 		// BINMODEL->BINNODE->szName
 		szTemp = ReadString(fileBinaryStream);
 		strcpy_s(RootNode.szName, szTemp);
-		delete[] szTemp;
+		Safe_Delete(szTemp);
 
 		pModel->iRootNodeIndex = 0;
 		pModel->vNodes.push_back(RootNode);
@@ -49,10 +49,10 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		for (size_t i = 0; i < pModel->iNumMeshes; ++i)
 		{
 			binMesh meshTmp;
-			fileBinaryStream.read((char*)(&meshTmp.iNumVertices), sizeof(meshTmp.iNumVertices));
-			fileBinaryStream.read((char*)(&meshTmp.iNumFaces), sizeof(meshTmp.iNumFaces));
-			fileBinaryStream.read((char*)(&meshTmp.iNumBones), sizeof(meshTmp.iNumBones));
-			fileBinaryStream.read((char*)(&meshTmp.iMaterialIndex), sizeof(meshTmp.iMaterialIndex));
+			fileBinaryStream.read((_char*)(&meshTmp.iNumVertices), sizeof(meshTmp.iNumVertices));
+			fileBinaryStream.read((_char*)(&meshTmp.iNumFaces), sizeof(meshTmp.iNumFaces));
+			fileBinaryStream.read((_char*)(&meshTmp.iNumBones), sizeof(meshTmp.iNumBones));
+			fileBinaryStream.read((_char*)(&meshTmp.iMaterialIndex), sizeof(meshTmp.iMaterialIndex));
 			meshTmp.vTextureCoords.resize(1);
 			for (_uint j = 0; j < meshTmp.iNumVertices; ++j)
 			{
@@ -84,14 +84,14 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 				binBone binBoneTmp;
 				szTemp = ReadString(fileBinaryStream);
 				strcpy_s(binBoneTmp.szName, szTemp);
-				delete[] szTemp;
-				fileBinaryStream.read((char*)(&binBoneTmp.iNumWeights), sizeof(binBoneTmp.iNumWeights));
+				Safe_Delete(szTemp);
+				fileBinaryStream.read((_char*)(&binBoneTmp.iNumWeights), sizeof(binBoneTmp.iNumWeights));
 
 				for (size_t y = 0; y < binBoneTmp.iNumWeights; ++y)
 				{
 					binVertexWeight weightTmp;
-					fileBinaryStream.read((char*)(&weightTmp.iVertexId), sizeof(weightTmp.iVertexId));
-					fileBinaryStream.read((char*)(&weightTmp.fWeight), sizeof(weightTmp.fWeight));
+					fileBinaryStream.read((_char*)(&weightTmp.iVertexId), sizeof(weightTmp.iVertexId));
+					fileBinaryStream.read((_char*)(&weightTmp.fWeight), sizeof(weightTmp.fWeight));
 
 					binBoneTmp.vWeights.push_back(weightTmp);
 				}
@@ -99,7 +99,7 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 
 				XMStoreFloat4x4(&binBoneTmp.OffsetMatrix, XMMatrixIdentity());
 
-				fileBinaryStream.read((char*)(&binBoneTmp.OffsetMatrix), sizeof(XMFLOAT4X4));
+				fileBinaryStream.read((_char*)(&binBoneTmp.OffsetMatrix), sizeof(_float4x4));
 
 				//pBone->pNode = m_Nodes[x];
 				meshTmp.vBones.push_back(binBoneTmp);
@@ -108,22 +108,22 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 			for (size_t j = 0; j < meshTmp.iNumFaces; ++j)
 			{
 				binFace bFace;
-				fileBinaryStream.read((char*)(&bFace.iNumIndices), sizeof(bFace.iNumIndices));
+				fileBinaryStream.read((_char*)(&bFace.iNumIndices), sizeof(bFace.iNumIndices));
 				unsigned int iTmp1;
-				fileBinaryStream.read((char*)(&iTmp1), sizeof(iTmp1));
+				fileBinaryStream.read((_char*)(&iTmp1), sizeof(iTmp1));
 				bFace.vIndices.push_back(iTmp1);
 				unsigned int iTmp2;
-				fileBinaryStream.read((char*)(&iTmp2), sizeof(iTmp2));
+				fileBinaryStream.read((_char*)(&iTmp2), sizeof(iTmp2));
 				bFace.vIndices.push_back(iTmp2);
 				unsigned int iTmp3;
-				fileBinaryStream.read((char*)(&iTmp3), sizeof(iTmp3));
+				fileBinaryStream.read((_char*)(&iTmp3), sizeof(iTmp3));
 				bFace.vIndices.push_back(iTmp3);
 
 				meshTmp.vFaces.push_back(bFace);
 			}
 			szTemp = ReadString(fileBinaryStream);
 			strcpy_s(meshTmp.szName, szTemp);
-			delete[] szTemp;
+			Safe_Delete(szTemp);
 
 			pModel->vMeshes.push_back(meshTmp);
 		}
@@ -133,16 +133,16 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 			binMaterial matTmp;
 			for (size_t k = 0; k < BINMATERIAL::TEXTURETYPE::END; ++k)
 			{
-				unsigned int iNumSRVs;
-				fileBinaryStream.read((char*)(&iNumSRVs), sizeof(iNumSRVs));
+				_uint iNumSRVs;
+				fileBinaryStream.read((_char*)(&iNumSRVs), sizeof(iNumSRVs));
 				matTmp.vNumSRVs.push_back(iNumSRVs);
 				matTmp.strTexturePaths[k].clear();
 				matTmp.strTexturePaths[k].reserve(iNumSRVs);
 				for (size_t l = 0; l < matTmp.vNumSRVs[k]; ++l)
 				{
-					char* szTemp = ReadString(fileBinaryStream);
+					_char* szTemp = ReadString(fileBinaryStream);
 					matTmp.strTexturePaths[k].emplace_back(szTemp);
-					delete[] szTemp;
+					Safe_Delete_Array(szTemp);
 				}
 
 			}
@@ -155,42 +155,42 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 
 			szTemp = ReadString(fileBinaryStream);
 			strcpy_s(AnimTmp.szName, szTemp);
-			delete[] szTemp;
-			fileBinaryStream.read((char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
-			fileBinaryStream.read((char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));
-			fileBinaryStream.read((char*)(&AnimTmp.iNumChannels), sizeof(AnimTmp.iNumChannels));
+			Safe_Delete(szTemp);
+			fileBinaryStream.read((_char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
+			fileBinaryStream.read((_char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));
+			fileBinaryStream.read((_char*)(&AnimTmp.iNumChannels), sizeof(AnimTmp.iNumChannels));
 
 			for (size_t j = 0; j < AnimTmp.iNumChannels; ++j)
 			{
 				binChannel channelTmp;
 				szTemp = ReadString(fileBinaryStream);
 				strcpy_s(channelTmp.szName, szTemp);
-				delete[] szTemp;
-				fileBinaryStream.read((char*)(&channelTmp.iNumScalingKeys), sizeof(channelTmp.iNumScalingKeys));
-				fileBinaryStream.read((char*)(&channelTmp.iNumRotationKeys), sizeof(channelTmp.iNumRotationKeys));
-				fileBinaryStream.read((char*)(&channelTmp.iNumPositionKeys), sizeof(channelTmp.iNumPositionKeys));
+				Safe_Delete(szTemp);
+				fileBinaryStream.read((_char*)(&channelTmp.iNumScalingKeys), sizeof(channelTmp.iNumScalingKeys));
+				fileBinaryStream.read((_char*)(&channelTmp.iNumRotationKeys), sizeof(channelTmp.iNumRotationKeys));
+				fileBinaryStream.read((_char*)(&channelTmp.iNumPositionKeys), sizeof(channelTmp.iNumPositionKeys));
 
 				for (size_t k = 0; k < channelTmp.iNumScalingKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					fileBinaryStream.read((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.read((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.read((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.read((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 
 					channelTmp.cScalingKeys.push_back(keyTmp);
 				}
 				for (size_t k = 0; k < channelTmp.iNumRotationKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					fileBinaryStream.read((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.read((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.read((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.read((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 
 					channelTmp.cRotationKeys.push_back(keyTmp);
 				}
 				for (size_t k = 0; k < channelTmp.iNumPositionKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					fileBinaryStream.read((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.read((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.read((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.read((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 
 					channelTmp.cPositionKeys.push_back(keyTmp);
 				}
@@ -216,16 +216,16 @@ HRESULT CBinParser::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binM
 	binModel* pModel = *ppOut;
 
 
-	fileBinaryStream.write((char*)(&pModel->iNumMeshes), sizeof(pModel->iNumMeshes));
-	fileBinaryStream.write((char*)(&pModel->iNumMaterials), sizeof(pModel->iNumMaterials));
-	fileBinaryStream.write((char*)(&pModel->iNumAnimations), sizeof(pModel->iNumAnimations));
+	fileBinaryStream.write((_char*)(&pModel->iNumMeshes), sizeof(pModel->iNumMeshes));
+	fileBinaryStream.write((_char*)(&pModel->iNumMaterials), sizeof(pModel->iNumMaterials));
+	fileBinaryStream.write((_char*)(&pModel->iNumAnimations), sizeof(pModel->iNumAnimations));
 
 	if (true)
 	{
 		// BINMODEL->BINNODE->iNumChildren
-		fileBinaryStream.write((char*)(&pModel->vNodes[pModel->iRootNodeIndex].iNumChildren), sizeof(pModel->vNodes[pModel->iRootNodeIndex].iNumChildren));
+		fileBinaryStream.write((_char*)(&pModel->vNodes[pModel->iRootNodeIndex].iNumChildren), sizeof(pModel->vNodes[pModel->iRootNodeIndex].iNumChildren));
 		// BINMODEL->BINNODE->matTransformation
-		fileBinaryStream.write((char*)(&pModel->vNodes[pModel->iRootNodeIndex].matTransformation), sizeof(XMFLOAT4X4));
+		fileBinaryStream.write((_char*)(&pModel->vNodes[pModel->iRootNodeIndex].matTransformation), sizeof(_float4x4));
 		// BINMODEL->BINNODE->szName
 		WriteString(fileBinaryStream, pModel->vNodes[pModel->iRootNodeIndex].szName);
 
@@ -269,25 +269,25 @@ HRESULT CBinParser::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binM
 			{
 				binBone binBoneTmp = meshTmp.vBones[x];
 				WriteString(fileBinaryStream, binBoneTmp.szName);
-				fileBinaryStream.write((char*)(&binBoneTmp.iNumWeights), sizeof(binBoneTmp.iNumWeights));
+				fileBinaryStream.write((_char*)(&binBoneTmp.iNumWeights), sizeof(binBoneTmp.iNumWeights));
 
 				for (size_t y = 0; y < binBoneTmp.iNumWeights; ++y)
 				{
 					binVertexWeight weightTmp = binBoneTmp.vWeights[y];
-					fileBinaryStream.write((char*)(&weightTmp.iVertexId), sizeof(weightTmp.iVertexId));
-					fileBinaryStream.write((char*)(&weightTmp.fWeight), sizeof(weightTmp.fWeight));
+					fileBinaryStream.write((_char*)(&weightTmp.iVertexId), sizeof(weightTmp.iVertexId));
+					fileBinaryStream.write((_char*)(&weightTmp.fWeight), sizeof(weightTmp.fWeight));
 				}
 
-				fileBinaryStream.write((char*)(&binBoneTmp.OffsetMatrix), sizeof(XMFLOAT4X4));
+				fileBinaryStream.write((_char*)(&binBoneTmp.OffsetMatrix), sizeof(_float4x4));
 			}
 
 
 			for (size_t j = 0; j < meshTmp.iNumFaces; ++j)
 			{
-				fileBinaryStream.write(reinterpret_cast<char*>(&meshTmp.vFaces[j].iNumIndices), sizeof(meshTmp.vFaces[j].iNumIndices));
-				fileBinaryStream.write(reinterpret_cast<char*>(&meshTmp.vFaces[j].vIndices[0]), sizeof(meshTmp.vFaces[j].vIndices[0]));
-				fileBinaryStream.write(reinterpret_cast<char*>(&meshTmp.vFaces[j].vIndices[1]), sizeof(meshTmp.vFaces[j].vIndices[1]));
-				fileBinaryStream.write(reinterpret_cast<char*>(&meshTmp.vFaces[j].vIndices[2]), sizeof(meshTmp.vFaces[j].vIndices[2]));
+				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vFaces[j].iNumIndices), sizeof(meshTmp.vFaces[j].iNumIndices));
+				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vFaces[j].vIndices[0]), sizeof(meshTmp.vFaces[j].vIndices[0]));
+				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vFaces[j].vIndices[1]), sizeof(meshTmp.vFaces[j].vIndices[1]));
+				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vFaces[j].vIndices[2]), sizeof(meshTmp.vFaces[j].vIndices[2]));
 			}
 
 			WriteString(fileBinaryStream, meshTmp.szName);
@@ -298,12 +298,11 @@ HRESULT CBinParser::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binM
 			binMaterial matTmp = pModel->vMaterials[j];
 			for (size_t k = 0; k < BINMATERIAL::TEXTURETYPE::END; ++k)
 			{
-				fileBinaryStream.write(reinterpret_cast<char*>(&matTmp.vNumSRVs[k]), sizeof(matTmp.vNumSRVs[k]));
+				fileBinaryStream.write(reinterpret_cast<_char*>(&matTmp.vNumSRVs[k]), sizeof(matTmp.vNumSRVs[k]));
 				for (size_t l = 0; l < matTmp.vNumSRVs[k]; ++l)
 				{
-					WriteString(fileBinaryStream, const_cast<char*>(matTmp.strTexturePaths[k][l].c_str()));
+					WriteString(fileBinaryStream, const_cast<_char*>(matTmp.strTexturePaths[k][l].c_str()));
 				}
-
 			}
 		}
 
@@ -312,35 +311,35 @@ HRESULT CBinParser::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binM
 			binAnimation AnimTmp = pModel->vAnimations[i];
 
 			WriteString(fileBinaryStream, AnimTmp.szName);
-			fileBinaryStream.write((char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
-			fileBinaryStream.write((char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));
-			fileBinaryStream.write((char*)(&AnimTmp.iNumChannels), sizeof(AnimTmp.iNumChannels));
+			fileBinaryStream.write((_char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
+			fileBinaryStream.write((_char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));
+			fileBinaryStream.write((_char*)(&AnimTmp.iNumChannels), sizeof(AnimTmp.iNumChannels));
 
 			for (size_t j = 0; j < AnimTmp.iNumChannels; ++j)
 			{
 				binChannel channelTmp = AnimTmp.vChannels[j];
 				WriteString(fileBinaryStream, channelTmp.szName);
-				fileBinaryStream.write((char*)(&channelTmp.iNumScalingKeys), sizeof(channelTmp.iNumScalingKeys));
-				fileBinaryStream.write((char*)(&channelTmp.iNumRotationKeys), sizeof(channelTmp.iNumRotationKeys));
-				fileBinaryStream.write((char*)(&channelTmp.iNumPositionKeys), sizeof(channelTmp.iNumPositionKeys));
+				fileBinaryStream.write((_char*)(&channelTmp.iNumScalingKeys), sizeof(channelTmp.iNumScalingKeys));
+				fileBinaryStream.write((_char*)(&channelTmp.iNumRotationKeys), sizeof(channelTmp.iNumRotationKeys));
+				fileBinaryStream.write((_char*)(&channelTmp.iNumPositionKeys), sizeof(channelTmp.iNumPositionKeys));
 
 				for (size_t k = 0; k < channelTmp.iNumScalingKeys; ++k)
 				{
 					binVectorKey keyTmp = channelTmp.cScalingKeys[k];
-					fileBinaryStream.write((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.write((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.write((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.write((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 				}
 				for (size_t k = 0; k < channelTmp.iNumRotationKeys; ++k)
 				{
 					binVectorKey keyTmp = channelTmp.cRotationKeys[k];
-					fileBinaryStream.write((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.write((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.write((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.write((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 				}
 				for (size_t k = 0; k < channelTmp.iNumPositionKeys; ++k)
 				{
 					binVectorKey keyTmp = channelTmp.cPositionKeys[k];
-					fileBinaryStream.write((char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
-					fileBinaryStream.write((char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
+					fileBinaryStream.write((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.write((_char*)(&keyTmp.vValue), sizeof(keyTmp.vValue));
 				}
 
 			}
@@ -357,9 +356,9 @@ HRESULT CBinParser::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binM
 char* CBinParser::ReadString(ifstream& fileBinaryStream)
 {
 	_uint iStringLength;
-	fileBinaryStream.read((char*)&iStringLength, sizeof(iStringLength));
+	fileBinaryStream.read((_char*)&iStringLength, sizeof(iStringLength));
 
-	char* str = new char[iStringLength + 1];
+	_char* str = new _char[iStringLength + 1];
 	fileBinaryStream.read(&str[0], iStringLength);
 
 	str[iStringLength] = '\0';
@@ -369,14 +368,14 @@ char* CBinParser::ReadString(ifstream& fileBinaryStream)
 XMFLOAT3 CBinParser::ReadFloat3(ifstream& fileBinaryStream)
 {
 	XMFLOAT3 vTemp;
-	fileBinaryStream.read((char*)&vTemp, sizeof(XMFLOAT3));
+	fileBinaryStream.read((_char*)&vTemp, sizeof(_float3));
 	return vTemp;
 }
 
 XMFLOAT2 CBinParser::ReadFloat2(ifstream& fileBinaryStream)
 {
 	XMFLOAT2 vTemp;
-	fileBinaryStream.read((char*)&vTemp, sizeof(XMFLOAT2));
+	fileBinaryStream.read((_char*)&vTemp, sizeof(_float2));
 	return vTemp;
 }
 
@@ -390,13 +389,13 @@ unsigned int CBinParser::Read_BinNode(ifstream& fileBinaryStream, binModel* pMod
 	unsigned int iNodeIndex;
 	binNode Node;
 	// BINMODEL->BINNODE->iNumChildren
-	fileBinaryStream.read((char*)(&Node.iNumChildren), sizeof(Node.iNumChildren));
+	fileBinaryStream.read((_char*)(&Node.iNumChildren), sizeof(Node.iNumChildren));
 	// BINMODEL->BINNODE->matTransformation
-	fileBinaryStream.read((char*)(&Node.matTransformation), sizeof(XMFLOAT4X4));
+	fileBinaryStream.read((_char*)(&Node.matTransformation), sizeof(_float4x4));
 	// BINMODEL->BINNODE->szName
-	char* szTemp = ReadString(fileBinaryStream);
+	_char* szTemp = ReadString(fileBinaryStream);
 	strcpy_s(Node.szName, szTemp);
-	delete[] szTemp;
+	Safe_Delete(szTemp);
 
 
 	pModel->vNodes.push_back(Node);
@@ -411,22 +410,22 @@ unsigned int CBinParser::Read_BinNode(ifstream& fileBinaryStream, binModel* pMod
 	return iNodeIndex;
 }
 
-void CBinParser::WriteString(ofstream& fileBinaryStream, char* pStr)
+void CBinParser::WriteString(ofstream& fileBinaryStream, _char* pStr)
 {
 	_uint iStringLength = strlen(pStr);
-	fileBinaryStream.write(reinterpret_cast<const char*>(&iStringLength), sizeof(iStringLength));
+	fileBinaryStream.write(reinterpret_cast<const _char*>(&iStringLength), sizeof(iStringLength));
 
 	fileBinaryStream.write(pStr, iStringLength);
 }
 
-void CBinParser::WriteFloat3(ofstream& fileBinaryStream, XMFLOAT3 vTmp)
+void CBinParser::WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp)
 {
-	fileBinaryStream.write((char*)&vTmp, sizeof(XMFLOAT3));
+	fileBinaryStream.write((_char*)&vTmp, sizeof(_float3));
 }
 
-void CBinParser::WriteFloat2(ofstream& fileBinaryStream, XMFLOAT2 vTmp)
+void CBinParser::WriteFloat2(ofstream& fileBinaryStream, _float2 vTmp)
 {
-	fileBinaryStream.write((char*)&vTmp, sizeof(XMFLOAT2));
+	fileBinaryStream.write((_char*)&vTmp, sizeof(_float2));
 }
 
 void CBinParser::WriteUint(ofstream& fileBinaryStream, _uint iTmp)
@@ -436,9 +435,9 @@ void CBinParser::WriteUint(ofstream& fileBinaryStream, _uint iTmp)
 void CBinParser::Write_BinNode(ofstream& fileBinaryStream, binModel* pModel, binNode* pNode)
 {
 	// BINMODEL->BINNODE->iNumChildren
-	fileBinaryStream.write((char*)(&pNode->iNumChildren), sizeof(pNode->iNumChildren));
+	fileBinaryStream.write((_char*)(&pNode->iNumChildren), sizeof(pNode->iNumChildren));
 	// BINMODEL->BINNODE->matTransformation
-	fileBinaryStream.write((char*)(&pNode->matTransformation), sizeof(XMFLOAT4X4));
+	fileBinaryStream.write((_char*)(&pNode->matTransformation), sizeof(_float4x4));
 	// BINMODEL->BINNODE->szName
 	WriteString(fileBinaryStream, pNode->szName);
 
