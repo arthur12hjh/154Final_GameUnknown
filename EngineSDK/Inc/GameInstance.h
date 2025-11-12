@@ -80,6 +80,8 @@ public:
 
 #pragma region RENDERER
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);

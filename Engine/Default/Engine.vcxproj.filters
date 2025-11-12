@@ -253,9 +253,9 @@
     <ClInclude Include="..\public\Font_Manager.h">
       <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DebugRenderer.h">
+    <ClInclude Include="..\Public\ColliderRenderer.h">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
-  </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\Occlusion.h">
       <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
     </ClInclude>
@@ -264,6 +264,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Query.h">
       <Filter>01.Utility\19.Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Deferred.h">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blur.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Distortion.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Glow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -492,9 +504,9 @@
     <ClCompile Include="..\private\Font_Manager.cpp">
       <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\DebugRenderer.cpp">
+    <ClCompile Include="..\Private\ColliderRenderer.cpp">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
-  </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Occlusion.cpp">
       <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
     </ClCompile>
@@ -503,6 +515,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Query.cpp">
       <Filter>01.Utility\19.Query</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Deferred.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blur.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Glow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Distortion.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -787,7 +811,7 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Debug">
       <UniqueIdentifier>{0527329d-9bd1-4c8e-a934-b9f8bdeffda3}</UniqueIdentifier>
-   </Filter>
+    </Filter>
     <Filter Include="01.Utility\12.CameraManager\Occlusion">
       <UniqueIdentifier>{4de1b191-ff85-4c71-9934-81f9e00625ea}</UniqueIdentifier>
     </Filter>
@@ -796,6 +820,18 @@
     </Filter>
     <Filter Include="01.Utility\19.Query\GPUTimer">
       <UniqueIdentifier>{f993a55b-b4f8-4425-8a05-7fef317aee61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred">
+      <UniqueIdentifier>{4dcde3fa-f3ad-456d-9aa4-2b459958dec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Blur">
+      <UniqueIdentifier>{90fb9989-207c-432e-8247-790bed24ba5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Distortion">
+      <UniqueIdentifier>{a551d8e5-3364-4eb8-9142-9ad6e978d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Glow">
+      <UniqueIdentifier>{4f46e805-f973-4b3e-b6ff-ac74ceabac48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
