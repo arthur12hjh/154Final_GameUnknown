@@ -66,6 +66,17 @@ struct PS_OUT_BLUR_FINAL
     float4 vBlurY : SV_TARGET0;
 };
 
+struct PS_OUT_GLOW_X
+{
+    float4 vGlowX : SV_TARGET0;
+};
+
+struct PS_OUT_GLOW_FINAL
+{
+    float4 vGlowY : SV_TARGET0;
+};
+
+
 struct PS_OUT_DISTORTION
 {
     float4 vDistortion : SV_TARGET0;
