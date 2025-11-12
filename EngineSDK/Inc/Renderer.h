@@ -12,12 +12,6 @@ class COcclusion;
 
 class CRenderer final : public CBase
 {
-public:
-	/* 블러 데스크. 블러 사이즈 세팅 */
-	typedef struct tagBlurDesc {
-		_float fSizeX = {};
-	} BLUR_DESC;
-
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
@@ -75,9 +69,9 @@ private:
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
-	void		Apply_Deferred();
+	void		Render_SceneDeferred();
+	void		Render_BackBuffer();
 	void		Render_UI();
-	void		Composite_RT_ToBackBuffer();
 
 private:
 	HRESULT		Ready_RenderTargets();

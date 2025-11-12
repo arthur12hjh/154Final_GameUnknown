@@ -246,7 +246,7 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	std::random_device	rd;
+	random_device	rd;
 
 	return static_cast<_float>(rd()) / (rd.max)();
 }
