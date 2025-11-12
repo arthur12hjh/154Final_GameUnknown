@@ -26,7 +26,6 @@ texture2D g_BlurFinalTexture;
 texture2D g_GlowTexture;
 texture2D g_GlowXTexture;
 texture2D g_GlowFinalTexture;
-texture2D g_OutlineTexture;
 
 texture2D g_SceneTexture;
 texture2D g_DistortionTexture;
@@ -183,16 +182,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    
-    //외곽선 연산
-    //Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
-    
-    //글로우 연산.
-    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    
-    //블러 연산. 얜 무조건 마지막에 있는게 맞는거같아서 여기 뒀는데 바꾸고싶으면 디코 ㄱ.
-    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    
+   
     return Out;
 }
 
@@ -310,12 +300,14 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_DISTORTION(PS_IN In)
+PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_COMBINE(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
+   
+    Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    //최종적으로 디스토션 연산.
     Out.vBackBuffer = Calc_Distortion(g_SceneTexture, g_DistortionTexture, In.vTexcoord);
-    //원본 씬 텍스쳐 & 디스토션 텍스쳐. 현재 텍스쿠드까지 필요.
     
     return Out;
 }
@@ -325,6 +317,11 @@ PS_OUT_BACKBUFFER PS_MAIN_SCENE(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
+    //글로우 샘플링.
+    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    
+    //블러 샘플링.
+    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
     
     return Out;
 }
@@ -422,14 +419,14 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_GLOW_FINAL();
     }
     // idx 9
-    pass Distortion
+    pass Deferred_Combine
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
+        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_COMBINE();
     }
 
     // idx 10
@@ -437,7 +434,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SCENE();
