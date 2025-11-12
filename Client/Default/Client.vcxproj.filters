@@ -178,6 +178,18 @@
     <Filter Include="97.ShaderFiles\Mouse">
       <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
+      <UniqueIdentifier>{45be3ed5-b966-4eab-b64c-9f21bfa23ee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIWrapper">
+      <UniqueIdentifier>{b20d1372-bb40-4675-b7e5-9c27becc1e99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
+      <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
+      <UniqueIdentifier>{67a1ade5-3014-4ffd-8a93-178e874f30c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -327,10 +339,18 @@
     <ClInclude Include="GameStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UIResourceStore.h" />
-    <ClInclude Include="..\Public\UIText.h" />
-    <ClInclude Include="..\Public\UIPanel.h" />
-    <ClInclude Include="..\Public\UIWrapper.h" />
+    <ClInclude Include="..\Public\UIText.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPanel.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIResourceStore.h">
+      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -464,10 +484,18 @@
     <ClCompile Include="..\private\MousePointer.cpp">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UIResourceStore.cpp" />
-    <ClCompile Include="..\Private\UIText.cpp" />
-    <ClCompile Include="..\Private\UIPanel.cpp" />
-    <ClCompile Include="..\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\Private\UIText.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPanel.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIResourceStore.cpp">
+      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">

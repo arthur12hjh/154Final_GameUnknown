@@ -35,6 +35,14 @@ inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)
     return vBlurColor;
 }
 
+inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
+{
+    // 블러 연산
+    float4 vGlowColor = GlowTexture.Sample(DefaultSampler, vTexcoord);
+    
+    return vGlowColor;
+}
+
 inline float4 Calc_Outline(float4 vBackBuffer, texture2D OutlineTexture, float2 vTexcoord)
 {
     float4 vOutline = OutlineTexture.Sample(DefaultSampler, vTexcoord);

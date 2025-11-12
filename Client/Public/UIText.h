@@ -4,9 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect;
-class CTexture;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)

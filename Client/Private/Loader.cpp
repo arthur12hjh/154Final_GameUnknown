@@ -124,8 +124,7 @@ void CLoader::Output()
 HRESULT CLoader::Loading_For_Logo()
 {
 	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
-	
-	
+
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 
 	m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");

@@ -2,6 +2,7 @@
 #include "UIResourceStore.h"
 
 #include "GameInstance.h"
+#include "UIHUD.h"
 
 CUIResourceStore::CUIResourceStore()
 {
@@ -32,6 +33,7 @@ HRESULT CUIResourceStore::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTe
 	Desc.pTexture = pTexture;
 	Desc.iTextIndex = iTextureIndex;
 	Desc.szFilePath = szFilePath;
+	Desc.szProtoTag = szTextureProtoTag;
 
 	m_TextureDescs.emplace(szTextureTag, Desc);
 
@@ -46,6 +48,13 @@ CUIResourceStore::UI_TEXTURE_DESC CUIResourceStore::Get_UI_Texture_Desc(const WC
 		return UI_TEXTURE_DESC();
 
 	return Desc->second;
+}
+
+void CUIResourceStore::Clear_UI_Texture_Descs()
+{
+	for (auto& iter : m_TextureDescs)
+		Safe_Release(iter.second.pTexture);
+	m_TextureDescs.clear();
 }
 
 CUIResourceStore::UI_TEXTURE_DESC CUIResourceStore::Find_UI_Texture_Desc(const _wstring& szTextureTag)
@@ -79,4 +88,5 @@ void CUIResourceStore::Free()
 
 	for (auto& iter : m_TextureDescs)
 		Safe_Release(iter.second.pTexture);
+	m_TextureDescs.clear();
 }
