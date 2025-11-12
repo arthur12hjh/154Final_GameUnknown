@@ -17,11 +17,29 @@ class CParticle final : public CGameObject
 public:
 	struct PointConstBufferData
 	{
+		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
 		_float2			fTimeDelta;
 		_int2			iLoopAndCount;
 	};
+	typedef struct ParticleData
+	{
+		_int	iBegin;
+		_int    iNumInstance;
+		_float3 fCenter;
+		_float3 fPivot;
+		_float3 fRange;
+		_float2 fSize;
+		_float2 fLifeTime;
+		_float2 fSpeed;
+		_float4 fSizeDiagram = {};
+		_float4 fGravityDiagram = {};
+		_bool   bisLoop;
+		_uint	m_iSelectRender = {};
+		_float4 fColor = {};
+		string szCS;
+	}PARTICLE_DATA;
 
 private:
 	CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,18 +53,24 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void	Set_Components(CVIBuffer_Point_Instance* pViBufferCom, CComputeShader* pComputeShader, CShader* pShaderCom, _float4 fGravity, _float3 fPivot);
+	void	Set_Components(PARTICLE_DATA tData);
+	void	Update(PARTICLE_DATA tData) { m_tData = tData; };
 	void	Set_Begin(_int iBegin) { m_iBegin = iBegin; }
+	PARTICLE_DATA	Get_Data() { return m_tData; }
+	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
+	void	Set_Texture(_int iIndex, CTexture* pTexture, string szFile) { m_pTexture[iIndex] = pTexture; m_szFile[iIndex] = szFile; }
 private:
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CTexture* m_pTexture[3] = {};
+	string    m_szFile[3];
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
-	_float4			m_fGravity = {};
-	_float3			m_fPivot = {};
+	PARTICLE_DATA	m_tData;
 	_uint			m_iBegin = {};
+	_uint			m_iSelectRender = {};
 
 private:
 	HRESULT							Ready_Components();

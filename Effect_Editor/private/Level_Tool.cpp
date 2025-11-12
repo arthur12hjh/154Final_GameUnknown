@@ -22,6 +22,29 @@ HRESULT CLevel_Tool::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	LIGHT_DESC			LightDesc{};
+
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
+
+	//SHADOW_LIGHT_DESC		ShadowDesc{};
+	//ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
+	//ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
+	//ShadowDesc.fFovy = XMConvertToRadians(120.0f);
+	//ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
+	//ShadowDesc.fNear = 0.1f;
+	//ShadowDesc.fFar = 500.f;
+	//
+	//if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+	//	return E_FAIL;
+
+
 	m_pImgManager = CImg_Manager::GetInstance();
 	m_pImgManager->Ready_Manager(m_pDevice, m_pContext);
 	return S_OK;
@@ -70,6 +93,10 @@ HRESULT CLevel_Tool::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_Tool::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_GameObject_Sky"),
+		ENUM_CLASS(LEVEL::TOOL), strLayerTag)))
+		return E_FAIL;
 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_GameObject_BackGround"),
 	//	ENUM_CLASS(LEVEL::LOGO), strLayerTag)))
 	//	return E_FAIL;
