@@ -200,6 +200,8 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 				Load_Hierarchy(pCreatedObj, pChild);
 			}
 		}
+		else
+			continue;
 	}
 
 	return S_OK;

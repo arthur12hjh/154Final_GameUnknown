@@ -38,6 +38,7 @@ public :
 	HRESULT Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex = 0, void* pArg = nullptr);
 	CUIResourceStore::UI_TEXTURE_DESC Get_UI_Texture_Desc(const WCHAR* szTextureTag);
 	const unordered_map<_wstring, CUIResourceStore::UI_TEXTURE_DESC>* Get_UI_Texture_Descs();
+	void Clear_UI_Texture_Descs();
 
 	//HRESULT Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, _uint iTextureIndex, void* pArg = nullptr);
 	//CTexture* Get_UI_TextureCom(const WCHAR* szTextureTag);

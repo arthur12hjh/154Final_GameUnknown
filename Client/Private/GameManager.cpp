@@ -55,6 +55,11 @@ const unordered_map<_wstring, CUIResourceStore::UI_TEXTURE_DESC>* CGameManager::
 {
     return m_pUIResourceStore->Get_UI_Texture_Descs();
 }
+void CGameManager::Clear_UI_Texture_Descs()
+{
+    m_pUIResourceStore->Clear_UI_Texture_Descs();
+}
+
 #pragma endregion
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
