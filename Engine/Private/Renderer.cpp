@@ -201,12 +201,11 @@ void CRenderer::Render()
 	Render_SceneDeferred();
 	Render_BackBuffer();
 	
-	Render_UI();
-
 #ifdef _DEBUG
 	Render_Debug();
 #endif
 
+	Render_UI();
 }
 
 const _float4x4* CRenderer::Get_Renderer_Matrix(D3DTS eType)
