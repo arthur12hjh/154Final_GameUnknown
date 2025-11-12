@@ -393,7 +393,13 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);
 }
 
+const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
+{
+	return m_pRenderer->Get_Renderer_Matrix(eType);
+}
+
 #ifdef _DEBUG
+
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
