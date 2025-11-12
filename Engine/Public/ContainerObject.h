@@ -13,6 +13,7 @@ protected:
 
 public:
 	CComponent* Get_Component(const _wstring& strPartTag, const _wstring& strComponentTag);
+	class CPartObject* Get_PartObject(const _wstring& strPartTag);
 
 public:
 	virtual HRESULT Initialize_Prototype();

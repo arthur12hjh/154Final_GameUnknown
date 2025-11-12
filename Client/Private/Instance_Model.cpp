@@ -55,7 +55,10 @@ HRESULT CInstance_Model::Render()
         if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", TEXTURE_TYPE::DIFFUSE, 0)))
             return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(1)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", TEXTURE_TYPE::NORMAL, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

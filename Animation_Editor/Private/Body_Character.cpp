@@ -67,18 +67,6 @@ void CBody_Character::Update(_float fTimeDelta)
 	//if (*m_pParentState & CCharacter::STATE_WALK)
 	//	m_pModelCom->Set_AnimationIndex(4);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
-	{
-		m_iAnimationIndex++;
-		m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
-	}
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
-	{
-		m_iAnimationIndex--;
-		m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
-	}
-
 	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
@@ -109,6 +97,9 @@ HRESULT CBody_Character::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))

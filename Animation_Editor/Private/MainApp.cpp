@@ -31,6 +31,8 @@ HRESULT Animation_Editor::CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
+	m_pTool_Manager->Initialize(m_pDevice, m_pContext);
+
 	if (FAILED(Ready_Default_Setting()))
 		return E_FAIL;
 
@@ -40,7 +42,6 @@ HRESULT Animation_Editor::CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::EDITOR)))
 		return E_FAIL;
 
-	m_pTool_Manager->Initialize(m_pDevice, m_pContext);
 
 	srand(time(NULL));
 

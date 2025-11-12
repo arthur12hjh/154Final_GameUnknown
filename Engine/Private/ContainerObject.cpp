@@ -22,6 +22,11 @@ CComponent* CContainerObject::Get_Component(const _wstring& strPartTag, const _w
     return pPartObject->Find_Component(strComponentTag);    
 }
 
+CPartObject* CContainerObject::Get_PartObject(const _wstring& strPartTag)
+{
+    return Find_PartObject(strPartTag);
+}
+
 HRESULT CContainerObject::Initialize_Prototype()
 {
     return S_OK;

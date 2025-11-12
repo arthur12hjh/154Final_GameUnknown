@@ -27,6 +27,8 @@ public:
 			return FALSE;
 	}
 
+	const _char* Get_Name() { return m_szName; }
+
 	void Reset();
 private:
 	_char						m_szName[MAX_PATH] = {};
