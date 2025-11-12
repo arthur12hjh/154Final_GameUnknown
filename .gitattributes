@@ -62,5 +62,6 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 
-# Any path that contains Bin/Resources (case-insensitive)
+# Any path that contains Bin/Resources, Bin/EngineResource (case-insensitive)
 **/[Bb]in/[Rr]esources/** filter=lfs diff=lfs merge=lfs -text
+**/[Bb]in/EngineResource/** filter=lfs diff=lfs merge=lfs -text
