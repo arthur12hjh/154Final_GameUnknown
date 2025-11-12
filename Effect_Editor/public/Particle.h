@@ -33,7 +33,8 @@ public:
 		_float2 fSize;
 		_float2 fLifeTime;
 		_float2 fSpeed;
-		_float4 fGravity = {};
+		_float4 fSizeDiagram = {};
+		_float4 fGravityDiagram = {};
 		_bool   bisLoop;
 		_uint	m_iSelectRender = {};
 		_float4 fColor = {};

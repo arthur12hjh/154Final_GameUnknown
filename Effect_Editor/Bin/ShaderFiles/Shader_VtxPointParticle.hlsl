@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
+vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 vector g_vCamPosition;
 
 struct VS_IN
@@ -29,7 +30,14 @@ VS_OUT VS_MAIN(VS_IN In)
     vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
     
     Out.vPosition = mul(vPosition, g_WorldMatrix);
-    Out.fSize = length(In.TransformMatrix._11_12_13);
+    
+    float t = In.vLifeTime.x / In.vLifeTime.y;
+    float fSize = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * g_vSize.x
+                        + (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(g_vSize.y)) * 100
+                        + (-2 * pow(t, 3) + 3 * pow(t, 2)) * g_vSize.z
+                        + (pow(t, 3) - pow(t, 2)) * tan(radians(g_vSize.w)) * 100;
+    
+    Out.fSize = length(In.TransformMatrix._11_12_13) * fSize;
     Out.vLifeTime = In.vLifeTime;
 
     return Out;
@@ -217,7 +225,7 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_ENLARGE();
+        VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_BILLBOARD();
         PixelShader = compile ps_5_0 PS_MAIN();
     }

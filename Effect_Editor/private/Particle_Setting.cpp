@@ -28,7 +28,8 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fLifeTime = _float2(0.5f, 1.f);
     m_tParticleData.fSpeed = _float2(1.f, 0.5f);
     m_tParticleData.bisLoop = true;
-    m_tParticleData.fGravity = _float4(0, 0, 0, 0);
+    m_tParticleData.fSizeDiagram = _float4(1, 0, 1, 0);
+    m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
     m_tParticleData.m_iSelectRender = 3;
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
@@ -196,7 +197,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
         Desc.vLifeTime = m_tParticleData.fLifeTime;
         Desc.vSpeed = m_tParticleData.fSpeed;
         Desc.isLoop = m_tParticleData.bisLoop;
-        _float4 fGravity = m_tParticleData.fGravity;
+        _float4 fGravity = m_tParticleData.fGravityDiagram;
 
 
         ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 0, 0);
@@ -204,6 +205,33 @@ void CParticle_Setting::Update(_float fTimeDelta)
         ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
         ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
         ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
+
+        _float time = 1.f / 100;
+        _float fMax = 5;
+        for (_uint i = 0; i < 100; ++i) {
+            _float t = time * i;
+            if (fabsf(m_tParticleData.fSizeDiagram.y) >= 90.f || fabsf(m_tParticleData.fSizeDiagram.w) >= 90.f) {
+                values[i] = m_tParticleData.fSizeDiagram.x;
+            }
+            else {
+
+                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fSizeDiagram.x
+                    + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.y)) * 100
+                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fSizeDiagram.z
+                    + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.w)) * 100;
+            }
+            fMax = max(fMax, fabsf(values[i]));
+        }
+        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+            "Size Data", -fMax, fMax, ImVec2(0, 100));
+
+        ImGui::DragFloat("Start Size", &m_tParticleData.fSizeDiagram.x, 0.01f, 0.f, 100.f);
+        ImGui::DragFloat("Start Size fx", &m_tParticleData.fSizeDiagram.y, 1.f, -90.f, 90.f);
+        ImGui::DragFloat("End Size", &m_tParticleData.fSizeDiagram.z, 0.01f, 0.f, 100.f);
+        ImGui::DragFloat("End Size fx", &m_tParticleData.fSizeDiagram.w, 1.f, -90.f, 90.f);
+
+
+
         ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
         ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
         ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
@@ -246,29 +274,27 @@ void CParticle_Setting::Update(_float fTimeDelta)
         m_pParticles[m_iSelectParticle]->GetTransform()->Rotation(XMConvertToRadians(rot.x), XMConvertToRadians(rot.y), XMConvertToRadians(rot.z));
 
 
-            _float time = 1.f / 100;
-            _float fMax = 5;
             for (_uint i = 0; i < 100; ++i) {
                 _float t = time * i;
-                if (fabsf(m_tParticleData.fGravity.y) >= 90.f || fabsf(m_tParticleData.fGravity.w) >= 90.f) {
-                    values[i] = m_tParticleData.fGravity.x;
+                if (fabsf(m_tParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tParticleData.fGravityDiagram.w) >= 90.f) {
+                    values[i] = m_tParticleData.fGravityDiagram.x;
                 }
                 else {
 
-                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fGravity.x
-                        + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fGravity.y)) * 100
-                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fGravity.z
-                        + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fGravity.w)) * 100;
+                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fGravityDiagram.x
+                        + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.y)) * 100
+                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fGravityDiagram.z
+                        + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.w)) * 100;
                 }
                 fMax = max(fMax, fabsf(values[i]));
             }
-            ImGui::PlotLines("Sine Wave", values, IM_ARRAYSIZE(values), 0,
-                "sample data", -fMax, fMax, ImVec2(0, 100));
+            ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                "Gravity Data", -fMax, fMax, ImVec2(0, 100));
 
-        ImGui::DragFloat("Start fValue", &m_tParticleData.fGravity.x, 0.01f, -100.f, 100.f);
-        ImGui::DragFloat("Start fx", &m_tParticleData.fGravity.y, 1.f, -90.f, 90.f);
-        ImGui::DragFloat("End fValue", &m_tParticleData.fGravity.z, 0.01f, -100.f, 100.f);
-        ImGui::DragFloat("End fx", &m_tParticleData.fGravity.w, 1.f, -90.f, 90.f);
+        ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+        ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+        ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+        ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
 
 
         if (Desc.iNumInstance != m_tParticleData.iNumInstance ||
@@ -288,10 +314,10 @@ void CParticle_Setting::Update(_float fTimeDelta)
             Desc.vSpeed.x != m_tParticleData.fSpeed.x ||
             Desc.vSpeed.y != m_tParticleData.fSpeed.y ||
             Desc.isLoop != m_tParticleData.bisLoop ||
-            fGravity.x != m_tParticleData.fGravity.x ||
-            fGravity.y != m_tParticleData.fGravity.y ||
-            fGravity.z != m_tParticleData.fGravity.z ||
-            fGravity.w != m_tParticleData.fGravity.w) {
+            fGravity.x != m_tParticleData.fGravityDiagram.x ||
+            fGravity.y != m_tParticleData.fGravityDiagram.y ||
+            fGravity.z != m_tParticleData.fGravityDiagram.z ||
+            fGravity.w != m_tParticleData.fGravityDiagram.w) {
             Desc.iNumInstance = m_tParticleData.iNumInstance;
             Desc.vCenter = m_tParticleData.fCenter;
             Desc.vPivot = m_tParticleData.fPivot;

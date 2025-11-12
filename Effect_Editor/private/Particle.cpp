@@ -97,6 +97,9 @@ HRESULT CParticle::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
 		return E_FAIL;
+	
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vSize", &m_tData.fSizeDiagram, sizeof(_float4))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -128,7 +131,7 @@ HRESULT CParticle::Ready_ComputeShader()
 
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
-	m_CBData.vGravity = m_tData.fGravity;
+	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f};
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
