@@ -73,6 +73,7 @@ void CFrustum::Update()
 	if (pMainCamera)
 	{
 		auto CameraInfo = pMainCamera->GetCameraInfo();
+
 		m_OrizinBoundingFrustom->Near = CameraInfo.fNear;
 		m_OrizinBoundingFrustom->Far = CameraInfo.fFar;
 
@@ -93,10 +94,10 @@ void CFrustum::FrustomRender()
 			continue;
 
 		auto CameraInfo = pCamera.second->GetCameraInfo();
-		BoundingFrustum tempFrustum = *m_OrizinBoundingFrustom;
-		m_OrizinBoundingFrustom->Near = CameraInfo.fNear;
-		m_OrizinBoundingFrustom->Far = CameraInfo.fFar;
-		m_OrizinBoundingFrustom->Transform(tempFrustum, XMLoadFloat4x4(pCamera.second->GetTransform()->Get_WorldMatrixPtr()));
+		BoundingFrustum tempFrustum{}, tempFrustum2;
+		tempFrustum.Near = CameraInfo.fNear;
+		tempFrustum.Far = CameraInfo.fFar;
+		tempFrustum.Transform(tempFrustum2, XMLoadFloat4x4(pCamera.second->GetTransform()->Get_WorldMatrixPtr()));
 
 		m_pEffect->SetWorld(XMMatrixIdentity());
 		m_pEffect->SetView(m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW));
@@ -106,7 +107,7 @@ void CFrustum::FrustomRender()
 		m_pEffect->Apply(m_pContext);
 
 		m_pBatch->Begin();
-		DX::Draw(m_pBatch, tempFrustum, XMVectorSet(1.f, 1.f, 0.f, 1.f));
+		DX::Draw(m_pBatch, tempFrustum2, XMVectorSet(1.f, 1.f, 0.f, 1.f));
 		m_pBatch->End();
 	}
 	Safe_Release(pMainCamera);

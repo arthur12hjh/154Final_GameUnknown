@@ -53,15 +53,14 @@ void CMonster::Update(_float fTimeDelta)
 	{
 		m_pColliderCom[i]->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
+	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
 void CMonster::Late_Update(_float fTimeDelta)
 {
 	CCollider* pTargetCollider = { nullptr };
-
 	pTargetCollider = static_cast<CCollider*>(m_pGameInstance->Get_PartObject_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Player"), TEXT("Part_Weapon"), TEXT("Com_Collider_OBB")));
-	
 
 	if (true == m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
@@ -71,6 +70,7 @@ void CMonster::Late_Update(_float fTimeDelta)
 		{
 			m_pGameInstance->ADD_Collider(m_pColliderCom[i]);
 			m_pGameInstance->Add_DebugComponent(m_pColliderCom[i]);
+			m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 		}
 #endif
 	}
