@@ -27,6 +27,7 @@
 #include "UIButton.h"
 // 로드 테스트
 #include "Vil_Bui03_04.h"
+#include "Terrain_Sand.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -187,7 +188,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Fiona/Fiona.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Eve */
@@ -215,13 +216,25 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_Component_Model_ForkLift */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.bin", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Terrain_Sand */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Terrain_Sand"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Terrain/006_A_SM/006_A_SM.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Vil_Bui03_04 */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Village/Object/Vil_Bui03_04.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Village/Object/Vil_Bui03_04.bin", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Sky */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sky"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Sky/Sky1.fbx", PreTransformMatrix))))
 		return E_FAIL;
 	
 
@@ -278,6 +291,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Terrain_Sand */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
+		CTerrain_Sand::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Body_Player*/
@@ -342,6 +360,11 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Sky1*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/MapObj/Sky/T_skybox_06.png"), 1))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Texture_Explosion_Test*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Explosion_Test"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1))))
@@ -403,10 +426,6 @@ HRESULT CLoader::Loading_For_GamePlay_Shader()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
 		CShaderTestModel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_GameObject_PxTestProp */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
-		CPxTestProp::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 #endif
 
 	return S_OK;
@@ -416,7 +435,7 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation()
 {
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.bin")))))
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation2.bin")))))
 		return E_FAIL;
 
 	return S_OK;

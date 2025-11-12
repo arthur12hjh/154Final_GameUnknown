@@ -151,18 +151,6 @@
     <Filter Include="02.GameObjects\Maps">
       <UniqueIdentifier>{71ce41b5-d270-4f95-b0bc-6632eb48cc33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Village">
-      <UniqueIdentifier>{9a273159-9a7d-486a-b86b-706a7dda7cd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Obj">
-      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Mou">
-      <UniqueIdentifier>{84947ce9-bc4e-4724-8f21-50e915ee60b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Obj\Vil_Bui03_04">
-      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\InstanceModel">
       <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
     </Filter>
@@ -180,6 +168,12 @@
     </Filter>
     <Filter Include="97.ShaderFiles\Mouse">
       <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Obj">
+      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Obj\Vil_Bui03_04">
+      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,11 +309,8 @@
     <ClInclude Include="..\Public\ClientStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Village_Mou.h">
-      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Vil_Bui03_04.h">
-      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+      <Filter>02.GameObjects\Maps\Obj\Vil_Bui03_04</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h">
       <Filter>02.GameObjects\ShaderTestModel\CCTBehaviorCallBack</Filter>
@@ -329,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\public\MousePointer.h">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain_Sand.h">
+      <Filter>02.GameObjects\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -451,11 +445,8 @@
     <ClCompile Include="..\Private\PxTestProp.cpp">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Village_Mou.cpp">
-      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Vil_Bui03_04.cpp">
-      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+      <Filter>02.GameObjects\Maps\Obj\Vil_Bui03_04</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp">
       <Filter>02.GameObjects\ShaderTestModel\CCTBehaviorCallBack</Filter>
@@ -465,6 +456,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MousePointer.cpp">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain_Sand.cpp">
+      <Filter>02.GameObjects\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

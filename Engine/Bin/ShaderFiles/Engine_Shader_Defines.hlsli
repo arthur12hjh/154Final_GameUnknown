@@ -99,3 +99,8 @@ BlendState BS_Blend
     BlendOp = Add;
 };
 
+DepthStencilState DSS_DepthTest_ON_Write_OFF
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ZERO; // ±íÀÌ ¹öÆÛ ¾²±â ²û
+};

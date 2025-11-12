@@ -195,10 +195,10 @@
     <ClInclude Include="..\Public\Snow.h" />
     <ClInclude Include="..\Public\SpriteEffect.h" />
     <ClInclude Include="..\Public\Terrain.h" />
+    <ClInclude Include="..\public\Terrain_Sand.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
-    <ClInclude Include="..\public\Village_Mou.h" />
     <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
@@ -263,10 +263,10 @@
     <ClCompile Include="..\Private\Snow.cpp" />
     <ClCompile Include="..\Private\SpriteEffect.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
+    <ClCompile Include="..\private\Terrain_Sand.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
-    <ClCompile Include="..\private\Village_Mou.cpp" />
     <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
