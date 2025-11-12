@@ -21,6 +21,7 @@ struct VS_OUT
     float4 vPosition : POSITION;
     float  fSize : PSIZE;
     float2 vLifeTime : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -39,6 +40,7 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.fSize = length(In.TransformMatrix._11_12_13) * fSize;
     Out.vLifeTime = In.vLifeTime;
+    Out.vProjPos = Out.vPosition;
 
     return Out;
 }
@@ -81,6 +83,7 @@ struct GS_OUT
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
     float2 vLifeTime : TEXCOORD1;
+    float4 vProjPos : TEXCOORD2;
 };
 
 [maxvertexcount(6)]
@@ -98,18 +101,22 @@ void GS_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
     Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp, 1.f), matVP);
     Out[0].vTexcoord = float2(0.f, 0.f);
     Out[0].vLifeTime = In[0].vLifeTime;
+    Out[0].vProjPos = Out[0].vPosition;
     
     Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight + vUp, 1.f), matVP);
     Out[1].vTexcoord = float2(1.f, 0.f);
     Out[1].vLifeTime = In[0].vLifeTime;
+    Out[1].vProjPos = Out[1].vPosition;
     
     Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight - vUp, 1.f), matVP);
     Out[2].vTexcoord = float2(1.f, 1.f);
     Out[2].vLifeTime = In[0].vLifeTime;
+    Out[2].vProjPos = Out[2].vPosition;
     
     Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vRight - vUp, 1.f), matVP);
     Out[3].vTexcoord = float2(0.f, 1.f);
     Out[3].vLifeTime = In[0].vLifeTime;
+    Out[3].vProjPos = Out[3].vPosition;
     
     
     OutStream.Append(Out[0]);
@@ -172,11 +179,20 @@ struct PS_IN
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
     float2 vLifeTime : TEXCOORD1;
+    float4 vProjPos : TEXCOORD2;
 };
 
 struct PS_OUT
 {
     float4 vColor : SV_TARGET0;
+};
+
+struct PS_LIGHT_OUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+    float4 vRimLight : SV_TARGET3;
 };
 
 
@@ -188,6 +204,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float4 fireFront = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
+    //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
     Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
     Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
     Out.vColor.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
@@ -196,18 +213,24 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
     return Out;
 }
-PS_OUT PS_RECT(PS_IN In)
+PS_LIGHT_OUT PS_LIGHT(PS_IN In)
 {
-    PS_OUT Out;
-    float4 fireFront = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
-    float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
-    //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
-    Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
-    //Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    //Out.vColor.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
+    PS_LIGHT_OUT Out;
+    Out.vDiffuse = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
     
-    //if (Out.vColor.a <= 0.1f || 0 > In.vLifeTime.x)
-    //    discard;
+    
+    vector vNormalDesc = float4(0.5f, 0.5f, 1.f, 1.f) * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
+    //float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal * -1.f, In.vNormal);
+    
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    float3 vNormal = mul(float4(vNormalDesc.xyz * 2.f - 1.f, 0), matVP);
+        
+    Out.vNormal = vNormal;
+    
+    //Out.vNormal = float4(0.5f, 0.5f, 1.f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    if (Out.vDiffuse.a <= 0.1f || 0 > In.vLifeTime.x)
+        discard;
     return Out;
 }
 PS_OUT PS_PIXEL(PS_IN In)
@@ -235,9 +258,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_Shrink();
+        VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_BILLBOARD();
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_LIGHT();
     }
 
     //pass Frame

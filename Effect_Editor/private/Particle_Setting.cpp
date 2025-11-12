@@ -222,7 +222,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
             fMax = max(fMax, fabsf(values[i]));
         }
-        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 1,
             "Size Data", -fMax, fMax, ImVec2(0, 100));
 
         ImGui::DragFloat("Start Size", &m_tParticleData.fSizeDiagram.x, 0.01f, 0.f, 100.f);
