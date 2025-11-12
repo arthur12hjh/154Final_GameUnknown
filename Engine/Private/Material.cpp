@@ -1,13 +1,15 @@
 #include "Material.h"
-
 #include "Shader.h"
+#include "GameInstance.h"
 
 CMaterial::CMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
 	, m_pContext { pContext }
+	, m_pGameInstance { CGameInstance::GetInstance() }
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pBinMaterial)
@@ -20,14 +22,14 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 
 		for (size_t j = 0; j < m_iNumSRVs; j++)
 		{
-			/*pModelFilePath : 모델파일이 저장되어있느 ㄴㄱ경로 + 모델파일이름 + 모델파일확장자. */
+			/* pModelFilePath : 모델파일이 저장되어있는 경로 + 모델파일이름 + 모델파일확장자. */
 			/* 추출한파일의경로 + 파일이름 + 확장자 */
 			char	strTexturePath[MAX_PATH];
-		
+
 			char		szDrive[MAX_PATH] = {};
 			char		szDir[MAX_PATH] = {};
 			char		szFileName[MAX_PATH] = {};
-			char		szEXT[MAX_PATH] = {};			
+			char		szEXT[MAX_PATH] = {};
 
 			strcpy_s(strTexturePath, pBinMaterial->strTexturePaths[i][j].c_str());
 
@@ -55,11 +57,13 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 			else
 				hr = CreateWICTextureFromFile(m_pDevice, szAbsolutePath, nullptr, &pSRV);
 
-			if(FAILED(hr))
+			if (FAILED(hr))
 				return E_FAIL;
 
 			m_SRVs[i].push_back(pSRV);
+
 		}
+
 	}
 
 	return S_OK;
@@ -70,7 +74,109 @@ HRESULT CMaterial::Bind_SRV(CShader* pShader, const _char* pConstantName, aiText
 	if (m_SRVs[eType].size() > iTextureIndex)
 		return pShader->Bind_SRV(pConstantName, m_SRVs[eType][iTextureIndex]);
 	else
-		return S_FALSE;
+	{
+		BindDefaultTexture(pShader, eType);
+	}
+
+	return E_FAIL;
+}
+
+HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)
+{
+	switch (static_cast<binMaterial::TEXTURETYPE>(eType))
+	{
+	case binMaterial::NONE:
+		return S_OK;
+		break;
+	case binMaterial::DIFFUSE:
+		return S_OK;
+		break;
+	case binMaterial::SPECULAR:
+		return S_OK;
+		break;
+	case binMaterial::AMBIENT:
+		return S_OK;
+		break;
+	case binMaterial::EMISSIVE:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Emissive.png"))->Bind_ShaderResource(pShader, "g_EmissiveTexture", 0);
+		break;
+	case binMaterial::HEIGHT:
+		return S_OK;
+		break;
+	case binMaterial::NORMALS:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Normal.png"))->Bind_ShaderResource(pShader, "g_NormalTexture", 0);
+		break;
+	case binMaterial::SHININESS:
+		return S_OK;
+		break;
+	case binMaterial::OPACITY:
+		return S_OK;
+		break;
+	case binMaterial::DISPLACEMENT:
+		return S_OK;
+		break;
+	case binMaterial::LIGHTMAP:
+		return S_OK;
+		break;
+	case binMaterial::REFLECTION:
+		return S_OK;
+		break;
+	case binMaterial::BASE_COLOR:
+		return S_OK;
+		break;
+	case binMaterial::NORMAL_CAMERA:
+		return S_OK;
+		break;
+	case binMaterial::EMISSIVE_COLOR:
+		return S_OK;
+		break;
+	case binMaterial::METALNESS:
+		return S_OK;
+		break;
+	case binMaterial::DIFFUSE_ROUGHNESS:
+		return S_OK;
+		break;
+	case binMaterial::AMBIENT_OCCLUSION:
+		return S_OK;
+		break;
+	case binMaterial::UNKNOWN:
+		return S_OK;
+		break;
+	case binMaterial::SHEEN:
+		return S_OK;
+		break;
+	case binMaterial::CLEARCOAT:
+		return S_OK;
+		break;
+	case binMaterial::TRANSMISSION:
+		return S_OK;
+		break;
+	case binMaterial::MAYA_BASE:
+		return S_OK;
+		break;
+	case binMaterial::MAYA_SPECULAR:
+		return S_OK;
+		break;
+	case binMaterial::MAYA_SPECULAR_COLOR:
+		return S_OK;
+		break;
+	case binMaterial::MAYA_SPECULAR_ROUGHNESS:
+		return S_OK;
+		break;
+	case binMaterial::ANISOTROPY:
+		return S_OK;
+		break;
+	case binMaterial::GLTF_METALLIC_ROUGHNESS:
+		return S_OK;
+		break;
+	case binMaterial::END:
+		return S_OK;
+		break;
+	default:
+		break;
+	}
+
+	return S_OK;
 }
 
 CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, const binMaterial* pBinMaterial)
@@ -91,6 +197,7 @@ void CMaterial::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pGameInstance);
 
 	for (auto& SRVs : m_SRVs)
 	{

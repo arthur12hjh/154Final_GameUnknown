@@ -136,10 +136,8 @@ HRESULT CLoader::Loading_For_Logo()
 
 	Loading_UI_For_Logo_Level();
 
-	m_strMessage = TEXT("로딩이 완료되었습니다..");
-
 	while (m_pGameInstance->IsWorkThread());
-		
+	m_strMessage = TEXT("로딩이 완료되었습니다..");
 	m_isFinished = true;
 	return S_OK;
 }
@@ -346,10 +344,10 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/* For.Prototype_GameObject_ShaderTestModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		CShaderTestModel::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_ShaderTestModel */
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+	//	CShaderTestModel::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 #endif
 
 	Desc->OnCompleted(this_thread::get_id());
@@ -372,6 +370,7 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	//이거 스레드 지연작동
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),

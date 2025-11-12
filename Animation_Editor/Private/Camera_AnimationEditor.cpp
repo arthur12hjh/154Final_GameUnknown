@@ -67,7 +67,7 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 	
 
 
-	m_pTransformCom->LookAt(XMVectorSet(0.f, -1.f, 0.f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 
 

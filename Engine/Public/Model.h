@@ -46,6 +46,8 @@ public:
 
 	void Set_Animation(const _char* szAnimationTag);
 
+	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;

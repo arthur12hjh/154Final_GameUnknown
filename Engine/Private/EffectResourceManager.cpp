@@ -15,12 +15,10 @@ CEffectResourceManager::CEffectResourceManager(ID3D11Device* pDevice, ID3D11Devi
 
 HRESULT CEffectResourceManager::Initalize()
 {
+	m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->LoadVIBuffer(pArg); });
 	if (FAILED(LoadTexture()))
 		return E_FAIL;
-
-	if (FAILED(LoadVIBuffer()))
-		return E_FAIL;
-
+	while (m_pGameInstance->IsWorkThread());
 	return S_OK;
 }
 
@@ -101,9 +99,17 @@ HRESULT CEffectResourceManager::LoadTexture()
 		MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
 		_wstring FullPath = FrontPath + pFileName;
-		auto pTexture = CTexture::Create(m_pDevice, m_pContext, FullPath.c_str(), 1);
 		_wstring szTextureTag = pFileName;
-		m_pTextures.emplace(szTextureTag, pTexture);
+
+		auto iter = m_pTextures.find(szTextureTag);
+		if (iter == m_pTextures.end())
+		{
+			auto pTexture = CTexture::Create(m_pDevice, m_pContext, FullPath.c_str(), 1);
+			if (nullptr == pTexture)
+				MSG_BOX("Create Fail : Static Resource");
+			m_pTextures.emplace(szTextureTag, pTexture);
+		}
+		
 		//_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
 		iResult = _findnext64(handle, &fd);
 		Safe_Delete_Array(pFileName);
@@ -113,8 +119,9 @@ HRESULT CEffectResourceManager::LoadTexture()
 	return S_OK;
 }
 
-HRESULT CEffectResourceManager::LoadVIBuffer()
+HRESULT CEffectResourceManager::LoadVIBuffer(void* pArg)
 {
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	// _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
 	_finddatai64_t  fd;
 
@@ -137,17 +144,24 @@ HRESULT CEffectResourceManager::LoadVIBuffer()
 		MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
 		string FullPath = FrontPath + fd.name;
-		auto pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, FullPath.c_str(), PreMatrix);
-
 		_wstring szTextureTag = pFileName;
-		m_pVIBuffers.emplace(szTextureTag, pModel);
+		auto iter = m_pVIBuffers.find(szTextureTag);
+		if (iter == m_pVIBuffers.end())
+		{
+			auto pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, FullPath.c_str(), PreMatrix);
+			if (nullptr == pModel)
+				MSG_BOX("Create Fail : Static Resource");
+
+			m_pVIBuffers.emplace(szTextureTag, pModel);
+		}
+		
 		//_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
 		iResult = _findnext64(handle, &fd);
 		Safe_Delete_Array(pFileName);
 	}
 
 	_findclose(handle);
-
+	Desc->OnCompleted(this_thread::get_id());
 	//m_pVIBuffers.emplace(TEXT("VI_Rect"), CVIBuffer_Rect::Create(m_pDevice, m_pContext));
 	return S_OK;
 }

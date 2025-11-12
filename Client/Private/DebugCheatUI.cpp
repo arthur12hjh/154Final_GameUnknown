@@ -41,6 +41,8 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
     DrawCaemraDebug();
     ImGui::Separator();
     DrawLightDebug();
+    ImGui::Separator();
+    DrawGameSpeedDebug();
 
     ImGui::End();
 
@@ -155,6 +157,26 @@ void CDebugCheatUI::DrawLightDebug()
             ImGui::EndCombo();
         }
     }
+#endif // _DEBUG
+}
+
+void CDebugCheatUI::DrawGameSpeedDebug()
+{
+#ifdef _DEBUG
+    ImGui::Text("Game Speed Debug");
+
+    if(ImGui::SliderFloat("Game Speed Ratio", &m_fGameSpeed, 0.001f, 3.f))
+    {
+       m_pGameInstance->SetGameSpeed(m_fGameSpeed);
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::Text("DeltaTime Mulitply Ratio");
+        ImGui::EndTooltip();
+    }
+
+
 #endif // _DEBUG
 }
 

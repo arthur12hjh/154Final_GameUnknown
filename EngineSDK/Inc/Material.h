@@ -17,8 +17,13 @@ private:
 	ID3D11Device*					m_pDevice = { nullptr };
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 
+	class CGameInstance*			m_pGameInstance = { nullptr };
+
 	_uint									m_iNumSRVs = {};
 	vector<ID3D11ShaderResourceView*>		m_SRVs[AI_TEXTURE_TYPE_MAX];
+
+private:
+	HRESULT BindDefaultTexture(CShader* pShader, _uint eType);
 
 public:
 	static CMaterial* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, const binMaterial* pBinMaterial);

@@ -48,7 +48,7 @@ void CPxTestProp::Update(_float fTimeDelta)
 
 void CPxTestProp::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
@@ -69,7 +69,7 @@ HRESULT CPxTestProp::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(3)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;

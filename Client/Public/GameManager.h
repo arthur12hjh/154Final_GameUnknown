@@ -54,7 +54,6 @@ private :
 	CGameInstance*				m_pGameInstance = nullptr;
 
 	CGameObject*				m_pPlayer = nullptr;
-
 	CUIResourceStore*			m_pUIResourceStore = nullptr;
 
 private :

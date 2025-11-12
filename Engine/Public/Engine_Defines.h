@@ -30,6 +30,7 @@ using Json = nlohmann::json;
 #include <functional>
 #include <string>
 #include <bitset>
+#include <future>
 
 #include <thread>
 #include <condition_variable>

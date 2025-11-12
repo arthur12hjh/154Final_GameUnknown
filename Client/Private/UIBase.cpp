@@ -74,7 +74,6 @@ HRESULT CUIBase::Add_Child(CGameObject* pObj)
 	Safe_AddRef(pUIObject);
 
 	m_Children.push_back(pUIObject);
-
 	return S_OK;
 }
 

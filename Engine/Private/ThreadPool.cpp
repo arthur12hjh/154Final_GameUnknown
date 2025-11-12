@@ -66,7 +66,7 @@ void CThreadPool::Update_WorkThread()
 		// 맨 앞의 job 을 뺀다.
 		THREAD_JOB job = move(m_ThreadJobs.front());
 		m_ThreadJobs.pop();
-		lock.unlock();
+	
 
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
@@ -74,6 +74,7 @@ void CThreadPool::Update_WorkThread()
 			m_iWorkdThread++;
 			job.JobFunction(&m_DefferdContexts[this_thread::get_id()]);
 		}
+		lock.unlock();
 	}
 }
 

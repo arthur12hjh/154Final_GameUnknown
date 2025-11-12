@@ -17,6 +17,7 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 	for (auto& pChannel : m_Channels)
 		Safe_AddRef(pChannel);
 
+	strcpy_s(m_szName, Prototype.m_szName);
 }
 
 HRESULT CAnimation::Initialize(class CModel* pModel, binAnimation* pAnimation)

@@ -4,6 +4,8 @@
 #include "Tool_Manager.h"
 
 #include "GameObject.h"
+#include "ContainerObject.h"
+#include "Animation.h"
 
 CImGui_Manager::CImGui_Manager()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
@@ -111,7 +113,19 @@ void CImGui_Manager::LoadFont()
 
 void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 {
+	if (nullptr != m_pSelectedObject)
+	{
+		m_pSelectedObject->Set_Dead(TRUE);
+		m_pSelectedObject = nullptr;
+	}
+
 	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), szCharacterTag, ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
+
+	list<CGameObject*>* pObjLists = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
+
+	m_pSelectedObject = pObjLists->back();
+
+	m_pAnimationList = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_AnimationList();
 }
 
 void CImGui_Manager::Kill_Character()
@@ -120,6 +134,7 @@ void CImGui_Manager::Kill_Character()
 		return;
 	m_pSelectedObject->Set_Dead(TRUE);
 	m_pSelectedObject = nullptr;
+	m_pAnimationList = nullptr;
 }
 
 void CImGui_Manager::Update_ToolBar()
@@ -249,11 +264,66 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 
 void CImGui_Manager::Update_AnimationList()
 {
-
 	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
-	ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y)); // 왼쪽에 갖다붙일거임
+	ImGui::SetNextWindowSize(ImVec2(450, ImGui::GetIO().DisplaySize.y)); // 왼쪽에 갖다붙일거임
 
-	ImGui::Begin(u8"Animation List", NULL, ImGuiWindowFlags_MenuBar);
+	static int iSelectedAnimationIndex = 0;
+	static int iBeforeAnimationIndex = -1;
+
+	ImGui::Begin(u8"Animation List", NULL);
+
+	if (nullptr == m_pAnimationList)
+	{
+		ImGui::End();
+		iSelectedAnimationIndex = 0;
+		iBeforeAnimationIndex = -1;
+		return;
+	}
+
+	if (!m_pAnimationList || m_pAnimationList->empty())
+	{
+		ImGui::Text("No animations loaded.");
+		return;
+	}
+
+	ImGui::Text("Animation List:");
+
+	if (iSelectedAnimationIndex != -1)
+	{
+		ImVec4 skyBlue = ImVec4(0.4f, 0.7f, 1.0f, 1.0f);
+
+		ImGui::TextColored(skyBlue, "Selected Index:");
+		ImGui::SameLine();
+		ImGui::Text("%d   ", iSelectedAnimationIndex);
+
+		ImGui::TextColored(skyBlue, "Selected Name:");
+		ImGui::SameLine();
+		ImGui::Text("%s", (*m_pAnimationList)[iSelectedAnimationIndex]->Get_Name());
+
+	}
+
+	ImGui::Separator();
+	ImGui::Separator();
+
+	for (int i = 0; i < m_pAnimationList->size(); ++i)
+	{
+		CAnimation* pAnim = (*m_pAnimationList)[i];
+		const char* animName = pAnim->Get_Name();
+
+
+		if (ImGui::Selectable(animName, iSelectedAnimationIndex == i))
+		{
+			iSelectedAnimationIndex = i;
+		}
+	}
+
+	if (iSelectedAnimationIndex != iBeforeAnimationIndex)
+	{
+		iBeforeAnimationIndex = iSelectedAnimationIndex;
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(iSelectedAnimationIndex);
+	}
+
+
 
 	ImGui::End();
 
