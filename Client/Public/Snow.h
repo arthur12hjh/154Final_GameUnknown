@@ -18,9 +18,9 @@ class CSnow final : public CGameObject
 public :
 	struct RectConstBufferData
 	{
+		_float4			vGravity;
 		_float2			fTimeDelta;
 		_int2			iLoopAndCount;
-
 	};
 
 private:

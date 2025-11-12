@@ -26,23 +26,28 @@ HRESULT CForkLift::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(
+	/*m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(
 		m_pGameInstance->Random(0.f, 30.f), 
 		4.f,
 		m_pGameInstance->Random(0.f, 30.f),
 		1.f
-	));
+	));*/
 
 	return S_OK;
 }
 
 void CForkLift::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+
 }
 
 void CForkLift::Update(_float fTimeDelta)
 {
+	m_fAccTime += fTimeDelta;
+	if (m_fAccTime >= 5.f)
+		m_fAccTime = 0.f;
+
+	m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(10, m_pts, m_fAccTime / 5.f));
 }
 
 void CForkLift::Late_Update(_float fTimeDelta)

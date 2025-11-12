@@ -40,35 +40,49 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 
 void CShaderTestModel::Priority_Update(_float fTimeDelta)
 {
+	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 }
 
 void CShaderTestModel::Update(_float fTimeDelta)
 {
-	m_pModelCom->Play_Animation(fTimeDelta);
+  	m_pModelCom->Play_Animation(fTimeDelta);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD8))
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD6))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD6))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
 
- 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+	{
+		m_iShaderPassIdx = 2;
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+	{
+		m_iShaderPassIdx = 3;
+	}
 }
 
 void CShaderTestModel::Late_Update(_float fTimeDelta)
 {
+ 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
+#endif
 }
 
 HRESULT CShaderTestModel::Render()
@@ -83,10 +97,19 @@ HRESULT CShaderTestModel::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
 			return E_FAIL;
 
+		/* 디퓨즈 바인딩 */
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
+		/* 노멀맵 바인딩 */
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+		/* 이미시브 바인딩 */
+		if (S_FALSE == (m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+		{
+			m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Emissive.png"))->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture", 0);
+		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(m_iShaderPassIdx)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
@@ -151,7 +174,9 @@ HRESULT CShaderTestModel::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
 		return E_FAIL;
-	
+
+	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
+
 	return S_OK;
 }
 

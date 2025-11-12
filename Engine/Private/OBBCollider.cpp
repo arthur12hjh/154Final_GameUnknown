@@ -134,6 +134,11 @@ _bool COBBCollider::RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC
     return bIsHit;
 }
 
+_bool COBBCollider::FrustomIntersect(const BoundingFrustum& Frustom)
+{
+    return m_Bounding->Intersects(Frustom);
+}
+
 ContainmentType COBBCollider::Contains(_vector vPoint)
 {
     return m_Bounding->Contains(vPoint);

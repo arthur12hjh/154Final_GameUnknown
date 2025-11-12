@@ -39,6 +39,7 @@ private:
 	HRESULT					Start_Level(LEVEL eLevelID);
 	HRESULT					Ready_Gara();
 	HRESULT					Ready_Prototypes();
+	HRESULT					Ready_Mouse();
 
 public:
 	static CMainApp*		Create();

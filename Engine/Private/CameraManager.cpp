@@ -53,13 +53,13 @@ HRESULT CCameraManager::Remove_Camera(const WCHAR* szCameraTag)
     return S_OK;
 }
 
-HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
     if (nullptr != m_pMainCamera)
     {
-        if (nullptr != ppPreCameraMatrix)
+        if (nullptr != pPreCameraMatrix)
         {
-            *ppPreCameraMatrix = m_pMainCamera->GetTransform()->Get_WorldMatrixPtr();
+            memcpy(pPreCameraMatrix, m_pMainCamera->GetTransform()->Get_WorldMatrixPtr(), sizeof(_float4x4));
         }
         Safe_Release(m_pMainCamera);
     }

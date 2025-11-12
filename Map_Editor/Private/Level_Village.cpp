@@ -20,6 +20,9 @@ HRESULT CLevel_Village::Initialize()
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
@@ -117,6 +120,15 @@ HRESULT CLevel_Village::Ready_Layer_Terrain(const _wstring& strLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Village::Ready_Layer_Terrain_Sand(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Terrain_Sand"),
+		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CLevel_Village::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
@@ -174,7 +186,7 @@ CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 void CLevel_Village::Free()
 {
+	CImgui_Manager::GetInstance()->DestroyInstance();
 	__super::Free();
 
-	CImgui_Manager::GetInstance()->DestroyInstance();
 }

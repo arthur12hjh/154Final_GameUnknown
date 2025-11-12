@@ -1,8 +1,8 @@
 #include "pch.h"
+#include "GameObject.h"
 #include "Particle_Setting.h"
 #include "GameInstance.h"
 
-//static CVIBuffer_Rect_Instance* pVIBufferCom = { nullptr };
 CParticle_Setting::CParticle_Setting(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CImgBase{ pDevice, pContext } {}
 
 CParticle_Setting* CParticle_Setting::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -19,352 +19,516 @@ CParticle_Setting* CParticle_Setting::Create(ID3D11Device* pDevice, ID3D11Device
 
 HRESULT CParticle_Setting::Initialize()
 {
-    //CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		desc{};
-    //desc.iNumInstance = 7;
-    //desc.vCenter = _float3(0.0f, 0.f, 0.f);
-    //desc.vRange = _float3(0.5f, 0.5f, 1.f);
-    //desc.vSize = _float2(0.05f, 0.1f);
-    //desc.vLifeTime = _float2(0.1f, 0.4f);
-    //desc.vSpeed = _float2(1.f, 2.f);
-    //desc.isLoop = false;
-    //pVIBufferCom = CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &desc);
+    m_tParticleData.iNumInstance = 100;
+    m_tParticleData.iBegin = 0;
+    m_tParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
+    m_tParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
+    m_tParticleData.fRange = _float3(1.f, 1.f, 1.f);
+    m_tParticleData.fSize = _float2(0.5f, 1.f);
+    m_tParticleData.fLifeTime = _float2(0.5f, 1.f);
+    m_tParticleData.fSpeed = _float2(1.f, 0.5f);
+    m_tParticleData.bisLoop = true;
+    m_tParticleData.fSizeDiagram = _float4(1, 0, 1, 0);
+    m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
+    m_tParticleData.m_iSelectRender = 3;
+    m_tParticleData.fColor = { 0,0,0,1 };
+    m_tParticleData.szCS = "CS";
+    m_szCS = "CS";
+
+    m_ImageFiles.clear();
+
+    vector<string> ImageFiles;
+    char pattern[MAX_PATH] = {};
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
+
+    WIN32_FIND_DATAA fd{};
+    HANDLE h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                char szFilePath[MAX_PATH] = {};
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
+                strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+                ImageFiles.emplace_back(szFilePath);
+                m_ImageFiles.emplace_back(fd.cFileName);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
+    }
+    for (auto Texture : m_pTextures) {
+        Safe_Release(Texture);
+    }
+    m_pTextures.clear();
+    m_SRVs.clear();
+    for (auto ImageFile : ImageFiles) {
+        _tchar szPath[256] = { 0, };
+        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
+        m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
+
+        _tchar			szEXT[MAX_PATH] = {};
+
+        _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+
+        _tchar			szFullPath[MAX_PATH] = {};
+
+        ID3D11ShaderResourceView* pSRV = { nullptr };
+
+        HRESULT			hr = { };
+        if (false == lstrcmp(szEXT, TEXT(".dds")))
+            hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+        else if (false == lstrcmp(szEXT, TEXT(".tga")))
+            hr = E_FAIL;
+        else
+            hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+        if (FAILED(hr))
+            return E_FAIL;
+        m_SRVs.push_back(pSRV);
+    }
+
+
+
+    CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+
+    Desc.iNumInstance = m_tParticleData.iNumInstance;
+    Desc.vCenter = m_tParticleData.fCenter;
+    Desc.vPivot = m_tParticleData.fPivot;
+    Desc.vRange = m_tParticleData.fRange;
+    Desc.vSize = m_tParticleData.fSize;
+    Desc.vLifeTime = m_tParticleData.fLifeTime;
+    Desc.vSpeed = m_tParticleData.fSpeed;
+    Desc.isLoop = m_tParticleData.bisLoop;
+
+    m_pParticles.clear();
+    CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
+    pParticle->Initialize(nullptr);
+
+    pParticle->Set_Components(m_tParticleData);
+
+    for (_uint i = 0; i < 3; ++i) {
+        pParticle->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
+    }
+    m_iSelectParticle = 0;
+    m_pParticles.push_back(pParticle);
+
+    CParticle* pParticle2 = CParticle::Create(m_pDevice, m_pContext);
+    pParticle2->Initialize(nullptr);
+
+    pParticle2->Set_Components(m_tParticleData);
+
+    for (_uint i = 0; i < 3; ++i) {
+        pParticle2->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
+    }
+
+    m_iSelectParticle = 0;
+    m_pParticles.push_back(pParticle2);
     return S_OK;
 }
 
 HRESULT CParticle_Setting::Save_Binary(const _tchar* pFilePath)
 {
-    //HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    //if (!hFile)
-    //    return E_FAIL;
-    //
-    //DWORD dwByte = 0;
-    //
-    //_uint iCount = (_uint)m_Placed.size();
-    //if (!WriteFile(hFile, &iCount, sizeof(_uint), &dwByte, nullptr)) {
-    //    CloseHandle(hFile);
-    //    return E_FAIL;
-    //}
-    //
-    //for (const auto& r : m_Placed)
-    //{
-    //    int protoLenA = 0;
-    //    if (!r.protoTag.empty())
-    //        protoLenA = WideCharToMultiByte(CP_ACP, 0, r.protoTag.c_str(), (int)r.protoTag.size(), nullptr, 0, nullptr, nullptr);
-    //    string protoA;
-    //    protoA.resize(protoLenA);
-    //    if (protoLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.protoTag.c_str(), (int)r.protoTag.size(), &protoA[0], protoLenA, nullptr, nullptr);
-    //
-    //    _uint lenProto = (_uint)protoA.size();
-    //    if (!WriteFile(hFile, &lenProto, sizeof(lenProto), &dwByte, nullptr) || dwByte != sizeof(lenProto))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenProto)
-    //    {
-    //        if (!WriteFile(hFile, protoA.data(), lenProto, &dwByte, nullptr) || dwByte != lenProto)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //
-    //    // pos/rot/scale
-    //    float p[3] = { r.pos.x,     r.pos.y,     r.pos.z };
-    //    float rx[3] = { r.rotDeg.x,  r.rotDeg.y,  r.rotDeg.z };
-    //    float sc[3] = { r.scale.x,   r.scale.y,   r.scale.z };
-    //
-    //    if (!WriteFile(hFile, p, sizeof(p), &dwByte, nullptr) || dwByte != sizeof(p))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, rx, sizeof(rx), &dwByte, nullptr) || dwByte != sizeof(rx))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, sc, sizeof(sc), &dwByte, nullptr) || dwByte != sizeof(sc))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //    int layerLenA = 0;
-    //    if (!r.layerTag.empty())
-    //        layerLenA = WideCharToMultiByte(CP_ACP, 0, r.layerTag.c_str(), (int)r.layerTag.size(), nullptr, 0, nullptr, nullptr);
-    //    string layerA;
-    //    layerA.resize(layerLenA);
-    //    if (layerLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.layerTag.c_str(), (int)r.layerTag.size(), &layerA[0], layerLenA, nullptr, nullptr);
-    //
-    //    _uint lenLayer = (_uint)layerA.size();
-    //    if (!WriteFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenLayer) {
-    //        if (!WriteFile(hFile, layerA.data(), lenLayer, &dwByte, nullptr) || dwByte != lenLayer) {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //
-    //    if (!WriteFile(hFile, &r.layerLevel, sizeof(r.layerLevel), &dwByte, nullptr) || dwByte != sizeof(r.layerLevel)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!WriteFile(hFile, &r.protoLevel, sizeof(r.protoLevel), &dwByte, nullptr) || dwByte != sizeof(r.protoLevel)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //    if (!WriteFile(hFile, &r.cell, sizeof(r.cell), &dwByte, nullptr) || dwByte != sizeof(r.cell)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //
-    //    layerLenA = 0;
-    //    if (!r.NavigaionTag.empty())
-    //        layerLenA = WideCharToMultiByte(CP_ACP, 0, r.NavigaionTag.c_str(), (int)r.NavigaionTag.size(), nullptr, 0, nullptr, nullptr);
-    //    layerA = {};
-    //    layerA.resize(layerLenA);
-    //    if (layerLenA)
-    //        WideCharToMultiByte(CP_ACP, 0, r.NavigaionTag.c_str(), (int)r.NavigaionTag.size(), &layerA[0], layerLenA, nullptr, nullptr);
-    //
-    //    lenLayer = (_uint)layerA.size();
-    //    if (!WriteFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer)) {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (lenLayer) {
-    //        if (!WriteFile(hFile, layerA.data(), lenLayer, &dwByte, nullptr) || dwByte != lenLayer) {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //}
-    //
-    //CloseHandle(hFile);
     return S_OK;
 }
 
 HRESULT CParticle_Setting::Load_Binary(const _tchar* pFilePath)
 {
-    //HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    //if (hFile == INVALID_HANDLE_VALUE) return E_FAIL;
-    //
-    //DWORD dwByte = 0;
-    //
-    //_uint iCount;
-    //if (!ReadFile(hFile, &iCount, sizeof(_uint), &dwByte, nullptr)) {
-    //    CloseHandle(hFile);
-    //    return E_FAIL;
-    //}
-    //m_pNavigation = nullptr;
-    //vector<PlacedRecord> loaded;
-    //loaded.reserve(iCount);
-    //
-    //for (_uint i = 0; i < iCount; ++i)
-    //{
-    //    _uint lenProto = 0;
-    //    if (!ReadFile(hFile, &lenProto, sizeof(lenProto), &dwByte, nullptr) || dwByte != sizeof(lenProto))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string protoA;
-    //    protoA.resize(lenProto);
-    //    if (lenProto) {
-    //        if (!ReadFile(hFile, &protoA[0], lenProto, &dwByte, nullptr) || dwByte != lenProto)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring protoW;
-    //    if (lenProto) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, protoA.data(), (int)protoA.size(), nullptr, 0);
-    //        protoW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, protoA.data(), (int)protoA.size(), &protoW[0], needW);
-    //    }
-    //
-    //    // pos/rot/scale
-    //    float p[3]{}, rx[3]{}, sc[3]{};
-    //    if (!ReadFile(hFile, p, sizeof(p), &dwByte, nullptr) || dwByte != sizeof(p))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, rx, sizeof(rx), &dwByte, nullptr) || dwByte != sizeof(rx))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, sc, sizeof(sc), &dwByte, nullptr) || dwByte != sizeof(sc))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //    _uint lenLayer = 0;
-    //    if (!ReadFile(hFile, &lenLayer, sizeof(lenLayer), &dwByte, nullptr) || dwByte != sizeof(lenLayer))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string layerA;
-    //    layerA.resize(lenLayer);
-    //    if (lenLayer) {
-    //        if (!ReadFile(hFile, &layerA[0], lenLayer, &dwByte, nullptr) || dwByte != lenLayer)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring layerW;
-    //    if (lenLayer) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, layerA.data(), (int)layerA.size(), nullptr, 0);
-    //        layerW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, layerA.data(), (int)layerA.size(), &layerW[0], needW);
-    //    }
-    //
-    //    _uint lv = 0, pv = 0, cell = 0;
-    //    if (!ReadFile(hFile, &lv, sizeof(lv), &dwByte, nullptr) || dwByte != sizeof(lv))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, &pv, sizeof(pv), &dwByte, nullptr) || dwByte != sizeof(pv))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    if (!ReadFile(hFile, &cell, sizeof(cell), &dwByte, nullptr) || dwByte != sizeof(cell))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //
-    //
-    //
-    //
-    //    _uint lenNavigation = 0;
-    //    if (!ReadFile(hFile, &lenNavigation, sizeof(lenNavigation), &dwByte, nullptr) || dwByte != sizeof(lenNavigation))
-    //    {
-    //        CloseHandle(hFile);
-    //        return E_FAIL;
-    //    }
-    //    string navigationA;
-    //    navigationA.resize(lenNavigation);
-    //    if (lenNavigation) {
-    //        if (!ReadFile(hFile, &navigationA[0], lenNavigation, &dwByte, nullptr) || dwByte != lenNavigation)
-    //        {
-    //            CloseHandle(hFile);
-    //            return E_FAIL;
-    //        }
-    //    }
-    //    wstring navigationW = {};
-    //    if (lenNavigation) {
-    //        int needW = MultiByteToWideChar(CP_ACP, 0, navigationA.data(), (int)navigationA.size(), nullptr, 0);
-    //        navigationW.resize(needW);
-    //        if (needW) MultiByteToWideChar(CP_ACP, 0, navigationA.data(), (int)navigationA.size(), &navigationW[0], needW);
-    //    }
-    //
-    //
-    //
-    //    PlacedRecord r{};
-    //    r.protoTag = protoW;
-    //    r.pos = _float3{ p[0],  p[1],  p[2] };
-    //    r.rotDeg = _float3{ rx[0], rx[1], rx[2] };
-    //    r.scale = _float3{ sc[0], sc[1], sc[2] };
-    //    r.layerTag = layerW;
-    //    r.layerLevel = lv;
-    //    r.protoLevel = pv;
-    //    r.cell = cell;
-    //    r.NavigaionTag = navigationW;
-    //
-    //    loaded.push_back(r);
-    //}
-    //
-    //CloseHandle(hFile);
-    //
-    //_bool isMap = true;
-    //for (auto& r : loaded) {
-    //    _vector P = XMVectorSet(r.pos.x, r.pos.y, r.pos.z, 1.0f);
-    //    CGameObject::GAMEOBJECT_DESC desc;
-    //    desc.fSpeedPerSec = 0.f;
-    //    desc.fRotationPerSec = 0.f;
-    //    desc.strName = r.protoTag;
-    //    desc.pos = P;
-    //    desc.fRot = r.rotDeg;
-    //    isMap = r.layerTag == L"Layer_Map";
-    //    desc.fScale = isMap ? _float3(r.scale.x * 100, r.scale.y * 100, r.scale.z * 100) : r.scale;
-    //    desc.iMapIndex = r.cell;
-    //    desc.strNavigation = r.NavigaionTag;
-    //
-    //    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(r.protoLevel, r.protoTag, r.layerLevel, r.layerTag, &desc))) {
-    //        MSG_BOX("faileditem.");
-    //    }
-    //    else {
-    //        m_Placed.push_back(r);
-    //    }
-    //}
-
     return S_OK;
 }
 
 void CParticle_Setting::Update(_float fTimeDelta)
 {
-
+    ImGui::SetNextWindowSizeConstraints(
+        ImVec2(100, 100),
+        ImVec2(400, 600) 
+    );
     ImGui::Begin("Tools", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     ImVec2 btn = { 120, ImGui::GetFrameHeight() };
     if (ImGui::Button("Particle", btn)) {
         m_iLevel = 0;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Emission", btn)) {
+    if (ImGui::Button("Shader", btn)) {
         m_iLevel = 1;
     }
-    ImGui::SameLine();
-    if (ImGui::Button("Shape", btn)) {
-        m_iLevel = 2;
-    }
 
-    static _float fMaxTime = 0;
-    struct MyStruct
+
+    char str[3];
+    snprintf(str, sizeof(str), "%d", m_iSelectParticle);
+    if (ImGui::BeginCombo("Particles", str))
     {
-        _float fTime;
-        _float fX;
-        _float fValue;
-    };
-    static vector<MyStruct> value;
-    static _float values[100] = {};
-    static _int values_offset = 0;
-    static _float refresh_time = 0.0f;
-
-    if (ImGui::GetTime() > refresh_time) {
-        values[values_offset] = cosf(ImGui::GetTime() * 2.0f);
-        values_offset = (values_offset + 1) % IM_ARRAYSIZE(values);
-        refresh_time = ImGui::GetTime() + 1.0f / 60.0f;
+        for (_uint i = 0; i < m_pParticles.size(); ++i) {
+            _bool sel = i == m_iSelectParticle;
+            snprintf(str, sizeof(str), "%d", i);
+            if (ImGui::Selectable(str, sel)) {
+                m_iSelectParticle = i;
+                m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+            }
+            if (sel)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
     }
+    if (ImGui::Button("All Replay", btn)) {
+        for (_uint i = 0; i < m_pParticles.size(); ++i) {
+            m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Replay", btn)) {
+        m_pParticles[m_iSelectParticle]->Set_Components(m_pParticles[m_iSelectParticle]->Get_Data());
+    }
+    m_pParticles[m_iSelectParticle]->Update(m_tParticleData);
 
-    ImGui::PlotLines("Sine Wave", values, IM_ARRAYSIZE(values), values_offset,
-        "sample data", -1.0f, 1.0f, ImVec2(0, 80));
+    ImGui::BeginChild("Menu", ImVec2(300, 500), true);
+    switch (m_iLevel)
+    {
+    case 0:
+    {
+        static _float fTime = 10;
+        static _uint  iSelect = 0;
+        static vector<DiagramData> value;
+        static _float values[100] = {};
+        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+        CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+        Desc.iNumInstance = m_tParticleData.iNumInstance;
+        Desc.vCenter = m_tParticleData.fCenter;
+        Desc.vPivot = m_tParticleData.fPivot;
+        Desc.vRange = m_tParticleData.fRange;
+        Desc.vSize = m_tParticleData.fSize;
+        Desc.vLifeTime = m_tParticleData.fLifeTime;
+        Desc.vSpeed = m_tParticleData.fSpeed;
+        Desc.isLoop = m_tParticleData.bisLoop;
+        _float4 fGravity = m_tParticleData.fGravityDiagram;
+
+
+        ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 0, 0);
+        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tParticleData.fCenter), 0.1f, -100.f, 100.f);
+        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
+        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
+        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
+
+        _float time = 1.f / 100;
+        _float fMax = 5;
+        for (_uint i = 0; i < 100; ++i) {
+            _float t = time * i;
+            if (fabsf(m_tParticleData.fSizeDiagram.y) >= 90.f || fabsf(m_tParticleData.fSizeDiagram.w) >= 90.f) {
+                values[i] = m_tParticleData.fSizeDiagram.x;
+            }
+            else {
+
+                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fSizeDiagram.x
+                    + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.y)) * 100
+                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fSizeDiagram.z
+                    + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.w)) * 100;
+            }
+            fMax = max(fMax, fabsf(values[i]));
+        }
+        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 1,
+            "Size Data", -fMax, fMax, ImVec2(0, 100));
+
+        ImGui::DragFloat("Start Size", &m_tParticleData.fSizeDiagram.x, 0.01f, 0.f, 100.f);
+        ImGui::DragFloat("Start Size fx", &m_tParticleData.fSizeDiagram.y, 1.f, -90.f, 90.f);
+        ImGui::DragFloat("End Size", &m_tParticleData.fSizeDiagram.z, 0.01f, 0.f, 100.f);
+        ImGui::DragFloat("End Size fx", &m_tParticleData.fSizeDiagram.w, 1.f, -90.f, 90.f);
+
+
+
+        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
+        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
+        ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
+
+        _float3 pos;
+        XMStoreFloat3(&pos, m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::POSITION));
+        ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&pos), 0.1f, -1000.f, 1000.f);
+        m_pParticles[m_iSelectParticle]->GetTransform()->Set_State(STATE::POSITION, XMLoadFloat3(&pos));
+        ImGui::SetNextItemWidth(180);
+        
+        _float pitch, yaw, roll;
+        _vector vRight = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::RIGHT) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().x);
+        _vector vUp = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::UP) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().y);
+        _vector vLook = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::LOOK) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().z);
+        _float _11 = XMVectorGetX(vRight);
+        _float _12 = XMVectorGetY(vRight);
+        _float _13 = XMVectorGetZ(vRight);
+
+        _float _21 = XMVectorGetX(vUp);
+        _float _22 = XMVectorGetY(vUp);
+        _float _23 = XMVectorGetZ(vUp);
+
+        _float _31 = XMVectorGetX(vLook);
+        _float _32 = XMVectorGetY(vLook);
+        _float _33 = XMVectorGetZ(vLook);
+
+        pitch = asinf(-_32);
+        if (cosf(pitch) > 0.0001f)
+        {
+            yaw = atan2f(_31, _33);
+            roll = atan2f(_12, _22);
+        }
+        else
+        {
+            yaw = atan2f(-_13, _11);
+            roll = 0.0f;
+        }
+        _float3 rot = { XMConvertToDegrees(pitch),XMConvertToDegrees(yaw), XMConvertToDegrees(roll) };
+        ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&rot), 1.f, 0.f, 360.f);
+        m_pParticles[m_iSelectParticle]->GetTransform()->Rotation(XMConvertToRadians(rot.x), XMConvertToRadians(rot.y), XMConvertToRadians(rot.z));
+
+
+            for (_uint i = 0; i < 100; ++i) {
+                _float t = time * i;
+                if (fabsf(m_tParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tParticleData.fGravityDiagram.w) >= 90.f) {
+                    values[i] = m_tParticleData.fGravityDiagram.x;
+                }
+                else {
+
+                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fGravityDiagram.x
+                        + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.y)) * 100
+                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fGravityDiagram.z
+                        + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.w)) * 100;
+                }
+                fMax = max(fMax, fabsf(values[i]));
+            }
+            ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                "Gravity Data", -fMax, fMax, ImVec2(0, 100));
+
+        ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+        ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+        ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+        ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
+
+
+        if (Desc.iNumInstance != m_tParticleData.iNumInstance ||
+            Desc.vCenter.x != m_tParticleData.fCenter.x ||
+            Desc.vCenter.y != m_tParticleData.fCenter.y ||
+            Desc.vCenter.z != m_tParticleData.fCenter.z ||
+            Desc.vPivot.x != m_tParticleData.fPivot.x ||
+            Desc.vPivot.y != m_tParticleData.fPivot.y ||
+            Desc.vPivot.z != m_tParticleData.fPivot.z ||
+            Desc.vRange.x != m_tParticleData.fRange.x ||
+            Desc.vRange.y != m_tParticleData.fRange.y ||
+            Desc.vRange.z != m_tParticleData.fRange.z ||
+            Desc.vSize.x != m_tParticleData.fSize.x ||
+            Desc.vSize.y != m_tParticleData.fSize.y ||
+            Desc.vLifeTime.x != m_tParticleData.fLifeTime.x ||
+            Desc.vLifeTime.y != m_tParticleData.fLifeTime.y ||
+            Desc.vSpeed.x != m_tParticleData.fSpeed.x ||
+            Desc.vSpeed.y != m_tParticleData.fSpeed.y ||
+            Desc.isLoop != m_tParticleData.bisLoop ||
+            fGravity.x != m_tParticleData.fGravityDiagram.x ||
+            fGravity.y != m_tParticleData.fGravityDiagram.y ||
+            fGravity.z != m_tParticleData.fGravityDiagram.z ||
+            fGravity.w != m_tParticleData.fGravityDiagram.w) {
+            Desc.iNumInstance = m_tParticleData.iNumInstance;
+            Desc.vCenter = m_tParticleData.fCenter;
+            Desc.vPivot = m_tParticleData.fPivot;
+            Desc.vRange = m_tParticleData.fRange;
+            Desc.vSize = m_tParticleData.fSize;
+            Desc.vLifeTime = m_tParticleData.fLifeTime;
+            Desc.vSpeed = m_tParticleData.fSpeed;
+            Desc.isLoop = m_tParticleData.bisLoop;
+            //Safe_Release(m_pVIBufferCom);
+            m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
+        }
+    }
+    break;
+    case 1:
+    {
+        ImGui::ColorPicker4("MyColor", (_float*)&m_tParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+
+        if (ImGui::Button("Refresh", btn)) {
+            m_ImageFiles.clear();
+
+            vector<string> ImageFiles;
+            char pattern[MAX_PATH] = {};
+            strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
+
+            WIN32_FIND_DATAA fd{};
+            HANDLE h = FindFirstFileA(pattern, &fd);
+            if (h != INVALID_HANDLE_VALUE) {
+                do {
+                    if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                        char szFilePath[MAX_PATH] = {};
+                        strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
+                        strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+                        ImageFiles.emplace_back(szFilePath);
+                        m_ImageFiles.emplace_back(fd.cFileName);
+                    }
+                } while (FindNextFileA(h, &fd));
+                FindClose(h);
+            }
+            for (auto Texture : m_pTextures) {
+                Safe_Release(Texture);
+            }
+            m_pTextures.clear();
+            m_SRVs.clear();
+            _uint i = 0;
+            _bool bisFlag[3] = { false, false, false };
+            for (auto ImageFile : ImageFiles) {
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
+                m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
+
+                _tchar			szEXT[MAX_PATH] = {};
+
+                _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+
+                _tchar			szFullPath[MAX_PATH] = {};
+
+                ID3D11ShaderResourceView* pSRV = { nullptr };
+
+                HRESULT			hr = { };
+                if (false == lstrcmp(szEXT, TEXT(".dds")))
+                    hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                else if (false == lstrcmp(szEXT, TEXT(".tga")))
+                    hr = E_FAIL;
+                else
+                    hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                if (FAILED(hr))
+                    return;
+                m_SRVs.push_back(pSRV);
+
+                for (_uint j = 0; j < 3; ++j) {
+                    if(m_pParticles[m_iSelectParticle]->Get_TextureName(j) == m_ImageFiles[i]) {
+                        m_pParticles[m_iSelectParticle]->Set_Texture(j, m_pTextures[i], m_ImageFiles[i]);
+                        bisFlag[j] = true;
+                    }
+                }
+                ++i;
+            }
+
+            for (_uint j = 0; j < 3; ++j) {
+                if (!bisFlag[j]) {
+                    m_pParticles[m_iSelectParticle]->Set_Texture(j, m_pTextures[0], m_ImageFiles[0]);
+                }
+            }
+        }
+        /*
+        
+		PRIORITY,   0
+		SHADOW,     1
+		NONBLEND,   2
+		NONLIGHT,   3
+		BLUR,       4
+		DISTORTION, 5
+		BLEND,      6
+		UI,
+        */
+        
+        string szRender;
+        switch (m_tParticleData.m_iSelectRender)
+        {
+        case 2:
+            szRender = "NONBLEND";
+            break;
+        case 3:
+            szRender = "NONLIGHT";
+            break;
+        case 4:
+            szRender = "BLUR";
+            break;
+        case 5:
+            szRender = "DISTORTION";
+            break;
+        }
+        if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+        {
+            for (_uint i = 2; i < 6; ++i) {
+                _bool sel = i == m_tParticleData.m_iSelectRender;
+                switch (i)
+                {
+                case 2:
+                    szRender = "NONBLEND";
+                    break;
+                case 3:
+                    szRender = "NONLIGHT";
+                    break;
+                case 4:
+                    szRender = "BLUR";
+                    break;
+                case 5:
+                    szRender = "DISTORTION";
+                    break;
+                }
+                if (ImGui::Selectable(szRender.c_str(), sel))
+                    m_tParticleData.m_iSelectRender = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        char szName[30] = {};
+        strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
+        if (ImGui::InputText("File", szName, sizeof(szName))) {
+            m_szCS = szName;
+        }
+        if (ImGui::Button("Refresh Shader", btn)) {
+            m_tParticleData.szCS = m_szCS;
+            m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
+        }
+        ImGui::InputInt("Shader Begine", &m_tParticleData.iBegin);
+        if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+        {
+            for (_uint i = 0; i < 3; ++i) {
+                _bool sel = i == m_iImageType;
+                if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                    m_iImageType = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::Separator();
+
+        ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+        if (0 < m_SRVs.size()) {
+            _uint i = 0;
+            for (auto SRV : m_SRVs) {
+                if (ImGui::ImageButton(m_ImageFiles[i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                    m_pParticles[m_iSelectParticle]->Set_Texture(m_iImageType, m_pTextures[i], m_ImageFiles[i]);
+                }
+                if(1 == ++i % 2)
+                    ImGui::SameLine();
+            }
+        }
+        ImGui::EndChild();
+    }
+    break;
+    }
+    ImGui::EndChild();
+
     ImGui::End();
-    //pVIBufferCom->Drop(fTimeDelta);
+
+    for (_uint i = 0; i < m_pParticles.size(); ++i) {
+        m_pParticles[i]->Priority_Update(fTimeDelta);
+        m_pParticles[i]->Update(fTimeDelta);
+        m_pParticles[i]->Late_Update(fTimeDelta);
+    }
+    //m_pVIBufferCom->Spread(fTimeDelta);
 }
 
 HRESULT CParticle_Setting::Render()
 {
+
+
+    //m_pShaderCom->Begin(m_iShaderBegine);
+    //
+    //
+    //m_pVIBufferCom->Bind_Resources();
+    //
+    //m_pVIBufferCom->Render();
     return S_OK;
 }
 
 void CParticle_Setting::Free()
 {
     __super::Free();
+    for (auto texture : m_pTextures)
+        Safe_Release(texture);
+    m_pTextures.clear();
+    for (auto SRV : m_SRVs)
+        Safe_Release(SRV);
+    m_SRVs.clear();
+    for(auto pParticle : m_pParticles)
+        Safe_Release(pParticle);
+    m_pParticles.clear();
 }

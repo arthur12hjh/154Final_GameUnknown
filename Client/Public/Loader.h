@@ -3,13 +3,16 @@
 #include "Client_Defines.h"
 #include "Base.h"
 
-/* 1. ´ÙÀ½ ·¹º§¿¡ ´ëÇÑ ÀÚ¿øÀ» ·ÎµåÇÑ´Ù. */
+/* 1. ë‹¤ìŒ ë ˆë²¨ì— ëŒ€í•œ ìì›ì„ ë¡œë“œí•œë‹¤. */
 
 NS_BEGIN(Engine)
 class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
+
+class CGameManager;
+class CUIResourceManager;
 
 class CLoader final : public CBase
 {
@@ -40,11 +43,19 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
+	CGameManager*		m_pGameManager = { nullptr };
 
 private:
 	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_GamePlay();
 
+	HRESULT Loading_For_GamePlay();
+	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
+	HRESULT Loading_For_GamePlay_Shader(void* pArg);
+	HRESULT Loading_For_GamePlay_Navigation(void* pArg);
+	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
+public:
+	HRESULT Loading_For_UI_Logo_Level();
+	HRESULT Loading_UI_For_Logo_Level();
 
 
 public:

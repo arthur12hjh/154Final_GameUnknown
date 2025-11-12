@@ -142,9 +142,6 @@
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Font_Manager.h">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClInclude>
@@ -226,12 +223,9 @@
     <ClInclude Include="..\public\StateMachine.h">
       <Filter>01.Utility\18.StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\StateLayer.h">
-      <Filter>01.Utility\18.StateMachine\Layer</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\State.h">
-      <Filter>01.Utility\18.StateMachine\Layer\State</Filter>
-     </ClInclude>
+      <Filter>01.Utility\18.StateMachine\State</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
     </ClInclude>
@@ -244,11 +238,32 @@
     <ClInclude Include="..\Public\PxUserData.h">
       <Filter>01.Utility\03.Components\PhysxComponent\PxUserData</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CCTBehaviorCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Instance_Model.h">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\Model</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\FbxParser.h">
       <Filter>01.Utility\103.ModelParser\FbxParser</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BinParser.h">
       <Filter>01.Utility\103.ModelParser\BinParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Font_Manager.h">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DebugRenderer.h">
+      <Filter>01.Utility\05.Renderer\Debug</Filter>
+  </ClInclude>
+    <ClInclude Include="..\public\Occlusion.h">
+      <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GpuTimer.h">
+      <Filter>01.Utility\19.Query\GPUTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Query.h">
+      <Filter>01.Utility\19.Query</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -375,9 +390,6 @@
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Font_Manager.cpp">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClCompile>
@@ -453,11 +465,8 @@
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>01.Utility\18.StateMachine</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\StateLayer.cpp">
-      <Filter>01.Utility\18.StateMachine\Layer</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\State.cpp">
-      <Filter>01.Utility\18.StateMachine\Layer\State</Filter>
+      <Filter>01.Utility\18.StateMachine\State</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
@@ -468,11 +477,32 @@
     <ClCompile Include="..\Private\CCTHitReporter.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Instance_Model.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\Model</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\FbxParser.cpp">
       <Filter>01.Utility\103.ModelParser\FbxParser</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BinParser.cpp">
       <Filter>01.Utility\103.ModelParser\BinParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTBehaviorCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Font_Manager.cpp">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DebugRenderer.cpp">
+      <Filter>01.Utility\05.Renderer\Debug</Filter>
+  </ClCompile>
+    <ClCompile Include="..\private\Occlusion.cpp">
+      <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GpuTimer.cpp">
+      <Filter>01.Utility\19.Query\GPUTimer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Query.cpp">
+      <Filter>01.Utility\19.Query</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -497,14 +527,8 @@
     <Filter Include="00.System\00.Device\Graphic">
       <UniqueIdentifier>{c39856ee-26b4-4735-9fa7-c1c2a4f029a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\00.Device\Input">
-      <UniqueIdentifier>{6b8c9942-c122-4b9c-ac40-c6875f6a64a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\01.Levels">
       <UniqueIdentifier>{69534a59-b5fe-42e4-98d2-d352d2d2a90b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects">
-      <UniqueIdentifier>{62d7d084-9acc-44d9-b9c2-856102250ce2}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components">
       <UniqueIdentifier>{9232881a-7808-4c76-94cc-6226f3e6970c}</UniqueIdentifier>
@@ -518,17 +542,8 @@
     <Filter Include="01.Utility\04.Prototypes\Manager">
       <UniqueIdentifier>{184fc138-0a87-4b86-9475-c02b96445bdf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObjects\Manager">
-      <UniqueIdentifier>{efc82929-890d-4b38-9012-b28e7cfd31b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\Manager\Layers">
-      <UniqueIdentifier>{71f86de6-d79b-4a5b-bd36-741a477b174d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\01.Levels\Manager">
       <UniqueIdentifier>{5551b45b-b6f2-4aae-b287-d99e83f12793}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\UIObject">
-      <UniqueIdentifier>{5afffd4c-fc13-4efe-81bd-ff8dd523a759}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Transform">
       <UniqueIdentifier>{f969d824-a1bc-4975-9fe6-4173dcece90e}</UniqueIdentifier>
@@ -571,12 +586,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Model\Animation\Channel">
       <UniqueIdentifier>{98095d25-33bd-4d64-8b5d-9d0a35dba342}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\ContainerObject">
-      <UniqueIdentifier>{0caac38f-1c83-42cb-bc4d-60419d229070}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\02.GameObjects\PartObject">
-      <UniqueIdentifier>{1f0dfad3-a936-4e4a-a45b-dbdde53ef1c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\07.Lights">
       <UniqueIdentifier>{5b406faa-f75b-4ab9-bd6c-8a033359432f}</UniqueIdentifier>
@@ -629,23 +638,11 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{ccaab4a9-3a94-4a6f-b842-d75b1077b29a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObjects\BlendObject">
-      <UniqueIdentifier>{bda12695-dadb-4680-8048-7cfe7808cfec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\11.Shadow">
       <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{d7a32d31-9649-45c6-a72d-77c64be53560}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\100. Math">
-      <UniqueIdentifier>{4aac6d9e-0e88-431f-9347-9c8d3b31d6f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD">
-      <UniqueIdentifier>{964fe775-6c7d-4591-9f2e-c28b55ad49a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\14. HUD\Layer">
-      <UniqueIdentifier>{c9eedade-8961-45ce-9e1a-b846fd2e75ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Collider">
       <UniqueIdentifier>{72d6d7ff-05c7-4e9e-994f-be7cd7b4685e}</UniqueIdentifier>
@@ -701,9 +698,6 @@
     <Filter Include="01.Utility\101.String">
       <UniqueIdentifier>{025519de-3c46-4dae-9c9a-06b7365b86a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Shader\Compute">
       <UniqueIdentifier>{f70290d7-8069-4762-8383-23523b3cf611}</UniqueIdentifier>
     </Filter>
@@ -725,12 +719,6 @@
     <Filter Include="01.Utility\18.StateMachine">
       <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\18.StateMachine\Layer">
-      <UniqueIdentifier>{5ccc2d1c-e2bb-4ddb-bd4d-2a3981407e37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine\Layer\State">
-      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent">
       <UniqueIdentifier>{8da1091f-79d9-4902-911a-d0f2ddd3441b}</UniqueIdentifier>
     </Filter>
@@ -745,6 +733,9 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\PxUserData">
       <UniqueIdentifier>{21be063d-19c8-4368-9fcb-820e3f35dfb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine\State">
+      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -767,6 +758,45 @@
     <Filter Include="01.Utility\103.ModelParser\BinParser">
       <UniqueIdentifier>{fa16b9ca-9cf2-469e-9b0c-b312eebc8037}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
+      <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects">
+      <UniqueIdentifier>{62d7d084-9acc-44d9-b9c2-856102250ce2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Manager">
+      <UniqueIdentifier>{efc82929-890d-4b38-9012-b28e7cfd31b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Manager\Layers">
+      <UniqueIdentifier>{71f86de6-d79b-4a5b-bd36-741a477b174d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\UIObject">
+      <UniqueIdentifier>{5afffd4c-fc13-4efe-81bd-ff8dd523a759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\ContainerObject">
+      <UniqueIdentifier>{0caac38f-1c83-42cb-bc4d-60419d229070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\PartObject">
+      <UniqueIdentifier>{1f0dfad3-a936-4e4a-a45b-dbdde53ef1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\BlendObject">
+      <UniqueIdentifier>{bda12695-dadb-4680-8048-7cfe7808cfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{bc262dbf-82ca-4973-af0b-a5955fe21f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Debug">
+      <UniqueIdentifier>{0527329d-9bd1-4c8e-a934-b9f8bdeffda3}</UniqueIdentifier>
+   </Filter>
+    <Filter Include="01.Utility\12.CameraManager\Occlusion">
+      <UniqueIdentifier>{4de1b191-ff85-4c71-9934-81f9e00625ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\19.Query">
+      <UniqueIdentifier>{f367dde0-4f40-4413-8b1f-e4dd316ff93e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\19.Query\GPUTimer">
+      <UniqueIdentifier>{f993a55b-b4f8-4425-8a05-7fef317aee61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -780,6 +810,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl">
       <Filter>98.ShaderFiles\VIBuffer\Point</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

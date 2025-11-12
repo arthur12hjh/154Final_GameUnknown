@@ -54,7 +54,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
-#elif
+#else
 	m_pLight_Manager = CLight_Manager::Create();
 #endif // DEBUG
 	if (nullptr == m_pLight_Manager)
@@ -125,7 +125,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 
-	m_pThreadPool = CThreadPool::Create(4);
+	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 4);
 	if (nullptr == m_pThreadPool)
 		return E_FAIL;
 
@@ -144,6 +144,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	if (false == m_bIsPause)
 	{
+		m_pThreadPool->Update_Async();
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fTimeDelta);
@@ -204,6 +205,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pPhysx_Manager->Update(fTimeDelta); // isdead Ã¼Å©ÇØ¼­ •û°í
 
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
+	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
 	m_pLevel_Manager->Update(fTimeDelta);
 
@@ -216,7 +218,9 @@ HRESULT CGameInstance::Draw()
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
+	
 	m_pRenderer->Render();
+
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] -= GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
 #else
@@ -351,6 +355,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, c
 	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;
 }
 
+const map<const _wstring, class CBase*>* CGameInstance::Get_Prototypes_InLevel(_uint iLevelIndex)
+{
+	return m_pPrototype_Manager->Get_Prototypes_InLevel(iLevelIndex);
+}
+
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
@@ -388,6 +397,10 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
+}
+HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+{
+	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 #endif
 
@@ -444,6 +457,11 @@ HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOut
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
 
+CLight* CGameInstance::Find_Light(_uint iIndex)
+{
+	return m_pLight_Manager->Find_Light(iIndex);
+}
+
 const list<class CLight*>* CGameInstance::GetAllLight()
 {
 	return m_pLight_Manager->GetAllLight();
@@ -454,10 +472,12 @@ HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
 }
 
+#ifdef _DEBUG
 void CGameInstance::Debug_LightRender()
 {
 	m_pLight_Manager->Debug_LightRender();
 }
+#endif // _DEBUG
 #pragma endregion
 
 #pragma region FONT_MANAGER
@@ -471,6 +491,10 @@ HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pTe
 	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor);
 }
 
+_float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace, float fScale)
+{
+	return m_pFont_Manager->Get_Text_Size(strFontTag, pText, bIgnoreWhitespace, fScale);
+}
 #pragma endregion
 
 #pragma region TARGET_MANAGER
@@ -569,6 +593,11 @@ _bool CGameInstance::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return m_pFrustum->isIn_LocalFrustum(vLocalPos, fRange);
 }
 
+_bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
+{
+	return m_pFrustum->isIn_WorldFrustum(pCollider);
+}
+
 #pragma endregion
 
 #pragma region Sound Manager
@@ -615,32 +644,32 @@ void CGameInstance::ADD_ResourceManagerVIBuffer(const WCHAR* VIBufferTag, CCompo
 	m_pEffect_ResourceManager->ADD_VIBufferResource(VIBufferTag, pVIBuffer);
 }
 
-CTexture* CGameInstance::GetResourceManagerTextureResource(const WCHAR* TextureTag)
+CTexture* CGameInstance::Get_ResourceManagerTextureResource(const WCHAR* TextureTag)
 {
 	return m_pEffect_ResourceManager->GetTextureResource(TextureTag);
 }
 
-CShader* CGameInstance::GetResourceManagerShaderResource(const WCHAR* ShaderTag)
+CShader* CGameInstance::Get_ResourceManagerShaderResource(const WCHAR* ShaderTag)
 {
 	return m_pEffect_ResourceManager->GetShaderResource(ShaderTag);
 }
 
-CComponent* CGameInstance::GetResourceManagerVIBufferResource(const WCHAR* VIBufferTag)
+CComponent* CGameInstance::Get_ResourceManagerVIBufferResource(const WCHAR* VIBufferTag)
 {
 	return m_pEffect_ResourceManager->GetVIBufferResource(VIBufferTag);
 }
 
-map<const _wstring, CTexture*>* CGameInstance::GetALLResourceManagerTextureResource()
+map<const _wstring, CTexture*>* CGameInstance::Get_ALLResourceManagerTextureResource()
 {
 	return m_pEffect_ResourceManager->GetALLTextureResource();
 }
 
-map<const _wstring, CShader*>* CGameInstance::GetALLResourceManagerShaderResource()
+map<const _wstring, CShader*>* CGameInstance::Get_ALLResourceManagerShaderResource()
 {
 	return m_pEffect_ResourceManager->GetALLShaderResource();
 }
 
-map<const _wstring, CComponent*>* CGameInstance::GetALLResourceManagerModelResource()
+map<const _wstring, CComponent*>* CGameInstance::Get_ALLResourceManagerModelResource()
 {
 	return m_pEffect_ResourceManager->GetALLVIBufferResource();
 }
@@ -655,7 +684,7 @@ void CGameInstance::ADD_Collider(CCollider* pCollider)
 #pragma endregion
 
 #pragma region Thread Pool
-ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void()> function)
+ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void(void*)> function)
 {
 	return m_pThreadPool->Add_jobList(function);
 }
@@ -663,6 +692,16 @@ ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void()> function)
 _bool CGameInstance::IsThreadPoolStop()
 {
 	return m_pThreadPool->IsThreadPoolStop();
+}
+
+size_t CGameInstance::GetThreadJobCount()
+{
+	return m_pThreadPool->GetThreadJobCount();
+}
+
+_bool CGameInstance::IsWorkThread()
+{
+	return m_pThreadPool->IsWorkThread();
 }
 
 #pragma endregion
@@ -676,9 +715,9 @@ HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
 }
-HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix)
+HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
-	return m_pCameraManager->SetMainCamera(szCameraTag, ppPreCameraMatrix);
+	return m_pCameraManager->SetMainCamera(szCameraTag, pPreCameraMatrix);
 }
 CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 {
@@ -716,6 +755,11 @@ PxControllerManager* CGameInstance::Get_PxCCTManager()
 	return m_pPhysx_Manager->Get_PxCCTManager();
 }
 
+PxScene* CGameInstance::Get_PxScene()
+{
+	return m_pPhysx_Manager->Get_PxScene();
+}
+
 PxPhysics* CGameInstance::Get_PxPhysics()
 {
 	return m_pPhysx_Manager->Get_PxPhysics();
@@ -729,6 +773,11 @@ PxTransform CGameInstance::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 _matrix CGameInstance::Convert_PxTransform_ToMatrix(PxTransform Transform)
 {
 	return m_pPhysx_Manager->Convert_PxTransform_ToMatrix(Transform);
+}
+
+HRESULT CGameInstance::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterController* pCCT)
+{
+	return m_pPhysx_Manager->Add_CCT_ToPhysx(pGameObject, pCCT);
 }
 
 HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)

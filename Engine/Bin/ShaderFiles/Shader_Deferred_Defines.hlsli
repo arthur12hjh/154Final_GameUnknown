@@ -66,7 +66,43 @@ struct PS_OUT_BLUR_FINAL
     float4 vBlurY : SV_TARGET0;
 };
 
+struct PS_OUT_GLOW_X
+{
+    float4 vGlowX : SV_TARGET0;
+};
+
+struct PS_OUT_GLOW_FINAL
+{
+    float4 vGlowY : SV_TARGET0;
+};
+
+
 struct PS_OUT_DISTORTION
 {
     float4 vDistortion : SV_TARGET0;
+};
+
+//피직스 디버깅용
+struct VS_PHYSX_IN
+{
+    float3 vPosition : POSITION;
+    float4 vColor : COLOR0;
+};
+
+struct VS_PHYSX_OUT
+{
+    float4 vPosition : SV_POSITION;
+    float4 vColor : COLOR0;
+};
+
+
+struct PS_PHYSX_IN
+{
+    float4 vPosition : SV_POSITION;
+    float4 vColor : COLOR0;
+};
+
+struct PS_PHYSX_OUT
+{
+    float4 vColor : SV_TARGET0;
 };

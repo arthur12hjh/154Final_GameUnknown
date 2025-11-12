@@ -14,11 +14,6 @@ public:
 		_float2			vSpeed;
 	}POINT_INSTANCE_DESC;
 
-	typedef struct tagVertexPointInstance_Particle final : public VTX_INSTANCE_PARTICLE
-	{
-		_float2 vSpeeds;
-	}VTX_INSTANCE_POINT_PARTICLE;
-
 private:
 	CVIBuffer_Point_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Point_Instance(const CVIBuffer_Point_Instance& Prototype);
@@ -36,7 +31,7 @@ public:
 
 
 private:
-	VTX_INSTANCE_POINT_PARTICLE*	m_pInstanceVertices = { nullptr };
+	VTX_INSTANCE_VERTEX_PARTICLE*	m_pInstanceVertices = { nullptr };
 	_float3							m_vPivot = {};
 	_bool							m_bFlag = { true };
 

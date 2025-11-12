@@ -22,7 +22,7 @@ public :
 	HRESULT				Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT				Remove_Camera(const WCHAR* szCameraTag);
 
-	HRESULT				SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix);
+	HRESULT				SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix);
 
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요

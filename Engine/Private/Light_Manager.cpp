@@ -90,7 +90,7 @@ void CLight_Manager::Debug_LightRender()
         }
     }
 }
-#elif
+#else
 CLight_Manager::CLight_Manager()
 {
 }
@@ -101,7 +101,7 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight
     CLight* pLight = nullptr;
 #ifdef _DEBUG
     pLight = CLight::Create(m_pDevice, m_pContext, LightDesc);
-#elif
+#else
     pLight = CLight::Create(LightDesc);
 #endif // _DEBUG
     if (nullptr == pLight)
@@ -115,6 +115,17 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight
 
     m_Lights.push_back(pLight);
     return S_OK;
+}
+
+CLight* CLight_Manager::Find_Light(_uint iIndex)
+{
+    if (0 > iIndex || m_Lights.size() <= iIndex)
+        return nullptr;
+
+    auto iter = m_Lights.begin();
+    advance(iter, iIndex);
+
+    return *iter;
 }
 
 void CLight_Manager::Clear_DeadLight()
@@ -152,7 +163,7 @@ CLight_Manager* CLight_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContex
     }
     return pLight_Manager;
 }
-#elif
+#else
 CLight_Manager* CLight_Manager::Create()
 {
     return new CLight_Manager();

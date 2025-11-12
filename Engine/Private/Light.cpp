@@ -17,7 +17,7 @@ CLight::CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
 }
-#elif
+#else
 CLight::CLight()
 {
 
@@ -54,6 +54,24 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 #endif // _DEBUG
 
     return S_OK;
+}
+
+void CLight::SetLightInfo(const LIGHT_DESC& Desc)
+{
+	m_LightDesc = Desc;
+
+#ifdef _DEBUG
+	switch (m_LightDesc.eType)
+	{
+	case LIGHT_TYPE::POINT:
+		static_cast<CSphereCollider*>(m_pCollider)->SetCollision({ 0, 0, 0 }, m_LightDesc.fRange);
+		break;
+	case LIGHT_TYPE::DIRECTIONAL:
+		break;
+	case LIGHT_TYPE::SPOT:
+		break;
+	}
+#endif // _DEBUG
 }
 
 void CLight::SetDead(_bool bIsDead)
@@ -99,6 +117,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 
 void CLight::SetVisibility(VISIBILITY eVisibility)
 {
+	m_eVisible = eVisibility;
 }
 
 #ifdef _DEBUG
@@ -151,7 +170,7 @@ CLight* CLight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, con
 
 	return pInstance;
 }
-#elif
+#else
 CLight* CLight::Create(const LIGHT_DESC& LightDesc)
 {
 	CLight* pInstance = new CLight();

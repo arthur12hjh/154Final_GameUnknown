@@ -23,6 +23,8 @@ public:
 	virtual _bool					Intersect(COLLIDER eType, CCollider* pTarget) override;
 	virtual _bool					RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT_DESC& OutDesc) override;
 	virtual _bool					RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC& OutDesc) override;
+	virtual _bool					FrustomIntersect(const BoundingFrustum& Frustom);
+
 	virtual	ContainmentType			Contains(_vector vPoint) override;
 
 	void							SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtents);

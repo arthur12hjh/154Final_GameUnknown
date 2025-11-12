@@ -66,6 +66,7 @@ public:
 #pragma region PROTOTYPE_MANAGER
 	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
@@ -81,6 +82,7 @@ public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 #endif
 #pragma endregion
 
@@ -102,6 +104,8 @@ public:
 #pragma region LIGHT_MANAGER
 	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
 	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	
+	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
 #ifdef _DEBUG
 	void								Debug_LightRender();
@@ -112,6 +116,7 @@ public:
 #pragma region FONT_MANAGER
 	HRESULT						Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
 	HRESULT						Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f ,1.f));
+	_float2						Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace = true, float fScale = 1.f);
 #pragma endregion
 
 #pragma region TARGET_MANAGER
@@ -144,6 +149,7 @@ public:
 	void Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
 	_bool isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
+	_bool isIn_WorldFrustum(class CCollider* pCollider);
 
 #pragma endregion
 
@@ -168,14 +174,14 @@ public:
 	void								ADD_ResourceManagerShader(const WCHAR* ShaderTag, CShader* pShader);
 	void								ADD_ResourceManagerVIBuffer(const WCHAR* VIBufferTag, CComponent* pVIBuffer);
 
-	CTexture*							GetResourceManagerTextureResource(const WCHAR* TextureTag);
-	CShader*							GetResourceManagerShaderResource(const WCHAR* ShaderTag);
-	CComponent*							GetResourceManagerVIBufferResource(const WCHAR* VIBufferTag);
-
-#pragma region _DEBUG
-	map<const _wstring, CTexture*>*		GetALLResourceManagerTextureResource();
-	map<const _wstring, CShader*>*		GetALLResourceManagerShaderResource();
-	map<const _wstring, CComponent*>*	GetALLResourceManagerModelResource();
+	CTexture*							Get_ResourceManagerTextureResource(const WCHAR* TextureTag);
+	CShader*							Get_ResourceManagerShaderResource(const WCHAR* ShaderTag);
+	CComponent*							Get_ResourceManagerVIBufferResource(const WCHAR* VIBufferTag);
+										   
+#pragma region _DEBUG					   
+	map<const _wstring, CTexture*>*		Get_ALLResourceManagerTextureResource();
+	map<const _wstring, CShader*>*		Get_ALLResourceManagerShaderResource();
+	map<const _wstring, CComponent*>*	Get_ALLResourceManagerModelResource();
 #pragma endregion
 #pragma endregion
 
@@ -188,8 +194,10 @@ public:
 	// 이걸로 나중에 취소하거나 할수있음
 	// Handle 받은거 작업 호출되면 nullptr로 바꿔주세요
 	// 작업수행되서 작업리스트에서 빠지면 댕글링 포인터입니다.
-	ThreadJobHandle*				Add_ThreadjobList(function<void()> function);
+	ThreadJobHandle*				Add_ThreadjobList(function<void(void*)> function);
 	_bool							IsThreadPoolStop();
+	size_t							GetThreadJobCount();
+	_bool							IsWorkThread();
 #pragma endregion
 
 #pragma region Camera Manager
@@ -198,7 +206,7 @@ public:
 
 	// Defaut 매개변수 있습니다.
 	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
-	HRESULT							SetMainCamera(const WCHAR* szCameraTag, const _float4x4** ppPreCameraMatrix = nullptr);
+	HRESULT							SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix = nullptr);
 
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요
@@ -222,11 +230,13 @@ public:
 #pragma region Physx_Manager
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
+	PxScene*	Get_PxScene();
 	PxPhysics*  Get_PxPhysics();
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
+	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
 
 #pragma endregion

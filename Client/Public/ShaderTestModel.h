@@ -37,7 +37,7 @@ private:
 	CCharacterController* m_pCCT = { nullptr };
 	CModel*				  m_pModelCom = { nullptr };
 	CShader*			  m_pShaderCom = { nullptr };
-
+	_uint				  m_iShaderPassIdx = { 3 };
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

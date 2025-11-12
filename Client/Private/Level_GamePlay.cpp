@@ -2,7 +2,6 @@
 #include "Level_GamePlay.h"
 
 #include "GameInstance.h"
-
 #include "Camera_Free.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -23,14 +22,14 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	/*if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
+		return E_FAIL;*/
+
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
-
-	/*if (FAILED(Ready_Layer_Village_Mou(TEXT("Layer_Village_Mou"))))
-		return E_FAIL;*/
 
 	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
 	//	{
@@ -47,13 +46,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
-	{
-		m_pGameInstance->Add_ThreadjobList([&]()
-			{
-				FontRender();
-			});
-	}*/
+	
 
 }
 
@@ -81,7 +74,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
+	Load_Light_Data();
+
+	/*LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
@@ -99,7 +94,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 10.f;
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
 	SHADOW_LIGHT_DESC		ShadowDesc{};
@@ -137,6 +132,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 
 }
 
+HRESULT CLevel_GamePlay::Ready_Layer_Terrain_Sand(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
@@ -169,17 +173,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;	
 
-#ifdef _DEBUG
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-
 	for (size_t i = 0; i < 30; i++)
 	{
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 			return E_FAIL;
 	}
+
+#ifdef _DEBUG
+ 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
+
 #endif
 
 	return S_OK;
@@ -194,6 +199,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
+	for (size_t i = 0; i < 1; i++)
+	{
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+			return E_FAIL;
+
+	}
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -216,15 +232,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-
-	return S_OK;
-}
-
-HRESULT CLevel_GamePlay::Ready_Layer_Village_Mou(const _wstring& strLayerTag)
-{
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Village_Mou"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -285,6 +292,41 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 				}
 			}
 		}
+	}
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Light_Data()
+{
+	std::ifstream ifs("../Bin/DataFiles/LightData2.bin", std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
+
+	if (pLights && !pLights->empty())
+	{
+		for (auto pLight : *pLights)
+		{
+			pLight->SetDead(true);
+		}
+	}
+
+	_uint iNumLights = 0;
+	ifs.read(reinterpret_cast<_char*>(&iNumLights), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumLights; ++i)
+	{
+		LIGHT_DESC LightDesc;
+		ifs.read(reinterpret_cast<_char*>(&LightDesc), sizeof(LIGHT_DESC));
+
+		m_pGameInstance->Add_Light(LightDesc);
 	}
 
 	ifs.close();

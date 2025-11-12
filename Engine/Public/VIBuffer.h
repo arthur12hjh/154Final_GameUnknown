@@ -19,11 +19,21 @@ public:
 	virtual HRESULT Bind_Resources();
 	virtual HRESULT Render();
 
+	// Buffer를 가져오는 행위는 레퍼런스 카운트가 증가합니다.
+	ID3D11Buffer*					GetVIBuffer();
+
+	// Buffer를 가져오는 행위는 레퍼런스 카운트가 증가합니다.
+	ID3D11Buffer*					GetIBBuffer();
+
+	_uint							GetVertexStride();
+	_uint							GetIndices();
+	DXGI_FORMAT						GetIndexFormat();
+
 protected:
 	ID3D11Buffer*					m_pVB = { nullptr };
 	ID3D11Buffer*					m_pIB = { nullptr };	
 
-	_float3*					m_pVertexPositions = {};
+	_float3*						m_pVertexPositions = {};
 
 	_uint							m_iNumVertices = {};
 	_uint							m_iVertexStride = {};

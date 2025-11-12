@@ -45,6 +45,13 @@ CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelInd
 	return pGameObject;
 }
 
+const map<const _wstring, class CBase*>* CPrototype_Manager::Get_Prototypes_InLevel(_uint iLevelIndex)
+{
+	if (iLevelIndex >= m_iNumLevels)
+		return nullptr;
+	return &m_pPrototypes[iLevelIndex];
+}
+
 void CPrototype_Manager::Clear(_uint iLevelIndex)
 {
 	for (auto& Pair : m_pPrototypes[iLevelIndex])	

@@ -27,6 +27,19 @@ HRESULT CCustomFont::Render(const _tchar* pText, const _float2& vPosition, _fvec
 	return S_OK;
 }
 
+_float2 CCustomFont::Get_Text_Size(const _tchar* pText, bool bIgnoreWhitespace, float fScale) const
+{
+	if (!pText || !m_pFont)
+		return _float2{ 0.f, 0.f };
+
+	// MeasureString: X = width, Y = height (여러 줄이면 최대폭 / 전체높이)
+	XMVECTOR vSize = m_pFont->MeasureString(pText, bIgnoreWhitespace);
+	float width = XMVectorGetX(vSize) * fScale;
+	float height = XMVectorGetY(vSize) * fScale;
+
+	return _float2{ width, height };
+}
+
 CCustomFont* CCustomFont::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath)
 {
 	CCustomFont* pInstance = new CCustomFont(pDevice, pContext);

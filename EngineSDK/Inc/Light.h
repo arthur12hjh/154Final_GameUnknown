@@ -11,14 +11,14 @@ class ENGINE_DLL CLight final : public CBase
 private:
 #ifdef _DEBUG
 	CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#elif
+#else
 	CLight();
 #endif // _DEBUG
 	
 	virtual ~CLight() = default;
 
 public:
-	void			  SetLightInfo(const LIGHT_DESC& Desc) { m_LightDesc = Desc; }
+	void			  SetLightInfo(const LIGHT_DESC& Desc);
 	const LIGHT_DESC* Get_LightDesc() const {
 		return &m_LightDesc;
 	}
@@ -61,7 +61,7 @@ private :
 public:
 #ifdef _DEBUG
 	static CLight* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHT_DESC& LightDesc);
-#elif
+#else
 	static CLight* Create(const LIGHT_DESC& LightDesc);
 #endif // _DEBUG
 
