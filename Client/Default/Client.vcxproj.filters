@@ -312,9 +312,6 @@
     <ClInclude Include="..\Public\PxTestProp.h">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ClientStruct.h">
-      <Filter>99.Defines\GameStruct</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Village_Mou.h">
       <Filter>02.GameObjects\Maps\Village\Mou</Filter>
     </ClInclude>
@@ -329,6 +326,12 @@
     </ClInclude>
     <ClInclude Include="..\public\MousePointer.h">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ClientStruct.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStruct.h">
+      <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

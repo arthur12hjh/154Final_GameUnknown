@@ -8,6 +8,7 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class COcclusion;
 
 class CRenderer final : public CBase
 {
@@ -42,23 +43,51 @@ public:
 	HRESULT Ready_RenderTargets();
 	HRESULT Ready_MRTs();
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	
+	void	UpdateOcclusion();
 	void	Render();
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+<<<<<<< HEAD
 	unique_ptr<GeometricPrimitive> CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop);
+=======
+>>>>>>> CB_FrameWorkd
 #endif
 
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
+<<<<<<< HEAD
+=======
+
+	list<class CGameObject*>								m_NonCulledObjects[ENUM_CLASS(RENDER::END)];
+	unordered_map<class CGameObject*, class COcclusion*>	m_pOcclusionDatas[2];
+
+	/* 사실적인 림라이트를 구현하려면 조명 연산 도중에 들어가는게 맞긴한데.. */
+	/* NonBlend에 대해서 Desc하나 만들것 */
+	/* 우선 선행적으로 Query를 통해서 검사할 오브젝트들 */
+>>>>>>> CB_FrameWorkd
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
 	ID3D11DepthStencilView*				m_pOutlineDSV = { nullptr };
 
+<<<<<<< HEAD
+=======
+	ID3D11RasterizerState*				m_pOcclusionRSState = { nullptr };
+	ID3D11DepthStencilState*			m_pOcclusionDSState = { nullptr };
+
+#ifdef _DEBUG
+private:
+	class CShader*						m_pPhysxDebugShader = { nullptr };
+	list<class CComponent*>				m_DebugComponents = {};
+	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
+#endif
+
+>>>>>>> CB_FrameWorkd
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
@@ -104,7 +133,8 @@ private:
 	void Composite_RT_ToBackBuffer();
 
 private:
-	HRESULT Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT								Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT								Ready_OcclusionDepthStencil();
 
 #ifdef _DEBUG
 private:

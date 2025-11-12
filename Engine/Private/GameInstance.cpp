@@ -125,7 +125,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 
-	m_pThreadPool = CThreadPool::Create(4);
+	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 4);
 	if (nullptr == m_pThreadPool)
 		return E_FAIL;
 
@@ -144,6 +144,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	if (false == m_bIsPause)
 	{
+		m_pThreadPool->Update_Async();
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fTimeDelta);
@@ -588,6 +589,11 @@ _bool CGameInstance::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return m_pFrustum->isIn_LocalFrustum(vLocalPos, fRange);
 }
 
+_bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
+{
+	return m_pFrustum->isIn_WorldFrustum(pCollider);
+}
+
 #pragma endregion
 
 #pragma region Sound Manager
@@ -634,32 +640,32 @@ void CGameInstance::ADD_ResourceManagerVIBuffer(const WCHAR* VIBufferTag, CCompo
 	m_pEffect_ResourceManager->ADD_VIBufferResource(VIBufferTag, pVIBuffer);
 }
 
-CTexture* CGameInstance::GetResourceManagerTextureResource(const WCHAR* TextureTag)
+CTexture* CGameInstance::Get_ResourceManagerTextureResource(const WCHAR* TextureTag)
 {
 	return m_pEffect_ResourceManager->GetTextureResource(TextureTag);
 }
 
-CShader* CGameInstance::GetResourceManagerShaderResource(const WCHAR* ShaderTag)
+CShader* CGameInstance::Get_ResourceManagerShaderResource(const WCHAR* ShaderTag)
 {
 	return m_pEffect_ResourceManager->GetShaderResource(ShaderTag);
 }
 
-CComponent* CGameInstance::GetResourceManagerVIBufferResource(const WCHAR* VIBufferTag)
+CComponent* CGameInstance::Get_ResourceManagerVIBufferResource(const WCHAR* VIBufferTag)
 {
 	return m_pEffect_ResourceManager->GetVIBufferResource(VIBufferTag);
 }
 
-map<const _wstring, CTexture*>* CGameInstance::GetALLResourceManagerTextureResource()
+map<const _wstring, CTexture*>* CGameInstance::Get_ALLResourceManagerTextureResource()
 {
 	return m_pEffect_ResourceManager->GetALLTextureResource();
 }
 
-map<const _wstring, CShader*>* CGameInstance::GetALLResourceManagerShaderResource()
+map<const _wstring, CShader*>* CGameInstance::Get_ALLResourceManagerShaderResource()
 {
 	return m_pEffect_ResourceManager->GetALLShaderResource();
 }
 
-map<const _wstring, CComponent*>* CGameInstance::GetALLResourceManagerModelResource()
+map<const _wstring, CComponent*>* CGameInstance::Get_ALLResourceManagerModelResource()
 {
 	return m_pEffect_ResourceManager->GetALLVIBufferResource();
 }
@@ -674,7 +680,7 @@ void CGameInstance::ADD_Collider(CCollider* pCollider)
 #pragma endregion
 
 #pragma region Thread Pool
-ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void()> function)
+ThreadJobHandle* CGameInstance::Add_ThreadjobList(function<void(void*)> function)
 {
 	return m_pThreadPool->Add_jobList(function);
 }
@@ -687,6 +693,11 @@ _bool CGameInstance::IsThreadPoolStop()
 size_t CGameInstance::GetThreadJobCount()
 {
 	return m_pThreadPool->GetThreadJobCount();
+}
+
+_bool CGameInstance::IsWorkThread()
+{
+	return m_pThreadPool->IsWorkThread();
 }
 
 #pragma endregion

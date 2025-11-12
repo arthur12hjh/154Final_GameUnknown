@@ -3,6 +3,9 @@
 CPipeLine::CPipeLine()
 {
 	XMStoreFloat4x4(&m_IdentityMatrix, XMMatrixIdentity());
+
+	for (_uint i = 0; i < ENUM_CLASS(D3DTS::END); ++i)
+		XMStoreFloat4x4(&m_TransformStateMatrices[i], XMMatrixIdentity());
 }
 
 void CPipeLine::Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix)

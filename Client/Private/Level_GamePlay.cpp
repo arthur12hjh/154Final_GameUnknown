@@ -31,10 +31,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	/*if (FAILED(Ready_Layer_Village_Mou(TEXT("Layer_Village_Mou"))))
 		return E_FAIL;*/
 
-	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
-	//	{
-	//		Ready_Layer_Effect(TEXT("Layer_Effect"));
-	//	});
+	/*m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
+		{
+			Ready_Layer_Effect(TEXT("Layer_Effect"));
+		});*/
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -46,13 +46,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
-	{
-		m_pGameInstance->Add_ThreadjobList([&]()
-			{
-				FontRender();
-			});
-	}*/
+	
 
 }
 
