@@ -374,7 +374,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	//이거 스레드 지연작동
-	this_thread::sleep_for(chrono::seconds(3));
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
