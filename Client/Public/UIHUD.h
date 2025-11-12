@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "GameHUD.h"
+#include "UIBase.h"
 
 NS_BEGIN(Engine)
 class CHUDLayer;
@@ -18,17 +19,12 @@ private:
 
 public:
 	unordered_map<_wstring, CHUDLayer*> Get_Layers() { return m_pLayers; }
-	
-	/*HRESULT Add_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, void* pArg = nullptr);
-	CTexture* Get_TextureCom(const WCHAR* szTextureTag);
 
-	unordered_map<_wstring, CTexture*> Get_Textures() { return m_Textures; }
+	HRESULT Save_Data(_wstring szLayerTag);
+	HRESULT Load_Data(const _tchar* szFilePath);
 
 private:
-	CTexture* Find_Texture(const _wstring& szTextureTag);
-
-private:
-	unordered_map<_wstring, CTexture*> m_Textures{};*/
+	void Save_Hierarchy(CUIBase* pUI, Json& OutData);
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

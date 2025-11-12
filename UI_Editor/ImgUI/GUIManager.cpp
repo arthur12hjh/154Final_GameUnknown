@@ -217,8 +217,22 @@ void CGUIManager::Show_UIObject_List()
                         continue;
                 }
             }
+
             GUI::TreePop();
         }
+
+        _float space = GUI::GetContentRegionAvail().x - GUI::CalcTextSize("Close").x - GUI::GetStyle().FramePadding.x * 2; // auto left margin
+        GUI::Dummy(ImVec2(space, 0));
+        GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
+        if (GUI::Button("SAVE OBJECTS"))
+        {
+            if (FAILED(m_pUIHUD->Save_Data(pLayer.first)))
+            {
+                MSG_BOX("저장 실패");
+                return;
+            }
+        }
+        GUI::PopStyleColor();
     }
 }
 
