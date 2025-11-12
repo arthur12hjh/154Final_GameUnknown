@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -23,13 +23,13 @@
       <Filter>99.Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameInstance.h">
-      <Filter>01.Utility\00.GameInstance</Filter>
+      <Filter>00.GameInstance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Timer_Manager.h">
-      <Filter>00.System\01.Timer\Manager</Filter>
+      <Filter>00.GameInstance\00.System\01.Timer\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Timer.h">
-      <Filter>00.System\01.Timer</Filter>
+      <Filter>00.GameInstance\00.System\01.Timer</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Component.h">
       <Filter>01.Utility\03.Components</Filter>
@@ -53,7 +53,7 @@
       <Filter>01.Utility\01.Levels\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Graphic_Device.h">
-      <Filter>00.System\00.Device\Graphic</Filter>
+      <Filter>00.GameInstance\00.System\00.Device\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Prototype_Manager.h">
       <Filter>01.Utility\04.Prototypes\Manager</Filter>
@@ -86,7 +86,7 @@
       <Filter>01.Utility\12.CameraManager\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Input_Device.h">
-      <Filter>00.System\02.Input</Filter>
+      <Filter>00.GameInstance\00.System\02.Input</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Model.h">
       <Filter>01.Utility\03.Components\Model</Filter>
@@ -283,13 +283,13 @@
       <Filter>01.Utility\99.SuperClass</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GameInstance.cpp">
-      <Filter>01.Utility\00.GameInstance</Filter>
+      <Filter>00.GameInstance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Timer_Manager.cpp">
-      <Filter>00.System\01.Timer\Manager</Filter>
+      <Filter>00.GameInstance\00.System\01.Timer\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Timer.cpp">
-      <Filter>00.System\01.Timer</Filter>
+      <Filter>00.GameInstance\00.System\01.Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Component.cpp">
       <Filter>01.Utility\03.Components</Filter>
@@ -313,7 +313,7 @@
       <Filter>01.Utility\01.Levels\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Graphic_Device.cpp">
-      <Filter>00.System\00.Device\Graphic</Filter>
+      <Filter>00.GameInstance\00.System\00.Device\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Prototype_Manager.cpp">
       <Filter>01.Utility\04.Prototypes\Manager</Filter>
@@ -346,7 +346,7 @@
       <Filter>01.Utility\12.CameraManager\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Input_Device.cpp">
-      <Filter>00.System\02.Input</Filter>
+      <Filter>00.GameInstance\00.System\02.Input</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Model.cpp">
       <Filter>01.Utility\03.Components\Model</Filter>
@@ -530,26 +530,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="00.System">
-      <UniqueIdentifier>{7496302b-bbf3-4d17-b06c-776ada306fe7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility">
       <UniqueIdentifier>{b96ac28b-812c-4488-9b7a-915ac186c966}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\00.Device">
-      <UniqueIdentifier>{beb170b4-0ce9-4a0a-9ebc-3d39cbef8248}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\01.Timer">
-      <UniqueIdentifier>{b9f9c58f-53bd-4729-a636-484b43e2e23d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\01.Timer\Manager">
-      <UniqueIdentifier>{735eba6b-ad64-41e3-a769-a260db5c646c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\00.Device\Graphic">
-      <UniqueIdentifier>{c39856ee-26b4-4735-9fa7-c1c2a4f029a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\01.Levels">
       <UniqueIdentifier>{69534a59-b5fe-42e4-98d2-d352d2d2a90b}</UniqueIdentifier>
@@ -589,9 +574,6 @@
     </Filter>
     <Filter Include="01.Utility\06.PipeLine">
       <UniqueIdentifier>{00bb1f39-0400-4781-b607-94cd184f43ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\02.Input">
-      <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Model">
       <UniqueIdentifier>{16ee2ecd-a996-493e-84af-4824bb830a26}</UniqueIdentifier>
@@ -685,9 +667,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Collider\Manager">
       <UniqueIdentifier>{ec64baad-3e2d-4981-a8d6-b65bd11ba6dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\00.GameInstance">
-      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -832,6 +811,27 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\Glow">
       <UniqueIdentifier>{4f46e805-f973-4b3e-b6ff-ac74ceabac48}</UniqueIdentifier>
+   </Filter>
+    <Filter Include="00.GameInstance">
+      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System">
+      <UniqueIdentifier>{7496302b-bbf3-4d17-b06c-776ada306fe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System\00.Device">
+      <UniqueIdentifier>{beb170b4-0ce9-4a0a-9ebc-3d39cbef8248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System\00.Device\Graphic">
+      <UniqueIdentifier>{c39856ee-26b4-4735-9fa7-c1c2a4f029a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System\01.Timer">
+      <UniqueIdentifier>{b9f9c58f-53bd-4729-a636-484b43e2e23d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System\01.Timer\Manager">
+      <UniqueIdentifier>{735eba6b-ad64-41e3-a769-a260db5c646c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.GameInstance\00.System\02.Input">
+      <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
