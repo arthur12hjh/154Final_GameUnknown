@@ -1,0 +1,16 @@
+[
+    {
+        "TextureDesc": {
+            "iPass": 0,
+            "iTextureIndex": 0,
+            "szTextureComTag": "Com_Texture_UI_BackGround"
+        },
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "iDepth": 0,
+        "iLevel": 2,
+        "iRenderGroup": 7,
+        "szLayerTag": "Test",
+        "szUITag": "UI_Test_Panel_0"
+    }
+]

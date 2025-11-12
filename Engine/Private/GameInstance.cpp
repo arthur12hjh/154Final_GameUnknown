@@ -491,6 +491,10 @@ HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pTe
 	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor);
 }
 
+_float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace, float fScale)
+{
+	return m_pFont_Manager->Get_Text_Size(strFontTag, pText, bIgnoreWhitespace, fScale);
+}
 #pragma endregion
 
 #pragma region TARGET_MANAGER
