@@ -258,6 +258,11 @@ public:
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
+	_float							GetGameSpeedfRatio();
+	void							ResetGameSpeed();
+
+	// 델타 타임에 대해 곱셈 연산을 수행해서 느려지게 만들거나 빠르게 만들수있습니다.
+	void							SetGameSpeed(_float fRatio);
 	// 스크린 전체 사이즈
 	const _uint2&					GetScreenSize();
 
@@ -295,6 +300,7 @@ private:
 	class CFbxParser*				m_pFbxParser = { nullptr };
 
 	_bool							m_bIsPause = false;
+	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
 

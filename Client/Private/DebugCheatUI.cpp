@@ -10,8 +10,6 @@
 #include "StringHelper.h"
 #include "GameManager.h"
 
-const char* CDebugCheatUI::szGameSpeedCombo[] = { "0.1", "0.5", "1", "1.5", "2.0"};
-
 CDebugCheatUI::CDebugCheatUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CGameObject(pDevice, pContext)
 {
@@ -166,20 +164,19 @@ void CDebugCheatUI::DrawGameSpeedDebug()
 {
 #ifdef _DEBUG
     ImGui::Text("Game Speed Debug");
-    if (ImGui::BeginCombo("Select GameSpeed", m_szSelectGameSpeed))
-    {
-        _uint iIndex = {};
-        for (_uint i = 0; i < 5; ++i)
-        {
-            if (ImGui::Selectable(szGameSpeedCombo[i], false))
-            {
-                strcpy_s(m_szSelectGameSpeed, szGameSpeedCombo[i]);
-                m_pGameManager->SetGameSpeed(atoi(szGameSpeedCombo[i]));
-            }
-        }
 
-        ImGui::EndCombo();
+    if(ImGui::SliderFloat("Game Speed Ratio", &m_fGameSpeed, 0.001f, 3.f))
+    {
+       m_pGameInstance->SetGameSpeed(m_fGameSpeed);
     }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::Text("DeltaTime Mulitply Ratio");
+        ImGui::EndTooltip();
+    }
+
+
 #endif // _DEBUG
 }
 

@@ -142,53 +142,55 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
+	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 	if (false == m_bIsPause)
 	{
 		m_pThreadPool->Update_Async();
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
-		m_pCameraManager->Priority_Update(fTimeDelta);
+		m_pCameraManager->Priority_Update(fGameSpeed);
 
 		//Priority Update 디버그
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] = GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
-		m_pObject_Manager->Priority_Update(fTimeDelta);
+		m_pObject_Manager->Priority_Update(fGameSpeed);
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] -= GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
 #else
-		m_pObject_Manager->Priority_Update(fTimeDelta);
+		m_pObject_Manager->Priority_Update(fGameSpeed);
 #endif
 
 		m_pPipeLine->Update();
-		m_pTimer_Manager->Update_Timer(fTimeDelta);
+		m_pTimer_Manager->Update_Timer(fGameSpeed);
 	
 		m_pFrustum->Update();
-		m_pCameraManager->Update(fTimeDelta);
+		m_pCameraManager->Update(fGameSpeed);
 
 		//Update 디버그
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
-		m_pObject_Manager->Update(fTimeDelta);
+		m_pObject_Manager->Update(fGameSpeed);
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
 #else
-		m_pObject_Manager->Update(fTimeDelta);
+		m_pObject_Manager->Update(fGameSpeed);
 
 #endif
 	}
 
-	m_pCameraManager->Late_Update(fTimeDelta);
+	m_pCameraManager->Late_Update(fGameSpeed);
+
 	//Late_Update 디버그
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
-	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pObject_Manager->Late_Update(fGameSpeed);
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
 #else
-	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pObject_Manager->Late_Update(fGameSpeed);
 #endif
 
 	//충돌 로직 디버그
@@ -202,13 +204,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pCollisionManager->Compute_Collision();
 #endif
 
-	m_pPhysx_Manager->Update(fTimeDelta); // isdead 체크해서 뺴고
+	m_pPhysx_Manager->Update(fGameSpeed); // isdead 체크해서 뺴고
 
 	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
 	m_pLight_Manager->Clear_DeadLight(); // -> 죽은 객체 빠지고
 
 	m_pLevel_Manager->Update(fTimeDelta);
-
 	m_fTimeAcc += fTimeDelta;
 }
 
@@ -818,6 +819,22 @@ HRESULT CGameInstance::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, b
 }
 
 #pragma endregion
+
+_float CGameInstance::GetGameSpeedfRatio()
+{
+	return m_fTimeRatio;
+}
+
+void CGameInstance::ResetGameSpeed()
+{
+	m_fTimeRatio = 1.f;
+}
+
+void CGameInstance::SetGameSpeed(_float fRatio)
+{
+	fRatio = Clamp<_float>(fRatio, 0.001f, 3.f);
+	m_fTimeRatio = fRatio;
+}
 
 const _uint2& CGameInstance::GetScreenSize()
 {
