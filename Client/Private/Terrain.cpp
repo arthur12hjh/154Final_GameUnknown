@@ -17,7 +17,7 @@ HRESULT CTerrain::Initialize_Prototype()
 {
 	return S_OK;
 }
-
+ 
 HRESULT CTerrain::Initialize(void* pArg)
 {		
 	if (FAILED(__super::Initialize(pArg)))
@@ -63,8 +63,6 @@ HRESULT CTerrain::Render()
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
-
-
 
 	return S_OK;
 }

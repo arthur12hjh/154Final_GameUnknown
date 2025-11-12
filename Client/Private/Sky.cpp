@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CSky::CSky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject { pDevice, pContext }
+	: CGameObject{ pDevice, pContext }
 {
 }
 
-CSky::CSky(const CSky& Prototype) 
-	: CGameObject { Prototype }
+CSky::CSky(const CSky& Prototype)
+	: CGameObject{ Prototype }
 {
 }
 
@@ -19,7 +19,7 @@ HRESULT CSky::Initialize_Prototype()
 }
 
 HRESULT CSky::Initialize(void* pArg)
-{		
+{
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -49,7 +49,7 @@ void CSky::Late_Update(_float fTimeDelta)
 HRESULT CSky::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	m_pShaderCom->Begin(0);
 
@@ -71,7 +71,7 @@ HRESULT CSky::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Cube"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
-	
+
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxCube"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -82,7 +82,7 @@ HRESULT CSky::Ready_Components()
 
 HRESULT CSky::Bind_ShaderResources()
 {
-	
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 

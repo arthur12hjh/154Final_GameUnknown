@@ -720,7 +720,7 @@ HRESULT CMapTool::Save_NavigationData()
 		return S_OK;
 	}
 
-	std::ofstream ofs("C:/coding/jusin/Navigation.bin", std::ios::binary);
+	std::ofstream ofs("C:/coding/jusin/Navigation2.bin", std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open Navigation", L"Error", MB_OK | MB_ICONERROR);

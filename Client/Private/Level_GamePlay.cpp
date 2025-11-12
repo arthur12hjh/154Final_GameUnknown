@@ -22,19 +22,19 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	/*if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
+		return E_FAIL;*/
+
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Village_Mou(TEXT("Layer_Village_Mou"))))
-		return E_FAIL;*/
-
-	/*m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
-		{
-			Ready_Layer_Effect(TEXT("Layer_Effect"));
-		});*/
+	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
+	//	{
+	//		Ready_Layer_Effect(TEXT("Layer_Effect"));
+	//	});
 
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -132,6 +132,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 
 }
 
+HRESULT CLevel_GamePlay::Ready_Layer_Terrain_Sand(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
@@ -227,15 +236,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Village_Mou(const _wstring& strLayerTag)
-{
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Village_Mou"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CLevel_GamePlay::Load_Map_Data()
 {
 
@@ -301,7 +301,7 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 
 HRESULT CLevel_GamePlay::Load_Light_Data()
 {
-	std::ifstream ifs("../Bin/DataFiles/LightData.bin", std::ios::binary);
+	std::ifstream ifs("../Bin/DataFiles/LightData2.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);

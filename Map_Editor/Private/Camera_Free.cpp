@@ -34,7 +34,7 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Straight(fTimeDelta * 10.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
 		m_pTransformCom->Go_Backward(fTimeDelta * 5.f);

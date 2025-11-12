@@ -158,8 +158,17 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
+    pass SKYBOX 
+    {
+        SetRasterizerState(RS_Cull_None); 
+        SetDepthStencilState(DSS_DepthTest_ON_Write_OFF, 0); 
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN(); 
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN(); 
+    }
 
- 
+
     
 
  

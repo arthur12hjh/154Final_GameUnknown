@@ -82,6 +82,9 @@
     <Filter Include="96.IMGUI\Map">
       <UniqueIdentifier>{1a5628f3-4bd2-4fb2-a5af-b60f742e12cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Terrain">
+      <UniqueIdentifier>{d1e75dee-19d8-4ce3-a95b-f83fd2773b6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -171,6 +174,9 @@
     <ClInclude Include="..\public\MapTool.h">
       <Filter>96.IMGUI\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Terrain_Sand.h">
+      <Filter>02.GameObjects\Maps\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -238,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MapTool.cpp">
       <Filter>96.IMGUI\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain_Sand.cpp">
+      <Filter>02.GameObjects\Maps\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

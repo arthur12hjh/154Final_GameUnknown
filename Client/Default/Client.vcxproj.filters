@@ -157,9 +157,6 @@
     <Filter Include="02.GameObjects\Maps\Village\Obj">
       <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Mou">
-      <UniqueIdentifier>{84947ce9-bc4e-4724-8f21-50e915ee60b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Maps\Village\Obj\Vil_Bui03_04">
       <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
     </Filter>
@@ -312,9 +309,6 @@
     <ClInclude Include="..\Public\PxTestProp.h">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Village_Mou.h">
-      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Vil_Bui03_04.h">
       <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
     </ClInclude>
@@ -333,6 +327,10 @@
     <ClInclude Include="GameStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIResourceStore.h" />
+    <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\Public\UIPanel.h" />
+    <ClInclude Include="..\Public\UIWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -454,9 +452,6 @@
     <ClCompile Include="..\Private\PxTestProp.cpp">
       <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Village_Mou.cpp">
-      <Filter>02.GameObjects\Maps\Village\Mou</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Vil_Bui03_04.cpp">
       <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
     </ClCompile>
@@ -469,6 +464,10 @@
     <ClCompile Include="..\private\MousePointer.cpp">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UIResourceStore.cpp" />
+    <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\Private\UIPanel.cpp" />
+    <ClCompile Include="..\Private\UIWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
