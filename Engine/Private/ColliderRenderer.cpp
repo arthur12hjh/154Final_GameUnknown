@@ -105,13 +105,16 @@ HRESULT CColliderRenderer::Initialize()
     return S_OK;
 }
 
-void CColliderRenderer::Render()
+void CColliderRenderer::Render(class CShader* pShader)
 {
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F3))
         m_isColliderVisible = !m_isColliderVisible;
+
+    Render_DebugCollider(pShader);
+    Render_DebugPhysxCollider(pShader);
 }
 
-void CColliderRenderer::Render_Debug(class CShader* pShader)
+void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
 {
     if (false == m_isColliderVisible)
         return;
@@ -133,7 +136,7 @@ void CColliderRenderer::Render_Debug(class CShader* pShader)
         return;
 }
 
-void CColliderRenderer::Render_PhysxDebug(CShader* pShader)
+void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 {
     if (false == m_isColliderVisible)
         return;

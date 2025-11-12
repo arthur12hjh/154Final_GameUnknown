@@ -19,7 +19,7 @@ public:
 
 public:
 	HRESULT Initialize();
-	void	Render();
+	void	Render(class CShader* pShader);
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
@@ -41,8 +41,8 @@ private:
 	_bool								m_isColliderVisible = { false };
 
 private:
-	void	Render_Debug(class CShader* pShader);
-	void	Render_PhysxDebug(class CShader* pShader);
+	void	Render_DebugCollider(class CShader* pShader);
+	void	Render_DebugPhysxCollider(class CShader* pShader);
 	_float4 Convert_PxColor_ToVector(PxU32 iColor);
 
 public:

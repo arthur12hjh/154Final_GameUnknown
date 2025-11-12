@@ -5,7 +5,7 @@
 #include "BlendObject.h"
 #include "UIObject.h"
 #include "GameInstance.h"
-#include "Occlusion.h";
+#include "Occlusion.h"
 
 #include "ColliderRenderer.h"
 
@@ -181,8 +181,10 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 
 void CRenderer::Render()
 {
+#ifdef _DEBUG
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
 		m_isDebugVisible = !m_isDebugVisible;
+#endif
 
 	Render_Priority();
 	Render_Shadow();
@@ -199,6 +201,10 @@ void CRenderer::Render()
 	Apply_Deferred();
 	
 	Render_UI();
+
+#ifdef _DEBUG
+	Render_Debug();
+#endif
 
 }
 
@@ -228,6 +234,8 @@ HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 
 void CRenderer::Render_Debug()
 {
+	m_pColliderRenderer->Render(m_pShader);
+
 	if (false == m_isDebugVisible)
 		return;
 
