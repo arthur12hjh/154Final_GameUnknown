@@ -73,6 +73,7 @@ HRESULT CUIBase::Add_Child(CGameObject* pObj)
 		return E_FAIL;
 
 	m_Children.push_back(pUIObject);
+	return S_OK;
 }
 
 void CUIBase::Set_Position(_float fX, _float fY)

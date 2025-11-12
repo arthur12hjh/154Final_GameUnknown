@@ -345,10 +345,10 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/* For.Prototype_GameObject_ShaderTestModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		CShaderTestModel::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	///* For.Prototype_GameObject_ShaderTestModel */
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+	//	CShaderTestModel::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 #endif
 
 	Desc->OnCompleted(this_thread::get_id());

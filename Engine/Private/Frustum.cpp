@@ -2,9 +2,9 @@
 
 #include "GameInstance.h"
 #include "Collider.h"
+#include "Camera.h"
 
 #ifdef _DEBUG
-#include "Camera.h"
 #include "DebugDraw.h"
 
 CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
