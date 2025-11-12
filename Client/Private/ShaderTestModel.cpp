@@ -52,15 +52,24 @@ void CShaderTestModel::Update(_float fTimeDelta)
 		m_pTransformCom->Go_Straight(fTimeDelta);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD6))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD6))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 		m_pModelCom->Set_AnimationIndex(1, true);
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+	{
+		m_iShaderPassIdx = 2;
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+	{
+		m_iShaderPassIdx = 3;
 	}
 }
 
@@ -88,10 +97,19 @@ HRESULT CShaderTestModel::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
 			return E_FAIL;
 
+		/* 디퓨즈 바인딩 */
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
+		/* 노멀맵 바인딩 */
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+		/* 이미시브 바인딩 */
+		if (S_FALSE == (m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+		{
+			m_pGameInstance->GetResourceManagerTextureResource(TEXT("Default_Emissive.png"))->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture", 0);
+		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(m_iShaderPassIdx)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

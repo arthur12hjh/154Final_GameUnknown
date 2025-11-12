@@ -17,8 +17,10 @@ public:
 		DEBUG, DIRECTIONAL, POINT, COMBINED,
 		OUTLINE,
 
-		//후처리 셰이딩. 일단 블러만 추가
-		BLUR_X, BLUR_FINAL, DISTORTION,
+		//후처리 셰이딩.
+		BLUR_X, BLUR_FINAL, 
+		GLOW_X, GLOW_FINAL,
+		DISTORTION,
 
 		// 최종적으로 백버퍼에 렌더타겟 넘기는 과정.
 		SCENE,
@@ -52,39 +54,39 @@ private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
-	/* 사실적인 림라이트를 구현하려면 조명 연산 도중에 들어가는게 맞긴한데.. */
-	/* NonBlend에 대해서 Desc하나 만들것 */
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
 	ID3D11DepthStencilView*				m_pOutlineDSV = { nullptr };
-
-#ifdef _DEBUG
-private:
-	class CShader*						m_pPhysxDebugShader = { nullptr };
-	list<class CComponent*>				m_DebugComponents = {};
-	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
-	BasicEffect* m_pEffect = {};
-	ID3D11InputLayout* m_pInputLayout = {};
-
-	// 외부 제공 모듈이라 어쩔수 없이 unique ptr 써야함..
-	unique_ptr<GeometricPrimitive> m_pBoxShape = { nullptr };
-	unique_ptr<GeometricPrimitive> m_pSphereShape = { nullptr };
-	unique_ptr<GeometricPrimitive> m_pCapsuleCylinderShape = { nullptr };
-	unique_ptr<GeometricPrimitive> m_pCapsuleHemiSphereShape = { nullptr };
-#endif
 
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
 private:
-	_bool								m_isDebugVisible = { false };
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 	_uint2								m_vScreenSize = {};
 	//8192, 4608 혹은 16384, 9216
 	_uint2								m_vShadowMapSize = {};
 	
+
+#ifdef _DEBUG
+private:
+	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
+	class CShader* m_pPhysxDebugShader = { nullptr };
+	list<class CComponent*>				m_DebugComponents = {};
+	BasicEffect* m_pEffect = {};
+	ID3D11InputLayout* m_pInputLayout = {};
+
+	// 외부 제공 모듈이라 어쩔수 없이 unique ptr 써야함..
+	unique_ptr<GeometricPrimitive>		m_pBoxShape = { nullptr };
+	unique_ptr<GeometricPrimitive>		m_pSphereShape = { nullptr };
+	unique_ptr<GeometricPrimitive>		m_pCapsuleCylinderShape = { nullptr };
+	unique_ptr<GeometricPrimitive>		m_pCapsuleHemiSphereShape = { nullptr };
+
+	_bool								m_isDebugVisible = { false };
+	_bool								m_isColliderVisible = { false };
+#endif
 private:
 	void Render_Priority();
 	void Render_Shadow();
@@ -92,6 +94,7 @@ private:
 	void Render_LightAcc();
 	/* 기록은 Combined 이전에. */
 	void Render_Blur();
+	void Render_Glow();
 	void Render_Distortion();
 	void Render_Combined();
 	void Render_NonLight();
@@ -99,6 +102,7 @@ private:
 	void Apply_Deferred();
 	void Render_UI();
 	void Composite_RT_ToBackBuffer();
+
 private:
 	HRESULT Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
 
