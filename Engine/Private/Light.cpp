@@ -56,6 +56,24 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
     return S_OK;
 }
 
+void CLight::SetLightInfo(const LIGHT_DESC& Desc)
+{
+	m_LightDesc = Desc;
+
+#ifdef _DEBUG
+	switch (m_LightDesc.eType)
+	{
+	case LIGHT_TYPE::POINT:
+		static_cast<CSphereCollider*>(m_pCollider)->SetCollision({ 0, 0, 0 }, m_LightDesc.fRange);
+		break;
+	case LIGHT_TYPE::DIRECTIONAL:
+		break;
+	case LIGHT_TYPE::SPOT:
+		break;
+	}
+#endif // _DEBUG
+}
+
 void CLight::SetDead(_bool bIsDead)
 {
 	m_bIsDead = bIsDead;

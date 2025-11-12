@@ -270,12 +270,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/* For.Prototype_Component_Model_ShaderTestModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/Nvzhu_SM_PlayerTest.fbx"))))
-		return E_FAIL;
-
-	
+	//_fmatrix PreWorlMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f)); 
+	///* For.Prototype_Component_Model_ShaderTestModel */
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/ShaderTestModel.fbx", PreWorlMatrix))))
+	//	return E_FAIL;
 #endif
 
 	return S_OK;
@@ -316,6 +315,8 @@ void CMainApp::Free()
 	__super::Free();
 
 	CGameManager::DestroyInstance();
+	CGameManager::DestroyInstance();
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 

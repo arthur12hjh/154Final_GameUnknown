@@ -138,6 +138,11 @@ _bool CBoxCollider::RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC
     return bIsHit;
 }
 
+_bool CBoxCollider::FrustomIntersect(const BoundingFrustum& Frustom)
+{
+    return m_Bounding->Intersects(Frustom);
+}
+
 ContainmentType CBoxCollider::Contains(_vector vPoint)
 {
     return m_Bounding->Contains(vPoint);

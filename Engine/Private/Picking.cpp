@@ -51,9 +51,7 @@ void CPicking::Update()
 	m_pGameInstance->Copy_RenderTarget(TEXT("Target_Depth"), m_pTexture2D);
 	D3D11_MAPPED_SUBRESOURCE		SubResource{};
 	m_pContext->Map(m_pTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-
 	memcpy(m_pPixels, SubResource.pData, sizeof(_float4) * m_iNumPixels);
-
 	m_pContext->Unmap(m_pTexture2D, 0);	
 
 
@@ -74,17 +72,9 @@ _bool CPicking::isPicking(_float3* pOut)
 	vMousePos.y = m_ptMouse.y / (m_iNumPixelH * -0.5f) + 1.f;
 	vMousePos.z = m_pPixels[iMouseIndex].x;
 
-	wchar_t szBuffer[256];
-	wsprintfW(szBuffer, L"Screen Z (Depth): %.5f\n", vMousePos.z);
-	OutputDebugStringW(szBuffer);
-
 	XMStoreFloat3(&vMousePos, XMVector3TransformCoord(XMLoadFloat3(&vMousePos), m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ)));
 	XMStoreFloat3(&vMousePos, XMVector3TransformCoord(XMLoadFloat3(&vMousePos), m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW)));
 	*pOut = vMousePos;
-
-	wsprintfW(szBuffer, L"World Picked: (%.2f, %.2f, %.2f)\n", pOut->x, pOut->y, pOut->z);
-	OutputDebugStringW(szBuffer);
-
 	return true;
 }
 

@@ -23,6 +23,9 @@ texture2D g_ShadowTexture;
 texture2D g_BlurTexture;
 texture2D g_BlurXTexture;
 texture2D g_BlurFinalTexture;
+texture2D g_GlowTexture;
+texture2D g_GlowXTexture;
+texture2D g_GlowFinalTexture;
 texture2D g_OutlineTexture;
 
 texture2D g_SceneTexture;
@@ -149,7 +152,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vBackBuffer = vDiffuse * vShade + vRimLight;
+    Out.vBackBuffer = vDiffuse * vShade + vSpecular + vRimLight;
     //vSpecular + vRimLight;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -182,7 +185,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
     
     //외곽선 연산
-    Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
+    //Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
+    
+    //글로우 연산.
+    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
     
     //블러 연산. 얜 무조건 마지막에 있는게 맞는거같아서 여기 뒀는데 바꾸고싶으면 디코 ㄱ.
     Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
@@ -250,7 +256,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     PS_OUT_BLUR_FINAL Out;
     
     float2 vTexcoord;
-    float4 vColor = 0.f;
+    float4 vColor;
     
     for (int i = -6; i < 7; ++i)
     {
@@ -261,6 +267,45 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     }
     
     Out.vBlurY = vColor / 6.5f;
+    
+    return Out;
+}
+
+PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
+{
+    PS_OUT_GLOW_X Out;
+    
+    float2 vTexcoord;
+    float4 vColor;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
+        vTexcoord.y = In.vTexcoord.y;
+        
+        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(DefaultSampler, vTexcoord);
+    }
+    
+    Out.vGlowX = vColor / 10.f;
+    
+    return Out;
+}
+
+PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
+{
+    PS_OUT_GLOW_FINAL Out;
+    float2 vTexcoord;
+    float4 vColor;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
+        
+        vColor += g_fWeights[i + 6] * g_GlowXTexture.Sample(DefaultSampler, vTexcoord);
+    }
+    
+    Out.vGlowY = vColor / 6.5f;
     
     return Out;
 }
@@ -357,6 +402,26 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();
     }
     // idx 7
+    pass Glow_X
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_GLOW_X();
+    }
+    // idx 8
+    pass Glow_Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_GLOW_FINAL();
+    }
+    // idx 9
     pass Distortion
     {
         SetRasterizerState(RS_Default);
@@ -367,7 +432,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
     }
 
-    // idx 8
+    // idx 10
     pass Scene
     {
         SetRasterizerState(RS_Default);

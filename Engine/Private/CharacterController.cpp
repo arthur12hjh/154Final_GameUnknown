@@ -18,7 +18,7 @@ CCharacterController::CCharacterController(const CCharacterController& Prototype
 {
 }
 
-PxShape* CCharacterController::Get_Shape()
+PxShape* CCharacterController::Get_PxShape()
 {
 	PxRigidDynamic* pPxActor = m_pController->getActor();
 	PxShape* pPxShapes[1];
@@ -33,7 +33,7 @@ PxShape* CCharacterController::Get_Shape()
 		return nullptr;
 }
 
-PxActor* CCharacterController::Get_Actor()
+PxRigidActor* CCharacterController::Get_PxActor()
 {
 	PxRigidDynamic* pPxActor = m_pController->getActor();
 

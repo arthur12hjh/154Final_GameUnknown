@@ -22,8 +22,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
@@ -46,13 +46,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
-	{
-		m_pGameInstance->Add_ThreadjobList([&]()
-			{
-				FontRender();
-			});
-	}*/
+	
 
 }
 
@@ -187,9 +181,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	}
 
 #ifdef _DEBUG
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+ 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
 #endif
 

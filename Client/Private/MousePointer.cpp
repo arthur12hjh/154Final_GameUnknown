@@ -35,13 +35,15 @@ HRESULT CMousePointer::Initialize(void* pArg)
 
 void CMousePointer::Priority_Update(_float fTimeDelta)
 {
-   
-}
+    POINT MousePoint = m_pGameInstance->GetMousePoint();
+    MousePoint.x += m_pTransformCom->Get_Scale().x * 0.25f;
+    MousePoint.y += m_pTransformCom->Get_Scale().y * 0.3f;
+    ComputeTransform(XMVectorSet(MousePoint.x, MousePoint.y, 0.f, 1.f));
+} 
 
 void CMousePointer::Update(_float fTimeDelta)
 {
-    POINT MousePoint = m_pGameInstance->GetMousePoint();
-    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(_float(MousePoint.x) - g_iHalfWinSizeX, _float(-MousePoint.y) + g_iHalfWinSizeY, 0.f, 1.f));
+
 }
 
 void CMousePointer::Late_Update(_float fTimeDelta)
@@ -88,7 +90,7 @@ HRESULT CMousePointer::Ready_Components()
 
 HRESULT CMousePointer::Bind_ShaderResources()
 {
-    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+    if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", GetCombinedMatrixPtr())))
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))

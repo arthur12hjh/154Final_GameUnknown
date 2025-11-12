@@ -34,7 +34,7 @@ private:
 	CTexture*					m_pTextureCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };
 
-	MOUSE_SCALE					m_eMosueScale = {};
+	MOUSE_SCALE					m_eMosueScale = {MOUSE_SCALE::SCLAE_DEFUALT};
 
 private:
 	HRESULT						Ready_Components();

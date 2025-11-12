@@ -58,6 +58,11 @@ _bool CCollider::RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_DESC& O
     return _bool();
 }
 
+_bool CCollider::FrustomIntersect(const BoundingFrustum& Frustom)
+{
+    return _bool();
+}
+
 ContainmentType CCollider::Contains(_vector Point)
 {
     return ContainmentType();

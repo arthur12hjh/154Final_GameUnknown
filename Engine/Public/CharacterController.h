@@ -43,8 +43,8 @@ private:
 
 public:
 	PxController* Get_PxController() { return m_pController; }
-	PxShape*	  Get_Shape();
-	PxActor*	  Get_Actor();
+	PxShape*	  Get_PxShape();
+	PxRigidActor* Get_PxActor();
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

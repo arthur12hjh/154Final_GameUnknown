@@ -129,6 +129,11 @@ _bool CSphereCollider::RayHit(_vector vOrizin, _vector vDiraction, DEFAULT_HIT_D
 	return bIsHit;
 }
 
+_bool CSphereCollider::FrustomIntersect(const BoundingFrustum& Frustom)
+{
+	return m_Bounding->Intersects(Frustom);
+}
+
 ContainmentType CSphereCollider::Contains(_vector vPoint)
 {
 	return m_Bounding->Contains(vPoint);

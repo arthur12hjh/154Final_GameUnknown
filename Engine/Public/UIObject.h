@@ -7,6 +7,8 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CUIObject abstract : public CGameObject
 {
 public:
+	enum class DRAW_TPYE { WORLD, SCREEN, END };
+
 	typedef struct tagUIObjectDesc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_float		fX, fY, fSizeX, fSizeY;
@@ -23,19 +25,28 @@ public:
 	virtual void			Priority_Update(_float fTimeDelta);
 	virtual void			Update(_float fTimeDelta);
 	virtual void			Late_Update(_float fTimeDelta);
+
 	virtual HRESULT			Render();	
 
 	// ZOrder 라는 것을 통해서 UI의 우선순위를 관리한다.
 	void					SetZOrder(_uint iZOrder);
 	_uint					GetZOrder() { return m_iZOrder; }
+
+	const _float4x4*		GetCombinedMatrixPtr() { return &m_CombinedMatrix; }
 	const RECT&				GetScreenSize() { return m_ScreenSize; }
 
 protected:
-	CUIObject*				m_pParent = { nullptr };
-
+	CGameObject*			m_pParent = { nullptr };
+	DRAW_TPYE				m_eDrawType = { DRAW_TPYE::SCREEN };
 	RECT					m_ScreenSize = {};
+
 	_uint					m_iZOrder = {};
 	_float4x4				m_ProjMatrix = {};
+	_float4x4				m_CombinedMatrix = {};
+
+protected :
+	// 변경 되어야 하는 포지션
+	void					ComputeTransform(_vector vPosition);
 
 public:	
 	virtual CGameObject*		Clone(void* pArg) = 0;

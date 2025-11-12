@@ -43,6 +43,10 @@ HRESULT CGameHUD::Add_UserInterface(_uint iLevel, const WCHAR* PrototypeTag, con
         return E_FAIL;
 
     pLayer->ADD_GameObject(UITag, pGameObject);
+
+    if (ppOut != nullptr)
+        *ppOut = pGameObject;
+
     return S_OK;
 }
 
