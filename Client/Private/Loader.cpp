@@ -340,18 +340,12 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
 		CPxTestProp::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 #ifdef _DEBUG
 	/* For.Prototype_GameObject_ShaderTestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
 		CShaderTestModel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-<<<<<<< HEAD
-	///* For.Prototype_GameObject_PxTestProp */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PxTestProp"),
-	//	CPxTestProp::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-=======
->>>>>>> CB_FrameWorkd
 #endif
 
 	Desc->OnCompleted(this_thread::get_id());

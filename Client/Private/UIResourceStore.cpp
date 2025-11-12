@@ -77,6 +77,6 @@ void CUIResourceStore::Free()
 
 	Safe_Release(m_pGameInstance);
 
-	/*for (auto& iter : m_Textures)
-		Safe_Release(iter);*/
+	for (auto& iter : m_TextureDescs)
+		Safe_Release(iter.second.pTexture);
 }

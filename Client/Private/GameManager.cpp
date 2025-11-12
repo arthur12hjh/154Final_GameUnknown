@@ -33,8 +33,6 @@ HRESULT CGameManager::Ready_UIResourceStore()
     if (!m_pUIResourceStore)
         return E_FAIL;
 
-    Safe_AddRef(m_pUIResourceStore);
-
     return S_OK;
 }
 

@@ -50,44 +50,30 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-<<<<<<< HEAD
+
 	unique_ptr<GeometricPrimitive> CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop);
-=======
->>>>>>> CB_FrameWorkd
+
 #endif
 
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
-<<<<<<< HEAD
-=======
 
-	list<class CGameObject*>								m_NonCulledObjects[ENUM_CLASS(RENDER::END)];
-	unordered_map<class CGameObject*, class COcclusion*>	m_pOcclusionDatas[2];
+	/*list<class CGameObject*>								m_NonCulledObjects[ENUM_CLASS(RENDER::END)];
+	unordered_map<class CGameObject*, class COcclusion*>	m_pOcclusionDatas[2];*/
 
 	/* 사실적인 림라이트를 구현하려면 조명 연산 도중에 들어가는게 맞긴한데.. */
 	/* NonBlend에 대해서 Desc하나 만들것 */
 	/* 우선 선행적으로 Query를 통해서 검사할 오브젝트들 */
->>>>>>> CB_FrameWorkd
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
 	ID3D11DepthStencilView*				m_pOutlineDSV = { nullptr };
 
-<<<<<<< HEAD
-=======
-	ID3D11RasterizerState*				m_pOcclusionRSState = { nullptr };
-	ID3D11DepthStencilState*			m_pOcclusionDSState = { nullptr };
+	/*ID3D11RasterizerState*				m_pOcclusionRSState = { nullptr };
+	ID3D11DepthStencilState*			m_pOcclusionDSState = { nullptr };*/
 
-#ifdef _DEBUG
-private:
-	class CShader*						m_pPhysxDebugShader = { nullptr };
-	list<class CComponent*>				m_DebugComponents = {};
-	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
-#endif
-
->>>>>>> CB_FrameWorkd
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
@@ -102,10 +88,10 @@ private:
 #ifdef _DEBUG
 private:
 	list<pair<class PxRigidActor*, class PxShape*>> m_PxShapes = {};
-	class CShader* m_pPhysxDebugShader = { nullptr };
-	list<class CComponent*>				m_DebugComponents = {};
-	BasicEffect* m_pEffect = {};
-	ID3D11InputLayout* m_pInputLayout = {};
+	class CShader*									m_pPhysxDebugShader = { nullptr };
+	list<class CComponent*>							m_DebugComponents = {};
+	BasicEffect*									m_pEffect = {};
+	ID3D11InputLayout*								m_pInputLayout = {};
 
 	// 외부 제공 모듈이라 어쩔수 없이 unique ptr 써야함..
 	unique_ptr<GeometricPrimitive>		m_pBoxShape = { nullptr };
@@ -134,7 +120,7 @@ private:
 
 private:
 	HRESULT								Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
-	HRESULT								Ready_OcclusionDepthStencil();
+	//HRESULT								Ready_OcclusionDepthStencil();
 
 #ifdef _DEBUG
 private:
