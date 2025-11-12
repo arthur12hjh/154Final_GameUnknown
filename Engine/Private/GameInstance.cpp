@@ -66,6 +66,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pInput_Device)
 		return E_FAIL;
 
+	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 8);
+	if (nullptr == m_pThreadPool)
+		return E_FAIL;
+
 	m_pPipeLine = CPipeLine::Create();
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
@@ -123,9 +127,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 
-	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 4);
-	if (nullptr == m_pThreadPool)
-		return E_FAIL;
+	
 
 #ifdef _DEBUG
 	m_pTimer_Manager->Add_Timer(TEXT("Priority_Time"));

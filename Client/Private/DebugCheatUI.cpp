@@ -10,6 +10,8 @@
 #include "StringHelper.h"
 #include "GameManager.h"
 
+const char* CDebugCheatUI::szGameSpeedCombo[] = { "0.1", "0.5", "1", "1.5", "2.0"};
+
 CDebugCheatUI::CDebugCheatUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CGameObject(pDevice, pContext)
 {
@@ -41,6 +43,8 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
     DrawCaemraDebug();
     ImGui::Separator();
     DrawLightDebug();
+    ImGui::Separator();
+    DrawGameSpeedDebug();
 
     ImGui::End();
 
@@ -154,6 +158,27 @@ void CDebugCheatUI::DrawLightDebug()
             }
             ImGui::EndCombo();
         }
+    }
+#endif // _DEBUG
+}
+
+void CDebugCheatUI::DrawGameSpeedDebug()
+{
+#ifdef _DEBUG
+    ImGui::Text("Game Speed Debug");
+    if (ImGui::BeginCombo("Select GameSpeed", m_szSelectGameSpeed))
+    {
+        _uint iIndex = {};
+        for (_uint i = 0; i < 5; ++i)
+        {
+            if (ImGui::Selectable(szGameSpeedCombo[i], false))
+            {
+                strcpy_s(m_szSelectGameSpeed, szGameSpeedCombo[i]);
+                m_pGameManager->SetGameSpeed(atoi(szGameSpeedCombo[i]));
+            }
+        }
+
+        ImGui::EndCombo();
     }
 #endif // _DEBUG
 }
