@@ -21,12 +21,11 @@ HRESULT CUIBase::Initialize_Prototype()
 
 HRESULT CUIBase::Initialize(void* pArg)
 {	
-	m_tOriginUIDesc = *static_cast<UIBASE_DESC*>(pArg);
+	m_tUIDesc = *static_cast<UIBASE_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(&m_tOriginUIDesc)))
+	if (FAILED(__super::Initialize(&m_tUIDesc)))
 		return E_FAIL;
-
-	m_tUIDesc = m_tOriginUIDesc;
+	
 	m_iZOrder = m_tUIDesc.iDepth;
 
 	m_pGameManager = CGameManager::GetInstance();
@@ -137,7 +136,10 @@ void CUIBase::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pGameManager);
+	Safe_Delete(m_tUIDesc.m_pUITextDesc);
+	
+	Safe_Delete(m_tUIDesc.m_pUITextureDesc);
+
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

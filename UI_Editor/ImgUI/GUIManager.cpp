@@ -258,12 +258,9 @@ void CGUIManager::Create_Layer()
         Desc.fY = g_iHalfWinSizeY;
         Desc.iDepth = 0;
         Desc.iLevel = m_iCurrentLevel;
-        //Desc.iPass = 0;
-        //Desc.iTextureIndex = 0;
-        //Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
         Desc.szLayerTag = szLayerTag;
         Desc.szUITag = szUITag;
-        //Desc.szTextureComTag = szTextureComTag;
+        Desc.szProtoTag = TEXT("Prototype_GameObject_UI_Panel");
 
         if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, TEXT("Prototype_GameObject_UI_Panel"), szLayerTag, szUITag, nullptr, &Desc)))
             return;
@@ -277,44 +274,36 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
     SetUp_UI_Proto_Tags();
     Select_UI_Proto_Tag(m_szCloneProtoTag);
 
-   /* SetUp_Texture_Tags();
-    Select_Texture_Tag(m_szCloneTextureComTag);*/
-
     if (GUI::Button("Create"))
     {
         WCHAR szProto[MAX_PATH]{};
         swprintf_s(szProto, TEXT("Prototype_GameObject_UI_%hs"), m_szCloneProtoTag);
 
-        //WCHAR szTextureComTag[MAX_PATH]{};
-        //swprintf_s(szTextureComTag, TEXT("Prototype_Component_UI_Texture_%hs"), m_szCloneTextureComTag);
-
         _uint iObjectIdx = pParent->Get_Children()->size() + 1;
 
-        WCHAR szUITag[MAX_PATH];
-        swprintf_s(szUITag, TEXT("UI_%hs_%d-%d"), m_szCloneProtoTag, pParent->Get_UIBase_OriginDesc().iDepth + 1, iObjectIdx);
+        _char szParentUITag[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(pParent->Get_UIBase_Desc().szUITag.c_str(), szParentUITag);
 
-        WCHAR szLayerTag[MAX_PATH];
-        swprintf_s(szLayerTag, pParent->Get_UIBase_OriginDesc().szLayerTag.c_str());
+        WCHAR szUITag[MAX_PATH]{};
+        swprintf_s(szUITag, TEXT("%hs_%hs_%d-%d"), szParentUITag, m_szCloneProtoTag, pParent->Get_UIBase_Desc().iDepth + 1, iObjectIdx);
+
+        WCHAR szLayerTag[MAX_PATH]{};
+        swprintf_s(szLayerTag, pParent->Get_UIBase_Desc().szLayerTag.c_str());
 
         CGameObject* pCreatedObj = nullptr;
 
         CUIBase::UIBASE_DESC Desc{};
         Desc.fSizeX = 100.f;
         Desc.fSizeY = 20.f;
-        //Desc.fX = 0.f;
-        //Desc.fY = 0.f;
-        Desc.fX = pParent->Get_UIBase_OriginDesc().fX;
-        Desc.fY = pParent->Get_UIBase_OriginDesc().fY;
-        Desc.iDepth = pParent->Get_UIBase_OriginDesc().iDepth + 1;
+        Desc.fX = pParent->Get_UIBase_Desc().fX;
+        Desc.fY = pParent->Get_UIBase_Desc().fY;
+        Desc.iDepth = pParent->Get_UIBase_Desc().iDepth + 1;
         Desc.iLevel = m_iCurrentLevel;
-        //Desc.iPass = 0;
-        //Desc.iTextureIndex = 1;
-        //Desc.iRenderGroup = ENUM_CLASS(RENDER::UI);
         Desc.szUITag = szUITag;
-        Desc.szLayerTag = pParent->Get_UIBase_OriginDesc().szLayerTag.c_str();
-        //Desc.szTextureComTag = szTextureComTag;
+        Desc.szLayerTag = pParent->Get_UIBase_Desc().szLayerTag.c_str();
+        Desc.szProtoTag = szProto;
 
-        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto, pParent->Get_UIBase_OriginDesc().szLayerTag.c_str(), szUITag, &pCreatedObj, &Desc)))
+        if (FAILED(m_pUIHUD->Add_UserInterface(m_iCurrentLevel, szProto, pParent->Get_UIBase_Desc().szLayerTag.c_str(), szUITag, &pCreatedObj, &Desc)))
         {
             GUI::OpenPopup("Clone Error");
             if (GUI::BeginPopup("Clone Error"))
@@ -496,7 +485,7 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
         return;
 
     _char szUITag[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(pObj->Get_UIBase_OriginDesc().szUITag.c_str(), szUITag);
+    CStringHelper::ConvertWideToUTF(pObj->Get_UIBase_Desc().szUITag.c_str(), szUITag);
 
     if (GUI::TreeNode(szUITag))
     {
@@ -505,18 +494,16 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
             m_bOpenViewOptions = true;
             m_pTargetUI = pObj;
 
-            //m_vOldPos.x = m_pTargetUI->Get_UIBase_OriginDesc().fX;
-            //m_vOldPos.y = m_pTargetUI->Get_UIBase_OriginDesc().fY;
-            m_vOldPos.x = m_pTargetUI->Get_UIBase_OriginDesc().fOffsetX;
-            m_vOldPos.y = m_pTargetUI->Get_UIBase_OriginDesc().fOffsetY;
+            m_vOldPos.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
+            m_vOldPos.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
             m_vEditedPos = m_vOldPos;
 
-            m_vOldSize.x = m_pTargetUI->Get_UIBase_OriginDesc().fSizeX;
-            m_vOldSize.y = m_pTargetUI->Get_UIBase_OriginDesc().fSizeY;
+            m_vOldSize.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
+            m_vOldSize.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
             m_vEditedSize = m_vOldSize;
 
-            if (m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Text_Desc())
-                m_vColor = m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Text_Desc()->vColor;
+            if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc())
+                m_vColor = m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->vColor;
         }
         GUI::SameLine();
         if (GUI::Button("Add Child"))
@@ -550,7 +537,7 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
 void CGUIManager::View_Options()
 {
     _char szUITag[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(m_pTargetUI->Get_UIBase_OriginDesc().szUITag.c_str(), szUITag);
+    CStringHelper::ConvertWideToUTF(m_pTargetUI->Get_UIBase_Desc().szUITag.c_str(), szUITag);
 
     GUI::Begin("OPTIONS");
     
@@ -644,11 +631,11 @@ void CGUIManager::Set_Size(_float2* pOldSize, _float2* pEditedSize)
     {
         *pOldSize = *pEditedSize;
 
-        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
+        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
         Desc.fSizeX = pOldSize->x;
         Desc.fSizeY = pOldSize->y;
 
-        m_pTargetUI->Set_UIBase_OriginDesc(Desc);
+        m_pTargetUI->Set_UIBase_Desc(Desc);
     }
     GUI::PopStyleColor();
 }
@@ -686,7 +673,7 @@ void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
     {
         *pOldPos = *pEditedPos;
 
-        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_OriginDesc();
+        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
         //Desc.fX = pOldPos->x;
         //Desc.fY = pOldPos->y;
         Desc.fOffsetX = pOldPos->x;
@@ -694,7 +681,7 @@ void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
         //Desc.fX = Desc.fX + Desc.fOffsetX;
         //Desc.fY = Desc.fY + Desc.fOffsetY;
 
-        m_pTargetUI->Set_UIBase_OriginDesc(Desc);
+        m_pTargetUI->Set_UIBase_Desc(Desc);
     }
     GUI::PopStyleColor();
 }
@@ -718,7 +705,7 @@ void CGUIManager::Set_Texture()
 
     if (GUI::Button("Reset"))
     {
-        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Texture_Desc()->szTextureComTag, m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Texture_Desc()->iTextureIndex);
+        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->szTextureComTag, m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->iTextureIndex);
     }
     GUI::SameLine();
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
@@ -726,7 +713,7 @@ void CGUIManager::Set_Texture()
     {
         Client::CUIBase::UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
 
-        m_pTargetUI->Set_UIBase_OriginDesc(UIDesc);
+        m_pTargetUI->Set_UIBase_Desc(UIDesc);
     }
     GUI::PopStyleColor();
 }
@@ -761,7 +748,7 @@ void CGUIManager::Set_Text()
 
         UIDesc.Set_UI_Text_Desc(TextDesc);
 
-        m_pTargetUI->Set_UIBase_OriginDesc(UIDesc);
+        m_pTargetUI->Set_UIBase_Desc(UIDesc);
     }
 }
 
