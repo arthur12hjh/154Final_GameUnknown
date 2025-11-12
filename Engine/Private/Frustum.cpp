@@ -3,11 +3,26 @@
 #include "GameInstance.h"
 #include "Collider.h"
 
+#ifdef _DEBUG
+#include "Camera.h"
+#include "DebugDraw.h"
+
+CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	m_pDevice(pDevice),
+	m_pContext(pContext),
+	m_pGameInstance{ CGameInstance::GetInstance() }
+{
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pGameInstance);
+}
+#else
 CFrustum::CFrustum()
 	: m_pGameInstance { CGameInstance::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
+#endif // _DEBUG
 
 HRESULT CFrustum::Initialize()
 {
@@ -23,7 +38,21 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
 
 	m_OrizinBoundingFrustom = new BoundingFrustum();
-	m_OrizinBoundingFrustom->Near = 0.1f;
+
+#ifdef _DEBUG
+	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
+	m_pEffect = new BasicEffect(m_pDevice);
+	m_pEffect->SetVertexColorEnabled(true);
+
+	const void* pShaderByteCode = { nullptr };
+	size_t		iShaderByteCodeLength = {};
+
+	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
+
+	if (m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
+		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout))
+		return E_FAIL;
+#endif
 
 	return S_OK;
 }
@@ -32,22 +61,58 @@ void CFrustum::Update()
 {
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
-
+	_matrix		matPV = ProjMatrixInverse * ViewMatrixInverse;
 	/* 투영 스페이스 (3차원공간) 에서 월드로 내려줌. 절두체의 형태로 바뀐다.*/
 	for (size_t i = 0; i < 8; i++)
 	{
 		XMStoreFloat4(&m_vWorldPoints[i], 
-			XMVector3TransformCoord(XMLoadFloat4(&m_vOriginalPoints[i]), ProjMatrixInverse));
-		XMStoreFloat4(&m_vWorldPoints[i],
-			XMVector3TransformCoord(XMLoadFloat4(&m_vWorldPoints[i]), ViewMatrixInverse));
+			XMVector3TransformCoord(XMLoadFloat4(&m_vOriginalPoints[i]), matPV));
 	}
 
-	BoundingFrustum tempFrustum = {};
-	m_OrizinBoundingFrustom->Transform(tempFrustum, ProjMatrixInverse);
-	tempFrustum.Transform(m_BoundingFrustom, ViewMatrixInverse);
+	auto pMainCamera = m_pGameInstance->GetMainCamera();
+	if (pMainCamera)
+	{
+		auto CameraInfo = pMainCamera->GetCameraInfo();
 
+		m_OrizinBoundingFrustom->Near = CameraInfo.fNear;
+		m_OrizinBoundingFrustom->Far = CameraInfo.fFar;
+
+		m_OrizinBoundingFrustom->Transform(m_BoundingFrustom, m_pGameInstance->GetMainCameraWorldMatrix());
+	}
 	Make_Planes(m_vWorldPoints, m_vWorldPlanes);
+	Safe_Release(pMainCamera);
 }
+
+#ifdef _DEBUG
+void CFrustum::FrustomRender()
+{
+	auto pAllCamera = m_pGameInstance->GetAllCamera();
+	auto pMainCamera = m_pGameInstance->GetMainCamera();
+	for (auto& pCamera : *pAllCamera)
+	{
+		if (pMainCamera == pCamera.second)
+			continue;
+
+		auto CameraInfo = pCamera.second->GetCameraInfo();
+		BoundingFrustum tempFrustum{}, tempFrustum2;
+		tempFrustum.Near = CameraInfo.fNear;
+		tempFrustum.Far = CameraInfo.fFar;
+		tempFrustum.Transform(tempFrustum2, XMLoadFloat4x4(pCamera.second->GetTransform()->Get_WorldMatrixPtr()));
+
+		m_pEffect->SetWorld(XMMatrixIdentity());
+		m_pEffect->SetView(m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW));
+		m_pEffect->SetProjection(m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ));
+
+		m_pContext->IASetInputLayout(m_pInputLayout);
+		m_pEffect->Apply(m_pContext);
+
+		m_pBatch->Begin();
+		DX::Draw(m_pBatch, tempFrustum2, XMVectorSet(1.f, 1.f, 0.f, 1.f));
+		m_pBatch->End();
+	}
+	Safe_Release(pMainCamera);
+}	
+#endif // _DEBUG
 
 void CFrustum::Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse)
 {
@@ -87,7 +152,7 @@ _bool CFrustum::isIn_WorldFrustum(CCollider* pCollider)
 	case COLLIDER::OBB:
 		return static_cast<COBBCollider*>(pCollider)->FrustomIntersect(m_BoundingFrustom);
 	}
-	return  false;
+	return  true;
 }
 
 _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
@@ -111,6 +176,20 @@ void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 	XMStoreFloat4(&pPlanes[5], XMPlaneFromPoints(XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[2])));
 }
 
+#ifdef _DEBUG
+CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CFrustum* pInstance = new CFrustum(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("Failed to Created : CFrustum");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+#else
 CFrustum* CFrustum::Create()
 {
 	CFrustum* pInstance = new CFrustum();
@@ -123,10 +202,20 @@ CFrustum* CFrustum::Create()
 
 	return pInstance;
 }
+#endif // _DEBUG
 
 void CFrustum::Free()
 {
 	__super::Free();
+
+#ifdef _DEBUG
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
+
+	Safe_Delete(m_pBatch);
+	Safe_Delete(m_pEffect);
+	Safe_Release(m_pInputLayout);
+#endif // _DEBUG
 
 	Safe_Release(m_pGameInstance);
 	Safe_Delete(m_OrizinBoundingFrustom);

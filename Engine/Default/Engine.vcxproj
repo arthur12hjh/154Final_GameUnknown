@@ -171,6 +171,7 @@ popd</Command>
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Blur.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -187,7 +188,9 @@ popd</Command>
     <ClInclude Include="..\Public\CCTBehaviorCallback.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
-    <ClInclude Include="..\Public\DebugRenderer.h" />
+    <ClInclude Include="..\Public\ColliderRenderer.h" />
+    <ClInclude Include="..\Public\Deferred.h" />
+    <ClInclude Include="..\Public\Distortion.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -202,6 +205,7 @@ popd</Command>
     <ClInclude Include="..\public\GameHUD.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
     <ClInclude Include="..\Public\GameObject.h" />
+    <ClInclude Include="..\Public\Glow.h" />
     <ClInclude Include="..\public\GpuTimer.h" />
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\public\HUDLayer.h" />
@@ -261,6 +265,7 @@ popd</Command>
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\Blur.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
@@ -277,13 +282,16 @@ popd</Command>
     <ClCompile Include="..\Private\CCTBehaviorCallback.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
-    <ClCompile Include="..\Private\DebugRenderer.cpp" />
+    <ClCompile Include="..\Private\ColliderRenderer.cpp" />
+    <ClCompile Include="..\Private\Deferred.cpp" />
+    <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameHUD.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
+    <ClCompile Include="..\Private\Glow.cpp" />
     <ClCompile Include="..\private\GpuTimer.cpp" />
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\HUDLayer.cpp" />

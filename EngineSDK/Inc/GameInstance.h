@@ -80,6 +80,8 @@ public:
 
 #pragma region RENDERER
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
@@ -146,10 +148,14 @@ public:
 #pragma endregion
 
 #pragma region FRUSTUM
-	void Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
-	_bool isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
-	_bool isIn_WorldFrustum(class CCollider* pCollider);
+	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
+	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
+	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+
+#ifdef _DEBUG
+	void				FrustomRender();
+#endif
 
 #pragma endregion
 

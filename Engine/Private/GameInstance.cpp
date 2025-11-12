@@ -54,18 +54,16 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
+	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #else
 	m_pLight_Manager = CLight_Manager::Create();
+	m_pFrustum = CFrustum::Create();
 #endif // DEBUG
-	if (nullptr == m_pLight_Manager)
+	if (nullptr == m_pLight_Manager || nullptr == m_pFrustum)
 		return E_FAIL;
 
 	m_pInput_Device = CInput_Device::Create(EngineDesc.hInstance, EngineDesc.hWnd);
 	if (nullptr == m_pInput_Device)
-		return E_FAIL;
-
-	m_pFrustum = CFrustum::Create();
-	if (nullptr == m_pFrustum)
 		return E_FAIL;
 
 	m_pPipeLine = CPipeLine::Create();
@@ -393,7 +391,13 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);
 }
 
+const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
+{
+	return m_pRenderer->Get_Renderer_Matrix(eType);
+}
+
 #ifdef _DEBUG
+
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
@@ -597,6 +601,13 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 {
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
+
+#ifdef _DEBUG
+void CGameInstance::FrustomRender()
+{
+	return m_pFrustum->FrustomRender();
+}
+#endif // _DEBUG
 
 #pragma endregion
 
