@@ -8,17 +8,20 @@ CPlayerBehaviorCallback::CPlayerBehaviorCallback()
 
 PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxShape& PxShape, const PxActor& PxActor)
 {
-    return PxControllerBehaviorFlags();
+    if (PxActor.is<PxRigidDynamic>()) 
+        return PxControllerBehaviorFlags();
+
+    return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
 }
 
 PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxController& controller)
 {
-    return PxControllerBehaviorFlags();
+    return PxControllerBehaviorFlags(0);
 }
 
 PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxObstacle& obstacle)
 {
-    return PxControllerBehaviorFlags();
+    return PxControllerBehaviorFlags(0);
 }
 
 CPlayerBehaviorCallback* CPlayerBehaviorCallback::Create()

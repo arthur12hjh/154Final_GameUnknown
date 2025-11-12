@@ -74,6 +74,8 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 	m_vPrePosition = PxVec3(vPos.x, vPos.y, vPos.z);
 }
 
+/* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
+/* 그니까 충돌 이후 내 트랜스폼을 제어하는게 정답인듯? */
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
 	_float3 vPos;
@@ -85,13 +87,12 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 	//무브 자체는 시뮬레이션에서 돌아간다고함. 밥먹고나서 시뮬레이션 이후 값보정 하도록 변경할 것.
 	m_pController->move(m_vPosition - m_vPrePosition, 0.f, fTimeDelta, PxControllerFilters());
 
-  	m_pController->setFootPosition(PxExtendedVec3(m_vPosition.x, m_vPosition.y, m_vPosition.z));
+	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
+	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
 }
 
 void CCharacterController::Update_ControllerTransform()
 {
-	m_pController->setFootPosition(PxExtendedVec3(m_vPosition.x, m_vPosition.y, m_vPosition.z));
-	int a = 10;
 }
 
 HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
@@ -156,7 +157,6 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	CCTDesc.maxJumpHeight		= 0.0f;
 	CCTDesc.reportCallback		= m_pHitReporter;
 	CCTDesc.behaviorCallback	= m_pBehaviorCallback;
-	CCTDesc.behaviorCallback	= nullptr;
 	CCTDesc.nonWalkableMode		= PxControllerNonWalkableMode::ePREVENT_CLIMBING;
 	CCTDesc.upDirection			= PxVec3(0, 1, 0); // 기본 up
 
@@ -218,4 +218,5 @@ void CCharacterController::Free()
 		m_pPxCCTManager = nullptr;
 
 	Safe_Release(m_pHitReporter);
+	Safe_Release(m_pBehaviorCallback);
 }
