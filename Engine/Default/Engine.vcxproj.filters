@@ -142,9 +142,6 @@
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Font_Manager.h">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClInclude>
@@ -253,8 +250,13 @@
     <ClInclude Include="..\Public\BinParser.h">
       <Filter>01.Utility\103.ModelParser\BinParser</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\public\Font_Manager.h">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
+=======
     <ClInclude Include="..\Public\DebugRenderer.h">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
+>>>>>>> 344b3f43fc87cb09acacdce1f233757dbc45620a
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -381,9 +383,6 @@
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Font_Manager.cpp">
-      <Filter>01.Utility\08.Fonts</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClCompile>
@@ -483,8 +482,13 @@
     <ClCompile Include="..\Private\CCTBehaviorCallback.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="..\private\Font_Manager.cpp">
+      <Filter>01.Utility\08.Fonts\Manager</Filter>
+=======
     <ClCompile Include="..\Private\DebugRenderer.cpp">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
+>>>>>>> 344b3f43fc87cb09acacdce1f233757dbc45620a
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

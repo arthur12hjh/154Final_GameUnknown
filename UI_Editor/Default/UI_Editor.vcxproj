@@ -164,9 +164,14 @@
     <ClInclude Include="UI_Editor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBase.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIResourceStore.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIText.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />
     <ClCompile Include="..\ImgUI\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

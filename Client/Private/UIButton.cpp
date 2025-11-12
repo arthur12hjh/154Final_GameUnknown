@@ -20,14 +20,14 @@ HRESULT CUIButton::Initialize_Prototype()
 
 HRESULT CUIButton::Initialize(void* pArg)
 {
-	CUIObject::UIOBJECT_DESC	Desc{};
+	//CUIObject::UIOBJECT_DESC	Desc = *static_cast<CUIObject::UIOBJECT_DESC*>(pArg);
 
-	Desc.fX = g_iWinSizeX >> 1;
+	/*Desc.fX = g_iWinSizeX >> 1;
 	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;
+	Desc.fSizeX = 100.f;
+	Desc.fSizeY = 100.f;*/
 	
-	if (FAILED(__super::Initialize(&Desc)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
@@ -38,32 +38,37 @@ HRESULT CUIButton::Initialize(void* pArg)
 
 void CUIButton::Priority_Update(_float fTimeDelta)
 {
-	
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CUIButton::Update(_float fTimeDelta)
 {
-	
+	__super::Update(fTimeDelta);
 }
 
 void CUIButton::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIButton::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
+	if (m_tUIDesc.Get_UI_Texture_Desc())
+	{
+		if (FAILED(Bind_ShaderResources()))
+			return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(0)))
-		return E_FAIL;
+		if (FAILED(m_pShaderCom->Begin(m_tUIDesc.Get_UI_Texture_Desc()->iPass)))
+			return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Bind_Resources()))
-		return E_FAIL;
+		if (FAILED(m_pVIBufferCom->Bind_Resources()))
+			return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
+		if (FAILED(m_pVIBufferCom->Render()))
+			return E_FAIL;
+	}
+
+	__super::Render();
 
 	return S_OK;
 }
@@ -75,10 +80,10 @@ HRESULT CUIButton::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_Texture_BackGround"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	///* Com_Texture */
+	//if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
+	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	//	return E_FAIL;
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
@@ -96,7 +101,7 @@ HRESULT CUIButton::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.Get_UI_Texture_Desc()->iTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;
@@ -131,8 +136,4 @@ CGameObject* CUIButton::Clone(void* pArg)
 void CUIButton::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pShaderCom);
 }
