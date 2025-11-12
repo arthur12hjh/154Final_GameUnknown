@@ -23,6 +23,9 @@ private:
 public :
 	HRESULT						Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
+	void						ResetGameSpeed();
+	void						SetGameSpeed(_float fRatio);
+
 	// 캐릭터 바인딩
 	// 어떤 캐릭터를 플레이어가 지금 조종중인지를 바인딩
 	// 이전에 플레이어 바인딩되어있던건 참조 카운트 감소하고

@@ -137,10 +137,8 @@ HRESULT CLoader::Loading_For_Logo()
 
 	Loading_UI_For_Logo_Level();
 
-	m_strMessage = TEXT("로딩이 완료되었습니다..");
-
 	while (m_pGameInstance->IsWorkThread());
-		
+	m_strMessage = TEXT("로딩이 완료되었습니다..");
 	m_isFinished = true;
 	return S_OK;
 }

@@ -12,6 +12,8 @@ class CImGuiManager;
 
 class CDebugCheatUI : public CGameObject
 {
+public :
+	static	const char*			szGameSpeedCombo[5];
 private:
 	CDebugCheatUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CDebugCheatUI() = default;
@@ -31,6 +33,7 @@ private:
 	char						m_szCameraComboTag[MAX_PATH] = {};
 
 	char						m_szSelectLight[MAX_PATH] = {};
+	char						m_szSelectGameSpeed[MAX_PATH] = {};
 	char						m_szVisbility[MAX_PATH] = {};
 	CLight*						m_pSelectLight = nullptr;
 
@@ -42,6 +45,7 @@ private :
 	void						DrawObjectDebug();
 	void						DrawCaemraDebug();
 	void						DrawLightDebug();
+	void						DrawGameSpeedDebug();
 
 public:
 	static	CDebugCheatUI*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
