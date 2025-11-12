@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Tool_Manager.h"
 
+#include "GameObject.h"
+
 CImGui_Manager::CImGui_Manager()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 	, m_pTool_Manager{ CTool_Manager::GetInstance() }
@@ -33,21 +35,21 @@ HRESULT CImGui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	//LoadFont();
 
-	m_bActive = FALSE;
-	m_bActiveTrigger = FALSE;
+	m_bIsActive = FALSE;
+	m_bIsActiveTrigger = FALSE;
 
 	return S_OK;
 }
 
 void CImGui_Manager::Priority_Update(_float fTimeDelta)
 {
-	if (m_bActiveTrigger == TRUE)
-		m_bActive = TRUE;
+	if (m_bIsActiveTrigger == TRUE)
+		m_bIsActive = TRUE;
 
-	if (m_bActiveTrigger == FALSE)
-		m_bActive = FALSE;
+	if (m_bIsActiveTrigger == FALSE)
+		m_bIsActive = FALSE;
 
-	if (m_bActive == FALSE)
+	if (m_bIsActive == FALSE)
 		return;
 
 	ImGui_ImplDX11_NewFrame();
@@ -58,19 +60,23 @@ void CImGui_Manager::Priority_Update(_float fTimeDelta)
 
 void CImGui_Manager::Update(_float fTimeDelta)
 {
-	if (m_bActive == FALSE)
+	if (m_bIsActive == FALSE)
 		return;
+
+	Update_ToolBar();
+	Update_AnimationList();
+	Update_KeyFrameTool();
 }
 
 void CImGui_Manager::Late_Update(_float fTimeDelta)
 {
-	if (m_bActive == FALSE)
+	if (m_bIsActive == FALSE)
 		return;
 }
 
 HRESULT CImGui_Manager::Render()
 {
-	if (m_bActive == FALSE)
+	if (m_bIsActive == FALSE)
 		return S_OK;
 
 	ShowGUI();
@@ -101,6 +107,166 @@ void CImGui_Manager::LoadFont()
 	}
 	IM_ASSERT(font != NULL);
 
+}
+
+void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
+{
+	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), szCharacterTag, ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
+}
+
+void CImGui_Manager::Kill_Character()
+{
+	if (nullptr == m_pSelectedObject)
+		return;
+	m_pSelectedObject->Set_Dead(TRUE);
+	m_pSelectedObject = nullptr;
+}
+
+void CImGui_Manager::Update_ToolBar()
+{
+	ImGui::SetNextWindowPos(ImVec2(0, 0)); // 화면 상단 좌표
+	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, 30)); // 전체 너비, 높이 30
+	ImGui::Begin("Toolbar", nullptr,
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoCollapse);
+
+	if (ImGui::Button("Load"))
+	{
+		ImGui::OpenPopup("Load");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+	{
+		ImGui::OpenPopup("Save");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Editor Preferences"))
+	{
+		ImGui::OpenPopup("EditorPreferences");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Animation"))
+	{
+		ImGui::OpenPopup("Animation");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Sound"))
+	{
+		ImGui::OpenPopup("Sound");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Tools"))
+	{
+		ImGui::OpenPopup("Tools");
+	}
+
+	Update_ToolBar_LoadCharacter();
+	Update_ToolBar_Save_Animation();
+
+
+	ImGui::End();
+}
+
+void CImGui_Manager::Update_ToolBar_LoadCharacter()
+{
+	static int iCurrentIndex = 0;
+	static int iBeforeIndex = 0;
+
+	if (ImGui::BeginPopup("Load"))
+	{
+		ImGui::Text("Load Character");
+		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
+		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
+
+		ImGui::EndPopup();
+	}
+
+	if (iCurrentIndex != iBeforeIndex)
+	{
+		// 구조
+		// 캐릭터 객체 코드를 따로 만들 것인가?
+		// 캐릭터 객체 코드를 같이 만들면 PartObject 관련 처리는 어떻게 할 것인가?
+		switch (iCurrentIndex)
+		{
+		case 0:
+			Kill_Character();
+			break;
+		case 1:
+			Create_Character(TEXT("Prototype_GameObject_Character"));
+			break;
+		case 2:
+			Create_Character(TEXT("Prototype_GameObject_Dororong"));
+			break;
+		}
+
+		iBeforeIndex = iCurrentIndex;
+	}
+
+
+}
+
+void CImGui_Manager::Update_ToolBar_Save_Animation()
+{
+	int a = 10;
+}
+
+void CImGui_Manager::Update_ToolBar_Editor_Preferences()
+{
+	static int iCurrentIndex = 0;
+	static int iBeforeIndex = 0;
+
+	if (ImGui::BeginPopup("Load"))
+	{
+		ImGui::Text("Load Character");
+		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
+		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
+
+		ImGui::EndPopup();
+	}
+
+	if (iCurrentIndex != iBeforeIndex)
+	{
+		// 구조
+		// 캐릭터 객체 코드를 따로 만들 것인가?
+		// 캐릭터 객체 코드를 같이 만들면 PartObject 관련 처리는 어떻게 할 것인가?
+		switch (iCurrentIndex)
+		{
+		case 0:
+			Kill_Character();
+			break;
+		case 1:
+			Create_Character(TEXT("Prototype_GameObject_Character"));
+			break;
+		case 2:
+			Create_Character(TEXT("Prototype_GameObject_Dororong"));
+			break;
+		}
+
+		iBeforeIndex = iCurrentIndex;
+	}
+}
+
+void CImGui_Manager::Update_AnimationList()
+{
+
+	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
+	ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y)); // 왼쪽에 갖다붙일거임
+
+	ImGui::Begin(u8"Animation List", NULL, ImGuiWindowFlags_MenuBar);
+
+	ImGui::End();
+
+}
+
+void CImGui_Manager::Update_KeyFrameTool()
+{
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 500, 30)); // 화면 상단 좌표
+	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y)); // 오른쪽에 갖다붙일거임
+
+	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
+
+	ImGui::End();
 }
 
 CImGui_Manager* CImGui_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

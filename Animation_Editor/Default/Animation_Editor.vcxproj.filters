@@ -32,9 +32,6 @@
     <Filter Include="02.GameObjects\Camera">
       <UniqueIdentifier>{da06ccd5-c113-4611-a3e9-ca4c968a3992}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character">
-      <UniqueIdentifier>{15d7d0af-4fe6-4bb5-be24-86c1ce57809f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Sky">
       <UniqueIdentifier>{956671f2-4d46-46f4-91a9-553d85624441}</UniqueIdentifier>
     </Filter>
@@ -59,12 +56,6 @@
     <Filter Include="02.GameObjects\Camera\Camera_AnimationEditor">
       <UniqueIdentifier>{278879e8-5c91-4680-9d8f-9de552cbeac9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Weapon">
-      <UniqueIdentifier>{f46d85b2-ef7b-4513-b5bd-98d5e04077e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Body_Character">
-      <UniqueIdentifier>{de4d02af-b8d0-40e5-bac8-4ce02dc170da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Manager\ImGui_Manager\ImGui">
       <UniqueIdentifier>{c4842145-b227-46e4-9c84-f6c4a53d9153}</UniqueIdentifier>
     </Filter>
@@ -74,14 +65,32 @@
     <Filter Include="03.Manager\Character_Manager">
       <UniqueIdentifier>{3ffabc8c-5ca1-460f-8b5c-f50877ef616e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Face_Character">
+    <Filter Include="02.GameObjects\Entity">
+      <UniqueIdentifier>{4de2656c-951f-420e-8d62-78be14dd4cd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character">
+      <UniqueIdentifier>{15d7d0af-4fe6-4bb5-be24-86c1ce57809f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Weapon">
+      <UniqueIdentifier>{f46d85b2-ef7b-4513-b5bd-98d5e04077e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Body_Character">
+      <UniqueIdentifier>{de4d02af-b8d0-40e5-bac8-4ce02dc170da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Face_Character">
       <UniqueIdentifier>{138f0071-e657-4861-956b-919900fc5cf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Hair_Character">
+    <Filter Include="02.GameObjects\Entity\Character\Hair_Character">
       <UniqueIdentifier>{689c4976-06c3-41b9-b315-a7f8f03df40b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\PonyTail_Character">
+    <Filter Include="02.GameObjects\Entity\Character\PonyTail_Character">
       <UniqueIdentifier>{87a9ca88-1cbf-4aca-9258-a4e79458f76c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Dororong">
+      <UniqueIdentifier>{0951333f-1b27-410e-92c3-1bfc613d3a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Dororong\Body_Dororong">
+      <UniqueIdentifier>{8f34aa76-baef-4133-920f-d400e08569d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,16 +131,16 @@
       <Filter>02.GameObjects\BackGround</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
-      <Filter>02.GameObjects\Character</Filter>
+      <Filter>02.GameObjects\Entity\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon.h">
-      <Filter>02.GameObjects\Character\Weapon</Filter>
+      <Filter>02.GameObjects\Entity\Character\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Body_Character.h">
-      <Filter>02.GameObjects\Character\Body_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Body_Character</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>100.ETC</Filter>
@@ -170,13 +179,19 @@
       <Filter>03.Manager\Character_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Face_Character.h">
-      <Filter>02.GameObjects\Character\Face_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Face_Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hair_Character.h">
-      <Filter>02.GameObjects\Character\Hair_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Hair_Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PonyTail_Character.h">
-      <Filter>02.GameObjects\Character\PonyTail_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\PonyTail_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Dororong.h">
+      <Filter>02.GameObjects\Entity\Dororong\Body_Dororong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dororong.h">
+      <Filter>02.GameObjects\Entity\Dororong</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -211,16 +226,16 @@
       <Filter>02.GameObjects\BackGround</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
-      <Filter>02.GameObjects\Character</Filter>
+      <Filter>02.GameObjects\Entity\Character</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sky.cpp">
       <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon.cpp">
-      <Filter>02.GameObjects\Character\Weapon</Filter>
+      <Filter>02.GameObjects\Entity\Character\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Body_Character.cpp">
-      <Filter>02.GameObjects\Character\Body_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Body_Character</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui.cpp">
       <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
@@ -250,13 +265,19 @@
       <Filter>03.Manager\Character_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Face_Character.cpp">
-      <Filter>02.GameObjects\Character\Face_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Face_Character</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hair_Character.cpp">
-      <Filter>02.GameObjects\Character\Hair_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\Hair_Character</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PonyTail_Character.cpp">
-      <Filter>02.GameObjects\Character\PonyTail_Character</Filter>
+      <Filter>02.GameObjects\Entity\Character\PonyTail_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Dororong.cpp">
+      <Filter>02.GameObjects\Entity\Dororong\Body_Dororong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dororong.cpp">
+      <Filter>02.GameObjects\Entity\Dororong</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

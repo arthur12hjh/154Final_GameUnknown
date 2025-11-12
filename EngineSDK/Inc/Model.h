@@ -44,6 +44,8 @@ public:
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 	}
 
+	void Set_Animation(const _char* szAnimationTag);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;

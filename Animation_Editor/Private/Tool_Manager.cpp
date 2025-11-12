@@ -33,20 +33,28 @@ HRESULT CTool_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 void CTool_Manager::Priority_Update(_float fTimeDelta)
 {
+	m_pImGuiManager->Priority_Update(fTimeDelta);
 }
 
 void CTool_Manager::Update(_float fTimeDelta)
 {
+	m_pImGuiManager->Update(fTimeDelta);
 }
 
 void CTool_Manager::Late_Update(_float fTimeDelta)
 {
+	m_pImGuiManager->Late_Update(fTimeDelta);
 }
 
 HRESULT CTool_Manager::Render()
 {
 	return m_pImGuiManager->Render();
 
+}
+
+void CTool_Manager::Set_Active(_bool bIsActive)
+{
+	m_pImGuiManager->Set_Active(bIsActive);
 }
 
 void CTool_Manager::Release_Manager()

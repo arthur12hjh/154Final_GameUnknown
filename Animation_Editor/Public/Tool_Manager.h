@@ -24,6 +24,9 @@ public:
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
 
+public:
+	void Set_Active(_bool bIsActive);
+
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
