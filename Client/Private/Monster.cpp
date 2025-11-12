@@ -62,7 +62,8 @@ void CMonster::Late_Update(_float fTimeDelta)
 
 	pTargetCollider = static_cast<CCollider*>(m_pGameInstance->Get_PartObject_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Player"), TEXT("Part_Weapon"), TEXT("Com_Collider_OBB")));
 	
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pTransformCom->Get_State(Engine::STATE::POSITION), 2.f))
+
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 #ifdef _DEBUG
@@ -117,6 +118,7 @@ HRESULT CMonster::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	
 	/* Com_Collider_Sphere */
 	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 
@@ -127,6 +129,7 @@ HRESULT CMonster::Ready_Components()
 		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom[ENUM_CLASS(COLLIDER::SPHERE)]), &SphereDesc)))
 		return E_FAIL;
 
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, _float3(0.8f, 1.3f, 0.8f));
 	/* Com_Collider_AABB */
 	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
 

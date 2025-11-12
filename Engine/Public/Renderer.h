@@ -44,15 +44,14 @@ public:
 	HRESULT Ready_MRTs();
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	
-	void	UpdateOcclusion();
+	//void	UpdateOcclusion();
 	void	Render();
 
 #ifdef _DEBUG
-	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	HRESULT								Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT								Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 
-	unique_ptr<GeometricPrimitive> CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop);
-
+	unique_ptr<GeometricPrimitive>		CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop);
 #endif
 
 private:

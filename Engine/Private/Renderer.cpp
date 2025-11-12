@@ -832,6 +832,7 @@ void CRenderer::Render_Debug()
 			Safe_Release(pDebugCom);
 		}
 		m_DebugComponents.clear();
+		m_pGameInstance->FrustomRender();
 
 		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 			return;
