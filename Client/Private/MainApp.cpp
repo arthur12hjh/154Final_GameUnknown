@@ -57,11 +57,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
 
-	Json json;
-	CJsonParser::ReadJsonData("../Bin/DataFiles/Dungeon_0.json", json);
-
-	CJsonParser::SaveJsonData("../Bin/DataFiles/Test.json", json);
-
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)
