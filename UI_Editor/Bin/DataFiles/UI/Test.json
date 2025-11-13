@@ -5,20 +5,20 @@
                 "Children": [
                     {
                         "TextDesc": {
-                            "szText": "TEST",
+                            "szText": "새로운 게임",
                             "vColor": [
-                                0.6499999761581421,
-                                0.215681791305542,
-                                0.215681791305542,
+                                1.0,
+                                1.0,
+                                1.0,
                                 1.0
                             ]
                         },
                         "fOffsetX": 0.0,
                         "fOffsetY": 0.0,
-                        "fSizeX": 100.0,
-                        "fSizeY": 20.0,
-                        "fX": 613.0,
-                        "fY": 507.0,
+                        "fSizeX": 80.0,
+                        "fSizeY": 30.0,
+                        "fX": 181.0,
+                        "fY": 450.0,
                         "iDepth": 2,
                         "iLevel": 2,
                         "iRenderGroup": 8,
@@ -32,8 +32,8 @@
                     "iTextureIndex": 0,
                     "szTextureComTag": "Com_Texture_UI_Default"
                 },
-                "fOffsetX": -187.0,
-                "fOffsetY": 57.0,
+                "fOffsetX": -619.0,
+                "fOffsetY": 0.0,
                 "fSizeX": 100.0,
                 "fSizeY": 100.0,
                 "fX": 800.0,
@@ -49,20 +49,20 @@
                 "Children": [
                     {
                         "TextDesc": {
-                            "szText": "TEST2",
+                            "szText": "게임 종료",
                             "vColor": [
-                                0.3545454740524292,
-                                0.2642975449562073,
-                                0.2642975449562073,
+                                1.0,
+                                1.0,
+                                1.0,
                                 1.0
                             ]
                         },
                         "fOffsetX": 72.0,
                         "fOffsetY": 15.0,
                         "fSizeX": 100.0,
-                        "fSizeY": 20.0,
-                        "fX": 567.0,
-                        "fY": 614.0,
+                        "fSizeY": 30.0,
+                        "fX": 181.0,
+                        "fY": 564.0,
                         "iDepth": 2,
                         "iLevel": 2,
                         "iRenderGroup": 8,
@@ -73,11 +73,11 @@
                 ],
                 "TextureDesc": {
                     "iPass": 0,
-                    "iTextureIndex": 1,
+                    "iTextureIndex": 0,
                     "szTextureComTag": "Com_Texture_UI_BackGround"
                 },
-                "fOffsetX": -233.0,
-                "fOffsetY": 164.0,
+                "fOffsetX": -619.0,
+                "fOffsetY": 114.0,
                 "fSizeX": 100.0,
                 "fSizeY": 100.0,
                 "fX": 800.0,
@@ -101,8 +101,8 @@
                 },
                 "fOffsetX": 0.0,
                 "fOffsetY": -312.0,
-                "fSizeX": 100.0,
-                "fSizeY": 20.0,
+                "fSizeX": 260.0,
+                "fSizeY": 30.0,
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 1,

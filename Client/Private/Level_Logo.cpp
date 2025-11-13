@@ -6,6 +6,7 @@
 #include "GameManager.h"
 
 #include "UIHUD.h"
+#include "HUDLayer.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -41,7 +42,17 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		//m_pGameManager->Clear_UI_Texture_Descs();
+		for (auto& pLayers : dynamic_cast<CUIHUD*>(GetHUD())->Get_Layers())
+		{
+			auto pLayer = pLayers.second;
+
+			for (auto& pUIObjs : *pLayer->Get_UserInterfaces())
+			{
+				pUIObjs.second->SetVisibility(VISIBILITY::VISIBLE);
+			}
+		}
+
+		dynamic_cast<CUIHUD*>(GetHUD())->Set_Show_Debug_Rect(true);
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}

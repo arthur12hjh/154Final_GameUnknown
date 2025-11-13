@@ -70,6 +70,8 @@ HRESULT CUIText::Render()
 
 HRESULT CUIText::Ready_Components()
 {
+	__super::Ready_Components();
+
 	return S_OK;
 }
 
