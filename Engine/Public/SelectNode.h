@@ -12,12 +12,16 @@ public:
 	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree);
 
 	// 데코레이터 성공 여부 반환
-	virtual	_bool						Update(_float fTimeDelta);
+	virtual	NODE_STATE					Update(_float fTimeDelta);
+	void								Bind_BehaviorNode(CBehaviorNode* pNode);
+
+protected :
+	vector<CBehaviorNode*>				m_Decorators;
+	vector<CBehaviorNode*>				m_Services;
+	vector<CBehaviorNode*>				m_Actions;
 
 private :
-	list<CBehaviorNode*>				m_Decorators;
-	list<CBehaviorNode*>				m_Services;
-	CBehaviorNode*						m_Action[2] = { nullptr, nullptr };
+	_uint								m_iIndex = {};
 
 public:
 	static	CSelectNode*				Create(const CBehaviorTree* pOwnerTree);

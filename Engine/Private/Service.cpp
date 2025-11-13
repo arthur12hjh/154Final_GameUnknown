@@ -4,20 +4,18 @@ CService::CService() : CBehaviorNode()
 {
 }
 
-HRESULT CService::Initialize_Prototype()
+HRESULT CService::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 {
+	m_eNodeType = BEHAVIOR_NODE_TYPE::SERVICE;
+	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
-HRESULT CService::Initialize(void* pArg)
+CBehaviorNode::NODE_STATE CService::Update(_float fTimeDelta)
 {
-	return S_OK;
-}
-
-_bool CService::Update(_float fTimeDelta)
-{
-
-	return true;
+	return NODE_STATE::COMPLETE;
 }
 
 void CService::Free()

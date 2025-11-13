@@ -887,9 +887,6 @@
     <Filter Include="01.Utility\20.BehaviorTree\Task">
       <UniqueIdentifier>{8ac93faa-6382-4a92-be57-fd8fb48b5c3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Service">
-      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\20.BehaviorTree\Decorator">
       <UniqueIdentifier>{d4a5b2fe-4691-47d3-8d25-4d7fceef0c49}</UniqueIdentifier>
     </Filter>
@@ -904,6 +901,9 @@
     </Filter>
     <Filter Include="01.Utility\20.BehaviorTree\Node\Selector">
       <UniqueIdentifier>{a8205b58-8687-4860-81fc-0d73e5ad3b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Service">
+      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

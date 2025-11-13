@@ -164,9 +164,14 @@
     <ClInclude Include="..\public\DebugCheatUI.h" />
     <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
+    <ClInclude Include="..\public\Deco_AttackRange.h" />
     <ClInclude Include="..\Public\Explosion.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\public\GameManager.h" />
+    <ClInclude Include="..\public\GorillaBehaviorTree.h" />
+    <ClInclude Include="..\public\GorillaBlackBoard.h" />
+    <ClInclude Include="..\public\Task_GorillaAttack.h" />
+    <ClInclude Include="..\public\Deco_PhaseChange.h" />
     <ClInclude Include="..\public\ImGuiMain.h" />
     <ClInclude Include="..\public\ImGuiManager.h" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
@@ -183,7 +188,7 @@
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
-    <ClInclude Include="..\Public\Monster.h" />
+    <ClInclude Include="..\Public\Gorilla.h" />
     <ClInclude Include="..\public\MousePointer.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
@@ -194,6 +199,11 @@
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
     <ClInclude Include="..\Public\SpriteEffect.h" />
+    <ClInclude Include="..\public\Task_Dead.h" />
+    <ClInclude Include="..\public\Task_GorillaHit.h" />
+    <ClInclude Include="..\public\Task_Idle.h" />
+    <ClInclude Include="..\public\Task_Move.h" />
+    <ClInclude Include="..\public\Task_Wait.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
@@ -217,9 +227,14 @@
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
+    <ClCompile Include="..\private\Deco_AttackRange.cpp" />
     <ClCompile Include="..\Private\Explosion.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
     <ClCompile Include="..\private\GameManager.cpp" />
+    <ClCompile Include="..\private\GorillaBehaviorTree.cpp" />
+    <ClCompile Include="..\private\GorillaBlackBoard.cpp" />
+    <ClCompile Include="..\private\Task_GorillaAttack.cpp" />
+    <ClCompile Include="..\private\Deco_PhaseChange.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -252,7 +267,7 @@
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
-    <ClCompile Include="..\Private\Monster.cpp" />
+    <ClCompile Include="..\Private\Gorilla.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -266,6 +281,11 @@
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />
     <ClCompile Include="..\Private\SpriteEffect.cpp" />
+    <ClCompile Include="..\private\Task_Dead.cpp" />
+    <ClCompile Include="..\private\Task_GorillaHit.cpp" />
+    <ClCompile Include="..\private\Task_Idle.cpp" />
+    <ClCompile Include="..\private\Task_Move.cpp" />
+    <ClCompile Include="..\private\Task_Wait.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />

@@ -6,30 +6,68 @@ CSquenceNode::CSquenceNode() : CBehaviorNode()
 
 HRESULT CSquenceNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 {
+	m_eNodeType = BEHAVIOR_NODE_TYPE::SQUENCE;
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-_bool CSquenceNode::Update(_float fTimeDelta)
+CBehaviorNode::NODE_STATE CSquenceNode::Update(_float fTimeDelta)
 {
+	_bool bIsDecorator = true;
 	for (auto& iter : m_Decorators)
 	{
-		if (false == iter->Update(fTimeDelta))
-			return false;
+		if (NODE_STATE::FAIL == iter->Update(fTimeDelta))
+			bIsDecorator = false;
 	}
 
-	for (auto& iter : m_Services)
-		iter->Update(fTimeDelta);
-
-	for (auto& iter : m_Actions)
+	if (bIsDecorator)
 	{
-		if (false == iter->Update(fTimeDelta))
-			return false;
+		NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
+		switch (State)
+		{
+		case NODE_STATE::COMPLETE:
+			m_iIndex++;
+			break;
+		case NODE_STATE::FAIL:
+			m_iIndex = 0;
+			break;
+		default:
+			return NODE_STATE::RUNNING;
+		}
+
+		if (m_Actions.size() <= m_iIndex)
+		{
+			m_iIndex = 0;
+			NODE_STATE::COMPLETE;
+		}
 	}
 
-	return true;
+	return NODE_STATE::RUNNING;
+}
+
+void CSquenceNode::Bind_BehaviorNode(CBehaviorNode* pNode)
+{
+	if (nullptr == pNode)
+		return;
+	 
+	switch (pNode->GetNodeType())
+	{
+	case BEHAVIOR_NODE_TYPE::SELECTOR :
+	case BEHAVIOR_NODE_TYPE::SQUENCE :
+	case BEHAVIOR_NODE_TYPE::TASK :
+		m_Actions.push_back(pNode);
+		break;
+
+	case BEHAVIOR_NODE_TYPE::SERVICE :
+		m_Services.push_back(pNode);
+		break;
+
+	case BEHAVIOR_NODE_TYPE::DECORATOR:
+		m_Decorators.push_back(pNode);
+		break;
+	}
 }
 
 CSquenceNode* CSquenceNode::Create(const CBehaviorTree* pOwnerTree)

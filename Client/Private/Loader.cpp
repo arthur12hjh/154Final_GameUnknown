@@ -7,7 +7,7 @@
 #include "Explosion.h"
 #include "ForkLift.h"
 
-#include "Monster.h"
+#include "Gorilla.h"
 #include "Terrain.h"
 #include "Weapon.h"
 #include "Player.h"
@@ -155,6 +155,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.bin", PreTransformMatrix))))
 		return E_FAIL;
 
+	
+
 	/* For.Prototype_Component_Model_Vil_Bui03_04 */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
@@ -234,7 +236,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
-		CMonster::Create(m_pDevice, m_pContext))))
+		CGorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	
@@ -419,7 +421,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance))))
 		return E_FAIL;
 
-	_matrix			PreTransformMatrix = XMMatrixIdentity();
+	_matrix PreTransformMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
@@ -441,6 +443,10 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Instance_Model_Dororong"),
 		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/Gorilla.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	Desc->OnCompleted(this_thread::get_id());

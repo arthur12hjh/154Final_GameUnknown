@@ -4,19 +4,18 @@ CTask::CTask() : CBehaviorNode()
 {
 }
 
-HRESULT CTask::Initialize_Prototype()
+HRESULT CTask::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 {
+    m_eNodeType = BEHAVIOR_NODE_TYPE::TASK;
+    if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
+        return E_FAIL;
+
     return S_OK;
 }
 
-HRESULT CTask::Initialize(void* pArg)
+CBehaviorNode::NODE_STATE CTask::Update(_float fTimeDelta)
 {
-    return S_OK;
-}
-
-_bool CTask::Update(_float fTimeDelta)
-{
-    return true;
+    return NODE_STATE::COMPLETE;
 }
 
 void CTask::Free()

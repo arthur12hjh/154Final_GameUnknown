@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Monster.h"
+#include "Gorilla.h"
 #include "GameInstance.h"
 
-CMonster::CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGorilla::CGorilla(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject { pDevice, pContext }
 {
 }
 
-CMonster::CMonster(const CMonster& Prototype) 
+CGorilla::CGorilla(const CGorilla& Prototype) 
 	: CGameObject { Prototype }
 {
 }
 
-HRESULT CMonster::Initialize_Prototype()
+HRESULT CGorilla::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CMonster::Initialize(void* pArg)
+HRESULT CGorilla::Initialize(void* pArg)
 {		
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,21 +32,36 @@ HRESULT CMonster::Initialize(void* pArg)
 		1.f
 	));
 
-	m_pModelCom->Set_AnimationIndex(/*rand() % 20*/0);
-
+	m_pModelCom->Set_AnimationIndex(0);
+	m_iMaxIndex = (_uint)m_pModelCom->Get_AnimationList()->size();
 	for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
 		m_pColliderCom[i]->SetOwner(this);
 
 	return S_OK;
 }
 
-void CMonster::Priority_Update(_float fTimeDelta)
+void CGorilla::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
 }
 
-void CMonster::Update(_float fTimeDelta)
+void CGorilla::Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
+	{
+		m_iIndex++;
+		if (m_iMaxIndex <= m_iIndex)
+			m_iIndex = 0;
+
+		m_pModelCom->Set_AnimationIndex(m_iIndex);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
+	{
+		m_iIndex--;
+		if (0 > m_iIndex)
+			m_iIndex = m_iMaxIndex - 1;
+
+		m_pModelCom->Set_AnimationIndex(m_iIndex);
+	}
 	m_pModelCom->Play_Animation(fTimeDelta);
 	
 	for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
@@ -57,7 +72,7 @@ void CMonster::Update(_float fTimeDelta)
 
 }
 
-void CMonster::Late_Update(_float fTimeDelta)
+void CGorilla::Late_Update(_float fTimeDelta)
 {
 	CCollider* pTargetCollider = { nullptr };
 	pTargetCollider = static_cast<CCollider*>(m_pGameInstance->Get_PartObject_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Player"), TEXT("Part_Weapon"), TEXT("Com_Collider_OBB")));
@@ -77,7 +92,7 @@ void CMonster::Late_Update(_float fTimeDelta)
 	
 }
 
-HRESULT CMonster::Render()
+HRESULT CGorilla::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -92,8 +107,11 @@ HRESULT CMonster::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;*/
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -106,10 +124,10 @@ HRESULT CMonster::Render()
 	return S_OK;
 }
 
-HRESULT CMonster::Ready_Components()
+HRESULT CGorilla::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 	
@@ -152,7 +170,7 @@ HRESULT CMonster::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CMonster::Bind_ShaderResources()
+HRESULT CGorilla::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -166,9 +184,9 @@ HRESULT CMonster::Bind_ShaderResources()
 	return S_OK;
 }
 
-CMonster* CMonster::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGorilla* CGorilla::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMonster* pInstance = new CMonster(pDevice, pContext);
+	CGorilla* pInstance = new CGorilla(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -179,9 +197,9 @@ CMonster* CMonster::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CMonster::Clone(void* pArg)
+CGameObject* CGorilla::Clone(void* pArg)
 {
-	CMonster* pInstance = new CMonster(*this);
+	CGorilla* pInstance = new CGorilla(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -192,7 +210,7 @@ CGameObject* CMonster::Clone(void* pArg)
 	return pInstance;
 }
 
-void CMonster::Free()
+void CGorilla::Free()
 {
 	__super::Free();
 

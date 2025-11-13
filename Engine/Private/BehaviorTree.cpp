@@ -25,6 +25,8 @@ HRESULT CBehaviorTree::Initialize(void* pArg)
 
 void CBehaviorTree::Update(_float fTimeDelta)
 {
+    if(m_pRootNode)
+        m_pRootNode->Update(fTimeDelta);
 }
 
 CBlackBoard* CBehaviorTree::GetBlackBoard() const
@@ -36,26 +38,11 @@ CBlackBoard* CBehaviorTree::GetBlackBoard() const
     return m_pBlackBoard;
 }
 
-CBehaviorTree* CBehaviorTree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-    CBehaviorTree* pBehaviorTree = new CBehaviorTree(pDevice, pContext);
-    if (FAILED(pBehaviorTree->Initialize_Prototype()))
-    {
-        Safe_Release(pBehaviorTree);
-        MSG_BOX("Create Fail : Behavior Tree");
-    }
-    return pBehaviorTree;
-}
 
 CComponent* CBehaviorTree::Clone(void* pArg)
 {
-    CBehaviorTree* pBehaviorTree = new CBehaviorTree(*this);
-    if (FAILED(pBehaviorTree->Initialize(pArg)))
-    {
-        Safe_Release(pBehaviorTree);
-        MSG_BOX("Create Fail : Behavior Tree");
-    }
-    return pBehaviorTree;
+    
+    return nullptr;
 }
 
 void CBehaviorTree::Free()

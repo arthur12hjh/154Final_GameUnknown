@@ -5,9 +5,9 @@
 // 상속 받아서 변수 정의해서 GetSet 만들어서 사용하는 형태임
 
 NS_BEGIN(Engine)
-class ENGINE_DLL CBlackBoard : public CBase
+class ENGINE_DLL CBlackBoard abstract : public CBase
 {
-private :
+protected :
 	CBlackBoard();
 	virtual ~CBlackBoard() = default;
 

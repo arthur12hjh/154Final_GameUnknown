@@ -40,9 +40,6 @@
     <Filter Include="02.GameObjects\Camera\Camera_Free">
       <UniqueIdentifier>{2f5ad10f-a81e-4bfb-a6b8-d66ba44c361e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster">
-      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player">
       <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
     </Filter>
@@ -190,6 +187,60 @@
     <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
       <UniqueIdentifier>{67a1ade5-3014-4ffd-8a93-178e874f30c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Boss">
+      <UniqueIdentifier>{c8e51291-6ba9-41bd-870c-e32bcc1ba89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla">
+      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree">
+      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task">
+      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior">
+      <UniqueIdentifier>{97a1cc60-d0a3-4bf8-bedd-de310c29f151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Task">
+      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Decorator">
+      <UniqueIdentifier>{598a6be4-e105-42b0-a918-3c2475dd5d56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Service">
+      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack">
+      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Task\Dead">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Task\Idle">
+      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Task\Move">
+      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Task\Wait">
+      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="50.Behavior\Decorator\AttackRange">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -224,9 +275,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Monster.h">
-      <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>02.GameObjects\Player</Filter>
@@ -351,6 +399,39 @@
     <ClInclude Include="..\Public\UIWrapper.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GorillaBehaviorTree.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GorillaBlackBoard.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_GorillaAttack.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Deco_PhaseChange.h">
+      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Deco_AttackRange.h">
+      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Dead.h">
+      <Filter>50.Behavior\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Idle.h">
+      <Filter>50.Behavior\Task\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Move.h">
+      <Filter>50.Behavior\Task\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Wait.h">
+      <Filter>50.Behavior\Task\Wait</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gorilla.h">
+      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_GorillaHit.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -387,9 +468,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Monster.cpp">
-      <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Player</Filter>
@@ -495,6 +573,39 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIWrapper.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GorillaBehaviorTree.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GorillaBlackBoard.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_GorillaAttack.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_PhaseChange.cpp">
+      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_AttackRange.cpp">
+      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Dead.cpp">
+      <Filter>50.Behavior\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Idle.cpp">
+      <Filter>50.Behavior\Task\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Move.cpp">
+      <Filter>50.Behavior\Task\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Wait.cpp">
+      <Filter>50.Behavior\Task\Wait</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gorilla.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_GorillaHit.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

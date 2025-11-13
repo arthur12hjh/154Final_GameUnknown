@@ -4,19 +4,19 @@ CDecorator::CDecorator() : CBehaviorNode()
 {
 }
 
-HRESULT CDecorator::Initialize_Prototype()
+
+HRESULT CDecorator::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 {
+    m_eNodeType = BEHAVIOR_NODE_TYPE::DECORATOR;
+    if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
+        return E_FAIL;
+
     return S_OK;
 }
 
-HRESULT CDecorator::Initialize(void* pArg)
+CBehaviorNode::NODE_STATE  CDecorator::Update(_float fTimeDelta)
 {
-    return S_OK;
-}
-
-_bool CDecorator::Update(_float fTimeDelta)
-{
-    return true;
+    return NODE_STATE::COMPLETE;
 }
 
 void CDecorator::Free()

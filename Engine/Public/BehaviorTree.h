@@ -5,9 +5,9 @@ NS_BEGIN(Engine)
 class CBehaviorNode;
 class CBlackBoard;
 
-class ENGINE_DLL CBehaviorTree : public CComponent
+class ENGINE_DLL CBehaviorTree abstract : public CComponent
 {
-private :
+protected :
 	CBehaviorTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBehaviorTree(const CBehaviorTree& Prototype);
 	virtual ~CBehaviorTree() = default;
@@ -21,12 +21,11 @@ public :
 	//블랙보드 참조하면 래퍼런스 카운트 올라감
 	CBlackBoard*						GetBlackBoard() const;
 
-private :
+protected :
 	CBehaviorNode*						m_pRootNode = nullptr;
 	CBlackBoard*						m_pBlackBoard = nullptr;
 
 public :
-	static	CBehaviorTree*				Create(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
 	virtual	CComponent*					Clone(void* pArg);
 	virtual	void						Free() override;
 

@@ -13,15 +13,11 @@ HRESULT CBehaviorNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 	return S_OK;
 }
 
-_bool CBehaviorNode::Update(_float fTimeDelta)
+CBehaviorNode::NODE_STATE CBehaviorNode::Update(_float fTimeDelta)
 {
-	return false;
+	return NODE_STATE::COMPLETE;
 }
 
-CBehaviorNode* CBehaviorNode::Clone(void* pArg)
-{
-	return nullptr;
-}
 
 void CBehaviorNode::Free()
 {

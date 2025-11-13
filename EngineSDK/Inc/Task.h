@@ -9,11 +9,10 @@ protected:
 	virtual ~CTask() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype();
-	virtual	HRESULT						Initialize(void* pArg);
+	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree) override;
 
 	// 테스크의 성공유무반환
-	virtual	_bool						Update(_float fTimeDelta) override;
+	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
 public:
 	virtual	void						Free() override;
