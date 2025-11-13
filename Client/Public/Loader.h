@@ -49,6 +49,7 @@ private:
 	HRESULT Loading_For_Logo();
 
 	HRESULT Loading_For_GamePlay();
+	HRESULT Loading_For_GamePlay_Player(void* pArg);
 	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
 	HRESULT Loading_For_GamePlay_Navigation(void* pArg);

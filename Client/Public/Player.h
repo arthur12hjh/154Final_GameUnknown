@@ -36,6 +36,9 @@ private:
 	CNavigation*		m_pNavigationCom = { nullptr };
 	CCollider*			m_pColliderCom = { nullptr };
 
+	class CGameManager* m_pGameManager = { nullptr };
+	class CBody_Player* m_pPart_Body = { nullptr };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();

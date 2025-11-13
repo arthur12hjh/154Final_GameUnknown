@@ -1,43 +1,37 @@
 #include "pch.h"
+#include "Face_Player.h"
 #include "Body_Player.h"
+
+#include "Bone.h"
+#include "Model.h"
 
 #include "GameInstance.h"
 
 #include "Player.h"
 
-CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CFace_Player::CFace_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CBody_Player::CBody_Player(const CBody_Player& Prototype) 
+CFace_Player::CFace_Player(const CFace_Player& Prototype)
 	: CPartObject{ Prototype }
 {
 }
 
-const _float4x4* CBody_Player::Get_BoneMatrixPtr(const _char* pBoneName) const
-{
-	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);	
-}
 
-_bool CBody_Player::isFinish_Att()
-{
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		return m_isAnimFinish;
-
-	return false;
-}
-
-HRESULT CBody_Player::Initialize_Prototype()
+HRESULT CFace_Player::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBody_Player::Initialize(void* pArg)
-{	
-	BODY_PLAYER_DESC* pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
+HRESULT CFace_Player::Initialize(void* pArg)
+{
+	FACE_PLAYER_DESC* pDesc = static_cast<FACE_PLAYER_DESC*>(pArg);
 
 	m_pParentState = pDesc->pParentState;
+	//m_pSocketMatrix = pDesc->pSocketMatrix;
+	//strcpy_s(m_szBoneTag, pDesc->szBoneTag);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -45,48 +39,66 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	Bind_BoneToPartBody(pDesc->pBodyPtr);
 
-	m_pModelCom->Set_AnimationIndex(1);
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
+
 
 	return S_OK;
 }
 
-void CBody_Player::Priority_Update(_float fTimeDelta)
+void CFace_Player::Priority_Update(_float fTimeDelta)
 {
 	int a = 10;
 }
 
-void CBody_Player::Update(_float fTimeDelta)
+void CFace_Player::Update(_float fTimeDelta)
 {
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		m_pModelCom->Set_AnimationIndex(0, false);
+	//if (*m_pParentState & CCharacter::STATE_ATTACK)
+	//	m_pModelCom->Set_AnimationIndex(0, false);
+	//
+	//if (*m_pParentState & CCharacter::STATE_IDLE)
+	//	m_pModelCom->Set_AnimationIndex(3);
+	//
+	//if (*m_pParentState & CCharacter::STATE_WALK)
+	//	m_pModelCom->Set_AnimationIndex(4);	
 
-	if(*m_pParentState & CPlayer::STATE_IDLE)
-		m_pModelCom->Set_AnimationIndex(1);
 
-	if (*m_pParentState & CPlayer::STATE_WALK)
-		m_pModelCom->Set_AnimationIndex(4);
+	vector<CBone*>* pFaceBone = m_pModelCom->Get_Bones();
 
-	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
+	for (auto& pBone : *pFaceBone)
+	{
+		for (auto& pBodyBone : m_mapBodyBones)
+		{
+			if (TRUE == pBone->Compare_Name(pBodyBone.first))
+			{
+				_matrix matBuffer = pBodyBone.second->Get_TransformationMatrix();
+				pBone->Set_TransformationMatrix(matBuffer);
+				break;
+			}
+		}
+
+	}
+	
+	m_pModelCom->Attach_CombinedTransformationMatrix();
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
-void CBody_Player::Late_Update(_float fTimeDelta)
+void CFace_Player::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	
+
 #endif
 }
 
-HRESULT CBody_Player::Render()
+HRESULT CFace_Player::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -107,26 +119,27 @@ HRESULT CBody_Player::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-		
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
 
+
+
+
 	return S_OK;
 }
 
-HRESULT CBody_Player::Render_Shadow()
+HRESULT CFace_Player::Render_Shadow()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
-		return E_FAIL;	
-	
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
@@ -146,38 +159,26 @@ HRESULT CBody_Player::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Ready_Components()
+HRESULT CFace_Player::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-	
+
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
-
-	SphereDesc.fRadius = 0.5f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-HRESULT CBody_Player::Bind_ShaderResources()
+HRESULT CFace_Player::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
-		return E_FAIL;	
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -186,36 +187,54 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT CFace_Player::Bind_BoneToPartBody(void* pArg)
 {
-	CBody_Player* pInstance = new CBody_Player(pDevice, pContext);
+	CBody_Player* pBody = static_cast<CBody_Player*>(pArg);
+
+	// map<_char*, _float4x4*>의 형태로 각 본의 위치 포인터를 전달 받음
+
+	vector<CBone*>* pBodyBones = static_cast<CModel*>(pBody->Find_Component(TEXT("Com_Model")))->Get_Bones();
+
+	for (auto& pBone : *pBodyBones)
+	{
+		m_mapBodyBones.emplace(pBone->Get_Name(), pBone);
+	}
+
+
+
+	return S_OK;
+}
+
+CFace_Player* CFace_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CFace_Player* pInstance = new CFace_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : pGraphic_Device");
+		MSG_BOX("Failed to Created : CFace_Player");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CBody_Player::Clone(void* pArg)
+CGameObject* CFace_Player::Clone(void* pArg)
 {
-	CBody_Player* pInstance = new CBody_Player(*this);
+	CFace_Player* pInstance = new CFace_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBody_Player");
+		MSG_BOX("Failed to Cloned : CFace_Player");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CBody_Player::Free()
+void CFace_Player::Free()
 {
 	__super::Free();
-	Safe_Release(m_pColliderCom);
+
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }
