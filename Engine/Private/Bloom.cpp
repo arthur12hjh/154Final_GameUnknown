@@ -49,7 +49,7 @@ HRESULT CBloom::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
     return S_OK;
 }
-
+#ifdef _DEBUG
 HRESULT CBloom::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
     return S_OK;
@@ -59,7 +59,7 @@ HRESULT CBloom::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 {
     return S_OK;
 }
-
+#endif
 CBloom* CBloom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CBloom* pInstance = new CBloom(pDevice, pContext);

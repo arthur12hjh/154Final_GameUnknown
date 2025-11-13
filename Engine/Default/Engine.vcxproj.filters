@@ -298,16 +298,16 @@
     <ClInclude Include="..\Public\Deferred.h">
       <Filter>01.Utility\05.Renderer\Deferred</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Target_Manager.h">
-      <Filter>01.Utility\09.Target_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RenderTarget.h">
-      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Bloom.h">
       <Filter>01.Utility\05.Renderer\Deferred\Bloom</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Entity.h" />
+    <ClInclude Include="..\Public\Target_Manager.h">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RenderTarget.h">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -580,16 +580,16 @@
     <ClCompile Include="..\private\SelectNode.cpp">
       <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Target_Manager.cpp">
-      <Filter>01.Utility\09.Target_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RenderTarget.cpp">
-      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Bloom.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Bloom</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Entity.cpp" />
+    <ClCompile Include="..\Private\RenderTarget.cpp">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Target_Manager.cpp">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">

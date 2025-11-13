@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 
 #include "SpriteEffect.h"
@@ -124,13 +124,13 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Logo()
 {
-	m_strMessage = TEXT("로딩중.");
+	m_strMessage = TEXT("Loading.");
 
-	m_strMessage = TEXT("로딩중.");
+	m_strMessage = TEXT("Loading.");
 
-	m_strMessage = TEXT("로딩중.");
+	m_strMessage = TEXT("Loading.");
 	
-	m_strMessage = TEXT("로딩중.");
+	m_strMessage = TEXT("Loading.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -138,7 +138,7 @@ HRESULT CLoader::Loading_For_Logo()
 	Loading_UI_For_Logo_Level();
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료됐습니다..");
+	m_strMessage = TEXT("완료..");
 	m_isFinished = true;
 	return S_OK;
 }
