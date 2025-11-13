@@ -44,7 +44,7 @@ private:
 	void Update_AnimationList();
 
 	void Update_KeyFrameTool();
-
+	void Update_TimeLine();
 
 
 private:

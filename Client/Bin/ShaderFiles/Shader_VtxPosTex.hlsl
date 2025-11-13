@@ -144,6 +144,8 @@ PS_OUT PS_DISTORTION(PS_IN In)
     
     /* */
     Out.vColor.g = g_fDistortionIntensity;
+    
+    
     return Out;
 }
 
@@ -183,7 +185,7 @@ technique11 DefaultTechnique
     pass Distortion
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_DepthTest_ON_Write_OFF, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;

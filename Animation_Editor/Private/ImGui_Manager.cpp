@@ -116,6 +116,7 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 	if (nullptr != m_pSelectedObject)
 	{
 		m_pSelectedObject->Set_Dead(TRUE);
+		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
 	}
 
@@ -336,7 +337,15 @@ void CImGui_Manager::Update_KeyFrameTool()
 
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
+	Update_TimeLine();
+
 	ImGui::End();
+}
+
+void CImGui_Manager::Update_TimeLine()
+{
+	
+
 }
 
 CImGui_Manager* CImGui_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

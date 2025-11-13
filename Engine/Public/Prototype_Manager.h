@@ -15,12 +15,15 @@ private:
 
 public:
 	HRESULT Initialize(_uint iNumLevels);
-	HRESULT Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
+	HRESULT Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, CBase** ppOut = nullptr);
+	HRESULT Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix);
 	class CBase* Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg);
 	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 	void Clear(_uint iLevelIndex);
 
 private:
+	class CGameInstance*						m_pGameInstance = { nullptr };
+
 	_uint										m_iNumLevels = { };
 	map<const _wstring, class CBase*>*			m_pPrototypes = { nullptr };
 

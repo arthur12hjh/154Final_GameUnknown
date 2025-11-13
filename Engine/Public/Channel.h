@@ -16,6 +16,10 @@ private:
 public:
 	HRESULT Initialize(const class CModel* pModel, binChannel* pChannel);
 	void Update_TransformationMatrix(const vector<class CBone*>& Bones, _float fCurrentTrackPosition, _uint* pCurrentKeyFrameIndex);
+
+	_char* Get_Name() { return m_szName; }
+	void Set_BoneIndex(_uint iIndex) { m_iBoneIndex = iIndex; }
+
 private:
 	_char					m_szName[MAX_PATH] = {};
 	_int					m_iBoneIndex = { -1 };
