@@ -69,7 +69,8 @@ void CUIBase::Late_Update(_float fTimeDelta)
 HRESULT CUIBase::Render()
 {
 #ifdef _DEBUG
-	if(dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_Show_Debug_Rect())
+	if(dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD()) 
+		&& dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_Show_Debug_Rect())
 		Render_Debug_Rect();
 #endif
 
