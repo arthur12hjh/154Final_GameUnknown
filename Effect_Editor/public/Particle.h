@@ -33,12 +33,14 @@ public:
 		_float2 fSize;
 		_float2 fLifeTime;
 		_float2 fSpeed;
-		_float4 fSizeDiagram = {};
 		_float4 fGravityDiagram = {};
+		_float4 fPosition = {0,0,0,1};
+		_float3 fRotation = {};
 		_bool   bisLoop;
-		_uint	m_iSelectRender = {};
+		_uint	iSelectRender = {};
 		_float4 fColor = {};
 		string szCS;
+		vector<_float3> fSizeDiagrams;
 	}PARTICLE_DATA;
 
 private:
@@ -54,7 +56,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_Components(PARTICLE_DATA tData);
-	void	Update(PARTICLE_DATA tData) { m_tData = tData; };
+	void	Update(PARTICLE_DATA tData);
 	void	Set_Begin(_int iBegin) { m_iBegin = iBegin; }
 	PARTICLE_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
@@ -65,6 +67,8 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
 	string    m_szFile[3];
+
+	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
