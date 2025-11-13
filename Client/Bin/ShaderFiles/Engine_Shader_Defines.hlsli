@@ -107,6 +107,17 @@ BlendState BS_Blend
     BlendOp = Add;
 };
 
+/* One, One, Add 모드로 블렌드 켜기.*/
+BlendState BS_Override
+{
+    BlendEnable[0] = true;
+    BlendEnable[1] = false;
+
+    SrcBlend = one;
+    DestBlend = one;
+    BlendOp = Add;
+};
+
 DepthStencilState DSS_DepthTest_ON_Write_OFF
 {
     DepthEnable = TRUE;
