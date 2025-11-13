@@ -75,6 +75,8 @@ HRESULT CUIButton::Render()
 
 HRESULT CUIButton::Ready_Components()
 {
+	__super::Ready_Components();
+
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
@@ -85,10 +87,10 @@ HRESULT CUIButton::Ready_Components()
 	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 	//	return E_FAIL;
 
-	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
+	///* Com_Shader */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
+	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+	//	return E_FAIL;
 
 	return S_OK;
 }

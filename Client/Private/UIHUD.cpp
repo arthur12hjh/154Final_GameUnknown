@@ -95,9 +95,9 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	{
 		Json TextDesc;
 
-		CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Text_Desc()->szText.c_str(), szText);
+		//CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Text_Desc()->szText.c_str(), szText);
 
-		TextDesc["szText"] = szText;
+		TextDesc["szText"] = WStringToUTF8(pDesc.Get_UI_Text_Desc()->szText.c_str());
 		TextDesc["vColor"] = {
 			pDesc.Get_UI_Text_Desc()->vColor.x,
 			pDesc.Get_UI_Text_Desc()->vColor.y,
@@ -171,8 +171,9 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		{
 			CUIBase::UI_TEXT_DESC TextDesc{};
 			Json jDesc = pUIObject["TextDesc"];
-			CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
-			TextDesc.szText = szText;
+			//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
+			//TextDesc.szText = szText;
+			TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 			TextDesc.vColor = {
 				jDesc["vColor"][0].get<_float>(),
 				jDesc["vColor"][1].get<_float>(),
@@ -246,8 +247,9 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		CUIBase::UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
-		CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
-		TextDesc.szText = szText;
+		//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
+		//TextDesc.szText = szText;
+		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.vColor = {
 			jDesc["vColor"][0].get<_float>(),
 			jDesc["vColor"][1].get<_float>(),
@@ -281,6 +283,26 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 			Load_Hierarchy(pCreatedObj, pChild);
 		}
 	}
+}
+
+string CUIHUD::WStringToUTF8(const _wstring& wstr)
+{
+	if (wstr.empty()) return {};
+
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+	std::string result(size_needed - 1, 0); // null 제외
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &result[0], size_needed, nullptr, nullptr);
+	return result;
+}
+
+_wstring CUIHUD::UTF8ToWString(const string& str)
+{
+	if (str.empty()) return {};
+
+	_uint size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+	_wstring result(size_needed - 1, 0); // null 제외
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
+	return result;
 }
 
 CUIHUD* CUIHUD::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
