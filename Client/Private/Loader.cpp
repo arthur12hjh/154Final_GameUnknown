@@ -33,7 +33,6 @@
 #include "UIButton.h"
 #include "UIText.h"
 
-// �ε� �׽�Ʈ
 #include "Vil_Bui03_04.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -60,12 +59,8 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {	
 	m_eNextLevelID = eNextLevelID;
 
-	/* ��������, ���ؽ�, ũ��Ƽ�ü��� */
-
-	/* �Ӱ迵��(��, ������, �ڵ�)�� �����ϱ����� Ű�� �����Ѵ�. */
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ���� �ε��� �����ϱ����� �����带 �����Ѵ�. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -93,19 +88,19 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("�ؽ��ĸ�(��) �ε� �� �Դϴ�.");
+		m_strMessage = TEXT("메시 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
 
-		m_strMessage = TEXT("���̴���(��) �ε� �� �Դϴ�.");
+		m_strMessage = TEXT("셰이더 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
 
-		m_strMessage = TEXT("�׺���̼Ǹ�(��) �ε� �� �Դϴ�.");
+		m_strMessage = TEXT("네비게이션 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Navigation(pArg); });
 
-		m_strMessage = TEXT("�𵨸�(��) �ε� �� �Դϴ�.");
+		m_strMessage = TEXT("인스턴싱중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
 
-		m_strMessage = TEXT("�÷��̾(��) �ε� �� �Դϴ�.");
+		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
@@ -129,13 +124,13 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Logo()
 {
-	m_strMessage = TEXT("�ؽ��ĸ�(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("로딩중.");
 
-	m_strMessage = TEXT("�𵨸�(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("로딩중.");
 
-	m_strMessage = TEXT("���̴���(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("로딩중.");
 	
-	m_strMessage = TEXT("��ü������(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("로딩중.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -143,7 +138,7 @@ HRESULT CLoader::Loading_For_Logo()
 	Loading_UI_For_Logo_Level();
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("�ε��� �Ϸ�Ǿ����ϴ�..");
+	m_strMessage = TEXT("완료됐습니다..");
 	m_isFinished = true;
 	return S_OK;
 }
@@ -191,7 +186,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("���̴���(��) �ε� �� �Դϴ�.");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -222,7 +216,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("�ݶ��̴���(��) �ε� �� �Դϴ�.");
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -238,9 +231,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	
-
-	m_strMessage = TEXT("��ü������(��) �ε� �� �Դϴ�.");
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -278,7 +268,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("�ε��� �Ϸ�Ǿ����ϴ�..");
+	m_strMessage = TEXT("완료 되었습니다..");
 	m_isFinished = true;
 
 	return S_OK;
@@ -517,7 +507,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 HRESULT CLoader::Loading_UI_For_Logo_Level()
 {
-	m_strMessage = TEXT("UI�ؽ��ĵ� �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("UI 로딩중 입니다..");
 	/* For.Prototype_Component_UI_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
@@ -534,7 +524,6 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
-	m_strMessage = TEXT("UI��ü������ �ε� �� �Դϴ�.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;

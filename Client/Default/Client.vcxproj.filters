@@ -411,39 +411,6 @@
     <ClInclude Include="..\Public\UIWrapper.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\GorillaBlackBoard.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_GorillaAttack.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Deco_PhaseChange.h">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Deco_AttackRange.h">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_Dead.h">
-      <Filter>50.Behavior\Task\Dead</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_Idle.h">
-      <Filter>50.Behavior\Task\Idle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_Move.h">
-      <Filter>50.Behavior\Task\Move</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_Wait.h">
-      <Filter>50.Behavior\Task\Wait</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Gorilla.h">
-      <Filter>02.GameObjects\Boss\Gorilla</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Task_GorillaHit.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Face_Player.h">
       <Filter>02.GameObjects\Player\Face</Filter>
     </ClInclude>
@@ -452,6 +419,40 @@
     </ClInclude>
     <ClInclude Include="..\Public\PonyTail_Player.h">
       <Filter>02.GameObjects\Player\PonyTail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain_Sand.h" />
+    <ClInclude Include="..\Public\Task_Wait.h">
+      <Filter>50.Behavior\Task\Wait</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Move.h">
+      <Filter>50.Behavior\Task\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Idle.h">
+      <Filter>50.Behavior\Task\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Dead.h">
+      <Filter>50.Behavior\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_GorillaHit.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_GorillaAttack.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GorillaBlackBoard.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GorillaBehaviorTree.h">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gorilla.h">
+      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Deco_PhaseChange.h">
+      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Deco_AttackRange.h">
+      <Filter>50.Behavior\Decorator\AttackRange</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -595,39 +596,6 @@
     <ClCompile Include="..\Private\UIWrapper.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\GorillaBehaviorTree.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\GorillaBlackBoard.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_GorillaAttack.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Deco_PhaseChange.cpp">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Deco_AttackRange.cpp">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_Dead.cpp">
-      <Filter>50.Behavior\Task\Dead</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_Idle.cpp">
-      <Filter>50.Behavior\Task\Idle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_Move.cpp">
-      <Filter>50.Behavior\Task\Move</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_Wait.cpp">
-      <Filter>50.Behavior\Task\Wait</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Gorilla.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Task_GorillaHit.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Face_Player.cpp">
       <Filter>02.GameObjects\Player\Face</Filter>
     </ClCompile>
@@ -636,6 +604,40 @@
     </ClCompile>
     <ClCompile Include="..\Private\PonyTail_Player.cpp">
       <Filter>02.GameObjects\Player\PonyTail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain_Sand.cpp" />
+    <ClCompile Include="..\Private\Task_Wait.cpp">
+      <Filter>50.Behavior\Task\Wait</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_Move.cpp">
+      <Filter>50.Behavior\Task\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_Idle.cpp">
+      <Filter>50.Behavior\Task\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_Dead.cpp">
+      <Filter>50.Behavior\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_GorillaHit.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GorillaBlackBoard.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gorilla.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
+      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Deco_AttackRange.cpp">
+      <Filter>50.Behavior\Decorator\AttackRange</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -239,7 +239,6 @@ popd</Command>
     <ClInclude Include="..\Public\QuadTree.h" />
     <ClInclude Include="..\public\Query.h" />
     <ClInclude Include="..\Public\Renderer.h" />
-    <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\EffectResourceManager.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\public\SelectNode.h" />
@@ -252,7 +251,6 @@ popd</Command>
     <ClInclude Include="..\public\State.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\Public\StringHelper.h" />
-    <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Task.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\public\ThreadPool.h" />
@@ -335,7 +333,6 @@ popd</Command>
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\private\Query.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
-    <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\EffectResourceManager.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\private\SelectNode.cpp" />
@@ -348,7 +345,6 @@ popd</Command>
     <ClCompile Include="..\private\State.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StringHelper.cpp" />
-    <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Task.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\private\ThreadPool.cpp" />
