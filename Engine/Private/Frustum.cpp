@@ -68,7 +68,6 @@ void CFrustum::Update()
 		XMStoreFloat4(&m_vWorldPoints[i], 
 			XMVector3TransformCoord(XMLoadFloat4(&m_vOriginalPoints[i]), matPV));
 	}
-
 	auto pMainCamera = m_pGameInstance->GetMainCamera();
 	if (pMainCamera)
 	{

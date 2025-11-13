@@ -27,7 +27,11 @@ public:
 			return FALSE;
 	}
 
-	const _char* Get_Name() { return m_szName; }
+	vector<class CChannel*>*	Get_vChannels() { return &m_Channels; }
+
+	HRESULT Swap_AnimationChannel(_uint iSrc, _uint iDst);
+
+	_char* Get_Name() { return m_szName; }
 
 	void Reset();
 private:

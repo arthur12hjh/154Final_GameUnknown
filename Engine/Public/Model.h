@@ -48,6 +48,8 @@ public:
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
+	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -81,6 +83,7 @@ private:
 	HRESULT Ready_Bones(binNode* pNode, _int iParentIndex);
 	HRESULT Ready_Animations();
 
+	HRESULT Mapping_Animation(class CAnimation* pAnimation);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity());
