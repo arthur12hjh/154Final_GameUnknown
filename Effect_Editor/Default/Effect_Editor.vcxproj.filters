@@ -19,18 +19,6 @@
     <Filter Include="30.ImgUI">
       <UniqueIdentifier>{bf8664cc-d39a-4497-9dd3-f077dfec6547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Levels">
-      <UniqueIdentifier>{0760b8a1-b4f6-418f-ad6c-4c71f0621e22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Levels\Loading">
-      <UniqueIdentifier>{5964d2fa-151f-4169-8f9d-2a4f581e0db7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Levels\Tool">
-      <UniqueIdentifier>{8b4871d6-a2e2-4638-9c57-2e7d84706571}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Levels\Loading\Loader">
-      <UniqueIdentifier>{c093dc71-724b-4c7d-893c-4a886b6f115a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="30.ImgUI\source">
       <UniqueIdentifier>{8e8d6899-209f-4658-b7f1-da0fee3e532b}</UniqueIdentifier>
     </Filter>
@@ -72,6 +60,18 @@
     </Filter>
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{b0e0bcb2-c951-4d53-8d2c-096bf3aecf3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels">
+      <UniqueIdentifier>{0760b8a1-b4f6-418f-ad6c-4c71f0621e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Loading">
+      <UniqueIdentifier>{5964d2fa-151f-4169-8f9d-2a4f581e0db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Loading\Loader">
+      <UniqueIdentifier>{c093dc71-724b-4c7d-893c-4a886b6f115a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Tool">
+      <UniqueIdentifier>{8b4871d6-a2e2-4638-9c57-2e7d84706571}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -121,13 +121,13 @@
       <Filter>99.Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Loading.h">
-      <Filter>01.Levels\Loading</Filter>
+      <Filter>02.Object\01.Levels\Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Loader.h">
-      <Filter>01.Levels\Loading\Loader</Filter>
+      <Filter>02.Object\01.Levels\Loading\Loader</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Tool.h">
-      <Filter>01.Levels\Tool</Filter>
+      <Filter>02.Object\01.Levels\Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImgBase.h">
       <Filter>30.ImgUI\ui\Img</Filter>
@@ -188,13 +188,13 @@
       <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Loading.cpp">
-      <Filter>01.Levels\Loading</Filter>
+      <Filter>02.Object\01.Levels\Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Loader.cpp">
-      <Filter>01.Levels\Loading\Loader</Filter>
+      <Filter>02.Object\01.Levels\Loading\Loader</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Tool.cpp">
-      <Filter>01.Levels\Tool</Filter>
+      <Filter>02.Object\01.Levels\Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImgBase.cpp">
       <Filter>30.ImgUI\ui\Img</Filter>
