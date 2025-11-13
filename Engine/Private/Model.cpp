@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Animation.h"
+#include "Channel.h"
 
 #include "GameInstance.h"
 
@@ -130,6 +131,19 @@ void CModel::Set_Animation(const _char* szAnimationTag)
 	}
 }
 
+HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
+{
+	if (nullptr == pAnimations)
+		return E_FAIL;
+
+	for (auto& pAnimation : *pAnimations)
+	{
+		Mapping_Animation(pAnimation);
+	}
+
+	return S_OK;
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
 	_uint			iFlag = {};
@@ -143,7 +157,9 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	_splitpath_s(pModelFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
 	if (false == strcmp(".fbx", szEXT))
 	{
-		m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel);
+		if (FAILED(m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel)))
+			return E_FAIL;
+
 		char szBinModelFilePath[MAX_PATH] = {};
 		char szDrive[MAX_PATH] = {};
 		char szDir[MAX_PATH] = {};
@@ -166,7 +182,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	}
 	else if (false == strcmp(".bin", szEXT))
 	{
-		m_pGameInstance->ReadBin(pModelFilePath, eType, &m_pModel);
+		if (FAILED(m_pGameInstance->ReadBin(pModelFilePath, eType, &m_pModel)))
+			return E_FAIL;
 
 		char szFbxModelFilePath[MAX_PATH] = {};
 		char szDrive[MAX_PATH] = {};
@@ -323,6 +340,55 @@ HRESULT CModel::Ready_Animations()
 
 		m_Animations.push_back(pAnimation);
 	}
+
+	return S_OK;
+}
+
+/// <애니메이션 매핑>
+/// 
+/// 1. 먼저 Bone을 unordered_map으로 만들어서 매핑하기 편하게 한다.
+/// 2. map에 이름과 Bone Index를 넣는다.
+/// 3. ChannelList를 순회하며 Channel->Get_Name()으로 Bone Index를 찾는다.
+/// 4. pAnimation의 해당 인덱스와 기존 채널 Index에 Swap을 한다.
+/// 5. Safe_AddRef(pAnimation) 이후 m_Animations에 push_back한다.
+///		
+/// </애니메이션 매핑>
+
+HRESULT CModel::Mapping_Animation(CAnimation* pAnimation)
+{
+	/// 1. 먼저 Bone을 unordered_map으로 만들어서 매핑하기 편하게 한다.
+	unordered_map<string, _uint> BoneIndexMap;
+	BoneIndexMap.reserve(m_Bones.size());
+	for (size_t i = 0; i < m_Bones.size(); ++i)
+	{
+		/// 2. map에 이름과 Bone Index를 넣는다.
+		BoneIndexMap[m_Bones[i]->Get_Name()] = i;
+	}
+
+	/// 3. ChannelList를 순회하며 Channel->Get_Name()으로 Bone Index를 찾는다.
+	_uint iChannelIndex = 0;
+	for (auto& pChannel : *pAnimation->Get_vChannels())
+	{
+		auto it = BoneIndexMap.find(pChannel->Get_Name());
+
+		if (it != BoneIndexMap.end())
+		{
+			pAnimation->Swap_AnimationChannel(iChannelIndex, it->second);
+			pChannel->Set_BoneIndex(Get_BoneIndex(pChannel->Get_Name()));
+		}
+		else
+		{
+			
+		}
+
+		++iChannelIndex;
+	}
+
+	m_Animations.push_back(pAnimation);
+
+	Safe_AddRef(pAnimation);
+
+	++m_iNumAnimations;
 
 	return S_OK;
 }

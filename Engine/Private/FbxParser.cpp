@@ -24,7 +24,7 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	if (MODEL_TYPE::NONANIM == eType)
 		iFlag |= aiProcess_PreTransformVertices;
 
-	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+ 	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
 

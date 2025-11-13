@@ -351,6 +351,11 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _wstring& strProto
 	return m_pPrototype_Manager->Add_Prototype(iLevelIndex, strPrototypeTag, pPrototype);
 }
 
+HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix)
+{
+	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, PreTransformMatrix);
+}
+
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;

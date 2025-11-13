@@ -110,7 +110,7 @@ HRESULT CShaderTestModel::Render()
 			m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Emissive.png"))->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture", 0);
 		}
 
-		if (FAILED(m_pShaderCom->Begin(m_iShaderPassIdx)))
+		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

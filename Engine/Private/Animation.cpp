@@ -69,6 +69,17 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 	return false;
 }
 
+HRESULT CAnimation::Swap_AnimationChannel(_uint iSrc, _uint iDst)
+{
+	if (m_Channels.size() <= iSrc
+		|| m_Channels.size() <= iDst)
+		return E_FAIL;
+	
+	swap(m_Channels[iSrc], m_Channels[iDst]);
+
+	return S_OK;
+}
+
 void CAnimation::Reset()
 {
 	m_fCurrentTrackPosition = 0.f;
