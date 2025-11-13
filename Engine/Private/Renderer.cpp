@@ -126,6 +126,9 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Specular */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	/* Target_Screen */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 	/* Target_Shadow. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -154,6 +157,9 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	/* MRT_Scene*/
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
+		return E_FAIL;
+	/* MRT_Scene*/
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Screen"), TEXT("Target_Screen"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -185,6 +191,8 @@ void CRenderer::Render()
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
 		m_isDebugVisible = !m_isDebugVisible;
 #endif
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F4))
+		m_isScreenRadialBlur = !m_isScreenRadialBlur;
 
 	Render_Priority();
 	Render_Shadow();
@@ -489,13 +497,12 @@ void CRenderer::Render_SceneDeferred()
 
 void CRenderer::Render_BackBuffer()
 {
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
+		return;
 	/* 최종적인 스크린에 대한 후처리. 일단 디스토션만 처리. */
 	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
-
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
@@ -503,6 +510,29 @@ void CRenderer::Render_BackBuffer()
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_COMBINE));
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+	//////////////////////////////////////////////////////////////////
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	if (true == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::RADIAL_BLUR));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
+	else if (false == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
 }
 
 void CRenderer::Render_UI()

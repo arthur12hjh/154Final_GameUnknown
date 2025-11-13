@@ -52,7 +52,7 @@ void CSpriteEffect::Late_Update(_float fTimeDelta)
 {
 	Compute_Depth();
 
-	// m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::DISTORTION, this);

@@ -47,6 +47,7 @@ private:
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
+	_bool								m_isScreenRadialBlur = { false };
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
