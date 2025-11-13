@@ -259,9 +259,6 @@
     <ClInclude Include="..\public\Query.h">
       <Filter>01.Utility\19.Query</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Deferred.h">
-      <Filter>01.Utility\05.Renderer\Deferred</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Blur.h">
       <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
     </ClInclude>
@@ -271,8 +268,15 @@
     <ClInclude Include="..\Public\Glow.h">
       <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RenderTarget.h" />
-    <ClInclude Include="..\public\Target_Manager.h" />
+    <ClInclude Include="..\Public\Deferred.h">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Target_Manager.h">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RenderTarget.h">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -518,8 +522,12 @@
     <ClCompile Include="..\Private\Distortion.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RenderTarget.cpp" />
-    <ClCompile Include="..\private\Target_Manager.cpp" />
+    <ClCompile Include="..\private\Target_Manager.cpp">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RenderTarget.cpp">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -819,6 +827,18 @@
     <Filter Include="00.System\02.Input">
       <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\09.Target_Manager">
+      <UniqueIdentifier>{e7dc7d85-a721-46c5-b39a-9eb879aeaeaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.Target_Manager\RenderTarget">
+      <UniqueIdentifier>{b4e22c55-9e39-4d30-91e6-1ada415f0366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Blur\ShaderFile">
+      <UniqueIdentifier>{ca06de19-a660-4b2f-9247-e7e8fd5a0fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Glow\ShaderFile">
+      <UniqueIdentifier>{e6a4efef-00e9-47dd-bf0b-095fcf5aaee8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -835,6 +855,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
       <Filter>98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

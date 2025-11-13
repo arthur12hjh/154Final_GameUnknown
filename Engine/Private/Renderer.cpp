@@ -111,6 +111,9 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Scene */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 1.f, 1.f))))
 		return E_FAIL;
+	/* Target_Screen */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 	/* Target_Diffuse */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -126,9 +129,6 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Specular */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
-	/* Target_Screen */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
-		return E_FAIL;
 	/* Target_Shadow. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -140,6 +140,12 @@ HRESULT CRenderer::Ready_RenderTargets()
 
 HRESULT CRenderer::Ready_MRTs()
 {
+	/* MRT_Scene*/
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
+		return E_FAIL;	
+	/* MRT_Screen */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Screen"), TEXT("Target_Screen"))))
+		return E_FAIL;
 	/* MRT_GameObjects */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -154,12 +160,6 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	/* MRT_Shadow */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
-		return E_FAIL;
-	/* MRT_Scene*/
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
-		return E_FAIL;
-	/* MRT_Scene*/
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Screen"), TEXT("Target_Screen"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -198,17 +198,18 @@ void CRenderer::Render()
 	Render_Shadow();
 	Render_NonBlend();
 	Render_LightAcc();
-	Render_Blur();
-	Render_Glow();
-	Render_Distortion();
 	Render_Combined();
 	Render_NonLight();
 	Render_Blend();
 
+	//후처리 마무리 해.
+	Render_Blur();
+	Render_Glow();
+	Render_Distortion();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
-	Render_SceneDeferred();
 	Render_BackBuffer();
 	
+
 	Render_UI();
 
 #ifdef _DEBUG
@@ -431,21 +432,6 @@ void CRenderer::Render_NonLight()
 		return;
 }
 
-void CRenderer::Render_Blur()
-{
-	HRESULT hr = m_pBlur->Render(m_pVIBuffer, m_pShader);
-}
-
-void CRenderer::Render_Glow()
-{
-	HRESULT hr = m_pGlow->Render(m_pVIBuffer, m_pShader);
-}
-
-void CRenderer::Render_Distortion()
-{
-	HRESULT hr = m_pDistortion->Render(m_pVIBuffer, m_pShader);
-}
-
 void CRenderer::Render_Blend()
 {	
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
@@ -469,13 +455,14 @@ void CRenderer::Render_Blend()
 		return;
 }
 
-void CRenderer::Render_SceneDeferred()
+void CRenderer::Render_Blur()
 {
-	/* 씬 가져와서 블러 처리하고 다시 합성. UI도 나중에 이렇게 해볼까? */
+	HRESULT hr = m_pBlur->Render(m_pVIBuffer);
+
+	/* 씬 가져와서 블러 처리하고 다시 합성. */
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
 		return;
-
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
 		return;
 
 	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
@@ -484,10 +471,58 @@ void CRenderer::Render_SceneDeferred()
 
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_BLUR));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+}
+
+void CRenderer::Render_Glow()
+{
+	HRESULT hr = m_pGlow->Render(m_pVIBuffer);
+
+	/* 씬 가져와서 글로우 처리하고 다시 합성. */
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
+		return;
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
+		return;
+
+	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
 		return;
 
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCENE));
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_GLOW));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+}
+
+void CRenderer::Render_Distortion()
+{
+	HRESULT hr = m_pDistortion->Render(m_pVIBuffer);
+
+	/* 씬 가져와서 디스토션 처리하고 다시 합성. */
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
+		return;
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
+		return;
+
+	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
+		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_DISTORTION));
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
 
@@ -497,23 +532,7 @@ void CRenderer::Render_SceneDeferred()
 
 void CRenderer::Render_BackBuffer()
 {
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
-		return;
-	/* 최종적인 스크린에 대한 후처리. 일단 디스토션만 처리. */
-	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
-	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
-	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
-
-	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
-		return;
-
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_COMBINE));
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
-	//////////////////////////////////////////////////////////////////
+	/* 최종적으로 Target_Screen을 백버퍼로 바인딩. */
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
 		return;
 
