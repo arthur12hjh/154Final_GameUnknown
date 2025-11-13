@@ -37,7 +37,7 @@ void CParticle::Update(_float fTimeDelta)
 
 void CParticle::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.m_iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
 }
 
 HRESULT CParticle::Render()
@@ -60,6 +60,8 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pReadSource);
+	Safe_Release(m_pSizeDiagramSRV);
+	
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = tData.iNumInstance;
 	Desc.vCenter = tData.fCenter;
@@ -77,6 +79,32 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
 	m_tData = tData;
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
+	Safe_Release(pBuffer);
 	Ready_ComputeShader();
 }
 
@@ -98,8 +126,6 @@ HRESULT CParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
 		return E_FAIL;
 	
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vSize", &m_tData.fSizeDiagram, sizeof(_float4))))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -111,6 +137,11 @@ HRESULT CParticle::Bind_ShaderResources()
 
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
 		return E_FAIL;
+	int iSizeCount = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
+		return E_FAIL;
+
+	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
 
@@ -265,6 +296,8 @@ void CParticle::Free()
 	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pShaderCom);
-	for (_uint i = 0; i < 3; ++i)
-		Safe_Release(m_pTexture[i]);
+	Safe_Release(m_pSizeDiagramSRV);
+	
+	//for (_uint i = 0; i < 3; ++i)
+	//	Safe_Release(m_pTexture[i]);
 }

@@ -33,12 +33,12 @@ public:
 		_float2 fSize;
 		_float2 fLifeTime;
 		_float2 fSpeed;
-		_float4 fSizeDiagram = {};
 		_float4 fGravityDiagram = {};
 		_bool   bisLoop;
-		_uint	m_iSelectRender = {};
+		_uint	iSelectRender = {};
 		_float4 fColor = {};
 		string szCS;
+		vector<_float3> fSizeDiagrams;
 	}PARTICLE_DATA;
 
 private:
@@ -65,6 +65,8 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
 	string    m_szFile[3];
+
+	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };

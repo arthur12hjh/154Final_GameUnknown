@@ -81,6 +81,50 @@ HRESULT CLoader::Loading_For_Tool()
 
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 
+
+
+
+	vector<string> ImageFiles;
+	char pattern[MAX_PATH] = {};
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/*.bin");
+
+	WIN32_FIND_DATAA fd{};
+	HANDLE h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				ImageFiles.emplace_back(szFilePath);
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+	for (auto ImageFile : ImageFiles) {
+		_tchar szPath[256] = { 0, };
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
+		_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), szPath,
+			CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, ImageFile.c_str(), PreTransformMatrix))))
+			return E_FAIL;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");
 
 	/* For.Prototype_Component_Shader_VtxCube */
