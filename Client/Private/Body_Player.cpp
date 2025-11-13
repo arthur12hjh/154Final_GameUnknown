@@ -46,7 +46,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 		return E_FAIL;
 
 
-	m_pModelCom->Set_AnimationIndex(3);
+	m_pModelCom->Set_AnimationIndex(1);
 
 	return S_OK;
 }
@@ -62,7 +62,7 @@ void CBody_Player::Update(_float fTimeDelta)
 		m_pModelCom->Set_AnimationIndex(0, false);
 
 	if(*m_pParentState & CPlayer::STATE_IDLE)
-		m_pModelCom->Set_AnimationIndex(3);
+		m_pModelCom->Set_AnimationIndex(1);
 
 	if (*m_pParentState & CPlayer::STATE_WALK)
 		m_pModelCom->Set_AnimationIndex(4);
@@ -100,8 +100,13 @@ HRESULT CBody_Player::Render()
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;*/
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -144,7 +149,7 @@ HRESULT CBody_Player::Render_Shadow()
 HRESULT CBody_Player::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 	

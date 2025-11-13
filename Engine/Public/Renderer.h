@@ -64,13 +64,12 @@ private:
 	void		Render_NonBlend();
 	void		Render_LightAcc();
 	/* 기		록은 Combined 이전에. */
-	void		Render_Blur();
-	void		Render_Glow();
-	void		Render_Distortion();
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
-	void		Render_SceneDeferred();
+	void		Render_Blur();
+	void		Render_Glow();
+	void		Render_Distortion();
 	void		Render_BackBuffer();
 	void		Render_UI();
 

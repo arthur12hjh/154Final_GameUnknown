@@ -10,7 +10,18 @@ CBlur::CBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CBlur::Initialize()
 {
+	/* 셰이더 파일 로딩 */
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred_Blur.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	if (nullptr == m_pShader)
+		return E_FAIL;
+
+	/* 스크린 사이즈는 미리 바인딩 한다. */
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
+	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vScreenSize.x, sizeof(_int))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vScreenSize.y, sizeof(_int))))
+		return E_FAIL;
 
 	/* Target_Blur. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
@@ -47,7 +58,7 @@ HRESULT CBlur::Add_RenderObject(CGameObject* pRenderObject)
 	return S_OK;
 }
 
-HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
+HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 {
 	/* 블러 기록할 물체들만 뺴서 기록 */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
@@ -70,14 +81,14 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
 		return E_FAIL;
 
-	pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-	pShader->Bind_Matrix("g_ViewMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-	pShader->Bind_Matrix("g_ProjMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+	m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+	m_pShader->Bind_Matrix("g_ViewMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+	m_pShader->Bind_Matrix("g_ProjMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), pShader, "g_BlurTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
 
-	pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::BLUR_X));
+	m_pShader->Begin(0);
 
 	pVIBuffer->Bind_Resources();
 
@@ -90,10 +101,10 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), pShader, "g_BlurXTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurXTexture")))
 		return E_FAIL;
 
-	pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::BLUR_FINAL));
+	m_pShader->Begin(1);
 
 	pVIBuffer->Bind_Resources();
 

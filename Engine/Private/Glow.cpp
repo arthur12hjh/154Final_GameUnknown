@@ -10,7 +10,18 @@ CGlow::CGlow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CGlow::Initialize()
 {
+    /* 셰이더 파일 로딩 */
+    m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred_Glow.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+    if (nullptr == m_pShader)
+        return E_FAIL;
+
+    /* 스크린 사이즈는 미리 바인딩 한다. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vScreenSize.x, sizeof(_int))))
+        return E_FAIL;
+
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vScreenSize.y, sizeof(_int))))
+        return E_FAIL;
 
     /* Target_Glow. */
     if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
@@ -47,7 +58,7 @@ HRESULT CGlow::Add_RenderObject(CGameObject* pRenderObject)
     return S_OK;
 }
 
-HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
+HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
 {
     /* 블러 기록할 물체들만 뺴서 기록 */
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow"))))
@@ -70,17 +81,15 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_X"))))
         return E_FAIL;
 
-    pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), pShader, "g_GlowTexture")))
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
         return E_FAIL;
 
-    pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::GLOW_X));
-
+    m_pShader->Begin(0);
     pVIBuffer->Bind_Resources();
-
     pVIBuffer->Render();
 
     if (FAILED(m_pGameInstance->End_MRT()))
@@ -90,13 +99,11 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_Final"))))
         return E_FAIL;
 
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), pShader, "g_GlowXTexture")))
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowXTexture")))
         return E_FAIL;
 
-    pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::GLOW_FINAL));
-
+    m_pShader->Begin(1);
     pVIBuffer->Bind_Resources();
-
     pVIBuffer->Render();
 
     if (FAILED(m_pGameInstance->End_MRT()))

@@ -19,4 +19,5 @@ void CDeferred::Free()
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pShader);
 }

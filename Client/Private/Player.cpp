@@ -2,6 +2,9 @@
 #include "Player.h"
 
 #include "Body_Player.h"
+#include "Face_Player.h"
+#include "Hair_Player.h"
+#include "PonyTail_Player.h"
 #include "Weapon.h"
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -39,6 +42,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pColliderCom->SetOwner(this);
 
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
+
 	return S_OK;
 }
 
@@ -162,19 +166,47 @@ HRESULT CPlayer::Ready_PartObjects()
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	CBody_Player*	pPart_Body = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
+	m_pPart_Body = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
-	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pParentState = &m_iState;
-	WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SWORD");
-	WeaponDesc.pParentTransform = m_pTransformCom;
+	//CWeapon::WEAPON_DESC	WeaponDesc{};
+	//WeaponDesc.pParentState = &m_iState;
+	//WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SWORD");
+	//WeaponDesc.pParentTransform = m_pTransformCom;
+	//
+	///* Part_Weapon */
+	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+	//	TEXT("Part_Weapon"), &WeaponDesc)))
+	//	return E_FAIL;
 
-	/* Part_Weapon */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-		TEXT("Part_Weapon"), &WeaponDesc)))
+	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
+	FaceDesc.pParentState = &m_iState;
+	FaceDesc.pParentTransform = m_pTransformCom;
+	FaceDesc.pBodyPtr = m_pPart_Body;
+
+	/* Part_Face */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
+		TEXT("Part_Face"), &FaceDesc)))
 		return E_FAIL;
 
+	CHair_Player::HAIR_PLAYER_DESC HairDesc{};
+	HairDesc.pParentState = &m_iState;
+	HairDesc.pParentTransform = m_pTransformCom;
+	HairDesc.pBodyPtr = m_pPart_Body;
 
+	/* Part_Hair */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
+		TEXT("Part_Hair"), &HairDesc)))
+		return E_FAIL;
+
+	CPonyTail_Player::PONYTAIL_PLAYER_DESC PonyTailDesc{};
+	PonyTailDesc.pParentState = &m_iState;
+	PonyTailDesc.pParentTransform = m_pTransformCom;
+	PonyTailDesc.pBodyPtr = m_pPart_Body;
+
+	/* Part_PonyTail */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
+		TEXT("Part_PonyTail"), &PonyTailDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
