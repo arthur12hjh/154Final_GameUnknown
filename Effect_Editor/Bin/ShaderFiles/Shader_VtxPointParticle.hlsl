@@ -299,19 +299,31 @@ struct PS_LIGHT_OUT
 
 
 /* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
-PS_OUT PS_MAIN(PS_IN In)
+PS_LIGHT_OUT PS_MAIN(PS_IN In)
 {
-    PS_OUT Out;
+    PS_LIGHT_OUT Out;
     float4 fireFront = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
     //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
-    Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
-    Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    Out.vColor.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
-    
-    if (Out.vColor.a <= 0.1f || 0 > In.vLifeTime.x)
+    //Out.vDiffuse = (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
+    //Out.vDiffuse.a = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
+    Out.vDiffuse = g_vColor;
+    if (Out.vDiffuse.a <= 0.1f || 0 > In.vLifeTime.x)
         discard;
+    
+    Out.vDiffuse *= g_vColor;
+    
+    float weight = saturate(pow(1 - (In.vProjPos.w / 500), 3));
+    
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vNormal.r = Out.vDiffuse.a;
+    Out.vNormal.g = Out.vDiffuse.a * weight;
+    Out.vDiffuse.a = 1;
+    Out.vNormal.a = 1;
+    
+    
     return Out;
 }
 
@@ -402,8 +414,9 @@ technique11 DefaultTechnique
     pass Billboard
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        //SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_BILLBOARD();
         PixelShader = compile ps_5_0 PS_MAIN();

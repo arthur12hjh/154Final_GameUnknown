@@ -84,13 +84,13 @@ void CS2(uint3 Gid : SV_GroupID,
  + (-2 * pow(t, 3) + 3 * pow(t, 2)) * vfGravity.z
                         + (pow(t, 3) - pow(t, 2)) * tan(radians(vfGravity.w)) * 100;
     
-    float4 vDir = normalize(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0));
+    float4 vDir = normalize(float4(Input[DTid.x].vTranslation.xyz - vfPivot.xyz, 0));
     
     float4 vRight = normalize(float4(cross(float3(0.f, 1.f, 0.f), vDir.xyz), 0));
     float4 vUp = normalize(float4(cross(vDir.xyz, vRight.xyz), 0));
     g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
     g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-    //g_Out[DTid.x].vTranslation = Input[DTid.x].vfRoot + vDir * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x / 3 + sin(g_Out[DTid.x].vLifeTime.x * 10) * vRight * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x / 3 + cos(g_Out[DTid.x].vLifeTime.x * 10) * vUp * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x / 3;
+    g_Out[DTid.x].vTranslation += vDir * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x / 2 + vRight * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x / 2;
     //g_Out[DTid.x].vTranslation += float4(normalize(g_WorldMatrix._21_22_23), 0) * fGravity * vfTimeDelta.x;
     if (1 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
     {

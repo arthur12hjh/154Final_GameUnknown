@@ -32,6 +32,8 @@ void CParticle::Priority_Update(_float fTimeDelta)
 
 void CParticle::Update(_float fTimeDelta)
 {
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_tData.pParentMat));
 	Spread(fTimeDelta);
 }
 
@@ -61,7 +63,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pSizeDiagramSRV);
-	
+
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = tData.iNumInstance;
 	Desc.vCenter = tData.fCenter;
@@ -115,6 +117,7 @@ void CParticle::Update(PARTICLE_DATA tData)
 	m_tData = tData;
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
 }
 HRESULT CParticle::Ready_Components()
 {
@@ -123,8 +126,7 @@ HRESULT CParticle::Ready_Components()
 
 HRESULT CParticle::Bind_ShaderResources()
 {
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
@@ -133,7 +135,7 @@ HRESULT CParticle::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -171,7 +173,7 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
-	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f};
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -235,7 +237,7 @@ void CParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
-	m_CBData.matWorld = *m_pTransformCom->Get_WorldMatrixPtr();
+	m_CBData.matWorld = m_CombinedWorldMatrix;
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
@@ -305,7 +307,7 @@ void CParticle::Free()
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pSizeDiagramSRV);
-	
+
 	//for (_uint i = 0; i < 3; ++i)
 	//	Safe_Release(m_pTexture[i]);
 }

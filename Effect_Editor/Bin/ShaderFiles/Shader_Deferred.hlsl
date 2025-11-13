@@ -29,6 +29,7 @@ texture2D g_GlowFinalTexture;
 
 texture2D g_SceneTexture;
 texture2D g_DistortionTexture;
+texture2D g_ScreenTexture;
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -331,6 +332,72 @@ PS_OUT_BACKBUFFER PS_MAIN_SCENE(PS_IN In)
     return Out;
 }
 
+PS_OUT_BACKBUFFER PS_MAIN_RADIAL_BLUR(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+ 
+    float4 vAccumulatedColor = 0.0f;
+    float iSampleCount = 3;
+
+    float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
+    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * 0.5f;
+    
+    for (int i = 0; i < iSampleCount; i++)
+    {
+        // »ùÇÃ¸µ ÁøÇà·ü (0.0 ~ 1.0)
+        float t = (float) i / (float) iSampleCount;
+        
+        // »ùÇÃ¸µ UV ÁÂÇ¥: ÇöÀç UV + (¹æÇâ º¤ÅÍ * ÁøÇà·ü)
+        float2 vSampleUV = In.vTexcoord + vDir * t;
+        
+        // ÅØ½ºÃ³ »ùÇÃ¸µ ¹× ´©Àû
+        vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
+    }
+    
+    // ´©ÀûµÈ »ö»óÀ» »ùÇÃ °³¼ö·Î ³ª´©¾î Æò±ÕÀ» ±¸ÇÔ
+    Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
+
+    return Out;
+}
+
+PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+ 
+    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    return Out;
+}
+
+PS_OUT_BACKBUFFER PS_MAIN_WEIGHT(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+
+    Out.vBackBuffer.rgb = g_Texture.Sample(DefaultSampler, In.vTexcoord).rgb / g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    Out.vBackBuffer.a = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    
+    //Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    //Out.vNormal.r = Out.vDiffuse.a;
+    //Out.vNormal.g = Out.vDiffuse.a * weight;
+    
+    
+    return Out;
+}
+
+PS_OUT_WEIGHT PS_MAIN_WEIGHT_START(PS_IN In)
+{
+    PS_OUT_WEIGHT Out;
+
+    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vWeight = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    return Out;
+}
+
+
+
+
 technique11 DefaultTechnique
 { 
     // idx 0 
@@ -443,5 +510,45 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SCENE();
+    }
+    // idx 11
+    pass RadialBlur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_RADIAL_BLUR();
+    }
+    // idx 12
+    pass Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_FINAL();
+    }
+    // idx 13
+    pass Weight
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_WEIGHT();
+    }
+    // idx 14
+    pass Weight_Start
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_WEIGHT_START();
     }
 }

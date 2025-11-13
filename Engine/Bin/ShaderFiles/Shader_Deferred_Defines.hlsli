@@ -50,6 +50,12 @@ struct PS_OUT_BACKBUFFER
     float4 vBackBuffer : SV_TARGET0;
 };
 
+struct PS_OUT_WEIGHT
+{
+    float4 vColor : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
+};
+
 struct PS_OUT_LIGHT
 {
     vector vShade : SV_TARGET0;

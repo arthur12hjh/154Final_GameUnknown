@@ -253,6 +253,34 @@ PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
     return Out;
 }
 
+PS_OUT_BACKBUFFER PS_MAIN_WEIGHT(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+
+    Out.vBackBuffer.rgb = g_Texture.Sample(DefaultSampler, In.vTexcoord).rgb / g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    Out.vBackBuffer.a = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    
+    //Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    //Out.vNormal.r = Out.vDiffuse.a;
+    //Out.vNormal.g = Out.vDiffuse.a * weight;
+    
+    
+    return Out;
+}
+
+PS_OUT_WEIGHT PS_MAIN_WEIGHT_START(PS_IN In)
+{
+    PS_OUT_WEIGHT Out;
+
+    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vWeight = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    return Out;
+}
+
+
+
 
 technique11 DefaultTechnique
 { 
@@ -346,5 +374,25 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
+    }
+    // idx 13
+    pass Weight
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_WEIGHT();
+    }
+    // idx 14
+    pass Weight_Start
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_WEIGHT_START();
     }
 }

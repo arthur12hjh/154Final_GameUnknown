@@ -25,6 +25,7 @@ public:
 	};
 	typedef struct ParticleData
 	{
+		const _float4x4* pParentMat = { nullptr };
 		_int	iBegin;
 		_int    iNumInstance;
 		_float3 fCenter;
@@ -34,7 +35,7 @@ public:
 		_float2 fLifeTime;
 		_float2 fSpeed;
 		_float4 fGravityDiagram = {};
-		_float4 fPosition = {0,0,0,1};
+		_float4 fPosition = { 0,0,0,1 };
 		_float3 fRotation = {};
 		_bool   bisLoop;
 		_uint	iSelectRender = {};
@@ -75,6 +76,7 @@ private:
 	PARTICLE_DATA	m_tData;
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_float4x4		m_CombinedWorldMatrix = {};
 
 private:
 	HRESULT							Ready_Components();

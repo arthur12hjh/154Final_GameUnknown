@@ -45,7 +45,7 @@ private:
     vector<CParticle*> m_pParticles;
     vector<CMeshEffect*> m_pMeshs;
     _int       m_iSelectParticle;
-    _uint       m_iSelectMesh = { 0 };
+    _int       m_iSelectMesh = { 0 };
     _uint       m_iSelectModel = { 0 };
     _uint       m_iImageType = { 0 };
     _uint       m_iSelectSize = { 0 };

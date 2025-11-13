@@ -16,11 +16,12 @@ class CMeshEffect final : public CGameObject
 public:
 	typedef struct MeshEffectData
 	{
+		const _float4x4* pParentMat = { nullptr };
 		_int	iBegin = {};
 		_uint	iSelectRender = {};
 		_float4 fColor = {};
 		_float3 fScale = {};
-		_float4 fPosition = {0,0,0,1};
+		_float4 fPosition = { 0,0,0,1 };
 		_float3 fRotation = {};
 	}MESH_DATA;
 
@@ -50,6 +51,7 @@ private:
 	_float		m_fTime = {};
 	MESH_DATA	m_tData;
 	_uint	m_iModelCount = {};
+	_float4x4		m_CombinedWorldMatrix = {};
 
 private:
 	HRESULT							Ready_Components();

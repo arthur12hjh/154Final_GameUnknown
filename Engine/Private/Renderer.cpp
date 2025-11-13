@@ -132,6 +132,24 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Shadow. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
+
+
+	/* Target_Weight */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Weight_Start"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+	/* Target_Weight_Deapth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Weight_Deapth_Start"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+
+	/* Target_Weight */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Weight"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+	/* Target_Weight_Deapth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Weight_Deapth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
 	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
 		return E_FAIL;
 
@@ -160,6 +178,19 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	/* MRT_Shadow */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+		return E_FAIL;
+
+
+	/* MRT_Weight_Start*/
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Weight_Start"), TEXT("Target_Weight_Start"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Weight_Start"), TEXT("Target_Weight_Deapth_Start"))))
+		return E_FAIL;
+
+	/* MRT_Weight*/
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Weight"), TEXT("Target_Weight"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Weight"), TEXT("Target_Weight_Deapth"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -415,18 +446,54 @@ void CRenderer::Render_Combined()
 
 void CRenderer::Render_NonLight()
 {
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Weight"))))
 		return;
-
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Weight_Start"))))
+			return;
+
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
 
 		Safe_Release(pRenderObject);
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return;
+		if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Weight"))))
+			return;
+
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Start"), m_pShader, "g_Texture")))
+			return;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth_Start"), m_pShader, "g_ScreenTexture")))
+			return;
+
+		m_pShader->Begin(14);
+
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return;
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)].clear();
+
+
+	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
+		return;
+
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight"), m_pShader, "g_Texture")))
+		return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Begin(13);
+
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;

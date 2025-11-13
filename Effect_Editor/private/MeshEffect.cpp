@@ -33,11 +33,12 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_tData.pParentMat));
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
 {
-	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
 }
 
@@ -64,6 +65,7 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 	Safe_Release(m_pShaderCom);
 	m_fTime = 0.f;
 	m_tData = tData;
+	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
@@ -73,6 +75,7 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 void CMeshEffect::Update(MESH_DATA tData)
 {
 	m_tData = tData;
+	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 }
@@ -92,8 +95,7 @@ HRESULT CMeshEffect::Ready_Components()
 
 HRESULT CMeshEffect::Bind_ShaderResources()
 {
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;

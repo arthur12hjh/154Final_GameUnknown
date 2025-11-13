@@ -33,7 +33,7 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
     m_tParticleData.fSizeDiagrams.clear();
-    m_tParticleData.fSizeDiagrams.push_back(_float3(0,1,0));
+    m_tParticleData.fSizeDiagrams.push_back(_float3(0, 1, 0));
     m_tParticleData.fSizeDiagrams.push_back(_float3(1, 1, 0));
     m_tParticleData.fPosition = _float4(0, 0, 0, 1);
     m_tParticleData.fRotation = _float3(0, 0, 0);
@@ -167,6 +167,7 @@ void CParticle_Setting::Add_Particle()
 {
     CParticle::PARTICLE_DATA tParticleData;
 
+    tParticleData.pParentMat = m_pTransform->Get_WorldMatrixPtr();
     tParticleData.iNumInstance = 100;
     tParticleData.iBegin = 0;
     tParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
@@ -223,6 +224,7 @@ void CParticle_Setting::Delete_Particle()
 void CParticle_Setting::Add_MeshEffect()
 {
     CMeshEffect::MeshEffectData		MeshDesc{};
+    MeshDesc.pParentMat = m_pTransform->Get_WorldMatrixPtr();
     MeshDesc.fColor = { 0,0,0,1 };
     MeshDesc.iBegin = 0;
     MeshDesc.iSelectRender = 3;
@@ -283,7 +285,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 {
     ImGui::SetNextWindowSizeConstraints(
         ImVec2(100, 100),
-        ImVec2(400, 600) 
+        ImVec2(400, 600)
     );
     ImGui::Begin("Tools", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
@@ -538,10 +540,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     yaw = atan2f(-_13, _11);
                     roll = 0.0f;
                 }
-                _float3 rot = { XMConvertToDegrees(pitch),XMConvertToDegrees(yaw), XMConvertToDegrees(roll) };
-                ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&rot), 1.f, 0.f, 360.f);
-                m_pParticles[m_iSelectParticle]->GetTransform()->Rotation(XMConvertToRadians(rot.x), XMConvertToRadians(rot.y), XMConvertToRadians(rot.z));
-
+                ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&m_tParticleData.fRotation), 1.f, 0.f, 360.f);
 
                 for (_uint i = 0; i < 100; ++i) {
                     _float t = time * i;
@@ -795,7 +794,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
         }
         break;
-    case 1: 
+    case 1:
 
         if (ImGui::Button("Add MeshEffect", btn)) {
             Add_MeshEffect();
@@ -946,7 +945,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 }
             }
 
-            ImGui::DragFloat3("Particle Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f);
+            ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f);
+            ImGui::DragFloat3("Effect Position", reinterpret_cast<_float*>(&m_tMeshData.fPosition), 0.1f, -1000.f, 1000.f);
+            ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
 
             string szRender;
             switch (m_tMeshData.iSelectRender)
@@ -1037,7 +1038,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
 
 
-    
+
     ImGui::End();
 
     for (_uint i = 0; i < m_pMeshs.size(); ++i) {
@@ -1075,7 +1076,7 @@ void CParticle_Setting::Free()
     for (auto SRV : m_SRVs)
         Safe_Release(SRV);
     m_SRVs.clear();
-    for(auto pParticle : m_pParticles)
+    for (auto pParticle : m_pParticles)
         Safe_Release(pParticle);
     m_pParticles.clear();
     for (auto pMesh : m_pMeshs)
