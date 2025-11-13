@@ -174,6 +174,7 @@ popd</Command>
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Bloom.h" />
     <ClInclude Include="..\Public\Blur.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
@@ -203,6 +204,7 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Math.h" />
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\Public\Entity.h" />
     <ClInclude Include="..\Public\FbxParser.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
@@ -277,6 +279,7 @@ popd</Command>
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\Bloom.cpp" />
     <ClCompile Include="..\Private\Blur.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
@@ -298,6 +301,7 @@ popd</Command>
     <ClCompile Include="..\private\Decorator.cpp" />
     <ClCompile Include="..\Private\Deferred.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
+    <ClCompile Include="..\Private\Entity.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
@@ -368,6 +372,8 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>
   <ItemGroup>

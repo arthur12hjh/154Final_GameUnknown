@@ -147,11 +147,13 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Body_Character.h" />
     <ClInclude Include="..\Public\Body_Dororong.h" />
+    <ClInclude Include="..\Public\Body_Gigas.h" />
     <ClInclude Include="..\Public\Camera_AnimationEditor.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Character_Manager.h" />
     <ClInclude Include="..\Public\Dororong.h" />
     <ClInclude Include="..\Public\Face_Character.h" />
+    <ClInclude Include="..\Public\Gigas.h" />
     <ClInclude Include="..\Public\Hair_Character.h" />
     <ClInclude Include="..\Public\imconfig.h" />
     <ClInclude Include="..\Public\imgui.h" />
@@ -181,11 +183,13 @@
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\Private\Body_Character.cpp" />
     <ClCompile Include="..\Private\Body_Dororong.cpp" />
+    <ClCompile Include="..\Private\Body_Gigas.cpp" />
     <ClCompile Include="..\Private\Camera_AnimationEditor.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\Character_Manager.cpp" />
     <ClCompile Include="..\Private\Dororong.cpp" />
     <ClCompile Include="..\Private\Face_Character.cpp" />
+    <ClCompile Include="..\Private\Gigas.cpp" />
     <ClCompile Include="..\Private\Hair_Character.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

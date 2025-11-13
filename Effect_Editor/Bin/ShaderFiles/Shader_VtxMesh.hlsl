@@ -3,9 +3,11 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4 g_vCamPosition;
+vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
+vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
+float g_fTime = 0;
 
-texture2D g_DiffuseTexture;
-texture2D g_NormalTexture;
+texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -100,17 +102,30 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.4f)
+    
+    //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
+    
+    if (In.vTexcoord.y < 0.5)
+    {
+        Out.vDiffuse = g_vColor;
+        Out.vDiffuse *= ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1) * 0.5) * ((1 - In.vTexcoord.y) * 5) * 5;
+        Out.vDiffuse *= g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x / 3, In.vTexcoord.y * 2)) * (1 - (In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1)) +
+    g_vColor * ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1));
+        Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, float2(In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1, In.vTexcoord.y * 2)).r;
+    }
+    else
+    {
+        Out.vDiffuse = g_vColor;
+        Out.vDiffuse *= ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1) * 0.5) * ((1 - In.vTexcoord.y) * 5) * 5;
+        Out.vDiffuse *= g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x / 3, 1 - (In.vTexcoord.y * 2 - 1))) * (1 - (In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1)) +
+    g_vColor * ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1));
+        Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, float2(In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1, 1 - (In.vTexcoord.y * 2 - 1))).r;
+    }
+    
+    if (Out.vDiffuse.a <= 0.1f || 0 > fmod(g_fTime, 1))
         discard;
-    
-    vector vNormalDesc = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
-    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal * -1.f, In.vNormal);
-    
-    float3 vNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
-        
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     return Out;
 }
@@ -140,7 +155,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
@@ -150,7 +165,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();

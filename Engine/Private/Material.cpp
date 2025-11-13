@@ -75,7 +75,7 @@ HRESULT CMaterial::Bind_SRV(CShader* pShader, const _char* pConstantName, aiText
 		return pShader->Bind_SRV(pConstantName, m_SRVs[eType][iTextureIndex]);
 	else
 	{
-		BindDefaultTexture(pShader, eType);
+		return BindDefaultTexture(pShader, eType);
 	}
 
 	return E_FAIL;

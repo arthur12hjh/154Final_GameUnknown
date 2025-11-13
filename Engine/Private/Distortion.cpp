@@ -9,7 +9,8 @@ CDistortion::CDistortion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 HRESULT CDistortion::Initialize()
-{
+{    
+    /* 디스토션은 셰이더 따로 필요 없음. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 
     /* Target_Distortion.*/
@@ -35,7 +36,7 @@ HRESULT CDistortion::Add_RenderObject(CGameObject* pRenderObject)
     return S_OK;
 }
 
-HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
+HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer)
 {
     /* Diffuse + Normal */
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Distortion"))))

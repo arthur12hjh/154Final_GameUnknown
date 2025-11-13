@@ -47,11 +47,12 @@ private:
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 혹은 16384, 9216
 	
+	_bool								m_isScreenRadialBlur = { false };
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
-
+	ID3D11Texture2D*					m_pSceneTexture = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -63,13 +64,13 @@ private:
 	void		Render_NonBlend();
 	void		Render_LightAcc();
 	/* 기		록은 Combined 이전에. */
-	void		Render_Blur();
-	void		Render_Glow();
-	void		Render_Distortion();
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
-	void		Render_SceneDeferred();
+	void		Render_Blur();
+	void		Render_Glow();
+	void		Render_Distortion();
+	void		Render_Deferred();
 	void		Render_BackBuffer();
 	void		Render_UI();
 

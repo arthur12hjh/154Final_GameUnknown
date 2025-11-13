@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "ContainerObject.h"
+#include "Entity.h"
 
 NS_BEGIN(Engine)
 class CCollider;
@@ -10,7 +10,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CPlayer final : public CContainerObject
+class CPlayer final : public CEntity
 {
 public:
 	enum STATE { 
@@ -35,6 +35,9 @@ private:
 	_uint				m_iState = {};
 	CNavigation*		m_pNavigationCom = { nullptr };
 	CCollider*			m_pColliderCom = { nullptr };
+
+	class CGameManager* m_pGameManager = { nullptr };
+	class CBody_Player* m_pPart_Body = { nullptr };
 
 private:
 	HRESULT Ready_Components();

@@ -18,6 +18,9 @@
 #include "GameManager.h"
 
 #include "Body_Player.h"
+#include "Face_Player.h"
+#include "Hair_Player.h"
+#include "PonyTail_Player.h"
 #include "Instance_Model.h"
 #include "PxTestProp.h"
 
@@ -30,7 +33,7 @@
 #include "UIButton.h"
 #include "UIText.h"
 
-// ·Îµå Å×½ºÆ®
+// ï¿½Îµï¿½ ï¿½×½ï¿½Æ®
 #include "Vil_Bui03_04.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -57,12 +60,12 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {	
 	m_eNextLevelID = eNextLevelID;
 
-	/* ¼¼¸¶Æ÷¾î, ¹ÂÅØ½º, Å©¸®Æ¼ÄÃ¼½¼Ç */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ø½ï¿½, Å©ï¿½ï¿½Æ¼ï¿½Ã¼ï¿½ï¿½ï¿½ */
 
-	/* ÀÓ°è¿µ¿ª(Èü, µ¥ÀÌÅÍ, ÄÚµå)¿¡ Á¢±ÙÇÏ±âÀ§ÇÑ Å°¸¦ »ý¼ºÇÑ´Ù. */
+	/* ï¿½Ó°è¿µï¿½ï¿½(ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Úµï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ½ÇÁ¦ ·ÎµùÀ» ¼öÇàÇÏ±âÀ§ÇÑ ½º·¹µå¸¦ »ý¼ºÇÑ´Ù. */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -90,17 +93,20 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("ÅØ½ºÃÄ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ï¿½Ø½ï¿½ï¿½Ä¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
 
-		m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
 
-		m_strMessage = TEXT("³×ºñ°ÔÀÌ¼Ç¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ï¿½×ºï¿½ï¿½ï¿½Ì¼Ç¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Navigation(pArg); });
 
-		m_strMessage = TEXT("¸ðµ¨¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ï¿½ðµ¨¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
+
+		m_strMessage = TEXT("ï¿½Ã·ï¿½ï¿½Ì¾î¸¦(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
@@ -123,13 +129,13 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Logo()
 {
-	m_strMessage = TEXT("ÅØ½ºÃÄ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½Ø½ï¿½ï¿½Ä¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 
-	m_strMessage = TEXT("¸ðµ¨¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ðµ¨¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 
-	m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	
-	m_strMessage = TEXT("°´Ã¼¿øÇü¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -137,7 +143,7 @@ HRESULT CLoader::Loading_For_Logo()
 	Loading_UI_For_Logo_Level();
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù..");
+	m_strMessage = TEXT("ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½..");
 	m_isFinished = true;
 	return S_OK;
 }
@@ -155,7 +161,23 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.bin", PreTransformMatrix))))
 		return E_FAIL;
 
-	
+	/* For.Prototype_Component_Model_Face_Eve */
+	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_p_EVE_Face_NodeTest.bin", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Hair_Eve */
+	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Hair_Eve"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_Test/CH_P_EVE_Hair_Test.bin", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_PonyTail_Eve */
+	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_PonyTail_Eve"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_PonyTailTest_2/CH_P_EVE_Hair_PonyTail_2_Test.bin", PreTransformMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Vil_Bui03_04 */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -169,7 +191,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -200,7 +222,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("ÄÝ¶óÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -218,7 +240,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	
 
-	m_strMessage = TEXT("°´Ã¼¿øÇü¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -227,6 +249,21 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Body_Player*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		CBody_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Face_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
+		CFace_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hair_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
+		CHair_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_PonyTail_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
+		CPonyTail_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
@@ -241,8 +278,33 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù..");
+	m_strMessage = TEXT("ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½..");
 	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+
+	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest");
+	_matrix PreMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f));
+
+	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
+	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
+
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Character/CH_P_EVE_09_nosimplify.bin",
+		szFrontPath, PreMatrix)))
+		return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
+	//	return E_FAIL;
+
+	Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -346,10 +408,10 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 
 #ifdef _DEBUG
-	///* For.Prototype_GameObject_ShaderTestModel */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
-	//	CShaderTestModel::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	/* For.Prototype_GameObject_ShaderTestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ShaderTestModel"),
+		CShaderTestModel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 #endif
 
 	Desc->OnCompleted(this_thread::get_id());
@@ -372,7 +434,7 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-	//ÀÌ°Å ½º·¹µå Áö¿¬ÀÛµ¿
+	//ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ûµï¿½
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -455,14 +517,14 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 HRESULT CLoader::Loading_UI_For_Logo_Level()
 {
-	m_strMessage = TEXT("UIÅØ½ºÃÄµé ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("UIï¿½Ø½ï¿½ï¿½Äµï¿½ ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_Component_UI_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
 		return E_FAIL;
 
 	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/Default%d.jpg"), 2);
+		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Default */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
@@ -472,7 +534,7 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
-	m_strMessage = TEXT("UI°´Ã¼¿øÇüµé ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("UIï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;

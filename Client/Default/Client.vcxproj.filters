@@ -40,6 +40,15 @@
     <Filter Include="02.GameObjects\Camera\Camera_Free">
       <UniqueIdentifier>{2f5ad10f-a81e-4bfb-a6b8-d66ba44c361e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Face">
+      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Hair">
+      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\PonyTail">
+      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Player">
       <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
     </Filter>
@@ -241,6 +250,9 @@
     <Filter Include="50.Behavior\Decorator\AttackRange">
       <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\UI">
+      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -432,6 +444,15 @@
     <ClInclude Include="..\public\Task_GorillaHit.h">
       <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Face_Player.h">
+      <Filter>02.GameObjects\Player\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hair_Player.h">
+      <Filter>02.GameObjects\Player\Hair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PonyTail_Player.h">
+      <Filter>02.GameObjects\Player\PonyTail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -607,6 +628,15 @@
     <ClCompile Include="..\private\Task_GorillaHit.cpp">
       <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Face_Player.cpp">
+      <Filter>02.GameObjects\Player\Face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hair_Player.cpp">
+      <Filter>02.GameObjects\Player\Hair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PonyTail_Player.cpp">
+      <Filter>02.GameObjects\Player\PonyTail</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -644,6 +674,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
       <Filter>97.ShaderFiles\Mouse</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
+      <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
