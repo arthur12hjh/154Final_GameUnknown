@@ -30,9 +30,12 @@ public:
 private:
     _uint   m_iSelectMeshParticle = { 0 };
     _uint   m_iLevel = { 0 };
+    _float4  m_fPosition;
+    _float3  m_fScale;
+    _float3  m_fRotation;
     CParticle::PARTICLE_DATA m_tParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
-
+    CTransform* m_pTransform = nullptr;
     vector<string> m_ImageFiles;
     vector<string> m_ShaderFiles;
     vector<string> m_ModelFiles;
@@ -41,7 +44,7 @@ private:
     vector<ID3D11ShaderResourceView*>	m_SRVs;
     vector<CParticle*> m_pParticles;
     vector<CMeshEffect*> m_pMeshs;
-    _uint       m_iSelectParticle;
+    _int       m_iSelectParticle;
     _uint       m_iSelectMesh = { 0 };
     _uint       m_iSelectModel = { 0 };
     _uint       m_iImageType = { 0 };
@@ -49,7 +52,10 @@ private:
     _int       m_iShaderBegine = { 0 };
     string      m_szCS;
 private:
-
+    void    Add_Particle();
+    void    Delete_Particle();
+    void    Add_MeshEffect();
+    void    Delete_MeshEffect();
 public:
     HRESULT Save_Binary(const _tchar* pFilePath);
     HRESULT Load_Binary(const _tchar* pFilePath);

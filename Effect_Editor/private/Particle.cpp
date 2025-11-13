@@ -71,7 +71,6 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Desc.vLifeTime = tData.fLifeTime;
 	Desc.vSpeed = tData.fSpeed;
 	Desc.isLoop = tData.bisLoop;
-
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
@@ -79,6 +78,9 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
 	m_tData = tData;
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
 	ID3D11Buffer* pBuffer = nullptr;
 	D3D11_BUFFER_DESC BufferDesc = {};
@@ -108,6 +110,12 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Ready_ComputeShader();
 }
 
+void CParticle::Update(PARTICLE_DATA tData)
+{
+	m_tData = tData;
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+}
 HRESULT CParticle::Ready_Components()
 {
 	return S_OK;

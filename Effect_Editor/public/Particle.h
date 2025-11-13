@@ -34,6 +34,8 @@ public:
 		_float2 fLifeTime;
 		_float2 fSpeed;
 		_float4 fGravityDiagram = {};
+		_float4 fPosition = {0,0,0,1};
+		_float3 fRotation = {};
 		_bool   bisLoop;
 		_uint	iSelectRender = {};
 		_float4 fColor = {};
@@ -54,7 +56,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_Components(PARTICLE_DATA tData);
-	void	Update(PARTICLE_DATA tData) { m_tData = tData; };
+	void	Update(PARTICLE_DATA tData);
 	void	Set_Begin(_int iBegin) { m_iBegin = iBegin; }
 	PARTICLE_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }

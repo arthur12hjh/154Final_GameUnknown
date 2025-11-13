@@ -64,7 +64,17 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 	Safe_Release(m_pShaderCom);
 	m_fTime = 0.f;
 	m_tData = tData;
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+}
+
+void CMeshEffect::Update(MESH_DATA tData)
+{
+	m_tData = tData;
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 }
 
 void CMeshEffect::Set_Model(_wstring szMode)

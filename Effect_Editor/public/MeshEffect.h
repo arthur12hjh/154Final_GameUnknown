@@ -20,6 +20,8 @@ public:
 		_uint	iSelectRender = {};
 		_float4 fColor = {};
 		_float3 fScale = {};
+		_float4 fPosition = {0,0,0,1};
+		_float3 fRotation = {};
 	}MESH_DATA;
 
 private:
@@ -35,7 +37,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_Components(MESH_DATA tData);
-	void	Update(MESH_DATA tData) { m_tData = tData; };
+	void	Update(MESH_DATA tData);
 	MESH_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
 	void	Set_Texture(_int iIndex, CTexture* pTexture, string szFile) { m_pTexture[iIndex] = pTexture; m_szFile[iIndex] = szFile; }
