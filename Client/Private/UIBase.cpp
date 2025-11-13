@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
+#include "UIHUD.h"
+
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
 {
@@ -60,14 +62,15 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	if (m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc())
+	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
 }
 
 HRESULT CUIBase::Render()
 {
 #ifdef _DEBUG
-	Render_Debug_Rect();
+	if(dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_Show_Debug_Rect())
+		Render_Debug_Rect();
 #endif
 
 	return S_OK;

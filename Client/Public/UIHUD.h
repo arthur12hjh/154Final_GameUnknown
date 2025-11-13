@@ -23,6 +23,12 @@ public:
 	HRESULT Save_Data(_wstring szLayerTag);
 	HRESULT Load_Data(_wstring szLayerTag);
 
+	void Set_Show_Debug_Rect(_bool bShow) {
+		m_bShowDebugRect = bShow;
+	}
+
+	_bool Get_Show_Debug_Rect() { return m_bShowDebugRect;}
+
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);
@@ -30,6 +36,8 @@ private:
 private:
 	string WStringToUTF8(const _wstring& wstr);
 	_wstring UTF8ToWString(const string& str);
+
+	_bool m_bShowDebugRect{ true };
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

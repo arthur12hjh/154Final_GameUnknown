@@ -6,6 +6,9 @@
 #include "ImGuiManager.h"
 #include "StringHelper.h"
 
+#include "UIHUD.h"
+#include "HUDLayer.h"
+
 const char* CImGuiMain::m_szFpsComboText[] = {"30", "60", "144"};
 
 CImGuiMain::CImGuiMain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -72,6 +75,25 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	if (ImGui::Button("Show Hierarchy"))
 		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_Hierarchy"), VISIBILITY::VISIBLE);
+
+	if (ImGui::Checkbox("Toggle Show UI", &m_bIsToggleShowUI))
+	{
+		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_Layers())
+		{
+			auto pLayer = pLayers.second;
+
+			for (auto& pUIObjs : *pLayer->Get_UserInterfaces())
+			{
+				pUIObjs.second->SetVisibility(m_bIsToggleShowUI ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN);
+			}
+		}
+	}
+
+	if (ImGui::Checkbox("Toggle Show UI Debug", &m_bIsToggleShowUIDebug))
+	{
+		dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Set_Show_Debug_Rect(m_bIsToggleShowUIDebug);
+	}
+
 
 	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();
