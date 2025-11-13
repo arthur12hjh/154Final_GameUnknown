@@ -839,6 +839,9 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\Glow\ShaderFile">
       <UniqueIdentifier>{e6a4efef-00e9-47dd-bf0b-095fcf5aaee8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Entity">
+      <UniqueIdentifier>{66c00183-99f8-49e8-be94-c1f4de49cfba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">

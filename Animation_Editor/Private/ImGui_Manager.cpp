@@ -194,6 +194,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		ImGui::Text("Load Character");
 		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
 		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
+		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
 
 		ImGui::EndPopup();
 	}
@@ -213,6 +214,9 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 2:
 			Create_Character(TEXT("Prototype_GameObject_Dororong"));
+			break;
+		case 3:
+			Create_Character(TEXT("Prototype_GameObject_Gigas"));
 			break;
 		}
 
@@ -237,6 +241,7 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 		ImGui::Text("Load Character");
 		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
 		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
+		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
 
 		ImGui::EndPopup();
 	}
@@ -256,6 +261,9 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 			break;
 		case 2:
 			Create_Character(TEXT("Prototype_GameObject_Dororong"));
+			break;
+		case 3:
+			Create_Character(TEXT("Prototype_GameObject_Gigas"));
 			break;
 		}
 

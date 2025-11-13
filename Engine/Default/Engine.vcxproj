@@ -199,6 +199,7 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Math.h" />
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\Public\Entity.h" />
     <ClInclude Include="..\Public\FbxParser.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
@@ -285,6 +286,7 @@ popd</Command>
     <ClCompile Include="..\Private\ColliderRenderer.cpp" />
     <ClCompile Include="..\Private\Deferred.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
+    <ClCompile Include="..\Private\Entity.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
