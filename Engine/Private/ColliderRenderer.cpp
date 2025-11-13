@@ -110,17 +110,17 @@ void CColliderRenderer::Render(class CShader* pShader)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F3))
         m_isColliderVisible = !m_isColliderVisible;
 
+    if (false == m_isColliderVisible)
+        return;
+
     Render_DebugCollider(pShader);
     Render_DebugPhysxCollider(pShader);
-    m_pGameInstance->FrustomRender();
 }
 
 void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
 {
-    if (false == m_isColliderVisible)
-        return;
-
     m_pGameInstance->Debug_LightRender();
+
     for (auto& pDebugCom : m_DebugComponents)
     {
         if (nullptr != pDebugCom)
@@ -135,13 +135,12 @@ void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
 
     if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ))))
         return;
+
+    m_pGameInstance->FrustomRender();
 }
 
 void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 {
-    if (false == m_isColliderVisible)
-        return;
-
     for (auto& Pair : m_PxShapes)
     {
         PxGeometryHolder Geometry = Pair.second->getGeometry();

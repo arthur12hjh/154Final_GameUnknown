@@ -15,9 +15,9 @@ using namespace Client;
 
 extern HINSTANCE		g_hInstance;
 extern float			g_fGameFrame;
+
 extern unsigned int		g_iHalfWinSizeX;
 extern unsigned int		g_iHalfWinSizeY;
-
 
 extern bool				g_bIsFocus;
 extern bool				g_bIsMouseLock;

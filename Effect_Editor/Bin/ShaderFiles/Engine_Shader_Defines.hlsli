@@ -25,6 +25,14 @@ sampler MirrorSampler = sampler_state
     AddressV = mirror;
 };
 
+sampler NoneSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = border;
+    AddressV = border;
+    BorderColor = float4(0, 0, 0, 0);
+};
+
 RasterizerState RS_Default
 {
     FillMode = Solid;
@@ -99,3 +107,8 @@ BlendState BS_Blend
     BlendOp = Add;
 };
 
+DepthStencilState DSS_DepthTest_ON_Write_OFF
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ZERO; // ±íÀÌ ¹öÆÛ ¾²±â ²û
+};

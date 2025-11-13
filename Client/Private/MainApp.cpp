@@ -57,11 +57,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
 
-	Json json;
-	CJsonParser::ReadJsonData("../Bin/DataFiles/Dungeon_0.json", json);
-
-	CJsonParser::SaveJsonData("../Bin/DataFiles/Test.json", json);
-
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)
@@ -100,7 +95,7 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::Ready_Default_Setting()
 {
 	/*MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 155ex.spritefont */
-	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_154"), TEXT("../Bin/Resources/Fonts/154ex.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
 		return E_FAIL;
 
 	return S_OK;

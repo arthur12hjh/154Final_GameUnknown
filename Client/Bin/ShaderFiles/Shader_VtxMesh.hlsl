@@ -114,6 +114,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = float4(vNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     
+    Out.vDiffuse.a = 0.4f;
+    
     return Out;
 }
 struct PS_IN_SHADOW
@@ -138,7 +140,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 
 technique11 DefaultTechnique
 { 
-    pass UI
+    pass Default
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
@@ -168,8 +170,14 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN(); 
     }
 
+    pass Blend
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 
-    
-
- 
 }

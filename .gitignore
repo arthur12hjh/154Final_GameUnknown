@@ -357,5 +357,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Client/Bin/Resources/Models/ShaderTestModel/ShaderTestModel.fbx
-/Client/Bin/Resources/Models/ShaderTestModel/ShaderTestModel.bin

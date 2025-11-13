@@ -21,12 +21,11 @@ HRESULT CUIBase::Initialize_Prototype()
 
 HRESULT CUIBase::Initialize(void* pArg)
 {	
-	m_tOriginUIDesc = *static_cast<UIBASE_DESC*>(pArg);
+	m_tUIDesc = *static_cast<UIBASE_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(&m_tOriginUIDesc)))
+	if (FAILED(__super::Initialize(&m_tUIDesc)))
 		return E_FAIL;
-
-	m_tUIDesc = m_tOriginUIDesc;
+	
 	m_iZOrder = m_tUIDesc.iDepth;
 
 	m_pGameManager = CGameManager::GetInstance();
@@ -71,8 +70,11 @@ HRESULT CUIBase::Add_Child(CGameObject* pObj)
 
 	if (pUIObject == nullptr)
 		return E_FAIL;
+	
+	Safe_AddRef(pUIObject);
 
 	m_Children.push_back(pUIObject);
+	return S_OK;
 }
 
 void CUIBase::Set_Position(_float fX, _float fY)
@@ -99,10 +101,12 @@ HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _uint iTextureIndex)
 	if (m_tUIDesc.Get_UI_Texture_Desc() == nullptr)
 		return S_OK;
 
-	/*m_tUIDesc.Get_UI_Texture_Desc()->iTextureIndex = iTextureIndex;
-	m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag = szTextureTag;*/
+	//m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
 
-	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).szProtoTag,
+		m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag, reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
@@ -115,7 +119,12 @@ HRESULT CUIBase::Ready_Texture()
 	if (m_tUIDesc.Get_UI_Texture_Desc() == nullptr)
 		return S_OK;
 
-	m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
+	//m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).szProtoTag,
+		m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag, reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
@@ -137,7 +146,13 @@ void CUIBase::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pGameManager);
+	Safe_Delete(m_tUIDesc.m_pUITextDesc);
+	
+	Safe_Delete(m_tUIDesc.m_pUITextureDesc);
+
+	for (auto iter : m_Children)
+		Safe_Release(iter);
+
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

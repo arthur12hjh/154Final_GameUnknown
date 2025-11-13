@@ -53,6 +53,8 @@ void CUIButton::Late_Update(_float fTimeDelta)
 
 HRESULT CUIButton::Render()
 {
+	__super::Render();
+
 	if (m_tUIDesc.Get_UI_Texture_Desc())
 	{
 		if (FAILED(Bind_ShaderResources()))
@@ -67,8 +69,6 @@ HRESULT CUIButton::Render()
 		if (FAILED(m_pVIBufferCom->Render()))
 			return E_FAIL;
 	}
-
-	__super::Render();
 
 	return S_OK;
 }

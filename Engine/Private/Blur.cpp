@@ -125,7 +125,7 @@ HRESULT CBlur::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 
 HRESULT CBlur::Render_Debug(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader)
 {
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Blur"), pShader, pVIBuffer)))
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Blur_Final"), pShader, pVIBuffer)))
 		return E_FAIL;
 
 	return S_OK;

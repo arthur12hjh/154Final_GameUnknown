@@ -41,7 +41,7 @@ private:
 
 private :
 	HRESULT									LoadTexture();
-	HRESULT									LoadVIBuffer();
+	HRESULT									LoadVIBuffer(void* pArg);
 
 	//  이펙트 구현 되면 이거 하나 풀어서 사용할 예정
 	//	폴더에 이펙트 데이터 넣고 내가 읽어서 파싱

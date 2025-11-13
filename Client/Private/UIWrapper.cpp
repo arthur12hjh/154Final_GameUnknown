@@ -20,14 +20,14 @@ HRESULT CUIWrapper::Initialize_Prototype()
 
 HRESULT CUIWrapper::Initialize(void* pArg)
 {
-	CUIObject::UIOBJECT_DESC	Desc{};
+	//CUIObject::UIOBJECT_DESC	Desc{};
 
-	Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;
+	//Desc.fX = g_iWinSizeX >> 1;
+	//Desc.fY = g_iWinSizeY >> 1;
+	//Desc.fSizeX = g_iWinSizeX;
+	//Desc.fSizeY = g_iWinSizeY;
 	
-	if (FAILED(__super::Initialize(&Desc)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))

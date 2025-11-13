@@ -76,13 +76,17 @@ namespace Engine
 		DEBUG, DIRECTIONAL, POINT, COMBINED,
 		OUTLINE,
 
-		//후처리 셰이딩.
+		//후처리 셰이딩 과정.
 		BLUR_X, BLUR_FINAL,
 		GLOW_X, GLOW_FINAL,
-		DISTORTION,
+		//후처리 컴바인
+		DEFERRED_COMBINE,
 
 		// 최종적으로 백버퍼에 렌더타겟 넘기는 과정.
 		SCENE,
+		RADIAL_BLUR,
+		FINAL,
+		
 		// 디버깅용 패스. 당장은 릴리즈모드에서도 둠
 		PHYSX
 	};

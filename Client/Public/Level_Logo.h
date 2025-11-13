@@ -5,6 +5,8 @@
 
 NS_BEGIN(Client)
 
+class CGameManager;
+
 class CLevel_Logo final : public CLevel
 {
 private:
@@ -21,6 +23,9 @@ public:
 	HRESULT Ready_Layer_Camera(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_BackGround(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
+
+private:
+	CGameManager* m_pGameManager{ nullptr };
 	
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

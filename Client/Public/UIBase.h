@@ -20,6 +20,7 @@ public:
 	{
 		_wstring szText;
 		_float4 vColor{ 1.f, 1.f, 1.f, 1.f };
+
 	}UI_TEXT_DESC;
 
 	typedef struct tagUITextureDesc
@@ -27,6 +28,7 @@ public:
 		_wstring szTextureComTag;
 		_uint iTextureIndex{ 0 };
 		_uint iPass{ 0 };
+
 	}UI_TEXTURE_DESC;
 
 public:
@@ -37,18 +39,17 @@ public:
 		_uint iDepth{ 0 };
 		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };
 
-		_wstring szUITag;
-		_wstring szLayerTag;
+		_wstring szUITag{};
+		_wstring szLayerTag{};
+		_wstring szProtoTag{};
 
-		//~tagUIBaseDesc() {
-		//	// 안전한 해제
-		//	delete m_pUITextDesc;
-		//	delete m_pUITextureDesc;
-		//}
+		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
+		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
 
 	public:
 		// 텍스트
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
+			Safe_Delete(m_pUITextDesc);
 			m_pUITextDesc = new UI_TEXT_DESC(Desc);
 		}
 
@@ -58,6 +59,7 @@ public:
 
 		// 텍스쳐
 		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
+			Safe_Delete(m_pUITextureDesc);
 			m_pUITextureDesc = new UI_TEXTURE_DESC(Desc);
 		}
 
@@ -65,14 +67,13 @@ public:
 			return m_pUITextureDesc;
 		}		
 
-	private:
-		UI_TEXT_DESC* m_pUITextDesc{};
-		UI_TEXTURE_DESC* m_pUITextureDesc;
-
-		void Clear() {
-			delete m_pUITextDesc; m_pUITextDesc = nullptr;
-			delete m_pUITextureDesc; m_pUITextureDesc = nullptr;
-		}
+		//void Clear() {
+		//	//delete m_pUITextDesc; m_pUITextDesc = nullptr;
+		//	//delete m_pUITextureDesc; m_pUITextureDesc = nullptr;
+		//	
+		//	Safe_Delete(m_pUITextDesc);
+		//	Safe_Delete(m_pUITextureDesc);
+		//}
 
 	}UIBASE_DESC;
 
@@ -90,15 +91,15 @@ public:
 	virtual HRESULT Render() override;
 
 	UIBASE_DESC Get_UIBase_Desc() { return m_tUIDesc; }
-	void Set_UIBase_Desc(UIBASE_DESC tDesc) {
-		m_tUIDesc = tDesc;
+	void Set_UIBase_Desc(UIBASE_DESC pDesc) {
+		m_tUIDesc = pDesc;
 	}
 
-	UIBASE_DESC Get_UIBase_OriginDesc() { return m_tOriginUIDesc; }
-	void Set_UIBase_OriginDesc(UIBASE_DESC tDesc) {
-		m_tOriginUIDesc = tDesc;
-		m_tUIDesc = m_tOriginUIDesc;
-	}
+	//UIBASE_DESC Get_UIBase_OriginDesc() { return m_tOriginUIDesc; }
+	//void Set_UIBase_OriginDesc(UIBASE_DESC tDesc) {
+	//	m_tOriginUIDesc = tDesc;
+	//	m_tUIDesc = m_tOriginUIDesc;
+	//}
 
 	_uint Get_Depth() { return m_tUIDesc.iDepth; }
 	void Set_Depth(_uint iDepth) {
@@ -129,7 +130,7 @@ protected:
 
 	CGameManager*		m_pGameManager = { nullptr };
 
-	UIBASE_DESC m_tOriginUIDesc{};
+	//UIBASE_DESC m_tOriginUIDesc{};
 	UIBASE_DESC m_tUIDesc{};
 
 	vector<CUIBase*>		m_Children = {};

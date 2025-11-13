@@ -26,10 +26,10 @@ texture2D g_BlurFinalTexture;
 texture2D g_GlowTexture;
 texture2D g_GlowXTexture;
 texture2D g_GlowFinalTexture;
-texture2D g_OutlineTexture;
 
 texture2D g_SceneTexture;
 texture2D g_DistortionTexture;
+texture2D g_ScreenTexture;
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -183,16 +183,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    
-    //외곽선 연산
-    //Out.vBackBuffer = Calc_Outline(Out.vBackBuffer, g_OutlineTexture, In.vTexcoord);
-    
-    //글로우 연산.
-    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    
-    //블러 연산. 얜 무조건 마지막에 있는게 맞는거같아서 여기 뒀는데 바꾸고싶으면 디코 ㄱ.
-    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    
+   
     return Out;
 }
 
@@ -288,6 +279,10 @@ PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
     
     Out.vGlowX = vColor / 10.f;
     
+    Out.vGlowX.rgb *= 3;
+    Out.vGlowX.a *= 10;
+    Out.vGlowX *= 0.01;
+    
     return Out;
 }
 
@@ -302,20 +297,23 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
-        vColor += g_fWeights[i + 6] * g_GlowXTexture.Sample(DefaultSampler, vTexcoord);
+        vColor += g_fWeights[i + 6] * g_GlowXTexture.Sample(DefaultSampler, vTexcoord) * 100;
     }
+    vColor /= 6.5f;
     
-    Out.vGlowY = vColor / 6.5f;
+    Out.vGlowY = vColor;
     
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_DISTORTION(PS_IN In)
+PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_COMBINE(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
+   
+    Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    //최종적으로 디스토션 연산.
     Out.vBackBuffer = Calc_Distortion(g_SceneTexture, g_DistortionTexture, In.vTexcoord);
-    //원본 씬 텍스쳐 & 디스토션 텍스쳐. 현재 텍스쿠드까지 필요.
     
     return Out;
 }
@@ -325,9 +323,52 @@ PS_OUT_BACKBUFFER PS_MAIN_SCENE(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
+    //글로우 샘플링.
+    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    
+    //블러 샘플링.
+    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
     
     return Out;
 }
+
+PS_OUT_BACKBUFFER PS_MAIN_RADIAL_BLUR(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+ 
+    float4 vAccumulatedColor = 0.0f;
+    float iSampleCount = 3;
+
+    float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
+    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * 0.5f;
+    
+    for (int i = 0; i < iSampleCount; i++)
+    {
+        // 샘플링 진행률 (0.0 ~ 1.0)
+        float t = (float) i / (float) iSampleCount;
+        
+        // 샘플링 UV 좌표: 현재 UV + (방향 벡터 * 진행률)
+        float2 vSampleUV = In.vTexcoord + vDir * t;
+        
+        // 텍스처 샘플링 및 누적
+        vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
+    }
+    
+    // 누적된 색상을 샘플 개수로 나누어 평균을 구함
+    Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
+
+    return Out;
+}
+
+PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+ 
+    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    return Out;
+}
+
 
 technique11 DefaultTechnique
 { 
@@ -422,14 +463,14 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_GLOW_FINAL();
     }
     // idx 9
-    pass Distortion
+    pass Deferred_Combine
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
+        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_COMBINE();
     }
 
     // idx 10
@@ -437,9 +478,29 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SCENE();
+    }
+    // idx 11
+    pass RadialBlur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_RADIAL_BLUR();
+    }
+    // idx 12
+    pass Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
 }

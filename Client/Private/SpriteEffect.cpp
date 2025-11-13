@@ -52,11 +52,10 @@ void CSpriteEffect::Late_Update(_float fTimeDelta)
 {
 	Compute_Depth();
 
-	// m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
-	///m_pGameInstance->Add_RenderGroup(RENDER::BLUR, this);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::GLOW, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::DISTORTION, this);
 }
 
 HRESULT CSpriteEffect::Render()
@@ -65,7 +64,7 @@ HRESULT CSpriteEffect::Render()
 		return E_FAIL;
 
 	//현재 인덱스 3이 Distortion, 인덱스 2가 Blur야.
-	if (FAILED(m_pShaderCom->Begin(2)))
+	if (FAILED(m_pShaderCom->Begin(3)))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
