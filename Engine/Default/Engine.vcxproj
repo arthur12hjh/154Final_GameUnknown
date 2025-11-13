@@ -350,6 +350,8 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>
   <ItemGroup>

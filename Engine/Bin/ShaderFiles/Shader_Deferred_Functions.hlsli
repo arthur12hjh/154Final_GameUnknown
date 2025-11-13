@@ -43,14 +43,6 @@ inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
     return vGlowColor;
 }
 
-inline float4 Calc_Outline(float4 vBackBuffer, texture2D OutlineTexture, float2 vTexcoord)
-{
-    float4 vOutline = OutlineTexture.Sample(DefaultSampler, vTexcoord);
-    
-    float4 vResult = lerp(vBackBuffer * vOutline, vBackBuffer, 0.4f);
-    return vResult;
-}
-
 /* 배럴 왜곡 이용해서 구현한거임. 내부 로직 바꾸고 싶으면 일단 디코로 따로 말해줘*/
 inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
 {   
