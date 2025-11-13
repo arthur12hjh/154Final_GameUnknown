@@ -156,6 +156,17 @@ HRESULT CSphereCollider::Render()
 	m_pBatch->End();
 	return S_OK;
 }
+
+HRESULT CSphereCollider::Render(_float4 vColor)
+{
+	__super::Render(vColor);
+	m_pBatch->Begin();
+
+	DX::Draw(m_pBatch, *m_Bounding, false == m_bIsHit ? XMVectorSet(0.f, 1.f, 0.f, 1.f) : XMVectorSet(1.f, 0.f, 0.f, 1.f));
+
+	m_pBatch->End();
+	return S_OK;
+}
 #endif // _DEBUG
 
 CSphereCollider* CSphereCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

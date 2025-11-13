@@ -27,6 +27,7 @@ namespace Engine
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };
 
 	enum class CAMERASTATE		{ CAMERA_FOV, CAMERA_FAR, CAMERA_NEAR, END };
+	enum class OBJECT_TEAM		{ FRIENDLY, ENEMY, NEUTRAL, END };
 
 	enum class TEXTURE_TYPE {
 		NONE = 0,

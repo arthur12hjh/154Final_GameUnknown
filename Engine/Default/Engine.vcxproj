@@ -167,7 +167,10 @@ popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\BehaviorNode.h" />
+    <ClInclude Include="..\public\BehaviorTree.h" />
     <ClInclude Include="..\Public\BinParser.h" />
+    <ClInclude Include="..\public\BlackBoard.h" />
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -189,6 +192,7 @@ popd</Command>
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\ColliderRenderer.h" />
+    <ClInclude Include="..\public\Decorator.h" />
     <ClInclude Include="..\Public\Deferred.h" />
     <ClInclude Include="..\Public\Distortion.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
@@ -224,6 +228,7 @@ popd</Command>
     <ClInclude Include="..\Public\Object_Manager.h" />
     <ClInclude Include="..\public\Occlusion.h" />
     <ClInclude Include="..\public\PartObject.h" />
+    <ClInclude Include="..\public\Percetion.h" />
     <ClInclude Include="..\Public\Physx_Manager.h" />
     <ClInclude Include="..\public\Picking.h" />
     <ClInclude Include="..\public\PipeLine.h" />
@@ -235,14 +240,18 @@ popd</Command>
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\EffectResourceManager.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
+    <ClInclude Include="..\public\SelectNode.h" />
+    <ClInclude Include="..\public\Service.h" />
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\SphereCollider.h" />
+    <ClInclude Include="..\public\SquenceNode.h" />
     <ClInclude Include="..\public\State.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\Public\StringHelper.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
+    <ClInclude Include="..\public\Task.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\Public\Timer.h" />
@@ -261,7 +270,10 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\BehaviorNode.cpp" />
+    <ClCompile Include="..\private\BehaviorTree.cpp" />
     <ClCompile Include="..\Private\BinParser.cpp" />
+    <ClCompile Include="..\private\BlackBoard.cpp" />
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -283,6 +295,7 @@ popd</Command>
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\ColliderRenderer.cpp" />
+    <ClCompile Include="..\private\Decorator.cpp" />
     <ClCompile Include="..\Private\Deferred.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
@@ -310,6 +323,7 @@ popd</Command>
     <ClCompile Include="..\Private\Object_Manager.cpp" />
     <ClCompile Include="..\private\Occlusion.cpp" />
     <ClCompile Include="..\private\PartObject.cpp" />
+    <ClCompile Include="..\private\Percetion.cpp" />
     <ClCompile Include="..\Private\Physx_Manager.cpp" />
     <ClCompile Include="..\private\Picking.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
@@ -320,14 +334,18 @@ popd</Command>
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\EffectResourceManager.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
+    <ClCompile Include="..\private\SelectNode.cpp" />
+    <ClCompile Include="..\private\Service.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\SphereCollider.cpp" />
+    <ClCompile Include="..\private\SquenceNode.cpp" />
     <ClCompile Include="..\private\State.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StringHelper.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
+    <ClCompile Include="..\private\Task.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />

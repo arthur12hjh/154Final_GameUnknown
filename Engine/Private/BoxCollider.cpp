@@ -159,6 +159,17 @@ HRESULT CBoxCollider::Render()
     m_pBatch->End();
     return S_OK;
 }
+
+HRESULT CBoxCollider::Render(_float4 vColor)
+{
+    __super::Render(vColor);
+    m_pBatch->Begin();
+
+    DX::Draw(m_pBatch, *m_Bounding, XMLoadFloat4(&vColor));
+
+    m_pBatch->End();
+    return S_OK;
+}
 #endif // _DEBUG
 
 CBoxCollider* CBoxCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

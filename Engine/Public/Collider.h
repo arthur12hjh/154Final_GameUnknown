@@ -39,6 +39,7 @@ public:
 
 #ifdef _DEBUG
 	virtual HRESULT			Render() override;
+	virtual HRESULT			Render(_float4 vColor);
 #endif // _DEBUG
 
 	void					BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent);

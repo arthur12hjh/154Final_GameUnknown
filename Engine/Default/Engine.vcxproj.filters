@@ -271,8 +271,39 @@
     <ClInclude Include="..\Public\Glow.h">
       <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RenderTarget.h" />
-    <ClInclude Include="..\public\Target_Manager.h" />
+    <ClInclude Include="..\public\Percetion.h">
+      <Filter>01.Utility\03.Components\Percetion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RenderTarget.h">
+      <Filter>01.Utility\9.RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Target_Manager.h">
+      <Filter>01.Utility\9.RenderTarget\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BehaviorTree.h">
+      <Filter>01.Utility\20.BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BlackBoard.h">
+      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task.h">
+      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Service.h">
+      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BehaviorNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Decorator.h">
+      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SquenceNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SelectNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -518,8 +549,39 @@
     <ClCompile Include="..\Private\Distortion.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RenderTarget.cpp" />
-    <ClCompile Include="..\private\Target_Manager.cpp" />
+    <ClCompile Include="..\private\Percetion.cpp">
+      <Filter>01.Utility\03.Components\Percetion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RenderTarget.cpp">
+      <Filter>01.Utility\9.RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Target_Manager.cpp">
+      <Filter>01.Utility\9.RenderTarget\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BehaviorTree.cpp">
+      <Filter>01.Utility\20.BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlackBoard.cpp">
+      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Service.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BehaviorNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Decorator.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SquenceNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SelectNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -729,15 +791,6 @@
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\16.Files">
-      <UniqueIdentifier>{0deedc01-9d0a-4657-a7ae-1936aaa04761}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\16.Files\FbxParser">
-      <UniqueIdentifier>{347ba364-09f1-4c17-8e3b-2f32a9164b4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\16.Files\BinParser">
-      <UniqueIdentifier>{fd85af6f-ebb8-40b7-9e43-09a7cb10fec9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\103.ModelParser">
       <UniqueIdentifier>{5bd79515-c00d-4493-8550-4f9e400d8db5}</UniqueIdentifier>
     </Filter>
@@ -818,6 +871,39 @@
     </Filter>
     <Filter Include="00.System\02.Input">
       <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Percetion">
+      <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\9.RenderTarget">
+      <UniqueIdentifier>{0deedc01-9d0a-4657-a7ae-1936aaa04761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\9.RenderTarget\Manager">
+      <UniqueIdentifier>{9441c2d9-4e15-45ad-acb9-5c0475c4acf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree">
+      <UniqueIdentifier>{e47c613a-d081-4a97-a636-e7e0b804d707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Task">
+      <UniqueIdentifier>{8ac93faa-6382-4a92-be57-fd8fb48b5c3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Service">
+      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Decorator">
+      <UniqueIdentifier>{d4a5b2fe-4691-47d3-8d25-4d7fceef0c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{358152bc-0d8b-4b2b-a066-86bcaf97a3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node">
+      <UniqueIdentifier>{917bbcfd-cfac-4964-b40e-cf13caff31e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node\Squence">
+      <UniqueIdentifier>{66ae4285-b58e-4ac2-80ac-93c31c42abd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node\Selector">
+      <UniqueIdentifier>{a8205b58-8687-4860-81fc-0d73e5ad3b4e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
