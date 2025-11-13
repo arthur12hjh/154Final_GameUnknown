@@ -42,7 +42,9 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		for (auto& pLayers : dynamic_cast<CUIHUD*>(GetHUD())->Get_Layers())
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(GetHUD());
+
+		for (auto& pLayers : pUIHUD->Get_Layers())
 		{
 			auto pLayer = pLayers.second;
 
@@ -52,7 +54,9 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
-		dynamic_cast<CUIHUD*>(GetHUD())->Set_Show_Debug_Rect(true);
+		pUIHUD->Set_Show_Debug_Rect(true);
+		Safe_Release(pUIHUD);
+		
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
