@@ -76,23 +76,30 @@ void CImGuiMain::Update(_float fTimeDelta)
 	if (ImGui::Button("Show Hierarchy"))
 		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_Hierarchy"), VISIBILITY::VISIBLE);
 
-	if (ImGui::Checkbox("Toggle Show UI", &m_bIsToggleShowUI))
-	{
-		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Get_Layers())
-		{
-			auto pLayer = pLayers.second;
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-			for (auto& pUIObjs : *pLayer->Get_UserInterfaces())
+	if (pHUD)
+	{
+		if (ImGui::Checkbox("Toggle Show UI", &m_bIsToggleShowUI))
+		{
+			for (auto& pLayers : pHUD->Get_Layers())
 			{
-				pUIObjs.second->SetVisibility(m_bIsToggleShowUI ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN);
+				auto pLayer = pLayers.second;
+
+				for (auto& pUIObjs : *pLayer->Get_UserInterfaces())
+				{
+					pUIObjs.second->SetVisibility(m_bIsToggleShowUI ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN);
+				}
 			}
+		}
+
+		if (ImGui::Checkbox("Toggle Show UI Debug", &m_bIsToggleShowUIDebug))
+		{
+			pHUD->Set_Show_Debug_Rect(m_bIsToggleShowUIDebug);
 		}
 	}
 
-	if (ImGui::Checkbox("Toggle Show UI Debug", &m_bIsToggleShowUIDebug))
-	{
-		dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD())->Set_Show_Debug_Rect(m_bIsToggleShowUIDebug);
-	}
+	Safe_Release(pHUD);
 
 
 	m_pImGuiManager->Update(fTimeDelta);

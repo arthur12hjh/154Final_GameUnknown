@@ -93,10 +93,10 @@ HRESULT CPxTestProp::Ready_Components()
 	PxUserData tUserData;
 	tUserData.szActorTag = TEXT("Prop_Actor");
 
-	//리지드 바디 Desc 세팅. 머테리얼이랑 질량, userdata 부분 위주로 살펴보세요.
+	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
 	RigidBodyDesc.eRigidBodyShape	= CRigidBody::RIGIDBODY_SHAPE::SPHERE;
-	RigidBodyDesc.eRigidBodyType		= CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+	RigidBodyDesc.eRigidBodyType	= CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 	RigidBodyDesc.StartWorldMatrix	= *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData			= tUserData;
 	RigidBodyDesc.vMaterial			= _float3(0.5f, 0.5f, 0.6f);
