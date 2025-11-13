@@ -190,6 +190,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
       <UniqueIdentifier>{67a1ade5-3014-4ffd-8a93-178e874f30c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\UI">
+      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -533,6 +536,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
       <Filter>97.ShaderFiles\Mouse</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
+      <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

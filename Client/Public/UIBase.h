@@ -5,6 +5,7 @@
 
 NS_BEGIN(Engine)
 class CVIBuffer_Rect;
+class CVIBuffer_Point;
 class CTexture;
 class CShader;
 NS_END
@@ -137,6 +138,14 @@ protected:
 
 private:
 	HRESULT Ready_Texture();
+
+#ifdef _DEBUG
+	HRESULT Ready_Components_For_Debug();
+	void Render_Debug_Rect();
+	HRESULT Bind_Debug_ShaderResources();
+
+	CVIBuffer_Point* m_pVIDebugBufferCom = { nullptr };
+#endif
 
 protected:
 	virtual HRESULT Ready_Components();

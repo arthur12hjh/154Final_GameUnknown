@@ -33,6 +33,11 @@ HRESULT CUIBase::Initialize(void* pArg)
 	if (!m_pGameManager)
 		return E_FAIL;
 
+#ifdef _DEBUG
+	if (FAILED(Ready_Components_For_Debug()))
+		return E_FAIL;
+#endif
+
 	if (FAILED(Ready_Texture()))
 		return E_FAIL;
 
@@ -61,6 +66,10 @@ void CUIBase::Late_Update(_float fTimeDelta)
 
 HRESULT CUIBase::Render()
 {
+#ifdef _DEBUG
+	Render_Debug_Rect();
+#endif
+
 	return S_OK;
 }
 
@@ -122,7 +131,8 @@ HRESULT CUIBase::Ready_Texture()
 	//m_pTextureCom = m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).pTexture;
 
 	/* Com_Texture */
-	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).szProtoTag,
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel,
+		m_pGameManager->Get_UI_Texture_Desc(m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str()).szProtoTag,
 		m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag, reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
@@ -132,8 +142,67 @@ HRESULT CUIBase::Ready_Texture()
 	return S_OK;
 }
 
+
+HRESULT CUIBase::Ready_Components_For_Debug()
+{
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CUIBase::Render_Debug_Rect()
+{
+	if (FAILED(Bind_Debug_ShaderResources()))
+		return;
+
+	if (FAILED(m_pShaderCom->Begin(1)))
+		return;
+
+	if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
+		return;
+
+	if (FAILED(m_pVIDebugBufferCom->Render()))
+		return;
+}
+
+HRESULT CUIBase::Bind_Debug_ShaderResources()
+{
+	_float2 vPos{};
+	vPos.x = m_tUIDesc.fX + m_tUIDesc.fOffsetX;
+	vPos.y = m_tUIDesc.fY, m_tUIDesc.fOffsetY;
+
+	_float2 vSize{};
+	vSize.x = m_tUIDesc.fSizeX;
+	vSize.y = m_tUIDesc.fSizeY;
+
+	_vector vColor{ 0.f, 1.f, 0.f, 1.f };
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UIPosition", &vPos, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UISize", &vSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UIDebugLineColor", &vColor, sizeof(_vector))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
 HRESULT CUIBase::Ready_Components()
 {
+	/* Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -152,6 +221,10 @@ void CUIBase::Free()
 
 	for (auto iter : m_Children)
 		Safe_Release(iter);
+
+#ifdef _DEBUG
+	Safe_Release(m_pVIDebugBufferCom);
+#endif
 
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);

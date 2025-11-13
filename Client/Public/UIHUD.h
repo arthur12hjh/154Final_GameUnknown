@@ -27,6 +27,10 @@ private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);
 
+private:
+	string WStringToUTF8(const _wstring& wstr);
+	_wstring UTF8ToWString(const string& str);
+
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
