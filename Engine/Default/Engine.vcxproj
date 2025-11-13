@@ -171,6 +171,7 @@ popd</Command>
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Bloom.h" />
     <ClInclude Include="..\Public\Blur.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
@@ -266,6 +267,7 @@ popd</Command>
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\Bloom.cpp" />
     <ClCompile Include="..\Private\Blur.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />

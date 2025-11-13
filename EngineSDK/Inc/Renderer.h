@@ -52,7 +52,7 @@ private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
-
+	ID3D11Texture2D*					m_pSceneTexture = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -70,6 +70,7 @@ private:
 	void		Render_Blur();
 	void		Render_Glow();
 	void		Render_Distortion();
+	void		Render_Deferred();
 	void		Render_BackBuffer();
 	void		Render_UI();
 

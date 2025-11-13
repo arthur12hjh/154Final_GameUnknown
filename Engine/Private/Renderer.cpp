@@ -102,6 +102,25 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 #endif
 
+	D3D11_TEXTURE2D_DESC	TextureDesc{};
+
+	TextureDesc.Width = m_vScreenSize.x;
+	TextureDesc.Height = m_vScreenSize.y;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pSceneTexture)))
+		return E_FAIL;
+
     return S_OK;
 }
 
@@ -207,6 +226,7 @@ void CRenderer::Render()
 	Render_Glow();
 	Render_Distortion();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
+	Render_Deferred();
 	Render_BackBuffer();
 	
 
@@ -458,60 +478,20 @@ void CRenderer::Render_Blend()
 void CRenderer::Render_Blur()
 {
 	HRESULT hr = m_pBlur->Render(m_pVIBuffer);
-
-	/* 씬 가져와서 블러 처리하고 다시 합성. */
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-		return;
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
-		return;
-
-	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
-	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
-	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
-
-	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
-		return;
-
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_BLUR));
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Render_Glow()
 {
 	HRESULT hr = m_pGlow->Render(m_pVIBuffer);
-
-	/* 씬 가져와서 글로우 처리하고 다시 합성. */
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-		return;
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
-		return;
-
-	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
-	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
-	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
-
-	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
-		return;
-
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_GLOW));
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Render_Distortion()
 {
 	HRESULT hr = m_pDistortion->Render(m_pVIBuffer);
+}
 
-	/* 씬 가져와서 디스토션 처리하고 다시 합성. */
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-		return;
+void CRenderer::Render_Deferred()
+{
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
 		return;
 
@@ -519,10 +499,19 @@ void CRenderer::Render_Distortion()
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
+		return;
+
+	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
+		return;
+
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
+		return;
+
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED_DISTORTION));
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
 
@@ -532,7 +521,7 @@ void CRenderer::Render_Distortion()
 
 void CRenderer::Render_BackBuffer()
 {
-	/* 최종적으로 Target_Screen을 백버퍼로 바인딩. */
+	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
 		return;
 
@@ -540,9 +529,10 @@ void CRenderer::Render_BackBuffer()
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
+	/* 스크린 효과는 한번씩 거쳐서 처리해야할거같은데...? */
 	if (true == m_isScreenRadialBlur)
 	{
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::RADIAL_BLUR));
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCREEN_RADIAL_BLUR));
 		m_pVIBuffer->Bind_Resources();
 		m_pVIBuffer->Render();
 	}
@@ -640,6 +630,7 @@ void CRenderer::Free()
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
+	Safe_Release(m_pSceneTexture);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);
