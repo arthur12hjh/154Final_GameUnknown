@@ -2,6 +2,7 @@
 #include "PartObject.h"
 
 #include "GameInstance.h"
+#include "Entity.h"
 
 CContainerObject::CContainerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CGameObject { pDevice, pContext }
@@ -20,6 +21,11 @@ CComponent* CContainerObject::Get_Component(const _wstring& strPartTag, const _w
         return nullptr;
 
     return pPartObject->Find_Component(strComponentTag);    
+}
+
+CPartObject* CContainerObject::Get_PartObject(const _wstring& strPartTag)
+{
+    return Find_PartObject(strPartTag);
 }
 
 HRESULT CContainerObject::Initialize_Prototype()

@@ -20,7 +20,7 @@ public:
 	virtual HRESULT			Render() { return S_OK; }
 
 	void					SetOwner(CGameObject* pGameObject);
-	CGameObject*			GetOwner() { return m_pOwner; }
+	CGameObject*			GetOwner() const { return m_pOwner; }
 
 protected:
 	ID3D11Device*			m_pDevice = { nullptr };

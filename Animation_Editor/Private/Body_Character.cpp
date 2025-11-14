@@ -48,8 +48,6 @@ HRESULT CBody_Character::Initialize(void* pArg)
 	m_iAnimationIndex = 0;
 	m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
 
-
-
 	return S_OK;
 }
 
@@ -68,12 +66,6 @@ void CBody_Character::Update(_float fTimeDelta)
 	//
 	//if (*m_pParentState & CCharacter::STATE_WALK)
 	//	m_pModelCom->Set_AnimationIndex(4);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
-	{
-		m_iAnimationIndex++;
-		m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
-	}
 
 	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
 
@@ -105,6 +97,9 @@ HRESULT CBody_Character::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -153,7 +148,7 @@ HRESULT CBody_Character::Render_Shadow()
 HRESULT CBody_Character::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Body_Eve"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

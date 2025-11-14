@@ -25,6 +25,14 @@ sampler MirrorSampler = sampler_state
     AddressV = mirror;
 };
 
+sampler NoneSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = border;
+    AddressV = border;
+    BorderColor = float4(0, 0, 0, 0);
+};
+
 RasterizerState RS_Default
 {
     FillMode = Solid;
@@ -93,6 +101,17 @@ BlendState BS_Blend
 {
     BlendEnable[0] = true;    
     BlendEnable[1] = true;
+
+    SrcBlend = one;
+    DestBlend = one;
+    BlendOp = Add;
+};
+
+/* One, One, Add 모드로 블렌드 켜기.*/
+BlendState BS_Override
+{
+    BlendEnable[0] = true;
+    BlendEnable[1] = false;
 
     SrcBlend = one;
     DestBlend = one;

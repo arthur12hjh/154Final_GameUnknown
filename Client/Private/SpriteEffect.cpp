@@ -52,11 +52,10 @@ void CSpriteEffect::Late_Update(_float fTimeDelta)
 {
 	Compute_Depth();
 
-	// m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
-	///m_pGameInstance->Add_RenderGroup(RENDER::BLUR, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::GLOW, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::BLUR, this);
 }
 
 HRESULT CSpriteEffect::Render()
@@ -107,7 +106,7 @@ HRESULT CSpriteEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	_float fDistortionIntensity = { 0.5f };
+	_float fDistortionIntensity = { 0.4f };
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDistortionIntensity", &fDistortionIntensity, sizeof(_float))))
 		return E_FAIL;
 

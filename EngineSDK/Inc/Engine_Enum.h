@@ -27,6 +27,7 @@ namespace Engine
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };
 
 	enum class CAMERASTATE		{ CAMERA_FOV, CAMERA_FAR, CAMERA_NEAR, END };
+	enum class OBJECT_TEAM		{ FRIENDLY, ENEMY, NEUTRAL, END };
 
 	enum class TEXTURE_TYPE {
 		NONE = 0,
@@ -70,6 +71,14 @@ namespace Engine
 		UI,
 		END
 	};
+
+	enum class SHADER_DEFERRED_IDX {
+		//여기까진 조명처리
+		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		DEFERRED,
+		SCREEN_RADIAL_BLUR, FINAL
+	};
+
 	
 	enum class AXIS				{ HORIZONTAL, VERTICAL, END };
 

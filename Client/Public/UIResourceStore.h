@@ -17,7 +17,8 @@ public:
 	{
 		CTexture* pTexture{ nullptr };
 		_uint iTextIndex{ 0 };
-		_wstring szFilePath;
+		_wstring szFilePath{};
+		_wstring szProtoTag{};
 	}UI_TEXTURE_DESC;
 
 private:
@@ -31,6 +32,7 @@ public:
 	HRESULT Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex = 0, void* pArg = nullptr);
 	UI_TEXTURE_DESC Get_UI_Texture_Desc(const WCHAR* szTextureTag);
 	const unordered_map<_wstring, UI_TEXTURE_DESC>* Get_UI_Texture_Descs(){ return &m_TextureDescs; }
+	void Clear_UI_Texture_Descs();
 
 private:
 	UI_TEXTURE_DESC Find_UI_Texture_Desc(const _wstring& szTextureTag);

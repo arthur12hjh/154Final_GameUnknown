@@ -54,18 +54,20 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
+	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #else
 	m_pLight_Manager = CLight_Manager::Create();
+	m_pFrustum = CFrustum::Create();
 #endif // DEBUG
-	if (nullptr == m_pLight_Manager)
+	if (nullptr == m_pLight_Manager || nullptr == m_pFrustum)
 		return E_FAIL;
 
 	m_pInput_Device = CInput_Device::Create(EngineDesc.hInstance, EngineDesc.hWnd);
 	if (nullptr == m_pInput_Device)
 		return E_FAIL;
 
-	m_pFrustum = CFrustum::Create();
-	if (nullptr == m_pFrustum)
+	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 8);
+	if (nullptr == m_pThreadPool)
 		return E_FAIL;
 
 	m_pPipeLine = CPipeLine::Create();
@@ -125,9 +127,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 
-	m_pThreadPool = CThreadPool::Create(*ppDevice, *ppContext, 4);
-	if (nullptr == m_pThreadPool)
-		return E_FAIL;
+	
 
 #ifdef _DEBUG
 	m_pTimer_Manager->Add_Timer(TEXT("Priority_Time"));
@@ -142,53 +142,55 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
+	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 	if (false == m_bIsPause)
 	{
 		m_pThreadPool->Update_Async();
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
-		m_pCameraManager->Priority_Update(fTimeDelta);
+		m_pCameraManager->Priority_Update(fGameSpeed);
 
 		//Priority Update 디버그
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] = GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
-		m_pObject_Manager->Priority_Update(fTimeDelta);
+		m_pObject_Manager->Priority_Update(fGameSpeed);
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] -= GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
 #else
-		m_pObject_Manager->Priority_Update(fTimeDelta);
+		m_pObject_Manager->Priority_Update(fGameSpeed);
 #endif
 
 		m_pPipeLine->Update();
-		m_pTimer_Manager->Update_Timer(fTimeDelta);
+		m_pTimer_Manager->Update_Timer(fGameSpeed);
 	
 		m_pFrustum->Update();
-		m_pCameraManager->Update(fTimeDelta);
+		m_pCameraManager->Update(fGameSpeed);
 
 		//Update 디버그
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
-		m_pObject_Manager->Update(fTimeDelta);
+		m_pObject_Manager->Update(fGameSpeed);
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
 #else
-		m_pObject_Manager->Update(fTimeDelta);
+		m_pObject_Manager->Update(fGameSpeed);
 
 #endif
 	}
 
-	m_pCameraManager->Late_Update(fTimeDelta);
+	m_pCameraManager->Late_Update(fGameSpeed);
+
 	//Late_Update 디버그
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
-	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pObject_Manager->Late_Update(fGameSpeed);
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
 #else
-	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pObject_Manager->Late_Update(fGameSpeed);
 #endif
 
 	//충돌 로직 디버그
@@ -202,13 +204,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pCollisionManager->Compute_Collision();
 #endif
 
-	m_pPhysx_Manager->Update(fTimeDelta); // isdead 체크해서 뺴고
+	m_pPhysx_Manager->Update(fGameSpeed); // isdead 체크해서 뺴고
 
 	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
 	m_pLight_Manager->Clear_DeadLight(); // -> 죽은 객체 빠지고
 
 	m_pLevel_Manager->Update(fTimeDelta);
-
 	m_fTimeAcc += fTimeDelta;
 }
 
@@ -248,7 +249,7 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	std::random_device	rd;
+	random_device	rd;
 
 	return static_cast<_float>(rd()) / (rd.max)();
 }
@@ -350,6 +351,11 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _wstring& strProto
 	return m_pPrototype_Manager->Add_Prototype(iLevelIndex, strPrototypeTag, pPrototype);
 }
 
+HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix)
+{
+	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, PreTransformMatrix);
+}
+
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;
@@ -393,7 +399,13 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);
 }
 
+const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
+{
+	return m_pRenderer->Get_Renderer_Matrix(eType);
+}
+
 #ifdef _DEBUG
+
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
@@ -597,6 +609,13 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 {
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
+
+#ifdef _DEBUG
+void CGameInstance::FrustomRender()
+{
+	return m_pFrustum->FrustomRender();
+}
+#endif // _DEBUG
 
 #pragma endregion
 
@@ -805,6 +824,22 @@ HRESULT CGameInstance::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, b
 }
 
 #pragma endregion
+
+_float CGameInstance::GetGameSpeedfRatio()
+{
+	return m_fTimeRatio;
+}
+
+void CGameInstance::ResetGameSpeed()
+{
+	m_fTimeRatio = 1.f;
+}
+
+void CGameInstance::SetGameSpeed(_float fRatio)
+{
+	fRatio = Clamp<_float>(fRatio, 0.001f, 3.f);
+	m_fTimeRatio = fRatio;
+}
 
 const _uint2& CGameInstance::GetScreenSize()
 {

@@ -57,11 +57,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
 
-	Json json;
-	CJsonParser::ReadJsonData("../Bin/DataFiles/Dungeon_0.json", json);
-
-	CJsonParser::SaveJsonData("../Bin/DataFiles/Test.json", json);
-
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)
@@ -100,7 +95,7 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::Ready_Default_Setting()
 {
 	/*MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 155ex.spritefont */
-	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_154"), TEXT("../Bin/Resources/Fonts/154ex.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -230,8 +225,7 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
-	/* For.Prototype_Component_VIBuffer_Rect */
+	/* For.Prototype_Component_VIBuffer_Point */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -240,6 +234,11 @@ HRESULT CMainApp::Ready_Prototypes()
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_Point */
@@ -275,6 +274,13 @@ HRESULT CMainApp::Ready_Prototypes()
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/ShaderTestModel.fbx", PreWorlMatrix))))
 	//	return E_FAIL;
+
+	 /* For.Prototype_Component_Model_Dororong */
+	_fmatrix PreWorlMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/CH_NPC_Dororong.bin", PreWorlMatrix))))
+		return E_FAIL;
+
 #endif
 
 	return S_OK;

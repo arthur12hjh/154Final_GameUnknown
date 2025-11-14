@@ -17,6 +17,7 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 	for (auto& pChannel : m_Channels)
 		Safe_AddRef(pChannel);
 
+	strcpy_s(m_szName, Prototype.m_szName);
 }
 
 HRESULT CAnimation::Initialize(class CModel* pModel, binAnimation* pAnimation)
@@ -66,6 +67,17 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 	}
 
 	return false;
+}
+
+HRESULT CAnimation::Swap_AnimationChannel(_uint iSrc, _uint iDst)
+{
+	if (m_Channels.size() <= iSrc
+		|| m_Channels.size() <= iDst)
+		return E_FAIL;
+	
+	swap(m_Channels[iSrc], m_Channels[iDst]);
+
+	return S_OK;
 }
 
 void CAnimation::Reset()

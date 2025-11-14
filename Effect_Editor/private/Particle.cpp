@@ -37,15 +37,15 @@ void CParticle::Update(_float fTimeDelta)
 
 void CParticle::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
+	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
 }
 
 HRESULT CParticle::Render()
 {
-	//if (FAILED(Bind_ShaderResources()))
-	//	return E_FAIL;
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
-	m_pShaderCom->Begin(m_iBegin);
+	m_pShaderCom->Begin(m_tData.iBegin);
 
 	m_pVIBufferCom->Bind_Resources();
 
@@ -54,16 +54,68 @@ HRESULT CParticle::Render()
 	return S_OK;
 }
 
-void CParticle::Set_Components(CVIBuffer_Point_Instance* pViBufferCom, CComputeShader* pComputeShader, CShader* pShaderCom, _float4 fGravity, _float3 fPivot)
+void CParticle::Set_Components(PARTICLE_DATA tData)
 {
-	m_pVIBufferCom = pViBufferCom;
-	m_pComputeShader = pComputeShader;
-	m_pShaderCom = pShaderCom;
-	m_fGravity = fGravity;
-	m_fPivot = fPivot;
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pComputeShader);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pReadSource);
+	Safe_Release(m_pSizeDiagramSRV);
+	
+	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+	Desc.iNumInstance = tData.iNumInstance;
+	Desc.vCenter = tData.fCenter;
+	Desc.vPivot = tData.fPivot;
+	Desc.vRange = tData.fRange;
+	Desc.vSize = tData.fSize;
+	Desc.vLifeTime = tData.fLifeTime;
+	Desc.vSpeed = tData.fSpeed;
+	Desc.isLoop = tData.bisLoop;
+	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom->Initialize(nullptr);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	//m_pComputeShader = pComputeShader;
+	//m_pShaderCom = pShaderCom;
+	m_tData = tData;
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
+	Safe_Release(pBuffer);
 	Ready_ComputeShader();
 }
 
+void CParticle::Update(PARTICLE_DATA tData)
+{
+	m_tData = tData;
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+}
 HRESULT CParticle::Ready_Components()
 {
 	return S_OK;
@@ -72,21 +124,32 @@ HRESULT CParticle::Ready_Components()
 HRESULT CParticle::Bind_ShaderResources()
 {
 
-	//if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
-	//	return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+		return E_FAIL;
+	
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
 
+	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+		return E_FAIL;
+	int iSizeCount = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
+		return E_FAIL;
+
+	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
 
@@ -107,8 +170,8 @@ HRESULT CParticle::Ready_ComputeShader()
 
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
-	m_CBData.vGravity = m_fGravity;
-	m_CBData.vPivot = { m_fPivot.x,  m_fPivot.y,  m_fPivot.z, 1.f};
+	m_CBData.vGravity = m_tData.fGravityDiagram;
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f};
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -172,7 +235,7 @@ void CParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
-
+	m_CBData.matWorld = *m_pTransformCom->Get_WorldMatrixPtr();
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
@@ -237,9 +300,12 @@ CGameObject* CParticle::Clone(void* pArg)
 void CParticle::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pSizeDiagramSRV);
+	
+	//for (_uint i = 0; i < 3; ++i)
+	//	Safe_Release(m_pTexture[i]);
 }

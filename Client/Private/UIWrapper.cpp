@@ -20,14 +20,14 @@ HRESULT CUIWrapper::Initialize_Prototype()
 
 HRESULT CUIWrapper::Initialize(void* pArg)
 {
-	CUIObject::UIOBJECT_DESC	Desc{};
+	//CUIObject::UIOBJECT_DESC	Desc{};
 
-	Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;
+	//Desc.fX = g_iWinSizeX >> 1;
+	//Desc.fY = g_iWinSizeY >> 1;
+	//Desc.fSizeX = g_iWinSizeX;
+	//Desc.fSizeY = g_iWinSizeY;
 	
-	if (FAILED(__super::Initialize(&Desc)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
@@ -53,6 +53,8 @@ void CUIWrapper::Late_Update(_float fTimeDelta)
 
 HRESULT CUIWrapper::Render()
 {
+	__super::Render();
+
 	if (m_tUIDesc.Get_UI_Texture_Desc())
 	{
 		if (FAILED(Bind_ShaderResources()))
@@ -68,13 +70,13 @@ HRESULT CUIWrapper::Render()
 			return E_FAIL;
 	}
 
-	__super::Render();
-
 	return S_OK;
 }
 
 HRESULT CUIWrapper::Ready_Components()
 {
+	__super::Ready_Components();
+
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
@@ -85,10 +87,10 @@ HRESULT CUIWrapper::Ready_Components()
 	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 	//	return E_FAIL;
 
-	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
+	///* Com_Shader */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
+	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+	//	return E_FAIL;
 
 	return S_OK;
 }

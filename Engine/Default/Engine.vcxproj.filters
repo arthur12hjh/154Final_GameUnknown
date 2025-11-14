@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -145,12 +145,6 @@
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RenderTarget.h">
-      <Filter>01.Utility\09.RenderTargets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Target_Manager.h">
-      <Filter>01.Utility\09.RenderTargets\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Picking.h">
       <Filter>01.Utility\10.Picking</Filter>
     </ClInclude>
@@ -253,9 +247,9 @@
     <ClInclude Include="..\public\Font_Manager.h">
       <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DebugRenderer.h">
+    <ClInclude Include="..\Public\ColliderRenderer.h">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
-  </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\Occlusion.h">
       <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
     </ClInclude>
@@ -264,6 +258,55 @@
     </ClInclude>
     <ClInclude Include="..\public\Query.h">
       <Filter>01.Utility\19.Query</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blur.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Distortion.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Glow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Percetion.h">
+      <Filter>01.Utility\03.Components\Percetion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BehaviorTree.h">
+      <Filter>01.Utility\20.BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BlackBoard.h">
+      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task.h">
+      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Service.h">
+      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BehaviorNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Decorator.h">
+      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SquenceNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SelectNode.h">
+      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Deferred.h">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bloom.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Entity.h" />
+    <ClInclude Include="..\Public\Target_Manager.h">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RenderTarget.h">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -393,12 +436,6 @@
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Instance\Point</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RenderTarget.cpp">
-      <Filter>01.Utility\09.RenderTargets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Target_Manager.cpp">
-      <Filter>01.Utility\09.RenderTargets\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Picking.cpp">
       <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
@@ -492,9 +529,9 @@
     <ClCompile Include="..\private\Font_Manager.cpp">
       <Filter>01.Utility\08.Fonts\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\DebugRenderer.cpp">
+    <ClCompile Include="..\Private\ColliderRenderer.cpp">
       <Filter>01.Utility\05.Renderer\Debug</Filter>
-  </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Occlusion.cpp">
       <Filter>01.Utility\12.CameraManager\Occlusion</Filter>
     </ClCompile>
@@ -504,28 +541,62 @@
     <ClCompile Include="..\private\Query.cpp">
       <Filter>01.Utility\19.Query</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Deferred.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blur.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Glow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Distortion.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Percetion.cpp">
+      <Filter>01.Utility\03.Components\Percetion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BehaviorTree.cpp">
+      <Filter>01.Utility\20.BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlackBoard.cpp">
+      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Service.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BehaviorNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Decorator.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SquenceNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SelectNode.cpp">
+      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bloom.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Entity.cpp" />
+    <ClCompile Include="..\Private\RenderTarget.cpp">
+      <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Target_Manager.cpp">
+      <Filter>01.Utility\09.Target_Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="00.System">
-      <UniqueIdentifier>{7496302b-bbf3-4d17-b06c-776ada306fe7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility">
       <UniqueIdentifier>{b96ac28b-812c-4488-9b7a-915ac186c966}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\00.Device">
-      <UniqueIdentifier>{beb170b4-0ce9-4a0a-9ebc-3d39cbef8248}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\01.Timer">
-      <UniqueIdentifier>{b9f9c58f-53bd-4729-a636-484b43e2e23d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\01.Timer\Manager">
-      <UniqueIdentifier>{735eba6b-ad64-41e3-a769-a260db5c646c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\00.Device\Graphic">
-      <UniqueIdentifier>{c39856ee-26b4-4735-9fa7-c1c2a4f029a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\01.Levels">
       <UniqueIdentifier>{69534a59-b5fe-42e4-98d2-d352d2d2a90b}</UniqueIdentifier>
@@ -565,9 +636,6 @@
     </Filter>
     <Filter Include="01.Utility\06.PipeLine">
       <UniqueIdentifier>{00bb1f39-0400-4781-b607-94cd184f43ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\02.Input">
-      <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Model">
       <UniqueIdentifier>{16ee2ecd-a996-493e-84af-4824bb830a26}</UniqueIdentifier>
@@ -623,12 +691,6 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Instance\Point">
       <UniqueIdentifier>{2916da26-d415-4200-8555-6326dcf41c82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\09.RenderTargets">
-      <UniqueIdentifier>{ed656d07-78e2-4196-b653-01b1bcfb6a10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\09.RenderTargets\Manager">
-      <UniqueIdentifier>{b5390b66-5bf2-4f1e-a8c6-749a415f7031}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Navigation">
       <UniqueIdentifier>{468238c5-bdc9-4310-9599-9595da97b8b2}</UniqueIdentifier>
     </Filter>
@@ -661,9 +723,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Collider\Manager">
       <UniqueIdentifier>{ec64baad-3e2d-4981-a8d6-b65bd11ba6dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\00.GameInstance">
-      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -740,15 +799,6 @@
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\16.Files">
-      <UniqueIdentifier>{0deedc01-9d0a-4657-a7ae-1936aaa04761}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\16.Files\FbxParser">
-      <UniqueIdentifier>{347ba364-09f1-4c17-8e3b-2f32a9164b4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\16.Files\BinParser">
-      <UniqueIdentifier>{fd85af6f-ebb8-40b7-9e43-09a7cb10fec9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\103.ModelParser">
       <UniqueIdentifier>{5bd79515-c00d-4493-8550-4f9e400d8db5}</UniqueIdentifier>
     </Filter>
@@ -787,7 +837,7 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Debug">
       <UniqueIdentifier>{0527329d-9bd1-4c8e-a934-b9f8bdeffda3}</UniqueIdentifier>
-   </Filter>
+    </Filter>
     <Filter Include="01.Utility\12.CameraManager\Occlusion">
       <UniqueIdentifier>{4de1b191-ff85-4c71-9934-81f9e00625ea}</UniqueIdentifier>
     </Filter>
@@ -796,6 +846,84 @@
     </Filter>
     <Filter Include="01.Utility\19.Query\GPUTimer">
       <UniqueIdentifier>{f993a55b-b4f8-4425-8a05-7fef317aee61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred">
+      <UniqueIdentifier>{4dcde3fa-f3ad-456d-9aa4-2b459958dec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Blur">
+      <UniqueIdentifier>{90fb9989-207c-432e-8247-790bed24ba5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Distortion">
+      <UniqueIdentifier>{a551d8e5-3364-4eb8-9142-9ad6e978d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Glow">
+      <UniqueIdentifier>{4f46e805-f973-4b3e-b6ff-ac74ceabac48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\00.GameInstance">
+      <UniqueIdentifier>{319120ff-a7f0-4a97-a897-38bfd4a9e3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System">
+      <UniqueIdentifier>{7496302b-bbf3-4d17-b06c-776ada306fe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\00.Device">
+      <UniqueIdentifier>{beb170b4-0ce9-4a0a-9ebc-3d39cbef8248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\00.Device\Graphic">
+      <UniqueIdentifier>{c39856ee-26b4-4735-9fa7-c1c2a4f029a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\01.Timer">
+      <UniqueIdentifier>{b9f9c58f-53bd-4729-a636-484b43e2e23d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\01.Timer\Manager">
+      <UniqueIdentifier>{735eba6b-ad64-41e3-a769-a260db5c646c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\02.Input">
+      <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Percetion">
+      <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree">
+      <UniqueIdentifier>{e47c613a-d081-4a97-a636-e7e0b804d707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Task">
+      <UniqueIdentifier>{8ac93faa-6382-4a92-be57-fd8fb48b5c3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Decorator">
+      <UniqueIdentifier>{d4a5b2fe-4691-47d3-8d25-4d7fceef0c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{358152bc-0d8b-4b2b-a066-86bcaf97a3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node">
+      <UniqueIdentifier>{917bbcfd-cfac-4964-b40e-cf13caff31e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node\Squence">
+      <UniqueIdentifier>{66ae4285-b58e-4ac2-80ac-93c31c42abd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Node\Selector">
+      <UniqueIdentifier>{a8205b58-8687-4860-81fc-0d73e5ad3b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.BehaviorTree\Service">
+      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.Target_Manager">
+      <UniqueIdentifier>{e7dc7d85-a721-46c5-b39a-9eb879aeaeaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.Target_Manager\RenderTarget">
+      <UniqueIdentifier>{b4e22c55-9e39-4d30-91e6-1ada415f0366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Blur\ShaderFile">
+      <UniqueIdentifier>{ca06de19-a660-4b2f-9247-e7e8fd5a0fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Glow\ShaderFile">
+      <UniqueIdentifier>{e6a4efef-00e9-47dd-bf0b-095fcf5aaee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Bloom">
+      <UniqueIdentifier>{6e0fa89a-3811-4d1c-87f3-c3e789ef849e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.GameObjects\Entity">
+      <UniqueIdentifier>{66c00183-99f8-49e8-be94-c1f4de49cfba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -813,6 +941,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
       <Filter>98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Blur\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Glow\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

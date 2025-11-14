@@ -39,6 +39,8 @@ private :
 	_uint					m_iDrawCnt = {};
 	_float					m_fTimeAcc = {};
 	_bool					m_bIsGamePause = false;
+	_bool					m_bIsToggleShowUI = true;
+	_bool					m_bIsToggleShowUIDebug = true;
 
 private:
 	HRESULT					Ready_Default_Setting();

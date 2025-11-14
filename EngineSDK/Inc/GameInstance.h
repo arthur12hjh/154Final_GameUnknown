@@ -65,6 +65,7 @@ public:
 
 #pragma region PROTOTYPE_MANAGER
 	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
+	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix);
 	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 #pragma endregion
@@ -80,6 +81,8 @@ public:
 
 #pragma region RENDERER
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
@@ -146,10 +149,14 @@ public:
 #pragma endregion
 
 #pragma region FRUSTUM
-	void Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
-	_bool isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
-	_bool isIn_WorldFrustum(class CCollider* pCollider);
+	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
+	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
+	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+
+#ifdef _DEBUG
+	void				FrustomRender();
+#endif
 
 #pragma endregion
 
@@ -252,6 +259,11 @@ public:
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
+	_float							GetGameSpeedfRatio();
+	void							ResetGameSpeed();
+
+	// 델타 타임에 대해 곱셈 연산을 수행해서 느려지게 만들거나 빠르게 만들수있습니다.
+	void							SetGameSpeed(_float fRatio);
 	// 스크린 전체 사이즈
 	const _uint2&					GetScreenSize();
 
@@ -289,6 +301,7 @@ private:
 	class CFbxParser*				m_pFbxParser = { nullptr };
 
 	_bool							m_bIsPause = false;
+	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
 

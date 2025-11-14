@@ -2,12 +2,13 @@
 #include "Level_AnimationEditor.h"
 
 #include "GameInstance.h"
+#include "Tool_Manager.h"
 
 #include "Camera_AnimationEditor.h"
 
 CLevel_AnimationEditor::CLevel_AnimationEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel{ pDevice, pContext, ENUM_CLASS(eLevelID) }
-
+	, m_pToolManager {CTool_Manager::GetInstance() }
 {
 
 }
@@ -31,6 +32,8 @@ HRESULT CLevel_AnimationEditor::Initialize()
 
 	//if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	//	return E_FAIL;
+
+	m_pToolManager->Set_Active(TRUE);
 
 	return S_OK;
 }
@@ -60,7 +63,7 @@ HRESULT CLevel_AnimationEditor::Ready_Lights()
 
 	SHADOW_LIGHT_DESC		ShadowDesc{};
 	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
-	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
+	ShadowDesc.vAt = _float4(5.f, 5.f, 5.f, 1.f);
 	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
 	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
 	ShadowDesc.fNear = 0.1f;
@@ -114,9 +117,9 @@ HRESULT CLevel_AnimationEditor::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_AnimationEditor::Ready_Layer_Player(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Character"),
-		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Character"),
+	//	ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

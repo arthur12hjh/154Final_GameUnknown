@@ -48,7 +48,7 @@ void CPxTestProp::Update(_float fTimeDelta)
 
 void CPxTestProp::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
@@ -69,7 +69,7 @@ HRESULT CPxTestProp::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(3)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -93,10 +93,10 @@ HRESULT CPxTestProp::Ready_Components()
 	PxUserData tUserData;
 	tUserData.szActorTag = TEXT("Prop_Actor");
 
-	//리지드 바디 Desc 세팅. 머테리얼이랑 질량, userdata 부분 위주로 살펴보세요.
+	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
 	RigidBodyDesc.eRigidBodyShape	= CRigidBody::RIGIDBODY_SHAPE::SPHERE;
-	RigidBodyDesc.eRigidBodyType		= CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+	RigidBodyDesc.eRigidBodyType	= CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 	RigidBodyDesc.StartWorldMatrix	= *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData			= tUserData;
 	RigidBodyDesc.vMaterial			= _float3(0.5f, 0.5f, 0.6f);

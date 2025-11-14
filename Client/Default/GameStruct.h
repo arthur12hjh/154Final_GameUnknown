@@ -20,7 +20,7 @@ namespace Client
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	// 인게임에서 바뀔거 요거
-	typedef struct Character_Desc
+	typedef struct Player_Desc
 	{
 		long long		iCurrentHealth;
 		long long		iCurrentShield;
@@ -32,7 +32,9 @@ namespace Client
 		float			fCurrentCTPercent;
 		float			fCurrentCTDamage;
 		float			fCurrentLinkApplyDamage;
-	}CHARACTER_DESC;
+	}PLAYER_DESC;
+
+	// 보스몬스터 구조체
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
 

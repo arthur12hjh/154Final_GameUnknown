@@ -34,7 +34,7 @@ void CUI_Level_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (GetKeyState(VK_SPACE) & 0x8000)
+	if (GetKeyState(VK_F3) & 0x8000)
 	{
 		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
@@ -60,31 +60,8 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	/*if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Logo_Wrapper"))))
 		return E_FAIL;*/
 
-	/*_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
-	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
-	{
-		if (pTexture.first.find(prefix) == 0)
-		{
-			size_t pos = pTexture.first.find(prefix);
-			_wstring szTextureTag{};
-			szTextureTag = TEXT("Com_Texture_") + pTexture.first.substr(pos + prefix.length());
-
-			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::STATIC), pTexture.first, szTextureTag)))
-				return E_FAIL;
-		}
-	}
-	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::LOGO)))
-	{
-		if (pTexture.first.find(prefix) == 0)
-		{
-			size_t pos = pTexture.first.find(prefix);
-			_wstring szTextureTag{};
-			szTextureTag = TEXT("Com_Texture_") + pTexture.first.substr(pos + prefix.length());
-
-			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::LOGO), pTexture.first, szTextureTag)))
-				return E_FAIL;
-		}
-	}*/
+	if(FAILED(pUIHUD->Load_Data(TEXT("Test"))))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -30,9 +30,9 @@ private:
 	_uint ReadUint(ifstream& fileBinaryStream);
 	unsigned int Read_BinNode(ifstream& fileBinaryStream, binModel* pModel);
 
-	void WriteString(ofstream& fileBinaryStream, char* pStr);
-	void WriteFloat3(ofstream& fileBinaryStream, XMFLOAT3 vTmp);
-	void WriteFloat2(ofstream& fileBinaryStream, XMFLOAT2 vTmp);
+	void WriteString(ofstream& fileBinaryStream, _char* pStr);
+	void WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp);
+	void WriteFloat2(ofstream& fileBinaryStream, _float2 vTmp);
 	void WriteUint(ofstream& fileBinaryStream, _uint iTmp);
 	void Write_BinNode(ofstream& fileBinaryStream, binModel* pModel, binNode* pNode);
 

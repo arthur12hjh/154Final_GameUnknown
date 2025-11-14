@@ -30,9 +30,17 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Set_Animation(const _char* szAnimationTag);
+	void Set_Animation(_uint iAnimationIndex);
+
 private:
-	_uint				m_iState = {};
+	class CTool_Manager* m_pToolManager = { nullptr };
+	class CBody_Character* m_pPart_Body = { nullptr };
+
 	CCollider* m_pColliderCom = { nullptr };
+
+	_uint				m_iState = {};
+
 
 private:
 	HRESULT Ready_Components();

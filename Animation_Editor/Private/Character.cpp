@@ -137,6 +137,16 @@ HRESULT CCharacter::Render()
 	return S_OK;
 }
 
+void CCharacter::Set_Animation(const _char* szAnimationTag)
+{
+	static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")))->Set_Animation(szAnimationTag);
+}
+
+void CCharacter::Set_Animation(_uint iAnimationIndex)
+{
+	static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")))->Set_AnimationIndex(iAnimationIndex);
+}
+
 HRESULT CCharacter::Ready_Components()
 {
 	/* Com_Collider_AABB */
@@ -163,12 +173,12 @@ HRESULT CCharacter::Ready_PartObjects()
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	CBody_Character* pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
+	m_pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
 	
 	CFace_Character::FACE_CHARACTER_DESC FaceDesc{};
 	FaceDesc.pParentState = &m_iState;
 	FaceDesc.pParentTransform = m_pTransformCom;
-	FaceDesc.pBodyPtr = pPart_Body;
+	FaceDesc.pBodyPtr = m_pPart_Body;
 	
 	/* Part_Face */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Face_Character"),
@@ -178,7 +188,7 @@ HRESULT CCharacter::Ready_PartObjects()
 	CHair_Character::HAIR_CHARACTER_DESC HairDesc{};
 	HairDesc.pParentState = &m_iState;
 	HairDesc.pParentTransform = m_pTransformCom;
-	HairDesc.pBodyPtr = pPart_Body;
+	HairDesc.pBodyPtr = m_pPart_Body;
 
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Hair_Character"),
@@ -188,7 +198,7 @@ HRESULT CCharacter::Ready_PartObjects()
 	CPonyTail_Character::PONYTAIL_CHARACTER_DESC PonyTailDesc{};
 	PonyTailDesc.pParentState = &m_iState;
 	PonyTailDesc.pParentTransform = m_pTransformCom;
-	PonyTailDesc.pBodyPtr = pPart_Body;
+	PonyTailDesc.pBodyPtr = m_pPart_Body;
 
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_PonyTail_Character"),
@@ -206,7 +216,7 @@ HRESULT CCharacter::Ready_PartObjects()
 	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon"),
 	//	TEXT("Part_Weapon"), &WeaponDesc)))
 	//	return E_FAIL;
-
+	
 
 
 	return S_OK;

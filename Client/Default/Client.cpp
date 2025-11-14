@@ -16,9 +16,10 @@ float		        g_fGameFrame;
 
 bool				g_bIsFocus;
 bool				g_bIsMouseLock;
+
 unsigned int		g_iHalfWinSizeX;
 unsigned int		g_iHalfWinSizeY;
-
+float 			    g_fTimeRatio;
 
 WCHAR               szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR               szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
@@ -89,7 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-
+       
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
         pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);

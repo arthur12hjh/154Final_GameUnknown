@@ -3,8 +3,10 @@
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "GameManager.h"
 
 #include "UIHUD.h"
+#include "HUDLayer.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -15,14 +17,19 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 
 HRESULT CLevel_Logo::Initialize()
 {
+	m_pGameManager = CGameManager::GetInstance();
+
+	if (!m_pGameManager)
+		return E_FAIL;
+
 	//if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 	//	return E_FAIL;	
 
-	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;*/
-
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	//	return E_FAIL;
+
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
 
 	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
 
@@ -35,6 +42,21 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(GetHUD());
+
+		for (auto& pLayers : pUIHUD->Get_Layers())
+		{
+			auto pLayer = pLayers.second;
+
+			for (auto& pUIObjs : *pLayer->Get_UserInterfaces())
+			{
+				pUIObjs.second->SetVisibility(VISIBILITY::VISIBLE);
+			}
+		}
+
+		pUIHUD->Set_Show_Debug_Rect(true);
+		Safe_Release(pUIHUD);
+		
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
@@ -83,7 +105,30 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	if(FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Button"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Button"))))
+	/*CUIObject::UIOBJECT_DESC	Desc{};
+
+	Desc.fX = g_iWinSizeX >> 1;
+	Desc.fY = g_iWinSizeY >> 1;
+	Desc.fSizeX = g_iWinSizeX;
+	Desc.fSizeY = g_iWinSizeY;*/
+
+	/*CUIBase::UIBASE_DESC Desc{};
+	Desc.fSizeX = g_iWinSizeX;
+	Desc.fSizeY = g_iWinSizeY;
+	Desc.fX = g_iHalfWinSizeX;
+	Desc.fY = g_iHalfWinSizeY;
+	Desc.iDepth = 0;
+	Desc.iLevel = ENUM_CLASS(LEVEL::LOGO);
+	Desc.szLayerTag = TEXT("UIHUDLayer_Logo");
+	Desc.szUITag = TEXT("UI_Panel");
+	Desc.szProtoTag = TEXT("Prototype_GameObject_UI_Panel");
+
+	CGameObject* pObj = nullptr;
+
+	if(FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Panel"), &pObj, &Desc)))
+		return E_FAIL;*/
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Test"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -101,8 +146,6 @@ CLevel_Logo* CLevel_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 	return pInstance;
 }
-
-
 
 void CLevel_Logo::Free()
 {

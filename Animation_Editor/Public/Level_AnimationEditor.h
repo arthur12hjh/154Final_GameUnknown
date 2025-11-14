@@ -24,6 +24,9 @@ private:
 	HRESULT Ready_Layer_Monster(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Effect(const _wstring& strLayerTag);
 
+private:
+	class CTool_Manager* m_pToolManager = { nullptr };
+
 public:
 	static CLevel_AnimationEditor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
 	virtual void Free() override;

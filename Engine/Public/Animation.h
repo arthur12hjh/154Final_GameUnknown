@@ -19,6 +19,20 @@ public:
 
 	_uint Get_AnimationKeyFrameIndex() { return m_CurrentKeyFrameIndices[0]; }
 
+	_bool CompareAnimationTag(const _char* szAnimationTag)
+	{
+		if (0 == strcmp(szAnimationTag, m_szName))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	vector<class CChannel*>*	Get_vChannels() { return &m_Channels; }
+
+	HRESULT Swap_AnimationChannel(_uint iSrc, _uint iDst);
+
+	_char* Get_Name() { return m_szName; }
+
 	void Reset();
 private:
 	_char						m_szName[MAX_PATH] = {};

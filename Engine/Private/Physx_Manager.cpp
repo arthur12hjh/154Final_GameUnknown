@@ -53,25 +53,26 @@ HRESULT CPhysx_Manager::Initialize()
 void CPhysx_Manager::Update(_float fTimeDelta)
 {
     /* Dead 오브젝트 제거 */
-    _int iCnt = 0;
-    for (auto& Pair : m_RigidBodies)
+    for (auto iter = m_RigidBodies.begin(); iter != m_RigidBodies.end(); )
     {
-        if (true == Pair.first->isDead())
+        if (iter->first->isDead())
         {
-            Safe_Release(Pair.first);
-            Safe_Release(Pair.second);
+            // 씬 내에서 강체 우선 제거 
+            m_PxScene->removeActor(*iter->second->Get_PxRigidBody());
+            Safe_Release(iter->first);
+            Safe_Release(iter->second);
 
-            m_RigidBodies.erase( m_RigidBodies.begin() + iCnt);
+            iter = m_RigidBodies.erase(iter); // erase는 다음 iterator 반환
         }
-        iCnt++;
+        else
+        {
+            ++iter;
+        }
     }
 
     /* 씬 시뮬레이션 */
     if (nullptr != m_PxScene)
     {
-        m_PxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-        m_PxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-
         m_PxScene->simulate(fTimeDelta);      // 시뮬레이션 시작
         m_PxScene->fetchResults(true);        // 결과 가져오기, PVD에 전송됨
 
@@ -108,6 +109,8 @@ void CPhysx_Manager::Clear()
 {
     for (auto& Pair : m_RigidBodies)
     {
+        // 씬 내에서 강체 우선 제거 
+        m_PxScene->removeActor(*Pair.second->Get_PxRigidBody());
         Safe_Release(Pair.first);
         Safe_Release(Pair.second);
     }

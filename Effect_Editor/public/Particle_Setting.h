@@ -1,6 +1,7 @@
 #pragma once
 #include "ImgBase.h"
 #include "Particle.h"
+#include "MeshEffect.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Point_Instance;
@@ -15,37 +16,6 @@ NS_BEGIN(Tool_Effect)
 class CParticle_Setting : public CImgBase
 {
 public:
-    struct DiagramData
-    {
-        _float fTime;
-        _float fX;
-        _float fValue;
-    };
-    struct ShaderData {
-        wstring     szShaderTag;
-        vector<wstring> TextureTags;
-    };
-    struct ParticleData {
-        _float      fDuration;
-        _bool       bisLoop;
-        _float2     fStartDelay;
-        _float2     fStartLifeTime;
-        _float2     fStartSize;
-        vector<DiagramData> SizeDiagrams;
-        _float      fGravity;
-        _uint       iMaxParticles;
-        _uint       iRateOverTime;
-        _uint       iShape;
-        _vector     vPosition;
-        _vector     vRotation;
-        _vector     vScale;
-
-
-        _uint       iParticleType;
-
-        ShaderData  shaderData;
-        vector<ParticleData> ParticleDatas;
-    };
 private:
     CParticle_Setting(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual ~CParticle_Setting() = default;
@@ -56,36 +26,36 @@ public:
     virtual void    Update(_float fDeltaTime) override;
     virtual HRESULT    Render() override;
     virtual void    Free() override;
-    CShader* m_pShaderCom = { nullptr };
-    CComputeShader* m_pComputeShader = { nullptr };
-    CVIBuffer_Point_Instance* m_pVIBufferCom;
-    class CTransform* m_pTransformCom = { nullptr };
 
 private:
+    _uint   m_iSelectMeshParticle = { 0 };
     _uint   m_iLevel = { 0 };
-    _int   m_iNumInstance;
-    _float3 m_fCenter;
-    _float3 m_fPivot;
-    _float3 m_fRange;
-    _float2 m_fSize;
-    _float2 m_fLifeTime;
-    _float2 m_fSpeed;
-    _float4 m_fGravity = {};
-    _bool m_bisLoop;
-
-    _float4 m_fColor = {};
-
+    _float4  m_fPosition;
+    _float3  m_fScale;
+    _float3  m_fRotation;
+    CParticle::PARTICLE_DATA m_tParticleData;
+    CMeshEffect::MESH_DATA m_tMeshData;
+    CTransform* m_pTransform = nullptr;
     vector<string> m_ImageFiles;
     vector<string> m_ShaderFiles;
+    vector<string> m_ModelFiles;
+    vector<string> m_ModelFilePaths;
     vector<CTexture*> m_pTextures;
     vector<ID3D11ShaderResourceView*>	m_SRVs;
-    CTexture* m_pTexture[3] = {};
-    CParticle* m_pParticle = { nullptr };
-    string      szFile[3];
+    vector<CParticle*> m_pParticles;
+    vector<CMeshEffect*> m_pMeshs;
+    _int       m_iSelectParticle;
+    _uint       m_iSelectMesh = { 0 };
+    _uint       m_iSelectModel = { 0 };
     _uint       m_iImageType = { 0 };
+    _uint       m_iSelectSize = { 0 };
     _int       m_iShaderBegine = { 0 };
+    string      m_szCS;
 private:
-
+    void    Add_Particle();
+    void    Delete_Particle();
+    void    Add_MeshEffect();
+    void    Delete_MeshEffect();
 public:
     HRESULT Save_Binary(const _tchar* pFilePath);
     HRESULT Load_Binary(const _tchar* pFilePath);
