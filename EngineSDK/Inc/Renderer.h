@@ -8,7 +8,6 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
-class COcclusion;
 
 class CRenderer final : public CBase
 {
@@ -20,6 +19,7 @@ public:
 	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 
 public:
+	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	HRESULT Initialize();
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	void	Render();
@@ -48,11 +48,14 @@ private:
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
 	_bool								m_isScreenRadialBlur = { false };
+	_bool								m_isBloom = { false };
+
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
-	ID3D11Texture2D*					m_pSceneTexture = { nullptr };
+	class CBloom*						m_pBloom = { nullptr };
+
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -70,6 +73,7 @@ private:
 	void		Render_Blur();
 	void		Render_Glow();
 	void		Render_Distortion();
+	void		Render_Bloom();
 	void		Render_Deferred();
 	void		Render_BackBuffer();
 	void		Render_UI();
@@ -78,6 +82,7 @@ private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
 	HRESULT		Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT		Bind_WVP_Matrices();
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -58,7 +58,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
-        vColor += g_fWeights[i + 6] * g_BlurXTexture.Sample(DefaultSampler, vTexcoord);
+        vColor += g_fWeights[i + 6] * g_BlurXTexture.Sample(ClampSampler, vTexcoord);
     }
     
     Out.vBlurY = vColor / 6.5f;
