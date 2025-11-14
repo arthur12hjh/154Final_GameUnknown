@@ -5,6 +5,8 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
+float4 g_fMask, g_fDiffuse, g_fDissolve;
+float4 g_fMaskUV, g_fDiffuseUV, g_fDissolveUV;
 float g_fTime = 0;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
@@ -109,6 +111,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (In.vTexcoord.y < 0.5)
     {
         Out.vDiffuse = g_vColor;
+        //Out.vDiffuse *= 
         Out.vDiffuse *= ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1) * 0.5) * ((1 - In.vTexcoord.y) * 5) * 5;
         Out.vDiffuse *= g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x / 3, In.vTexcoord.y * 2)) * (1 - (In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1)) +
     g_vColor * ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1));

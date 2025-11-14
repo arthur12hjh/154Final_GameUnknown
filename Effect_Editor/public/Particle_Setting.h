@@ -26,7 +26,18 @@ public:
     virtual void    Update(_float fDeltaTime) override;
     virtual HRESULT    Render() override;
     virtual void    Free() override;
-
+    void    WriteString(ofstream& fileBinaryStream, _char* pStr);
+    void    WriteInt(ofstream& fileBinaryStream, _int vTmp);
+    void    WriteFloat4(ofstream& fileBinaryStream, _float4 vTmp);
+    void    WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp);
+    void    WriteFloat2(ofstream& fileBinaryStream, _float2 vTmp);
+    void    WriteBool(ofstream& fileBinaryStream, _bool vTmp);
+    _char*  ReadString(ifstream& fileBinaryStream);
+    _int    ReadInt(ifstream& fileBinaryStream);
+    _float4 ReadFloat4(ifstream& fileBinaryStream);
+    _float3 ReadFloat3(ifstream& fileBinaryStream);
+    _float2 ReadFloat2(ifstream& fileBinaryStream);
+    _bool   ReadBool(ifstream& fileBinaryStream);
 private:
     _uint   m_iSelectMeshParticle = { 0 };
     _uint   m_iLevel = { 0 };
@@ -36,12 +47,11 @@ private:
     CParticle::PARTICLE_DATA m_tParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
     CTransform* m_pTransform = nullptr;
-    vector<string> m_ImageFiles;
+    vector<string> m_ImageFiles[3];
     vector<string> m_ShaderFiles;
     vector<string> m_ModelFiles;
     vector<string> m_ModelFilePaths;
-    vector<CTexture*> m_pTextures;
-    vector<ID3D11ShaderResourceView*>	m_SRVs;
+    vector<ID3D11ShaderResourceView*>	m_SRVs[3];
     vector<CParticle*> m_pParticles;
     vector<CMeshEffect*> m_pMeshs;
     _int       m_iSelectParticle;
@@ -57,8 +67,8 @@ private:
     void    Add_MeshEffect();
     void    Delete_MeshEffect();
 public:
-    HRESULT Save_Binary(const _tchar* pFilePath);
-    HRESULT Load_Binary(const _tchar* pFilePath);
+    HRESULT Save_Binary(const _char* szFile);
+    HRESULT Load_Binary(const _char* szFile);
 };
 
 NS_END

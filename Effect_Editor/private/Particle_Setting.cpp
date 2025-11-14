@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Particle_Setting.h"
 #include "GameInstance.h"
+#include "fstream"
 
 CParticle_Setting::CParticle_Setting(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CImgBase{ pDevice, pContext } {}
 
@@ -39,7 +40,6 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fRotation = _float3(0, 0, 0);
     m_szCS = "CS";
 
-    m_ImageFiles.clear();
     m_pTransform = CTransform::Create(m_pDevice, m_pContext);
     m_fPosition = { 0,0,0,1 };
     m_fScale = { 1,1,1 };
@@ -47,55 +47,97 @@ HRESULT CParticle_Setting::Initialize()
     m_pTransform->Set_State(STATE::POSITION, XMLoadFloat4(&m_fPosition));
     m_pTransform->Set_Scale(m_fScale.x, m_fScale.y, m_fScale.z);
     m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
-    vector<string> ImageFiles;
-    char pattern[MAX_PATH] = {};
-    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
 
+
+    char pattern[MAX_PATH] = {};
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/*.dds");
+    m_ImageFiles[0].clear();
+    m_ImageFiles[1].clear();
+    m_ImageFiles[2].clear();
+    m_SRVs[0].clear();
+    m_SRVs[1].clear();
+    m_SRVs[2].clear();
     WIN32_FIND_DATAA fd{};
     HANDLE h = FindFirstFileA(pattern, &fd);
     if (h != INVALID_HANDLE_VALUE) {
         do {
             if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                char szProtoName[MAX_PATH] = {};
+                strcpy_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Mask_");
+                strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+                m_ImageFiles[0].emplace_back(szProtoName);
+
                 char szFilePath[MAX_PATH] = {};
-                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/");
                 strcat_s(szFilePath, MAX_PATH, fd.cFileName);
-                ImageFiles.emplace_back(szFilePath);
-                m_ImageFiles.emplace_back(fd.cFileName);
+
+                ID3D11ShaderResourceView* pSRV = { nullptr };
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+                HRESULT			hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                if (FAILED(hr))
+                    return E_FAIL;
+                m_SRVs[0].push_back(pSRV);
+
             }
         } while (FindNextFileA(h, &fd));
         FindClose(h);
     }
-    for (auto Texture : m_pTextures) {
-        Safe_Release(Texture);
+
+    memset(pattern, 0, sizeof(pattern));
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/*.dds");
+
+    h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                char szProtoName[MAX_PATH] = {};
+                strcpy_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Diffuse_");
+                strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+                m_ImageFiles[1].emplace_back(szProtoName);
+
+                char szFilePath[MAX_PATH] = {};
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/");
+                strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+
+                ID3D11ShaderResourceView* pSRV = { nullptr };
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+                HRESULT			hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                if (FAILED(hr))
+                    return E_FAIL;
+                m_SRVs[1].push_back(pSRV);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
     }
-    m_pTextures.clear();
-    for (auto SRV : m_SRVs) {
-        Safe_Release(SRV);
-    }
-    m_SRVs.clear();
-    for (auto ImageFile : ImageFiles) {
-        _tchar szPath[256] = { 0, };
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
-        m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
 
-        _tchar			szEXT[MAX_PATH] = {};
+    memset(pattern, 0, sizeof(pattern));
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/*.dds");
 
-        _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+    h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                char szProtoName[MAX_PATH] = {};
+                strcpy_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Dissolve_");
+                strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+                m_ImageFiles[2].emplace_back(szProtoName);
 
-        _tchar			szFullPath[MAX_PATH] = {};
+                char szFilePath[MAX_PATH] = {};
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/");
+                strcat_s(szFilePath, MAX_PATH, fd.cFileName);
 
-        ID3D11ShaderResourceView* pSRV = { nullptr };
-
-        HRESULT			hr = { };
-        if (false == lstrcmp(szEXT, TEXT(".dds")))
-            hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-        else if (false == lstrcmp(szEXT, TEXT(".tga")))
-            hr = E_FAIL;
-        else
-            hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-        if (FAILED(hr))
-            return E_FAIL;
-        m_SRVs.push_back(pSRV);
+                ID3D11ShaderResourceView* pSRV = { nullptr };
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+                HRESULT			hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
+                if (FAILED(hr))
+                    return E_FAIL;
+                m_SRVs[2].push_back(pSRV);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
     }
 
     strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/*.bin");
@@ -167,7 +209,6 @@ void CParticle_Setting::Add_Particle()
 {
     CParticle::PARTICLE_DATA tParticleData;
 
-    tParticleData.pParentMat = m_pTransform->Get_WorldMatrixPtr();
     tParticleData.iNumInstance = 100;
     tParticleData.iBegin = 0;
     tParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
@@ -186,14 +227,27 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fSizeDiagrams.push_back(_float3(1, 1, 0));
     tParticleData.fPosition = _float4(0, 0, 0, 1);
     tParticleData.fRotation = _float3(0, 0, 0);
+
+    for (_uint i = 0; i < 3; ++i) {
+        switch (i) {
+        case 0:
+            tParticleData.szMaskTexture = m_ImageFiles[i][0];
+            break;
+        case 1:
+            tParticleData.szDiffuseTexture = m_ImageFiles[i][0];
+            break;
+        case 2:
+            tParticleData.szDissolveTexture = m_ImageFiles[i][0];
+            break;
+        }
+    }
+
     CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
     pParticle->Initialize(nullptr);
 
     pParticle->Set_Components(tParticleData);
+    pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
 
-    for (_uint i = 0; i < 3; ++i) {
-        pParticle->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
-    }
     m_iSelectParticle = m_pParticles.size();
     m_pParticles.push_back(pParticle);
     m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
@@ -224,25 +278,38 @@ void CParticle_Setting::Delete_Particle()
 void CParticle_Setting::Add_MeshEffect()
 {
     CMeshEffect::MeshEffectData		MeshDesc{};
-    MeshDesc.pParentMat = m_pTransform->Get_WorldMatrixPtr();
     MeshDesc.fColor = { 0,0,0,1 };
     MeshDesc.iBegin = 0;
     MeshDesc.iSelectRender = 3;
     MeshDesc.fScale = { 1,1,1 };
     MeshDesc.fPosition = _float4(0, 0, 0, 1);
     MeshDesc.fRotation = _float3(0, 0, 0);
+    char szModelPath[MAX_PATH] = {};
+    strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[0].c_str(), _TRUNCATE);
+    MeshDesc.szModel = szModelPath;
+
+    for (_uint i = 0; i < 3; ++i) {
+
+        switch (i) {
+        case 0:
+            MeshDesc.szMaskTexture = m_ImageFiles[i][0];
+            break;
+        case 1:
+            MeshDesc.szDiffuseTexture = m_ImageFiles[i][0];
+            break;
+        case 2:
+            MeshDesc.szDissolveTexture = m_ImageFiles[i][0];
+            break;
+        }
+    }
 
     CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
     pMeshEffect->Initialize(nullptr);
 
     pMeshEffect->Set_Components(MeshDesc);
     _tchar szPath[256] = { 0, };
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFiles[0].c_str(), strlen(m_ModelFiles[0].c_str()), szPath, 256);
-    pMeshEffect->Set_Model(szPath);
-
-    for (_uint i = 0; i < 3; ++i) {
-        pMeshEffect->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
-    }
+    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[0].c_str(), strlen(m_ModelFilePaths[0].c_str()), szPath, 256);
+    pMeshEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
 
     m_iSelectMesh = m_pMeshs.size();
     m_pMeshs.push_back(pMeshEffect);
@@ -271,13 +338,175 @@ void CParticle_Setting::Delete_MeshEffect()
     }
 }
 
-HRESULT CParticle_Setting::Save_Binary(const _tchar* pFilePath)
+HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
 {
+    char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
+    strcat_s(szBinModelFilePath, MAX_PATH, szFile);
+    strcat_s(szBinModelFilePath, MAX_PATH, ".bin");
+    ofstream fileBinaryStream;
+    fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+    WriteInt(fileBinaryStream, m_pMeshs.size());
+    for (auto pMesh : m_pMeshs) {
+        char szImageFile[MAX_PATH] = {};
+        strncpy_s(szImageFile, sizeof(szImageFile), pMesh->Get_Data().szModel.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pMesh->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pMesh->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pMesh->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+
+
+        WriteFloat4(fileBinaryStream, pMesh->Get_Data().fColor);
+        WriteFloat4(fileBinaryStream, pMesh->Get_Data().fPosition);
+        WriteFloat3(fileBinaryStream, pMesh->Get_Data().fScale);
+        WriteFloat3(fileBinaryStream, pMesh->Get_Data().fRotation);
+        WriteInt(fileBinaryStream, pMesh->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pMesh->Get_Data().iSelectRender);
+    }
+    WriteInt(fileBinaryStream, m_pParticles.size());
+    for (auto pParticle : m_pParticles) {
+
+
+        char szImageFile[MAX_PATH] = {};
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szCS.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+
+        WriteInt(fileBinaryStream, pParticle->Get_Data().fSizeDiagrams.size());
+        for (auto fSizeDiagram : pParticle->Get_Data().fSizeDiagrams) {
+            WriteFloat3(fileBinaryStream, fSizeDiagram);
+        }
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fGravityDiagram);
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fPosition);
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fColor);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fCenter);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fPivot);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRange);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRotation);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
+    }
     return S_OK;
 }
 
-HRESULT CParticle_Setting::Load_Binary(const _tchar* pFilePath)
+HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 {
+    if (0 < m_pMeshs.size()) {
+        _uint iMeshCount = m_pMeshs.size();
+        for (_uint i = 0; i < iMeshCount; ++i) {
+            Delete_MeshEffect();
+        }
+    }
+    if (0 < m_pParticles.size()) {
+        _uint iParticleCount = m_pParticles.size();
+        for (_uint i = 0; i < iParticleCount; ++i) {
+            Delete_Particle();
+        }
+    }
+    CMeshEffect::MeshEffectData		MeshDesc{};
+    CParticle::ParticleData		    ParticleDesc{};
+    char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
+    strcat_s(szBinModelFilePath, MAX_PATH, szFile);
+    strcat_s(szBinModelFilePath, MAX_PATH, ".bin");
+    ifstream fileBinaryStream;
+    fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+    _int iMeshCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iMeshCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        MeshDesc.szModel = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        MeshDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        MeshDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        MeshDesc.szDissolveTexture = szTemp;
+        Safe_Delete(szTemp);
+        MeshDesc.fColor = ReadFloat4(fileBinaryStream);
+        MeshDesc.fPosition = ReadFloat4(fileBinaryStream);
+        MeshDesc.fScale = ReadFloat3(fileBinaryStream);
+        MeshDesc.fRotation = ReadFloat3(fileBinaryStream);
+        MeshDesc.iBegin = ReadInt(fileBinaryStream);
+        MeshDesc.iSelectRender = ReadInt(fileBinaryStream);
+
+        CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
+        pMeshEffect->Initialize(nullptr);
+        pMeshEffect->Set_Components(MeshDesc);
+        pMeshEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+
+        m_iSelectMesh = m_pMeshs.size();
+        m_pMeshs.push_back(pMeshEffect);
+        m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
+    }
+    _int iParticleCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iParticleCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szDissolveTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szCS = szTemp;
+        Safe_Delete(szTemp);
+        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+        ParticleDesc.fSizeDiagrams.clear();
+        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+            ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+        }
+        ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+        ParticleDesc.iBegin = ReadInt(fileBinaryStream);
+        ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
+        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+        ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+
+        CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
+        pParticle->Initialize(nullptr);
+
+        pParticle->Set_Components(ParticleDesc);
+        pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+        m_iSelectParticle = m_pParticles.size();
+        m_pParticles.push_back(pParticle);
+        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+    }
     return S_OK;
 }
 
@@ -301,14 +530,28 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
         ImGui::EndCombo();
     }
+    if (ImGui::TreeNode("Root Transform"))
+    {
+        ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&m_fPosition), 0.1f, -1000.f, 1000.f);
+        ImGui::DragFloat3("Scale", reinterpret_cast<_float*>(&m_fScale), 1.f, 0.f, 100.f);
+        ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&m_fRotation), 1.f, 0.f, 360.f);
+        ImGui::Text("shx");
+        m_pTransform->Set_State(STATE::POSITION, XMLoadFloat4(&m_fPosition));
+        m_pTransform->Set_Scale(m_fScale.x, m_fScale.y, m_fScale.z);
+        m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
+        ImGui::TreePop();
+    }
 
-    ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&m_fPosition), 0.1f, -1000.f, 1000.f);
-    ImGui::DragFloat3("Scale", reinterpret_cast<_float*>(&m_fScale), 1.f, 0.f, 100.f);
-    ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&m_fRotation), 1.f, 0.f, 360.f);
-    m_pTransform->Set_State(STATE::POSITION, XMLoadFloat4(&m_fPosition));
-    m_pTransform->Set_Scale(m_fScale.x, m_fScale.y, m_fScale.z);
-    m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
     ImVec2 btn = { 120, ImGui::GetFrameHeight() };
+
+    if (ImGui::Button("Save", btn)) {
+        Save_Binary("bin");
+    }
+
+    if (ImGui::Button("Load", btn)) {
+        Load_Binary("bin");
+    }
+    
     switch (m_iSelectMeshParticle)
     {
     case 0:
@@ -382,165 +625,37 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 _float4 fGravity = m_tParticleData.fGravityDiagram;
                 vector<_float3> fSizeDiagrams = m_tParticleData.fSizeDiagrams;
 
-                ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 0, 0);
-                ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tParticleData.fCenter), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
-
                 _float time = 1.f / 100;
                 _float fMax = 5;
-                //for (_uint i = 0; i < 100; ++i) {
-                //    _float t = time * i;
-                //    if (fabsf(m_tParticleData.fSizeDiagram.y) >= 90.f || fabsf(m_tParticleData.fSizeDiagram.w) >= 90.f) {
-                //        values[i] = m_tParticleData.fSizeDiagram.x;
-                //    }
-                //    else {
-                //
-                //        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fSizeDiagram.x
-                //            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.y)) * 100
-                //            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fSizeDiagram.z
-                //            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fSizeDiagram.w)) * 100;
-                //    }
-                //    fMax = max(fMax, fabsf(values[i]));
-                //}
-                //ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 1,
-                //    "Size Data", -fMax, fMax, ImVec2(0, 100));
-                //
-                //ImGui::DragFloat("Start Size", &m_tParticleData.fSizeDiagram.x, 0.01f, 0.f, 100.f);
-                //ImGui::DragFloat("Start Size fx", &m_tParticleData.fSizeDiagram.y, 1.f, -90.f, 90.f);
-                //ImGui::DragFloat("End Size", &m_tParticleData.fSizeDiagram.z, 0.01f, 0.f, 100.f);
-                //ImGui::DragFloat("End Size fx", &m_tParticleData.fSizeDiagram.w, 1.f, -90.f, 90.f);
-
-
-
-
                 float values[100] = {};
-                if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
-                    _float time = 1.f / 100;
-                    _float fMax = 5;
-                    for (_uint i = 0; i < 100; ++i) {
-                        _float3* in = {};
-                        _float3* out = {};
-                        for (_uint j = 0; j < (_uint)m_tParticleData.fSizeDiagrams.size(); ++j) {
-                            if (m_tParticleData.fSizeDiagrams[j].x <= time * i) {
-                                in = &m_tParticleData.fSizeDiagrams[j];
-                            }
-                            if (m_tParticleData.fSizeDiagrams[j].x > time * i) {
-                                out = &m_tParticleData.fSizeDiagrams[j];
-                                break;
-                            }
-                        }
-                        if (nullptr == out)
-                            values[i] = in->y;
-                        else {
-                            _float t = (time * i - in->x) / (out->x - in->x);
-                            if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
-                                values[i] = in->y;
-                            }
-                            else {
-                                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
-                                    + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
-                                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
-                                    + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
-                            }
-                        }
-                        fMax = max(fMax, fabsf(values[i]));
-                    }
-                    ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
-                        "Size data", -fMax, fMax, ImVec2(0, 100));
 
-
-                    char str[10];
-                    snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tParticleData.fSizeDiagrams[m_iSelectSize].x);
-
-                    if (ImGui::BeginCombo("TimeValue", str))
+                if (ImGui::TreeNode("Particle"))
+                {
+                    if (ImGui::TreeNode("Particle Transform"))
                     {
-                        for (_uint i = 0; i < (_uint)m_tParticleData.fSizeDiagrams.size(); ++i) {
-                            _bool sel = i == m_iSelectSize;
-                            snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tParticleData.fSizeDiagrams[i].x);
-                            if (ImGui::Selectable(str, sel))
-                                m_iSelectSize = i;
-                            if (sel)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        ImGui::EndCombo();
+                        ImGui::DragFloat3("Particle Position", reinterpret_cast<_float*>(&m_tParticleData.fPosition), 0.1f, -1000.f, 1000.f);
+                        ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&m_tParticleData.fRotation), 1.f, 0.f, 360.f);
+                        ImGui::TreePop();
                     }
-                }
-                if (ImGui::Button("AddTime", btn)) {
-                    if (0 < m_tParticleData.fSizeDiagrams.size()) {
-                        _float3 val = m_tParticleData.fSizeDiagrams.back();
-                        val.y = 0;
-                        m_tParticleData.fSizeDiagrams.push_back(val);
+                    if (ImGui::TreeNode("Particle Data"))
+                    {
+                        ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 1, 0);
+                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tParticleData.fCenter), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
+                        ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
+
+
+                        ImGui::TreePop();
                     }
-                    else {
-                        _float3 val = { 0,0,0 };
-                        m_tParticleData.fSizeDiagrams.push_back(val);
-                    }
-                    m_iSelectSize = m_tParticleData.fSizeDiagrams.size() - 1;
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("DeleteTime", btn)) {
-                    _uint iCount = 0;
-                    for (auto i = m_tParticleData.fSizeDiagrams.begin(); i != m_tParticleData.fSizeDiagrams.end();) {
-                        if (iCount == m_iSelectSize) {
-                            m_tParticleData.fSizeDiagrams.erase(i);
-                            break;
-                        }
-                        ++i;
-                        ++iCount;
-                    }
-                    m_iSelectSize = max(m_iSelectSize - 1, 0);
+
+                    ImGui::TreePop();
                 }
 
-                if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
-                    if (0 < m_iSelectSize)
-                        ImGui::DragFloat("Size Time", &m_tParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tParticleData.fSizeDiagrams.size() - 1 ? m_tParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
-                    ImGui::DragFloat("Size fx", &m_tParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
-                    ImGui::DragFloat("Size", &m_tParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
-                }
-
-
-
-
-
-
-
-                ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
-                ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
-                ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
-
-                ImGui::DragFloat3("Particle Position", reinterpret_cast<_float*>(&m_tParticleData.fPosition), 0.1f, -1000.f, 1000.f);
                 ImGui::SetNextItemWidth(180);
-
-                _float pitch, yaw, roll;
-                _vector vRight = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::RIGHT) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().x);
-                _vector vUp = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::UP) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().y);
-                _vector vLook = XMVector4Normalize(m_pParticles[m_iSelectParticle]->GetTransform()->Get_State(STATE::LOOK) / m_pParticles[m_iSelectParticle]->GetTransform()->Get_Scale().z);
-                _float _11 = XMVectorGetX(vRight);
-                _float _12 = XMVectorGetY(vRight);
-                _float _13 = XMVectorGetZ(vRight);
-
-                _float _21 = XMVectorGetX(vUp);
-                _float _22 = XMVectorGetY(vUp);
-                _float _23 = XMVectorGetZ(vUp);
-
-                _float _31 = XMVectorGetX(vLook);
-                _float _32 = XMVectorGetY(vLook);
-                _float _33 = XMVectorGetZ(vLook);
-
-                pitch = asinf(-_32);
-                if (cosf(pitch) > 0.0001f)
-                {
-                    yaw = atan2f(_31, _33);
-                    roll = atan2f(_12, _22);
-                }
-                else
-                {
-                    yaw = atan2f(-_13, _11);
-                    roll = 0.0f;
-                }
-                ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&m_tParticleData.fRotation), 1.f, 0.f, 360.f);
 
                 for (_uint i = 0; i < 100; ++i) {
                     _float t = time * i;
@@ -556,14 +671,105 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     }
                     fMax = max(fMax, fabsf(values[i]));
                 }
-                ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
-                    "Gravity Data", -fMax, fMax, ImVec2(0, 100));
 
-                ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
-                ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
-                ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
-                ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
 
+                if (ImGui::TreeNode("Size Diagram")) {
+                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
+                        _float time = 1.f / 100;
+                        _float fMax = 5;
+                        for (_uint i = 0; i < 100; ++i) {
+                            _float3* in = {};
+                            _float3* out = {};
+                            for (_uint j = 0; j < (_uint)m_tParticleData.fSizeDiagrams.size(); ++j) {
+                                if (m_tParticleData.fSizeDiagrams[j].x <= time * i) {
+                                    in = &m_tParticleData.fSizeDiagrams[j];
+                                }
+                                if (m_tParticleData.fSizeDiagrams[j].x > time * i) {
+                                    out = &m_tParticleData.fSizeDiagrams[j];
+                                    break;
+                                }
+                            }
+                            if (nullptr == out)
+                                values[i] = in->y;
+                            else {
+                                _float t = (time * i - in->x) / (out->x - in->x);
+                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                    values[i] = in->y;
+                                }
+                                else {
+                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                                }
+                            }
+                            fMax = max(fMax, fabsf(values[i]));
+                        }
+                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                            "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                        char str[10];
+                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tParticleData.fSizeDiagrams[m_iSelectSize].x);
+
+                        if (ImGui::BeginCombo("TimeValue", str))
+                        {
+                            for (_uint i = 0; i < (_uint)m_tParticleData.fSizeDiagrams.size(); ++i) {
+                                _bool sel = i == m_iSelectSize;
+                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tParticleData.fSizeDiagrams[i].x);
+                                if (ImGui::Selectable(str, sel))
+                                    m_iSelectSize = i;
+                                if (sel)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                    }
+                    if (ImGui::Button("AddTime", btn)) {
+                        if (0 < m_tParticleData.fSizeDiagrams.size()) {
+                            _float3 val = m_tParticleData.fSizeDiagrams.back();
+                            val.y = 0;
+                            m_tParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        else {
+                            _float3 val = { 0,0,0 };
+                            m_tParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        m_iSelectSize = m_tParticleData.fSizeDiagrams.size() - 1;
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("DeleteTime", btn)) {
+                        _uint iCount = 0;
+                        for (auto i = m_tParticleData.fSizeDiagrams.begin(); i != m_tParticleData.fSizeDiagrams.end();) {
+                            if (iCount == m_iSelectSize) {
+                                m_tParticleData.fSizeDiagrams.erase(i);
+                                break;
+                            }
+                            ++i;
+                            ++iCount;
+                        }
+                        m_iSelectSize = max(m_iSelectSize - 1, 0);
+                    }
+
+                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
+                        if (0 < m_iSelectSize)
+                            ImGui::DragFloat("Size Time", &m_tParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tParticleData.fSizeDiagrams.size() - 1 ? m_tParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                        ImGui::DragFloat("Size fx", &m_tParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                        ImGui::DragFloat("Size", &m_tParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                    }
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Gravity Diagram")) {
+                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
+
+                    ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
+                    ImGui::TreePop();
+                }
 
                 if (Desc.iNumInstance != m_tParticleData.iNumInstance ||
                     Desc.vCenter.x != m_tParticleData.fCenter.x ||
@@ -595,14 +801,12 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     Desc.vLifeTime = m_tParticleData.fLifeTime;
                     Desc.vSpeed = m_tParticleData.fSpeed;
                     Desc.isLoop = m_tParticleData.bisLoop;
-                    //m_tParticleData.fSizeDiagrams = fSizeDiagrams;
                     m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
                 }
                 for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
                     if (fSizeDiagrams[i].x != m_tParticleData.fSizeDiagrams[i].x ||
                         fSizeDiagrams[i].y != m_tParticleData.fSizeDiagrams[i].y ||
                         fSizeDiagrams[i].z != m_tParticleData.fSizeDiagrams[i].z) {
-                        //m_tParticleData.fSizeDiagrams = fSizeDiagrams;
                         m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
                     }
                 }
@@ -610,93 +814,15 @@ void CParticle_Setting::Update(_float fTimeDelta)
             break;
             case 1:
             {
-                ImGui::ColorPicker4("MyColor", (_float*)&m_tParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
 
-                if (ImGui::Button("Refresh", btn)) {
-                    m_ImageFiles.clear();
-
-                    vector<string> ImageFiles;
-                    char pattern[MAX_PATH] = {};
-                    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
-
-                    WIN32_FIND_DATAA fd{};
-                    HANDLE h = FindFirstFileA(pattern, &fd);
-                    if (h != INVALID_HANDLE_VALUE) {
-                        do {
-                            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                                char szFilePath[MAX_PATH] = {};
-                                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
-                                strcat_s(szFilePath, MAX_PATH, fd.cFileName);
-                                ImageFiles.emplace_back(szFilePath);
-                                m_ImageFiles.emplace_back(fd.cFileName);
-                            }
-                        } while (FindNextFileA(h, &fd));
-                        FindClose(h);
-                    }
-                    for (auto Texture : m_pTextures) {
-                        Safe_Release(Texture);
-                    }
-                    m_pTextures.clear();
-                    for (auto SRV : m_SRVs) {
-                        Safe_Release(SRV);
-                    }
-                    m_SRVs.clear();
-                    _uint i = 0;
-                    _bool bisFlag = true;
-                    for (auto ImageFile : ImageFiles) {
-                        _tchar szPath[256] = { 0, };
-                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
-                        m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
-
-                        _tchar			szEXT[MAX_PATH] = {};
-
-                        _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
-
-                        _tchar			szFullPath[MAX_PATH] = {};
-
-                        ID3D11ShaderResourceView* pSRV = { nullptr };
-
-                        HRESULT			hr = { };
-                        if (false == lstrcmp(szEXT, TEXT(".dds")))
-                            hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-                        else if (false == lstrcmp(szEXT, TEXT(".tga")))
-                            hr = E_FAIL;
-                        else
-                            hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-                        if (FAILED(hr))
-                            return;
-                        m_SRVs.push_back(pSRV);
-                        if (bisFlag) {
-                            for (_uint j = 0; j < m_pParticles.size(); ++j) {
-                                for (_uint k = 0; k < 3; ++k) {
-                                    m_pParticles[j]->Set_Texture(k, m_pTextures[0], m_ImageFiles[0]);
-                                }
-                            }
-                            for (_uint j = 0; j < m_pMeshs.size(); ++j) {
-                                for (_uint k = 0; k < 3; ++k) {
-                                    m_pMeshs[j]->Set_Texture(k, m_pTextures[0], m_ImageFiles[0]);
-                                }
-                            }
-                            bisFlag = false;
-                        }
-                        for (_uint j = 0; j < m_pParticles.size(); ++j) {
-                            for (_uint k = 0; k < 3; ++k) {
-                                if (m_pParticles[j]->Get_TextureName(k) == m_ImageFiles[i]) {
-                                    m_pParticles[j]->Set_Texture(k, m_pTextures[i], m_ImageFiles[i]);
-                                }
-                            }
-                        }
-                        for (_uint j = 0; j < m_pMeshs.size(); ++j) {
-                            for (_uint k = 0; k < 3; ++k) {
-                                if (m_pMeshs[j]->Get_TextureName(k) == m_ImageFiles[i]) {
-                                    m_pMeshs[j]->Set_Texture(k, m_pTextures[i], m_ImageFiles[i]);
-                                }
-                            }
-                        }
-                        ++i;
-                    }
+                if (ImGui::TreeNode("Color")) {
+                    ImGui::ColorPicker4("Color", (_float*)&m_tParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::TreePop();
                 }
 
+                if (ImGui::TreeNode("Shader")) {
+                    ImGui::TreePop();
+                }
                 string szRender;
                 switch (m_tParticleData.iSelectRender)
                 {
@@ -775,11 +901,25 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 ImGui::Separator();
 
                 ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-                if (0 < m_SRVs.size()) {
+                if (0 < m_SRVs[m_iImageType].size()) {
                     _uint i = 0;
-                    for (auto SRV : m_SRVs) {
-                        if (ImGui::ImageButton(m_ImageFiles[i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                            m_pParticles[m_iSelectParticle]->Set_Texture(m_iImageType, m_pTextures[i], m_ImageFiles[i]);
+                    for (auto SRV : m_SRVs[m_iImageType]) {
+                        if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                            m_pParticles[m_iSelectParticle]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+
+
+                            switch (m_iImageType) {
+                            case 0:
+                                m_tParticleData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            case 1:
+                                m_tParticleData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            case 2:
+                                m_tParticleData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            }
+
                         }
                         if (1 == ++i % 2)
                             ImGui::SameLine();
@@ -817,7 +957,11 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     if (ImGui::Selectable(m_ModelFilePaths[i].c_str(), sel)) {
                         m_iSelectModel = i;
                         _tchar szPath[256] = { 0, };
-                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFiles[m_iSelectModel].c_str(), strlen(m_ModelFiles[m_iSelectModel].c_str()), szPath, 256);
+                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[m_iSelectModel].c_str(), strlen(m_ModelFilePaths[m_iSelectModel].c_str()), szPath, 256);
+                        
+                        char szModelPath[MAX_PATH] = {};
+                        strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[m_iSelectModel].c_str(), _TRUNCATE);
+                        m_tMeshData.szModel = szModelPath;
                         m_pMeshs[m_iSelectMesh]->Set_Model(szPath);
                     }
                     if (sel)
@@ -858,92 +1002,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
             ImGui::ColorPicker4("MyColor", (_float*)&m_tMeshData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-
-            if (ImGui::Button("Refresh", btn)) {
-                m_ImageFiles.clear();
-
-                vector<string> ImageFiles;
-                char pattern[MAX_PATH] = {};
-                strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/*.dds");
-
-                WIN32_FIND_DATAA fd{};
-                HANDLE h = FindFirstFileA(pattern, &fd);
-                if (h != INVALID_HANDLE_VALUE) {
-                    do {
-                        if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                            char szFilePath[MAX_PATH] = {};
-                            strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/");
-                            strcat_s(szFilePath, MAX_PATH, fd.cFileName);
-                            ImageFiles.emplace_back(szFilePath);
-                            m_ImageFiles.emplace_back(fd.cFileName);
-                        }
-                    } while (FindNextFileA(h, &fd));
-                    FindClose(h);
-                }
-                for (auto Texture : m_pTextures) {
-                    Safe_Release(Texture);
-                }
-                m_pTextures.clear();
-                for (auto SRV : m_SRVs) {
-                    Safe_Release(SRV);
-                }
-                m_SRVs.clear();
-                _uint i = 0;
-                _bool bisFlag = true;
-                for (auto ImageFile : ImageFiles) {
-                    _tchar szPath[256] = { 0, };
-                    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
-                    m_pTextures.push_back(CTexture::Create(m_pDevice, m_pContext, szPath, 1));
-
-                    _tchar			szEXT[MAX_PATH] = {};
-
-                    _wsplitpath_s(szPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
-
-                    _tchar			szFullPath[MAX_PATH] = {};
-
-                    ID3D11ShaderResourceView* pSRV = { nullptr };
-
-                    HRESULT			hr = { };
-                    if (false == lstrcmp(szEXT, TEXT(".dds")))
-                        hr = CreateDDSTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-                    else if (false == lstrcmp(szEXT, TEXT(".tga")))
-                        hr = E_FAIL;
-                    else
-                        hr = CreateWICTextureFromFile(m_pDevice, szPath, nullptr, &pSRV);
-                    if (FAILED(hr))
-                        return;
-                    m_SRVs.push_back(pSRV);
-
-                    if (bisFlag) {
-                        for (_uint j = 0; j < m_pParticles.size(); ++j) {
-                            for (_uint k = 0; k < 3; ++k) {
-                                m_pParticles[j]->Set_Texture(k, m_pTextures[0], m_ImageFiles[0]);
-                            }
-                        }
-                        for (_uint j = 0; j < m_pMeshs.size(); ++j) {
-                            for (_uint k = 0; k < 3; ++k) {
-                                m_pMeshs[j]->Set_Texture(k, m_pTextures[0], m_ImageFiles[0]);
-                            }
-                        }
-                        bisFlag = false;
-                    }
-                    for (_uint j = 0; j < m_pParticles.size(); ++j) {
-                        for (_uint k = 0; k < 3; ++k) {
-                            if (m_pParticles[j]->Get_TextureName(k) == m_ImageFiles[i]) {
-                                m_pParticles[j]->Set_Texture(k, m_pTextures[i], m_ImageFiles[i]);
-                            }
-                        }
-                    }
-                    for (_uint j = 0; j < m_pMeshs.size(); ++j) {
-                        for (_uint k = 0; k < 3; ++k) {
-                            if (m_pMeshs[j]->Get_TextureName(k) == m_ImageFiles[i]) {
-                                m_pMeshs[j]->Set_Texture(k, m_pTextures[i], m_ImageFiles[i]);
-                            }
-                        }
-                    }
-                    ++i;
-                }
-            }
 
             ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f);
             ImGui::DragFloat3("Effect Position", reinterpret_cast<_float*>(&m_tMeshData.fPosition), 0.1f, -1000.f, 1000.f);
@@ -1021,11 +1079,23 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::Separator();
 
             ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-            if (0 < m_SRVs.size()) {
+            if (0 < m_SRVs[m_iImageType].size()) {
                 _uint i = 0;
-                for (auto SRV : m_SRVs) {
-                    if (ImGui::ImageButton(m_ImageFiles[i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                        m_pMeshs[m_iSelectMesh]->Set_Texture(m_iImageType, m_pTextures[i], m_ImageFiles[i]);
+                for (auto SRV : m_SRVs[m_iImageType]) {
+                    if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                        m_pMeshs[m_iSelectMesh]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+
+                        switch (m_iImageType) {
+                        case 0:
+                            m_tMeshData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 1:
+                            m_tMeshData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 2:
+                            m_tMeshData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        }
                     }
                     if (1 == ++i % 2)
                         ImGui::SameLine();
@@ -1070,16 +1140,97 @@ HRESULT CParticle_Setting::Render()
 void CParticle_Setting::Free()
 {
     __super::Free();
-    for (auto texture : m_pTextures)
-        Safe_Release(texture);
-    m_pTextures.clear();
-    for (auto SRV : m_SRVs)
-        Safe_Release(SRV);
-    m_SRVs.clear();
     for (auto pParticle : m_pParticles)
         Safe_Release(pParticle);
     m_pParticles.clear();
     for (auto pMesh : m_pMeshs)
         Safe_Release(pMesh);
-    m_pParticles.clear();
+    m_pMeshs.clear();
+    for (_uint i = 0; i < 3; ++i) {
+        for (auto SRV : m_SRVs[i]) {
+            Safe_Release(SRV);
+        }
+        m_SRVs[i].clear();
+    }
+    Safe_Release(m_pTransform);
+}
+
+void CParticle_Setting::WriteString(ofstream& fileBinaryStream, _char* pStr)
+{
+    _uint iStringLength = strlen(pStr);
+    fileBinaryStream.write(reinterpret_cast<const _char*>(&iStringLength), sizeof(iStringLength));
+
+    fileBinaryStream.write(pStr, iStringLength);
+}
+
+void CParticle_Setting::WriteInt(ofstream& fileBinaryStream, _int vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_int));
+}
+
+void CParticle_Setting::WriteFloat4(ofstream& fileBinaryStream, _float4 vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_float4));
+}
+
+void CParticle_Setting::WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_float3));
+}
+
+void CParticle_Setting::WriteFloat2(ofstream& fileBinaryStream, _float2 vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_float2));
+}
+
+void CParticle_Setting::WriteBool(ofstream& fileBinaryStream, _bool vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_bool));
+}
+
+_char* CParticle_Setting::ReadString(ifstream& fileBinaryStream)
+{
+    _uint iStringLength;
+    fileBinaryStream.read((_char*)&iStringLength, sizeof(iStringLength));
+
+    _char* sz = new _char[iStringLength + 1];
+    fileBinaryStream.read(&sz[0], iStringLength);
+
+    sz[iStringLength] = '\0';
+    return sz;
+}
+
+_int CParticle_Setting::ReadInt(ifstream& fileBinaryStream)
+{
+    _int iValue;
+    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
+    return iValue;
+}
+
+_float4 CParticle_Setting::ReadFloat4(ifstream& fileBinaryStream)
+{
+    _float4 fValue;
+    fileBinaryStream.read((_char*)&fValue, sizeof(_float4));
+    return fValue;
+}
+
+_float3 CParticle_Setting::ReadFloat3(ifstream& fileBinaryStream)
+{
+    _float3 fValue;
+    fileBinaryStream.read((_char*)&fValue, sizeof(_float3));
+    return fValue;
+}
+
+_float2 CParticle_Setting::ReadFloat2(ifstream& fileBinaryStream)
+{
+    _float2 fValue;
+    fileBinaryStream.read((_char*)&fValue, sizeof(_float2));
+    return fValue;
+}
+
+_bool CParticle_Setting::ReadBool(ifstream& fileBinaryStream)
+{
+    _bool bisFlag;
+    fileBinaryStream.read((_char*)&bisFlag, sizeof(_bool));
+    return bisFlag;
 }

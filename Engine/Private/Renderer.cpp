@@ -470,7 +470,7 @@ void CRenderer::Render_NonLight()
 		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth_Start"), m_pShader, "g_ScreenTexture")))
 			return;
 
-		m_pShader->Begin(14);
+		m_pShader->Begin(10);
 
 		m_pVIBuffer->Bind_Resources();
 		m_pVIBuffer->Render();
@@ -490,7 +490,7 @@ void CRenderer::Render_NonLight()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth"), m_pShader, "g_ScreenTexture")))
 		return;
 
-	m_pShader->Begin(13);
+	m_pShader->Begin(9);
 
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();

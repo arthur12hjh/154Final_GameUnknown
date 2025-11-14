@@ -306,16 +306,16 @@ PS_LIGHT_OUT PS_MAIN(PS_IN In)
     float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
     //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
     //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
-    //Out.vDiffuse = (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
-    //Out.vDiffuse.a = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
-    Out.vDiffuse = g_vColor;
+    Out.vDiffuse = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
+    Out.vDiffuse.a = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
+    //Out.vDiffuse = g_vColor;
     if (Out.vDiffuse.a <= 0.1f || 0 > In.vLifeTime.x)
         discard;
+    Out.vDiffuse.a *= g_vColor.a;
+    //Out.vDiffuse *= g_vColor;
     
-    Out.vDiffuse *= g_vColor;
-    
-    float weight = saturate(pow(1 - (In.vProjPos.w / 500), 3));
+    float weight = saturate(pow(1 - (In.vProjPos.z / In.vProjPos.w / 500), 3));
     
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vNormal.r = Out.vDiffuse.a;

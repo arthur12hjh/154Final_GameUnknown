@@ -10,19 +10,22 @@ class CShader;
 NS_END
 
 NS_BEGIN(Tool_Effect)
-
+//texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 class CMeshEffect final : public CGameObject
 {
 public:
 	typedef struct MeshEffectData
 	{
-		const _float4x4* pParentMat = { nullptr };
-		_int	iBegin = {};
-		_uint	iSelectRender = {};
+		string	szModel = {};
+		string	szMaskTexture = {};
+		string	szDiffuseTexture = {};
+		string	szDissolveTexture = {};
 		_float4 fColor = {};
-		_float3 fScale = {};
 		_float4 fPosition = { 0,0,0,1 };
+		_float3 fScale = {};
 		_float3 fRotation = {};
+		_int	iBegin = {};
+		_int	iSelectRender = {};
 	}MESH_DATA;
 
 private:
@@ -41,15 +44,18 @@ public:
 	void	Update(MESH_DATA tData);
 	MESH_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
-	void	Set_Texture(_int iIndex, CTexture* pTexture, string szFile) { m_pTexture[iIndex] = pTexture; m_szFile[iIndex] = szFile; }
+	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
+	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
 	void	Set_Model(_wstring szMode);
 private:
+	const _float4x4* m_pParentMat = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
 	string    m_szFile[3];
 	_float		m_fTime = {};
 	MESH_DATA	m_tData;
+	_uint	m_iCount = {};
 	_uint	m_iModelCount = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 

@@ -258,7 +258,7 @@ PS_OUT_BACKBUFFER PS_MAIN_WEIGHT(PS_IN In)
     PS_OUT_BACKBUFFER Out;
 
     Out.vBackBuffer.rgb = g_Texture.Sample(DefaultSampler, In.vTexcoord).rgb / g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    Out.vBackBuffer.a = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    Out.vBackBuffer.a = saturate(g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord).g);
     
     
     //Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
@@ -375,7 +375,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
-    // idx 13
+    // idx 9
     pass Weight
     {
         SetRasterizerState(RS_Default);
@@ -385,7 +385,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_WEIGHT();
     }
-    // idx 14
+    // idx 10
     pass Weight_Start
     {
         SetRasterizerState(RS_Default);

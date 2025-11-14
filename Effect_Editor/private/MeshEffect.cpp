@@ -34,7 +34,7 @@ void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_tData.pParentMat));
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
@@ -69,6 +69,13 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szModel.c_str(), strlen(m_tData.szModel.c_str()), sztPrototype, 256);
+	Set_Model(sztPrototype);
+	Set_Texture(0, m_tData.szMaskTexture.c_str());
+	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
+	Set_Texture(2, m_tData.szDissolveTexture.c_str());
+
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
 }
 
@@ -78,6 +85,19 @@ void CMeshEffect::Update(MESH_DATA tData)
 	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+}
+
+HRESULT CMeshEffect::Set_Texture(_int iIndex, const char* szPrototype)
+{
+
+	Safe_Release(m_pTexture[iIndex]);
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szPrototype, strlen(szPrototype), sztPrototype, 256);
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), sztPrototype,
+		TEXT("Com_Texture" + m_iCount++), reinterpret_cast<CComponent**>(&m_pTexture[iIndex]))))
+		return E_FAIL;
+	return S_OK;
 }
 
 void CMeshEffect::Set_Model(_wstring szMode)
@@ -153,4 +173,6 @@ void CMeshEffect::Free()
 	__super::Free();
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	for (_uint i = 0; i < 3; ++i)
+		Safe_Release(m_pTexture[i]);
 }
