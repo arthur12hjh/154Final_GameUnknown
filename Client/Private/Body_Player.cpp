@@ -15,6 +15,11 @@ CBody_Player::CBody_Player(const CBody_Player& Prototype)
 {
 }
 
+const _float4x4* CBody_Player::Get_BoneMatrixPtr(const _char* pBoneName) const
+{
+	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);	
+}
+
 _bool CBody_Player::isFinish_Att()
 {
 	if (*m_pParentState & CPlayer::STATE_ATTACK)
@@ -211,4 +216,6 @@ void CBody_Player::Free()
 {
 	__super::Free();
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 }

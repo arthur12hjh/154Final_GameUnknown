@@ -2,7 +2,6 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
-class CGameInstance;
 class CBehaviorTree;
 
 class ENGINE_DLL CBehaviorNode abstract : public CBase
@@ -24,8 +23,6 @@ public :
 
 protected :
 	const	CBehaviorTree*				m_pOwnerTree = nullptr;
-	CGameInstance*						m_pGameInstance = { nullptr };
-
 	BEHAVIOR_NODE_TYPE					m_eNodeType = { BEHAVIOR_NODE_TYPE::END };
 
 public :

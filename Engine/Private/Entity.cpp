@@ -57,35 +57,35 @@ _bool CEntity::Play_Animation(_float fTimeDelta)
     /// 
     /// 이후, CModel의 Play_Animation함수를 return 해줍니다.
 
-    if (nullptr == m_pBodyModelCom)
+    if (nullptr == m_pBehaviorTree_BodyModelCom)
         Import_ModelPtr();
 
-    return m_pBodyModelCom->Play_Animation(fTimeDelta);
+    return m_pBehaviorTree_BodyModelCom->Play_Animation(fTimeDelta);
 }
 
 void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
 {
-    if (nullptr == m_pBodyModelCom)
+    if (nullptr == m_pBehaviorTree_BodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
+    m_pBehaviorTree_BodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
 }
 
-void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop)
+void CEntity::Set_Animation(const _char* szAnimationTag)
 {
-    if (nullptr == m_pBodyModelCom)
+    if (nullptr == m_pBehaviorTree_BodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop);
+    m_pBehaviorTree_BodyModelCom->Set_Animation(szAnimationTag);
 }
 
 
 HRESULT CEntity::Import_ModelPtr()
 {
 
-    m_pBodyModelCom = static_cast<CModel*>(Find_PartObject(TEXT("Part_Body"))->Find_Component(TEXT("Com_Model")));
+    m_pBehaviorTree_BodyModelCom = static_cast<CModel*>(Find_PartObject(TEXT("Part_Body"))->Find_Component(TEXT("Com_Model")));
 
-    Safe_AddRef(m_pBodyModelCom);
+    Safe_AddRef(m_pBehaviorTree_BodyModelCom);
 
     return S_OK;
 }
@@ -94,6 +94,6 @@ void CEntity::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pBodyModelCom);
+    Safe_Release(m_pBehaviorTree_BodyModelCom);
 }
 

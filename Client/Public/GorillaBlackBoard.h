@@ -1,15 +1,18 @@
 #pragma once
-#include "BossBlackBoard.h"
+#include "Client_Defines.h"
+#include "BlackBoard.h"
 
 NS_BEGIN(Client)
-class CGorillaBlackBoard final : public CBossBlackBoard
+class CGorillaBlackBoard : public CBlackBoard
 {
 private:
 	CGorillaBlackBoard();
 	virtual ~CGorillaBlackBoard() = default;
 
 public :
-	HRESULT								Initialize();
+	HRESULT		Initialize();
+
+private :
 
 
 public:

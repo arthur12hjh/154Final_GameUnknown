@@ -1,9 +1,7 @@
 #include "pch.h"
 #include "GameManager.h"
+
 #include "GameInstance.h"
-
-#include "DataManager.h"
-
 #include "GameObject.h"
 
 IMPLEMENT_SINGLETON(CGameManager);
@@ -11,10 +9,6 @@ IMPLEMENT_SINGLETON(CGameManager);
 HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     if (FAILED(Setting_Manager(pDevice, pContext)))
-        return E_FAIL;
-
-    m_pDataManager = CDataManager::Create();
-    if (nullptr == m_pDataManager)
         return E_FAIL;
 
     return S_OK;
@@ -66,21 +60,7 @@ void CGameManager::Clear_UI_Texture_Descs()
     m_pUIResourceStore->Clear_UI_Texture_Descs();
 }
 
-
 #pragma endregion
-
-#pragma region DataManager
-const CHARACTER_SKILL_DESC* CGameManager::Find_SkillData(_uint iSkillID)
-{
-    return m_pDataManager->Find_SkillData(iSkillID);
-}
-
-const BOSS_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
-{
-    return m_pDataManager->Find_BossData(iBossID);
-}
-#pragma endregion
-
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -104,8 +84,6 @@ void CGameManager::Free()
 
     Safe_Release(m_pUIResourceStore);
     Safe_Release(m_pPlayer);
-    Safe_Release(m_pDataManager);
-
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);

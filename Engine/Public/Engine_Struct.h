@@ -11,18 +11,11 @@ namespace Engine
 		float			fAspect;
 	}CAMERA_INFO;
 
-	typedef struct PrototypeDesc
-	{
-		unsigned int			iLevelID;
-		const WCHAR*			szPrototypeName;
-		class CBase*			pPrototype;
-	}PROTOTYPE_DESC;
-
 	typedef struct ThreadDesc
 	{
 		ID3D11DeviceContext*			pContext = nullptr;
-		list<PROTOTYPE_DESC>			pAddObejct;
-		function<void(thread::id)>									OnCompleted;
+		function<void(thread::id)>		OnCompleted;
+	
 	}THREAD_DESC;
 
 	typedef struct ThreadJob

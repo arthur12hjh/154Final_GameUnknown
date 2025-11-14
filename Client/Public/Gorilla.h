@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "Entity.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
+class CModel;
+class CShader;
 class CCollider;
 NS_END
 
 NS_BEGIN(Client)
-class CGorilla_Body;
-class CGorillaBehaviorTree;
 
-class CGorilla final : public CEntity
+class CGorilla final : public CGameObject
 {
 private:
 	CGorilla(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -29,10 +29,9 @@ public:
 	virtual HRESULT			Render() override;
 
 private:
-	CGorilla_Body*			m_pBody = { nullptr };
+	CModel*					m_pModelCom = { nullptr };	
+	CShader*				m_pShaderCom = { nullptr };
 	CCollider*				m_pColliderCom[ENUM_CLASS(COLLIDER::END)] = {nullptr};
-
-	CGorillaBehaviorTree*	m_pBehaviorTree = { nullptr };
 
 	_int					m_iIndex = {};
 	_uint					m_iMaxIndex = {};

@@ -18,29 +18,3 @@ void CStringHelper::ConvertUTFToWide(const char* _str, WCHAR* _outwstr)
         MultiByteToWideChar(CP_ACP, 0, _str, -1, _outwstr, iLength);
     
 }
-
-HRESULT CStringHelper::CSVRead(const char* pfilePath, vector<string>& pOut)
-{
-	ifstream fFileStream(pfilePath);
-	string Row, Col, Cell;
-	if (!fFileStream.is_open())
-		return E_FAIL;
-
-	while (getline(fFileStream, Col))
-	{
-		stringstream sStream(Col);
-		while (getline(sStream, Row, ','))
-		{
-			if ('"' == Row.front())
-				Row.erase(Row.begin());
-			if ('"' == Row.back())
-				Row.pop_back();
-
-			pOut.push_back(Row);
-		}
-	}
-
-	fFileStream.close();
-
-    return S_OK;
-}

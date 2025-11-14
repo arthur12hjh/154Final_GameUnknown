@@ -1,17 +1,14 @@
 #include "pch.h"
 #include "Gorilla.h"
-
 #include "GameInstance.h"
-#include "Gorilla_Body.h"
-#include "GorillaBehaviorTree.h"
 
 CGorilla::CGorilla(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CEntity{ pDevice, pContext }
+	: CGameObject { pDevice, pContext }
 {
 }
 
 CGorilla::CGorilla(const CGorilla& Prototype) 
-	: CEntity{ Prototype }
+	: CGameObject { Prototype }
 {
 }
 
@@ -35,21 +32,21 @@ HRESULT CGorilla::Initialize(void* pArg)
 		1.f
 	));
 
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 5.f, 8.f, 5.f });
-	/*for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
-		m_pColliderCom[i]->SetOwner(this);*/
+	m_pModelCom->Set_AnimationIndex(0);
+	m_iMaxIndex = (_uint)m_pModelCom->Get_AnimationList()->size();
+	for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
+		m_pColliderCom[i]->SetOwner(this);
 
 	return S_OK;
 }
 
 void CGorilla::Priority_Update(_float fTimeDelta)
 {
-	m_pBody->Priority_Update(fTimeDelta);
 }
 
 void CGorilla::Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
 		m_iIndex++;
 		if (m_iMaxIndex <= m_iIndex)
@@ -64,18 +61,15 @@ void CGorilla::Update(_float fTimeDelta)
 			m_iIndex = m_iMaxIndex - 1;
 
 		m_pModelCom->Set_AnimationIndex(m_iIndex);
-	}*/
-	m_pBody->Update(fTimeDelta);
-	m_pBehaviorTree->Update(fTimeDelta);
-
-	//m_pBody->Update(fTimeDelta);
-
-	/*for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
+	}
+	m_pModelCom->Play_Animation(fTimeDelta);
+	
+	for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
 	{
 		m_pColliderCom[i]->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-	}*/
+	}
 	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-	
+
 }
 
 void CGorilla::Late_Update(_float fTimeDelta)
@@ -85,15 +79,14 @@ void CGorilla::Late_Update(_float fTimeDelta)
 
 	if (true == m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_pBody->Late_Update(fTimeDelta);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 #ifdef _DEBUG
-		/*for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
+		for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
 		{
 			m_pGameInstance->ADD_Collider(m_pColliderCom[i]);
 			m_pGameInstance->Add_DebugComponent(m_pColliderCom[i]);
-		}*/
-		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+			m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+		}
 #endif
 	}
 	
@@ -101,35 +94,92 @@ void CGorilla::Late_Update(_float fTimeDelta)
 
 HRESULT CGorilla::Render()
 {
-	
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+		
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
 
 HRESULT CGorilla::Ready_Components()
 {
-	/* Part_Model */
-	CPartObject::PARTOBJECT_DESC BodyDesc{};
-	BodyDesc.pParentTransform = m_pTransformCom;
-
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Gorilla_Body"),
-		TEXT("Part_Body"), &BodyDesc)))
+	/* Com_Model */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+	
+	/* Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	m_pBody = static_cast<CGorilla_Body*>(Find_PartObject(TEXT("Part_Body")));
+	
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 
-	m_pBehaviorTree = CGorillaBehaviorTree::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pBehaviorTree)
+	SphereDesc.fRadius = 0.5f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom[ENUM_CLASS(COLLIDER::SPHERE)]), &SphereDesc)))
 		return E_FAIL;
-	m_pBehaviorTree->SetOwner(this);
-	m_pBehaviorTree->Initialize(nullptr);
 
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, _float3(0.8f, 1.3f, 0.8f));
+	/* Com_Collider_AABB */
+	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+
+	AABBDesc.vSize = _float3(0.8f, 1.3f, 0.8f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom[ENUM_CLASS(COLLIDER::AABB)]), &AABBDesc)))
+		return E_FAIL;
+
+	/* Com_Collider_OBB */
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+
+	OBBDesc.vSize = _float3(0.8f, 0.8f, 0.8f);
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y * 0.5f, 0.f);
+	OBBDesc.vAngles = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom[ENUM_CLASS(COLLIDER::OBB)]), &OBBDesc)))
+		return E_FAIL;
 	return S_OK;
 }
 
 HRESULT CGorilla::Bind_ShaderResources()
 {
-	
+	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -167,5 +217,6 @@ void CGorilla::Free()
 	for (auto& pCollider : m_pColliderCom)
 		Safe_Release(pCollider);
 
-	Safe_Release(m_pBehaviorTree);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 }

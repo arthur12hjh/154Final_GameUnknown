@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "GorillaBlackBoard.h"
 
-CGorillaBlackBoard::CGorillaBlackBoard() : CBossBlackBoard()
+CGorillaBlackBoard::CGorillaBlackBoard() : CBlackBoard()
 {
 }
 
 HRESULT CGorillaBlackBoard::Initialize()
 {
-	if (FAILED(__super::Initialize(1)))
-		return E_FAIL;
+	// 여기서 구조체 초기화
+
 
 	return S_OK;
 }

@@ -28,14 +28,6 @@ namespace Engine
 
 	enum class CAMERASTATE		{ CAMERA_FOV, CAMERA_FAR, CAMERA_NEAR, END };
 	enum class OBJECT_TEAM		{ FRIENDLY, ENEMY, NEUTRAL, END };
-	enum class DIRECTION		{ LEFT,
-								  LEFT_FRONT,
-								  LEFT_BACK,
-								  RIGHT,
-								  RIGHT_FRONT,
-								  RIGHT_BACK,
-								  FRONT, 
-								  BACK, END};
 
 	enum class TEXTURE_TYPE {
 		NONE = 0,
