@@ -89,9 +89,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		return E_FAIL;
 
 	m_pShader->Begin(0);
-
 	pVIBuffer->Bind_Resources();
-
 	pVIBuffer->Render();
 
 	if (FAILED(m_pGameInstance->End_MRT()))

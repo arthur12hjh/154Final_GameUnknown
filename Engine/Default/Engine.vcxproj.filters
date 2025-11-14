@@ -310,6 +310,7 @@
     <ClInclude Include="..\Public\Entity.h">
       <Filter>01.Utility\02.GameObjects\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -929,6 +930,9 @@
     <Filter Include="01.Utility\02.GameObjects\Entity">
       <UniqueIdentifier>{66c00183-99f8-49e8-be94-c1f4de49cfba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Bloom\ShaderFile">
+      <UniqueIdentifier>{3a823ccd-5933-44fe-9521-f7a11b4332f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -951,6 +955,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Glow\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Bloom\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
