@@ -9,6 +9,7 @@
 
 #include "Gorilla.h"
 #include "Terrain.h"
+#include "Terrain_Sand.h"
 #include "Weapon.h"
 #include "Player.h"
 #include "Snow.h"
@@ -179,6 +180,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Village/Object/Vil_Bui03_04.bin", PreTransformMatrix))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Terrain_Sand */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Terrain_Sand"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Terrain/006_A_SM/006_A_SM.bin", PreTransformMatrix))))
+		return E_FAIL;
 	
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -313,6 +320,11 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Sky1 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/MapObj/Sky/T_skybox_06.png"), 1))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Texture_Snow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Snow"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
@@ -364,6 +376,11 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_Vil_Bui03_04 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Vil_Bui03_04"),
 		CVil_Bui03_04::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Terrain_Sand */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
+		CTerrain_Sand::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Snow */
@@ -424,7 +441,6 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-	//�̰� ������ �����۵�
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),

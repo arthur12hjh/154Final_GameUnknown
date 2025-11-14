@@ -253,6 +253,9 @@
     <Filter Include="97.ShaderFiles\UI">
       <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Terrain\Terrain_Sand">
+      <UniqueIdentifier>{967a6af0-4cca-484e-8d88-e62a56a35f96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -420,7 +423,6 @@
     <ClInclude Include="..\Public\PonyTail_Player.h">
       <Filter>02.GameObjects\Player\PonyTail</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Terrain_Sand.h" />
     <ClInclude Include="..\Public\Task_Wait.h">
       <Filter>50.Behavior\Task\Wait</Filter>
     </ClInclude>
@@ -453,6 +455,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Deco_AttackRange.h">
       <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain_Sand.h">
+      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -605,7 +610,6 @@
     <ClCompile Include="..\Private\PonyTail_Player.cpp">
       <Filter>02.GameObjects\Player\PonyTail</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Terrain_Sand.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp">
       <Filter>50.Behavior\Task\Wait</Filter>
     </ClCompile>
@@ -638,6 +642,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Deco_AttackRange.cpp">
       <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain_Sand.cpp">
+      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
