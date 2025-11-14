@@ -405,6 +405,11 @@ const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
 	return m_pRenderer->Get_Renderer_Matrix(eType);
 }
 
+HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
+{
+	return m_pRenderer->Set_ScreenSize(iSizeX, iSizeY);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
