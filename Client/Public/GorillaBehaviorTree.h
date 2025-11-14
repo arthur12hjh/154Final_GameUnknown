@@ -16,10 +16,6 @@ public:
 
 	virtual	void						Update(_float fTimeDelta);
 
-private:
-	CBehaviorNode*						m_pRootNode = nullptr;
-	CBlackBoard*						m_pBlackBoard = nullptr;
-
 private :
 	HRESULT								Ready_BlackBoard();
 	HRESULT								Ready_TreeNodes();

@@ -25,7 +25,6 @@ private:
 	virtual ~CBody_Player() = default;
 
 public:
-	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
 	_bool isFinish_Att();
 
 public:
@@ -38,8 +37,6 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	CModel*				m_pModelCom = { nullptr };	
-	CShader*			m_pShaderCom = { nullptr };
 	CCollider*			m_pColliderCom = { nullptr };
 
 private:

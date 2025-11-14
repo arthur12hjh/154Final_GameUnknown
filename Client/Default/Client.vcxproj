@@ -158,7 +158,9 @@
   <ItemGroup>
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
+    <ClInclude Include="..\public\BossBlackBoard.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
+    <ClInclude Include="..\public\DataManager.h" />
     <ClInclude Include="..\Public\ClientStruct.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\public\DebugCheatUI.h" />
@@ -170,9 +172,11 @@
     <ClInclude Include="..\Public\Face_Player.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\public\GameManager.h" />
+    <ClInclude Include="..\Public\GameStruct.h" />
     <ClInclude Include="..\Public\Gorilla.h" />
     <ClInclude Include="..\Public\GorillaBehaviorTree.h" />
     <ClInclude Include="..\Public\GorillaBlackBoard.h" />
+    <ClInclude Include="..\public\Gorilla_Body.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
     <ClInclude Include="..\public\ImGuiMain.h" />
     <ClInclude Include="..\public\ImGuiManager.h" />
@@ -221,14 +225,15 @@
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="GameStruct.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
+    <ClCompile Include="..\private\BossBlackBoard.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
+    <ClCompile Include="..\private\DataManager.cpp" />
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
@@ -241,6 +246,7 @@
     <ClCompile Include="..\Private\Gorilla.cpp" />
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp" />
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp" />
+    <ClCompile Include="..\private\Gorilla_Body.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

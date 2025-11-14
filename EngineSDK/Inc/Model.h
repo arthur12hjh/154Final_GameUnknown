@@ -44,7 +44,7 @@ public:
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 	}
 
-	void Set_Animation(const _char* szAnimationTag);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 

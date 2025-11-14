@@ -7,5 +7,7 @@ class ENGINE_DLL CStringHelper
 public :
 	static void ConvertWideToUTF(const WCHAR* _wstr, char* _Outstr = nullptr);
 	static void ConvertUTFToWide(const char* _str, WCHAR* _outwstr = nullptr);
+
+	static HRESULT	CSVRead(const char* pfilePath, vector<string>& pOut);
 };
 NS_END

@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "Task_GorillaAttack.h"
 
+#include "GameInstance.h"
+#include "BossBlackBoard.h"
+#include "BehaviorTree.h"
+#include "Entity.h"
+
 CTask_GorillaAttack::CTask_GorillaAttack() : CTask()
 {
 }
@@ -15,6 +20,15 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(const CBehaviorTree* pOwnerTre
 
 CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 {
+	auto pOwner = static_cast<CEntity*>(m_pOwnerTree->GetOwner());
+	auto pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
+
+	pOwner->Set_Animation(pBlackBoard->GetBossInfo().iAttackList[0].szAnimationName, false);
+	Safe_Release(pBlackBoard);
+
+	if (pOwner->Play_Animation(fTimeDelta))
+		return NODE_STATE::COMPLETE;
+
 	return NODE_STATE::RUNNING;
 }
 
