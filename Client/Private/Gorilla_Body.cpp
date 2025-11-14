@@ -1,87 +1,59 @@
 #include "pch.h"
-#include "Body_Player.h"
+#include "Gorilla_Body.h"
 
 #include "GameInstance.h"
 
-#include "Player.h"
-
-CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+CGorilla_Body::CGorilla_Body(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	CPartObject(pDevice, pContext)
 {
+
 }
 
-CBody_Player::CBody_Player(const CBody_Player& Prototype) 
-	: CPartObject{ Prototype }
-{
+CGorilla_Body::CGorilla_Body(const CGorilla_Body& Prototype) :
+	CPartObject(Prototype)
+{ 
 }
 
-_bool CBody_Player::isFinish_Att()
-{
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		return m_isAnimFinish;
-
-	return false;
-}
-
-HRESULT CBody_Player::Initialize_Prototype()
+HRESULT CGorilla_Body::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBody_Player::Initialize(void* pArg)
-{	
-	BODY_PLAYER_DESC* pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
-
-	m_pParentState = pDesc->pParentState;
-
+HRESULT CGorilla_Body::Initialize(void* pArg)
+{
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-
-	m_pModelCom->Set_AnimationIndex(1);
-
 	return S_OK;
 }
 
-void CBody_Player::Priority_Update(_float fTimeDelta)
+void CGorilla_Body::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
 }
 
-void CBody_Player::Update(_float fTimeDelta)
+void CGorilla_Body::Update(_float fTimeDelta)
 {
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		m_pModelCom->Set_AnimationIndex(0, false);
-	
-	if(*m_pParentState & CPlayer::STATE_IDLE)
-		m_pModelCom->Set_AnimationIndex(1);
-	
-	if (*m_pParentState & CPlayer::STATE_WALK)
-		m_pModelCom->Set_AnimationIndex(4);
-
-	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
-void CBody_Player::Late_Update(_float fTimeDelta)
+void CGorilla_Body::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	
+
 #endif
 }
 
-HRESULT CBody_Player::Render()
+HRESULT CGorilla_Body::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -105,7 +77,7 @@ HRESULT CBody_Player::Render()
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-		
+
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -114,14 +86,14 @@ HRESULT CBody_Player::Render()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Render_Shadow()
+HRESULT CGorilla_Body::Render_Shadow()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
-		return E_FAIL;	
-	
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
@@ -141,38 +113,44 @@ HRESULT CBody_Player::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Ready_Components()
+_bool CGorilla_Body::isFinish_Att()
 {
+	return _bool();
+}
+
+HRESULT CGorilla_Body::Ready_Components()
+{
+
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-	
+
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+	///* Com_Collider_Sphere */
+	//CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 
-	SphereDesc.fRadius = 0.5f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+	//SphereDesc.fRadius = 0.5f;
+	//SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+	//	TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CBody_Player::Bind_ShaderResources()
+HRESULT CGorilla_Body::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
-		return E_FAIL;	
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -181,34 +159,29 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGorilla_Body* CGorilla_Body::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Player* pInstance = new CBody_Player(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
+	CGorilla_Body* pGorilla_Body = new CGorilla_Body(pDevice, pContext);
+	if (FAILED(pGorilla_Body->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : pGraphic_Device");
-		Safe_Release(pInstance);
+		Safe_Release(pGorilla_Body);
+		MSG_BOX("Create Fail : Gorilla Body");
 	}
-
-	return pInstance;
+	return pGorilla_Body;
 }
 
-CGameObject* CBody_Player::Clone(void* pArg)
+CGameObject* CGorilla_Body::Clone(void* pArg)
 {
-	CBody_Player* pInstance = new CBody_Player(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
+	CGorilla_Body* pGorilla_Body = new CGorilla_Body(*this);
+	if (FAILED(pGorilla_Body->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBody_Player");
-		Safe_Release(pInstance);
+		Safe_Release(pGorilla_Body);
+		MSG_BOX("Clone Fail : Gorilla Body");
 	}
-
-	return pInstance;
+	return pGorilla_Body;
 }
 
-void CBody_Player::Free()
+void CGorilla_Body::Free()
 {
 	__super::Free();
-	Safe_Release(m_pColliderCom);
 }

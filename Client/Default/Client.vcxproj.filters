@@ -253,6 +253,15 @@
     <Filter Include="97.ShaderFiles\UI">
       <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="50.Behavior\BlackBoard">
+      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\CharacterManager">
+      <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Boss\Gorilla\Body">
+      <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -396,9 +405,6 @@
     <ClInclude Include="..\Public\ClientStruct.h">
       <Filter>99.Defines</Filter>
     </ClInclude>
-    <ClInclude Include="GameStruct.h">
-      <Filter>99.Defines\GameStruct</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIText.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIText</Filter>
     </ClInclude>
@@ -453,6 +459,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Deco_AttackRange.h">
       <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BossBlackBoard.h">
+      <Filter>50.Behavior\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameStruct.h">
+      <Filter>99.Defines\GameStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DataManager.h">
+      <Filter>10.GameManager\CharacterManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gorilla_Body.h">
+      <Filter>02.GameObjects\Boss\Gorilla\Body</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -638,6 +656,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Deco_AttackRange.cpp">
       <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BossBlackBoard.cpp">
+      <Filter>50.Behavior\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DataManager.cpp">
+      <Filter>10.GameManager\CharacterManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gorilla_Body.cpp">
+      <Filter>02.GameObjects\Boss\Gorilla\Body</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

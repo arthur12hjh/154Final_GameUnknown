@@ -2,11 +2,10 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class CGameInstance;
+
 class CThreadPool : public CBase
 {
-public :
-
-
 private:
 	CThreadPool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CThreadPool() = default;
@@ -33,6 +32,7 @@ public:
 private:
 	ID3D11Device*					m_pDevice = { nullptr };
 	ID3D11DeviceContext*			m_pContext = { nullptr };
+	CGameInstance*					m_pGameInstance = { nullptr };
 
 	_uint							m_iNumThread = {};
 	atomic<_uint>					m_iWorkdThread = {};
@@ -44,7 +44,10 @@ private:
 	mutex							m_Worker;
 
 	queue<ThreadJob>				m_ThreadJobs;
+
 	queue<ID3D11CommandList*>		m_CommandList;
+	queue<PROTOTYPE_DESC>			m_AddObjectList;
+	mutex							m_QueueLock;
 
 	_bool							m_bIsThreadStopAll = false;
 
