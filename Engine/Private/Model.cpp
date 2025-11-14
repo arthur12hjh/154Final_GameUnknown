@@ -110,7 +110,7 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 	return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop)
 {
 	_uint iAnimIndex = 0;
 	for (auto& pAnimation : m_Animations)
@@ -121,7 +121,7 @@ void CModel::Set_Animation(const _char* szAnimationTag)
 				return;
 
 			m_iCurrentAnimIndex = iAnimIndex;
-			m_isLoop = TRUE;
+			m_isLoop = isLoop;
 
 			m_Animations[m_iCurrentAnimIndex]->Reset();
 			return;

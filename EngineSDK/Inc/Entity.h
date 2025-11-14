@@ -14,10 +14,6 @@ protected:
 	virtual ~CEntity() = default;
 
 public:
-	CComponent* Get_Component(const _wstring& strPartTag, const _wstring& strComponentTag);
-	class CPartObject* Get_PartObject(const _wstring& strPartTag);
-
-public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 	virtual void Priority_Update(_float fTimeDelta);
@@ -34,10 +30,10 @@ public:
 	_bool Play_Animation(_float fTimeDelta);
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 
-	void Set_Animation(const _char* szAnimationTag);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true);
 
 protected:
-	class CModel* m_pBehaviorTree_BodyModelCom = { nullptr };
+	class CModel* m_pBodyModelCom = { nullptr };
 
 protected:
 	HRESULT Import_ModelPtr();

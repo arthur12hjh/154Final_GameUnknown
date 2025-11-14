@@ -1,11 +1,15 @@
 #include "ThreadPool.h"
 
+#include "GameInstance.h"
+
 CThreadPool::CThreadPool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
-	m_pContext(pContext)
+	m_pContext(pContext),
+	m_pGameInstance(CGameInstance::GetInstance())
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CThreadPool::Initialize(_uint iNumThread)
@@ -32,6 +36,15 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 
 void CThreadPool::Update_Async()
 {
+	while (!m_AddObjectList.empty())
+	{
+		auto Prototype = m_AddObjectList.front();
+		m_AddObjectList.pop();
+
+		m_pGameInstance->Add_Prototype(Prototype.iLevelID, Prototype.szPrototypeName, Prototype.pPrototype);
+	}
+
+
 	/*while (!m_CommandList.empty())
 	{
 		auto pCommandList = m_CommandList.front();
@@ -66,7 +79,7 @@ void CThreadPool::Update_WorkThread()
 		// 맨 앞의 job 을 뺀다.
 		THREAD_JOB job = move(m_ThreadJobs.front());
 		m_ThreadJobs.pop();
-	
+		lock.unlock();
 
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
@@ -74,7 +87,7 @@ void CThreadPool::Update_WorkThread()
 			m_iWorkdThread++;
 			job.JobFunction(&m_DefferdContexts[this_thread::get_id()]);
 		}
-		lock.unlock();
+	
 	}
 }
 
@@ -115,12 +128,20 @@ _bool CThreadPool::IsWorkThread()
 
 void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 {
-	auto Desc = m_DefferdContexts[ThreadID];
-	ID3D11CommandList* pCommandList = nullptr;
+	auto& Desc = m_DefferdContexts[ThreadID];
 
+	ID3D11CommandList* pCommandList = nullptr;
 	Desc.pContext->FinishCommandList(TRUE, &pCommandList);
-	m_CommandList.push(pCommandList);
 	m_iWorkdThread--;
+
+	unique_lock<mutex> lock(m_QueueLock);
+	m_CommandList.push(pCommandList);
+
+	for (auto& iter : Desc.pAddObejct)
+		m_AddObjectList.push(iter);
+
+	Desc.pAddObejct.clear();
+	lock.unlock();
 }
 
 CThreadPool* CThreadPool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, _uint iNumThread)
@@ -141,13 +162,22 @@ void CThreadPool::Free()
 	for (auto& Desc : m_DefferdContexts)
 		Safe_Release(Desc.second.pContext);
 
+
 	while (!m_CommandList.empty())
 	{
 		Safe_Release(m_CommandList.front());
 		m_CommandList.pop();
 	}
 
+	while (!m_AddObjectList.empty())
+	{
+		auto& Desc = m_AddObjectList.front();
+		m_AddObjectList.pop();
+		Safe_Release(Desc.pPrototype);
+	}
+
 	StopAllThread();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pGameInstance);
 }
