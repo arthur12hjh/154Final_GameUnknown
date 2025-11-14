@@ -86,6 +86,11 @@ CComponent* CGameObject::Find_Component(const _wstring& strComponentTag)
 	return iter->second;
 }
 
+void CGameObject::Set_Team(OBJECT_TEAM eTeam)
+{
+	m_eTeam = eTeam;
+}
+
 _bool CGameObject::IsFrustomCulling()
 {
 	return m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider);

@@ -60,10 +60,10 @@ void CBody_Player::Update(_float fTimeDelta)
 {
 	if (*m_pParentState & CPlayer::STATE_ATTACK)
 		m_pModelCom->Set_AnimationIndex(0, false);
-
+	
 	if(*m_pParentState & CPlayer::STATE_IDLE)
 		m_pModelCom->Set_AnimationIndex(1);
-
+	
 	if (*m_pParentState & CPlayer::STATE_WALK)
 		m_pModelCom->Set_AnimationIndex(4);
 

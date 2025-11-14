@@ -11,6 +11,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
+
 	}GAMEOBJECT_DESC;
 
 protected:
@@ -38,19 +39,24 @@ public:
 
 	class CComponent*			Find_Component(const _wstring& strComponentTag);
 
+	void						Set_Team(OBJECT_TEAM eTeam);
 	void						SetVisibility(VISIBILITY eVisiblility) {
 		m_eVisibility = eVisiblility;
 	}
 
-	const VISIBILITY&			GetVisibility() { return m_eVisibility;	}
-	CTransform*					GetTransform() { return m_pTransformCom; }
+	const VISIBILITY&							GetVisibility() { return m_eVisibility;	}
+	CTransform*									GetTransform() { return m_pTransformCom; }
 
-	_bool						IsFrustomCulling();
-	_float						Get_Depth();
-	CCollider*					GetCullingCollider() { return m_pCullingCollider; }
+	// 오브젝트의 속성을 받아올수 있음
+	OBJECT_TEAM									GetTeam() { return m_eTeam; }
+
+	_bool										IsFrustomCulling();
+	_float										Get_Depth();
+	CCollider*									GetCullingCollider() { return m_pCullingCollider; }
 
 protected:
 	int											m_iObjectID;
+	OBJECT_TEAM									m_eTeam = { OBJECT_TEAM::END };
 	_float										m_fDepth = {};
 
 	ID3D11Device*								m_pDevice = { nullptr };

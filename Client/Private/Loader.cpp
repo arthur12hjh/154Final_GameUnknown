@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Loader.h"
 
 #include "SpriteEffect.h"
@@ -7,8 +7,9 @@
 #include "Explosion.h"
 #include "ForkLift.h"
 
-#include "Monster.h"
+#include "Gorilla.h"
 #include "Terrain.h"
+#include "Terrain_Sand.h"
 #include "Weapon.h"
 #include "Player.h"
 #include "Snow.h"
@@ -33,7 +34,6 @@
 #include "UIButton.h"
 #include "UIText.h"
 
-// ·Îµå Å×½ºÆ®
 #include "Vil_Bui03_04.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -60,12 +60,8 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {	
 	m_eNextLevelID = eNextLevelID;
 
-	/* ¼¼¸¶Æ÷¾î, ¹ÂÅØ½º, Å©¸®Æ¼ÄÃ¼½¼Ç */
-
-	/* ÀÓ°è¿µ¿ª(Èü, µ¥ÀÌÅÍ, ÄÚµå)¿¡ Á¢±ÙÇÏ±âÀ§ÇÑ Å°¸¦ »ý¼ºÇÑ´Ù. */
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ½ÇÁ¦ ·ÎµùÀ» ¼öÇàÇÏ±âÀ§ÇÑ ½º·¹µå¸¦ »ý¼ºÇÑ´Ù. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -93,19 +89,19 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("ÅØ½ºÃÄ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ë©”ì‹œ ë¡œë”©ì¤‘.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
 
-		m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ì…°ì´ë” ë¡œë”©ì¤‘.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
 
-		m_strMessage = TEXT("³×ºñ°ÔÀÌ¼Ç¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ë„¤ë¹„ê²Œì´ì…˜ ë¡œë”©ì¤‘.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Navigation(pArg); });
 
-		m_strMessage = TEXT("¸ðµ¨¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("ì¸ìŠ¤í„´ì‹±ì¤‘.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
 
-		m_strMessage = TEXT("ÇÃ·¹ÀÌ¾î¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+		m_strMessage = TEXT("í”Œë ˆì´ì–´ê°€ ìž¬í›ˆì´í˜• ìž¡ìœ¼ëŸ¬ ê°€ëŠ”ì¤‘.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
@@ -129,13 +125,13 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Logo()
 {
-	m_strMessage = TEXT("ÅØ½ºÃÄ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("Loading.");
 
-	m_strMessage = TEXT("¸ðµ¨¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("Loading.");
 
-	m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("Loading.");
 	
-	m_strMessage = TEXT("°´Ã¼¿øÇü¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("Loading.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -143,7 +139,7 @@ HRESULT CLoader::Loading_For_Logo()
 	Loading_UI_For_Logo_Level();
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù..");
+	m_strMessage = TEXT("ì™„ë£Œ..");
 	m_isFinished = true;
 	return S_OK;
 }
@@ -184,6 +180,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Village/Object/Vil_Bui03_04.bin", PreTransformMatrix))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Terrain_Sand */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Terrain_Sand"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Terrain/006_A_SM/006_A_SM.bin", PreTransformMatrix))))
+		return E_FAIL;
 	
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -191,7 +193,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -222,7 +223,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("ÄÝ¶óÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -238,9 +238,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	
-
-	m_strMessage = TEXT("°´Ã¼¿øÇü¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -273,12 +270,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
-		CMonster::Create(m_pDevice, m_pContext))))
+		CGorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù..");
+	m_strMessage = TEXT("ì™„ë£Œ ë˜ì—ˆìŠµë‹ˆë‹¤..");
 	m_isFinished = true;
 
 	return S_OK;
@@ -321,6 +318,11 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Texture_Terrain_Mask */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Sky1 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/MapObj/Sky/T_skybox_06.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Snow */
@@ -374,6 +376,11 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_Vil_Bui03_04 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Vil_Bui03_04"),
 		CVil_Bui03_04::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Terrain_Sand */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
+		CTerrain_Sand::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Snow */
@@ -434,7 +441,6 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-	//ÀÌ°Å ½º·¹µå Áö¿¬ÀÛµ¿
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -483,7 +489,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance))))
 		return E_FAIL;
 
-	_matrix			PreTransformMatrix = XMMatrixIdentity();
+	_matrix PreTransformMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
@@ -507,13 +513,17 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/Gorilla.fbx", PreTransformMatrix))))
+		return E_FAIL;
+
 	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_UI_For_Logo_Level()
 {
-	m_strMessage = TEXT("UIÅØ½ºÃÄµé ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("UI ë¡œë”©ì¤‘ ìž…ë‹ˆë‹¤..");
 	/* For.Prototype_Component_UI_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
@@ -530,7 +540,6 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
-	m_strMessage = TEXT("UI°´Ã¼¿øÇüµé ·Îµù Áß ÀÔ´Ï´Ù.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;

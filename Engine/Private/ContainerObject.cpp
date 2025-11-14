@@ -2,6 +2,7 @@
 #include "PartObject.h"
 
 #include "GameInstance.h"
+#include "Entity.h"
 
 CContainerObject::CContainerObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CGameObject { pDevice, pContext }

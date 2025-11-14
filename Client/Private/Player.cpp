@@ -10,12 +10,12 @@
 #include "GameManager.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CContainerObject{pDevice, pContext}
+	: CEntity {pDevice, pContext}
 {
 }
 
 CPlayer::CPlayer(const CPlayer& Prototype)
-	: CContainerObject{ Prototype }
+	: CEntity{ Prototype }
 {
 }
 
@@ -112,6 +112,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 			m_iState ^= STATE_ATTACK;
 		}
 	}
+
 
 	__super::Late_Update(fTimeDelta); 
 	

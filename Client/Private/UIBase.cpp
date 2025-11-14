@@ -151,7 +151,7 @@ HRESULT CUIBase::Ready_Texture()
 	return S_OK;
 }
 
-
+#ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
@@ -204,6 +204,7 @@ HRESULT CUIBase::Bind_Debug_ShaderResources()
 
 	return S_OK;
 }
+#endif
 
 HRESULT CUIBase::Ready_Components()
 {

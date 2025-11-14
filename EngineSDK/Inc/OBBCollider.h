@@ -31,6 +31,7 @@ public:
 
 #ifdef _DEBUG
 	virtual HRESULT					Render() override;
+	virtual HRESULT					Render(_float4 vColor) override;
 #endif // _DBUG
 
 	const 	BoundingOrientedBox&	GetBounding() { return *m_Bounding; }

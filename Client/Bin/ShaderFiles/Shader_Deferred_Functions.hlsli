@@ -44,17 +44,14 @@ inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
 }
 
 /* 배럴 왜곡 이용해서 구현한거임. 내부 로직 바꾸고 싶으면 일단 디코로 따로 말해줘*/
-inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
-{   
-    /* 씬 텍스쳐 샘플링 */
-    float4 vScene = SceneTexture.Sample(DefaultSampler, vTexcoord);
-    
+inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
+{       
     /* 디스토션 렌더타겟 텍스쳐 샘플링 */
     float4 vDistortion = DistortionTexture.Sample(DefaultSampler, vTexcoord);
     
     /* r 성분을 디스토션할 성분으로 잡아놨으니까, r이 0이라면 리턴. */
     if(vDistortion.r == 0)
-        return vScene;
+        return vBackBuffer;
  
     // 0 ~ 1 -> -0.5 ~ 0.5
     float2 vCenteredUV = vTexcoord - float2(0.5f, 0.5f);
