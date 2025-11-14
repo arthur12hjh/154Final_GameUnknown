@@ -43,32 +43,21 @@ inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
     return vGlowColor;
 }
 
-inline float4 Calc_Outline(float4 vBackBuffer, texture2D OutlineTexture, float2 vTexcoord)
-{
-    float4 vOutline = OutlineTexture.Sample(DefaultSampler, vTexcoord);
-    
-    float4 vResult = lerp(vBackBuffer * vOutline, vBackBuffer, 0.4f);
-    return vResult;
-}
-
 /* 배럴 왜곡 이용해서 구현한거임. 내부 로직 바꾸고 싶으면 일단 디코로 따로 말해줘*/
-inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
-{   
-    /* 씬 텍스쳐 샘플링 */
-    float4 vScene = SceneTexture.Sample(DefaultSampler, vTexcoord);
-    
+inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
+{       
     /* 디스토션 렌더타겟 텍스쳐 샘플링 */
     float4 vDistortion = DistortionTexture.Sample(DefaultSampler, vTexcoord);
     
     /* r 성분을 디스토션할 성분으로 잡아놨으니까, r이 0이라면 리턴. */
     if(vDistortion.r == 0)
-        return vScene;
+        return vBackBuffer;
  
     // 0 ~ 1 -> -0.5 ~ 0.5
     float2 vCenteredUV = vTexcoord - float2(0.5f, 0.5f);
     float fDistortionFactor = 1 + vDistortion.g * vDistortion.r * vDistortion.r;
     //너무 낮은값 쓰면 찢어지는 효과 남. (같은 픽셀 계속 디스토션 돌려서)
-    fDistortionFactor = clamp(fDistortionFactor, 0.5f, 1.5f);
+    fDistortionFactor = clamp(fDistortionFactor, 0.2f, 2.0f);
 
     vCenteredUV *= fDistortionFactor;
     vCenteredUV += float2(0.5f, 0.5f);
@@ -76,8 +65,8 @@ inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTextur
     float4 vResult = SceneTexture.Sample(MirrorSampler, vCenteredUV);
 
     // 원래 색과 섞어.
-    float fFade = smoothstep(0.0f, 0.3f, vDistortion.r);
-    vResult.rgb = lerp(vScene.rgb, vResult.rgb, 0.8f * fFade);
+    //float fFade = (vDistortion.r > 0.0f) ? 1.0f : 0.0f;
+    //vResult.rgb = lerp(vScene.rgb, vResult.rgb, 0.8f * fFade);
     
     return vResult;
 }
