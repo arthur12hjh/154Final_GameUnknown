@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\asas.h" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\public\Bamboo.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
     <ClInclude Include="..\Public\ImGui\imgui.h" />
@@ -186,6 +187,19 @@
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\Reed1.h" />
+    <ClInclude Include="..\public\Reed2.h" />
+    <ClInclude Include="..\public\Reed3.h" />
+    <ClInclude Include="..\public\Reed4.h" />
+    <ClInclude Include="..\public\Rock1.h" />
+    <ClInclude Include="..\public\Rock2.h" />
+    <ClInclude Include="..\public\Rock3.h" />
+    <ClInclude Include="..\public\Rock4.h" />
+    <ClInclude Include="..\public\Rock5.h" />
+    <ClInclude Include="..\public\Rock6.h" />
+    <ClInclude Include="..\public\Rock7.h" />
+    <ClInclude Include="..\public\Rock8.h" />
+    <ClInclude Include="..\public\Stair.h" />
     <ClInclude Include="..\public\Terrain_Sand.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
@@ -197,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\private\Bamboo.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -235,6 +250,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\private\Reed1.cpp" />
+    <ClCompile Include="..\private\Reed2.cpp" />
+    <ClCompile Include="..\private\Reed3.cpp" />
+    <ClCompile Include="..\private\Reed4.cpp" />
+    <ClCompile Include="..\private\Rock1.cpp" />
+    <ClCompile Include="..\private\Rock2.cpp" />
+    <ClCompile Include="..\private\Rock3.cpp" />
+    <ClCompile Include="..\private\Rock4.cpp" />
+    <ClCompile Include="..\private\Rock5.cpp" />
+    <ClCompile Include="..\private\Rock6.cpp" />
+    <ClCompile Include="..\private\Rock7.cpp" />
+    <ClCompile Include="..\private\Rock8.cpp" />
+    <ClCompile Include="..\private\Stair.cpp" />
     <ClCompile Include="..\private\Terrain_Sand.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
@@ -256,6 +284,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

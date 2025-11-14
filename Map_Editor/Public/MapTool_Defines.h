@@ -15,7 +15,8 @@ namespace Tool_Map
 
 	enum class NAVI_MODE { NONE, ADD_POINT, ADD_CELL, DELETE_CELL, RESET_ALL, END };
 	enum class TOOL_MODE { MAP, LIGHT, CAMERA, END };
-	enum class ADD_OBJECT { VIL_BUI03_04, PLAYER, END };
+	enum class ADD_OBJECT { ROCK1, ROCK2, ROCK3, ROCK4, ROCK5, ROCK6, ROCK7, ROCK8, REED1, REED2, REED3, REED4, BAMBOO,
+						VIL_BUI03_04, STAIR, END };
 }
 
 using namespace Tool_Map;

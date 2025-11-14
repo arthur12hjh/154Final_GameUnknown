@@ -256,6 +256,12 @@
     <Filter Include="02.GameObjects\Terrain\Terrain_Sand">
       <UniqueIdentifier>{967a6af0-4cca-484e-8d88-e62a56a35f96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Environment">
+      <UniqueIdentifier>{ce156bc4-275a-4355-94a5-f59f41101cb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Environment\Reed">
+      <UniqueIdentifier>{825caf8c-d9a4-4e8a-9793-1b2691908023}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -459,6 +465,9 @@
     <ClInclude Include="..\Public\Terrain_Sand.h">
       <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Reed1.h">
+      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -645,6 +654,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Reed1.cpp">
+      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
