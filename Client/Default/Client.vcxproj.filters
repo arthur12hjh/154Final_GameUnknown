@@ -274,14 +274,23 @@
     <Filter Include="02.GameObjects\Map\Village\Obj\Vil_Bui03_04">
       <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Vending">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\InstanceModel">
       <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Enviornment">
-      <UniqueIdentifier>{8d7b2fb4-c948-4ddc-93f0-c407e0b34e43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\PhysicActor">
+    <Filter Include="02.GameObjects\Actor\ProbActor">
       <UniqueIdentifier>{e2fc6e3d-c95e-480a-82f6-a6097b896672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Box">
+      <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="11.Client_Component">
+      <UniqueIdentifier>{2c0dc1f9-2d3e-4fcd-a8f9-3fc4a6b963a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="11.Client_Component\Interaction">
+      <UniqueIdentifier>{2b1bfcba-12b8-4c13-9a47-2692930f08ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -495,6 +504,18 @@
     <ClInclude Include="..\Public\Terrain_Sand.h">
       <Filter>02.GameObjects\Map\Terrain\Terrain_Sand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Actor.h">
+      <Filter>02.GameObjects\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Prob_Box.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Vending.h">
+      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Interaction_Component.h">
+      <Filter>11.Client_Component\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -690,6 +711,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Map\Terrain\Terrain_Sand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Actor.cpp">
+      <Filter>02.GameObjects\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Prob_Box.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Vending.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interaction_Component.cpp">
+      <Filter>11.Client_Component\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

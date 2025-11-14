@@ -11,7 +11,11 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
+		_bool				bIsApplyTransform;
 
+		_float3				vScale;
+		_float3				vRotation;
+		_float3				vPosition;
 	}GAMEOBJECT_DESC;
 
 protected:

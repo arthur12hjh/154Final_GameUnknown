@@ -35,6 +35,19 @@
 
 #pragma endregion
 
+#pragma region Client Component
+#include "Interaction_Component.h"
+#pragma endregion
+
+#pragma region Prob
+#include "Prob_Box.h"
+
+
+#pragma region Interaction
+#include "Vending.h"
+#pragma endregion
+#pragma endregion
+
 
 #include "Instance_Model.h"
 #include "PxTestProp.h"
@@ -110,7 +123,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("네비게이션 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Navigation(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
@@ -296,6 +309,9 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+
+
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxNorTex");
 	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements);
@@ -398,6 +414,21 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Prob_Box */
+	_matrix PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	/*	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);*/
+
+	/* For.Prototype_Component_Model_Prob_Vending */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Vending");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Prob/Vending/Vending.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
@@ -492,7 +523,7 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
+HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
@@ -502,7 +533,20 @@ HRESULT CLoader::Loading_For_GamePlay_Navigation(void* pArg)
 	pProtoDesc.pPrototype = CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation2.bin"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* Prob. Box */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Box");
+	pProtoDesc.pPrototype = CProb_Box::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* Prob. Vending */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Vending");
+	pProtoDesc.pPrototype = CVending::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	Desc->OnCompleted(this_thread::get_id());
@@ -611,6 +655,24 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	Desc->OnCompleted(this_thread::get_id());
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
+	/* For.Prototype_Component_Interaction */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Interaction");
+	pProtoDesc.pPrototype = CInteraction_Component::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	Desc->OnCompleted(this_thread::get_id());
+
 	return S_OK;
 }
 

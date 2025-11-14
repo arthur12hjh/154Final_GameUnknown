@@ -156,6 +156,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\public\Instance_Model.h" />
+    <ClInclude Include="..\public\Interaction_Component.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -196,6 +198,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\MousePointer.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\public\Prob_Box.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="..\Public\UIHUD.h" />
     <ClInclude Include="..\Public\UIResourceStore.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\public\Vending.h" />
     <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
@@ -228,6 +232,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
@@ -274,6 +279,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Instance_Model.cpp" />
+    <ClCompile Include="..\private\Interaction_Component.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
@@ -284,6 +290,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\Prob_Box.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
@@ -306,6 +313,7 @@
     <ClCompile Include="..\Private\UIHUD.cpp" />
     <ClCompile Include="..\Private\UIResourceStore.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
