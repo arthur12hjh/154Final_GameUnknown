@@ -24,6 +24,8 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	auto pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
 
 	pOwner->Set_Animation(pBlackBoard->GetBossInfo().iAttackList[0].szAnimationName, false);
+	Safe_Release(pBlackBoard);
+
 	if (pOwner->Play_Animation(fTimeDelta))
 		return NODE_STATE::COMPLETE;
 
