@@ -178,6 +178,9 @@
     <Filter Include="97.ShaderFiles\Mouse">
       <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Terrain\Terrain_Sand">
+      <UniqueIdentifier>{967a6af0-4cca-484e-8d88-e62a56a35f96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -331,6 +334,9 @@
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
+    <ClInclude Include="..\public\Terrain_Sand.h">
+      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -468,6 +474,9 @@
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\private\Terrain_Sand.cpp">
+      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
