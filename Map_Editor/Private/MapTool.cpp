@@ -84,65 +84,14 @@ void CMapTool::Update(_float fTimeDelta)
 				_wstring layerTag = L"";
 				_wstring protoTag = L"";
 
-				if (m_eCurrentObject == ADD_OBJECT::VIL_BUI03_04)
+				if (m_eCurrentObject == ADD_OBJECT::PLAYER)
+				{
+					protoTag = TEXT("Prototype_GameObject_Player"); layerTag = TEXT("Layer_Player");
+				}
+
+				else if (m_eCurrentObject == ADD_OBJECT::VIL_BUI03_04)
 				{
 					protoTag = TEXT("Prototype_GameObject_Vil_Bui03_04"); layerTag = TEXT("Layer_Vil_Bui03_04");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK1)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock1"); layerTag = TEXT("Layer_Rock1");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK2)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock2"); layerTag = TEXT("Layer_Rock2");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK3)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock3"); layerTag = TEXT("Layer_Rock3");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK4)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock4"); layerTag = TEXT("Layer_Rock4");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK5)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock5"); layerTag = TEXT("Layer_Rock5");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK6)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock6"); layerTag = TEXT("Layer_Rock6");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK7)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock7"); layerTag = TEXT("Layer_Rock7");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::ROCK8)
-				{
-					protoTag = TEXT("Prototype_GameObject_Rock8"); layerTag = TEXT("Layer_Rock8");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::STAIR)
-				{
-					protoTag = TEXT("Prototype_GameObject_Stair"); layerTag = TEXT("Layer_Stair");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::REED1)
-				{
-					protoTag = TEXT("Prototype_GameObject_Reed1"); layerTag = TEXT("Layer_Reed1");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::REED2)
-				{
-					protoTag = TEXT("Prototype_GameObject_Reed2"); layerTag = TEXT("Layer_Reed2");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::REED3)
-				{
-					protoTag = TEXT("Prototype_GameObject_Reed3"); layerTag = TEXT("Layer_Reed3");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::REED4)
-				{
-					protoTag = TEXT("Prototype_GameObject_Reed4"); layerTag = TEXT("Layer_Reed4");
-				}
-				else if (m_eCurrentObject == ADD_OBJECT::BAMBOO)
-				{
-					protoTag = TEXT("Prototype_GameObject_Bamboo"); layerTag = TEXT("Layer_Bamboo");
 				}
 
 				hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag, ENUM_CLASS(LEVEL::VILLAGE), layerTag, nullptr);
@@ -209,47 +158,8 @@ void CMapTool::Update(_float fTimeDelta)
 				}
 			}
 		}
-
-		if (m_pLastAddedObject)
-		{
-			CTransform* pTransform = dynamic_cast<CTransform*>(m_pLastAddedObject->Find_Component(TEXT("Com_Transform")));
-			if (pTransform)
-			{
-				_vector vPosition = pTransform->Get_State(STATE::POSITION);
-
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
-				{
-					vPosition += pTransform->Get_State(STATE::LOOK) * 3.f * fTimeDelta;
-				}
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
-				{
-					vPosition -= pTransform->Get_State(STATE::LOOK) * 3.f * fTimeDelta;
-				}
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
-				{
-					vPosition -= pTransform->Get_State(STATE::RIGHT) * 3.f * fTimeDelta;
-				}
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
-				{
-					vPosition += pTransform->Get_State(STATE::RIGHT) * 3.f * fTimeDelta;
-				}
-
-				pTransform->Set_State(STATE::POSITION, vPosition);
-
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
-				{
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
-				}
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
-				{
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) - XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
-				}
-			}
-
-		}
-
-
 	}
+
 }
 
 void CMapTool::Late_Update(_float fTimeDelta)
@@ -358,95 +268,31 @@ HRESULT CMapTool::Render()
 	_int nSelectedBuilding = -1;
 	_int nSelectedEnvironment = -1;
 
-	const _char* environmentNames[] = { "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8", "Reed1", "Reed2", "Reed3", "Reed4", "Bamboo" };
 	const _char* modelNames[] = { "Player" };
-	const _char* buildingNames[] = { "Vil_Bui03_04", "Stair"};
+	const _char* buildingNames[] = { "Vil_Bui03_04" };
+	const _char* environmentNames[] = { "BirchTree1" };
 
-	if (ImGui::CollapsingHeader("Environments"))
+	if (ImGui::CollapsingHeader("Models"))
 	{
-		if (ImGui::ListBox("##Environments", &nSelectedEnvironment, environmentNames, IM_ARRAYSIZE(environmentNames), 7))
+		if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
 		{
-			if (nSelectedEnvironment == 0)
+			if (nSelectedModel == 0) // Player
 			{
-				m_eCurrentObject = ADD_OBJECT::ROCK1;
-				m_CurrentLayerName = TEXT("Layer_Rock1");
+				m_eCurrentObject = ADD_OBJECT::PLAYER;
+				m_CurrentLayerName = TEXT("Layer_Player");
 			}
-			else if (nSelectedEnvironment == 1)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK2;
-				m_CurrentLayerName = TEXT("Layer_Rock2");
-			}
-			else if (nSelectedEnvironment == 2)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK3;
-				m_CurrentLayerName = TEXT("Layer_Rock3");
-			}
-			else if (nSelectedEnvironment == 3)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK4;
-				m_CurrentLayerName = TEXT("Layer_Rock4");
-			}
-			else if (nSelectedEnvironment == 4)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK5;
-				m_CurrentLayerName = TEXT("Layer_Rock5");
-			}
-			else if (nSelectedEnvironment == 5)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK6;
-				m_CurrentLayerName = TEXT("Layer_Rock6");
-			}
-			else if (nSelectedEnvironment == 6)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK7;
-				m_CurrentLayerName = TEXT("Layer_Rock7");
-			}
-			else if (nSelectedEnvironment == 7)
-			{
-				m_eCurrentObject = ADD_OBJECT::ROCK8;
-				m_CurrentLayerName = TEXT("Layer_Rock8");
-			}
-			else if (nSelectedEnvironment == 8)
-			{
-				m_eCurrentObject = ADD_OBJECT::REED1;
-				m_CurrentLayerName = TEXT("Layer_Reed1");
-			}
-			else if (nSelectedEnvironment == 9)
-			{
-				m_eCurrentObject = ADD_OBJECT::REED2;
-				m_CurrentLayerName = TEXT("Layer_Reed2");
-			}
-			else if (nSelectedEnvironment == 10)
-			{
-				m_eCurrentObject = ADD_OBJECT::REED3;
-				m_CurrentLayerName = TEXT("Layer_Reed3");
-			}
-			else if (nSelectedEnvironment == 11)
-			{
-				m_eCurrentObject = ADD_OBJECT::REED4;
-				m_CurrentLayerName = TEXT("Layer_Reed4");
-			}
-			else if (nSelectedEnvironment == 12)
-			{
-				m_eCurrentObject = ADD_OBJECT::BAMBOO;
-				m_CurrentLayerName = TEXT("Layer_Bamboo");
-			}
+
 		}
 	}
 
 	if (ImGui::CollapsingHeader("Buildings"))
 	{
-		if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(buildingNames), 7))
+		if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(modelNames), 7))
 		{
 			if (nSelectedBuilding == 0) // Vil_Bui03_04
 			{
 				m_eCurrentObject = ADD_OBJECT::VIL_BUI03_04;
 				m_CurrentLayerName = TEXT("Layer_Vil_Bui03_04");
-			}
-			else if (nSelectedBuilding == 1) 
-			{
-				m_eCurrentObject = ADD_OBJECT::STAIR;
-				m_CurrentLayerName = TEXT("Layer_Stair");
 			}
 
 		}
@@ -710,26 +556,6 @@ HRESULT CMapTool::Save_Map_Objects()
 		}
 	}
 
-	list<CGameObject*>* pReed1 = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Reed1"));
-	_uint iNumReed1s = (pReed1) ? (_uint)pReed1->size() : 0;
-	ofs.write(reinterpret_cast<const char*>(&iNumReed1s), sizeof(_uint));
-
-	if (pReed1)
-	{
-		for (auto pObject : *pReed1)
-		{
-			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
-			if (pTransform)
-			{
-				SAVEDOBJECTINFO info;
-				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
-				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
-				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
-				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDOBJECTINFO));
-			}
-		}
-	}
-
 	ofs.close();
 
 	return S_OK;
@@ -763,54 +589,6 @@ HRESULT CMapTool::Load_Map_Objects()
 			{
 				CGameObject* pVil_Bui03_04 = pVil_Bui03_04s->back();
 				CTransform* pTransform = dynamic_cast<CTransform*>(pVil_Bui03_04->Find_Component(TEXT("Com_Transform")));
-				if (pTransform)
-				{
-					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-
-					_vector vScale = {};
-					_vector vRotation = {};
-					_vector vPosition = {};
-					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-
-					_float fX, fY, fZ;
-					fX = XMVectorGetX(vScale);
-					fY = XMVectorGetY(vScale);
-					fZ = XMVectorGetZ(vScale);
-
-					pTransform->Set_Scale(fX, fY, fZ);
-
-					pTransform->Set_State(STATE::POSITION, vPosition);
-
-					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-
-					pTransform->Set_State(STATE::RIGHT, matRotation.r[0]);
-					pTransform->Set_State(STATE::UP, matRotation.r[1]);
-					pTransform->Set_State(STATE::LOOK, matRotation.r[2]);
-
-				}
-			}
-		}
-	}
-
-	_uint iNumReed1s = 0;
-	ifs.read(reinterpret_cast<char*>(&iNumReed1s), sizeof(_uint));
-
-	for (_uint i = 0; i < iNumReed1s; ++i)
-	{
-		SAVEDOBJECTINFO info;
-		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
-
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Reed1"),
-			ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Reed1"));
-
-		if (SUCCEEDED(hr))
-		{
-			// Add_GameObject_ToLayer 호출 직후, 전체 리스트에서 마지막에 추가된 객체 가져오기
-			list<CGameObject*>* pReed1s = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Reed1"));
-			if (pReed1s && !pReed1s->empty())
-			{
-				CGameObject* pReed1 = pReed1s->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pReed1->Find_Component(TEXT("Com_Transform")));
 				if (pTransform)
 				{
 					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);

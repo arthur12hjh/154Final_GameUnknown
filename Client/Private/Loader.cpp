@@ -14,7 +14,6 @@
 #include "Player.h"
 #include "Snow.h"
 #include "Sky.h"
-#include "Reed1.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -179,19 +178,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_Component_Model_Vil_Bui03_04 */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Maps/Village/Object/Vil_Bui03_04.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Village/Object/Vil_Bui03_04.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Terrain_Sand */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Terrain_Sand"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Maps/Terrain/006_A_SM/006_A_SM.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Terrain/006_A_SM/006_A_SM.bin", PreTransformMatrix))))
 		return E_FAIL;
 	
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sky"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Maps/Sky/Sky1.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MapObj/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxNorTex */
@@ -323,7 +322,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Sky1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Maps/Sky/T_skybox_06.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/MapObj/Sky/T_skybox_06.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Snow */
@@ -402,11 +401,6 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		CInstance_Model::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Test_InstanceModel */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Reed1"),
-		CReed1::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_ForkLift */
@@ -516,17 +510,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	ModelDesc.PreModelMatrix = PreTransformMatrix;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Instance_Model_Dororong"),
-		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
-		return E_FAIL;
-
-	//CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1000;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(50.f, 0.f, 50.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Models/Maps/Scarlet/Reed/Reed1.bin";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Reed1"),
 		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
 		return E_FAIL;
 

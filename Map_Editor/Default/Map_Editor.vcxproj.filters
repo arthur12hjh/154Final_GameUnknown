@@ -85,24 +85,6 @@
     <Filter Include="02.GameObjects\Maps\Terrain">
       <UniqueIdentifier>{d1e75dee-19d8-4ce3-a95b-f83fd2773b6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Environment">
-      <UniqueIdentifier>{220623f4-659e-4966-a765-63e0e90fd0b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Environment\Rock">
-      <UniqueIdentifier>{b7a84164-49d9-4b58-a7c6-279bf0873745}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Architecture">
-      <UniqueIdentifier>{29bd1851-5aaf-43bb-b7dd-c61efab1d138}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Architecture\Stair">
-      <UniqueIdentifier>{52bd9914-c517-4f4a-9626-cae2dc602dc8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Environment\Reed">
-      <UniqueIdentifier>{8c196145-08e6-4253-8f9b-54f9ae59eb57}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Environment\Bamboo">
-      <UniqueIdentifier>{7bd8e978-841f-4cc2-93f2-ac05308feb29}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -195,48 +177,6 @@
     <ClInclude Include="..\public\Terrain_Sand.h">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rock1.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock8.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock2.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock3.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock4.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock5.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock6.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Rock7.h">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Stair.h">
-      <Filter>02.GameObjects\Maps\Architecture\Stair</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Bamboo.h">
-      <Filter>02.GameObjects\Maps\Environment\Bamboo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Reed1.h">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Reed2.h">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Reed3.h">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Reed4.h">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -308,48 +248,6 @@
     <ClCompile Include="..\private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rock1.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock2.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock3.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock4.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock5.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock6.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock7.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Rock8.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Rock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Stair.cpp">
-      <Filter>02.GameObjects\Maps\Architecture\Stair</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Bamboo.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Bamboo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Reed1.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Reed2.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Reed3.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Reed4.cpp">
-      <Filter>02.GameObjects\Maps\Environment\Reed</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Map_Editor.ico">
@@ -384,9 +282,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
