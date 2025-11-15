@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{2b75c767-6c83-46f6-9581-ac25248f6f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="100.ETC">
+      <UniqueIdentifier>{31a591cd-bca1-40ec-a5ee-1b29316c9e74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{7d8607d8-9217-4b7c-bfec-fce40452a8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{d02e7f01-13e0-408a-a173-cf48197c04bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels">
+      <UniqueIdentifier>{f5d3c756-84d8-4273-a363-0e8bbcad2a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\AnimationEditor">
+      <UniqueIdentifier>{7ec3e380-7078-450f-a755-fb46fbf6e102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects">
+      <UniqueIdentifier>{3832ad9d-9c7f-4a8e-ae62-7fad436e9855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\BackGround">
+      <UniqueIdentifier>{82b42957-2954-4f94-9b4c-89912c711a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera">
+      <UniqueIdentifier>{da06ccd5-c113-4611-a3e9-ca4c968a3992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Sky">
+      <UniqueIdentifier>{956671f2-4d46-46f4-91a9-553d85624441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager">
+      <UniqueIdentifier>{d4f667f0-b454-4bf4-baae-ead06a3a20d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{b8947364-43de-4202-9701-81c9be6faa4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Tool_Manager">
+      <UniqueIdentifier>{e8976998-46d6-4a94-a189-1483e17dd31d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\ImGui_Manager">
+      <UniqueIdentifier>{9f01378e-22c5-4643-aeee-945729f2d05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Loading">
+      <UniqueIdentifier>{b8888183-2923-44a1-a46f-f8738631ad8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Loading\Loader">
+      <UniqueIdentifier>{efb4ebab-8e16-4d8f-b87b-f8721c4423dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_AnimationEditor">
+      <UniqueIdentifier>{278879e8-5c91-4680-9d8f-9de552cbeac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\ImGui_Manager\ImGui">
+      <UniqueIdentifier>{c4842145-b227-46e4-9c84-f6c4a53d9153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\ModelTerrain">
+      <UniqueIdentifier>{68097011-e71f-4e65-94df-a49a1d1ba37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Manager\Character_Manager">
+      <UniqueIdentifier>{3ffabc8c-5ca1-460f-8b5c-f50877ef616e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity">
+      <UniqueIdentifier>{4de2656c-951f-420e-8d62-78be14dd4cd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character">
+      <UniqueIdentifier>{15d7d0af-4fe6-4bb5-be24-86c1ce57809f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Weapon">
+      <UniqueIdentifier>{f46d85b2-ef7b-4513-b5bd-98d5e04077e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Body_Character">
+      <UniqueIdentifier>{de4d02af-b8d0-40e5-bac8-4ce02dc170da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Face_Character">
+      <UniqueIdentifier>{138f0071-e657-4861-956b-919900fc5cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\Hair_Character">
+      <UniqueIdentifier>{689c4976-06c3-41b9-b315-a7f8f03df40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Character\PonyTail_Character">
+      <UniqueIdentifier>{87a9ca88-1cbf-4aca-9258-a4e79458f76c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Dororong">
+      <UniqueIdentifier>{0951333f-1b27-410e-92c3-1bfc613d3a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Dororong\Body_Dororong">
+      <UniqueIdentifier>{8f34aa76-baef-4133-920f-d400e08569d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Gigas">
+      <UniqueIdentifier>{e915b3e1-7722-40d9-8a5e-f834ad33695a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Gigas\Body_Gigas">
+      <UniqueIdentifier>{5917bbec-4e89-4c88-bf2d-71a508aba4d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation_Editor.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_AnimationEditor.h">
+      <Filter>01.Levels\AnimationEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>01.Levels\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui_Manager.h">
+      <Filter>03.Manager\ImGui_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Manager.h">
+      <Filter>03.Manager\Tool_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Editor_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_AnimationEditor.h">
+      <Filter>02.GameObjects\Camera\Camera_AnimationEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loader.h">
+      <Filter>01.Levels\Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BackGround.h">
+      <Filter>02.GameObjects\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character.h">
+      <Filter>02.GameObjects\Entity\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sky.h">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon.h">
+      <Filter>02.GameObjects\Entity\Character\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Character.h">
+      <Filter>02.GameObjects\Entity\Character\Body_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imconfig.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imgui.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imgui_impl_dx11.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imgui_impl_win32.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imgui_internal.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imstb_rectpack.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imstb_textedit.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\imstb_truetype.h">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelTerrain.h">
+      <Filter>02.GameObjects\ModelTerrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character_Manager.h">
+      <Filter>03.Manager\Character_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Face_Character.h">
+      <Filter>02.GameObjects\Entity\Character\Face_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hair_Character.h">
+      <Filter>02.GameObjects\Entity\Character\Hair_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PonyTail_Character.h">
+      <Filter>02.GameObjects\Entity\Character\PonyTail_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Dororong.h">
+      <Filter>02.GameObjects\Entity\Dororong\Body_Dororong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dororong.h">
+      <Filter>02.GameObjects\Entity\Dororong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gigas.h">
+      <Filter>02.GameObjects\Entity\Gigas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Gigas.h">
+      <Filter>02.GameObjects\Entity\Gigas\Body_Gigas</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation_Editor.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_AnimationEditor.cpp">
+      <Filter>01.Levels\AnimationEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>01.Levels\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImGui_Manager.cpp">
+      <Filter>03.Manager\ImGui_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Manager.cpp">
+      <Filter>03.Manager\Tool_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_AnimationEditor.cpp">
+      <Filter>02.GameObjects\Camera\Camera_AnimationEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loader.cpp">
+      <Filter>01.Levels\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGround.cpp">
+      <Filter>02.GameObjects\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character.cpp">
+      <Filter>02.GameObjects\Entity\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sky.cpp">
+      <Filter>02.GameObjects\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon.cpp">
+      <Filter>02.GameObjects\Entity\Character\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Character.cpp">
+      <Filter>02.GameObjects\Entity\Character\Body_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_demo.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_draw.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_dx11.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_impl_win32.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_tables.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\imgui_widgets.cpp">
+      <Filter>03.Manager\ImGui_Manager\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelTerrain.cpp">
+      <Filter>02.GameObjects\ModelTerrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character_Manager.cpp">
+      <Filter>03.Manager\Character_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Face_Character.cpp">
+      <Filter>02.GameObjects\Entity\Character\Face_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hair_Character.cpp">
+      <Filter>02.GameObjects\Entity\Character\Hair_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PonyTail_Character.cpp">
+      <Filter>02.GameObjects\Entity\Character\PonyTail_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Dororong.cpp">
+      <Filter>02.GameObjects\Entity\Dororong\Body_Dororong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dororong.cpp">
+      <Filter>02.GameObjects\Entity\Dororong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gigas.cpp">
+      <Filter>02.GameObjects\Entity\Gigas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Gigas.cpp">
+      <Filter>02.GameObjects\Entity\Gigas\Body_Gigas</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+    <Image Include="Animation_Editor.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Animation_Editor.rc">
+      <Filter>100.ETC</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
