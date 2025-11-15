@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{6c5b2804-596e-4609-9f10-6f7976f07e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{de8e6fd8-bd26-4a97-a09c-1341d4dd0900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="100.ETC">
+      <UniqueIdentifier>{a739dc7e-cad1-47e5-b46a-d912dc326c55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{b4770944-1ade-465a-8d68-0d99365a6b2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{c7db1a89-7bfd-4f0c-8b15-92e50e65fd9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI">
+      <UniqueIdentifier>{bf8664cc-d39a-4497-9dd3-f077dfec6547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source">
+      <UniqueIdentifier>{8e8d6899-209f-4658-b7f1-da0fee3e532b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source\public">
+      <UniqueIdentifier>{c325e180-aa8f-4725-94cc-bb6ecb535d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source\private">
+      <UniqueIdentifier>{2fe074cb-feea-444f-963e-15c5ecff1a3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\ui">
+      <UniqueIdentifier>{cb1eac07-6644-4105-8c7e-f0efb630a66f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\ui\Img_Manager">
+      <UniqueIdentifier>{2d707e85-fc92-402b-8616-d24439dc40d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\ui\Img">
+      <UniqueIdentifier>{bbef63ca-0336-49c3-9736-8fd8212e31ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\ui\Img\Particle_Setting">
+      <UniqueIdentifier>{3e6710d8-4a98-4689-abaa-5e81a4f325c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object">
+      <UniqueIdentifier>{57b29254-a597-4420-80c5-772f30596b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Effect">
+      <UniqueIdentifier>{953fa99b-246a-4ff6-a041-8c3c1571f690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Camera">
+      <UniqueIdentifier>{c09d1af2-b92b-4caf-88f6-d90fd937fd5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Sky">
+      <UniqueIdentifier>{c793a25c-d798-42f1-aaf2-567bfe18ae04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Effect\MeshEffect">
+      <UniqueIdentifier>{cbbbacbe-c599-4be1-a253-abbe42e76429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Effect\Particle">
+      <UniqueIdentifier>{0ee71ead-72cc-4b08-a74a-7e438380d15f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{b0e0bcb2-c951-4d53-8d2c-096bf3aecf3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels">
+      <UniqueIdentifier>{0760b8a1-b4f6-418f-ad6c-4c71f0621e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Loading">
+      <UniqueIdentifier>{5964d2fa-151f-4169-8f9d-2a4f581e0db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Loading\Loader">
+      <UniqueIdentifier>{c093dc71-724b-4c7d-893c-4a886b6f115a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\01.Levels\Tool">
+      <UniqueIdentifier>{8b4871d6-a2e2-4638-9c57-2e7d84706571}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\pch.h">
+      <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect_Editor.h">
+      <Filter>100.ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imconfig.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_impl_dx11.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_impl_win32.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imgui_internal.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_rectpack.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_textedit.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui\imstb_truetype.h">
+      <Filter>30.ImgUI\source\public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool_Effect_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Loading.h">
+      <Filter>02.Object\01.Levels\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Loader.h">
+      <Filter>02.Object\01.Levels\Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Tool.h">
+      <Filter>02.Object\01.Levels\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImgBase.h">
+      <Filter>30.ImgUI\ui\Img</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Img_Manager.h">
+      <Filter>30.ImgUI\ui\Img_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Particle_Setting.h">
+      <Filter>30.ImgUI\ui\Img\Particle_Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02.Object\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Free.h">
+      <Filter>02.Object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MeshEffect.h">
+      <Filter>02.Object\Effect\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Particle.h">
+      <Filter>02.Object\Effect\Particle</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Effect_Editor.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>100.ETC</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Effect_Editor.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\pch.cpp">
+      <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui_draw.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui_impl_dx11.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui_impl_win32.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui_widgets.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\imgui_tables.cpp">
+      <Filter>30.ImgUI\source\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Loading.cpp">
+      <Filter>02.Object\01.Levels\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Loader.cpp">
+      <Filter>02.Object\01.Levels\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Tool.cpp">
+      <Filter>02.Object\01.Levels\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImgBase.cpp">
+      <Filter>30.ImgUI\ui\Img</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Img_Manager.cpp">
+      <Filter>30.ImgUI\ui\Img_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Particle_Setting.cpp">
+      <Filter>30.ImgUI\ui\Img\Particle_Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02.Object\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Free.cpp">
+      <Filter>02.Object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MeshEffect.cpp">
+      <Filter>02.Object\Effect\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Particle.cpp">
+      <Filter>02.Object\Effect\Particle</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Effect_Editor.rc">
+      <Filter>100.ETC</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
