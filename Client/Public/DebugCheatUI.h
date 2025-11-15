@@ -39,6 +39,7 @@ private:
 	_float						m_fGameSpeed = {1.f};
 	_bool						m_bIsCamLerp = false;
 	_bool						m_bIsTeleport = false;
+	_bool						m_ShowLightInfo = false;
 #endif // _DEBUG
 
 private :

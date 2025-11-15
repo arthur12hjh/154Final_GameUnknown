@@ -141,6 +141,7 @@ void CDebugCheatUI::DrawLightDebug()
 
     if (m_pSelectLight)
     {
+        ImGui::Checkbox("Show Light Info ", &m_ShowLightInfo);
         if (ImGui::BeginCombo("VISIBILITY", m_szVisbility))
         {
             for (_uint i = 0; i < ENUM_CLASS(VISIBILITY::END); ++i)
@@ -156,7 +157,44 @@ void CDebugCheatUI::DrawLightDebug()
             }
             ImGui::EndCombo();
         }
+
+#pragma region Light Info
+        if (m_ShowLightInfo)
+        {
+            ImGui::Begin("LIGHT INFO");
+            ImGui::Text("Type :");
+            ImGui::SameLine();
+            auto pLightInfo = m_pSelectLight->Get_LightDesc();
+            switch (pLightInfo->eType)
+            {
+            case LIGHT_TYPE::DIRECTIONAL:
+                ImGui::Text("DIRECTIONAL");
+                break;
+            case LIGHT_TYPE::POINT:
+                ImGui::Text("POINT");
+                break;
+            case LIGHT_TYPE::SPOT:
+                ImGui::Text("SPOT");
+                break;
+            }
+            ImGui::Separator();
+            ImGui::Text("Diffuse : %.2f %.2f %.2f %.2f", pLightInfo->vDiffuse.x, pLightInfo->vDiffuse.y, pLightInfo->vDiffuse.z, pLightInfo->vDiffuse.w);
+            ImGui::Separator();
+            ImGui::Text("Ambient : %.2f %.2f %.2f %.2f", pLightInfo->vAmbient.x, pLightInfo->vAmbient.y, pLightInfo->vAmbient.z, pLightInfo->vAmbient.w);
+            ImGui::Separator();
+            ImGui::Text("Specular : %.2f %.2f %.2f %.2f", pLightInfo->vSpecular.x, pLightInfo->vSpecular.y, pLightInfo->vSpecular.z, pLightInfo->vSpecular.w);
+            ImGui::Separator();
+            if (LIGHT_TYPE::DIRECTIONAL == pLightInfo->eType)
+            {
+                ImGui::Text("Direction : %.2f %.2f %.2f %.2f", pLightInfo->vDirection.x, pLightInfo->vDirection.y, pLightInfo->vDirection.z, pLightInfo->vDirection.w);
+                ImGui::Separator();
+            }
+            ImGui::Text("vPosition : %.2f %.2f %.2f %.2f", pLightInfo->vPosition.x, pLightInfo->vPosition.y, pLightInfo->vPosition.z, pLightInfo->vPosition.w);
+            ImGui::End();
+        }
+#pragma endregion
     }
+
 #endif // _DEBUG
 }
 
