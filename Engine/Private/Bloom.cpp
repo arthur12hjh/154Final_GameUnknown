@@ -10,65 +10,14 @@ CBloom::CBloom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CBloom::Initialize()
 {
+    m_vOriginScreenSize = m_pGameInstance->GetScreenSize();
+
     /* 셰이더 파일 로딩 */
     m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred_Bloom.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
     if (nullptr == m_pShader)
         return E_FAIL;
 
-    /* 스크린 사이즈는 미리 바인딩 한다. */
-    _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vScreenSize.x, sizeof(_int))))
-        return E_FAIL;
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vScreenSize.y, sizeof(_int))))
-        return E_FAIL;
-
-    // 다운 샘플 4x4 
-    /* Target_BloomDownSample4x4. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomDownSample4x4"), vScreenSize.x / 4, vScreenSize.y / 4, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(1.0f, 0.0f, 0.0f, 1.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomDownSample4x4"), TEXT("Target_BloomDownSample4x4"))))
-        return E_FAIL;
-
-    // 다운 샘플 5x5 (최종 20x20)
-    /* Target_BloomDownSample20x20. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomDownSample20x20"), vScreenSize.x / 20, vScreenSize.y / 20, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomDownSample20x20"), TEXT("Target_BloomDownSample20x20"))))
-        return E_FAIL;
-
-    // 다운 샘플 5x5 (최종 20x20)
-    /* Target_BloomDownSample20x20. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomDownSample20x20_Final"), vScreenSize.x / 20, vScreenSize.y / 20, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomDownSample20x20_Final"), TEXT("Target_BloomDownSample20x20_Final"))))
-        return E_FAIL;
-
-
-    // 업 샘플 5x5 1번 더. (최종 4x4)
-    /* Target_BloomUpSample4x4. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomUpSample4x4"), vScreenSize.x / 4, vScreenSize.y / 4, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomUpSample4x4"), TEXT("Target_BloomUpSample4x4"))))
-        return E_FAIL;
-
-    // 업 샘플에 블러 먹여.
-    /* Target_BloomUpSample4x4_BlurX */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomUpSample4x4_BlurX"), vScreenSize.x / 4, vScreenSize.y / 4, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomUpSample4x4_BlurX"), TEXT("Target_BloomUpSample4x4_BlurX"))))
-        return E_FAIL;
-
-    /* Target_BloomUpSample4x4_BlurY */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomUpSample4x4_BlurY"), vScreenSize.x / 4, vScreenSize.y / 4, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BloomUpSample4x4_BlurY"), TEXT("Target_BloomUpSample4x4_BlurY"))))
-        return E_FAIL;
-
-    // 최종 렌더타겟. 
-    /* Target_Bloom_Final */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 1.0f, 0.0f, 1.0f))))
-        return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Bloom_Final"), TEXT("Target_Bloom_Final"))))
+    if (FAILED(Ready_RenderTargets()))
         return E_FAIL;
 
     if (FAILED(Ready_DSVs()))
@@ -77,152 +26,21 @@ HRESULT CBloom::Initialize()
     return S_OK;
 }
 
-HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRenderTargetTag)
+HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRenderTargetTag)
 {
-    _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
+    /* 과정 1. 전체 다운 샘플링 수행먼저해주고..*/
+    /* 과정 2. 업 샘플링 할떄마다 블러처리 해서 누적 가산한 뒤 처리*/
 
-#pragma region DOWN_SAMPLE_4x4
-    /* 다운 샘플링 4x4 수행.*/
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomDownSample4x4"), m_p4x4SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 4, vScreenSize.y / 4);
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    /* 캡쳐된 화면을 바인딩. */
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::CURVE));	
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
+#pragma region DOWN_SAMPLE
+    DownSampling(pVIBuffer, strSceneRenderTargetTag);
 #pragma endregion
 
-#pragma region DOWN_SAMPLE_20x20
-    /* 다운 샘플링 6x6 수행. (최종 24x24) */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomDownSample20x20"), m_p20x20SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 20, vScreenSize.y / 20);
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    /* 4x4 다운 샘플링된 화면을 바인딩. */
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomDownSample4x4"), m_pShader, "g_SceneTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING_BLUR_X));
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
+#pragma region BLUR
+    MiddleBlur(pVIBuffer);
 #pragma endregion
 
-#pragma region DOWN_SAMPLE_20x20_FINAL
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomDownSample20x20_Final"), m_p20x20SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 20, vScreenSize.y / 20);
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomDownSample20x20"), m_pShader, "g_SceneTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING_BLUR_Y));
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-#pragma endregion
-
-#pragma region UP_SAMPLE_4x4
-    /* 다운 샘플링 24x24 에 대해 블러처리. */
-    /* 이전 단계 텍스쳐도 누적 (additive) 해서 블러처리 해야됨. */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomUpSample4x4"), m_p4x4SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 4, vScreenSize.y / 4);
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-#pragma endregion
-
-#pragma region UP_SAMPLE_4x4_BLUR_X
-    /* 다운 샘플링 24x24 에 대해 블러 X 처리. */
-    /* 이전 단계 텍스쳐도 누적 (additive) 해서 블러처리 해야됨. */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomUpSample4x4_BlurX"), m_p4x4SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 4, vScreenSize.y / 4);
-
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    _uint2 vNewScreenSize = _uint2(vScreenSize.x / 4, vScreenSize.y / 4);
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
-        return E_FAIL;
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomUpSample4x4"), m_pShader, "g_SceneTexture")))
-        return E_FAIL;
-
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomDownSample20x20_Final"), m_pShader, "g_SourTexture")))
-        return E_FAIL;
-
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::ADDITIVE_BLUR_X));
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-#pragma endregion
-
-#pragma region UP_SAMPLE_4x4_BLUR_Y
-    /* 다운 샘플링 24x24 에 대해 블러 Y 처리. */
-    /* 이전 단계 텍스쳐도 누적 (additive) 해서 블러처리 해야됨. */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_BloomUpSample4x4_BlurY"), m_p4x4SampleDSV)))
-        return E_FAIL;
-
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x / 4, vScreenSize.y / 4);
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-    vNewScreenSize = _uint2(vScreenSize.x / 4, vScreenSize.y / 4);
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
-        return E_FAIL;
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomUpSample4x4_BlurX"), m_pShader, "g_SceneTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::ADDITIVE_BLUR_Y));
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
+#pragma region UP_SAMPLE
+    UpSampling(pVIBuffer);
 #pragma endregion
 
 #pragma region FINAL
@@ -230,18 +48,17 @@ HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRenderTarge
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Bloom_Final"))))
         return E_FAIL;
 
-    m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
-    vNewScreenSize = _uint2(vScreenSize.x, vScreenSize.y);
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
+    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x, m_vOriginScreenSize.y);
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vOriginScreenSize.x, sizeof(_int))))
         return E_FAIL;
-    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &m_vOriginScreenSize.y, sizeof(_int))))
         return E_FAIL;
 
     m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
     m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
     m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_BloomUpSample4x4_BlurY"), m_pShader, "g_SceneTexture")))
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(m_strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
         return E_FAIL;
 
     m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
@@ -267,12 +84,6 @@ HRESULT CBloom::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 #ifdef _DEBUG
 HRESULT CBloom::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
-    if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_BloomUpSample4x4_BlurX"), 150.f, 150.f, 300, 300)))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_BloomUpSample4x4_BlurY"), 450.f, 150.f, 300, 300)))
-        return E_FAIL;
-
     if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Bloom_Final"), 750.f, 150.f, 300, 300)))
         return E_FAIL;
 
@@ -281,34 +92,60 @@ HRESULT CBloom::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 
 HRESULT CBloom::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 {
-    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_BloomUpSample4x4_BlurX"), pShader, pVIBuffer)))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_BloomUpSample4x4_BlurY"), pShader, pVIBuffer)))
-        return E_FAIL;
-
     if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Bloom_Final"), pShader, pVIBuffer)))
         return E_FAIL;
 
 
     return S_OK;
 }
+
 #endif
+
+HRESULT CBloom::Ready_RenderTargets()
+{
+    //블룸 레벨이 3이고, 샘플레벨이 3이라면,
+    //3x3, 6x6, 9x9 렌더타겟들이 생성된다.
+    for (_uint i = 0; i < m_iBloomLevel; i++)
+    {
+        for (_uint j = 0; j < 8; j+=2)
+        {
+            _wstring strRenderTargetTag = m_strRenderTargetTags[j] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
+            _wstring strMRTTag = m_strRenderTargetTags[j+1] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
+            
+            // 다운 샘플
+            /* Target_BloomDownSample4x4. */
+            if (FAILED(m_pGameInstance->Add_RenderTarget(strRenderTargetTag, m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+                return E_FAIL;
+            if (FAILED(m_pGameInstance->Add_MRT(strMRTTag, strRenderTargetTag)))
+                return E_FAIL;
+        }
+    }
+
+    // 최종 렌더타겟. 
+    /* Target_Bloom_Final */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom_Final"), m_vOriginScreenSize.x, m_vOriginScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Bloom_Final"), TEXT("Target_Bloom_Final"))))
+        return E_FAIL;
+
+    return S_OK;
+}
 
 HRESULT CBloom::Ready_DSVs()
 {
     if (nullptr == m_pDevice)
         return E_FAIL;
 
-    ID3D11Texture2D* pDepthStencilTexture = nullptr;
+    ID3D11DepthStencilView* pDSV = { nullptr };
+    ID3D11Texture2D* pDepthStencilTexture = { nullptr };
     D3D11_TEXTURE2D_DESC	TextureDesc;
     ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
     /* 깊이 버퍼의 픽셀은 백버퍼의 픽셀과 갯수가 동일해야만 깊이 텍스트가 가능해진다. */
     /* 픽셀의 수가 다르면 아에 렌더링을 못함. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
-    TextureDesc.Width = vScreenSize.x / 4;
-    TextureDesc.Height = vScreenSize.y / 4 ;
+    TextureDesc.Width = vScreenSize.x;
+    TextureDesc.Height = vScreenSize.y;
     TextureDesc.MipLevels = 1;
     TextureDesc.ArraySize = 1;
     TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -321,19 +158,236 @@ HRESULT CBloom::Ready_DSVs()
     TextureDesc.CPUAccessFlags = 0;
     TextureDesc.MiscFlags = 0;
 
-    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
-        return E_FAIL;
-    if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_p4x4SampleDSV)))
-        return E_FAIL;
-    Safe_Release(pDepthStencilTexture);
+    for (_uint i = 0; i < m_iBloomLevel; ++i)
+    {
+        TextureDesc.Width = vScreenSize.x / (m_iSampleLevel * (i + 1));
+        TextureDesc.Height = vScreenSize.y / (m_iSampleLevel * (i + 1));
 
-    TextureDesc.Width = vScreenSize.x / 20;
-    TextureDesc.Height = vScreenSize.y / 20;
-    if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+        if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+            return E_FAIL;
+        if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &pDSV)))
+            return E_FAIL;
+        Safe_Release(pDepthStencilTexture);
+
+        m_pDSVs.push_back(pDSV);
+    }
+
+    return S_OK;
+}
+
+HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRenderTargetTag)
+{
+    //블룸 레벨이 3이고, 샘플레벨이 3이라면,
+    //3x3, 6x6, 9x9 렌더타겟들에 대해 다운 샘플링을 수행한다.
+
+    for (_uint i = 0; i < m_iBloomLevel; ++i)
+    {
+        _wstring strPreRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * i) + TEXT("x") + to_wstring(m_iSampleLevel * i);
+        _wstring strRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
+        _wstring strMRTTag = m_strRenderTargetTags[1] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
+
+        /* 다운 샘플링 4x4 수행.*/
+        if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[i])))
+            return E_FAIL;
+
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)));
+        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+        /* 캡쳐된 화면을 바인딩. */
+        if (0 == i)
+        {
+            if (FAILED(m_pGameInstance->Bind_RenderTarget(strSceneRenderTargetTag, m_pShader, "g_SceneTexture")))
+                return E_FAIL;
+
+            m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::CURVE));
+        }
+        /* 이전 렌더타겟을 바인딩. */
+        else
+        {
+            if (FAILED(m_pGameInstance->Bind_RenderTarget(strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
+                return E_FAIL;
+
+            m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
+        }
+
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+HRESULT CBloom::MiddleBlur(CVIBuffer* pVIBuffer)
+{
+    //블룸 레벨이 3이고, 샘플레벨이 3이라면,
+    //9x9에 대해 블러 처리만 수행해준다.
+
+    //샘플링. 
+    _wstring strRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+    _wstring strMRTTag = m_strRenderTargetTags[1] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+    _wstring strBlurXRenderTargetTag = m_strRenderTargetTags[4] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+    _wstring strBlurXMRTTag = m_strRenderTargetTags[5] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+    _wstring strBlurYRenderTargetTag = m_strRenderTargetTags[6] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+    _wstring strBlurYMRTTag = m_strRenderTargetTags[7] + to_wstring(m_iBloomLevel * m_iSampleLevel) + TEXT("x") + to_wstring(m_iBloomLevel * m_iSampleLevel);
+
+    /* 마지막에 샘플링 된 녀석 블러 처리. */
+    if (FAILED(m_pGameInstance->Begin_MRT(strBlurXMRTTag, m_pDSVs[m_iBloomLevel - 1])))
         return E_FAIL;
-    if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_p20x20SampleDSV)))
+
+    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+    _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
         return E_FAIL;
-    Safe_Release(pDepthStencilTexture);
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+        return E_FAIL;
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(strRenderTargetTag, m_pShader, "g_SceneTexture")))
+        return E_FAIL;
+
+    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING_BLUR_X));
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->End_MRT()))
+        return E_FAIL;
+
+    // 블러 Y 처리 
+    if (FAILED(m_pGameInstance->Begin_MRT(strBlurYMRTTag, m_pDSVs[m_iBloomLevel - 1])))
+        return E_FAIL;
+
+    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+    vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
+        return E_FAIL;
+    if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+        return E_FAIL;
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(strBlurXRenderTargetTag, m_pShader, "g_SceneTexture")))
+        return E_FAIL;
+
+    m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING_BLUR_Y));
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->End_MRT()))
+        return E_FAIL;
+        
+    m_strPreRenderTargetTag = strBlurYRenderTargetTag;
+
+    return S_OK;
+}
+
+HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
+{
+    //블룸 레벨이 3이고, 샘플레벨이 3이라면,
+    //9x9를 가산하여 6x6 업샘플링,
+    //6x6을 가산하여 3x3 업샘플링을 수행,
+    //
+    //레벨이 2이라면 1번 돌아야함.
+
+    for (_uint i = 0; i < m_iBloomLevel - 1; ++i)
+    {
+        // 현재 처리할 레벨에 해당하는 텍스처 태그들 계산
+        // 예를 들어, m_iBloomLevel이 3이고 m_iSampleLevel이 3일 때
+        // i=0이면 (m_iBloomLevel - (i + 1)) = 2. 즉 6x6 스케일 텍스처를 처리.
+        // i=1이면 (m_iBloomLevel - (i + 1)) = 1. 즉 3x3 스케일 텍스처를 처리.
+        _uint  iCurrentSampleLevelMultiplier = m_iBloomLevel - (i + 1);
+        _wstring strRenderTargetTag = m_strRenderTargetTags[2] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomUpSample
+        _wstring strMRTTag = m_strRenderTargetTags[3] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // MRT_BloomUpSample
+        _wstring strBlurXRenderTargetTag = m_strRenderTargetTags[4] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomUpSample_BlurX
+        _wstring strBlurXMRTTag = m_strRenderTargetTags[5] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // MRT_BloomUpSample_BlurX
+        _wstring strBlurYRenderTargetTag = m_strRenderTargetTags[6] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomUpSample_BlurY
+        _wstring strBlurYMRTTag = m_strRenderTargetTags[7] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // MRT_BloomUpSample_BlurY
+
+        // 이 레벨에 해당하는 '다운샘플링 원본' 텍스처를 가져옵니다.
+        // Additive Blend 시 이 텍스처를 g_SourTexture에 바인딩할 것입니다.
+        _wstring strCurrentDownSampleOriginalTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomDownSample
+
+        /* 업 샘플링 수행 (이전 레벨의 블러 결과를 현재 레벨 크기로 단순히 업샘플링) */
+        if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV 인덱스도 currentSampleLevelMultiplier에 맞춰 조정
+            return E_FAIL;
+
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+        /* 이전 블러 결과 (m_strPreRenderTargetTag)를 g_SceneTexture에 바인딩하여 현재 레벨 크기로 업샘플링 */
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(m_strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
+            return E_FAIL;
+
+        m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
+
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        /* 블러 X 처리 (가산 블러) */
+        if (FAILED(m_pGameInstance->Begin_MRT(strBlurXMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV 인덱스 조정
+            return E_FAIL;
+
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+        _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
+            return E_FAIL;
+        if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+            return E_FAIL;
+
+        // g_SceneTexture: 이전 단계 (단순 업샘플링)에서 현재 레벨 크기로 조정된 텍스처
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(strRenderTargetTag, m_pShader, "g_SceneTexture")))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(strCurrentDownSampleOriginalTag, m_pShader, "g_SourTexture")))
+            return E_FAIL;
+    
+        m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::ADDITIVE_BLUR_X));
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        /* 블러 Y 처리 (가산 블러) */
+        if (FAILED(m_pGameInstance->Begin_MRT(strBlurYMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV 인덱스 조정
+            return E_FAIL;
+
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+        vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
+            return E_FAIL;
+        if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+            return E_FAIL;
+
+        // g_SceneTexture: 이전 블러 X 결과
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(strBlurXRenderTargetTag, m_pShader, "g_SceneTexture")))
+            return E_FAIL;
+
+        m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::ADDITIVE_BLUR_Y));
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        m_strPreRenderTargetTag = strBlurYRenderTargetTag; // 다음 루프의 입력으로 현재 y블러 결과를 설정
+    }
 
     return S_OK;
 }
@@ -355,6 +409,10 @@ void CBloom::Free()
 {
     __super::Free();
 
-    Safe_Release(m_p4x4SampleDSV);
-    Safe_Release(m_p20x20SampleDSV);
+
+    for (auto& iter : m_pDSVs)
+    {
+        Safe_Release(iter); 
+    }
+    m_pDSVs.clear();
 }
