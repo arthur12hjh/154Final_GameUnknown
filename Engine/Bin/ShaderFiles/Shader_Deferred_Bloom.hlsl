@@ -8,7 +8,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_SceneTexture;
-texture2D g_SourTexture, g_DestTexture;
+texture2D g_SourTexture;
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -57,7 +57,7 @@ PS_OUT_BLUR_X PS_MAIN_SAMPLING_BLUR_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     
-    for (int i = -10; i < 10; ++i)
+    for (int i = -10; i < 11; ++i)
     {
         vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
@@ -75,9 +75,9 @@ PS_OUT_BLUR_FINAL PS_MAIN_SAMPLING_BLUR_Y(PS_IN In)
     PS_OUT_BLUR_FINAL Out;
     
     float2 vTexcoord;
-    float4 vColor;
+    float4 vColor = 0;
     
-    for (int i = -10; i < 10; ++i)
+    for (int i = -10; i < 11; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
@@ -97,12 +97,12 @@ PS_OUT_BLUR_X PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     
-    for (int i = -10; i < 10; ++i)
+    for (int i = -10; i < 11; ++i)
     {
         vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
-        vColor += g_fBloomWeights[i + 10] * g_SceneTexture.Sample(ClampSampler, vTexcoord) + g_SourTexture.Sample(ClampSampler, vTexcoord);
+        vColor += g_fBloomWeights[i + 10] * (g_SceneTexture.Sample(ClampSampler, vTexcoord) + g_SourTexture.Sample(ClampSampler, vTexcoord));
     }
     
     Out.vBlurX = vColor / 10.f;
@@ -115,9 +115,9 @@ PS_OUT_BLUR_FINAL PS_MAIN_ADDITIVE_BLUR_Y(PS_IN In)
     PS_OUT_BLUR_FINAL Out;
     
     float2 vTexcoord;
-    float4 vColor;
+    float4 vColor = 0.f;
     
-    for (int i = -10; i < 10; ++i)
+    for (int i = -10; i < 11; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
