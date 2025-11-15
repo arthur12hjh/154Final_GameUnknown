@@ -45,6 +45,7 @@ private:
 
 	void Update_KeyFrameTool();
 	void Update_TimeLine();
+	void Update_EventMaker();
 
 
 private:
@@ -55,6 +56,13 @@ private:
 
 	CGameObject*						m_pSelectedObject = { nullptr };
 	vector<CAnimation*>*				m_pAnimationList = { nullptr };
+
+
+	_int								m_iSelectedAnimationIndex = 0;
+	_int								m_iBeforeAnimationIndex = -1;
+
+	_int								m_iSelectedEventIndex = -1;
+	_int								m_iBeforeEventIndex = -1;
 
 	_bool								m_bIsActive;
 	_bool								m_bIsActiveTrigger;

@@ -18,6 +18,7 @@ public:
 	_bool Update_TransformationMatrices(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta);
 
 	_uint Get_AnimationKeyFrameIndex() { return m_CurrentKeyFrameIndices[0]; }
+	_float Get_Duration() { return m_fDuration; }
 
 	_bool CompareAnimationTag(const _char* szAnimationTag)
 	{
