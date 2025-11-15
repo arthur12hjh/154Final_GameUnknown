@@ -41,6 +41,18 @@ void CTransform::Set_State(STATE eState, _vector vState)
 	}
 }
 
+void CTransform::Set_Scale(_vector vScale)
+{
+	Set_State(STATE::RIGHT, XMVector3Normalize(Get_State(STATE::RIGHT)) * vScale.m128_f32[0]);
+	Set_State(STATE::UP, XMVector3Normalize(Get_State(STATE::UP)) * vScale.m128_f32[1]);
+	Set_State(STATE::LOOK, XMVector3Normalize(Get_State(STATE::LOOK)) * vScale.m128_f32[2]);
+}
+
+void CTransform::Set_Rotation(_vector vRotation)
+{
+	Rotation(vRotation.m128_f32[0], vRotation.m128_f32[1], vRotation.m128_f32[2]);
+}
+
 void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 {
 	Set_State(STATE::RIGHT, XMVector3Normalize(Get_State(STATE::RIGHT)) * fX);

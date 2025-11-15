@@ -33,6 +33,7 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
+	m_fMouseSensor = 0.1f;
 	if (false == m_bIsCameraAnimation)
 	{
 		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))

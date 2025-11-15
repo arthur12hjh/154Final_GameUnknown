@@ -50,6 +50,12 @@ HRESULT CGameObject::Initialize(void* pArg)
 	{
 		GAMEOBJECT_DESC* pDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
 
+		if (pDesc->bIsApplyTransform)
+		{
+			m_pTransformCom->Set_Scale(XMLoadFloat3(&pDesc->vScale));
+			m_pTransformCom->Set_Rotation(XMLoadFloat3(&pDesc->vRotation));
+			m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&pDesc->vPosition));
+		}
 	}
 
 	m_Components.emplace(g_strTransformTag, m_pTransformCom);
@@ -114,7 +120,6 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 		return E_FAIL;
 
 	m_Components.emplace(strComponentTag, pComponent);
-
 	pComponent->SetOwner(this);
 	*ppOut = pComponent;
 
