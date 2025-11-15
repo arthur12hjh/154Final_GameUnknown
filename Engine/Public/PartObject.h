@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CPartObject abstract : public CGameObject
 {
 public:
-	typedef struct tagPartObjectDesc
+	typedef struct tagPartObjectDesc : public GAMEOBJECT_DESC
 	{
 		class CTransform* pParentTransform = { nullptr };
 	}PARTOBJECT_DESC;

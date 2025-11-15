@@ -6,8 +6,10 @@
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
 #include "Weapon.h"
+
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "Interaction_Component.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEntity {pDevice, pContext}
@@ -92,6 +94,12 @@ void CPlayer::Update(_float fTimeDelta)
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
 		m_iState = STATE::STATE_ATTACK;
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInterraction = m_pGameInstance->GetNearInteraction();
+		pInterraction->Action_InteractionEvent(this);
 	}
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
