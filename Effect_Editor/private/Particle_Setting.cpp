@@ -140,7 +140,7 @@ HRESULT CParticle_Setting::Initialize()
         FindClose(h);
     }
 
-    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/*.bin");
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.bin");
 
     h = FindFirstFileA(pattern, &fd);
     if (h != INVALID_HANDLE_VALUE) {
@@ -148,7 +148,7 @@ HRESULT CParticle_Setting::Initialize()
             if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 
                 char szFilePath[MAX_PATH] = {};
-                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/");
+                strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/EffectMesh/");
                 strcat_s(szFilePath, MAX_PATH, fd.cFileName);
                 m_ModelFilePaths.push_back(fd.cFileName);
                 m_ModelFiles.push_back(szFilePath);
@@ -228,6 +228,16 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fPosition = _float4(0, 0, 0, 1);
     tParticleData.fRotation = _float3(0, 0, 0);
 
+    tParticleData.fMaskUV = _float2(0, 0);
+    tParticleData.fMaskUVSpeed = _float2(0, 0);
+    tParticleData.fMaskUVSize = _float2(1, 1);
+    tParticleData.fDiffuseUV = _float2(0, 0);
+    tParticleData.fDiffuseUVSpeed = _float2(0, 0);
+    tParticleData.fDiffuseUVSize = _float2(1, 1);
+    tParticleData.fDissolveUV = _float2(0, 0);
+    tParticleData.fDissolveUVSpeed = _float2(0, 0);
+    tParticleData.fDissolveUVSize = _float2(1, 1);
+
     for (_uint i = 0; i < 3; ++i) {
         switch (i) {
         case 0:
@@ -284,6 +294,15 @@ void CParticle_Setting::Add_MeshEffect()
     MeshDesc.fScale = { 1,1,1 };
     MeshDesc.fPosition = _float4(0, 0, 0, 1);
     MeshDesc.fRotation = _float3(0, 0, 0);
+    MeshDesc.fMaskUV = _float2(0, 0);
+    MeshDesc.fMaskUVSpeed = _float2(0, 0);
+    MeshDesc.fMaskUVSize = _float2(1, 1);
+    MeshDesc.fDiffuseUV = _float2(0, 0);
+    MeshDesc.fDiffuseUVSpeed = _float2(0, 0);
+    MeshDesc.fDiffuseUVSize = _float2(1, 1);
+    MeshDesc.fDissolveUV = _float2(0, 0);
+    MeshDesc.fDissolveUVSpeed = _float2(0, 0);
+    MeshDesc.fDissolveUVSize = _float2(1, 1);
     char szModelPath[MAX_PATH] = {};
     strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[0].c_str(), _TRUNCATE);
     MeshDesc.szModel = szModelPath;
@@ -898,6 +917,30 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     }
                     ImGui::EndCombo();
                 }
+
+
+                if (ImGui::TreeNode("MaskUV"))
+                {
+                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tParticleData.fMaskUV), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSize), 0.1f, 0.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DiffuseUV"))
+                {
+                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUV), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSize), 0.1f, 0.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DissolveUV"))
+                {
+                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUV), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSize), 0.1f, 0.f, 100.f);
+                    ImGui::TreePop();
+                }
+
                 ImGui::Separator();
 
                 ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
@@ -1076,6 +1119,29 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 }
                 ImGui::EndCombo();
             }
+
+            if (ImGui::TreeNode("MaskUV"))
+            {
+                ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tMeshData.fMaskUV), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSpeed), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSize), 0.1f, 0.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DiffuseUV"))
+            {
+                ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUV), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSpeed), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSize), 0.1f, 0.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DissolveUV"))
+            {
+                ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUV), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSpeed), 0.1f, 0.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSize), 0.1f, 0.f, 100.f);
+                ImGui::TreePop();
+            }
+
             ImGui::Separator();
 
             ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);

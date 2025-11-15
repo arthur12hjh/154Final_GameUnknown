@@ -5,9 +5,16 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
-float4 g_fMask, g_fDiffuse, g_fDissolve;
-float4 g_fMaskUV, g_fDiffuseUV, g_fDissolveUV;
 float g_fTime = 0;
+float2 g_fMaskUV = float2(0, 0);
+float2 g_fMaskUVSpeed = float2(0, 0);
+float2 g_fMaskUVSize = float2(1, 1);
+float2 g_fDiffuseUV = float2(0, 0);
+float2 g_fDiffuseUVSpeed = float2(0, 0);
+float2 g_fDiffuseUVSize = float2(1, 1);
+float2 g_fDissolveUV = float2(0, 0);
+float2 g_fDissolveUVSpeed = float2(0, 0);
+float2 g_fDissolveUVSize = float2(1, 1);
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 /* Á¤Á¡ ½¦ÀÌ´õ : */
@@ -108,30 +115,62 @@ PS_OUT PS_MAIN(PS_IN In)
     //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
     //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
     
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
     if (In.vTexcoord.y < 0.5)
     {
         Out.vDiffuse = g_vColor;
-        //Out.vDiffuse *= 
-        Out.vDiffuse *= ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1) * 0.5) * ((1 - In.vTexcoord.y) * 5) * 5;
-        Out.vDiffuse *= g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x / 3, In.vTexcoord.y * 2)) * (1 - (In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1)) +
-    g_vColor * ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1));
-        Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, float2(In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1, In.vTexcoord.y * 2)).r;
+        Out.vDiffuse *= (1 - abs(MaskTexcoord.x)) * abs(MaskTexcoord.y) * 2;
+        Out.vDiffuse *= g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y * 2));
+        Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
+        if (g_DissolveTexture.Sample(DefaultSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y * 2)).r > (1 - abs(MaskTexcoord.x)) * abs(MaskTexcoord.y) * 2 * 2)
+            discard;
+
     }
     else
     {
         Out.vDiffuse = g_vColor;
-        Out.vDiffuse *= ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1) * 0.5) * ((1 - In.vTexcoord.y) * 5) * 5;
-        Out.vDiffuse *= g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x / 3, 1 - (In.vTexcoord.y * 2 - 1))) * (1 - (In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1)) +
-    g_vColor * ((In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1));
-        Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, float2(In.vTexcoord.x + fmod(g_fTime, 1) * 2 - 1, 1 - (In.vTexcoord.y * 2 - 1))).r;
+        Out.vDiffuse *= (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2);
+        Out.vDiffuse *= g_DiffuseTexture.Sample(DefaultSampler, float2(1 - DiffuseTexcoord.x, 1 - (DiffuseTexcoord.y - 0.5) * 2));
+        Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, 1 - (MaskTexcoord.y - 0.5) * 2)).r;
+        if (g_DissolveTexture.Sample(DefaultSampler, float2(DissolveTexcoord.x, 1 - (DissolveTexcoord.y - 0.5) * 2)).r > (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2) * 2)
+            discard;
     }
-    
-    if (Out.vDiffuse.a <= 0.1f || 0 > fmod(g_fTime, 1))
-        discard;
-    Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    //
+    //if (Out.vDiffuse.a <= 0.1f || 0 > fmod(g_fTime, 1))
+    //    discard;
+    //Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
+    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     return Out;
 }
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_OUT PS_DISTORTION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    if (0 > MaskTexcoord.x || 1 < MaskTexcoord.x)
+        discard;
+    if (In.vTexcoord.y < 0.5)
+    {
+        Out.vDiffuse = g_vColor;
+        Out.vDiffuse *= (1 - abs(MaskTexcoord.x)) * abs(MaskTexcoord.y) * 2;
+        //Out.vDiffuse.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
+
+    }
+    else
+    {
+        Out.vDiffuse = g_vColor;
+        Out.vDiffuse *= (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2);
+        //Out.vDiffuse.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, 1 - (MaskTexcoord.y - 0.5) * 2)).r;
+    }
+    return Out;
+}
+
 struct PS_IN_SHADOW
 {
     float4 vPosition : SV_POSITION;
@@ -164,14 +203,14 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-    pass Shadow
+    pass Distortion
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
+        VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+        PixelShader = compile ps_5_0 PS_DISTORTION();
     }
 
 

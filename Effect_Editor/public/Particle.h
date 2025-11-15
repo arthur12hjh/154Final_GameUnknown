@@ -42,7 +42,18 @@ public:
 
 		_float2				fSize;          
 		_float2				fLifeTime;      
-		_float2				fSpeed;         
+		_float2				fSpeed;
+
+
+		_float2				fMaskUV;
+		_float2				fMaskUVSpeed;
+		_float2				fMaskUVSize;
+		_float2				fDiffuseUV;
+		_float2				fDiffuseUVSpeed;
+		_float2				fDiffuseUVSize;
+		_float2				fDissolveUV;
+		_float2				fDissolveUVSpeed;
+		_float2				fDissolveUVSize;
 
 		_int				iBegin;         
 		_int				iNumInstance;

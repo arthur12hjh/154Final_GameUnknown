@@ -5,6 +5,16 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
+float2 g_fMaskUV = float2(0, 0);
+float2 g_fMaskUVSpeed = float2(0, 0);
+float2 g_fMaskUVSize = float2(1, 1);
+float2 g_fDiffuseUV = float2(0, 0);
+float2 g_fDiffuseUVSpeed = float2(0, 0);
+float2 g_fDiffuseUVSize = float2(1, 1);
+float2 g_fDissolveUV = float2(0, 0);
+float2 g_fDissolveUVSpeed = float2(0, 0);
+float2 g_fDissolveUVSize = float2(1, 1);
+
 vector g_vCamPosition;
 int g_iSizeCount;
 StructuredBuffer<float3> g_fSizeDiagram : register(t0);
@@ -302,17 +312,11 @@ struct PS_LIGHT_OUT
 PS_LIGHT_OUT PS_MAIN(PS_IN In)
 {
     PS_LIGHT_OUT Out;
-    float4 fireFront = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
-    float4 fireBack = g_DissolveTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x));
-    //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(MirrorSampler, float2(In.vPosition.x / 1000, In.vPosition.y / 1000)));
-    //Out.vColor = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord));
-    Out.vDiffuse = g_vColor * (g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)) + g_DiffuseTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - In.vLifeTime.x, In.vTexcoord.y + In.vLifeTime.x)));
-    Out.vDiffuse.a = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
-    //Out.vDiffuse = g_vColor;
-    if (Out.vDiffuse.a <= 0.1f || 0 > In.vLifeTime.x)
+    Out.vDiffuse = g_vColor * g_DiffuseTexture.Sample(DefaultSampler, float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y));
+    Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y)).r;
+    if (Out.vDiffuse.a - (1 - saturate(In.vLifeTime.y - In.vLifeTime.x)) <= g_DissolveTexture.Sample(DefaultSampler, float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y)).r || 0 > In.vLifeTime.x)
         discard;
-    Out.vDiffuse.a = g_vColor.a;
+    //Out.vDiffuse.a = g_vColor.a;
     //Out.vDiffuse *= g_vColor;
     
     //float weight = saturate(pow(1 - (In.vProjPos.z / In.vProjPos.w / 500), 3));

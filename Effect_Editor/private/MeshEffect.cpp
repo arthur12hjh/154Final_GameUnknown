@@ -93,9 +93,19 @@ HRESULT CMeshEffect::Set_Texture(_int iIndex, const char* szPrototype)
 	Safe_Release(m_pTexture[iIndex]);
 	_tchar sztPrototype[256] = { 0, };
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szPrototype, strlen(szPrototype), sztPrototype, 256);
+
+	char pattern[MAX_PATH] = {};
+	strcpy_s(pattern, MAX_PATH, "Com_Texture");
+
+	snprintf(pattern, sizeof(pattern), "Com_Texture_%d", m_iCount++);
+
+
+	_tchar sztPrototype2[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, pattern, strlen(pattern), sztPrototype2, 256);
+
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), sztPrototype,
-		TEXT("Com_Texture" + m_iCount++), reinterpret_cast<CComponent**>(&m_pTexture[iIndex]))))
+		sztPrototype2, reinterpret_cast<CComponent**>(&m_pTexture[iIndex]))))
 		return E_FAIL;
 	return S_OK;
 }
@@ -103,8 +113,20 @@ HRESULT CMeshEffect::Set_Texture(_int iIndex, const char* szPrototype)
 void CMeshEffect::Set_Model(_wstring szMode)
 {
 	Safe_Release(m_pModelCom);
+
+
+	char pattern[MAX_PATH] = {};
+	strcpy_s(pattern, MAX_PATH, "Com_Model");
+
+	snprintf(pattern, sizeof(pattern), "Com_Model_%d", m_iCount++);
+
+
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, pattern, strlen(pattern), sztPrototype, 256);
+
+
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), szMode,
-		TEXT("Com_Model" + m_iModelCount++), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		sztPrototype, reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return;
 }
 
@@ -129,6 +151,26 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
+
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
 		return E_FAIL;
 
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))

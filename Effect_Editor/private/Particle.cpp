@@ -133,7 +133,7 @@ HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
 	char pattern[MAX_PATH] = {};
 	strcpy_s(pattern, MAX_PATH, "Com_Texture");
 
-	snprintf(pattern, sizeof(pattern), "Com_Texture %d", m_iCount++);
+	snprintf(pattern, sizeof(pattern), "Com_Texture_%d", m_iCount++);
 
 
 	_tchar sztPrototype2[256] = { 0, };
@@ -163,6 +163,26 @@ HRESULT CParticle::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
+
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
 		return E_FAIL;
 
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))

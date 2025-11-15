@@ -24,6 +24,18 @@ public:
 		_float4 fPosition = { 0,0,0,1 };
 		_float3 fScale = {};
 		_float3 fRotation = {};
+
+
+		_float2				fMaskUV;
+		_float2				fMaskUVSpeed;
+		_float2				fMaskUVSize;
+		_float2				fDiffuseUV;
+		_float2				fDiffuseUVSpeed;
+		_float2				fDiffuseUVSize;
+		_float2				fDissolveUV;
+		_float2				fDissolveUVSpeed;
+		_float2				fDissolveUVSize;
+
 		_int	iBegin = {};
 		_int	iSelectRender = {};
 	}MESH_DATA;
