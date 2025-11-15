@@ -119,6 +119,7 @@ HRESULT CExplosion::Ready_ComputeShader()
 
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
+	m_CBData.matWorld = *m_pTransformCom->Get_WorldMatrixPtr();
 	m_CBData.vPivot = { 0, 0, 0, 1.f };
 	m_CBData.vGravity = { 0,0,-30,-30 };
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
@@ -182,6 +183,7 @@ HRESULT CExplosion::Ready_ComputeShader()
 
 void CExplosion::Spread(_float fTimeDelta)
 {
+	m_CBData.matWorld = *m_pTransformCom->Get_WorldMatrixPtr();
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 

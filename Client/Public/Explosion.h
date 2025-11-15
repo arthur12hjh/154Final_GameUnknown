@@ -17,6 +17,7 @@ class CExplosion final : public CGameObject
 public :
 	struct PointConstBufferData
 	{
+		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
 		_float2			fTimeDelta;

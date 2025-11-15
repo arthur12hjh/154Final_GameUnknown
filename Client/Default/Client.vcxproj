@@ -166,6 +166,7 @@
     <ClInclude Include="..\public\DebugProfiler.h" />
     <ClInclude Include="..\Public\Deco_AttackRange.h" />
     <ClInclude Include="..\Public\Deco_PhaseChange.h" />
+    <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\Public\Explosion.h" />
     <ClInclude Include="..\Public\Face_Player.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
@@ -190,7 +191,9 @@
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\MeshEffect.h" />
     <ClInclude Include="..\public\MousePointer.h" />
+    <ClInclude Include="..\public\PointParticle.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
@@ -233,6 +236,7 @@
     <ClCompile Include="..\private\DebugProfiler.cpp" />
     <ClCompile Include="..\Private\Deco_AttackRange.cpp" />
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
+    <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\Private\Explosion.cpp" />
     <ClCompile Include="..\Private\Face_Player.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
@@ -273,7 +277,9 @@
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
+    <ClCompile Include="..\private\PointParticle.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -322,6 +328,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />

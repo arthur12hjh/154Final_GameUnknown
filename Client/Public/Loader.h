@@ -52,6 +52,7 @@ private:
 	HRESULT Loading_For_GamePlay_Player(void* pArg);
 	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
+	HRESULT Loading_For_GamePlay_Effect(void* pArg);
 	HRESULT Loading_For_GamePlay_Navigation(void* pArg);
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 public:

@@ -466,54 +466,18 @@ void CRenderer::Render_Combined()
 
 void CRenderer::Render_NonLight()
 {
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Weight"))))
+	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
-		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Weight_Start"))))
-			return;
-
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
 
 		Safe_Release(pRenderObject);
-
-		if (FAILED(m_pGameInstance->End_MRT()))
-			return;
-		if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Weight"))))
-			return;
-
-		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Start"), m_pShader, "g_Texture")))
-			return;
-		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth_Start"), m_pShader, "g_ScreenTexture")))
-			return;
-
-		m_pShader->Begin(10);
-
-		m_pVIBuffer->Bind_Resources();
-		m_pVIBuffer->Render();
-
-		if (FAILED(m_pGameInstance->End_MRT()))
-			return;
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)].clear();
-
-
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight"), m_pShader, "g_Texture")))
-		return;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Weight_Deapth"), m_pShader, "g_ScreenTexture")))
-		return;
-
-	m_pShader->Begin(9);
-
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;

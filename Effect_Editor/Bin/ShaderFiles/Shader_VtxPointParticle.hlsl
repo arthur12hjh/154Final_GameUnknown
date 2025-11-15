@@ -312,16 +312,16 @@ PS_LIGHT_OUT PS_MAIN(PS_IN In)
     //Out.vDiffuse = g_vColor;
     if (Out.vDiffuse.a <= 0.1f || 0 > In.vLifeTime.x)
         discard;
-    Out.vDiffuse.a *= g_vColor.a;
+    Out.vDiffuse.a = g_vColor.a;
     //Out.vDiffuse *= g_vColor;
     
-    float weight = saturate(pow(1 - (In.vProjPos.z / In.vProjPos.w / 500), 3));
-    
-    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
-    Out.vNormal.r = Out.vDiffuse.a;
-    Out.vNormal.g = Out.vDiffuse.a * weight;
-    Out.vDiffuse.a = 1;
-    Out.vNormal.a = 1;
+    //float weight = saturate(pow(1 - (In.vProjPos.z / In.vProjPos.w / 500), 3));
+    //
+    //Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    //Out.vNormal.r = Out.vDiffuse.a;
+    //Out.vNormal.g = Out.vDiffuse.a * weight;
+    //Out.vDiffuse.a = 1;
+    //Out.vNormal.a = 1;
     
     
     return Out;
@@ -414,8 +414,8 @@ technique11 DefaultTechnique
     pass Billboard
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         //SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_BILLBOARD();

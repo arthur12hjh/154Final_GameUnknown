@@ -85,7 +85,7 @@ HRESULT CLoader::Loading_For_Tool()
 
 
 	char pattern[MAX_PATH] = {};
-	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/*.bin");
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.bin");
 
 	WIN32_FIND_DATAA fd{};
 	HANDLE h = FindFirstFileA(pattern, &fd);
@@ -93,7 +93,7 @@ HRESULT CLoader::Loading_For_Tool()
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 				char szFilePath[MAX_PATH] = {};
-				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/");
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/EffectMesh/");
 				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
 				_tchar fileName[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fd.cFileName, strlen(fd.cFileName), fileName, 256);

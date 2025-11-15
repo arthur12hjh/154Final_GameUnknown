@@ -256,6 +256,12 @@
     <Filter Include="02.GameObjects\Terrain\Terrain_Sand">
       <UniqueIdentifier>{967a6af0-4cca-484e-8d88-e62a56a35f96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\MeshEffect">
+      <UniqueIdentifier>{2ca188cf-6704-4f52-91d0-fbd445bfeec8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\PointParticle">
+      <UniqueIdentifier>{d9946ca8-bf5c-458f-8a3e-13d155673745}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -459,6 +465,15 @@
     <ClInclude Include="..\Public\Terrain_Sand.h">
       <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Effect.h">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MeshEffect.h">
+      <Filter>02.GameObjects\Effect\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PointParticle.h">
+      <Filter>02.GameObjects\Effect\PointParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -646,6 +661,15 @@
     <ClCompile Include="..\Private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Effect.cpp">
+      <Filter>02.GameObjects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MeshEffect.cpp">
+      <Filter>02.GameObjects\Effect\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PointParticle.cpp">
+      <Filter>02.GameObjects\Effect\PointParticle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -686,6 +710,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

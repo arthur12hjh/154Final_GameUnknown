@@ -1,92 +1,53 @@
 #include "pch.h"
-#include "Particle.h"
+#include "PointParticle.h"
 
 #include "GameInstance.h"
 
-CParticle::CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CPointParticle::CPointParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CParticle::CParticle(const CParticle& Prototype)
-	: CGameObject{ Prototype }
+CPointParticle::CPointParticle(const CPointParticle& Prototype)
+	: CGameObject{ Prototype },
+	m_tData{Prototype.m_tData}
 {
+
+	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Instance*>(Prototype.m_pVIBufferCom->Clone(nullptr));
+	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
+	//Safe_AddRef(Prototype.m_pVIBufferCom);
+	//Safe_AddRef(Prototype.m_pComputeShader);
 }
 
-HRESULT CParticle::Initialize_Prototype()
+HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointParticleData)
 {
+	m_tData = *pPointParticleData;
+	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+	Desc.iNumInstance = pPointParticleData->iNumInstance;
+	Desc.vCenter = pPointParticleData->fCenter;
+	Desc.vPivot = pPointParticleData->fPivot;
+	Desc.vRange = pPointParticleData->fRange;
+	Desc.vSize = pPointParticleData->fSize;
+	Desc.vLifeTime = pPointParticleData->fLifeTime;
+	Desc.vSpeed = pPointParticleData->fSpeed;
+	Desc.isLoop = pPointParticleData->bisLoop;
+	Desc.vSpeed = _float2(5, 10);
+	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
 
-HRESULT CParticle::Initialize(void* pArg)
+HRESULT CPointParticle::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	return S_OK;
-}
-
-void CParticle::Priority_Update(_float fTimeDelta)
-{
-
-}
-
-void CParticle::Update(_float fTimeDelta)
-{
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-	Spread(fTimeDelta);
-}
-
-void CParticle::Late_Update(_float fTimeDelta)
-{
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
-}
-
-HRESULT CParticle::Render()
-{
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin(m_tData.iBegin);
-
-	m_pVIBufferCom->Bind_Resources();
-
-	m_pVIBufferCom->Render();
-
-	return S_OK;
-}
-
-void CParticle::Set_Components(PARTICLE_DATA tData)
-{
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pComputeShader);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pReadSource);
-	Safe_Release(m_pSizeDiagramSRV);
-
-	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-	Desc.iNumInstance = tData.iNumInstance;
-	Desc.vCenter = tData.fCenter;
-	Desc.vPivot = tData.fPivot;
-	Desc.vRange = tData.fRange;
-	Desc.vSize = tData.fSize;
-	Desc.vLifeTime = tData.fLifeTime;
-	Desc.vSpeed = tData.fSpeed;
-	Desc.isLoop = tData.bisLoop;
-	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
-	m_pVIBufferCom->Initialize(nullptr);
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
-	//m_pComputeShader = pComputeShader;
-	//m_pShaderCom = pShaderCom;
-	m_tData = tData;
-
-	Set_Texture(0, m_tData.szMaskTexture.c_str());
-	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
-	Set_Texture(2, m_tData.szDissolveTexture.c_str());
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+	//m_pVIBufferCom->Initialize(nullptr);
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
 
 	ID3D11Buffer* pBuffer = nullptr;
 	D3D11_BUFFER_DESC BufferDesc = {};
@@ -100,7 +61,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
 
 	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
-		return;
+		return E_FAIL;
 
 
 
@@ -110,47 +71,81 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	SRVDesc.Buffer.FirstElement = 0;
 	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
-		return;
-
+		return E_FAIL;
+	
 	Safe_Release(pBuffer);
-	Ready_ComputeShader();
-}
 
-void CParticle::Update(PARTICLE_DATA tData)
-{
-	m_tData = tData;
-	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
-	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
-
-}
-HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
-{
-	Safe_Release(m_pTexture[iIndex]);
-	_tchar sztPrototype[256] = { 0, };
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szPrototype, strlen(szPrototype), sztPrototype, 256);
-
-
-	char pattern[MAX_PATH] = {};
-	strcpy_s(pattern, MAX_PATH, "Com_Texture");
-
-	snprintf(pattern, sizeof(pattern), "Com_Texture %d", m_iCount++);
-
-
-	_tchar sztPrototype2[256] = { 0, };
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, pattern, strlen(pattern), sztPrototype2, 256);
-
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), sztPrototype,
-		sztPrototype2, reinterpret_cast<CComponent**>(&m_pTexture[iIndex]))))
+	if (FAILED(Ready_ComputeShader()))
 		return E_FAIL;
 	return S_OK;
 }
-HRESULT CParticle::Ready_Components()
+
+void CPointParticle::Priority_Update(_float fTimeDelta)
 {
+	m_pTransformCom->Set_Scale(1, 1, 1);
+}
+
+void CPointParticle::Update(_float fTimeDelta)
+{
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+	Spread(fTimeDelta);
+}
+
+void CPointParticle::Late_Update(_float fTimeDelta)
+{
+	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+}
+
+HRESULT CPointParticle::Render()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	m_pShaderCom->Begin(m_tData.iBegin);
+
+	m_pVIBufferCom->Bind_Resources();
+
+	m_pVIBufferCom->Render();
+
 	return S_OK;
 }
 
-HRESULT CParticle::Bind_ShaderResources()
+HRESULT CPointParticle::Ready_Components()
+{
+
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
+		TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
+		return E_FAIL;
+
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
+		TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
+		return E_FAIL;
+
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDissolveTexture.c_str(), strlen(m_tData.szDissolveTexture.c_str()), sztPrototype, 256);
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
+		TEXT("Com_DissolveTexture"), reinterpret_cast<CComponent**>(&m_pTexture[2]))))
+		return E_FAIL;
+
+	/* Com_VIBuffer */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_PointParticle_Explosion"),
+	//	TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+	//	return E_FAIL;
+
+	/* Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxPointParticle"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CPointParticle::Bind_ShaderResources()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -165,23 +160,24 @@ HRESULT CParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
+
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 		return E_FAIL;
 
 	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
 		return E_FAIL;
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
-
-	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+	if (FAILED(m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV)))
+		return E_FAIL;
 	return S_OK;
 }
 
-HRESULT CParticle::Ready_ComputeShader()
+HRESULT CPointParticle::Ready_ComputeShader()
 {
 	D3D11_MAPPED_SUBRESOURCE pIntanceData = {};
 	m_pVIBufferCom->Lock(D3D11_MAP_WRITE_NO_OVERWRITE, &pIntanceData);
@@ -189,7 +185,7 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Bind Compute Shader
 	// 이건 컴퓨트 셰이더를 바인딩한다.
 	/* ComputeShader_Snow */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_ComputeShader_Expolosion"),
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ComputeShader_Expolosion"),
 	//	TEXT("Com_ComputeShader"), reinterpret_cast<CComponent**>(&m_pComputeShader))))
 	//	return E_FAIL;
 #pragma endregion
@@ -219,8 +215,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Input & Output Base Buffer
 	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
 	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
@@ -236,8 +232,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Read Buffer
 	D3D11_BUFFER_DESC ReadBufferDesc = {};
 	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
 	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 
 	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pReadSource)))
@@ -259,7 +255,7 @@ HRESULT CParticle::Ready_ComputeShader()
 	return S_OK;
 }
 
-void CParticle::Spread(_float fTimeDelta)
+void CPointParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
@@ -299,11 +295,11 @@ void CParticle::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CParticle* CParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CPointParticle* CPointParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const POINT_PARTICLE_DATA* pPointParticleData)
 {
-	CParticle* pInstance = new CParticle(pDevice, pContext);
+	CPointParticle* pInstance = new CPointParticle(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(pPointParticleData)))
 	{
 		MSG_BOX("Failed to Created : pGraphic_Device");
 		Safe_Release(pInstance);
@@ -312,20 +308,20 @@ CParticle* CParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CParticle::Clone(void* pArg)
+CGameObject* CPointParticle::Clone(void* pArg)
 {
-	CParticle* pInstance = new CParticle(*this);
+	CPointParticle* pInstance = new CPointParticle(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CParticle");
+		MSG_BOX("Failed to Cloned : CPointParticle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CParticle::Free()
+void CPointParticle::Free()
 {
 	__super::Free();
 	Safe_Release(m_pVIBufferCom);
