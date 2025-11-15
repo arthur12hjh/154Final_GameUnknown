@@ -94,7 +94,7 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&]() { this->Excute_CallBack(); };
+    InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
@@ -158,7 +158,7 @@ HRESULT CVending::Begin_OverlapCallBack()
     return S_OK;
 }
 
-void CVending::Excute_CallBack()
+void CVending::Excute_CallBack(CGameObject* pActionObject)
 {
 
 }

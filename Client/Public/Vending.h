@@ -35,7 +35,7 @@ private:
 	HRESULT							Bind_ShaderResources();
 
 	HRESULT							Begin_OverlapCallBack();
-	void							Excute_CallBack();
+	void							Excute_CallBack(CGameObject* pActionObject);
 	HRESULT							End_OverlapCallBack();
 
 public:

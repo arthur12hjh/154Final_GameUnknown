@@ -4,9 +4,6 @@
 NS_BEGIN(Engine)
 class CGameInstance;
 class CGameObject;
-NS_END
-
-NS_BEGIN(Client)
 class CInteraction_Component;
 
 // 인터렉션 메니저는 특정 내가 원하는 레벨에서

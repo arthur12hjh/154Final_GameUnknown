@@ -13,10 +13,6 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIResourceStore;
-
-class CInteraction_Manager;
-class CInteraction_Component;
-
 class CDataManager;
 
 class CGameManager final : public CBase
@@ -65,15 +61,6 @@ public :
 	const BOSS_NETWORK_DESC*	Find_BossData(_uint iBossID);
 #pragma endregion
 
-#pragma region Interaction Manager
-	void									Interaction_Update();
-	void									SetInteractionBaseObject(CGameObject* pObject = nullptr);
-	void									ADD_Interaction(CInteraction_Component* pInteraction_Com);
-
-	CInteraction_Component*					GetNearInteraction();
-	vector<CInteraction_Component*>*		GetAllInteraction();
-#pragma endregion
-
 private :
 	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*		m_pContext = nullptr;
@@ -82,7 +69,6 @@ private :
 	CGameObject*				m_pPlayer = nullptr;
 	
 	CUIResourceStore*			m_pUIResourceStore = nullptr;
-	CInteraction_Manager*		m_pInteraction_Manager = nullptr;
 	CDataManager*				m_pDataManager = nullptr;
 
 private :

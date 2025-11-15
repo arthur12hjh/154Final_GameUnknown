@@ -42,14 +42,16 @@ HRESULT CLevel_GamePlay::Initialize()
 
 
 	Load_Map_Data();
-	CGameManager::GetInstance()->SetInteractionBaseObject();
-	
+	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
+	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
+	Safe_Release(pGameCharacter);
+
 	return S_OK;
 }
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	CGameManager::GetInstance()->Interaction_Update();
+
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -120,6 +122,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		return E_FAIL;
 	
 	CActor::ACTOR_DESC ProbDesc = {};
+	ProbDesc.bIsApplyTransform = true;
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
 
 	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
@@ -149,7 +152,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+		ProbDesc.vPosition = { 10.f * i,
 							   m_pGameInstance->Random(0, 50),
 							   m_pGameInstance->Random(0, 50) };
 

@@ -191,8 +191,6 @@
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\public\Instance_Model.h" />
-    <ClInclude Include="..\Public\Interaction_Component.h" />
-    <ClInclude Include="..\Public\Interaction_Manager.h" />
     <ClInclude Include="..\public\ItemBox.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -284,8 +282,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Instance_Model.cpp" />
-    <ClCompile Include="..\Private\Interaction_Component.cpp" />
-    <ClCompile Include="..\Private\Interaction_Manager.cpp" />
     <ClCompile Include="..\private\ItemBox.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />

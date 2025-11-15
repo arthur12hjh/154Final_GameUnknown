@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Interaction_Manager.h"
 #include "GameInstance.h"
 
@@ -33,6 +32,11 @@ void CInteraction_Manager::Update()
 
             return fSrcDist < fDestDist;
         });
+
+    if (!m_pInteractionList.empty())
+        m_pNearInteraction = m_pInteractionList.front();
+    else
+        m_pNearInteraction = nullptr;
 }
 
 void CInteraction_Manager::SetInteractionBaseObject(CGameObject* pObject)
@@ -44,9 +48,7 @@ void CInteraction_Manager::ADD_Interaction(CInteraction_Component* pInteraction_
 {
     auto iter = find(m_pInteractionList.begin(), m_pInteractionList.end(), pInteraction_Com);
     if (iter == m_pInteractionList.end())
-        return;
-
-    m_pInteractionList.push_back(m_pNearInteraction);
+        m_pInteractionList.push_back(pInteraction_Com);
 }
 
 CInteraction_Manager* CInteraction_Manager::Create()

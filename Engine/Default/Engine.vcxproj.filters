@@ -311,6 +311,12 @@
       <Filter>01.Utility\02.GameObjects\Entity</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Entity.h" />
+    <ClInclude Include="..\Public\Interaction_Manager.h">
+      <Filter>01.Utility\21.Interraction\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interaction_Component.h">
+      <Filter>01.Utility\21.Interraction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -594,6 +600,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Entity.cpp">
       <Filter>01.Utility\02.GameObjects\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Manager.cpp">
+      <Filter>01.Utility\21.Interraction\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Component.cpp">
+      <Filter>01.Utility\21.Interraction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -932,6 +944,12 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\RigidBody">
       <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\21.Interraction">
+      <UniqueIdentifier>{3daaf3e5-f5c4-40dc-8f00-e37b67e87046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\21.Interraction\Manager">
+      <UniqueIdentifier>{f781438a-73ea-4d9a-8926-c871c4b66e44}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

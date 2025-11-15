@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Interaction_Component.h"
 
 #include "GameInstance.h"
@@ -23,7 +22,7 @@ HRESULT CInteraction_Component::Initialize(void* pArg)
     INTERACTION_DESC* pDesc = static_cast<INTERACTION_DESC*>(pArg);
     m_BeginCallBackFunc = pDesc->BeginCallBackFunc;
     m_EndCallBackFunc = pDesc->EndCallBackFunc;
-    m_EndCallBackFunc = pDesc->InteractionEvent;
+    m_InteractionFunc = pDesc->InteractionEvent;
 
     if (FAILED(Ready_Components(*pDesc)))
         return E_FAIL;

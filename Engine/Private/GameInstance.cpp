@@ -23,6 +23,7 @@
 #include "Shadow.h"
 #include "Physx_Manager.h"
 #include "BinParser.h"
+#include "Interaction_Manager.h"
 #include "FbxParser.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -110,6 +111,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pShadow)
 		return E_FAIL;
 
+	m_pInteract_Manager = CInteraction_Manager::Create();
+	if (nullptr == m_pInteract_Manager)
+		return E_FAIL;
+
 	m_pCollisionManager = CCollisionManager::Create();
 	if (nullptr == m_pCollisionManager)
 		return E_FAIL;
@@ -145,7 +150,6 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 	if (false == m_bIsPause)
 	{
-	
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
@@ -204,6 +208,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pCollisionManager->Compute_Collision();
 #endif
 
+	m_pInteract_Manager->Update();
 	m_pPhysx_Manager->Update(fGameSpeed); // isdead 체크해서 뺴고
 
 	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
@@ -828,8 +833,30 @@ HRESULT CGameInstance::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, b
 {
 	return m_pBinParser->WriteBin(pModelFilePath, eType, ppOut);
 }
-
 #pragma endregion
+
+#pragma region Interact Manager
+void CGameInstance::SetInteractionBaseObject(CGameObject* pObject)
+{
+	m_pInteract_Manager->SetInteractionBaseObject(pObject);
+}
+
+void CGameInstance::ADD_Interaction(CInteraction_Component* pInteraction_Com)
+{
+	m_pInteract_Manager->ADD_Interaction(pInteraction_Com);
+}
+
+CInteraction_Component* CGameInstance::GetNearInteraction()
+{
+	return m_pInteract_Manager->GetNearInteraction();
+}
+
+vector<CInteraction_Component*>* CGameInstance::GetAllInteraction()
+{
+	return m_pInteract_Manager->GetAllInteraction();
+}
+#pragma endregion
+
 
 _float CGameInstance::GetGameSpeedfRatio()
 {
@@ -920,6 +947,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionManager);
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
+	Safe_Release(m_pInteract_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pFbxParser);

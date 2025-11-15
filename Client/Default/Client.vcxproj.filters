@@ -283,12 +283,6 @@
     <Filter Include="02.GameObjects\Actor\ProbActor\Box">
       <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10.GameManager\Interaction">
-      <UniqueIdentifier>{948aba18-bb52-4251-aadd-9cc8d8c04726}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\Interaction\Manager">
-      <UniqueIdentifier>{e9a0c3e2-57ae-4dee-835d-c812d88e2548}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager\CharacterDataManager">
       <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
     </Filter>
@@ -519,12 +513,6 @@
     <ClInclude Include="..\public\Vending.h">
       <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Interaction_Component.h">
-      <Filter>10.GameManager\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Interaction_Manager.h">
-      <Filter>10.GameManager\Interaction\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Prob_Interaction.h">
       <Filter>02.GameObjects\Actor\Interaction</Filter>
     </ClInclude>
@@ -738,12 +726,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Vending.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Interaction_Component.cpp">
-      <Filter>10.GameManager\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Interaction_Manager.cpp">
-      <Filter>10.GameManager\Interaction\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Prob_Interaction.cpp">
       <Filter>02.GameObjects\Actor\Interaction</Filter>

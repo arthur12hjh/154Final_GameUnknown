@@ -2,6 +2,7 @@
 #include "CanBox.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Interaction_Component.h"
 #include "UIBase.h"
 
@@ -29,6 +30,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
+    m_eState = BOX_STATE::UNLCOK;
     m_pModelCom->Set_AnimationIndex(1, false);
     return S_OK;
 }
@@ -41,7 +43,7 @@ void CCanBox::Update(_float fTimeDelta)
 {
     switch (m_eState)
     {
-    case CCanBox::BOX_STATE::OPEN:
+    case BOX_STATE::OPEN:
         m_pModelCom->Play_Animation(fTimeDelta);
         break;
     default :
@@ -58,7 +60,9 @@ void CCanBox::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_pInteractionCom->Update_Com();
+        if(BOX_STATE::OPEN != m_eState)
+		    m_pInteractionCom->Update_Com();
+
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
@@ -112,7 +116,7 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&]() { this->Excute_CallBack(); };
+    InteractionDesc.InteractionEvent = [&](CGameObject * pActionObject) { this->Excute_CallBack(pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
@@ -174,13 +178,19 @@ HRESULT CCanBox::Begin_OverlapCallBack()
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
 
+    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
     m_bIsInteractionAble = true;
     return S_OK;
 }
 
-void CCanBox::Excute_CallBack()
+void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 {
-    m_pModelCom->Set_AnimationIndex(1, false);
+
+    if (BOX_STATE::UNLCOK == m_eState)
+    {
+        m_pModelCom->Set_AnimationIndex(1, false);
+        m_eState = BOX_STATE::OPEN;
+    }
 }
 
 HRESULT CCanBox::End_OverlapCallBack()

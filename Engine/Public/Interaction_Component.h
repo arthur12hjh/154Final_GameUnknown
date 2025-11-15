@@ -1,28 +1,24 @@
 #pragma once
-#include "Client_Defines.h"
 #include "Component.h"
 
 NS_BEGIN(Engine)
 class CCollider;
 class CGameObject;
 class COBBCollider;
-NS_END
 
-NS_BEGIN(Client)
-class CInteraction_Component final : public CComponent
+class ENGINE_DLL CInteraction_Component final : public CComponent
 {
 public:
 	typedef struct InterractionDesc
 	{
-
 		_float4			vRoation;
 		_float3			vSize;
 
 		//	업데이트 해주면 이거 계속 불립니다.
 		//	그안에서 로직구성하세요
-		function<void()>		InteractionEvent;
-		function<void()>		BeginCallBackFunc;
-		function<void()>		EndCallBackFunc;
+		function<void(CGameObject*)>	InteractionEvent;
+		function<void()>				BeginCallBackFunc;
+		function<void()>				EndCallBackFunc;
 	}INTERACTION_DESC;
 
 private:

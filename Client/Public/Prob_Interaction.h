@@ -1,9 +1,12 @@
 #pragma once
 #include "Actor.h"
 
+NS_BEGIN(Engine)
+class CInteraction_Component;
+NS_END
+
 NS_BEGIN(Client)
 class CGameManager;
-class CInteraction_Component;
 class CUIBase;
 
 class CProb_Interaction abstract : public CActor

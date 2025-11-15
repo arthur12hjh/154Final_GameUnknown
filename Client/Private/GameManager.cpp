@@ -18,10 +18,6 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     if (nullptr == m_pDataManager)
         return E_FAIL;
 
-    m_pInteraction_Manager = CInteraction_Manager::Create();
-    if (nullptr == m_pInteraction_Manager)
-        return E_FAIL;
-
     return S_OK;
 }
 
@@ -97,36 +93,7 @@ const BOSS_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
 
 #pragma endregion
 
-#pragma region Interaction Manager
-void CGameManager::Interaction_Update()
-{
-    m_pInteraction_Manager->Update();
-}
 
-void CGameManager::SetInteractionBaseObject(CGameObject* pObject)
-{
-    if (nullptr == pObject)
-        m_pInteraction_Manager->SetInteractionBaseObject(m_pPlayer);
-    else
-        m_pInteraction_Manager->SetInteractionBaseObject(pObject);
-}
-
-void CGameManager::ADD_Interaction(CInteraction_Component* pInteraction_Com)
-{
-    m_pInteraction_Manager->ADD_Interaction(pInteraction_Com);
-}
-
-CInteraction_Component* CGameManager::GetNearInteraction()
-{
-    return m_pInteraction_Manager->GetNearInteraction();
-}
-
-vector<CInteraction_Component*>* CGameManager::GetAllInteraction()
-{
-    return m_pInteraction_Manager->GetAllInteraction();
-}
-
-#pragma endregion
 
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -152,7 +119,6 @@ void CGameManager::Free()
     Safe_Release(m_pUIResourceStore);
     Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
-    Safe_Release(m_pInteraction_Manager);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
