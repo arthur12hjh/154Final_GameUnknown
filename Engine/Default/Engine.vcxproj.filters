@@ -221,7 +221,7 @@
       <Filter>01.Utility\18.StateMachine\State</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RigidBody.h">
-      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
+      <Filter>01.Utility\03.Components\PhysxComponent\RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController</Filter>
@@ -509,7 +509,7 @@
       <Filter>01.Utility\18.StateMachine\State</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RigidBody.cpp">
-      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody</Filter>
+      <Filter>01.Utility\03.Components\PhysxComponent\RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController</Filter>
@@ -777,9 +777,6 @@
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController">
       <UniqueIdentifier>{0630c47d-ed31-4731-a976-ec8fdfc6b276}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\RigidBody">
-      <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter">
       <UniqueIdentifier>{e2676f0c-92da-4fd5-b645-9b1c62215ea4}</UniqueIdentifier>
     </Filter>
@@ -932,6 +929,9 @@
     </Filter>
     <Filter Include="01.Utility\98.ShaderFiles\VIBuffer\Model">
       <UniqueIdentifier>{cec658a0-d100-4324-845c-b2b18cbeed21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\RigidBody">
+      <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

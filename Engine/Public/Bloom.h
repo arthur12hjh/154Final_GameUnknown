@@ -2,9 +2,6 @@
 
 #include "Deferred.h"
 
-/*
-블룸 (구현중)
-*/
 NS_BEGIN(Engine)
 
 class CBloom final : public CDeferred
@@ -27,11 +24,34 @@ public:
 #endif
 
 private:
-	ID3D11DepthStencilView* m_p4x4SampleDSV = { nullptr };
-	ID3D11DepthStencilView* m_p20x20SampleDSV = { nullptr };
+	vector<ID3D11DepthStencilView*> m_pDSVs = {};
+	//이제 무조건 2x2 샘플링 수행 후 블룸 처리.
+	_uint m_iBloomLevel = { 5 }; 
+	_uint m_iSampleLevel = { 5 };
+
+	_uint2 m_vOriginScreenSize = {};
+
+	_wstring m_strRenderTargetTags[8] = {
+		{ TEXT("Target_BloomDownSample") },
+		{ TEXT("MRT_BloomDownSample") },
+		{ TEXT("Target_BloomUpSample") },
+		{ TEXT("MRT_BloomUpSample") },
+		{ TEXT("Target_BloomUpSample_BlurX") },
+		{ TEXT("MRT_BloomUpSample_BlurX") },
+		{ TEXT("Target_BloomUpSample_BlurY") },
+		{ TEXT("MRT_BloomUpSample_BlurY") }
+	};
+
+	_wstring m_strPreRenderTargetTag = { TEXT("")};
 
 private:
+	HRESULT Ready_RenderTargets();
 	HRESULT Ready_DSVs();
+
+	HRESULT DownSampling(class CVIBuffer* pVIBuffer, const _wstring& strSceneRenderTargetTag);
+	HRESULT MiddleBlur(class CVIBuffer* pVIBuffer);
+	HRESULT UpSampling(class CVIBuffer* pVIBuffer);
+
 public:
 	static CBloom* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

@@ -60,6 +60,10 @@ HRESULT CChannel::Initialize(const CModel* pModel, binChannel* pChannel)
 
 void CChannel::Update_TransformationMatrix(const vector<class CBone*>& Bones, _float fCurrentTrackPosition, _uint* pCurrentKeyFrameIndex)
 {
+	if (-1 == m_iBoneIndex 
+		|| m_iBoneIndex >= Bones.size())
+		return;
+
 	if (0.f == fCurrentTrackPosition)
 		*pCurrentKeyFrameIndex= 0;
 
