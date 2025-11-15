@@ -833,6 +833,17 @@ HRESULT CGameInstance::WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, b
 {
 	return m_pBinParser->WriteBin(pModelFilePath, eType, ppOut);
 }
+
+HRESULT CGameInstance::ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->ReadBinx(pModelFilePath, eType, ppOut);
+}
+
+HRESULT CGameInstance::WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->WriteBinx(pModelFilePath, eType, ppOut);
+}
+
 #pragma endregion
 
 #pragma region Interact Manager

@@ -66,6 +66,9 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 
 	}
 
+	if (pBinMaterial->szName[0] != '\0')
+		strcpy_s(m_szName, pBinMaterial->szName);
+
 	return S_OK;
 }
 
@@ -79,6 +82,16 @@ HRESULT CMaterial::Bind_SRV(CShader* pShader, const _char* pConstantName, aiText
 	}
 
 	return E_FAIL;
+}
+
+HRESULT CMaterial::Import_Texture(aiTextureType eType, ID3D11ShaderResourceView* pSRV)
+{
+	if(pSRV == nullptr)
+		return E_FAIL;
+
+	m_SRVs[eType].push_back(pSRV);
+
+	return S_OK;
 }
 
 HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)

@@ -139,6 +139,8 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 				}
 
 			}
+
+			strcpy_s(matTmp.szName, m_pAIScene->mMaterials[i]->GetName().C_Str());
 			pModel->vMaterials.push_back(matTmp);
 		}
 

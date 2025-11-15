@@ -254,6 +254,8 @@ public:
 	HRESULT ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 #pragma endregion
 
 #pragma region Interact Manager

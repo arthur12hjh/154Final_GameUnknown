@@ -20,8 +20,10 @@ private:
 
 public:
 	HRESULT Initialize();
-	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
-	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut); // 구버전 파서
+	HRESULT ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut); // 구버전 파서
+	HRESULT WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 
 private:
 	char* ReadString(ifstream& fileBinaryStream);

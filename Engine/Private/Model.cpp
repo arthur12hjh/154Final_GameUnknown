@@ -21,7 +21,7 @@ CModel::CModel(const CModel& Prototype)
 	, m_Meshes { Prototype.m_Meshes }
 	, m_iNumMaterials{ Prototype.m_iNumMaterials }
 	, m_Materials{ Prototype.m_Materials }
-	, m_PreTransformMatrix { Prototype.m_PreTransformMatrix}
+	, m_PreTransformMatrix { Prototype.m_PreTransformMatrix }
 	, m_iNumAnimations { Prototype.m_iNumAnimations }
 {
 	for (auto& pPrototypeBone : Prototype.m_Bones)
@@ -35,6 +35,8 @@ CModel::CModel(const CModel& Prototype)
 
 	for (auto& pPrototypeAnim : Prototype.m_Animations)
 		m_Animations.push_back(pPrototypeAnim->Clone());
+
+	memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
 }
 
 _int CModel::Get_BoneIndex(const _char* pBoneName) const
@@ -144,8 +146,100 @@ HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
 	return S_OK;
 }
 
+HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, CTexture* pTexture, const _char* pBindTag)
+{
+	// 1. m_Meshes에 Get_MaterialIndex()를 해서 머티리얼 인덱스를 받아온다.
+	// 2. m_Materials에 Import_Texture()로 SRV를 넣어준다.
+	// 3. pBindTag가 nullptr가 아니면 m_szBindTags에 복사해준다.
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	if(pTexture == nullptr)
+		return E_FAIL;
+
+	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	if (pBindTag != nullptr)
+		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
+
+	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pTexture->Get_SRV());
+}
+
+HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	char	strTexturePath[MAX_PATH];
+
+	char		szDrive[MAX_PATH] = {};
+	char		szDir[MAX_PATH] = {};
+	char		szFileName[MAX_PATH] = {};
+	char		szEXT[MAX_PATH] = {};
+
+	strcpy_s(strTexturePath, pTextureFilePath);
+
+	_char		szTextureFilePath[MAX_PATH] = {};
+	_splitpath_s(pTextureFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, nullptr, 0, nullptr, 0);
+	_splitpath_s(strTexturePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szEXT, MAX_PATH);
+
+	strcpy_s(szTextureFilePath, szDrive);
+	strcat_s(szTextureFilePath, szDir);
+	strcat_s(szTextureFilePath, szFileName);
+	strcat_s(szTextureFilePath, szEXT);
+
+	_tchar		szAbsolutePath[MAX_PATH] = {};
+	MultiByteToWideChar(CP_ACP, 0, szTextureFilePath, strlen(szTextureFilePath),
+		szAbsolutePath, MAX_PATH);
+
+	ID3D11ShaderResourceView* pSRV = { nullptr };
+
+	HRESULT			hr = {};
+
+	if (false == strcmp(".dds", szEXT))
+		hr = CreateDDSTextureFromFile(m_pDevice, szAbsolutePath, nullptr, &pSRV);
+	else if (false == strcmp(".tga", szEXT))
+		hr = S_OK;
+	else
+		hr = CreateWICTextureFromFile(m_pDevice, szAbsolutePath, nullptr, &pSRV);
+
+	if (FAILED(hr))
+		return E_FAIL;
+
+	if (pBindTag != nullptr)
+		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
+
+	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV);
+}
+
+HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	if (pBindTag != nullptr)
+		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
+
+	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV);
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
+	memset(m_szBindTags, 0, sizeof(m_szBindTags));
+
 	_uint			iFlag = {};
 
 	iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
@@ -164,14 +258,14 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 		char szDrive[MAX_PATH] = {};
 		char szDir[MAX_PATH] = {};
 		char szFileName[MAX_PATH] = {};
-		char szBinExtractor[MAX_PATH] = { ".bin" };
+		char szBinExtractor[MAX_PATH] = { ".binx" };
 		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
 		strcat_s(szBinModelFilePath, szDrive);
 		strcat_s(szBinModelFilePath, szDir);
 		strcat_s(szBinModelFilePath, szFileName);
 		strcat_s(szBinModelFilePath, szBinExtractor);
 		 
-		m_pGameInstance->WriteBin(szBinModelFilePath, eType, &m_pModel);
+		m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
 
 		//m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
 		//if (nullptr == m_pAIScene)
@@ -189,14 +283,14 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 		char szDrive[MAX_PATH] = {};
 		char szDir[MAX_PATH] = {};
 		char szFileName[MAX_PATH] = {};
-		char szBinExtractor[MAX_PATH] = { ".bin" };
+		char szBinExtractor[MAX_PATH] = { ".binx" };
 		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
 		strcat_s(szBinModelFilePath, szDrive);
 		strcat_s(szBinModelFilePath, szDir);
 		strcat_s(szBinModelFilePath, szFileName);
 		strcat_s(szBinModelFilePath, szBinExtractor);
 
-		m_pGameInstance->WriteBin(szBinModelFilePath, eType, &m_pModel);
+		m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
 
 		//m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
 		//if (nullptr == m_pAIScene)
@@ -209,21 +303,11 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	{
 		if (FAILED(m_pGameInstance->ReadBin(pModelFilePath, eType, &m_pModel)))
 			return E_FAIL;
-
-		char szFbxModelFilePath[MAX_PATH] = {};
-		char szDrive[MAX_PATH] = {};
-		char szDir[MAX_PATH] = {};
-		char szFileName[MAX_PATH] = {};
-		char szFbxExtractor[MAX_PATH] = { ".fbx" };
-		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
-		strcat_s(szFbxModelFilePath, szDrive);
-		strcat_s(szFbxModelFilePath, szDir);
-		strcat_s(szFbxModelFilePath, szFileName);
-		strcat_s(szFbxModelFilePath, szFbxExtractor);
-
-		//m_pAIScene = m_Importer.ReadFile(szFbxModelFilePath, iFlag);
-		//if (nullptr == m_pAIScene)
-		//	return E_FAIL;
+	}
+	else if (false == strcmp(".binx", szEXT))
+	{
+		if (FAILED(m_pGameInstance->ReadBinx(pModelFilePath, eType, &m_pModel)))
+			return E_FAIL;
 	}
 	else
 		return E_FAIL;
@@ -275,6 +359,23 @@ HRESULT CModel::Bind_Material(_uint iMeshIndex, CShader* pShader, const _char* p
 	
 }
 
+HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTextureIndex)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	for (_int eType = ENUM_CLASS(TEXTURE_TYPE::NONE); eType < ENUM_CLASS(TEXTURE_TYPE::END); ++eType)
+	{
+		if (m_szBindTags[eType][0] != '\0')
+			m_Materials[iMaterialIndex]->Bind_SRV(pShader, m_szBindTags[eType], Convert_TextureType((TEXTURE_TYPE)eType), iTextureIndex);
+	}
+}
+
 _bool CModel::Play_Animation(_float fTimeDelta)
 {
 	if (-1 == m_iCurrentAnimIndex || 
@@ -292,6 +393,63 @@ _bool CModel::Play_Animation(_float fTimeDelta)
 	}
 
 	return m_isFinish;
+}
+
+HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
+{
+	if (eType == TEXTURE_TYPE::END)
+		return E_FAIL;
+
+	if (eType == TEXTURE_TYPE::NONE)
+		return E_FAIL;
+
+	strcpy_s(m_szBindTags[ENUM_CLASS(eType)], szBindTag);
+	return S_OK;
+}
+
+aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
+{
+	switch (eType)
+	{
+	case TEXTURE_TYPE::NONE:
+		return aiTextureType_NONE;
+	case TEXTURE_TYPE::DIFFUSE:
+		return aiTextureType_DIFFUSE;
+	case TEXTURE_TYPE::SPECULAR:
+		return aiTextureType_SPECULAR;
+	case TEXTURE_TYPE::AMBIENT:
+		return aiTextureType_AMBIENT;
+	case TEXTURE_TYPE::EMISSIVE:
+		return aiTextureType_EMISSIVE;
+	case TEXTURE_TYPE::ORM:
+		return aiTextureType_METALNESS;
+	case TEXTURE_TYPE::NORMAL:
+		return aiTextureType_NORMALS;
+	case TEXTURE_TYPE::MASK:
+		return aiTextureType_DIFFUSE_ROUGHNESS;
+	case TEXTURE_TYPE::EXTRA1:
+		return aiTextureType_HEIGHT;
+	case TEXTURE_TYPE::EXTRA2:
+		return aiTextureType_SHININESS;
+	case TEXTURE_TYPE::EXTRA3:
+		return aiTextureType_OPACITY;
+	case TEXTURE_TYPE::EXTRA4:
+		return aiTextureType_DISPLACEMENT;
+	case TEXTURE_TYPE::EXTRA5:
+		return aiTextureType_LIGHTMAP;
+	case TEXTURE_TYPE::EXTRA6:
+		return aiTextureType_REFLECTION;
+	case TEXTURE_TYPE::EXTRA7:
+		return aiTextureType_AMBIENT_OCCLUSION;
+	case TEXTURE_TYPE::EXTRA8:
+		return aiTextureType_CLEARCOAT;
+	case TEXTURE_TYPE::END:
+		return aiTextureType_NONE;
+	default:
+		return aiTextureType_NONE;
+	}
+
+	return aiTextureType_NONE;
 }
 
 HRESULT CModel::Render(_uint iMeshIndex)

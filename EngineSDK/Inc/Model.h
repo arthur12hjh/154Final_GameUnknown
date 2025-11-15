@@ -18,9 +18,9 @@ public:
 	}
 
 	_int Get_BoneIndex(const _char* pBoneName) const;
-	
+
 	vector<class CBone*>* Get_Bones();
-	
+
 	_uint Get_AnimationKeyFrameIndex() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
@@ -50,19 +50,29 @@ public:
 
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
 
+	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, class CTexture* pTexture, const _char* pBindTag = nullptr);
+	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr);
+	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag = nullptr);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
 	HRESULT Bind_BoneMatrices(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_Material(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
+	HRESULT Bind_AllMaterials(_uint iMeshIndex, class CShader* pShader, _uint iTextureIndex);
 	_bool Play_Animation(_float fTimeDelta);
+
+	HRESULT Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag);
+
+	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
+
 	virtual HRESULT Render(_uint iMeshIndex);
-	
+
 private:
 	MODEL_TYPE					m_eType = {};
 	_float4x4					m_PreTransformMatrix = {};
 
-	binModel*					m_pModel;
+	binModel* m_pModel;
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
@@ -76,7 +86,9 @@ private:
 	_uint						m_iNumAnimations = {};
 	_bool						m_isLoop = { false };
 	_bool						m_isFinish = { false };
-	vector<class CAnimation*>	m_Animations;	
+	vector<class CAnimation*>	m_Animations;
+
+	_char						m_szBindTags[ENUM_CLASS(TEXTURE_TYPE::END)][MAX_PATH];
 private:
 	HRESULT Ready_Meshes();
 	HRESULT Ready_Materials(const _char* pModelFilePath);

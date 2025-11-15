@@ -355,13 +355,14 @@ namespace Engine
 			MAYA_SPECULAR,
 			MAYA_SPECULAR_COLOR, 
 			MAYA_SPECULAR_ROUGHNESS,
-			ANISOTROPY, 
+			ANISOTROPY,
 			GLTF_METALLIC_ROUGHNESS, 
 			END
 		};
 
-		vector<unsigned int> vNumSRVs;
-		vector<string> strTexturePaths[TEXTURETYPE::END];
+		vector<unsigned int>	vNumSRVs;
+		vector<string>			strTexturePaths[TEXTURETYPE::END];
+		char					szName[MAX_PATH];
 	}BINMATERIAL;
 
 	typedef struct binModel
