@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Interaction_Component.h"
 
 #include "GameInstance.h"
@@ -20,17 +21,48 @@ HRESULT CInteraction_Component::Initialize_Prototype()
 HRESULT CInteraction_Component::Initialize(void* pArg)
 {
     INTERACTION_DESC* pDesc = static_cast<INTERACTION_DESC*>(pArg);
-    m_pOBBColiider->SetCollision({}, pDesc->vRoation, pDesc->vSize);
+    m_BeginCallBackFunc = pDesc->BeginCallBackFunc;
+    m_EndCallBackFunc = pDesc->EndCallBackFunc;
+    m_EndCallBackFunc = pDesc->InteractionEvent;
 
-    m_UpdateFunction = pDesc->CallBackFunc;
+    if (FAILED(Ready_Components(*pDesc)))
+        return E_FAIL;
+    
+    m_pOBBColiider->SetCollision({}, pDesc->vRoation, pDesc->vSize);
     return S_OK;
 }
 
-void CInteraction_Component::Update_Intraction(_float fTimeDeleta)
+void CInteraction_Component::SetOwner(CGameObject* pGameObject)
 {
-    if (m_UpdateFunction)
-        m_UpdateFunction(fTimeDeleta);
+    __super::SetOwner(pGameObject);
+    m_pOBBColiider->SetOwner(pGameObject);
 }
+
+void CInteraction_Component::Update_Com()
+{
+    m_pGameInstance->ADD_Collider(m_pOBBColiider);
+#ifdef _DEBUG
+    m_pGameInstance->Add_DebugComponent(m_pOBBColiider);
+#endif // _DEBUG
+}
+
+void CInteraction_Component::Action_InteractionEvent(CGameObject* pGameObject)
+{
+    // 여기서 인터렉션 호출
+    // 호출하면 여기서 호출한 녀석과 함께 넘겨준다.
+    if(m_InteractionFunc)
+        m_InteractionFunc(pGameObject);
+}
+
+#ifdef _DEBUG
+HRESULT CInteraction_Component::Render()
+{
+    m_pOBBColiider->Render();
+
+
+    return S_OK;
+}
+#endif // _DEBUG
 
 _bool CInteraction_Component::Is_Overlap(CCollider* pCollider)
 {
@@ -48,6 +80,21 @@ _bool CInteraction_Component::Is_RayHit(_vector vTargetPos, _vector vDir, void* 
         OutDesc = &Desc;
 
     return bFlag;
+}
+
+HRESULT CInteraction_Component::Ready_Components(const INTERACTION_DESC& Desc)
+{
+    m_pOBBColiider = COBBCollider::Create(m_pDevice, m_pContext);
+    if (nullptr == m_pOBBColiider)
+        return E_FAIL;
+
+    COBBCollider::OBB_COLLIDER_DESC OBBDesc = { };
+    m_pOBBColiider->Initialize(&OBBDesc);
+
+    m_pOBBColiider->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_BeginCallBackFunc(); });
+    m_pOBBColiider->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_EndCallBackFunc(); });
+
+    return S_OK;
 }
 
 CInteraction_Component* CInteraction_Component::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

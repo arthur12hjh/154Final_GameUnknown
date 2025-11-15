@@ -163,9 +163,6 @@
     <Filter Include="50.Behavior\BlackBoard">
       <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10.GameManager\CharacterManager">
-      <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character">
       <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
@@ -286,11 +283,20 @@
     <Filter Include="02.GameObjects\Actor\ProbActor\Box">
       <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
     </Filter>
-    <Filter Include="11.Client_Component">
-      <UniqueIdentifier>{2c0dc1f9-2d3e-4fcd-a8f9-3fc4a6b963a9}</UniqueIdentifier>
+    <Filter Include="10.GameManager\Interaction">
+      <UniqueIdentifier>{948aba18-bb52-4251-aadd-9cc8d8c04726}</UniqueIdentifier>
     </Filter>
-    <Filter Include="11.Client_Component\Interaction">
-      <UniqueIdentifier>{2b1bfcba-12b8-4c13-9a47-2692930f08ef}</UniqueIdentifier>
+    <Filter Include="10.GameManager\Interaction\Manager">
+      <UniqueIdentifier>{e9a0c3e2-57ae-4dee-835d-c812d88e2548}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\CharacterDataManager">
+      <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
+      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
+      <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -496,7 +502,7 @@
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DataManager.h">
-      <Filter>10.GameManager\CharacterManager</Filter>
+      <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Gorilla_Body.h">
       <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
@@ -513,8 +519,20 @@
     <ClInclude Include="..\public\Vending.h">
       <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Interaction_Component.h">
-      <Filter>11.Client_Component\Interaction</Filter>
+    <ClInclude Include="..\Public\Interaction_Component.h">
+      <Filter>10.GameManager\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interaction_Manager.h">
+      <Filter>10.GameManager\Interaction\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Prob_Interaction.h">
+      <Filter>02.GameObjects\Actor\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ItemBox.h">
+      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CanBox.h">
+      <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -704,7 +722,7 @@
       <Filter>50.Behavior\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
-      <Filter>10.GameManager\CharacterManager</Filter>
+      <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gorilla_Body.cpp">
       <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
@@ -721,8 +739,20 @@
     <ClCompile Include="..\private\Vending.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Interaction_Component.cpp">
-      <Filter>11.Client_Component\Interaction</Filter>
+    <ClCompile Include="..\Private\Interaction_Component.cpp">
+      <Filter>10.GameManager\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interaction_Manager.cpp">
+      <Filter>10.GameManager\Interaction\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Prob_Interaction.cpp">
+      <Filter>02.GameObjects\Actor\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ItemBox.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CanBox.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

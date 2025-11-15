@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 
 #include "DataManager.h"
+#include "Interaction_Manager.h"
 
 #include "GameObject.h"
 
@@ -15,6 +16,10 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
     m_pDataManager = CDataManager::Create();
     if (nullptr == m_pDataManager)
+        return E_FAIL;
+
+    m_pInteraction_Manager = CInteraction_Manager::Create();
+    if (nullptr == m_pInteraction_Manager)
         return E_FAIL;
 
     return S_OK;
@@ -48,6 +53,16 @@ CGameObject* CGameManager::GetGameCharacter()
     return m_pPlayer;
 }
 
+_bool CGameManager::Is_NearCharacter(_vector vPos, _float vRange)
+{
+    _vector vPlayerPos = m_pPlayer->GetTransform()->Get_State(STATE::POSITION);
+    _float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vPos));
+    if (fDistance <= vRange)
+        return true;
+
+    return false;
+}
+
 #pragma region UIResourceManager
 HRESULT CGameManager::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex, void* pArg)
 {
@@ -79,6 +94,38 @@ const BOSS_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
 {
     return m_pDataManager->Find_BossData(iBossID);
 }
+
+#pragma endregion
+
+#pragma region Interaction Manager
+void CGameManager::Interaction_Update()
+{
+    m_pInteraction_Manager->Update();
+}
+
+void CGameManager::SetInteractionBaseObject(CGameObject* pObject)
+{
+    if (nullptr == pObject)
+        m_pInteraction_Manager->SetInteractionBaseObject(m_pPlayer);
+    else
+        m_pInteraction_Manager->SetInteractionBaseObject(pObject);
+}
+
+void CGameManager::ADD_Interaction(CInteraction_Component* pInteraction_Com)
+{
+    m_pInteraction_Manager->ADD_Interaction(pInteraction_Com);
+}
+
+CInteraction_Component* CGameManager::GetNearInteraction()
+{
+    return m_pInteraction_Manager->GetNearInteraction();
+}
+
+vector<CInteraction_Component*>* CGameManager::GetAllInteraction()
+{
+    return m_pInteraction_Manager->GetAllInteraction();
+}
+
 #pragma endregion
 
 
@@ -105,6 +152,7 @@ void CGameManager::Free()
     Safe_Release(m_pUIResourceStore);
     Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
+    Safe_Release(m_pInteraction_Manager);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);

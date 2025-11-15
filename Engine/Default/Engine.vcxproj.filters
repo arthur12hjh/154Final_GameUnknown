@@ -669,9 +669,6 @@
     <Filter Include="01.Utility\03.Components\VIBuffer\Cell">
       <UniqueIdentifier>{f42d7577-1fba-4d17-8c63-ad78e7b59491}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98.ShaderFiles">
-      <UniqueIdentifier>{f518d6b3-555c-47e6-8466-4a2d704bb85d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Cube">
       <UniqueIdentifier>{b6b04c4d-3ef5-4def-86cf-a5421e10d510}</UniqueIdentifier>
     </Filter>
@@ -770,15 +767,6 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\VIBuffer\Point">
       <UniqueIdentifier>{e3992711-2893-4620-b2e4-e2a09e2ac50e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.ShaderFiles\VIBuffer">
-      <UniqueIdentifier>{434b643b-122d-46ff-bbe4-9e1e9de03a6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.ShaderFiles\VIBuffer\Point">
-      <UniqueIdentifier>{656dfd05-f455-4091-b61b-089fef8ba0e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.ShaderFiles\VIBuffer\Model">
-      <UniqueIdentifier>{cec658a0-d100-4324-845c-b2b18cbeed21}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\18.StateMachine">
       <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
@@ -933,22 +921,34 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\Bloom\ShaderFile">
       <UniqueIdentifier>{3a823ccd-5933-44fe-9521-f7a11b4332f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles">
+      <UniqueIdentifier>{f518d6b3-555c-47e6-8466-4a2d704bb85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer">
+      <UniqueIdentifier>{434b643b-122d-46ff-bbe4-9e1e9de03a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer\Point">
+      <UniqueIdentifier>{656dfd05-f455-4091-b61b-089fef8ba0e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer\Model">
+      <UniqueIdentifier>{cec658a0-d100-4324-845c-b2b18cbeed21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl">
-      <Filter>98.ShaderFiles\VIBuffer\Model</Filter>
+      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Model</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl">
-      <Filter>98.ShaderFiles\VIBuffer\Point</Filter>
+      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Point</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\ShaderFile</Filter>
@@ -962,13 +962,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_Deferred_Defines.hlsli">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_Deferred_Functions.hlsli">
-      <Filter>98.ShaderFiles</Filter>
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Actor.h"
 
+#include "GameInstance.h"
+
 CActor::CActor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CGameObject(pDevice, pContext)
 {
@@ -51,6 +53,5 @@ void CActor::Free()
     __super::Free();
 
     Safe_Release(m_pShaderCom);
-    Safe_Release(m_pVIBufferCom);
     Safe_Release(m_pRigidBody);
 }

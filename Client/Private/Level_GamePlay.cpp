@@ -2,6 +2,9 @@
 #include "Level_GamePlay.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
+
+#include "Actor.h"
 #include "Camera_Free.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -39,14 +42,14 @@ HRESULT CLevel_GamePlay::Initialize()
 
 
 	Load_Map_Data();
-
+	CGameManager::GetInstance()->SetInteractionBaseObject();
+	
 	return S_OK;
 }
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	
-
+	CGameManager::GetInstance()->Interaction_Update();
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -115,14 +118,46 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
+	
+	CActor::ACTOR_DESC ProbDesc = {};
+	ProbDesc.vScale = { 1.f, 1.f, 1.f };
 
-	//for (size_t i = 0; i < 10; i++)
-	//{
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//		return E_FAIL;
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
+	/*for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(0, 20),
+							   m_pGameInstance->Random(0, 20),
+							   m_pGameInstance->Random(0, 20) };
 
-	//}
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Box"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
+
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box2");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+							   m_pGameInstance->Random(0, 50),
+							   m_pGameInstance->Random(0, 50) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Box"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
+
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+							   m_pGameInstance->Random(0, 50),
+							   m_pGameInstance->Random(0, 50) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}*/
+
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
@@ -197,14 +232,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 			return E_FAIL;
 	}
-
-	//for (size_t i = 0; i < 1; i++)
-	//{
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ForkLift"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//		return E_FAIL;
-
-	//}
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))

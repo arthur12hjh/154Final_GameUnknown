@@ -42,9 +42,9 @@
 #pragma region Prob
 #include "Prob_Box.h"
 
-
 #pragma region Interaction
 #include "Vending.h"
+#include "CanBox.h"
 #pragma endregion
 #pragma endregion
 
@@ -127,6 +127,7 @@ HRESULT CLoader::Loading()
 
 		m_strMessage = TEXT("인스턴싱중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
@@ -310,8 +311,6 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 
-
-
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxNorTex");
 	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements);
@@ -415,19 +414,33 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Prob_Box */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	/*	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_Component_Model_Prob_Vending */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Vending");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Prob/Vending/Vending.fbx", PreTransformMatrix);
+	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Box/TypeA/1/Box1.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Prob_Box */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Box2");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Box/TypeA/2/Box2.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Prob_CanBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Box/CanBox/CanBox.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	///* For.Prototype_Component_Model_Prob_Vending */
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Vending");
+	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Prob/Vending/Vending.fbx", PreTransformMatrix);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
@@ -545,6 +558,13 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 	/* Prob. Vending */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Vending");
 	pProtoDesc.pPrototype = CVending::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/*CanBox*/
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_CanBox");
+	pProtoDesc.pPrototype = CCanBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

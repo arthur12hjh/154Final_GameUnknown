@@ -120,7 +120,6 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 		return E_FAIL;
 
 	m_Components.emplace(strComponentTag, pComponent);
-
 	pComponent->SetOwner(this);
 	*ppOut = pComponent;
 

@@ -1,84 +1,104 @@
 #include "pch.h"
-#include "Vending.h"
+#include "CanBox.h"
 
 #include "GameInstance.h"
-#include "UIBase.h"
 #include "Interaction_Component.h"
+#include "UIBase.h"
 
-CVending::CVending(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-    CProb_Interaction(pDevice, pContext)
+CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	CProb_Interaction(pDevice, pContext)
 {
 }
 
-CVending::CVending(const CVending& Prototype) :
-    CProb_Interaction(Prototype)
+CCanBox::CCanBox(const CCanBox& Prototype) :
+	CProb_Interaction(Prototype)
 {
 }
 
-HRESULT CVending::Initialize_Prototype()
+HRESULT CCanBox::Initialize_Prototype()
 {
+	return S_OK;
+}
+
+HRESULT CCanBox::Initialize(void* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(ADD_Components(*pDesc)))
+		return E_FAIL;
+
+    m_pModelCom->Set_AnimationIndex(1, false);
     return S_OK;
 }
 
-HRESULT CVending::Initialize(void* pArg)
-{
-    if (FAILED(__super::Initialize(pArg)))
-        return E_FAIL;
-
-    ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
-    if (FAILED(ADD_Components(*pDesc)))
-        return E_FAIL;
-}
-
-void CVending::Priority_Update(_float fTimeDelta)
+void CCanBox::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CVending::Update(_float fTimeDelta)
+void CCanBox::Update(_float fTimeDelta)
 {
-    _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    m_pCullingCollider->UpdateColiision(WorldMat);
-    m_pRigidBody->Update_PxTransform(WorldMat);
-}
-
-void CVending::Late_Update(_float fTimeDelta)
-{
-    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    switch (m_eState)
     {
-        m_pInteractionCom->Update_Com();
+    case CCanBox::BOX_STATE::OPEN:
+        m_pModelCom->Play_Animation(fTimeDelta);
+        break;
+    default :
+        m_pModelCom->Play_Animation(0.f);
+        break;
+    }
+
+	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(WorldMat);
+	m_pRigidBody->Update_PxTransform(WorldMat);
+}
+
+void CCanBox::Late_Update(_float fTimeDelta)
+{
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		m_pInteractionCom->Update_Com();
 #ifdef _DEBUG
-        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-        m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
+		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    }
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 }
 
-HRESULT CVending::Render()
+HRESULT CCanBox::Render()
 {
-    if (FAILED(Bind_ShaderResources()))
-        return E_FAIL;
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
-    _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-    for (size_t i = 0; i < iNumMeshes; i++)
-    {
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+        if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+            return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
             return E_FAIL;
+
+        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+            return E_FAIL;
+
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
-        if (FAILED(m_pShaderCom->Begin(3)))
-            return E_FAIL;
-        if (FAILED(m_pModelCom->Render(i)))
-            return E_FAIL;
-    }
 
-    return S_OK;
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
-HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
 
@@ -99,13 +119,13 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
         return E_FAIL;
 
     /* Com_Shader */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
 
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
-    tUserData.szActorTag = TEXT("Prop_Actor");
+    tUserData.szActorTag = TEXT("KIMETIC_Actor2");
 
     //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
     CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -115,7 +135,7 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     // 충돌처리를 할지말지 
     // DYNAMIC : 충돌 
     // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
@@ -135,8 +155,10 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     return S_OK;
 }
 
-HRESULT CVending::Bind_ShaderResources()
+HRESULT CCanBox::Bind_ShaderResources()
 {
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
+        return E_FAIL;
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
@@ -147,7 +169,7 @@ HRESULT CVending::Bind_ShaderResources()
     return S_OK;
 }
 
-HRESULT CVending::Begin_OverlapCallBack()
+HRESULT CCanBox::Begin_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
@@ -156,12 +178,12 @@ HRESULT CVending::Begin_OverlapCallBack()
     return S_OK;
 }
 
-void CVending::Excute_CallBack()
+void CCanBox::Excute_CallBack()
 {
-
+    m_pModelCom->Set_AnimationIndex(1, false);
 }
 
-HRESULT CVending::End_OverlapCallBack()
+HRESULT CCanBox::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::END);
@@ -170,29 +192,29 @@ HRESULT CVending::End_OverlapCallBack()
     return S_OK;
 }
 
-CVending* CVending::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCanBox* CCanBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CVending* pVending = new CVending(pDevice, pContext);
-    if (FAILED(pVending->Initialize_Prototype()))
+    CCanBox* pCanBox = new CCanBox(pDevice, pContext);
+    if (FAILED(pCanBox->Initialize_Prototype()))
     {
-        Safe_Release(pVending);
-        MSG_BOX("Create Fail : Vending");
+        Safe_Release(pCanBox);
+        MSG_BOX("Create Fail : Can Box");
     }
-    return pVending;
+    return pCanBox;
 }
 
-CGameObject* CVending::Clone(void* pArg)
+CGameObject* CCanBox::Clone(void* pArg)
 {
-    CVending* pVending = new CVending(*this);
-    if (FAILED(pVending->Initialize(pArg)))
+    CCanBox* pCanBox = new CCanBox(*this);
+    if (FAILED(pCanBox->Initialize(pArg)))
     {
-        Safe_Release(pVending);
-        MSG_BOX("Clone Fail : Vending");
+        Safe_Release(pCanBox);
+        MSG_BOX("Clone Fail : Can Box");
     }
-    return pVending;
+    return pCanBox;
 }
 
-void CVending::Free()
+void CCanBox::Free()
 {
     __super::Free();
 

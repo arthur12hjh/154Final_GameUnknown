@@ -161,6 +161,7 @@
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
+    <ClInclude Include="..\public\CanBox.h" />
     <ClInclude Include="..\public\DataManager.h" />
     <ClInclude Include="..\Public\ClientStruct.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
@@ -190,7 +191,9 @@
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\public\Instance_Model.h" />
-    <ClInclude Include="..\public\Interaction_Component.h" />
+    <ClInclude Include="..\Public\Interaction_Component.h" />
+    <ClInclude Include="..\Public\Interaction_Manager.h" />
+    <ClInclude Include="..\public\ItemBox.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -203,6 +206,7 @@
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
     <ClInclude Include="..\Public\PonyTail_Player.h" />
+    <ClInclude Include="..\public\Prob_Interaction.h" />
     <ClInclude Include="..\Public\PxTestProp.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
@@ -237,6 +241,7 @@
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
+    <ClCompile Include="..\private\CanBox.cpp" />
     <ClCompile Include="..\private\DataManager.cpp" />
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
@@ -279,7 +284,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Instance_Model.cpp" />
-    <ClCompile Include="..\private\Interaction_Component.cpp" />
+    <ClCompile Include="..\Private\Interaction_Component.cpp" />
+    <ClCompile Include="..\Private\Interaction_Manager.cpp" />
+    <ClCompile Include="..\private\ItemBox.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
@@ -295,6 +302,7 @@
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
     <ClCompile Include="..\Private\PonyTail_Player.cpp" />
+    <ClCompile Include="..\private\Prob_Interaction.cpp" />
     <ClCompile Include="..\Private\PxTestProp.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
