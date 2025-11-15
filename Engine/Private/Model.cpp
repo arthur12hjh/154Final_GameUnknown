@@ -170,6 +170,31 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 		strcat_s(szBinModelFilePath, szDir);
 		strcat_s(szBinModelFilePath, szFileName);
 		strcat_s(szBinModelFilePath, szBinExtractor);
+		 
+		m_pGameInstance->WriteBin(szBinModelFilePath, eType, &m_pModel);
+
+		//m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+		//if (nullptr == m_pAIScene)
+		//	return E_FAIL;
+
+
+
+	}
+	else if (false == strcmp(".glb", szEXT))
+	{
+		if (FAILED(m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel)))
+			return E_FAIL;
+
+		char szBinModelFilePath[MAX_PATH] = {};
+		char szDrive[MAX_PATH] = {};
+		char szDir[MAX_PATH] = {};
+		char szFileName[MAX_PATH] = {};
+		char szBinExtractor[MAX_PATH] = { ".bin" };
+		_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+		strcat_s(szBinModelFilePath, szDrive);
+		strcat_s(szBinModelFilePath, szDir);
+		strcat_s(szBinModelFilePath, szFileName);
+		strcat_s(szBinModelFilePath, szBinExtractor);
 
 		m_pGameInstance->WriteBin(szBinModelFilePath, eType, &m_pModel);
 

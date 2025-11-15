@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "ImGui_Manager.h"
 #include "GameInstance.h"
 #include "Tool_Manager.h"
@@ -116,8 +117,10 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 	if (nullptr != m_pSelectedObject)
 	{
 		m_pSelectedObject->Set_Dead(TRUE);
+		m_iSelectedAnimationIndex = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
+		
 	}
 
 	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), szCharacterTag, ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
@@ -134,6 +137,7 @@ void CImGui_Manager::Kill_Character()
 	if (nullptr == m_pSelectedObject)
 		return;
 	m_pSelectedObject->Set_Dead(TRUE);
+	m_iSelectedAnimationIndex = 0;
 	m_pSelectedObject = nullptr;
 	m_pAnimationList = nullptr;
 }
@@ -276,16 +280,14 @@ void CImGui_Manager::Update_AnimationList()
 	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
 	ImGui::SetNextWindowSize(ImVec2(450, ImGui::GetIO().DisplaySize.y)); // 왼쪽에 갖다붙일거임
 
-	static int iSelectedAnimationIndex = 0;
-	static int iBeforeAnimationIndex = -1;
 
 	ImGui::Begin(u8"Animation List", NULL);
 
 	if (nullptr == m_pAnimationList)
 	{
 		ImGui::End();
-		iSelectedAnimationIndex = 0;
-		iBeforeAnimationIndex = -1;
+		m_iSelectedAnimationIndex = 0;
+		m_iBeforeAnimationIndex = -1;
 		return;
 	}
 
@@ -297,17 +299,17 @@ void CImGui_Manager::Update_AnimationList()
 
 	ImGui::Text("Animation List:");
 
-	if (iSelectedAnimationIndex != -1)
+	if (m_iSelectedAnimationIndex != -1)
 	{
-		ImVec4 skyBlue = ImVec4(0.4f, 0.7f, 1.0f, 1.0f);
+		ImVec4 vFontColor = ImVec4(0.4f, 0.7f, 1.0f, 1.0f);
 
-		ImGui::TextColored(skyBlue, "Selected Index:");
+		ImGui::TextColored(vFontColor, "Selected Index:");
 		ImGui::SameLine();
-		ImGui::Text("%d   ", iSelectedAnimationIndex);
+		ImGui::Text("%d   ", m_iSelectedAnimationIndex);
 
-		ImGui::TextColored(skyBlue, "Selected Name:");
+		ImGui::TextColored(vFontColor, "Selected Name:");
 		ImGui::SameLine();
-		ImGui::Text("%s", (*m_pAnimationList)[iSelectedAnimationIndex]->Get_Name());
+		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
 
 	}
 
@@ -316,20 +318,20 @@ void CImGui_Manager::Update_AnimationList()
 
 	for (int i = 0; i < m_pAnimationList->size(); ++i)
 	{
-		CAnimation* pAnim = (*m_pAnimationList)[i];
-		const char* animName = pAnim->Get_Name();
+		CAnimation* pAnimation = (*m_pAnimationList)[i];
+		const char* szAnimationName = pAnimation->Get_Name();
 
 
-		if (ImGui::Selectable(animName, iSelectedAnimationIndex == i))
+		if (ImGui::Selectable(szAnimationName, m_iSelectedAnimationIndex == i))
 		{
-			iSelectedAnimationIndex = i;
+			m_iSelectedAnimationIndex = i;
 		}
 	}
 
-	if (iSelectedAnimationIndex != iBeforeAnimationIndex)
+	if (m_iSelectedAnimationIndex != m_iBeforeAnimationIndex)
 	{
-		iBeforeAnimationIndex = iSelectedAnimationIndex;
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(iSelectedAnimationIndex);
+		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
 	}
 
 
@@ -341,18 +343,104 @@ void CImGui_Manager::Update_AnimationList()
 void CImGui_Manager::Update_KeyFrameTool()
 {
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 500, 30)); // 화면 상단 좌표
-	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y)); // 오른쪽에 갖다붙일거임
+	ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y)); // 오른쪽에 갖다붙일거임
 
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
+	Update_EventMaker();
 
 	ImGui::End();
 }
 
 void CImGui_Manager::Update_TimeLine()
 {
+	if (nullptr == m_pAnimationList)
+	{
+		ImGui::Text("Select Animation");
+		return;
+	}
 	
+	CAnimation* pAnimation = (*m_pAnimationList)[m_iSelectedAnimationIndex];
+	if (nullptr == pAnimation)
+	{
+		ImGui::Text("Invalid Animation");
+		return;
+	}
+	
+	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 360.f);
+
+	ImGui::InvisibleButton("Canvas_Timeline", vCanvasSize, ImGuiButtonFlags_MouseButtonLeft);	// 이걸로 타임라인 캔버스 전체를 클릭 가능한 영역으로 만듬
+	
+	ImVec2 vCanvasLeftTop = ImGui::GetItemRectMin();
+	ImVec2 vCanvasRightBottom = ImGui::GetItemRectMax();
+	ImDrawList* pDrawList = ImGui::GetWindowDrawList();
+	
+	pDrawList->AddRectFilled(vCanvasLeftTop, vCanvasRightBottom, IM_COL32(40, 40, 45, 255)); // 이걸로 타임라인바 배경 색 채우는거임
+	
+	// 타임라인 세로선 그릴 때 쓸 좌표
+	_float fVerticalLineTop = vCanvasLeftTop.y;
+	_float fVerticalLineBottom = vCanvasRightBottom.y;
+
+	_float fCenterX = (vCanvasLeftTop.x + vCanvasRightBottom.x) * 0.5f;
+	_float fCenterY = (vCanvasLeftTop.y + vCanvasRightBottom.y) * 0.5f;
+	
+	// 현재 키프레임이 타임라인의 x좌표 어디에 있는지 표시할 float값
+	_float fSaturatedCurrentKeyFrameRatio = max(pAnimation->Get_AnimationKeyFrameIndex() / pAnimation->Get_Duration(), 0.f);
+	fSaturatedCurrentKeyFrameRatio = min(pAnimation->Get_AnimationKeyFrameIndex() / pAnimation->Get_Duration(), 1.f);
+	_float fCurrentFramePosition = vCanvasLeftTop.x + fSaturatedCurrentKeyFrameRatio * vCanvasSize.x;
+	
+	// 눈금 사이 키프레임
+	_int iFrameTick = 0;
+	
+	if (pAnimation->Get_Duration() <= 10)
+		iFrameTick = 1;
+	else if(pAnimation->Get_Duration() <= 50)
+		iFrameTick = 5;
+	else if (pAnimation->Get_Duration() <= 100)
+		iFrameTick = 10;
+	else
+		iFrameTick = 20;
+	
+	// 138프레임일 경우, 20 키프레임 단위로 0-20-40-60-80-100-120-140 총 8개 그려야함.
+	_int iNumVerticalLines = (pAnimation->Get_Duration() + iFrameTick - 1) / iFrameTick;
+
+	ImU32 vVerticalLineColor = IM_COL32(120, 120, 130, 255);
+	ImU32 vTextColor = IM_COL32(220, 220, 220, 255);
+
+	for (_int iCurrentLine = 0; iCurrentLine <= iNumVerticalLines; ++iCurrentLine)
+	{
+		_uint iCurrentFrame = iCurrentLine * iFrameTick;
+
+		_float fCurrentKeyPositionX = max(iCurrentFrame / pAnimation->Get_Duration(), 0.f);
+		fCurrentKeyPositionX = min(iCurrentFrame / pAnimation->Get_Duration(), 1.f);
+		fCurrentKeyPositionX = vCanvasLeftTop.x + fCurrentKeyPositionX * vCanvasSize.x;
+
+		pDrawList->AddLine(ImVec2(fCurrentKeyPositionX, fVerticalLineTop), ImVec2(fCurrentKeyPositionX, fVerticalLineBottom), vVerticalLineColor, 1.0f); // ImVec으로는 색 설정이 안됨
+
+
+		char szCurrentKeyFrame[8];
+		sprintf_s(szCurrentKeyFrame, "%d", iCurrentFrame);
+		pDrawList->AddText(ImVec2(fCurrentKeyPositionX , vCanvasLeftTop.y ), vTextColor, szCurrentKeyFrame);
+	}
+
+	ImU32 vCursorFrameColor = IM_COL32(180, 220, 255, 255);
+
+	// 여기까지가 기본 키프레임 툴바고, 이제 현재 키 프레임을 표시하자
+	pDrawList->AddLine(ImVec2(fCurrentFramePosition, vCanvasLeftTop.y), ImVec2(fCurrentFramePosition, vCanvasRightBottom.y), vCursorFrameColor);
+	pDrawList->AddCircle(ImVec2(fCurrentFramePosition, vCanvasLeftTop.y), 5.f, vCursorFrameColor);
+
+	///
+	/// 클릭 관련 처리 넣기
+	/// 클릭하면 해당 키프레임으로 이동 등
+	///
+
+
+}
+
+void CImGui_Manager::Update_EventMaker()
+{
+
 
 }
 
