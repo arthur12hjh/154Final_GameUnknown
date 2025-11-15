@@ -28,6 +28,8 @@ HRESULT CVending::Initialize(void* pArg)
     ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
     if (FAILED(ADD_Components(*pDesc)))
         return E_FAIL;
+
+    return S_OK;
 }
 
 void CVending::Priority_Update(_float fTimeDelta)

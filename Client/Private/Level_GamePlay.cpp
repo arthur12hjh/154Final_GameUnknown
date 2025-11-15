@@ -123,7 +123,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
 
 	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
-	/*for (size_t i = 0; i < 5; i++)
+	for (size_t i = 0; i < 5; i++)
 	{
 		ProbDesc.vPosition = { m_pGameInstance->Random(0, 20),
 							   m_pGameInstance->Random(0, 20),
@@ -156,7 +156,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
