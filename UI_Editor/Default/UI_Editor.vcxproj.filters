@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="100. ETC">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{bc9540e8-bdd4-4bfa-9530-f9c1de56eae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{a4dc3fb4-79fd-463b-aae9-66f3f31254c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines\PCH">
+      <UniqueIdentifier>{5c295bd9-df16-47bc-b775-527b94a06aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.GUIManager">
+      <UniqueIdentifier>{72d1c617-da2a-4f2b-8e8d-d6adc02aa0ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.GUIManager\backend">
+      <UniqueIdentifier>{99a606e7-1914-4234-963b-021ea75ec4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Level">
+      <UniqueIdentifier>{50248469-472e-4128-9d26-7d5e390b0b93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Level\GamePlay">
+      <UniqueIdentifier>{acad7577-0bd6-400c-afe5-b81800d138c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Level\Loading">
+      <UniqueIdentifier>{9b9ec81a-145d-45fb-9822-3c0bcf64e302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Level\Logo">
+      <UniqueIdentifier>{e1d92d81-538d-44d6-b496-4a0d45e2c7c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Level\Loading\Loader">
+      <UniqueIdentifier>{fd9ae4b7-953d-46a2-a313-e36c1894e3b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client">
+      <UniqueIdentifier>{c2123a54-d70f-4664-93dc-084127495837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\00. UIObjects">
+      <UniqueIdentifier>{9326214e-d79f-491f-878d-ddbe7ea10857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\01. GameManager">
+      <UniqueIdentifier>{83d451ad-a043-4011-a1b8-4d6f42b9af7e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>100. ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>100. ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Editor.h">
+      <Filter>100. ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_UI_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99.Defines\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\GUIManager.h">
+      <Filter>97.GUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imconfig.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_impl_dx11.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_impl_win32.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imgui_internal.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_rectpack.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_textedit.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImgUI\imstb_truetype.h">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Level_GamePlay.h">
+      <Filter>01.Level\GamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Level_Loading.h">
+      <Filter>01.Level\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Level_Logo.h">
+      <Filter>01.Level\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Loader.h">
+      <Filter>01.Level\Loading\Loader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UI_Editor.cpp">
+      <Filter>98. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99.Defines\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\GUIManager.cpp">
+      <Filter>97.GUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_demo.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_draw.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_impl_dx11.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_impl_win32.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_tables.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
+      <Filter>97.GUIManager\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Level_GamePlay.cpp">
+      <Filter>01.Level\GamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Level_Loading.cpp">
+      <Filter>01.Level\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Level_Logo.cpp">
+      <Filter>01.Level\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Loader.cpp">
+      <Filter>01.Level\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBase.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIButton.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIHUD.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIPanel.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\GameManager.cpp">
+      <Filter>999. CPP From Client\01. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIResourceStore.cpp">
+      <Filter>999. CPP From Client\01. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIText.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>100. ETC</Filter>
+    </Image>
+    <Image Include="UI_Editor.ico">
+      <Filter>100. ETC</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UI_Editor.rc">
+      <Filter>100. ETC</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
