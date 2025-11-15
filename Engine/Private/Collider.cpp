@@ -79,6 +79,11 @@ HRESULT CCollider::Render()
     m_pEffect->Apply(m_pContext);
     return S_OK;
 }
+
+HRESULT CCollider::Render(_float4 vColor)
+{
+    return Render();
+}
 #endif // _DEBUG
 
 void CCollider::BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent)

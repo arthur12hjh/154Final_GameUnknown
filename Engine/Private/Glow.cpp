@@ -131,7 +131,7 @@ HRESULT CGlow::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 
 HRESULT CGlow::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 {
-    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Glow"), pShader, pVIBuffer)))
+    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Glow_Final"), pShader, pVIBuffer)))
         return E_FAIL;
 
     return S_OK;

@@ -120,6 +120,11 @@ HRESULT CLoader::Loading_For_Village()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Sky1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_skybox_06.png"), 4))))
+		return E_FAIL;
+
 	m_strMessage = TEXT("네비게이션를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Navigation"),
@@ -148,7 +153,12 @@ HRESULT CLoader::Loading_For_Village()
 	/* For.Prototype_Component_Model_Terrain_006_A_SM */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Terrain_Sand"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Terrain/006_A_SM//006_A_SM.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Terrain/006_A_SM//006_A_SM.bin", PreTransformMatrix))))
+		return E_FAIL;
+
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Sky"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Fiona */

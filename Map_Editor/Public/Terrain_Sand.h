@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Maptool_Defines.h"
+#include "MapTool_Defines.h"
 #include "GameObject.h"
 
 NS_BEGIN(Engine)

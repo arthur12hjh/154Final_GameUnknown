@@ -128,9 +128,9 @@ void CDebugCheatUI::DrawLightDebug()
                 m_pSelectLight = m_pGameInstance->Find_Light(iIndex);
 
                 if(VISIBILITY::HIDDEN == m_pSelectLight->GetVisbility())
-                    strcpy_s(m_szSelectLight, g_szVisibility[1]);
+                    strcpy_s(m_szVisbility, g_szVisibility[1]);
                 else
-                    strcpy_s(m_szSelectLight, g_szVisibility[0]);
+                    strcpy_s(m_szVisbility, g_szVisibility[0]);
             }
 
             iIndex++;

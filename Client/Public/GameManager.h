@@ -1,7 +1,9 @@
 #pragma once
 #include "Client_Defines.h"
-#include "Base.h"
+#include "GameStruct.h"
+
 #include "UIResourceStore.h"
+#include "Base.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -11,6 +13,7 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIResourceStore;
+class CDataManager;
 
 class CGameManager final : public CBase
 {
@@ -48,6 +51,11 @@ public :
 	//const unordered_map<_wstring, _uint>* Get_UI_TextureIndices();
 #pragma endregion
 
+#pragma region DataManager
+	const CHARACTER_SKILL_DESC*	Find_SkillData(_uint iSkillID);
+	const BOSS_NETWORK_DESC*	Find_BossData(_uint iBossID);
+#pragma endregion
+
 private :
 	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*		m_pContext = nullptr;
@@ -55,6 +63,7 @@ private :
 
 	CGameObject*				m_pPlayer = nullptr;
 	CUIResourceStore*			m_pUIResourceStore = nullptr;
+	CDataManager*				m_pDataManager = nullptr;
 
 private :
 	HRESULT						Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

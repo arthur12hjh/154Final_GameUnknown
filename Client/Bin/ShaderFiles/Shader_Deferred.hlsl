@@ -24,6 +24,7 @@ texture2D g_ShadowTexture;
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
 texture2D g_DistortionTexture;
+texture2D g_BloomTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -184,39 +185,24 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_BLUR(PS_IN In)
+PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     //블러 샘플링.
     Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    
-    return Out;
-
-}
-PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_GLOW(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
-    
-    Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     //글로우 샘플링.
     Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    //블룸 샘플링
+    Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
+    //디스토션 샘플링.
+    Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
     
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_DISTORTION(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
-   
-    //디스토션 연산.
-    Out.vBackBuffer = Calc_Distortion(g_SceneTexture, g_DistortionTexture, In.vTexcoord);
-    
-    return Out;
-}
-
-PS_OUT_BACKBUFFER PS_MAIN_DEFERRED_RADIAL_BLUR(PS_IN In)
+PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
  
@@ -297,47 +283,27 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
     // idx 4
-    pass Deferred_Blur
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_BLUR();
-    }
-    // idx 5
-    pass Deferred_Glow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_GLOW();
-    }
-    // idx 6
-    pass Deferred_Distortion
+    pass Deferred
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_DISTORTION();
+        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED();
     }
 
-    // idx 7
-    pass Deferred_RadialBlur
+    // idx 5
+    pass Screen_RadialBlur
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DEFERRED_RADIAL_BLUR();
+        PixelShader = compile ps_5_0 PS_MAIN_SCREEN_RADIAL_BLUR();
     }
-    // idx 8
+    // idx 6
     pass Final
     {
         SetRasterizerState(RS_Default);

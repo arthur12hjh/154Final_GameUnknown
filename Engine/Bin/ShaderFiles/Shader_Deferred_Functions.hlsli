@@ -44,17 +44,14 @@ inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
 }
 
 /* 배럴 왜곡 이용해서 구현한거임. 내부 로직 바꾸고 싶으면 일단 디코로 따로 말해줘*/
-inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
-{   
-    /* 씬 텍스쳐 샘플링 */
-    float4 vScene = SceneTexture.Sample(DefaultSampler, vTexcoord);
-    
+inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
+{       
     /* 디스토션 렌더타겟 텍스쳐 샘플링 */
     float4 vDistortion = DistortionTexture.Sample(DefaultSampler, vTexcoord);
     
     /* r 성분을 디스토션할 성분으로 잡아놨으니까, r이 0이라면 리턴. */
     if(vDistortion.r == 0)
-        return vScene;
+        return vBackBuffer;
  
     // 0 ~ 1 -> -0.5 ~ 0.5
     float2 vCenteredUV = vTexcoord - float2(0.5f, 0.5f);
@@ -72,4 +69,23 @@ inline float4 Calc_Distortion(texture2D SceneTexture, texture2D DistortionTextur
     //vResult.rgb = lerp(vScene.rgb, vResult.rgb, 0.8f * fFade);
     
     return vResult;
+}
+
+/* 블룸 커브 수식 3개. HALO 책에서 나왔다는데 일단 가져옴..*/
+float GetBloomCurve(float fIntensity)
+{
+    float fResult = fIntensity;
+    fIntensity *= 2.0f;
+
+    /* method 1 */
+    fResult = fIntensity * 0.05 + max(0, fIntensity - 0.4f) * 0.5; // default gThreshold = 1.26
+
+    /* method 2 */
+    //result = x * x / 3.2;
+
+    /* method 3 */
+    //fResult = max(0, fIntensity - 0.6f); // default gThreshold = 1.0
+    //fResult *= fResult;
+
+    return fResult * 0.5f;
 }

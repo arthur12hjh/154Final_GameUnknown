@@ -4,9 +4,9 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Cube;
 class CTexture;
 class CShader;
+class CModel;
 NS_END
 
 NS_BEGIN(Client)
@@ -27,9 +27,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CVIBuffer_Cube* m_pVIBufferCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();
