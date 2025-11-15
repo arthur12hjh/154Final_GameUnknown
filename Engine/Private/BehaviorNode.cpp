@@ -1,7 +1,10 @@
 #include "BehaviorNode.h"
+#include "GameInstance.h"
 
-CBehaviorNode::CBehaviorNode()
+CBehaviorNode::CBehaviorNode() :
+	m_pGameInstance(CGameInstance::GetInstance())
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CBehaviorNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
@@ -22,4 +25,6 @@ CBehaviorNode::NODE_STATE CBehaviorNode::Update(_float fTimeDelta)
 void CBehaviorNode::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pGameInstance);
 }

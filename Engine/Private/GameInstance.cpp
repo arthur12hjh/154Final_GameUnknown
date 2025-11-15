@@ -145,7 +145,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 	if (false == m_bIsPause)
 	{
-		m_pThreadPool->Update_Async();
+	
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
@@ -209,6 +209,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
 	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
+	m_pThreadPool->Update_Async();
 	m_pLevel_Manager->Update(fTimeDelta);
 	m_fTimeAcc += fTimeDelta;
 }
@@ -402,6 +403,11 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
 {
 	return m_pRenderer->Get_Renderer_Matrix(eType);
+}
+
+HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
+{
+	return m_pRenderer->Set_ScreenSize(iSizeX, iSizeY);
 }
 
 #ifdef _DEBUG

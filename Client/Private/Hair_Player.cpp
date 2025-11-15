@@ -145,7 +145,7 @@ HRESULT CHair_Player::Render_Shadow()
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
+	for (_uint i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
 			return E_FAIL;
@@ -234,7 +234,4 @@ CGameObject* CHair_Player::Clone(void* pArg)
 void CHair_Player::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

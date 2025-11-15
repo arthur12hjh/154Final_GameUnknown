@@ -24,6 +24,7 @@ texture2D g_ShadowTexture;
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
 texture2D g_DistortionTexture;
+texture2D g_BloomTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -191,10 +192,14 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     //ºí·¯ »ùÇÃ¸µ.
     Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
+    //±Û·Î¿ì »ùÇÃ¸µ.
     Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    //ºí·ë »ùÇÃ¸µ
+    Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
+    //µð½ºÅä¼Ç »ùÇÃ¸µ.
     Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
+    
     return Out;
-
 }
 
 PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
