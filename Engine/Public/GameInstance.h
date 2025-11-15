@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 
 class CCamera;
+class CInteraction_Component;
 
 class ENGINE_DLL CGameInstance final : public CBase
 {
@@ -91,17 +92,17 @@ public:
 #pragma endregion
 
 #pragma region PIPELINE
-	void						Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix);
-	const _float4x4*			Get_Transform_Float4x4(D3DTS eState);
-	_matrix						Get_Transform_Matrix(D3DTS eState);
-	const _float4x4*			Get_Transform_Float4x4_Inverse(D3DTS eState);
-	_matrix						Get_Transform_Matrix_Inverse(D3DTS eState);
-	const _float4*				Get_CamPosition();
+	void								Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix);
+	const _float4x4*					Get_Transform_Float4x4(D3DTS eState);
+	_matrix								Get_Transform_Matrix(D3DTS eState);
+	const _float4x4*					Get_Transform_Float4x4_Inverse(D3DTS eState);
+	_matrix								Get_Transform_Matrix_Inverse(D3DTS eState);
+	const _float4*						Get_CamPosition();
 	// 항등행렬 꺼내오기
-	_matrix						GetIdentityMatrix();
+	_matrix								GetIdentityMatrix();
 
 	// 항등행렬 포인터 꺼내오기
-	const _float4x4*			GetIdentityMatrixPtr();
+	const _float4x4*					GetIdentityMatrixPtr();
 
 #pragma endregion
 
@@ -253,9 +254,15 @@ public:
 	HRESULT ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
 	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
-
 #pragma endregion
 
+#pragma region Interact Manager
+	void								SetInteractionBaseObject(CGameObject* pObject);
+	void								ADD_Interaction(CInteraction_Component* pInteraction_Com);
+
+	CInteraction_Component*				GetNearInteraction();
+	vector<CInteraction_Component*>*	GetAllInteraction();
+#pragma endregion 
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
@@ -300,6 +307,8 @@ private:
 	class CPhysx_Manager*			m_pPhysx_Manager = { nullptr };
 	class CBinParser*				m_pBinParser = { nullptr };
 	class CFbxParser*				m_pFbxParser = { nullptr };
+	class CInteraction_Manager*		m_pInteract_Manager = { nullptr };
+
 
 	_bool							m_bIsPause = false;
 	_float							m_fTimeRatio = { 1.f };

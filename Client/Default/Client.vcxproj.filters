@@ -31,53 +31,11 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{1af5be23-53fb-447f-a0ef-0a7b40e2652d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Terrain">
-      <UniqueIdentifier>{efe302ec-f3ed-4deb-8411-e6749a4cb37e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera">
       <UniqueIdentifier>{b544119c-56b8-4206-be74-8dc3959154b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Free">
       <UniqueIdentifier>{2f5ad10f-a81e-4bfb-a6b8-d66ba44c361e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\Face">
-      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\Hair">
-      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\PonyTail">
-      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player">
-      <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\Body">
-      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\Weapon">
-      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\ForkLift">
-      <UniqueIdentifier>{86982e00-41f1-4999-8b8c-6d82e76ccfb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Sky">
-      <UniqueIdentifier>{cf2d055f-c2f0-468d-9b18-e4eabc957677}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect">
-      <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Particle">
-      <UniqueIdentifier>{5dd9dcc0-b9bc-4128-a327-a75467e2415c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Particle\Snow">
-      <UniqueIdentifier>{b9c1ba52-ae9b-40d8-9bab-02994a14a8de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Particle\Explosion">
-      <UniqueIdentifier>{14f558ec-80a2-42ca-9303-a5bc43ebb6cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Effect\Sprite">
-      <UniqueIdentifier>{bce2693b-8e32-446c-a473-09f285cbb08c}</UniqueIdentifier>
     </Filter>
     <Filter Include="100.ETC">
       <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
@@ -142,33 +100,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
       <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\ShaderTestModel">
-      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\ShaderTestModel\TestProp">
-      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\ShaderTestModel\CCTHitReporter">
-      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\ShaderTestModel\CCTBehaviorCallBack">
-      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps">
-      <UniqueIdentifier>{71ce41b5-d270-4f95-b0bc-6632eb48cc33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village">
-      <UniqueIdentifier>{9a273159-9a7d-486a-b86b-706a7dda7cd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Obj">
-      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Village\Obj\Vil_Bui03_04">
-      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\InstanceModel">
-      <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97.ShaderFiles\Instancing">
       <UniqueIdentifier>{f8b20de2-8cd5-433e-a016-94086d9c516f}</UniqueIdentifier>
     </Filter>
@@ -196,24 +127,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
       <UniqueIdentifier>{67a1ade5-3014-4ffd-8a93-178e874f30c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Boss">
-      <UniqueIdentifier>{c8e51291-6ba9-41bd-870c-e32bcc1ba89e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla">
-      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree">
-      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task">
-      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard">
-      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="50.Behavior">
       <UniqueIdentifier>{97a1cc60-d0a3-4bf8-bedd-de310c29f151}</UniqueIdentifier>
     </Filter>
@@ -225,12 +138,6 @@
     </Filter>
     <Filter Include="50.Behavior\Service">
       <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack">
-      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
     </Filter>
     <Filter Include="50.Behavior\Task\Dead">
       <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
@@ -256,14 +163,134 @@
     <Filter Include="50.Behavior\BlackBoard">
       <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10.GameManager\CharacterManager">
-      <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character">
+      <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Boss\Gorilla\Body">
+    <Filter Include="02.GameObjects\Character\Boss">
+      <UniqueIdentifier>{c8e51291-6ba9-41bd-870c-e32bcc1ba89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla">
+      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree">
+      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task">
+      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack">
+      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Boss\Gorilla\Body">
       <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Terrain\Terrain_Sand">
+    <Filter Include="02.GameObjects\Character\Player">
+      <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Face">
+      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Hair">
+      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\PonyTail">
+      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Body">
+      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Weapon">
+      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects">
+      <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Particle">
+      <UniqueIdentifier>{5dd9dcc0-b9bc-4128-a327-a75467e2415c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Particle\Snow">
+      <UniqueIdentifier>{b9c1ba52-ae9b-40d8-9bab-02994a14a8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Particle\Explosion">
+      <UniqueIdentifier>{14f558ec-80a2-42ca-9303-a5bc43ebb6cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Sprite">
+      <UniqueIdentifier>{bce2693b-8e32-446c-a473-09f285cbb08c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel">
+      <UniqueIdentifier>{04e7b548-70aa-46b3-b69e-c395034d8e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\ShaderTestModel">
+      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\TestProp">
+      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter">
+      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack">
+      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\ForkLift">
+      <UniqueIdentifier>{86982e00-41f1-4999-8b8c-6d82e76ccfb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor">
+      <UniqueIdentifier>{074b4f1f-6c72-4d79-9fd3-2e48b9707017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction">
+      <UniqueIdentifier>{6e1c7878-8aeb-483d-90d9-15a97bad5c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Sky">
+      <UniqueIdentifier>{cf2d055f-c2f0-468d-9b18-e4eabc957677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map">
+      <UniqueIdentifier>{8575d6e1-b05c-409a-87e2-c9ad9f4ed2f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Terrain">
+      <UniqueIdentifier>{efe302ec-f3ed-4deb-8411-e6749a4cb37e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Terrain\Terrain_Sand">
       <UniqueIdentifier>{967a6af0-4cca-484e-8d88-e62a56a35f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Village">
+      <UniqueIdentifier>{9a273159-9a7d-486a-b86b-706a7dda7cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Village\Obj">
+      <UniqueIdentifier>{8737ab03-eebf-4796-a527-e26eefa5034e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Village\Obj\Vil_Bui03_04">
+      <UniqueIdentifier>{c46c634b-b922-4cd7-911c-b179c7745886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Vending">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\InstanceModel">
+      <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor">
+      <UniqueIdentifier>{e2fc6e3d-c95e-480a-82f6-a6097b896672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Box">
+      <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\CharacterDataManager">
+      <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
+      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
+      <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -295,34 +322,34 @@
       <Filter>02.GameObjects\BackGround</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Terrain.h">
-      <Filter>02.GameObjects\Terrain</Filter>
+      <Filter>02.GameObjects\Map\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Player.h">
-      <Filter>02.GameObjects\Player</Filter>
+      <Filter>02.GameObjects\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Body_Player.h">
-      <Filter>02.GameObjects\Player\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon.h">
-      <Filter>02.GameObjects\Player\Weapon</Filter>
+      <Filter>02.GameObjects\Character\Player\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ForkLift.h">
-      <Filter>02.GameObjects\ForkLift</Filter>
+      <Filter>02.GameObjects\TestModel\ForkLift</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sky.h">
-      <Filter>02.GameObjects\Sky</Filter>
+      <Filter>02.GameObjects\Actor\Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Snow.h">
-      <Filter>02.GameObjects\Effect\Particle\Snow</Filter>
+      <Filter>03.Effects\Particle\Snow</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Explosion.h">
-      <Filter>02.GameObjects\Effect\Particle\Explosion</Filter>
+      <Filter>03.Effects\Particle\Explosion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SpriteEffect.h">
-      <Filter>02.GameObjects\Effect\Sprite</Filter>
+      <Filter>03.Effects\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>100.ETC</Filter>
@@ -385,22 +412,22 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ShaderTestModel.h">
-      <Filter>02.GameObjects\ShaderTestModel</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h">
-      <Filter>02.GameObjects\ShaderTestModel\CCTHitReporter</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PxTestProp.h">
-      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\TestProp</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Vil_Bui03_04.h">
-      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+      <Filter>02.GameObjects\Map\Village\Obj\Vil_Bui03_04</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h">
-      <Filter>02.GameObjects\ShaderTestModel\CCTBehaviorCallBack</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Instance_Model.h">
-      <Filter>02.GameObjects\InstanceModel</Filter>
+      <Filter>02.GameObjects\Actor\InstanceModel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MousePointer.h">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
@@ -421,13 +448,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Face_Player.h">
-      <Filter>02.GameObjects\Player\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\Face</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hair_Player.h">
-      <Filter>02.GameObjects\Player\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\Hair</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PonyTail_Player.h">
-      <Filter>02.GameObjects\Player\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\PonyTail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Wait.h">
       <Filter>50.Behavior\Task\Wait</Filter>
@@ -442,19 +469,19 @@
       <Filter>50.Behavior\Task\Dead</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaHit.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBlackBoard.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Gorilla.h">
-      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
       <Filter>50.Behavior\Decorator\PhaseChange</Filter>
@@ -469,13 +496,31 @@
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DataManager.h">
-      <Filter>10.GameManager\CharacterManager</Filter>
+      <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Gorilla_Body.h">
-      <Filter>02.GameObjects\Boss\Gorilla\Body</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Terrain_Sand.h">
-      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
+      <Filter>02.GameObjects\Map\Terrain\Terrain_Sand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Actor.h">
+      <Filter>02.GameObjects\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Prob_Box.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Vending.h">
+      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Prob_Interaction.h">
+      <Filter>02.GameObjects\Actor\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ItemBox.h">
+      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CanBox.h">
+      <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -509,34 +554,34 @@
       <Filter>02.GameObjects\BackGround</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Terrain.cpp">
-      <Filter>02.GameObjects\Terrain</Filter>
+      <Filter>02.GameObjects\Map\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
-      <Filter>02.GameObjects\Player</Filter>
+      <Filter>02.GameObjects\Character\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Body_Player.cpp">
-      <Filter>02.GameObjects\Player\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon.cpp">
-      <Filter>02.GameObjects\Player\Weapon</Filter>
+      <Filter>02.GameObjects\Character\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ForkLift.cpp">
-      <Filter>02.GameObjects\ForkLift</Filter>
+      <Filter>02.GameObjects\TestModel\ForkLift</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sky.cpp">
-      <Filter>02.GameObjects\Sky</Filter>
+      <Filter>02.GameObjects\Actor\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Snow.cpp">
-      <Filter>02.GameObjects\Effect\Particle\Snow</Filter>
+      <Filter>03.Effects\Particle\Snow</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Explosion.cpp">
-      <Filter>02.GameObjects\Effect\Particle\Explosion</Filter>
+      <Filter>03.Effects\Particle\Explosion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SpriteEffect.cpp">
-      <Filter>02.GameObjects\Effect\Sprite</Filter>
+      <Filter>03.Effects\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\pch.cpp">
       <Filter>99.Defines\PCH</Filter>
@@ -587,22 +632,22 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ShaderTestModel.cpp">
-      <Filter>02.GameObjects\ShaderTestModel</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp">
-      <Filter>02.GameObjects\ShaderTestModel\CCTHitReporter</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PxTestProp.cpp">
-      <Filter>02.GameObjects\ShaderTestModel\TestProp</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\TestProp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Vil_Bui03_04.cpp">
-      <Filter>02.GameObjects\Maps\Village\Obj\Vil_Bui03_04</Filter>
+      <Filter>02.GameObjects\Map\Village\Obj\Vil_Bui03_04</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp">
-      <Filter>02.GameObjects\ShaderTestModel\CCTBehaviorCallBack</Filter>
+      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Instance_Model.cpp">
-      <Filter>02.GameObjects\InstanceModel</Filter>
+      <Filter>02.GameObjects\Actor\InstanceModel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MousePointer.cpp">
       <Filter>02.GameObjects\UIObjects\MousePointer</Filter>
@@ -620,13 +665,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Face_Player.cpp">
-      <Filter>02.GameObjects\Player\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\Face</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hair_Player.cpp">
-      <Filter>02.GameObjects\Player\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PonyTail_Player.cpp">
-      <Filter>02.GameObjects\Player\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\PonyTail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Wait.cpp">
       <Filter>50.Behavior\Task\Wait</Filter>
@@ -641,19 +686,19 @@
       <Filter>50.Behavior\Task\Dead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaHit.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\BehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Gorilla.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
       <Filter>50.Behavior\Decorator\PhaseChange</Filter>
@@ -665,13 +710,31 @@
       <Filter>50.Behavior\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
-      <Filter>10.GameManager\CharacterManager</Filter>
+      <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gorilla_Body.cpp">
-      <Filter>02.GameObjects\Boss\Gorilla\Body</Filter>
+      <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Terrain_Sand.cpp">
-      <Filter>02.GameObjects\Terrain\Terrain_Sand</Filter>
+      <Filter>02.GameObjects\Map\Terrain\Terrain_Sand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Actor.cpp">
+      <Filter>02.GameObjects\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Prob_Box.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Vending.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Prob_Interaction.cpp">
+      <Filter>02.GameObjects\Actor\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ItemBox.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CanBox.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

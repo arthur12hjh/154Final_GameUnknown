@@ -117,7 +117,6 @@ HRESULT CPxTestProp::Ready_Components()
 
 HRESULT CPxTestProp::Bind_ShaderResources()
 {
-	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 

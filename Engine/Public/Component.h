@@ -19,7 +19,7 @@ public:
 	virtual HRESULT			Initialize(void* pArg);
 	virtual HRESULT			Render() { return S_OK; }
 
-	void					SetOwner(CGameObject* pGameObject);
+	virtual void			SetOwner(CGameObject* pGameObject);
 	CGameObject*			GetOwner() const { return m_pOwner; }
 
 protected:
