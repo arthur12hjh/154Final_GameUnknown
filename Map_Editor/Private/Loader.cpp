@@ -8,6 +8,7 @@
 
 #include "GameInstance.h"
 #include "Vil_Bui03_04.h"
+#include "CinemaComponent.h"
 #include "Terrain_Sand.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -222,7 +223,10 @@ HRESULT CLoader::Loading_For_Village()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	/* For.Prototype_Component_CinemaComponent */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_CinemaComponent"),
+		CCinemaComponent::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strMessage = TEXT("객체원형를(을) 로딩 중 입니다.");
 	/* For.Prototype_GameObject_Terrain */

@@ -179,6 +179,7 @@ popd</Command>
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\CinemaComponent.h" />
     <ClInclude Include="..\public\CameraManager.h" />
     <ClInclude Include="..\Public\CCTHitReporter.h" />
     <ClInclude Include="..\public\Cell.h" />
@@ -286,6 +287,7 @@ popd</Command>
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\CinemaComponent.cpp" />
     <ClCompile Include="..\private\CameraManager.cpp" />
     <ClCompile Include="..\Private\CCTHitReporter.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />

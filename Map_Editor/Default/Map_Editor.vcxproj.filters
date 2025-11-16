@@ -85,6 +85,12 @@
     <Filter Include="02.GameObjects\Maps\Terrain">
       <UniqueIdentifier>{d1e75dee-19d8-4ce3-a95b-f83fd2773b6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.IMGUI\Camera">
+      <UniqueIdentifier>{1d41c4a1-20fd-4e8c-8c2c-60be6d2e8729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\SpawnBox">
+      <UniqueIdentifier>{7e4af978-be7c-4c14-a7e4-810f12088af5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -177,6 +183,12 @@
     <ClInclude Include="..\public\Terrain_Sand.h">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Tool.h">
+      <Filter>96.IMGUI\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpawnBox.h">
+      <Filter>02.GameObjects\Map_Object\SpawnBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -247,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Tool.cpp">
+      <Filter>96.IMGUI\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpawnBox.cpp">
+      <Filter>02.GameObjects\Map_Object\SpawnBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
