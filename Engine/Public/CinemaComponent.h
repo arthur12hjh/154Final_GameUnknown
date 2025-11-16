@@ -2,7 +2,7 @@
 #include "Component.h"
 
 NS_BEGIN(Engine)
-class CCinemaComponent final : public CComponent
+class ENGINE_DLL CCinemaComponent final : public CComponent
 {
 private:
 	CCinemaComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
