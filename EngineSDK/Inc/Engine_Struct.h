@@ -253,6 +253,18 @@ namespace Engine
 		float			fTrackPosition;
 	}KEYFRAME;
 
+	typedef struct tagChinemaKeyFrame
+	{
+		XMFLOAT3		vScale;
+		XMFLOAT4		vRotation;
+		XMFLOAT3		vTranslation;
+		float			fTrackPosition;
+
+		float			fFov;
+		float			fNear;
+		float			fFar;
+	}CINEMA_KEYFRAME;
+
 #pragma region MODEL_IMPORT
 
 	typedef struct binFace
