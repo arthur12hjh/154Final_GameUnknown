@@ -50,129 +50,6 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 
 	// json배열이 이상함
 	CJsonParser::SaveJsonData(szPath, jUIObjects);
-	
-	MSG_BOX("저장 성공");
-
-	return S_OK;
-}
-
-HRESULT CUIHUD::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
-{
-	CUIBase::UI_ANIM_DESC AnimDesc = *static_cast<CUIBase::UI_ANIM_DESC*>(pDesc);
-
-	Json jAnim;
-
-	_char szText[MAX_PATH]{};
-	CStringHelper::ConvertWideToUTF(szAnimTag.c_str(), szText);
-	jAnim["szAnimTag"] = szText;
-	jAnim["fDuration"] = AnimDesc.fDuration;
-	jAnim["isLoop"] = AnimDesc.isLoop;
-
-	for (auto& TrackDesc : AnimDesc.m_Tracks)
-	{
-		Json jTrack;
-		
-		CStringHelper::ConvertWideToUTF(TrackDesc.first.c_str(), szText);
-		jTrack["szTrackTag"] = szText;
-		jTrack["vStartParam"] = {
-			TrackDesc.second->vStartParam.x,
-			TrackDesc.second->vStartParam.y,
-			TrackDesc.second->vStartParam.z,
-			TrackDesc.second->vStartParam.w
-		};
-		jTrack["vEndParam"] = {
-			TrackDesc.second->vEndParam.x,
-			TrackDesc.second->vEndParam.y,
-			TrackDesc.second->vEndParam.z,
-			TrackDesc.second->vEndParam.w
-		};
-
-		jAnim["Tracks"].push_back(jTrack);
-	}
-
-	_wstring szFilePath{};
-	szFilePath = TEXT("../Bin/DataFiles/UI/UI_Anims/") + szAnimTag + TEXT(".json");
-
-	_char szPath[MAX_PATH]{};
-	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
-
-	// json배열이 이상함
-	CJsonParser::SaveJsonData(szPath, jAnim);
-
-	MSG_BOX("저장 성공");
-
-	return S_OK;
-}
-
-HRESULT CUIHUD::Load_Anim_Files()
-{
-	WIN32_FIND_DATAW fd;
-	_wstring search = L"../Bin/DataFiles/UI/UI_Anims/*.json";
-
-	HANDLE hFind = FindFirstFileW(search.c_str(), &fd);
-
-	if (hFind == INVALID_HANDLE_VALUE)
-		return E_FAIL;
-
-	do
-	{
-		if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-		{
-			_wstring szfileName = fd.cFileName;
-
-			size_t pos = szfileName.find_last_of(L'.');
-
-			m_AnimDatas.push_back(szfileName.substr(0, pos));
-		}
-	} while (FindNextFileW(hFind, &fd));
-
-	FindClose(hFind);
-
-	return S_OK;
-}
-
-HRESULT CUIHUD::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
-{
-	Json jAnim;
-
-	_wstring szFilePath{};
-	szFilePath = TEXT("../Bin/DataFiles/UI/UI_Anims/") + szAnimTag + TEXT(".json");
-
-	_char szPath[MAX_PATH]{};
-	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
-
-	CJsonParser::ReadJsonData(szPath, jAnim);
-
-	WCHAR szText[MAX_PATH]{};
-
-	CUIBase::UI_ANIM_DESC* AnimDesc = new CUIBase::UI_ANIM_DESC();
-
-	AnimDesc->isLoop = jAnim["isLoop"].get<_bool>();
-	AnimDesc->fDuration = jAnim["fDuration"].get<_float>();
-
-	for (auto& Track : jAnim["Tracks"])
-	{
-		CUIBase::UI_ANIM_TRACK_DESC TrackDesc{};
-
-		CStringHelper::ConvertUTFToWide(Track["szTrackTag"].get<string>().c_str(), szText);
-		TrackDesc.szTrackTag = szText;
-		TrackDesc.vStartParam = {
-			Track["vStartParam"][0].get<_float>(),
-			Track["vStartParam"][1].get<_float>(),
-			Track["vStartParam"][2].get<_float>(),
-			Track["vStartParam"][3].get<_float>()
-		};
-		TrackDesc.vEndParam = {
-			Track["vEndParam"][0].get<_float>(),
-			Track["vEndParam"][1].get<_float>(),
-			Track["vEndParam"][2].get<_float>(),
-			Track["vEndParam"][3].get<_float>()
-		};
-
-		AnimDesc->Add_UI_Track_Desc(szText, TrackDesc);
-	}
-
-	*static_cast<CUIBase::UI_ANIM_DESC*>(pAnimOut) = *AnimDesc;
 
 	return S_OK;
 }
@@ -204,11 +81,6 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	jObj["szLayerTag"] = szText;
 	CStringHelper::ConvertWideToUTF(pDesc.szProtoTag.c_str(), szText);
 	jObj["szProtoTag"] = szText;
-
-	for (auto& pAnimDesc : pDesc.Get_UI_Anim_Descs())
-	{
-		jObj["szAnimTags"].push_back(pAnimDesc.first);
-	}
 
 	if (pDesc.Get_UI_Texture_Desc())
 	{
@@ -252,6 +124,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		OutData = jObj;
 	else
 		OutData["Children"].push_back(jObj);
+
 }
 
 HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
@@ -338,8 +211,6 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		else
 			continue;
 	}
-
-	//MSG_BOX("읽기 성공");
 
 	return S_OK;
 }

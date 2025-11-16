@@ -16,7 +16,7 @@ class CUIAnimationCom;
 class CUIBase abstract : public CUIObject
 {
 public:
-	enum class ANIM_STATE { STOP, PLAY, PAUSE, IDLE };
+	enum class ANIM_STATE { STOP, PLAY, PAUSE };
 
 public:
 	typedef struct tagUITextDesc
@@ -35,6 +35,30 @@ public:
 
 	}UI_TEXTURE_DESC;
 
+	//typedef struct tagUIAnimDesc
+	//{
+	//	_wstring szAnimTag{}; // fade_in, move 등
+	//	map<_wstring, _float4> Prams{}; // duration, offset, alpha 등
+	//	//_wstring szEasing{ TEXT("Linear") }; // 나중에 해보기
+
+	//public:
+	//	void Set_Param(_wstring szPramTag, _float4 fValue)
+	//	{
+	//		auto Pram = Prams.find(szPramTag);
+
+	//		if (Pram == Prams.end())
+	//		{
+	//			Prams.emplace(szPramTag, fValue);
+	//			return;
+	//		}
+
+	//		Pram->second = fValue;
+	//	}
+
+	//	map<_wstring, _float4> Get_Prams() { return Prams; }
+
+	//}UI_ANIM_DESC;
+
 	typedef struct tagUIAnimTrackDesc
 	{
 		_wstring szTrackTag{};
@@ -47,6 +71,7 @@ public:
 
 	typedef struct tagUIAnimDesc
 	{
+		//_wstring szAnimTag{}; // fade_in, move 등
 		_float fDuration{ 1.f };
 		_bool isLoop = false;
 		map<_wstring, UI_ANIM_TRACK_DESC*> m_Tracks{};
@@ -59,8 +84,14 @@ public:
 			if (TrackDesc != m_Tracks.end())
 				return;
 
+			//if (TrackDesc->first == szTrackTag)
+			//	return;
+
 			UI_ANIM_TRACK_DESC* pDesc = new UI_ANIM_TRACK_DESC(Desc);
 			m_Tracks.emplace(szTrackTag, pDesc);
+
+			//UI_ANIM_TRACK_DESC* pDesc = new UI_ANIM_TRACK_DESC(Desc);
+			//m_Tracks.push_back(pDesc);
 		}
 
 		UI_ANIM_TRACK_DESC* Get_UI_Track_Desc(_wstring szTrackTag) {
@@ -141,6 +172,14 @@ public:
 			return m_pUIAnimDescs;
 		}
 
+		//void Clear() {
+		//	//delete m_pUITextDesc; m_pUITextDesc = nullptr;
+		//	//delete m_pUITextureDesc; m_pUITextureDesc = nullptr;
+		//	
+		//	Safe_Delete(m_pUITextDesc);
+		//	Safe_Delete(m_pUITextureDesc);
+		//}
+
 	}UIBASE_DESC;
 
 protected:
@@ -202,8 +241,6 @@ public:
 		m_eAnimState = ANIM_STATE::STOP;
 	}
 
-	ANIM_STATE Get_Anim_State() { return m_eAnimState; }
-
 	CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
 
 protected:
@@ -223,7 +260,7 @@ private:
 	HRESULT Ready_Texture();
 	HRESULT Ready_UIAnimation();
 
-	ANIM_STATE m_eAnimState{ ANIM_STATE::IDLE };
+	ANIM_STATE m_eAnimState{ ANIM_STATE::STOP };
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();

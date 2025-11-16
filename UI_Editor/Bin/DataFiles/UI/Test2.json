@@ -29,10 +29,10 @@
                     }
                 ],
                 "TextureDesc": {
-                    "iPass": 2,
+                    "iPass": 0,
                     "iTextureIndex": 0,
-                    "szProtoTag": "Prototype_Component_UI_Texture_Default",
-                    "szTextureComTag": "Com_Texture_UI_Default"
+                    "szTextureComTag": "Com_Texture_UI_Default",
+                    "szProtoTag": "Prototype_Component_UI_Texture_Default"
                 },
                 "fAlpha": 1.0,
                 "fOffsetX": -619.0,
@@ -76,10 +76,10 @@
                     }
                 ],
                 "TextureDesc": {
-                    "iPass": 2,
+                    "iPass": 0,
                     "iTextureIndex": 0,
-                    "szProtoTag": "Prototype_Component_UI_Texture_BackGround",
-                    "szTextureComTag": "Com_Texture_UI_BackGround"
+                    "szTextureComTag": "Com_Texture_UI_BackGround",
+                    "szProtoTag": "Prototype_Component_UI_Texture_BackGround"
                 },
                 "fAlpha": 1.0,
                 "fOffsetX": -619.0,
@@ -123,10 +123,10 @@
         "TextureDesc": {
             "iPass": 2,
             "iTextureIndex": 0,
-            "szProtoTag": "Prototype_Component_UI_Texture_BackGround",
-            "szTextureComTag": "Com_Texture_UI_BackGround"
+            "szTextureComTag": "Com_Texture_UI_BackGround",
+            "szProtoTag": "Prototype_Component_UI_Texture_BackGround"
         },
-        "fAlpha": 1.0,
+        "fAlpha" :  1.0,
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
         "fSizeX": 1600.0,

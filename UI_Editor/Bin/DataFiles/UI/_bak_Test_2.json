@@ -5,38 +5,35 @@
                 "Children": [
                     {
                         "TextDesc": {
-                            "szText": "새로운 게임",
+                            "szText": "TEST",
                             "vColor": [
-                                1.0,
-                                1.0,
-                                1.0,
+                                0.6727272868156433,
+                                0.4219834804534912,
+                                0.4219834804534912,
                                 1.0
                             ]
                         },
-                        "fAlpha": 1.0,
                         "fOffsetX": 0.0,
                         "fOffsetY": 0.0,
-                        "fSizeX": 80.0,
-                        "fSizeY": 30.0,
-                        "fX": 181.0,
-                        "fY": 450.0,
+                        "fSizeX": 100.0,
+                        "fSizeY": 20.0,
+                        "fX": 648.0,
+                        "fY": 503.0,
                         "iDepth": 2,
                         "iLevel": 2,
                         "iRenderGroup": 8,
-                        "szLayerTag": "Test2",
+                        "szLayerTag": "Test",
                         "szProtoTag": "Prototype_GameObject_UI_Text",
-                        "szUITag": "UI_Test2_Panel_0_Button_1-1_Text_2-1"
+                        "szUITag": "UI_Text_2-1"
                     }
                 ],
                 "TextureDesc": {
-                    "iPass": 2,
+                    "iPass": 0,
                     "iTextureIndex": 0,
-                    "szTextureComTag": "Com_Texture_UI_Default",
-                    "szProtoTag": "Prototype_Component_UI_Texture_Default"
+                    "szTextureComTag": "Com_Texture_UI_Default"
                 },
-                "fAlpha": 1.0,
-                "fOffsetX": -619.0,
-                "fOffsetY": 0.0,
+                "fOffsetX": -152.0,
+                "fOffsetY": 53.0,
                 "fSizeX": 100.0,
                 "fSizeY": 100.0,
                 "fX": 800.0,
@@ -44,46 +41,18 @@
                 "iDepth": 1,
                 "iLevel": 2,
                 "iRenderGroup": 8,
-                "szLayerTag": "Test2",
+                "szLayerTag": "Test",
                 "szProtoTag": "Prototype_GameObject_UI_Button",
-                "szUITag": "UI_Test2_Panel_0_Button_1-1"
+                "szUITag": "UI_Button_1-1"
             },
             {
-                "Children": [
-                    {
-                        "TextDesc": {
-                            "szText": "게임 종료",
-                            "vColor": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        },
-                        "fAlpha": 1.0,
-                        "fOffsetX": 72.0,
-                        "fOffsetY": 15.0,
-                        "fSizeX": 100.0,
-                        "fSizeY": 30.0,
-                        "fX": 181.0,
-                        "fY": 564.0,
-                        "iDepth": 2,
-                        "iLevel": 2,
-                        "iRenderGroup": 8,
-                        "szLayerTag": "Test2",
-                        "szProtoTag": "Prototype_GameObject_UI_Text",
-                        "szUITag": "UI_Test2_Panel_0_Button_1-2_Text_2-1"
-                    }
-                ],
                 "TextureDesc": {
-                    "iPass": 2,
-                    "iTextureIndex": 0,
-                    "szTextureComTag": "Com_Texture_UI_BackGround",
-                    "szProtoTag": "Prototype_Component_UI_Texture_BackGround"
+                    "iPass": 0,
+                    "iTextureIndex": 1,
+                    "szTextureComTag": "Com_Texture_UI_BackGround"
                 },
-                "fAlpha": 1.0,
-                "fOffsetX": -619.0,
-                "fOffsetY": 114.0,
+                "fOffsetX": 119.0,
+                "fOffsetY": 98.0,
                 "fSizeX": 100.0,
                 "fSizeY": 100.0,
                 "fX": 800.0,
@@ -91,42 +60,39 @@
                 "iDepth": 1,
                 "iLevel": 2,
                 "iRenderGroup": 8,
-                "szLayerTag": "Test2",
+                "szLayerTag": "Test",
                 "szProtoTag": "Prototype_GameObject_UI_Button",
-                "szUITag": "UI_Test2_Panel_0_Button_1-2"
+                "szUITag": "UI_Button_1-2"
             },
             {
                 "TextDesc": {
-                    "szText": "STELLAR BLADE",
+                    "szText": "Stellar Blade",
                     "vColor": [
-                        0.0,
-                        0.1272728443145752,
-                        1.0,
+                        0.6863636374473572,
+                        0.018718989565968513,
+                        0.018718989565968513,
                         1.0
                     ]
                 },
-                "fAlpha": 1.0,
                 "fOffsetX": 0.0,
-                "fOffsetY": -312.0,
-                "fSizeX": 260.0,
-                "fSizeY": 30.0,
+                "fOffsetY": -298.0,
+                "fSizeX": 100.0,
+                "fSizeY": 20.0,
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 1,
                 "iLevel": 2,
                 "iRenderGroup": 8,
-                "szLayerTag": "Test2",
+                "szLayerTag": "Test",
                 "szProtoTag": "Prototype_GameObject_UI_Text",
-                "szUITag": "UI_Test2_Panel_0_Text_1-3"
+                "szUITag": "UI_Text_1-3"
             }
         ],
         "TextureDesc": {
-            "iPass": 2,
+            "iPass": 0,
             "iTextureIndex": 0,
-            "szTextureComTag": "Com_Texture_UI_BackGround",
-            "szProtoTag": "Prototype_Component_UI_Texture_BackGround"
+            "szTextureComTag": "Com_Texture_UI_BackGround"
         },
-        "fAlpha" :  1.0,
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
         "fSizeX": 1600.0,
@@ -136,8 +102,8 @@
         "iDepth": 0,
         "iLevel": 2,
         "iRenderGroup": 8,
-        "szLayerTag": "Test2",
+        "szLayerTag": "Test",
         "szProtoTag": "Prototype_GameObject_UI_Panel",
-        "szUITag": "UI_Test2_Panel_0"
+        "szUITag": "UI_Test_Panel_0"
     }
 ]

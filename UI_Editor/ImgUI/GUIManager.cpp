@@ -535,8 +535,10 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
                 strcpy_s(m_szInputText, szInputText);
                 m_vColor = m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->vColor;
             }
-        }
 
+            //if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc())
+            //    m_vColor = m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->vColor;
+        }
         GUI::SameLine();
         if (GUI::Button("Add Child"))
         {
@@ -699,9 +701,11 @@ void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
     GUI::DragFloat("Position_y", &pEditedPos->y, 1.f, 0.f, 0.f, "%.2f");
 
     m_pTargetUI->Set_Position(pEditedPos->x, pEditedPos->y);
+    //m_pTargetUI->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(pEditedPos->x, pEditedPos->y, 0.f, 1.f));
 
     if (GUI::Button("Reset"))
     {
+        //m_pTargetUI->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(pOldPos->x, pOldPos->y, 0.f, 1.f));
         m_pTargetUI->Set_Position(pOldPos->x, pOldPos->y);
         *pEditedPos = *pOldPos;
     }
@@ -808,40 +812,6 @@ void CGUIManager::Set_Animation()
     {
         GUI::OpenPopup("Add Anim");
     }
-    GUI::SameLine();
-    if (GUI::Button("Import Prefab"))
-    {
-        m_pUIHUD->Load_Anim_Files();
-        m_AnimPrefabs = m_pUIHUD->Get_AnimDatas();
-
-        GUI::OpenPopup("Import Prefab");
-    }
-
-    if (GUI::BeginPopup("Import Prefab"))
-    {
-        Select_Anim_Prefabs(m_szCurrentAnimPrefab);
-
-        if (GUI::Button("Import"))
-        {
-            WCHAR szAnimTag[MAX_PATH]{};
-            CStringHelper::ConvertUTFToWide(m_szCurrentAnimPrefab, szAnimTag);
-
-            Client::CUIBase::UI_ANIM_DESC AnimDesc{};
-            map<_wstring, Client::CUIBase::UI_ANIM_TRACK_DESC*> TrackDescs{};
-
-            m_pUIHUD->Import_Anim_Prefab(szAnimTag, &AnimDesc);
-
-            Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
-            Desc.Add_UI_Anim_Desc(szAnimTag, AnimDesc);
-
-            m_pTargetUI->Set_UIBase_Desc(Desc);
-        }
-
-        if (GUI::Button("Close")) {
-            GUI::CloseCurrentPopup();
-        }
-        GUI::EndPopup();
-    }
 
     if (GUI::BeginPopup("Add Anim"))
     {
@@ -870,24 +840,16 @@ void CGUIManager::Set_Animation()
 
             GUI::Separator();
 
-            if (GUI::TreeNode("Debug"))
-            {
-                _char szDebug[MAX_PATH]{};
-                sprintf_s(szDebug, "deltaTime = %f\nanimDeltaTime = %f\nplayTime = %.3f\nalpha = %.3f\npos.x = %.3f, pos.y = %.3f\nsize.x = %.3f, size.y = %.3f",
-                    m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")),
-                    m_pTargetUI->Get_AnimationCom()->Get_DeltaTime(),
-                    m_pTargetUI->Get_AnimationCom()->Get_PlayTime(),
-                    m_pTargetUI->Get_UIBase_Desc().fAlpha,
-                    m_pTargetUI->Get_UIBase_Desc().fOffsetX,
-                    m_pTargetUI->Get_UIBase_Desc().fOffsetY,
-                    m_pTargetUI->Get_UIBase_Desc().fSizeX,
-                    m_pTargetUI->Get_UIBase_Desc().fSizeY);
+            _char szDebug[MAX_PATH]{};
+            sprintf_s(szDebug, "deltaTime = %f\nanimDeltaTime = %f\nplayTime = %.3f\nalpha = %.3f, pos.x = %.3f, pos.y = %.3f",
+                m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")),
+                m_pTargetUI->Get_AnimationCom()->Get_DeltaTime(),
+                m_pTargetUI->Get_AnimationCom()->Get_PlayTime(),
+                m_pTargetUI->Get_UIBase_Desc().fAlpha,
+                m_pTargetUI->Get_UIBase_Desc().fOffsetX,
+                m_pTargetUI->Get_UIBase_Desc().fOffsetY);
 
-                GUI::Text(szDebug);
-
-                GUI::TreePop();
-            }
-
+            GUI::Text(szDebug);
             GUI::Separator();
             if (GUI::Button("Play"))
             {
@@ -904,7 +866,6 @@ void CGUIManager::Set_Animation()
                 m_pTargetUI->Stop_Anim();
             }
 
-            GUI::Separator();
             if (GUI::BeginPopup("Add Track"))
             {
                 Add_AnimTrack(AnimDesc.first);
@@ -923,14 +884,8 @@ void CGUIManager::Set_Animation()
                 if (GUI::TreeNode(szTrackTag))
                 {
                     Set_AnimTrack(AnimDesc.first, TrackDesc.first);
-                    GUI::Separator();
                     GUI::TreePop();
                 }
-            }
-
-            if (GUI::Button("Export Prefab"))
-            {
-                m_pUIHUD->Export_Anim_Prefab(AnimDesc.first, AnimDesc.second);
             }
 
             GUI::TreePop();
@@ -984,6 +939,10 @@ void CGUIManager::Select_AnimTrack_Tags(_char* Outstr)
 
 void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
 {
+    //GUI::InputText("Track Tag", m_szInputTrackTag, IM_ARRAYSIZE(m_szInputTrackTag));
+
+    //GUI::DragFloat(m_szInputTrackTag, m_vPram.x, );
+
     _char szText[MAX_PATH]{};
     CStringHelper::ConvertWideToUTF((TEXT("TrackTag : ") + szTrackTag).c_str(), szText);
 
@@ -995,65 +954,50 @@ void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
         {
             GUI::DragFloat("x", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 1.f, 0.f, 0.f, "%.2f");
             GUI::DragFloat("y", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.y, 1.f, 0.f, 0.f, "%.2f");
-            m_pTargetUI->Set_Position(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x,
-                m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.y);
+            GUI::DragFloat("z", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.z, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("w", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.w, 1.f, 0.f, 0.f, "%.2f");
             GUI::TreePop();
         }
         if (GUI::TreeNode("EndPram"))
         {
             GUI::DragFloat("x", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 1.f, 0.f, 0.f, "%.2f");
             GUI::DragFloat("y", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.y, 1.f, 0.f, 0.f, "%.2f");
-            m_pTargetUI->Set_Position(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x,
-                m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.y);
-            GUI::TreePop();
-        }
-    }
-
-    if (szTrackTag == TEXT("Size"))
-    {
-        if (GUI::TreeNode("StartPram"))
-        {
-            GUI::DragFloat("x", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 1.f, 0.f, 0.f, "%.2f");
-            GUI::DragFloat("y", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.y, 1.f, 0.f, 0.f, "%.2f");
-            m_pTargetUI->Set_Size(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x,
-                m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.y);
-            GUI::TreePop();
-        }
-        if (GUI::TreeNode("EndPram"))
-        {
-            GUI::DragFloat("x", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 1.f, 0.f, 0.f, "%.2f");
-            GUI::DragFloat("y", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.y, 1.f, 0.f, 0.f, "%.2f");
-            m_pTargetUI->Set_Size(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x,
-                m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.y);
+            GUI::DragFloat("z", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.z, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("w", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.w, 1.f, 0.f, 0.f, "%.2f");
             GUI::TreePop();
         }
     }
 
     if (szTrackTag == TEXT("Alpha"))
     {
-        if (GUI::TreeNode("StartPram"))
-        {
-            GUI::DragFloat("Start Alpha", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 0.01f, 0.f, 1.f, "%.2f");
-            m_pTargetUI->Set_Alpha(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x);
-            GUI::TreePop();
-        }
-        if (GUI::TreeNode("EndPram"))
-        {
-            GUI::DragFloat("End Alpha", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 0.01f, 0.f, 1.f, "%.2f");
-            m_pTargetUI->Set_Alpha(m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x);
-            GUI::TreePop();
-        }
+        GUI::DragFloat("Start Alpha", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 0.01f, 0.f, 1.f, "%.2f");
+        GUI::DragFloat("End Alpha", &m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 0.01f, 0.f, 1.f, "%.2f");
     }
 }
 
 void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
 {
+    //GUI::InputText("Track Tag", m_szCurrentTrackTag, IM_ARRAYSIZE(m_szCurrentTrackTag));
+
     Select_AnimTrack_Tags(m_szCurrentTrackTag);
+
 
     if (GUI::Button("Add"))
     {
         WCHAR szTrackTag[MAX_PATH]{};
         CStringHelper::ConvertUTFToWide(m_szCurrentTrackTag, szTrackTag);
+
+       /* Client::CUIBase::UI_ANIM_DESC AnimDesc{};
+
+        Client::CUIBase::UIBASE_DESC Desc{};
+        Desc = m_pTargetUI->Get_UIBase_Desc();
+        Desc.Add_UI_Anim_Desc(szAnimTag, AnimDesc);
+
+        m_pTargetUI->Set_UIBase_Desc(Desc);*/
+
+       /* Client::CUIBase::UI_ANIM_TRACK_DESC TrackDesc{};
+
+        Desc.Add_UI_Track_Desc(szTrackTag, TrackDesc);*/
 
         Client::CUIBase::UI_ANIM_TRACK_DESC TrackDesc{};
         TrackDesc.szTrackTag = szTrackTag;
@@ -1062,51 +1006,26 @@ void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
         {
             TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
             TrackDesc.vStartParam.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
-            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
-            TrackDesc.vEndParam.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
-        }
-        if (TrackDesc.szTrackTag == TEXT("Size"))
-        {
-            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
-            TrackDesc.vStartParam.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
-            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
-            TrackDesc.vEndParam.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
         }
         if (TrackDesc.szTrackTag == TEXT("Alpha"))
         {
             TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fAlpha;
-            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fAlpha;
         }
 
         m_pTargetUI->Get_UIBase_Desc().Get_UI_Anim_Desc(szAnimTag)->Add_UI_Track_Desc(szTrackTag, TrackDesc);
 
+        //strcpy_s(m_szCurrentTrackTag, sizeof(m_szCurrentTrackTag), "");
 
-    }
-}
+       /* Client::CUIBase::UI_ANIM_DESC AnimDesc{};
+        AnimDesc = *;
 
-void CGUIManager::Select_Anim_Prefabs(_char* Outstr)
-{
-    WCHAR szCurAnimPrefabTag[MAX_PATH]{};
-    CStringHelper::ConvertUTFToWide(Outstr, szCurAnimPrefabTag);
+        AnimDesc.Add_UI_Track_Desc(szTrackTag, TrackDesc);*/
 
-    if (GUI::BeginCombo("AnimTrack Tag", Outstr)) // 드롭다운 시작
-    {
-        for (int i = 0; i < m_AnimPrefabs.size(); ++i)
-        {
-            bool is_selected = (szCurAnimPrefabTag == m_AnimPrefabs[i]);
+        //Client::CUIBase::UIBASE_DESC Desc{};
+        //Desc = m_pTargetUI->Get_UIBase_Desc();
+        ////Desc.Add_UI_Anim_Desc(szAnimTag, AnimDesc);
 
-            _char szTag[MAX_PATH]{};
-            CStringHelper::ConvertWideToUTF(m_AnimPrefabs[i].c_str(), szTag);
-
-            if (GUI::Selectable(szTag, is_selected))
-            {
-                CStringHelper::ConvertWideToUTF(m_AnimPrefabs[i].c_str(), Outstr);
-            }
-
-            if (is_selected)
-                GUI::SetItemDefaultFocus(); // 기본 포커스 설정
-        }
-        GUI::EndCombo();
+        //m_pTargetUI->Set_UIBase_Desc(Desc);
     }
 }
 

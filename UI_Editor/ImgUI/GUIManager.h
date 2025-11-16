@@ -117,9 +117,6 @@ private:
 	vector<_wstring> m_AnimTrackTags{};
 	_char m_szCurrentTrackTag[MAX_PATH]{};
 
-	vector<_wstring> m_AnimPrefabs{};
-	_char m_szCurrentAnimPrefab[MAX_PATH]{};
-
 private:
 	void ViewMode();
 
@@ -153,8 +150,6 @@ private:
 
 	void Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag);
 	void Add_AnimTrack(_wstring szAnimTag);
-
-	void Select_Anim_Prefabs(_char* Outstr);
 
 	ID3D11ShaderResourceView* LoadTextureSRV(const _wstring& path);
 

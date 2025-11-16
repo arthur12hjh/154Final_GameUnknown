@@ -57,7 +57,6 @@ void CUIBase::Update(_float fTimeDelta)
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		m_tUIDesc.fAlpha = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
-		//m_eAnimState = dynamic_cast<CUIBase*>(m_pParent)->Get_Anim_State();
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -74,12 +73,7 @@ void CUIBase::Late_Update(_float fTimeDelta)
 		m_pUIAnimCom->Pause();
 		break;
 	case ANIM_STATE::STOP :
-	{
 		m_pUIAnimCom->Stop();
-		m_eAnimState = ANIM_STATE::IDLE;
-	}
-		break;
-	case ANIM_STATE::IDLE:
 		break;
 	}
 
@@ -284,8 +278,6 @@ void CUIBase::Free()
 		Safe_Delete(AnimDesc.second);
 	}
 	m_tOriginUIDesc.m_pUIAnimDescs.clear();
-
-	//for(auto& AnimTag : m_tOriginUIDesc.m_UIAnimTags)
 
 	/*for (auto& AnimDesc : m_tUIDesc.m_pUIAnimDescs)
 		Safe_Delete(AnimDesc);
