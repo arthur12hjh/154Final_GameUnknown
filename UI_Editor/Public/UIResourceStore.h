@@ -38,6 +38,7 @@ public:
 	unordered_map<_wstring, UI_TEXTURE_RESOURCE_DESC>* Get_UI_Texture_Descs(){ return &m_TextureDescs; }
 	void Clear_UI_Texture_Descs();
 
+
 private:
 	UI_TEXTURE_RESOURCE_DESC Find_UI_Texture_Desc(const _wstring& szTextureTag);
 

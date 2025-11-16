@@ -72,6 +72,8 @@ private:
 	_float m_fTimeStack = 0.f;
 	_float m_fDeltaTime = 0.f;
 
+	_bool m_isAnimFinish = false;
+
 	//vector<UI_ANIM_TRACK> AnimTracks{};
 	CUIBase* m_pOwner{ nullptr };
 
