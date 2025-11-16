@@ -2,7 +2,6 @@
 
 #include "Client_Defines.h"
 #include "GameHUD.h"
-#include "UIBase.h"
 
 NS_BEGIN(Engine)
 class CHUDLayer;
@@ -10,6 +9,8 @@ class CTexture;
 NS_END
 
 NS_BEGIN(Client)
+
+class CUIBase;
 
 class CUIHUD final : public CGameHUD
 {

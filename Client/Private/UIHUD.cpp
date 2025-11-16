@@ -6,6 +6,7 @@
 #include "StringHelper.h"
 
 #include "GameInstance.h"
+#include "UIBase.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -64,6 +65,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 
 	Json jObj;
 
+	jObj["fAlpha"] = pDesc.fAlpha;
 	jObj["fX"] = pDesc.fX;
 	jObj["fY"] = pDesc.fY;
 	jObj["fOffsetX"] = pDesc.fOffsetX;
@@ -86,6 +88,8 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 
 		CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str(), szText);
 		TextureDesc["szTextureComTag"] = szText;
+		CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Texture_Desc()->szProtoTag.c_str(), szText);
+		TextureDesc["szProtoTag"] = szText;
 		TextureDesc["iTextureIndex"] = pDesc.Get_UI_Texture_Desc()->iTextureIndex;
 		TextureDesc["iPass"] = pDesc.Get_UI_Texture_Desc()->iPass;
 		jObj["TextureDesc"] = TextureDesc;
@@ -140,6 +144,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 	for (const auto& pUIObject : jUIObjects)
 	{
 		CUIBase::UIBASE_DESC Desc{};
+		Desc.fAlpha = pUIObject["fAlpha"].get<_float>();
 		Desc.fX = pUIObject["fX"].get<_float>();
 		Desc.fY = pUIObject["fY"].get<_float>();
 		Desc.fSizeX = pUIObject["fSizeX"].get<_float>();
@@ -163,6 +168,8 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			TextureDesc.iTextureIndex = jDesc["iTextureIndex"].get<_uint>();
 			CStringHelper::ConvertUTFToWide(jDesc["szTextureComTag"].get<string>().c_str(), szText);
 			TextureDesc.szTextureComTag = szText;
+			CStringHelper::ConvertUTFToWide(jDesc["szProtoTag"].get<string>().c_str(), szText);
+			TextureDesc.szProtoTag = szText;
 
 			Desc.Set_UI_Texture_Desc(TextureDesc);
 		}
@@ -216,6 +223,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	WCHAR szText[MAX_PATH]{};
 
 	CUIBase::UIBASE_DESC Desc{};
+	Desc.fAlpha = jData["fAlpha"].get<_float>();
 	Desc.fX = jData["fX"].get<_float>();
 	Desc.fY = jData["fY"].get<_float>();
 	Desc.fSizeX = jData["fSizeX"].get<_float>();
@@ -239,6 +247,8 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		TextureDesc.iTextureIndex = jDesc["iTextureIndex"].get<_uint>();
 		CStringHelper::ConvertUTFToWide(jDesc["szTextureComTag"].get<string>().c_str(), szText);
 		TextureDesc.szTextureComTag = szText;
+		CStringHelper::ConvertUTFToWide(jDesc["szProtoTag"].get<string>().c_str(), szText);
+		TextureDesc.szProtoTag = szText;
 
 		Desc.Set_UI_Texture_Desc(TextureDesc);
 	}

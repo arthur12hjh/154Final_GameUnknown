@@ -2,7 +2,7 @@
 
 #include "Tool_UI_Defines.h"
 #include "Base.h"
-#include "UIResourceStore.h"
+#include "UIBase.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -16,8 +16,6 @@ class CUIBase;
 class CUIPanel;
 class CUIWrapper;
 class CUIHUD;
-class CGameManager;
-class CUIResourceManager;
 NS_END
 
 namespace GUI
@@ -52,6 +50,8 @@ namespace GUI
 }
 
 NS_BEGIN(Tool_UI)
+class CUIResourceStore;
+
 class CGUIManager : public CBase
 {
 	DECLARE_SINGLETON(CGUIManager);
@@ -72,7 +72,7 @@ private:
 
 private:
 	CGameInstance* m_pGameInstance{ nullptr };
-	class Client::CGameManager* m_pGameManager{ nullptr };
+	CUIResourceStore* m_pUIResourceStore{ nullptr };
 
 	_uint m_iCurrentLevel = 0;
 	_uint m_iPrevLevel = 0;
@@ -110,6 +110,13 @@ private:
 	_char m_szInputText[MAX_PATH]{};
 	_float4 m_vColor{ 1.f, 1.f, 1.f, 1.f };
 
+	_char m_szInputAnimTag[MAX_PATH]{};
+
+	_float4 m_vPram{ 0.f, 0.f, 0.f, 0.f };
+
+	vector<_wstring> m_AnimTrackTags{};
+	_char m_szCurrentTrackTag[MAX_PATH]{};
+
 private:
 	void ViewMode();
 
@@ -119,13 +126,13 @@ private:
 	void Create_Layer();
 	void Add_Child(class Client::CUIBase* pObj);
 
-	void Select_UI_Proto_Tag(char* _Outstr);
-	void Select_Texture_Tag(char* _Outstr);
+	void Select_UI_Proto_Tag(_char* Outstr);
+	void Select_Texture_Tag(_char* Outstr);
 
 	void SetUp_UI_Proto_Tags();
 	void SetUp_Texture_Tags();
 	
-	void View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc);
+	void View_Textures(_wstring szTag, void* pDesc);
 
 	void Draw_Hierarchy(Client::CUIBase* pObj);
 
@@ -135,6 +142,14 @@ private:
 	void Set_Position(_float2* pOldPos, _float2* pEditedPos);
 	void Set_Texture();
 	void Set_Text();
+
+	void Set_Animation();
+	void Add_Animation();
+
+	void Select_AnimTrack_Tags(_char* Outstr);
+
+	void Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag);
+	void Add_AnimTrack(_wstring szAnimTag);
 
 	ID3D11ShaderResourceView* LoadTextureSRV(const _wstring& path);
 

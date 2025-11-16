@@ -60,7 +60,10 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	/*if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Logo_Wrapper"))))
 		return E_FAIL;*/
 
-	if(FAILED(pUIHUD->Load_Data(TEXT("Test"))))
+	/*if(FAILED(pUIHUD->Load_Data(TEXT("Test"))))
+		return E_FAIL;*/
+	
+	if(FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
 		return E_FAIL;
 
 	return S_OK;

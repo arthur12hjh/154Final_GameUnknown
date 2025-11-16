@@ -11,6 +11,10 @@ NS_END
 
 NS_BEGIN(Client)
 
+/*
+	hover, selected는 버튼이면 무조건 갖게 해야함
+*/
+
 class CUIButton final : public CUIBase
 {
 private:

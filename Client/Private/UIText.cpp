@@ -77,6 +77,8 @@ HRESULT CUIText::Ready_Components()
 
 HRESULT CUIText::Bind_ShaderResources()
 {
+	__super::Bind_ShaderResources();
+
 	return S_OK;
 }
 

@@ -124,9 +124,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
       <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIResourceStore">
-      <UniqueIdentifier>{67a1ade5-3014-4ffd-8a93-178e874f30c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="50.Behavior">
       <UniqueIdentifier>{97a1cc60-d0a3-4bf8-bedd-de310c29f151}</UniqueIdentifier>
     </Filter>
@@ -292,6 +289,9 @@
     <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
       <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIAnimationCom">
+      <UniqueIdentifier>{c2226d88-c70d-44c8-8cba-05822dee8cc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -441,9 +441,6 @@
     <ClInclude Include="..\Public\UIPanel.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UIResourceStore.h">
-      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIWrapper.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
@@ -521,6 +518,9 @@
     </ClInclude>
     <ClInclude Include="..\public\CanBox.h">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIAnimationCom.h">
+      <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -658,9 +658,6 @@
     <ClCompile Include="..\Private\UIPanel.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPanel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UIResourceStore.cpp">
-      <Filter>02.GameObjects\UIObjects\UIResourceStore</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIWrapper.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClCompile>
@@ -735,6 +732,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CanBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIAnimationCom.cpp">
+      <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
