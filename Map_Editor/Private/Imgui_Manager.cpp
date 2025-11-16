@@ -6,6 +6,7 @@
 #include "Terrain.h"
 #include "LightTool.h"
 #include "MapTool.h"
+#include "Camera_Tool.h"
 #include <fstream>
 
 IMPLEMENT_SINGLETON(CImgui_Manager)
@@ -52,6 +53,8 @@ HRESULT CImgui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	if (m_pLightTool != nullptr)
 		m_pLightTool->Initialize(pDevice, pContext);
 	
+	m_pCameraTool = CCamera_Tool::Create(pDevice, pContext);
+
 
 	return S_OK;
 }
@@ -84,6 +87,7 @@ HRESULT CImgui_Manager::Render()
     
 	m_pMapTool->Render();
 	m_pLightTool->Render();
+	m_pCameraTool->Render();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -100,6 +104,7 @@ void CImgui_Manager::Free()
 
 	Safe_Delete(m_pLightTool);
 	Safe_Delete(m_pMapTool);
+	Safe_Release(m_pCameraTool);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pGameInstance);
