@@ -36,6 +36,11 @@ public:
 	HRESULT Load_Anim_Files();
 	vector<_wstring> Get_AnimDatas() { return m_AnimDatas; }
 
+	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_All_Stop();
+
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);

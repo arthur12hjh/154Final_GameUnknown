@@ -8,6 +8,7 @@
 
 #include "UIHUD.h"
 #include "HUDLayer.h"
+#include "GameObject.h"
 
 const char* CImGuiMain::m_szFpsComboText[] = {"30", "60", "144"};
 

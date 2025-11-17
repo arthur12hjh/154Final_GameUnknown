@@ -35,49 +35,6 @@ public:
 
 	}UI_TEXTURE_DESC;
 
-	typedef struct tagUIAnimTrackDesc
-	{
-		_wstring szTrackTag{};
-		_float4 vStartParam{0.f, 0.f, 0.f, 0.f};
-		_float4 vEndParam{0.f, 0.f, 0.f, 0.f};
-		_float fStartTime{ 0.f };
-		_float fEndTime{ 0.f };
-		_float fSpeed{ 0.f };
-	}UI_ANIM_TRACK_DESC;
-
-	typedef struct tagUIAnimDesc
-	{
-		_float fDuration{ 1.f };
-		_bool isLoop = false;
-		map<_wstring, UI_ANIM_TRACK_DESC*> m_Tracks{};
-
-	public:
-		void Add_UI_Track_Desc(_wstring szTrackTag, const UI_ANIM_TRACK_DESC& Desc) {
-
-			auto TrackDesc = m_Tracks.find(szTrackTag);
-
-			if (TrackDesc != m_Tracks.end())
-				return;
-
-			UI_ANIM_TRACK_DESC* pDesc = new UI_ANIM_TRACK_DESC(Desc);
-			m_Tracks.emplace(szTrackTag, pDesc);
-		}
-
-		UI_ANIM_TRACK_DESC* Get_UI_Track_Desc(_wstring szTrackTag) {
-			auto TrackDesc = m_Tracks.find(szTrackTag);
-
-			if (TrackDesc == m_Tracks.end())
-				return nullptr;
-
-			return TrackDesc->second;
-		}
-
-		map<_wstring, UI_ANIM_TRACK_DESC*> Get_UI_Track_Descs() {
-			return m_Tracks;
-		}
-
-	}UI_ANIM_DESC;
-
 public:
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
 	{
@@ -93,7 +50,6 @@ public:
 
 		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
 		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
-		map<_wstring, UI_ANIM_DESC*> m_pUIAnimDescs{};
 
 	public:
 		// 텍스트
@@ -114,31 +70,6 @@ public:
 
 		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
 			return m_pUITextureDesc;
-		}
-
-		// 애니메이션
-		void Add_UI_Anim_Desc(_wstring szAnimTag, const UI_ANIM_DESC& Desc) {
-			
-			auto AnimDesc = m_pUIAnimDescs.find(szAnimTag);
-
-			if (AnimDesc != m_pUIAnimDescs.end())
-				return;
-
-			UI_ANIM_DESC* pDesc = new UI_ANIM_DESC(Desc);
-			m_pUIAnimDescs.emplace(szAnimTag, pDesc);
-		}
-
-		UI_ANIM_DESC* Get_UI_Anim_Desc(_wstring szAnimTag) {
-			auto AnimDesc = m_pUIAnimDescs.find(szAnimTag);
-
-			if (AnimDesc == m_pUIAnimDescs.end())
-				return nullptr;
-
-			return AnimDesc->second;
-		}
-
-		map<_wstring, UI_ANIM_DESC*> Get_UI_Anim_Descs() {
-			return m_pUIAnimDescs;
 		}
 
 	}UIBASE_DESC;
@@ -203,6 +134,7 @@ public:
 	}
 
 	ANIM_STATE Get_Anim_State() { return m_eAnimState; }
+	void Set_Anim_State(ANIM_STATE eState) { m_eAnimState = eState; }
 
 	CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
 

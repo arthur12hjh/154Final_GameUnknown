@@ -272,24 +272,6 @@ void CUIBase::Free()
 
 	Safe_Delete(m_tOriginUIDesc.m_pUITextDesc);
 	Safe_Delete(m_tOriginUIDesc.m_pUITextureDesc);
-	/*Safe_Delete(m_tUIDesc.m_pUITextDesc);
-	Safe_Delete(m_tUIDesc.m_pUITextureDesc);*/
-
-	for (auto& AnimDesc : m_tOriginUIDesc.m_pUIAnimDescs)
-	{
-		for (auto& TrackDesc : AnimDesc.second->m_Tracks)
-		{
-			Safe_Delete(TrackDesc.second);
-		}
-		Safe_Delete(AnimDesc.second);
-	}
-	m_tOriginUIDesc.m_pUIAnimDescs.clear();
-
-	//for(auto& AnimTag : m_tOriginUIDesc.m_UIAnimTags)
-
-	/*for (auto& AnimDesc : m_tUIDesc.m_pUIAnimDescs)
-		Safe_Delete(AnimDesc);
-	m_tUIDesc.m_pUIAnimDescs.clear();*/
 
 	for (auto iter : m_Children)
 		Safe_Release(iter);

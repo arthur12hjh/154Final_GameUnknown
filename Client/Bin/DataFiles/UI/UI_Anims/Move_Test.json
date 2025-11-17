@@ -1,0 +1,22 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                120.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 1.0,
+    "isLoop": false,
+    "szAnimTag": "Move_Test"
+}

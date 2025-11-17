@@ -13,24 +13,50 @@ class CUIBase;
 
 class CUIAnimationCom final : public CBase
 {
-private:
-	typedef struct tagKeyFrame
+public:
+	typedef struct tagUIAnimTrackDesc
 	{
-		//_float fTime{ 0.f };
-		_wstring szPramTag{};
-		_float4 vValue{ 0.f, 0.f, 0.f, 0.f };
-		_wstring szEasing{ TEXT("Linear") };
-	}KEY_FRAME;
+		_wstring szTrackTag{};
+		_float4 vStartParam{ 0.f, 0.f, 0.f, 0.f };
+		_float4 vEndParam{ 0.f, 0.f, 0.f, 0.f };
+		_float fStartTime{ 0.f };
+		_float fEndTime{ 0.f };
+		_float fSpeed{ 0.f };
+	}UI_ANIM_TRACK_DESC;
 
-	enum class UIANIM{ALPHA, POSITION, SIZE, COLOR, ROTATION, END};
-	typedef struct tagUIAnimTrack
+	typedef struct tagUIAnimDesc
 	{
-		_uint iTarget{ ENUM_CLASS(UIANIM::END) };
-		vector<KEY_FRAME> KeyFrames;
-		_bool isLoop{ false };
+		_wstring szAnimTag{};
+		_float fDuration{ 1.f };
+		_bool isLoop = false;
+		map<_wstring, UI_ANIM_TRACK_DESC*> m_Tracks{};
 
-		_float fDuration{ 0.f };
-	}UI_ANIM_TRACK;
+	public:
+		void Add_UI_Track_Desc(_wstring szTrackTag, const UI_ANIM_TRACK_DESC& Desc) {
+
+			auto TrackDesc = m_Tracks.find(szTrackTag);
+
+			if (TrackDesc != m_Tracks.end())
+				return;
+
+			UI_ANIM_TRACK_DESC* pDesc = new UI_ANIM_TRACK_DESC(Desc);
+			m_Tracks.emplace(szTrackTag, pDesc);
+		}
+
+		UI_ANIM_TRACK_DESC* Get_UI_Track_Desc(_wstring szTrackTag) {
+			auto TrackDesc = m_Tracks.find(szTrackTag);
+
+			if (TrackDesc == m_Tracks.end())
+				return nullptr;
+
+			return TrackDesc->second;
+		}
+
+		map<_wstring, UI_ANIM_TRACK_DESC*> Get_UI_Track_Descs() {
+			return m_Tracks;
+		}
+
+	}UI_ANIM_DESC;
 
 private:
 	CUIAnimationCom();
@@ -39,19 +65,19 @@ private:
 public:	
 	HRESULT Initialize();
 
-	/*void AddTrack(const UI_ANIM_TRACK& track) {
-		AnimTracks.push_back(track);
-	}*/
-
-	// 여기서 애니메이션 태그나 트랙 태그 받아다가 돌려주면 될..듯?
 	void Play(_wstring szAnimTag);
 	void Pause();
 	void Stop();
 	void Tick(_float fTimeDelta);
 
+	void Set_UI_Anim_Desc(const UI_ANIM_DESC& Desc)
+	{
+		m_tUIAnimDesc = Desc;
+	}
+
+	UI_ANIM_DESC* Get_UI_Anim_Desc() { return &m_tUIAnimDesc; }
+
 	void Play_Anim(void* pAnimDesc, void* pTrackDesc);
-	//void Play_PosAnim(void* pAnimDesc, void* pTrackDesc);
-	//void Play_AlphaAnim(void* pAnimDesc, void* pTrackDesc);
 
 	void Set_Owner(CUIBase* pOwner) {
 		m_pOwner = pOwner;
@@ -62,20 +88,15 @@ public:
 
 private:
 	CGameInstance* m_pGameInstance{ nullptr };
-
-	//_wstring szAnimTag{};
-	//_float duration{ 0.f };
-	//_uint iTickCount{ 0 };
-	//_uint iCurrentFrame{ 0 };
-	//_bool isLoop{ false };
 	 
 	_float m_fTimeStack = 0.f;
 	_float m_fDeltaTime = 0.f;
 
 	_bool m_isAnimFinish = false;
 
-	//vector<UI_ANIM_TRACK> AnimTracks{};
 	CUIBase* m_pOwner{ nullptr };
+
+	UI_ANIM_DESC m_tUIAnimDesc{};
 
 public:
 	static CUIAnimationCom* Create();

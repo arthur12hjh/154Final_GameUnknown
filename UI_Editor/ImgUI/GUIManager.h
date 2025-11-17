@@ -2,7 +2,6 @@
 
 #include "Tool_UI_Defines.h"
 #include "Base.h"
-#include "UIBase.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -16,6 +15,7 @@ class CUIBase;
 class CUIPanel;
 class CUIWrapper;
 class CUIHUD;
+class UIAnimationCom;
 NS_END
 
 namespace GUI
@@ -120,6 +120,14 @@ private:
 	vector<_wstring> m_AnimPrefabs{};
 	_char m_szCurrentAnimPrefab[MAX_PATH]{};
 
+	class Client::UIAnimationCom* m_pUIAnimCom{ nullptr };
+
+	vector<_wstring> m_UILayerTags{};
+	_char m_szCurrentUILayerTag[MAX_PATH]{};
+
+	vector<_wstring> m_UITags{};
+	_char m_szCurrentUITag[MAX_PATH]{};
+
 private:
 	void ViewMode();
 
@@ -147,7 +155,7 @@ private:
 	void Set_Text();
 
 	void Set_Animation();
-	void Add_Animation();
+	void Edit_Animation(void* pDesc);
 
 	void Select_AnimTrack_Tags(_char* Outstr);
 
