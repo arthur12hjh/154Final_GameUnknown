@@ -543,7 +543,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	char pattern[MAX_PATH] = {};
 
 	memset(pattern, 0, sizeof(pattern));
-	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.bin");
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.binx");
 
 	WIN32_FIND_DATAA fd{};
 	HANDLE h = FindFirstFileA(pattern, &fd);
