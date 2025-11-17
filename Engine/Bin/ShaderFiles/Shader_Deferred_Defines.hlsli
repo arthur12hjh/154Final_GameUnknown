@@ -1,4 +1,4 @@
-/* ºí·¯¸¦ À§ÇÑ °¡¿ì½Ã¾È °è¼ö. ÃßÈÄ ¼öÁ¤ ÇÊ¿ä. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½. */
 
 float g_fWeights[13] =
 {
@@ -10,28 +10,6 @@ float g_fBloomWeights[21] =
     0.0125f, 0.0249f, 0.0469f, 0.0818f, 0.1332f, 0.2052f, 0.3019f, 0.4259f, 0.5741f, 0.7370f, 1.0f,
     0.7370f, 0.5741f, 0.4259f, 0.3019f, 0.2052f, 0.1332f, 0.0818f, 0.0469f, 0.0249f, 0.0125f
 };
-
-/* Å÷ ¼ÎÀÌµùÀ» À§ÇÑ ¶óÇÃ¶ó½Ã¾È ÇÊÅÍ °è¼ö. ÃßÈÄ ¼öÁ¤ÇÒ¼öµµ ÀÖÀ½ */
-float g_fLaplacianMask[9] =
-{
-    -1, -1, -1,
-    -1, 8, -1,
-    -1, -1, -1,
-};
-
-float g_fPixelsX[9] =
-{
-    -1.f, 0.f, 1.f,
-    -1.f, 0.f, 1.f,
-    -1.f, 0.f, 1.f
-};
-float g_fPixelsY[9] =
-{
-    -1.f, -1.f, -1.f,
-    0.f, 0.f, 0.f,
-    1.f, 1.f, 1.f
-};
-
 
 struct VS_IN
 {
@@ -86,12 +64,18 @@ struct PS_OUT_GLOW_FINAL
     float4 vWeight : SV_TARGET1;
 };
 
+struct PS_OUT_FOG
+{
+    float fFogPower : SV_TARGET0;
+};
+
+
 struct PS_OUT_DISTORTION
 {
     float4 vDistortion : SV_TARGET0;
 };
 
-//ÇÇÁ÷½º µð¹ö±ë¿ë
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 struct VS_PHYSX_IN
 {
     float3 vPosition : POSITION;
