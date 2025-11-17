@@ -184,6 +184,9 @@
     <ClCompile Include="..\Private\UIResourceStore.cpp">
       <Filter>02. UIResourceStore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIImage.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

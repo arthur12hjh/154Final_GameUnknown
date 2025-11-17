@@ -12,6 +12,7 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIAnimationCom;
+class CUIHUD;
 
 class CUIBase abstract : public CUIObject
 {
@@ -138,6 +139,10 @@ public:
 
 	CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
 
+#ifdef _DEBUG
+	void Render_Debug_Rect();
+#endif
+
 protected:
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 	CTexture*			m_pTextureCom = { nullptr };
@@ -148,6 +153,7 @@ protected:
 
 	vector<CUIBase*>		m_Children = {};
 	CUIAnimationCom*		m_pUIAnimCom = { nullptr };
+	CUIHUD*					m_pUIHUD = { nullptr };
 
 	_wstring				m_szCurrentAnimTag = {};
 
@@ -159,7 +165,6 @@ private:
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();
-	void Render_Debug_Rect();
 	HRESULT Bind_Debug_ShaderResources();
 
 	CVIBuffer_Point* m_pVIDebugBufferCom = { nullptr };

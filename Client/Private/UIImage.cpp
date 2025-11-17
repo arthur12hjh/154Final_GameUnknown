@@ -1,25 +1,25 @@
 #include "pch.h"
-#include "UIPanel.h"
+#include "UIImage.h"
 
 #include "GameInstance.h"
 #include "UIAnimationCom.h"
 
-CUIPanel::CUIPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIImage::CUIImage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUIPanel::CUIPanel(const CUIPanel& Prototype) 
+CUIImage::CUIImage(const CUIImage& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUIPanel::Initialize_Prototype()
+HRESULT CUIImage::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUIPanel::Initialize(void* pArg)
+HRESULT CUIImage::Initialize(void* pArg)
 {	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -30,22 +30,22 @@ HRESULT CUIPanel::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUIPanel::Priority_Update(_float fTimeDelta)
+void CUIImage::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
 }
 
-void CUIPanel::Update(_float fTimeDelta)
+void CUIImage::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 }
 
-void CUIPanel::Late_Update(_float fTimeDelta)
+void CUIImage::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 }
 
-HRESULT CUIPanel::Render()
+HRESULT CUIImage::Render()
 {
 	__super::Render();
 
@@ -71,7 +71,7 @@ HRESULT CUIPanel::Render()
 	return S_OK;
 }
 
-HRESULT CUIPanel::Ready_Components()
+HRESULT CUIImage::Ready_Components()
 {
 	__super::Ready_Components();
 
@@ -83,7 +83,7 @@ HRESULT CUIPanel::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUIPanel::Bind_ShaderResources()
+HRESULT CUIImage::Bind_ShaderResources()
 {
 	__super::Bind_ShaderResources();
 
@@ -99,9 +99,9 @@ HRESULT CUIPanel::Bind_ShaderResources()
 	return S_OK;
 }
 
-CUIPanel* CUIPanel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIImage* CUIImage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUIPanel* pInstance = new CUIPanel(pDevice, pContext);
+	CUIImage* pInstance = new CUIImage(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -112,20 +112,20 @@ CUIPanel* CUIPanel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CUIPanel::Clone(void* pArg)
+CGameObject* CUIImage::Clone(void* pArg)
 {
-	CUIPanel* pInstance = new CUIPanel(*this);
+	CUIImage* pInstance = new CUIImage(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUIPanel");
+		MSG_BOX("Failed to Cloned : CUIImage");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUIPanel::Free()
+void CUIImage::Free()
 {
 	__super::Free();
 }

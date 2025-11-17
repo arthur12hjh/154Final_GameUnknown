@@ -20,13 +20,6 @@ HRESULT CUIText::Initialize_Prototype()
 
 HRESULT CUIText::Initialize(void* pArg)
 {
-	//CUIObject::UIOBJECT_DESC	Desc = *static_cast<CUIObject::UIOBJECT_DESC*>(pArg);
-
-	/*Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = 100.f;
-	Desc.fSizeY = 100.f;*/
-	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -71,6 +64,10 @@ HRESULT CUIText::Render()
 			_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f, m_tUIDesc.fY + m_tUIDesc.fOffsetY - fTextSize.y * 0.5f),
 			vColor);
 	}
+
+#ifdef _DEBUG
+	__super::Render_Debug_Rect();
+#endif
 
 	return S_OK;
 }

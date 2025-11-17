@@ -38,7 +38,7 @@ public:
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
 	//void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
-	//void Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
 	//void Anim_All_Stop();
 
 private:

@@ -106,10 +106,10 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	pUIHUD->Load_Anim_Files();
-
 	if (FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
 		return E_FAIL;
+	
+	pUIHUD->Load_Anim_Files();
 
 	pUIHUD->Anim_Play(TEXT("Test2"), TEXT("UI_Test2_Panel_0"), TEXT("Test_Anim"));
 

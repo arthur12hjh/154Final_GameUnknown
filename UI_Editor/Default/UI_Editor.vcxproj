@@ -169,6 +169,7 @@
     <ClCompile Include="..\..\Client\Private\UIBase.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIImage.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />

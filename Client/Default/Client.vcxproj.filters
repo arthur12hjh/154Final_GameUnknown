@@ -292,6 +292,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIAnimationCom">
       <UniqueIdentifier>{c2226d88-c70d-44c8-8cba-05822dee8cc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIImage">
+      <UniqueIdentifier>{28d715db-8247-4e00-ad1d-7d3af521afad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -522,6 +525,9 @@
     <ClInclude Include="..\Public\UIAnimationCom.h">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIImage.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -735,6 +741,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIAnimationCom.cpp">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIImage.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

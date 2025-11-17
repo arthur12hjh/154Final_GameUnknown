@@ -146,12 +146,34 @@ void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag
 	if (pUI == nullptr)
 		return;
 
+	for (auto& Track : pUI->Get_AnimationCom()->Get_UI_Anim_Desc()->m_Tracks)
+		Safe_Delete(Track.second);
+	pUI->Get_AnimationCom()->Get_UI_Anim_Desc()->m_Tracks.clear();
+
 	CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
 
 	Import_Anim_Prefab(szAnimTag, &AnimDesc);
 
 	pUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
+
 	pUI->Play_Anim(szAnimTag);
+}
+
+void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
+{
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	if (pUI == nullptr)
+		return;
+
+	pUI->Stop_Anim();
 }
 
 //void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
@@ -231,6 +253,7 @@ HRESULT CUIHUD::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 	WCHAR szText[MAX_PATH]{};
 
 	CUIAnimationCom::UI_ANIM_DESC* AnimDesc = new CUIAnimationCom::UI_ANIM_DESC();
+
 	CStringHelper::ConvertUTFToWide(jAnim["szAnimTag"].get<string>().c_str(), szText);
 	AnimDesc->szAnimTag = szText;
 	AnimDesc->isLoop = jAnim["isLoop"].get<_bool>();

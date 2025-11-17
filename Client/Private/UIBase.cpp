@@ -31,6 +31,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
+
 #ifdef _DEBUG
 	if (FAILED(Ready_Components_For_Debug()))
 		return E_FAIL;
@@ -47,6 +48,10 @@ HRESULT CUIBase::Initialize(void* pArg)
 
 void CUIBase::Priority_Update(_float fTimeDelta)
 {
+	/*if (!m_pUIHUD)
+	{
+		m_pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	}*/
 }
 
 void CUIBase::Update(_float fTimeDelta)
@@ -80,6 +85,10 @@ void CUIBase::Late_Update(_float fTimeDelta)
 	}
 		break;
 	case ANIM_STATE::IDLE:
+	{
+		m_pUIAnimCom->Stop();
+		//m_tUIDesc = m_tOriginUIDesc;
+	}
 		break;
 	}
 
@@ -89,16 +98,6 @@ void CUIBase::Late_Update(_float fTimeDelta)
 
 HRESULT CUIBase::Render()
 {
-#ifdef _DEBUG
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	if (pHUD && pHUD->Get_Show_Debug_Rect())
-	{
-		Render_Debug_Rect();
-		Safe_Release(pHUD);
-	}
-#endif
-
 	return S_OK;
 }
 
@@ -203,17 +202,27 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 
 void CUIBase::Render_Debug_Rect()
 {
-	if (FAILED(Bind_Debug_ShaderResources()))
-		return;
+#ifdef _DEBUG
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	if (FAILED(m_pShaderCom->Begin(1)))
-		return;
+	if (pHUD && pHUD->Get_Show_Debug_Rect())
+	{
+		if (FAILED(Bind_Debug_ShaderResources()))
+			return;
 
-	if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
-		return;
+		if (FAILED(m_pShaderCom->Begin(1)))
+			return;
 
-	if (FAILED(m_pVIDebugBufferCom->Render()))
+		if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
+			return;
+
+		if (FAILED(m_pVIDebugBufferCom->Render()))
+			return;
+
+		Safe_Release(pHUD);
 		return;
+	}
+#endif
 }
 
 HRESULT CUIBase::Bind_Debug_ShaderResources()
@@ -280,6 +289,7 @@ void CUIBase::Free()
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
+	Safe_Release(m_pUIHUD);
 	Safe_Release(m_pUIAnimCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
