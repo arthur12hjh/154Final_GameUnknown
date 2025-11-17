@@ -144,6 +144,7 @@ HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)
 		return S_OK;
 		break;
 	case binMaterial::METALNESS:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_ORM.png"))->Bind_ShaderResource(pShader, "g_ORMTexture", 0);
 		return S_OK;
 		break;
 	case binMaterial::DIFFUSE_ROUGHNESS:

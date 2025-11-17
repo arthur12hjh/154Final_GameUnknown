@@ -206,6 +206,7 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\Public\Entity.h" />
     <ClInclude Include="..\Public\FbxParser.h" />
+    <ClInclude Include="..\Public\Fog.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\GameHUD.h" />
@@ -305,6 +306,7 @@ popd</Command>
     <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\Entity.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
+    <ClCompile Include="..\Private\Fog.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameHUD.cpp" />
@@ -378,6 +380,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>
