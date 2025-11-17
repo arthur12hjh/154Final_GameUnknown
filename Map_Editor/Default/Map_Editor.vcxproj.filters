@@ -4,12 +4,6 @@
     <Filter Include="00.MainApp">
       <UniqueIdentifier>{f7312975-447b-4c94-b3e2-701c41b88dbe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{5db6257d-a35f-4f3d-b2e4-795ce8ef85f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99.Defines\PCH">
-      <UniqueIdentifier>{d725a5cc-086c-491c-a720-4a2604efa3bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Levels">
       <UniqueIdentifier>{25a30bc4-c42b-4691-9a07-48d0fae8aab8}</UniqueIdentifier>
     </Filter>
@@ -126,9 +120,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\TombStone">
       <UniqueIdentifier>{020a9aac-879e-48b5-a940-8f07c88882d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom">
-      <UniqueIdentifier>{6727cecf-8571-48c1-828c-46ab8ccd346b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

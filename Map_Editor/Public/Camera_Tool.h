@@ -4,7 +4,8 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
-class CCinemaData;
+class CCinemaTrack;
+class CGameObject;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -30,7 +31,7 @@ private:
 	ID3D11Device*									m_pDevice = { nullptr };
 	ID3D11DeviceContext*							m_pContext = { nullptr };
 	CGameInstance*									m_pGameInstance = { nullptr };
-	CCinemaData*									m_pCameraAnimation = { nullptr };
+	CCinemaTrack*									m_pCameraAnimation = { nullptr };
 
 	_bool											m_bIsPause = false;
 	ImVec2											m_vTimeLinePos = {};
@@ -40,7 +41,7 @@ private:
 	char											m_szSelectable[MAX_PATH] = {};
 	char											m_szViewCinemaScene[MAX_PATH] = {};
 	
-	const unordered_map<_wstring, CCinemaData*>*	m_pSelectSceneDatas = { nullptr };
+	const unordered_map<_wstring, CCinemaTrack*>*	m_pSelectSceneDatas = { nullptr };
 	char											m_szViewCinemaData[MAX_PATH] = {};
 
 #pragma region ADD_CinemaScene
@@ -56,17 +57,22 @@ private:
 #pragma region ADD_KeyFrame
 	_bool											m_bIsKeyFrame = { false };
 
-	_float											m_vRotation[3];
-	_float											m_vTranslate[3];
+	_float											m_vRotation[3] = {};
+	_float											m_vTranslate[3] = {};
 
 	_float											m_fFov = {};
 	_float											m_fFar = {};
 	_float											m_fNear = {};
+
+	char											m_szSelectObject[MAX_PATH] = {};
+	CGameObject*									m_pSelectObject = { nullptr };
+	
+	_int											m_iKeyFrameIndex = {};
 #pragma endregion
 
 #pragma region SAVE & LOAD
-	char											m_szSaveFielPath[MAX_PATH] = {};
-	char											m_szLoadFielPath[MAX_PATH] = {};
+	char											m_szSaveFilePath[MAX_PATH] = {};
+	char											m_szLoadFilePath[MAX_PATH] = {};
 #pragma endregion
 
 #pragma region KEY_INFO
@@ -80,10 +86,13 @@ private:
 private :
 	void											ADD_CinemaScene();
 	void											ADD_CinemaData();
+	
 	void											ADD_KeyFrame();
+	void											Show_SelectObject();
 
 	void											Show_KeyFrameInfo();
 	void											Show_KeyFrame(_float fTimeDelta);
+
 
 	HRESULT											Save_Cinematic_Action();
 	HRESULT											Load_Cinematic_Actions();

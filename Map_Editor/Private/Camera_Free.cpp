@@ -2,7 +2,7 @@
 #include "Camera_Free.h"
 
 #include "GameInstance.h"
-#include "CinemaData.h"
+#include "CinemaTrack.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera{ pDevice, pContext }
@@ -77,31 +77,10 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 void CCamera_Free::Update(_float fTimeDelta)
 {
-	if (m_bIsCameraAnimation)
+	if (m_pAnimation)
 	{
-		auto pKeyFrame = m_pAnimation->GetFrameList();
-		m_fTime.x += fTimeDelta;
-		if (m_fTime.x >= m_fTime.y)
-		{
-			m_fTime.x = 0.f;
-			m_iIndex++;
-
-			if (_uint(m_pAnimation->GetNumKeyFrame() - 1) <= m_iIndex)
-			{
-				m_bIsCameraAnimation = false;
-				m_fTime.x = m_fTime.y;
-				m_iIndex = _uint(m_pAnimation->GetNumKeyFrame() - 2);
-				m_pAnimation = nullptr;
-			}
-		}
-	
-		_float fRatio = {};
-		if (0.f == m_fTime.x)
-			fRatio = 0.f;
-		else
-			fRatio = m_fTime.x / m_fTime.y;
-		auto pLerp = XMVectorLerp(XMLoadFloat3(&(*pKeyFrame)[m_iIndex]->vTranslation), XMLoadFloat3(&(*pKeyFrame)[m_iIndex + 1]->vTranslation), fRatio);
-		m_pTransformCom->Set_State(STATE::POSITION, pLerp);
+		if (m_pAnimation->Play_Animation(m_pTransformCom, fTimeDelta))
+			m_pAnimation = nullptr;
 	}
 }
 
@@ -117,12 +96,10 @@ HRESULT CCamera_Free::Render()
 	return S_OK;
 }
 
-void CCamera_Free::CameraAnimtaionTest(CCinemaData* pCinemaData, _float PlayTime)
+void CCamera_Free::CameraAnimtaionTest(CCinemaTrack* pCinemaData, _float fPlayTime)
 {
 	m_pAnimation = pCinemaData;
-	m_iIndex = 0;
-	m_fTime = { 0.f, PlayTime / m_pAnimation->GetNumKeyFrame() };
-	m_bIsCameraAnimation = true;
+	m_pAnimation->Set_Animation(fPlayTime);
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -1,13 +1,30 @@
 #include "CutScene.h"
 
-#include "CinemaData.h"
+#include "CinemaTrack.h"
 #include "StringHelper.h"
 
-CCutScene::CCutScene()
+CCutScene::CCutScene(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+    m_pDevice(pDevice),
+    m_pContext(pContext)
 {
+    Safe_AddRef(m_pDevice);
+    Safe_AddRef(m_pContext);
 }
 
-HRESULT CCutScene::ADD_CutSceneData(const WCHAR* szTag, CCinemaData* pCinemaComponent)
+HRESULT CCutScene::Initailize(const WCHAR* szFilePath)
+{
+    if (0 == lstrcmp(szFilePath, L""))
+    {
+
+    }
+    else
+    {
+        Import(szFilePath);
+    }
+    return S_OK;
+}
+
+HRESULT CCutScene::ADD_CutSceneData(const WCHAR* szTag, CCinemaTrack* pCinemaComponent)
 {
     if (nullptr == pCinemaComponent)
         return E_FAIL;
@@ -23,7 +40,7 @@ HRESULT CCutScene::ADD_CutSceneData(const WCHAR* szTag, CCinemaData* pCinemaComp
     return S_OK;
 }
 
-const CCinemaData* CCutScene::GetCutSceneData(const WCHAR* szTag)
+const CCinemaTrack* CCutScene::GetCutSceneData(const WCHAR* szTag)
 {
     auto iter = m_SceneDatas.find(szTag);
     if (iter == m_SceneDatas.end())
@@ -32,7 +49,7 @@ const CCinemaData* CCutScene::GetCutSceneData(const WCHAR* szTag)
     return iter->second;
 }
 
-const unordered_map<_wstring, CCinemaData*>* CCutScene::GetAllSceneData()
+const unordered_map<_wstring, CCinemaTrack*>* CCutScene::GetAllSceneData()
 {
     return &m_SceneDatas;
 }
@@ -40,13 +57,13 @@ const unordered_map<_wstring, CCinemaData*>* CCutScene::GetAllSceneData()
 HRESULT CCutScene::Export(const WCHAR* szFilePath)
 {
     ios_base::open_mode bFlag = ios::out | ios::trunc;
-    ofstream ifs(szFilePath, bFlag);
 
-    if (ifs.is_open())
+    ofstream ofs(szFilePath, bFlag);
+    if (ofs.is_open())
     {
         _uint iNumScence = m_SceneDatas.size();
         //여기서 씬에서 몇개의 오브젝트를 구성중인가를 받아온다.
-        ifs << iNumScence << endl;
+        ofs << iNumScence << endl;
         for (auto& iter : m_SceneDatas)
         {
             // 여기서 데이터별로 데이터를 저장시킬거임
@@ -56,28 +73,24 @@ HRESULT CCutScene::Export(const WCHAR* szFilePath)
             auto p = wcsrchr(szFilePath, L'.');
             // 문자 위치 다시 지정
             wstring FullPath = wstring(szFilePath, p - szFilePath);
-            FullPath += TEXT("/");
-            FullPath += iter.first.c_str();
-            FullPath += TEXT(".bin");
+            FullPath += TEXT("_KeyFrame.bin");
             char LowStr[MAX_PATH] = {};
 
             CStringHelper::ConvertWideToUTF(FullPath.c_str(), LowStr);
-            ifs << LowStr << endl;
+            ofs << LowStr << endl;
         }
     }
     else
         E_FAIL;
 
-    ifs.close();
+    ofs.close();
 
     for (auto& iter : m_SceneDatas)
     {
         auto p = wcsrchr(szFilePath, L'.');
         // 문자 위치 다시 지정
         wstring FullPath = wstring(szFilePath, p - szFilePath);
-        FullPath += TEXT("/");
-        FullPath += iter.first.c_str();
-        FullPath += TEXT(".bin");
+        FullPath += TEXT("_KeyFrame.bin");
 
         iter.second->Save_FileData(FullPath.c_str());
     }
@@ -87,18 +100,66 @@ HRESULT CCutScene::Export(const WCHAR* szFilePath)
 
 HRESULT CCutScene::Import(const WCHAR* szFilePath)
 {
+    ios_base::open_mode bFlag = ios::in;
+
+    ifstream ifs(szFilePath, bFlag);
+    if (ifs.is_open())
+    {
+        _uint iNumScence = m_SceneDatas.size();
+        //여기서 씬에서 몇개의 오브젝트를 구성중인가를 받아온다.
+        ifs >> iNumScence;
+
+        char szUFilePath[MAX_PATH] = {};
+
+        WCHAR szWideFilePath[MAX_PATH] = {};
+        WCHAR szFileName[MAX_PATH] = {};
+        WCHAR szExtents[MAX_PATH] = {};
+
+        for (_uint i = 0; i < iNumScence; ++i)
+        {
+            ifs >> szUFilePath;
+
+            CStringHelper::ConvertUTFToWide(szUFilePath, szWideFilePath);
+            _wsplitpath_s(szWideFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExtents, MAX_PATH);
+
+            auto iter = m_SceneDatas.find(szExtents);
+            if (iter == m_SceneDatas.end())
+            {
+                auto pCinemaData = CCinemaTrack::Create(m_pDevice, m_pContext, szWideFilePath);
+                m_SceneDatas.emplace(szFileName, pCinemaData);
+            }
+            else
+            {
+                iter->second->Read_FileData(szWideFilePath);
+            }
+        }
+    }
+    else
+        E_FAIL;
+
+    ifs.close();
+
     return S_OK;
 }
 
-CCutScene* CCutScene::Create()
+CCutScene* CCutScene::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const WCHAR* szFilePath)
 {
-    return new CCutScene();
+    auto pCutScene = new CCutScene(pDevice, pContext);
+    if (FAILED(pCutScene->Initailize(szFilePath)))
+    {
+        Safe_Release(pCutScene);
+        MSG_BOX("Create Fail : Cut Scene");
+    }
+
+    return pCutScene;
 }
 
 void CCutScene::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
 
     for (auto& iter : m_SceneDatas)
         Safe_Release(iter.second);

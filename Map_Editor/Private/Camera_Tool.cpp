@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "StringHelper.h"
 
-#include "CinemaData.h"
+#include "CinemaTrack.h"
 #include "Camera_Free.h"
 
 const WCHAR* m_szCinemaComponentName = TEXT("Prototype_Component_CinemaComponent");
@@ -92,7 +92,11 @@ HRESULT CCamera_Tool::Render()
                          if (iter == m_pSelectSceneDatas->end())
                              m_pCameraAnimation = nullptr;
                          else
+                         {
                              m_pCameraAnimation = iter->second;
+                             m_fTime.y = m_pCameraAnimation->GetPlayTime();
+                         }
+                         
                     }
                 }
             }
@@ -130,7 +134,7 @@ HRESULT CCamera_Tool::Render()
 
 HRESULT CCamera_Tool::Save_Cinematic_Action()
 {
-    ImGui::InputText("Save File Name", m_szSaveFielPath, MAX_PATH);
+    ImGui::InputText("Save File Name", m_szSaveFilePath, MAX_PATH);
     if (ImGui::IsItemHovered())
     {
         ImGui::BeginTooltip();
@@ -143,7 +147,7 @@ HRESULT CCamera_Tool::Save_Cinematic_Action()
     if (ImGui::Button("Save"))
     {
         WCHAR Conv_str[MAX_PATH] = {};
-        CStringHelper::ConvertUTFToWide(m_szSaveFielPath, Conv_str);
+        CStringHelper::ConvertUTFToWide(m_szSaveFilePath, Conv_str);
         m_pGameInstance->SaveCinemaSceneData(Conv_str);
     }
   
@@ -153,10 +157,12 @@ HRESULT CCamera_Tool::Save_Cinematic_Action()
 
 HRESULT CCamera_Tool::Load_Cinematic_Actions()
 {
-    ImGui::InputText("Load File Name", m_szLoadFielPath, MAX_PATH);
+    ImGui::InputText("Load File Name", m_szLoadFilePath, MAX_PATH);
     if (ImGui::Button("Load"))
     {
-
+        WCHAR Conv_str[MAX_PATH] = {};
+        CStringHelper::ConvertUTFToWide(m_szLoadFilePath, Conv_str);
+        m_pGameInstance->LoadCinemaSceneData(Conv_str);
     }
 
 
@@ -193,7 +199,7 @@ void CCamera_Tool::ADD_CinemaData()
         CStringHelper::ConvertUTFToWide(m_szCinemaSceneTag, Cnv_Str);
         CStringHelper::ConvertUTFToWide(m_szCinemaDataTag, Cnv_Str2);
 
-        auto pCinemaData = CCinemaData::Create(m_pDevice, m_pContext);
+        auto pCinemaData = CCinemaTrack::Create(m_pDevice, m_pContext);
         if (nullptr == pCinemaData)
         {
             MSG_BOX("시네마틱 데이터 생성 실패");
@@ -210,18 +216,50 @@ void CCamera_Tool::ADD_CinemaData()
 void CCamera_Tool::ADD_KeyFrame()
 {
     ImGui::Begin("ADD KeyFrame Data");
-
+    Show_SelectObject();
     // 이거 나중에 타입으로 바꿔서 보여줄거임
     // 카메라인지 모델인지 해서
+    ImGui::Text("Transform");
     ImGui::Separator();
     ImGui::DragFloat3("Roation", m_vRotation);
     ImGui::DragFloat3("Translate", m_vTranslate);
 
     ImGui::Text("CameraInfo");
     ImGui::Separator();
+
     ImGui::InputFloat("Fov", &m_fFov);
+    m_fFov = XMConvertToRadians(m_fFov);
+
     ImGui::InputFloat("Far", &m_fFar);
     ImGui::InputFloat("Near", &m_fNear);
+  
+
+    if (ImGui::Button("Copy SelectObject Data"))
+    {
+        // 여기도 나누자
+        // 회전은 Transform  수정해야하는데 이건 고민좀 해보자
+        _float3 vTranslation = {};
+        if (m_pSelectObject)
+        {
+            XMStoreFloat3(&vTranslation, m_pSelectObject->GetTransform()->Get_State(STATE::POSITION));
+            memcpy(&m_vTranslate, &vTranslation, sizeof(_float3));
+
+            auto pSelectCamera = dynamic_cast<CCamera*>(m_pSelectObject);
+            if (pSelectCamera)
+            {
+                auto& pCameraInfo = pSelectCamera->GetCameraInfo();
+
+                m_fFov = pCameraInfo.fFov;
+                m_fNear = pCameraInfo.fNear;
+                m_fFar = pCameraInfo.fFar;
+            }
+        }
+        else
+        {
+            MSG_BOX("Please Select Object");
+        }
+    }
+    ImGui::SameLine();
     if (ImGui::Button("Create"))
     {
         auto pKeyFrame = new CAMERA_KEYFRAME();
@@ -232,12 +270,44 @@ void CCamera_Tool::ADD_KeyFrame()
         pKeyFrame->vScale = { 1.f, 1.f, 1.f };
         memcpy(&pKeyFrame->vRotation, m_vRotation, sizeof(_float3));
         memcpy(&pKeyFrame->vTranslation, m_vTranslate, sizeof(_float3));
+
+        pKeyFrame->vRotation.x = XMConvertToRadians(pKeyFrame->vRotation.x);
+        pKeyFrame->vRotation.y = XMConvertToRadians(pKeyFrame->vRotation.y);
+        pKeyFrame->vRotation.z = XMConvertToRadians(pKeyFrame->vRotation.z);
+
+        m_pCameraAnimation->SetPlayTime(m_fTime.y);
         m_pCameraAnimation->Insert_KeyFrame(pKeyFrame);
     }
     ImGui::SameLine();
     if (ImGui::Button("Cancel"))
         m_bIsKeyFrame = false;
+
+    ImGui::Separator();
+    ImGui::InputInt("Key Frame Index", &m_iKeyFrameIndex);
+    ImGui::SameLine();
+    if (ImGui::Button("Delete"))
+        m_pCameraAnimation->Remove_KeyFrame(m_iKeyFrameIndex);
+
     ImGui::End();
+}
+
+void CCamera_Tool::Show_SelectObject()
+{
+    // 여기도 타입에 의해서 나눌거임
+    if (ImGui::BeginCombo("ObjectList", m_szSelectObject))
+    {
+        for (auto pCamera : *m_pGameInstance->GetAllCamera())
+        {
+            CStringHelper::ConvertWideToUTF(pCamera.first.c_str(), m_szSelectable);
+            if (ImGui::Selectable(m_szSelectable, false))
+            {
+                strcpy_s(m_szSelectObject, m_szSelectable);
+                m_pSelectObject = pCamera.second;
+            }
+        }
+        ImGui::EndCombo();
+    }
+    
 }
 
 void CCamera_Tool::Show_KeyFrameInfo()
@@ -264,7 +334,7 @@ void CCamera_Tool::Show_KeyFrameInfo()
     ImGui::Separator();
     ImGui::Text("Cam KeyFrame Info");
     ImGui::Text("Rotation : %.2f %.2f %.2f", m_CameraKeyFrameInfo.vRotation.x, m_CameraKeyFrameInfo.vRotation.y, m_CameraKeyFrameInfo.vRotation.z);
-    ImGui::Text("Rotation : %.2f %.2f %.2f", m_CameraKeyFrameInfo.vTranslation.x, m_CameraKeyFrameInfo.vTranslation.y, m_CameraKeyFrameInfo.vTranslation.z);
+    ImGui::Text("Translation : %.2f %.2f %.2f", m_CameraKeyFrameInfo.vTranslation.x, m_CameraKeyFrameInfo.vTranslation.y, m_CameraKeyFrameInfo.vTranslation.z);
     ImGui::Text("Fov : %.2f", m_CameraKeyFrameInfo.fFov);
     ImGui::Text("Far : %.2f", m_CameraKeyFrameInfo.fFar);
     ImGui::Text("Near : %.2f", m_CameraKeyFrameInfo.fNear);
@@ -287,7 +357,9 @@ void CCamera_Tool::Show_KeyFrame(_float fTimeDelta)
     if (ImGui::Button("Test Action"))
     {
         auto pCamera = m_pGameInstance->GetMainCamera();
-        static_cast<CCamera_Free*>(pCamera)->CameraAnimtaionTest(m_pCameraAnimation, m_fTime.y);
+        if (2 <= (_int)m_pCameraAnimation->GetNumKeyFrame())
+            static_cast<CCamera_Free*>(pCamera)->CameraAnimtaionTest(m_pCameraAnimation, m_fTime.y);
+
         Safe_Release(pCamera);
     }
 

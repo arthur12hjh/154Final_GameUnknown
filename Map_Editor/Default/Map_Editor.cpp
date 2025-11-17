@@ -14,6 +14,7 @@ HINSTANCE g_hInstance;                                // 현재 인스턴스입�
 HWND g_hWnd;                               
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+bool		g_bIsImgKeyBoardFoucs;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -84,7 +85,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
 
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-        pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
+        if (GetForegroundWindow() == g_hWnd)
+        {
+            if (g_bIsImgKeyBoardFoucs)
+                pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, false);
+            else
+                pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, true);
+            pGameInstance->SetInputFoucs(KEY_INPUT::MOUSE, true);
+        }
+        else
+        {
+            pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, false);
+            pGameInstance->SetInputFoucs(KEY_INPUT::MOUSE, false);
+        }
+
         if (/*fTimeAcc >= 1.f / 60.f*/1)
         {
             pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));

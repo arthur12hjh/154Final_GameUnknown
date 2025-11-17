@@ -8,7 +8,7 @@
 
 #include "GameInstance.h"
 #include "Vil_Bui03_04.h"
-#include "CinemaData.h"
+#include "CinemaTrack.h"
 #include "Terrain_Sand.h"
 
 // Buildings
@@ -433,7 +433,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_CinemaComponent */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_CinemaComponent"),
-		CCinemaData::Create(m_pDevice, m_pContext))))
+		CCinemaTrack::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("객체원형를(을) 로딩 중 입니다.");

@@ -132,7 +132,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pCameraManager)
 		return E_FAIL;
 
-	m_pCinema_Manager = CCinematicManager::Create();
+	m_pCinema_Manager = CCinematicManager::Create(*ppDevice, *ppContext);
 	if (nullptr == m_pCinema_Manager)
 		return E_FAIL;
 
@@ -298,13 +298,19 @@ _bool CGameInstance::KeyUp(KEY_INPUT eType, _uint KeyState)
 	return m_pInput_Device->KeyUp(eType, KeyState);
 }
 
-LONG CGameInstance::GetMouseAxis(_uint iAxis)
+LONG CGameInstance::GetMouseAxis( _uint iAxis)
 {
 	return m_pInput_Device->GetMouseAxis(iAxis);
 }
-void CGameInstance::SetInputFoucs(_bool bFlag)
+
+void CGameInstance::SetInputFoucs(KEY_INPUT eType, _bool bFlag)
 {
-	m_pInput_Device->SetInputFoucs(bFlag);
+	m_pInput_Device->SetInputFoucs(eType, bFlag);
+}
+
+_bool CGameInstance::GetInputFoucs(KEY_INPUT eType)
+{
+	return m_pInput_Device->GetInputFoucs(eType);
 }
 #pragma endregion
 
@@ -872,16 +878,16 @@ vector<CInteraction_Component*>* CGameInstance::GetAllInteraction()
 #pragma endregion
 
 #pragma region Cinema Manager
-HRESULT CGameInstance::ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaData* pData)
+HRESULT CGameInstance::ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaTrack* pData)
 {
 	return m_pCinema_Manager->ADD_CutSceneData(szSceneTag, szTag, pData);
 }
-const CCinemaData* CGameInstance::GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag)
+const CCinemaTrack* CGameInstance::GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag)
 {
 	return m_pCinema_Manager->GetCutSceneData(szSceneTag, szTag);
 }
 
-const unordered_map<_wstring, CCinemaData*>* CGameInstance::GetCinemaSceneAllDatas(const WCHAR* szSceneTag)
+const unordered_map<_wstring, CCinemaTrack*>* CGameInstance::GetCinemaSceneAllDatas(const WCHAR* szSceneTag)
 {
 	return m_pCinema_Manager->GetSceneAllDatas(szSceneTag);
 }
