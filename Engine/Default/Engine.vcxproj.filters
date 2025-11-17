@@ -317,8 +317,14 @@
     <ClInclude Include="..\Public\Interaction_Component.h">
       <Filter>01.Utility\21.Interraction</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CinemaComponent.h">
-      <Filter>01.Utility\03.Components\CameraAnimation</Filter>
+    <ClInclude Include="..\public\CinemaData.h">
+      <Filter>01.Utility\22.CutScene\CinemaData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CutScene.h">
+      <Filter>01.Utility\22.CutScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CinematicManager.h">
+      <Filter>01.Utility\22.CutScene\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -610,8 +616,14 @@
     <ClCompile Include="..\Private\Interaction_Component.cpp">
       <Filter>01.Utility\21.Interraction</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CinemaComponent.cpp">
-      <Filter>01.Utility\03.Components\CameraAnimation</Filter>
+    <ClCompile Include="..\private\CinemaData.cpp">
+      <Filter>01.Utility\22.CutScene\CinemaData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CutScene.cpp">
+      <Filter>01.Utility\22.CutScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CinematicManager.cpp">
+      <Filter>01.Utility\22.CutScene\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -957,7 +969,13 @@
     <Filter Include="01.Utility\21.Interraction\Manager">
       <UniqueIdentifier>{f781438a-73ea-4d9a-8926-c871c4b66e44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\CameraAnimation">
+    <Filter Include="01.Utility\22.CutScene">
+      <UniqueIdentifier>{f50cefdc-8723-46ce-aa92-e2c97bb1008b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\22.CutScene\Manager">
+      <UniqueIdentifier>{7098a45e-e6ff-48c8-8a3f-7f8f31997951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\22.CutScene\CinemaData">
       <UniqueIdentifier>{09221add-465f-4549-8d79-f12f08ddaf1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

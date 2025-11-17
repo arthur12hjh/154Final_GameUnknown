@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 
 class CCamera;
 class CInteraction_Component;
+class CCinemaData;
 
 class ENGINE_DLL CGameInstance final : public CBase
 {
@@ -266,6 +267,19 @@ public:
 	vector<CInteraction_Component*>*	GetAllInteraction();
 #pragma endregion 
 
+#pragma region Cinema Manager
+	HRESULT												ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaData* pData);
+
+	const CCinemaData*									GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag);
+	const unordered_map<_wstring, CCinemaData*>*		GetCinemaSceneAllDatas(const WCHAR* szSceneTag);
+	const unordered_map<_wstring, class CCutScene*>*	GetCinemaAllScenes();
+
+	HRESULT												SaveCinemaSceneData(const WCHAR* szFilePath);
+	HRESULT												LoadCinemaSceneData(const WCHAR* szFilePath);
+
+#pragma endregion
+
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -310,7 +324,7 @@ private:
 	class CBinParser*				m_pBinParser = { nullptr };
 	class CFbxParser*				m_pFbxParser = { nullptr };
 	class CInteraction_Manager*		m_pInteract_Manager = { nullptr };
-
+	class CCinematicManager*		m_pCinema_Manager = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_float							m_fTimeRatio = { 1.f };
