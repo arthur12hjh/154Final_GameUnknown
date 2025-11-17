@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\asas.h" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\Bamboo.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_Tool.h" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
@@ -177,6 +178,8 @@
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\public\Imgui_Manager.h" />
+    <ClInclude Include="..\Public\Inscription_L.h" />
+    <ClInclude Include="..\Public\Inscription_R.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_Village.h" />
@@ -187,10 +190,29 @@
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Reed.h" />
+    <ClInclude Include="..\Public\Rock1.h" />
+    <ClInclude Include="..\Public\Rock2.h" />
+    <ClInclude Include="..\Public\Rock3.h" />
+    <ClInclude Include="..\Public\Rock4.h" />
+    <ClInclude Include="..\Public\Rock5.h" />
+    <ClInclude Include="..\Public\Rock6.h" />
+    <ClInclude Include="..\Public\Rock7.h" />
+    <ClInclude Include="..\Public\Rock8.h" />
     <ClInclude Include="..\public\SpawnBox.h" />
+    <ClInclude Include="..\Public\Stair.h" />
+    <ClInclude Include="..\Public\Stone1.h" />
+    <ClInclude Include="..\Public\Stone2.h" />
+    <ClInclude Include="..\Public\Stone3.h" />
+    <ClInclude Include="..\Public\Stone4.h" />
+    <ClInclude Include="..\Public\StoneWall1.h" />
+    <ClInclude Include="..\Public\StoneWall2.h" />
     <ClInclude Include="..\public\Terrain_Sand.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\Public\TombStone.h" />
+    <ClInclude Include="..\Public\TombStoneBase1.h" />
+    <ClInclude Include="..\Public\TombStoneBase2.h" />
     <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Map_Editor.h" />
@@ -199,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Bamboo.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_Tool.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
@@ -226,6 +249,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\Inscription_L.cpp" />
+    <ClCompile Include="..\Private\Inscription_R.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_Village.cpp" />
@@ -238,10 +263,29 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Reed.cpp" />
+    <ClCompile Include="..\Private\Rock1.cpp" />
+    <ClCompile Include="..\Private\Rock2.cpp" />
+    <ClCompile Include="..\Private\Rock3.cpp" />
+    <ClCompile Include="..\Private\Rock4.cpp" />
+    <ClCompile Include="..\Private\Rock5.cpp" />
+    <ClCompile Include="..\Private\Rock6.cpp" />
+    <ClCompile Include="..\Private\Rock7.cpp" />
+    <ClCompile Include="..\Private\Rock8.cpp" />
     <ClCompile Include="..\private\SpawnBox.cpp" />
+    <ClCompile Include="..\Private\Stair.cpp" />
+    <ClCompile Include="..\Private\Stone1.cpp" />
+    <ClCompile Include="..\Private\Stone2.cpp" />
+    <ClCompile Include="..\Private\Stone3.cpp" />
+    <ClCompile Include="..\Private\Stone4.cpp" />
+    <ClCompile Include="..\Private\StoneWall1.cpp" />
+    <ClCompile Include="..\Private\StoneWall2.cpp" />
     <ClCompile Include="..\private\Terrain_Sand.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\Private\TombStone.cpp" />
+    <ClCompile Include="..\Private\TombStoneBase1.cpp" />
+    <ClCompile Include="..\Private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
   </ItemGroup>
@@ -260,6 +304,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

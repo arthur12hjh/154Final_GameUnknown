@@ -78,24 +78,24 @@ private:
 	const _tchar* m_CurrentLayerName = {};
 	list<CGameObject*>* m_pObjects = { nullptr };
 	CGameObject* m_pObject = { nullptr };
-	const list<CLight*>* m_pLights = { nullptr };
-	list<string>		m_LightNames = {};
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
+	MAP_THEME			m_eCurrentMap = { MAP_THEME::END };
 
 private:
 	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
 
-	class CVillage* m_pVillage = { nullptr };
-	class CPlayer* m_pPlayer = { nullptr };
-	class CTerrain* m_pTerrain = { nullptr };
+	class CVillage*		m_pVillage = { nullptr };
+	class CPlayer*		m_pPlayer = { nullptr };
+	class CTerrain*		m_pTerrain = { nullptr };
+
+
 
 	_vector				m_vNaviPoints[3] = {};
 	_float				m_fNaviSnapRadius = { 1.5f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)
 	NAVI_MODE			m_eNaviMode = { NAVI_MODE::NONE }; // 현재 네비게이션 작업 모드
 	_bool				m_bIsNaviEditMode = { false }; // 네비게이션 편집 모드
-
 
 	_bool				m_bIsDeplayMode = { false };
 	_bool				m_bIsMapMode = { false };
