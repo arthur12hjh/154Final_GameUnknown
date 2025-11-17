@@ -1594,6 +1594,9 @@ void CParticle_Setting::Free()
     for (auto pMesh : m_pMeshs)
         Safe_Release(pMesh);
     m_pMeshs.clear();
+    for (auto pSprite : m_pSprites)
+        Safe_Release(pSprite);
+    m_pSprites.clear();
     for (_uint i = 0; i < 4; ++i) {
         for (auto SRV : m_SRVs[i]) {
             Safe_Release(SRV);
