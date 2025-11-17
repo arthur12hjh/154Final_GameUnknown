@@ -6,6 +6,7 @@
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
+#endif
 
 CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
@@ -16,13 +17,7 @@ CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
 }
-#else
-CFrustum::CFrustum()
-	: m_pGameInstance { CGameInstance::GetInstance() }
-{
-	Safe_AddRef(m_pGameInstance);
-}
-#endif // _DEBUG
+
 
 HRESULT CFrustum::Initialize()
 {
@@ -38,6 +33,15 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
 
 	m_OrizinBoundingFrustom = new BoundingFrustum();
+
+	// 3으로 일단 지정해서 3등분해보자.
+	m_iNumCascadeCount = 3;
+
+	// 케스케이드 숫자 + 1은 케스케이드에서 상이 맺어지는 부분의 평면임
+	m_CascadeFar.resize(m_iNumCascadeCount + 1);
+	m_CascadeMatrix.resize(m_iNumCascadeCount);
+	for (_uint j = 0; j < m_iNumCascadeCount; ++j)
+		XMStoreFloat4x4(&m_CascadeMatrix[j], XMMatrixIdentity());
 
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
@@ -59,9 +63,80 @@ HRESULT CFrustum::Initialize()
 
 void CFrustum::Update()
 {
+	_matrix ShadowCamWorldMatrix = XMLoadFloat4x4(m_pGameInstance->GetInverseShadowMatrix(D3DTS::VIEW));
+	auto& ShadowLightDesc = m_pGameInstance->GetShadowCameraInfo();
+
+	// 수직 시야각을 이용하여 수평시야각을 구함
+	_float fHalfHFov = (ShadowLightDesc.fFov / 2.f) * ShadowLightDesc.fAspect;
+
+	// 그림자 품질은 로그 + 선형 분할
+	// 선형 분할
+	// 케스케이드 개수에 따라서 로그 + 선형 분할로 나눈다.
+	// 이러면 좀더 품질좋은 그림자가 나온다고한다.
+	m_CascadeFar[0] = ShadowLightDesc.fNear;
+	m_CascadeFar[m_iNumCascadeCount - 1] = ShadowLightDesc.fFar;
+	for (_uint i = 1; i < m_iNumCascadeCount - 1; ++i)
+		m_CascadeFar[i] = Mix<_float>(ShadowLightDesc.fNear, ShadowLightDesc.fFar, i / m_iNumCascadeCount);
+
+	for (_uint i = 0; i < m_iNumCascadeCount; ++i)
+	{
+		// 우선 평면의 4개의 AABB 박스의 점을 구한다.
+		_float NearX = m_CascadeFar[i] * fHalfHFov;
+		_float NearY = m_CascadeFar[i] * fHalfHFov;
+
+		_float FarX = m_CascadeFar[i + 1] * fHalfHFov;
+		_float FarY = m_CascadeFar[i + 1] * fHalfHFov;
+
+		m_vCascadeFrustumConers[0] = { NearX, NearY, m_CascadeFar[i], 1.f };
+		m_vCascadeFrustumConers[1] = { -NearX, NearY, m_CascadeFar[i], 1.f };
+		m_vCascadeFrustumConers[2] = { NearX, -NearY, m_CascadeFar[i], 1.f };
+		m_vCascadeFrustumConers[3] = { -NearX, -NearY, m_CascadeFar[i], 1.f };
+
+		m_vCascadeFrustumConers[4] = { FarX, FarY, m_CascadeFar[i + 1], 1.f };
+		m_vCascadeFrustumConers[5] = { -FarX, FarY, m_CascadeFar[i + 1], 1.f };
+		m_vCascadeFrustumConers[6] = { NearX, -NearY, m_CascadeFar[i + 1], 1.f };
+		m_vCascadeFrustumConers[7] = { -NearX, -NearY, m_CascadeFar[i + 1], 1.f };
+
+		// AABB 박스의 중점을 구하는 수식
+		_vector vCenterPos = {};
+		for (_uint j = 0; j < 8; ++j)
+		{
+			_vector ConerWorld =  XMVector3TransformNormal(XMLoadFloat4(&m_vCascadeFrustumConers[j]), ShadowCamWorldMatrix);
+			XMStoreFloat4(&m_vCascadeFrustumConers[i], ConerWorld);
+			vCenterPos += ConerWorld;
+		}
+		vCenterPos /= 8.0f;
+
+		// 가장 멀리 떨어진 길이를 찾는다.
+		_float	fRadius = {};
+		for (_uint j = 0; j < 8; ++j)
+		{
+			_float Distance = XMVectorGetX(XMVector3Length(XMLoadFloat4(&m_vCascadeFrustumConers[i]) - vCenterPos));
+			fRadius = max(fRadius, Distance);
+		}
+
+		// 카메라가 보는 시점이 변경될때 떨리는걸 방지하기 위한 공식이라고함
+		fRadius = std::ceil(fRadius * 16.0f) / 16.0f;
+		_vector MaxExtents = { fRadius, fRadius, fRadius };
+		_vector MinExtents = MaxExtents * -1.f;
+
+		_vector vShadowDir = XMVector3Normalize(XMLoadFloat4(&ShadowLightDesc.vEye) - XMLoadFloat4(&ShadowLightDesc.vAt));
+		_vector vShadowCameraPos = vCenterPos + vShadowDir * MaxExtents.m128_f32[2];
+
+		_vector CasCadeExtents = MaxExtents - MinExtents;
+
+
+		 _matrix OrthMatrix = XMMatrixOrthographicLH(MaxExtents.m128_f32[0] - MinExtents.m128_f32[0],
+													 MaxExtents.m128_f32[1] - MinExtents.m128_f32[1],
+													 m_CascadeFar[i], m_CascadeFar[i + 1]);
+
+		 XMStoreFloat4x4(&m_CascadeMatrix[i], OrthMatrix);
+	}
+
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
 	_matrix		matPV = ProjMatrixInverse * ViewMatrixInverse;
+
 	/* 투영 스페이스 (3차원공간) 에서 월드로 내려줌. 절두체의 형태로 바뀐다.*/
 	for (size_t i = 0; i < 8; i++)
 	{
@@ -175,7 +250,46 @@ void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 	XMStoreFloat4(&pPlanes[5], XMPlaneFromPoints(XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[2])));
 }
 
-#ifdef _DEBUG
+HRESULT CFrustum::Ready_CasCadeTexture()
+{
+	D3D11_TEXTURE2D_DESC texDesc = {};
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = m_iNumCascadeCount;                // <--- cascade 개수
+	texDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+	ID3D11Texture2D* pTex = { nullptr };
+	m_pDevice->CreateTexture2D(&texDesc, nullptr, &pTex);
+	if (nullptr == pTex)
+		return E_FAIL;
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
+	DSVDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	DSVDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+	DSVDesc.Texture2DArray.ArraySize = m_iNumCascadeCount;
+	DSVDesc.Texture2DArray.FirstArraySlice = 0;
+	DSVDesc.Texture2DArray.MipSlice = 0;
+	m_pDevice->CreateDepthStencilView(pTex, &DSVDesc, &m_pCasecasdeDSV);
+	if (nullptr == m_pCasecasdeDSV)
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	SRVDesc.Texture2DArray.MipLevels = 1;
+	SRVDesc.Texture2DArray.ArraySize = 3;
+	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
+	if (nullptr == m_pCasCadeSRV)
+		return E_FAIL;
+
+	Safe_Release(pTex);
+	return S_OK;
+}
+
 CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CFrustum* pInstance = new CFrustum(pDevice, pContext);
@@ -188,20 +302,6 @@ CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	return pInstance;
 }
-#else
-CFrustum* CFrustum::Create()
-{
-	CFrustum* pInstance = new CFrustum();
-
-	if (FAILED(pInstance->Initialize()))
-	{
-		MSG_BOX("Failed to Created : CFrustum");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-#endif // _DEBUG
 
 void CFrustum::Free()
 {

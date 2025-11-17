@@ -3,17 +3,12 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class CShader;
 
 class CFrustum final : public CBase
 {
 private:
-#ifdef _DEBUG
 	CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
-#else
-	CFrustum();
-#endif // _DEBUG
-
-
 	virtual ~CFrustum() = default;
 
 public:
@@ -31,7 +26,19 @@ public:
 
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
 
+	void				Bind_ShadowTextureArray(CShader* pShader, const _char* pConstantName);
+	void				Bind_ShadowMatrix(CShader* pShader, const _char* pConstantName);
+	void				Bind_DepthStencilView(CShader* pShader, const _char* pConstantName);
+
 private:
+	_uint				m_iNumCascadeCount = {};
+	vector<_float>		m_CascadeFar;
+
+	_float4						m_vCascadeFrustumConers[8] = {};
+	ID3D11ShaderResourceView*	m_pCasCadeSRV = { nullptr };
+	ID3D11DepthStencilView*		m_pCasecasdeDSV = { nullptr };
+	vector<_float4x4>			m_CascadeMatrix = {};
+
 	_float4				m_vOriginalPoints[8] = {};
 	_float4				m_vWorldPoints[8] = {};
 	
@@ -54,16 +61,11 @@ private:
 #endif // _DEBUG
 
 private:
-	void Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	void			Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	HRESULT			Ready_CasCadeTexture();
 
 public:
-#ifdef _DEBUG
 	static CFrustum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#else
-	static CFrustum* Create();
-#endif // _DEBUG
-
-
 	virtual void Free() override;
 };
 

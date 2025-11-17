@@ -54,12 +54,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pPhysx_Manager)
 		return E_FAIL;
 
+	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
-	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #else
 	m_pLight_Manager = CLight_Manager::Create();
-	m_pFrustum = CFrustum::Create();
 #endif // DEBUG
 	if (nullptr == m_pLight_Manager || nullptr == m_pFrustum)
 		return E_FAIL;
@@ -608,6 +607,21 @@ HRESULT CGameInstance::Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc)
 HRESULT CGameInstance::Bind_Shadow_Resource(CShader* pShader, const _char* pConstantName, D3DTS eType)
 {
 	return m_pShadow->Bind_Shader_Resource(pShader, pConstantName, eType);
+}
+
+const SHADOW_LIGHT_DESC& CGameInstance::GetShadowCameraInfo()
+{
+	return m_pShadow->GetCameraInfo();
+}
+
+const _float4x4* CGameInstance::GetInverseShadowMatrix(D3DTS eType)
+{
+	return m_pShadow->GetInverseShadowMatrix(eType);
+}
+
+const _float4x4* CGameInstance::GetShadowMatrix(D3DTS eType)
+{
+	return m_pShadow->GetShadowMatrix(eType);
 }
 
 #pragma endregion

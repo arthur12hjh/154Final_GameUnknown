@@ -1,4 +1,4 @@
-/* ºí·¯¸¦ À§ÇÑ °¡¿ì½Ã¾È °è¼ö. ÃßÈÄ ¼öÁ¤ ÇÊ¿ä. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½. */
 
 float g_fWeights[13] =
 {
@@ -43,21 +43,25 @@ struct PS_OUT_LIGHT
 struct PS_OUT_BLUR_X
 {
     float4 vBlurX : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_BLUR_FINAL
 {
     float4 vBlurY : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_GLOW_X
 {
     float4 vGlowX : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_GLOW_FINAL
 {
     float4 vGlowY : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_FOG
@@ -71,7 +75,7 @@ struct PS_OUT_DISTORTION
     float4 vDistortion : SV_TARGET0;
 };
 
-//ÇÇÁ÷½º µð¹ö±ë¿ë
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 struct VS_PHYSX_IN
 {
     float3 vPosition : POSITION;

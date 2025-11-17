@@ -149,15 +149,22 @@ public:
 #pragma endregion
 
 #pragma region SHADOW
-	HRESULT Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
-	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);	
+	HRESULT						Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
+	HRESULT						Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);	
+
+	const SHADOW_LIGHT_DESC&	GetShadowCameraInfo();
+
+	const _float4x4*			GetInverseShadowMatrix(D3DTS eType);
+	const _float4x4*			GetShadowMatrix(D3DTS eType);
 #pragma endregion
 
 #pragma region FRUSTUM
-	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
-	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
-	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+
+
+	void						Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool						isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
+	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
+	_bool						isIn_WorldFrustum(class CCollider* pCollider);
 
 #ifdef _DEBUG
 	void				FrustomRender();
