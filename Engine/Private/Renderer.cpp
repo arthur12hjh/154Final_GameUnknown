@@ -500,7 +500,13 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
 
+	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
+		return;
+
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
+		return;
+
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
