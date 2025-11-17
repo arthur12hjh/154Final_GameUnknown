@@ -170,6 +170,7 @@
     <ClInclude Include="..\public\DebugProfiler.h" />
     <ClInclude Include="..\Public\Deco_AttackRange.h" />
     <ClInclude Include="..\Public\Deco_PhaseChange.h" />
+    <ClInclude Include="..\Public\Effect.h" />
     <ClInclude Include="..\Public\Explosion.h" />
     <ClInclude Include="..\Public\Face_Player.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
@@ -197,8 +198,10 @@
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\MousePointer.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\PointParticle.h" />
     <ClInclude Include="..\public\Prob_Box.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
@@ -246,6 +249,7 @@
     <ClCompile Include="..\private\DebugProfiler.cpp" />
     <ClCompile Include="..\Private\Deco_AttackRange.cpp" />
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
+    <ClCompile Include="..\Private\Effect.cpp" />
     <ClCompile Include="..\Private\Explosion.cpp" />
     <ClCompile Include="..\Private\Face_Player.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
@@ -288,11 +292,13 @@
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\MeshEffect.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\PointParticle.cpp" />
     <ClCompile Include="..\private\Prob_Box.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />

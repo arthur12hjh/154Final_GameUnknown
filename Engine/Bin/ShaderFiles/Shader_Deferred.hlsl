@@ -23,6 +23,9 @@ texture2D g_ShadowTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
+texture2D g_BlurWeightTexture;
+texture2D g_GlowWeightTexture;
+
 texture2D g_DistortionTexture;
 texture2D g_BloomTexture;
 
@@ -190,14 +193,25 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    //ºí·¯ »ùÇÃ¸µ.
-    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    //±Û·Î¿ì »ùÇÃ¸µ.
-    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    ////ºí·¯ »ùÇÃ¸µ.
+    //Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
+    ////±Û·Î¿ì »ùÇÃ¸µ.
+    //Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    
     //ºí·ë »ùÇÃ¸µ
     Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
     //µð½ºÅä¼Ç »ùÇÃ¸µ.
     Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
+    
+    
+    vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
+    
+    vector fBlur;
+    fBlur.rgb = fBlurColor.rgb / fBlurAlpha.r;
+    fBlur.a = saturate(fBlurAlpha.r);
+    
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
     
     return Out;
 }

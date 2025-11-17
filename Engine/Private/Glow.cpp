@@ -24,23 +24,44 @@ HRESULT CGlow::Initialize()
         return E_FAIL;
 
     /* Target_Glow. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
     /* Target_Glow_X. X에 대해서 우선 블러처리. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
     /* Target_Glow_Final. Y에 대해서도 블러처리 수행. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+
+    /* Target_Glow_Weight. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+    /* Target_Glow_X_Weight. X에 대해서 우선 블러처리. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+    /* Target_Glow_Final_Weight. Y에 대해서도 블러처리 수행. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
 
     /* MRT_Glow */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow"), TEXT("Target_Glow"))))
         return E_FAIL;
+    /* MRT_Glow */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow"), TEXT("Target_Glow_Weight"))))
+        return E_FAIL;
+
     /* MRT_Glow_X */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_X"), TEXT("Target_Glow_X"))))
         return E_FAIL;
+    /* MRT_Glow_X_Weight */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_X"), TEXT("Target_Glow_X_Weight"))))
+        return E_FAIL;
+
     /* MRT_Glow_Final */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Final"), TEXT("Target_Glow_Final"))))
+        return E_FAIL;
+    /* MRT_Glow_Final_Weight */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Final"), TEXT("Target_Glow_Final_Weight"))))
         return E_FAIL;
 
     return S_OK;
@@ -88,6 +109,9 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
         return E_FAIL;
 
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
+        return E_FAIL;
+
     m_pShader->Begin(0);
     pVIBuffer->Bind_Resources();
     pVIBuffer->Render();
@@ -99,10 +123,20 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_Final"))))
         return E_FAIL;
 
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowXTexture")))
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowTexture")))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X_Weight"), m_pShader, "g_WeightTexture")))
         return E_FAIL;
 
     m_pShader->Begin(1);
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
+        return E_FAIL;
+
+    m_pShader->Begin(2);
     pVIBuffer->Bind_Resources();
     pVIBuffer->Render();
 
@@ -112,11 +146,16 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
     return S_OK;
 }
 
-HRESULT CGlow::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
+HRESULT CGlow::Bind_RenderTarget(CShader* pShader, const _char* pConstantName, _bool bisWeight)
 {
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final"), pShader, pConstantName)))
-        return E_FAIL;
-
+    if (bisWeight) {
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final_Weight"), pShader, pConstantName)))
+            return E_FAIL;
+    }
+    else {
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final"), pShader, pConstantName)))
+            return E_FAIL;
+    }
     return S_OK;
 }
 

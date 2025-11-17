@@ -14,7 +14,7 @@ public:
 	virtual HRESULT Initialize() = 0;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) = 0;
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) = 0;
-	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) = 0;
+	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName, _bool bisWeight = false) = 0;
 
 #ifdef _DEBUG
 	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) = 0;

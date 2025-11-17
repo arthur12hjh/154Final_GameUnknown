@@ -8,7 +8,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_BlurTexture;
-texture2D g_BlurXTexture;
+texture2D g_WeightTexture;
 
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -32,6 +32,7 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
     
     float2 vTexcoord;
     float4 vColor = 0.f;
+    float4 vWeight = 0.f;
     
     for (int i = -6; i < 7; ++i)
     {
@@ -39,9 +40,12 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
+        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+
     }
     
     Out.vBlurX = vColor / 10.0f;
+    Out.vWeight = vWeight / 10.0f;
     
     return Out;    
 }
@@ -52,16 +56,19 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     
     float2 vTexcoord;
     float4 vColor;
+    float4 vWeight = 0.f;
     
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
-        vColor += g_fWeights[i + 6] * g_BlurXTexture.Sample(ClampSampler, vTexcoord);
+        vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
+        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
     }
     
     Out.vBlurY = vColor / 6.5f;
+    Out.vWeight = vWeight / 6.5f;
     
     return Out;
 }

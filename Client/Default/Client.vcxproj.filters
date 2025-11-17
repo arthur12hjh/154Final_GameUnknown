@@ -292,6 +292,12 @@
     <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
       <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\MeshEffect">
+      <UniqueIdentifier>{263bdf7f-483f-4b21-b758-a79366c4ba62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\PointParticle">
+      <UniqueIdentifier>{f36f41a3-36bc-478b-a935-38080c6a1f7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -522,6 +528,15 @@
     <ClInclude Include="..\public\CanBox.h">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Effect.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PointParticle.h">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshEffect.h">
+      <Filter>03.Effects\MeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -735,6 +750,15 @@
     </ClCompile>
     <ClCompile Include="..\private\CanBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PointParticle.cpp">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshEffect.cpp">
+      <Filter>03.Effects\MeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

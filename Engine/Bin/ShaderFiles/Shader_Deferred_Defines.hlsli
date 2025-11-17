@@ -65,23 +65,26 @@ struct PS_OUT_LIGHT
 struct PS_OUT_BLUR_X
 {
     float4 vBlurX : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_BLUR_FINAL
 {
     float4 vBlurY : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_GLOW_X
 {
     float4 vGlowX : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_GLOW_FINAL
 {
     float4 vGlowY : SV_TARGET0;
+    float4 vWeight : SV_TARGET1;
 };
-
 
 struct PS_OUT_DISTORTION
 {

@@ -72,7 +72,7 @@ HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRender
     return S_OK;
 }
 
-HRESULT CBloom::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
+HRESULT CBloom::Bind_RenderTarget(CShader* pShader, const _char* pConstantName, _bool bisWeight)
 {
     /* ¾÷»ùÇÃ 4x4°¡ ³¡³­°Ô ÃÖÁ¾ ºí·ë Ã³¸® ·»´õÅ¸°Ù. */
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Bloom_Final"), pShader, pConstantName)))

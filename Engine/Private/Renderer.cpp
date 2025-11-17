@@ -453,14 +453,20 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
 
+	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture", true)))
+		return;
+
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
+		return;
+
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture", true)))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
-	if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
-		return;
+	//if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
+	//	return;
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
