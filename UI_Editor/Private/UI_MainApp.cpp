@@ -3,10 +3,10 @@
 #include "UI_MainApp.h"
 
 #include "GameInstance.h"
-#include "GameManager.h"
 
 #include "UI_Level_Loading.h"
 #include "GUIManager.h"
+#include "UIResourceStore.h"
 
 /********************************
 * 대재훈의 은총 이 얼마나 관대한가 *
@@ -89,8 +89,12 @@ HRESULT CUI_MainApp::Ready_Default_Setting()
 
 HRESULT CUI_MainApp::Ready_Manager_Setting()
 {
-	auto pGameManager = CGameManager::GetInstance();
-	pGameManager->Initialize(m_pDevice, m_pContext);
+	m_pUIResourceStore = CUIResourceStore::GetInstance();
+
+	if (!m_pUIResourceStore)
+		return E_FAIL;
+
+	m_pUIResourceStore->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }

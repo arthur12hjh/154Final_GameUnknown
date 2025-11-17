@@ -15,6 +15,8 @@ NS_END
 
 NS_BEGIN(Tool_UI)
 
+class CUIResourceStore;
+
 class CUI_Loader final : public CBase
 {
 private:
@@ -44,7 +46,7 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
-	class Client::CGameManager*		m_pGameManager = { nullptr };
+	CUIResourceStore*	m_pUIResourceStore = { nullptr };
 
 private:
 	HRESULT Loading_For_Logo();

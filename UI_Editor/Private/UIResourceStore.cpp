@@ -2,13 +2,11 @@
 #include "UIResourceStore.h"
 
 #include "GameInstance.h"
-#include "UIHUD.h"
 
-CUIResourceStore::CUIResourceStore()
-{
-}
+// ½Ì±ÛÅæ ±¸Çö
+IMPLEMENT_SINGLETON(CUIResourceStore);
 
-HRESULT CUIResourceStore::Initialize()
+HRESULT CUIResourceStore::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	m_pGameInstance = CGameInstance::GetInstance();
 
@@ -17,6 +15,11 @@ HRESULT CUIResourceStore::Initialize()
 
 	Safe_AddRef(m_pGameInstance);
 	return S_OK;
+}
+
+void CUIResourceStore::Release_UI_Resource_Store()
+{
+	DestroyInstance();
 }
 
 HRESULT CUIResourceStore::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex, void* pArg)
@@ -28,24 +31,24 @@ HRESULT CUIResourceStore::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTe
 	if (nullptr == pTexture)
 		return E_FAIL;
 
-	UI_TEXTURE_DESC Desc{};
+	UI_TEXTURE_RESOURCE_DESC Desc{};
 
 	Desc.pTexture = pTexture;
 	Desc.iTextIndex = iTextureIndex;
-	Desc.szFilePath = szFilePath;
-	Desc.szProtoTag = szTextureProtoTag;
+	wcscpy_s(Desc.szFilePath, szFilePath.c_str());
+	wcscpy_s(Desc.szProtoTag, szTextureProtoTag.c_str());
 
 	m_TextureDescs.emplace(szTextureTag, Desc);
 
 	return S_OK;
 }
 
-CUIResourceStore::UI_TEXTURE_DESC CUIResourceStore::Get_UI_Texture_Desc(const WCHAR* szTextureTag)
+CUIResourceStore::UI_TEXTURE_RESOURCE_DESC CUIResourceStore::Get_UI_Texture_Desc(const WCHAR* szTextureTag)
 {
 	auto Desc = m_TextureDescs.find(szTextureTag);
 
 	if (Desc == m_TextureDescs.end())
-		return UI_TEXTURE_DESC();
+		return UI_TEXTURE_RESOURCE_DESC();
 
 	return Desc->second;
 }
@@ -57,27 +60,14 @@ void CUIResourceStore::Clear_UI_Texture_Descs()
 	m_TextureDescs.clear();
 }
 
-CUIResourceStore::UI_TEXTURE_DESC CUIResourceStore::Find_UI_Texture_Desc(const _wstring& szTextureTag)
+CUIResourceStore::UI_TEXTURE_RESOURCE_DESC CUIResourceStore::Find_UI_Texture_Desc(const _wstring& szTextureTag)
 {
 	auto	iter = m_TextureDescs.find(szTextureTag);
 
 	if (iter == m_TextureDescs.end())
-		return UI_TEXTURE_DESC();
+		return UI_TEXTURE_RESOURCE_DESC();
 	
 	return iter->second;
-}
-
-CUIResourceStore* CUIResourceStore::Create()
-{
-	CUIResourceStore* pInstance = new CUIResourceStore();
-
-	if (FAILED(pInstance->Initialize()))
-	{
-		MSG_BOX("Failed to Created : CUIResourceStore");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
 }
 
 void CUIResourceStore::Free()

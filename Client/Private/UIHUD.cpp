@@ -6,6 +6,8 @@
 #include "StringHelper.h"
 
 #include "GameInstance.h"
+#include "UIBase.h"
+#include "UIAnimationCom.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -47,8 +49,218 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 	_char szPath[MAX_PATH]{};
 	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
 
-	// json배열이 이상함
 	CJsonParser::SaveJsonData(szPath, jUIObjects);
+	
+	MSG_BOX("저장 성공");
+
+	return S_OK;
+}
+
+HRESULT CUIHUD::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
+{
+	CUIAnimationCom::UI_ANIM_DESC AnimDesc = *static_cast<CUIAnimationCom::UI_ANIM_DESC*>(pDesc);
+
+	Json jAnim;
+
+	_char szText[MAX_PATH]{};
+	CStringHelper::ConvertWideToUTF(szAnimTag.c_str(), szText);
+	jAnim["szAnimTag"] = szText;
+	jAnim["fDuration"] = AnimDesc.fDuration;
+	jAnim["isLoop"] = AnimDesc.isLoop;
+
+	for (auto& TrackDesc : AnimDesc.m_Tracks)
+	{
+		Json jTrack;
+		
+		CStringHelper::ConvertWideToUTF(TrackDesc.first.c_str(), szText);
+		jTrack["szTrackTag"] = szText;
+		jTrack["vStartParam"] = {
+			TrackDesc.second->vStartParam.x,
+			TrackDesc.second->vStartParam.y,
+			TrackDesc.second->vStartParam.z,
+			TrackDesc.second->vStartParam.w
+		};
+		jTrack["vEndParam"] = {
+			TrackDesc.second->vEndParam.x,
+			TrackDesc.second->vEndParam.y,
+			TrackDesc.second->vEndParam.z,
+			TrackDesc.second->vEndParam.w
+		};
+
+		jAnim["Tracks"].push_back(jTrack);
+	}
+
+	_wstring szFilePath{};
+	szFilePath = TEXT("../Bin/DataFiles/UI/UI_Anims/") + szAnimTag + TEXT(".json");
+
+	_char szPath[MAX_PATH]{};
+	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+	CJsonParser::SaveJsonData(szPath, jAnim);
+
+	MSG_BOX("저장 성공");
+
+	return S_OK;
+}
+
+HRESULT CUIHUD::Load_Anim_Files()
+{
+	m_AnimDatas.clear();
+
+	WIN32_FIND_DATAW fd;
+	_wstring search = L"../Bin/DataFiles/UI/UI_Anims/*.json";
+
+	HANDLE hFind = FindFirstFileW(search.c_str(), &fd);
+
+	if (hFind == INVALID_HANDLE_VALUE)
+		return E_FAIL;
+
+	do
+	{
+		if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			_wstring szfileName = fd.cFileName;
+
+			size_t pos = szfileName.find_last_of(L'.');
+
+			m_AnimDatas.push_back(szfileName.substr(0, pos));
+		}
+	} while (FindNextFileW(hFind, &fd));
+
+	FindClose(hFind);
+
+	return S_OK;
+}
+
+void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+{
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	if (pUI == nullptr)
+		return;
+
+	CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
+
+	Import_Anim_Prefab(szAnimTag, &AnimDesc);
+
+	pUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
+	pUI->Play_Anim(szAnimTag);
+}
+
+//void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+//{
+//	auto pLayer = m_pLayers.find(szLayerTag);
+//
+//	if (pLayer == m_pLayers.end())
+//		return;
+//
+//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
+//	
+//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
+//
+//	if (pUI == nullptr)
+//		return;
+//
+//	pUI->Play_Anim(szAnimTag);
+//}
+//
+//void CUIHUD::Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+//{
+//	auto pLayer = m_pLayers.find(szLayerTag);
+//
+//	if (pLayer == m_pLayers.end())
+//		return;
+//
+//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
+//
+//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
+//
+//	if (pUI == nullptr)
+//		return;
+//
+//	pUI->Pause_Anim();
+//}
+//
+//void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+//{
+//	auto pLayer = m_pLayers.find(szLayerTag);
+//
+//	if (pLayer == m_pLayers.end())
+//		return;
+//
+//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
+//
+//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
+//
+//	if (pUI == nullptr)
+//		return;
+//
+//	pUI->Stop_Anim();
+//}
+//
+//void CUIHUD::Anim_All_Stop()
+//{
+//	for (auto& pLayer : m_pLayers)
+//	{
+//		for (auto& pUI : *pLayer.second->Get_UserInterfaces())
+//		{
+//			dynamic_cast<CUIBase*>(pUI.second)->Stop_Anim();
+//		}
+//	}
+//}
+
+HRESULT CUIHUD::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
+{
+	Json jAnim;
+
+	_wstring szFilePath{};
+	szFilePath = TEXT("../Bin/DataFiles/UI/UI_Anims/") + szAnimTag + TEXT(".json");
+
+	_char szPath[MAX_PATH]{};
+	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+	CJsonParser::ReadJsonData(szPath, jAnim);
+
+	WCHAR szText[MAX_PATH]{};
+
+	CUIAnimationCom::UI_ANIM_DESC* AnimDesc = new CUIAnimationCom::UI_ANIM_DESC();
+	CStringHelper::ConvertUTFToWide(jAnim["szAnimTag"].get<string>().c_str(), szText);
+	AnimDesc->szAnimTag = szText;
+	AnimDesc->isLoop = jAnim["isLoop"].get<_bool>();
+	AnimDesc->fDuration = jAnim["fDuration"].get<_float>();
+
+	for (auto& Track : jAnim["Tracks"])
+	{
+		CUIAnimationCom::UI_ANIM_TRACK_DESC TrackDesc{};
+
+		CStringHelper::ConvertUTFToWide(Track["szTrackTag"].get<string>().c_str(), szText);
+		TrackDesc.szTrackTag = szText;
+		TrackDesc.vStartParam = {
+			Track["vStartParam"][0].get<_float>(),
+			Track["vStartParam"][1].get<_float>(),
+			Track["vStartParam"][2].get<_float>(),
+			Track["vStartParam"][3].get<_float>()
+		};
+		TrackDesc.vEndParam = {
+			Track["vEndParam"][0].get<_float>(),
+			Track["vEndParam"][1].get<_float>(),
+			Track["vEndParam"][2].get<_float>(),
+			Track["vEndParam"][3].get<_float>()
+		};
+
+		AnimDesc->Add_UI_Track_Desc(szText, TrackDesc);
+	}
+
+	*static_cast<CUIAnimationCom::UI_ANIM_DESC*>(pAnimOut) = *AnimDesc;
+
+	Safe_Delete(AnimDesc);
 
 	return S_OK;
 }
@@ -64,6 +276,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 
 	Json jObj;
 
+	jObj["fAlpha"] = pDesc.fAlpha;
 	jObj["fX"] = pDesc.fX;
 	jObj["fY"] = pDesc.fY;
 	jObj["fOffsetX"] = pDesc.fOffsetX;
@@ -80,12 +293,19 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	CStringHelper::ConvertWideToUTF(pDesc.szProtoTag.c_str(), szText);
 	jObj["szProtoTag"] = szText;
 
+	/*for (auto& pAnimDesc : pDesc.Get_UI_Anim_Descs())
+	{
+		jObj["szAnimTags"].push_back(pAnimDesc.first);
+	}*/
+
 	if (pDesc.Get_UI_Texture_Desc())
 	{
 		Json TextureDesc;
 
 		CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Texture_Desc()->szTextureComTag.c_str(), szText);
 		TextureDesc["szTextureComTag"] = szText;
+		CStringHelper::ConvertWideToUTF(pDesc.Get_UI_Texture_Desc()->szProtoTag.c_str(), szText);
+		TextureDesc["szProtoTag"] = szText;
 		TextureDesc["iTextureIndex"] = pDesc.Get_UI_Texture_Desc()->iTextureIndex;
 		TextureDesc["iPass"] = pDesc.Get_UI_Texture_Desc()->iPass;
 		jObj["TextureDesc"] = TextureDesc;
@@ -120,7 +340,6 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		OutData = jObj;
 	else
 		OutData["Children"].push_back(jObj);
-
 }
 
 HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
@@ -140,6 +359,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 	for (const auto& pUIObject : jUIObjects)
 	{
 		CUIBase::UIBASE_DESC Desc{};
+		Desc.fAlpha = pUIObject["fAlpha"].get<_float>();
 		Desc.fX = pUIObject["fX"].get<_float>();
 		Desc.fY = pUIObject["fY"].get<_float>();
 		Desc.fSizeX = pUIObject["fSizeX"].get<_float>();
@@ -163,6 +383,8 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			TextureDesc.iTextureIndex = jDesc["iTextureIndex"].get<_uint>();
 			CStringHelper::ConvertUTFToWide(jDesc["szTextureComTag"].get<string>().c_str(), szText);
 			TextureDesc.szTextureComTag = szText;
+			CStringHelper::ConvertUTFToWide(jDesc["szProtoTag"].get<string>().c_str(), szText);
+			TextureDesc.szProtoTag = szText;
 
 			Desc.Set_UI_Texture_Desc(TextureDesc);
 		}
@@ -205,6 +427,8 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			continue;
 	}
 
+	//MSG_BOX("읽기 성공");
+
 	return S_OK;
 }
 
@@ -216,6 +440,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	WCHAR szText[MAX_PATH]{};
 
 	CUIBase::UIBASE_DESC Desc{};
+	Desc.fAlpha = jData["fAlpha"].get<_float>();
 	Desc.fX = jData["fX"].get<_float>();
 	Desc.fY = jData["fY"].get<_float>();
 	Desc.fSizeX = jData["fSizeX"].get<_float>();
@@ -239,6 +464,8 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		TextureDesc.iTextureIndex = jDesc["iTextureIndex"].get<_uint>();
 		CStringHelper::ConvertUTFToWide(jDesc["szTextureComTag"].get<string>().c_str(), szText);
 		TextureDesc.szTextureComTag = szText;
+		CStringHelper::ConvertUTFToWide(jDesc["szProtoTag"].get<string>().c_str(), szText);
+		TextureDesc.szProtoTag = szText;
 
 		Desc.Set_UI_Texture_Desc(TextureDesc);
 	}

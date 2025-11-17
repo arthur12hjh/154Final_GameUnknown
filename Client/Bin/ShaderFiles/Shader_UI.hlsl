@@ -11,6 +11,8 @@ float2 g_UIPosition;
 float2 g_UISize;
 vector g_UIDebugLineColor;
 
+float g_Alpha = 1.f;
+
 /*------------------[S_DEBUG]---------------*/
 
 struct VS_IN
@@ -66,6 +68,9 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     
     Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vColor.a = g_Alpha;
+    
     if (Out.vColor.a == 0.f)
         discard;
     
@@ -208,5 +213,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN_DEBUG();
         GeometryShader = compile gs_5_0 GS_MAIN_DEBUG();
         PixelShader = compile ps_5_0 PS_MAIN_DEBUG();
+    }
+
+    pass UI_Blend
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

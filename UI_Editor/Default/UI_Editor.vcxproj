@@ -151,6 +151,7 @@
     <ClInclude Include="..\ImgUI\imstb_rectpack.h" />
     <ClInclude Include="..\ImgUI\imstb_textedit.h" />
     <ClInclude Include="..\ImgUI\imstb_truetype.h" />
+    <ClInclude Include="..\Public\UIResourceStore.h" />
     <ClInclude Include="..\Public\UI_Level_GamePlay.h" />
     <ClInclude Include="..\Public\UI_Level_Loading.h" />
     <ClInclude Include="..\Public\UI_Level_Logo.h" />
@@ -164,12 +165,11 @@
     <ClInclude Include="UI_Editor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIAnimationCom.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBase.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
-    <ClCompile Include="..\..\Client\Private\UIResourceStore.cpp" />
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />
@@ -194,6 +194,7 @@
     <ClCompile Include="..\ImgUI\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\UIResourceStore.cpp" />
     <ClCompile Include="..\Private\UI_Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\UI_Level_Loading.cpp" />
     <ClCompile Include="..\Private\UI_Level_Logo.cpp" />

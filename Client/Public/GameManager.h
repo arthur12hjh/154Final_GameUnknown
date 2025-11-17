@@ -2,7 +2,6 @@
 #include "Client_Defines.h"
 #include "GameStruct.h"
 
-#include "UIResourceStore.h"
 #include "Base.h"
 
 NS_BEGIN(Engine)
@@ -12,7 +11,6 @@ class CTexture;
 NS_END
 
 NS_BEGIN(Client)
-class CUIResourceStore;
 class CDataManager;
 
 class CGameManager final : public CBase
@@ -42,20 +40,6 @@ public :
 
 #pragma endregion
 
-#pragma region UIResourceManager
-	HRESULT Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex = 0, void* pArg = nullptr);
-	CUIResourceStore::UI_TEXTURE_DESC Get_UI_Texture_Desc(const WCHAR* szTextureTag);
-	const unordered_map<_wstring, CUIResourceStore::UI_TEXTURE_DESC>* Get_UI_Texture_Descs();
-	void Clear_UI_Texture_Descs();
-
-	//HRESULT Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, _uint iTextureIndex, void* pArg = nullptr);
-	//CTexture* Get_UI_TextureCom(const WCHAR* szTextureTag);
-	//_uint Get_UI_Texture_Index(const WCHAR* szTextureTag);
-	//
-	//const unordered_map<_wstring, CTexture*>* Get_UI_Textures();
-	//const unordered_map<_wstring, _uint>* Get_UI_TextureIndices();
-#pragma endregion
-
 #pragma region DataManager
 	const CHARACTER_SKILL_DESC*	Find_SkillData(_uint iSkillID);
 	const BOSS_NETWORK_DESC*	Find_BossData(_uint iBossID);
@@ -68,12 +52,10 @@ private :
 
 	CGameObject*				m_pPlayer = nullptr;
 	
-	CUIResourceStore*			m_pUIResourceStore = nullptr;
 	CDataManager*				m_pDataManager = nullptr;
 
 private :
 	HRESULT						Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	HRESULT						Ready_UIResourceStore();
 
 public:
 	virtual void				Free() override;

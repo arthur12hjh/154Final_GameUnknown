@@ -14,6 +14,7 @@ NS_END
 NS_BEGIN(Tool_UI)
 
 class CGUIManager;
+class CUIResourceStore;
 
 class CUI_MainApp final : public CBase
 {	
@@ -32,7 +33,7 @@ private:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 	CGUIManager*			m_pGuiManager = { nullptr };
-	class Client::CGameManager*			m_pGameManager = { nullptr };
+	CUIResourceStore*		m_pUIResourceStore = { nullptr };
 
 private:
 	HRESULT Ready_Default_Setting();

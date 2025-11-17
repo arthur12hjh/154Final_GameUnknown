@@ -2,6 +2,7 @@
 #include "UIButton.h"
 
 #include "GameInstance.h"
+#include "UIAnimationCom.h"
 
 CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -49,6 +50,8 @@ void CUIButton::Update(_float fTimeDelta)
 void CUIButton::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	//m_pUIAnimCom->Play(fTimeDelta/*, &m_tUIDesc.m_pUIAnimDescs[0]*/);
 }
 
 HRESULT CUIButton::Render()
@@ -97,6 +100,8 @@ HRESULT CUIButton::Ready_Components()
 
 HRESULT CUIButton::Bind_ShaderResources()
 {
+	__super::Bind_ShaderResources();
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
