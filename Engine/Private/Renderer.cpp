@@ -122,10 +122,10 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Ready_Debug(m_vScreenSize.x - 150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
-	//if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
-	//	return E_FAIL;
-	if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
+	if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
 		return E_FAIL;
+	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
+	//	return E_FAIL;
 
 	m_pColliderRenderer = CColliderRenderer::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pColliderRenderer)
@@ -247,6 +247,8 @@ void CRenderer::Render()
 		m_isScreenRadialBlur = !m_isScreenRadialBlur;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F5))
 		m_isBloom = !m_isBloom;
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
+		m_isFog = !m_isFog;
 
 	Render_Priority();
 	Render_Shadow();
@@ -261,10 +263,12 @@ void CRenderer::Render()
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
+	Render_Bloom();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
 	Render_Deferred();
-	Render_BackBuffer();
+	Render_ScreenDeferred();
 
+	Render_BackBuffer();
 	Render_UI();
 
 #ifdef _DEBUG
@@ -475,7 +479,7 @@ void CRenderer::Render_Distortion()
 
 void CRenderer::Render_Bloom()
 {
-	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"));
+	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"), TEXT("MRT_Scene"));
 }
 
 void CRenderer::Render_Fog()
@@ -502,37 +506,21 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
+	if (false == m_isBloom)
+		m_pGameInstance->Clear_MRT(TEXT("MRT_Bloom_Final"));
+
+	if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
+		return;
+
 	//fog 바인딩.
+	if (false == m_isFog)
+		m_pGameInstance->Clear_MRT(TEXT("MRT_Fog"));
+
 	_float4 vFogColor = m_pFog->Get_FogColor();
 	if (FAILED(m_pShader->Bind_RawValue("g_vFogColor", &vFogColor, sizeof(_float4))))
 		return;
 	if (FAILED(m_pFog->Bind_RenderTarget(m_pShader, "g_FogTexture")))
 		return;
-
-	// 블룸은 객체들 다 찍고 적용해야함.
-	//Render_Bloom();
-	//if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
-	//	return;
-
-	//	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
-	///* 방사형 블러 내일 분리할 것..*/
-	//	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
-	//		return;
-	//
-	//	Bind_WVP_Matrices();
-	//
-	//	if (true == m_isScreenRadialBlur)
-	//	{
-	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCREEN_RADIAL_BLUR));
-	//		m_pVIBuffer->Bind_Resources();
-	//		m_pVIBuffer->Render();
-	//	}
-	//	else if (false == m_isScreenRadialBlur)
-	//	{
-	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-	//		m_pVIBuffer->Bind_Resources();
-	//		m_pVIBuffer->Render();
-	//	}
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
@@ -540,6 +528,10 @@ void CRenderer::Render_Deferred()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+}
+
+void CRenderer::Render_ScreenDeferred()
+{
 }
 
 void CRenderer::Render_BackBuffer()
@@ -562,17 +554,25 @@ void CRenderer::Render_BackBuffer()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
 		return;
 
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
+	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
+	/* 방사형 블러 내일 분리할 것..*/
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		return;
 
-	//============================================================================
-		//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
-		//	return;
+	Bind_WVP_Matrices();
 
-		//m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-		//m_pVIBuffer->Bind_Resources();
-		//m_pVIBuffer->Render();
+	if (true == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::RADIAL_BLUR));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
+	else if (false == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
 }
 
 void CRenderer::Render_UI()
@@ -604,8 +604,8 @@ void CRenderer::Render_Debug()
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
-	//	return;
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
