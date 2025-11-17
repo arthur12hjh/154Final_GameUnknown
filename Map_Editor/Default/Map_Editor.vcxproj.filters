@@ -159,9 +159,6 @@
     <ClInclude Include="..\public\BackGround.h">
       <Filter>02.GameObjects\BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\pch.h">
-      <Filter>99.Defines\PCH</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
       <Filter>96.IMGUI\Default</Filter>
     </ClInclude>
@@ -188,9 +185,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Imgui_Manager.h">
       <Filter>96.IMGUI\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\MapTool_Defines.h">
-      <Filter>99.Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
@@ -288,20 +282,22 @@
     <ClInclude Include="..\public\StoneTile.h">
       <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapTool_Defines.h" />
+    <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\CherryBlossom1.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CherryBlossom5.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom2.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom3.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom4.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom5.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -328,9 +324,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BackGround.cpp">
       <Filter>02.GameObjects\BackGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\pch.cpp">
-      <Filter>99.Defines\PCH</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Imgui_Manager.cpp">
       <Filter>96.IMGUI\Manager</Filter>
@@ -449,20 +442,21 @@
     <ClCompile Include="..\private\StoneTile.cpp">
       <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom2.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom3.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom4.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom5.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

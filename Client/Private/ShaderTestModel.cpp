@@ -105,10 +105,11 @@ HRESULT CShaderTestModel::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 		/* 이미시브 바인딩 */
-		if (S_FALSE == (m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-		{
-			m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Emissive.png"))->Bind_ShaderResource(m_pShaderCom, "g_EmissiveTexture", 0);
-		}
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

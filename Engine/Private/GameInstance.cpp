@@ -565,6 +565,11 @@ HRESULT CGameInstance::Bind_RenderTarget(const _wstring& strTargetTag, CShader* 
 	return m_pTarget_Manager->Bind_RenderTarget(strTargetTag, pShader, pConstantName);
 }
 
+HRESULT CGameInstance::Clear_MRT(const _wstring& strMRTTag)
+{
+	return m_pTarget_Manager->Clear_MRT(strMRTTag);
+}
+
 
 #ifdef _DEBUG
 

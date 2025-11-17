@@ -49,13 +49,13 @@ private:
 	
 	_bool								m_isScreenRadialBlur = { false };
 	_bool								m_isBloom = { false };
-
+	_bool								m_isFog = { false };
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
 	class CBloom*						m_pBloom = { nullptr };
-
+	class CFog*							m_pFog = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -74,7 +74,9 @@ private:
 	void		Render_Glow();
 	void		Render_Distortion();
 	void		Render_Bloom();
+	void		Render_Fog();
 	void		Render_Deferred();
+	void		Render_ScreenDeferred();
 	void		Render_BackBuffer();
 	void		Render_UI();
 

@@ -18,7 +18,7 @@ public:
 	HRESULT End_MRT();
 	HRESULT Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
 	HRESULT Bind_RenderTarget(const _wstring& strTargetTag, class CShader* pShader, const _char* pConstantName);
-
+	HRESULT Clear_MRT(const _wstring& strMRTag); 
 #ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);

@@ -3,6 +3,7 @@
 #include "GUIManager.h"
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "UIResourceStore.h"
 #include "StringHelper.h"
 
 #include "HUDLayer.h"
@@ -12,8 +13,9 @@
 #include "UIPanel.h"
 #include "UIWrapper.h"
 #include "UIButton.h"
-#include "UIBase.h"
 #include "UIText.h"
+
+#include "UIAnimationCom.h";
 
 // GUI 매니저 싱글톤 구현
 IMPLEMENT_SINGLETON(CGUIManager);
@@ -25,9 +27,9 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(m_pGameInstance);
 
-    m_pGameManager = Client::CGameManager::GetInstance();
+    m_pUIResourceStore = CUIResourceStore::GetInstance();
 
-    if (!m_pGameManager)
+    if (!m_pUIResourceStore)
         return E_FAIL;
 
 	m_pDevice = pDevice;
@@ -59,6 +61,11 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_ViewModes.push_back(TEXT("Default"));
     m_ViewModes.push_back(TEXT("Edit"));
     m_ViewModes.push_back(TEXT("Debug"));
+
+    m_AnimTrackTags.reserve(3);
+    m_AnimTrackTags.push_back(TEXT("Position"));
+    m_AnimTrackTags.push_back(TEXT("Size"));
+    m_AnimTrackTags.push_back(TEXT("Alpha"));
 
     return S_OK;
 }
@@ -92,7 +99,17 @@ void CGUIManager::Update(_float fTimeDelta)
         GUI::ShowDemoWindow(); // ImGui 데모 윈도우 표시
 
     if (m_szCurViewMode == TEXT("Editor"))
+    {
+        GUI::Begin("Timer");
+        _char szDebug[MAX_PATH]{};
+        sprintf_s(szDebug, "deltaTime = %f\n",
+            fTimeDelta);
+        
+        GUI::Text(szDebug);
+        GUI::End();
+
         Editor_Window();
+    }
 
     if (m_bOpenViewOptions && m_pTargetUI)
         View_Options();
@@ -254,6 +271,8 @@ void CGUIManager::Create_Layer()
         CUIBase::UIBASE_DESC Desc{};
         Desc.fSizeX = g_iWinSizeX;
         Desc.fSizeY = g_iWinSizeY;
+        //Desc.fX = 0.f;
+        //Desc.fY = 0.f;
         Desc.fX = g_iHalfWinSizeX;
         Desc.fY = g_iHalfWinSizeY;
         Desc.iDepth = 0;
@@ -294,7 +313,9 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
 
         CUIBase::UIBASE_DESC Desc{};
         Desc.fSizeX = 100.f;
-        Desc.fSizeY = 20.f;
+        Desc.fSizeY = 100.f;
+        //Desc.fX = 0.f;
+        //Desc.fY = 0.f;
         Desc.fX = pParent->Get_UIBase_Desc().fX;
         Desc.fY = pParent->Get_UIBase_Desc().fY;
         Desc.iDepth = pParent->Get_UIBase_Desc().iDepth + 1;
@@ -331,15 +352,15 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
     }
 }
 
-void CGUIManager::Select_UI_Proto_Tag(char* _Outstr)
+void CGUIManager::Select_UI_Proto_Tag(_char* Outstr)
 {
     //_char szCurProtoTag[MAX_PATH]{};
     //CStringHelper::ConvertWideToUTF(m_szCurrentProtoTag.c_str(), szCurProtoTag);
 
     WCHAR szCurProtoTag[MAX_PATH]{};
-    CStringHelper::ConvertUTFToWide(_Outstr, szCurProtoTag);
+    CStringHelper::ConvertUTFToWide(Outstr, szCurProtoTag);
 
-    if (GUI::BeginCombo("UI Proto Tag", _Outstr)) // 드롭다운 시작
+    if (GUI::BeginCombo("UI Proto Tag", Outstr)) // 드롭다운 시작
     {
         for (int i = 1; i < m_ProtoTags.size(); ++i)
         {
@@ -351,7 +372,7 @@ void CGUIManager::Select_UI_Proto_Tag(char* _Outstr)
             if (GUI::Selectable(szTag, is_selected))
             {
                 //m_szCurrentProtoTag = m_ProtoTags[i];
-                CStringHelper::ConvertWideToUTF(m_ProtoTags[i].c_str(), _Outstr);
+                CStringHelper::ConvertWideToUTF(m_ProtoTags[i].c_str(), Outstr);
             }
 
             if (is_selected)
@@ -361,12 +382,12 @@ void CGUIManager::Select_UI_Proto_Tag(char* _Outstr)
     }
 }
 
-void CGUIManager::Select_Texture_Tag(char* _Outstr)
+void CGUIManager::Select_Texture_Tag(_char* Outstr)
 {
     WCHAR szCurTextureTag[MAX_PATH]{};
-    CStringHelper::ConvertUTFToWide(_Outstr, szCurTextureTag);
+    CStringHelper::ConvertUTFToWide(Outstr, szCurTextureTag);
 
-    if (GUI::BeginCombo("TextureCom Tag", _Outstr)) // 드롭다운 시작
+    if (GUI::BeginCombo("TextureCom Tag", Outstr)) // 드롭다운 시작
     {
         for (int i = 1; i < m_TextureComTags.size(); ++i)
         {
@@ -377,7 +398,7 @@ void CGUIManager::Select_Texture_Tag(char* _Outstr)
 
             if (GUI::Selectable(szTag, is_selected))
             {
-                CStringHelper::ConvertWideToUTF(m_TextureComTags[i].c_str(), _Outstr);
+                CStringHelper::ConvertWideToUTF(m_TextureComTags[i].c_str(), Outstr);
             }
 
             if (is_selected)
@@ -419,7 +440,8 @@ void CGUIManager::SetUp_Texture_Tags()
 
     m_TextureComTags.push_back(TEXT("Select Texture"));
     _wstring prefix = TEXT("Com_Texture_");
-    for (auto& pTexture : *m_pGameManager->Get_UI_Texture_Descs())
+
+    for (auto& pTexture : *m_pUIResourceStore->Get_UI_Texture_Descs())
     {
         if (pTexture.first.find(prefix) == 0)
         {
@@ -429,21 +451,23 @@ void CGUIManager::SetUp_Texture_Tags()
     }
 }
 
-void CGUIManager::View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DESC pDesc)
+void CGUIManager::View_Textures(_wstring szTag, void* pDesc)
 {
+    CUIResourceStore::UI_TEXTURE_RESOURCE_DESC Desc = *static_cast<CUIResourceStore::UI_TEXTURE_RESOURCE_DESC*>(pDesc);
+
     GUI::Begin("Texture Browser");
 
     const float thumbSize = 96.0f;
     const float padding = 8.0f;
     const int itemsPerRow = 4;
 
-    vector<ID3D11ShaderResourceView*> loadedSRVs(pDesc.iTextIndex, nullptr);
+    vector<ID3D11ShaderResourceView*> loadedSRVs(Desc.iTextIndex, nullptr);
 
     _tchar szFullPath[MAX_PATH]{};
 
-    for (size_t i = 0; i < pDesc.iTextIndex; ++i)
+    for (size_t i = 0; i < Desc.iTextIndex; ++i)
     {
-        wsprintf(szFullPath, pDesc.szFilePath.c_str(), i);
+        wsprintf(szFullPath, Desc.szFilePath, i);
 
         // SRV 아직 로드 안됐으면 로드
         if (!loadedSRVs[i])
@@ -456,7 +480,7 @@ void CGUIManager::View_Textures(_wstring szTag, CUIResourceStore::UI_TEXTURE_DES
         if (GUI::ImageButton("", (ImTextureID)pSRV, ImVec2(thumbSize, thumbSize)))
         {
             m_iCurrentTextureIndex = (int)i; // 선택된 텍스처 저장
-            m_pTargetUI->Set_TextureCom(szTag, m_iCurrentTextureIndex);
+            m_pTargetUI->Set_TextureCom(szTag, Desc.szProtoTag, m_iCurrentTextureIndex);
         }
 
         if (GUI::IsItemHovered())
@@ -503,8 +527,15 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
             m_vEditedSize = m_vOldSize;
 
             if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc())
+            {
+                _char szInputText[MAX_PATH]{};
+                CStringHelper::ConvertWideToUTF(m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->szText.c_str(), szInputText);
+                //m_szInputText = szInputText;
+                strcpy_s(m_szInputText, szInputText);
                 m_vColor = m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->vColor;
+            }
         }
+
         GUI::SameLine();
         if (GUI::Button("Add Child"))
         {
@@ -560,6 +591,12 @@ void CGUIManager::View_Options()
         if (GUI::BeginTabItem("Texture"))
         {
             Set_Texture();
+            GUI::EndTabItem();
+        }
+
+        if (GUI::BeginTabItem("Animation List"))
+        {
+            Set_Animation();
             GUI::EndTabItem();
         }
 
@@ -674,14 +711,10 @@ void CGUIManager::Set_Position(_float2* pOldPos, _float2* pEditedPos)
         *pOldPos = *pEditedPos;
 
         Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
-        //Desc.fX = pOldPos->x;
-        //Desc.fY = pOldPos->y;
         Desc.fOffsetX = pOldPos->x;
         Desc.fOffsetY = pOldPos->y;
-        //Desc.fX = Desc.fX + Desc.fOffsetX;
-        //Desc.fY = Desc.fY + Desc.fOffsetY;
 
-        m_pTargetUI->Set_UIBase_Desc(Desc);
+        m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }
     GUI::PopStyleColor();
 }
@@ -694,18 +727,34 @@ void CGUIManager::Set_Texture()
     WCHAR szTextureComTag[MAX_PATH]{};
     swprintf_s(szTextureComTag, TEXT("Com_Texture_%hs"), m_szCloneTextureComTag);
 
-    CUIResourceStore::UI_TEXTURE_DESC ResDesc{};
+    CUIResourceStore::UI_TEXTURE_RESOURCE_DESC ResDesc{};
 
-    ResDesc = m_pGameManager->Get_UI_Texture_Desc(szTextureComTag);
+    ResDesc = m_pUIResourceStore->Get_UI_Texture_Desc(szTextureComTag);
+
+    if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc())
+    {
+        _float fAlpha = m_pTargetUI->Get_UIBase_Desc().fAlpha;
+
+        GUI::DragFloat("Alpha", &fAlpha, 0.01f, 0.f, 1.f);
+        m_pTargetUI->Set_Alpha(fAlpha);
+
+        _int iPass = static_cast<_int>(m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->iPass);
+
+        GUI::InputInt("Pass", &iPass);
+
+        m_pTargetUI->Set_Pass(static_cast<_uint>(iPass));
+    }
 
     if(ResDesc.pTexture)
     {
-        View_Textures(szTextureComTag, ResDesc);
+        View_Textures(szTextureComTag, &ResDesc);
     }
 
     if (GUI::Button("Reset"))
     {
-        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->szTextureComTag, m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->iTextureIndex);
+        m_pTargetUI->Set_TextureCom(m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->szTextureComTag,
+            m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->szProtoTag, 
+            m_pTargetUI->Get_UIBase_Desc().Get_UI_Texture_Desc()->iTextureIndex);
     }
     GUI::SameLine();
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
@@ -724,8 +773,6 @@ void CGUIManager::Set_Text()
     Client::CUIBase::UI_TEXT_DESC TextDesc{};
 
     GUI::InputText("Input Text", m_szInputText, IM_ARRAYSIZE(m_szInputText));
-
-    //ImVec4 color = ImVec4(1.f, 1.f, 1.f, 1.f);
 
     WCHAR szInputText[MAX_PATH]{};
     CStringHelper::ConvertUTFToWide(m_szInputText, szInputText);
@@ -749,6 +796,340 @@ void CGUIManager::Set_Text()
         UIDesc.Set_UI_Text_Desc(TextDesc);
 
         m_pTargetUI->Set_UIBase_Desc(UIDesc);
+    }
+}
+
+void CGUIManager::Set_Animation()
+{
+    // 위치, 크기, alpha, loop 조절해서 ui한테 보내기
+
+    if (GUI::Button("Clear Anim"))
+    {
+        Client::CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
+
+        m_pTargetUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
+    }
+    GUI::SameLine();
+    if (GUI::Button("Import Prefab"))
+    {
+        m_pUIHUD->Load_Anim_Files();
+        m_AnimPrefabs = m_pUIHUD->Get_AnimDatas();
+
+        GUI::OpenPopup("Import Prefab");
+    }
+
+    if (GUI::BeginPopup("Import Prefab"))
+    {
+        Select_Anim_Prefabs(m_szCurrentAnimPrefab);
+
+        if (GUI::Button("Import"))
+        {
+            WCHAR szAnimTag[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(m_szCurrentAnimPrefab, szAnimTag);
+
+            Client::CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
+            m_pUIHUD->Import_Anim_Prefab(szAnimTag, &AnimDesc);
+
+            m_pTargetUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
+        }
+
+        if (GUI::Button("Close")) {
+            GUI::CloseCurrentPopup();
+        }
+        GUI::EndPopup();
+    }
+
+    /*if (GUI::BeginPopup("Add Anim"))
+    {
+        Add_Animation();
+
+        if (GUI::Button("Close")) {
+            GUI::CloseCurrentPopup();
+        }
+        GUI::EndPopup();
+    }*/
+
+    //for (auto& AnimDesc : m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc())
+    //if(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc())
+    {
+        //Client::CUIAnimationCom::UI_ANIM_DESC AnimDesc{ *m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc() };
+
+        _char szAnimTag[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF((TEXT("AnimTag : ") + m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->szAnimTag).c_str(), szAnimTag);
+
+        if (GUI::TreeNode(szAnimTag))
+        {
+            GUI::DragFloat("Duration", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->fDuration, 0.01f, 0.f, 0.f, "%.2f");
+            GUI::Checkbox("Loop", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->isLoop);
+
+            if (GUI::Button("Add Track"))
+            {
+                GUI::OpenPopup("Add Track");
+            }
+
+            GUI::Separator();
+
+            if (GUI::TreeNode("Debug"))
+            {
+                _char szDebug[MAX_PATH]{};
+                sprintf_s(szDebug, "deltaTime = %f\nanimDeltaTime = %f\nplayTime = %.3f\nalpha = %.3f\npos.x = %.3f, pos.y = %.3f\nsize.x = %.3f, size.y = %.3f",
+                    m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")),
+                    m_pTargetUI->Get_AnimationCom()->Get_DeltaTime(),
+                    m_pTargetUI->Get_AnimationCom()->Get_PlayTime(),
+                    m_pTargetUI->Get_UIBase_Desc().fAlpha,
+                    m_pTargetUI->Get_UIBase_Desc().fOffsetX,
+                    m_pTargetUI->Get_UIBase_Desc().fOffsetY,
+                    m_pTargetUI->Get_UIBase_Desc().fSizeX,
+                    m_pTargetUI->Get_UIBase_Desc().fSizeY);
+
+                GUI::Text(szDebug);
+
+                GUI::TreePop();
+            }
+
+            GUI::Separator();
+            if (GUI::Button("Play"))
+            {
+                m_pTargetUI->Play_Anim(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->szAnimTag);
+            }
+            GUI::SameLine();
+            if (GUI::Button("Pause"))
+            {
+                m_pTargetUI->Pause_Anim();
+            }
+            GUI::SameLine();
+            if (GUI::Button("Stop"))
+            {
+                m_pTargetUI->Stop_Anim();
+            }
+
+            GUI::Separator();
+            if (GUI::BeginPopup("Add Track"))
+            {
+                Add_AnimTrack(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->szAnimTag);
+
+                if (GUI::Button("Close")) {
+                    GUI::CloseCurrentPopup();
+                }
+                GUI::EndPopup();
+            }
+
+            for (auto& TrackDesc : m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Descs())
+            {
+                _char szTrackTag[MAX_PATH]{};
+                CStringHelper::ConvertWideToUTF(TrackDesc.first.c_str(), szTrackTag);
+
+                if (GUI::TreeNode(szTrackTag))
+                {
+                    Set_AnimTrack(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->szAnimTag, TrackDesc.first);
+                    GUI::Separator();
+                    GUI::TreePop();
+                }
+            }
+
+            if (GUI::Button("Export Prefab"))
+            {
+                GUI::OpenPopup("Export Prefab");
+            }
+
+            if (GUI::BeginPopup("Export Prefab"))
+            {
+                GUI::InputText("Prefab Tag", m_szInputAnimTag, IM_ARRAYSIZE(m_szInputText));
+
+                if (GUI::Button("Export")) {
+                    WCHAR szAnimTag[MAX_PATH]{};
+                    CStringHelper::ConvertUTFToWide(m_szInputAnimTag, szAnimTag);
+
+                    Client::CUIAnimationCom::UI_ANIM_DESC AnimDesc = *m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc();
+
+                    m_pUIHUD->Export_Anim_Prefab(szAnimTag, &AnimDesc);
+                    GUI::CloseCurrentPopup();
+                }
+                GUI::SameLine();
+                if (GUI::Button("Close")) {
+                    GUI::CloseCurrentPopup();
+                }
+                GUI::EndPopup();
+            }
+
+            GUI::TreePop();
+        }
+    }
+}
+
+void CGUIManager::Edit_Animation(void* pDesc)
+{
+    //GUI::InputText("Anim Tag", m_szInputAnimTag, IM_ARRAYSIZE(m_szInputText));
+
+    //if (GUI::Button("Add"))
+    //{
+    //    WCHAR szAnimTag[MAX_PATH]{};
+    //    CStringHelper::ConvertUTFToWide(m_szInputAnimTag, szAnimTag);
+    //
+    //    Client::CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
+    //    
+    //    /*Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
+    //    Desc.Add_UI_Anim_Desc(szAnimTag, AnimDesc);
+    //
+    //    m_pTargetUI->Set_UIBase_Desc(Desc);*/
+    //
+    //    m_pTargetUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
+    //}
+
+    
+}
+
+void CGUIManager::Select_AnimTrack_Tags(_char* Outstr)
+{
+    WCHAR szCurAnimTrackTag[MAX_PATH]{};
+    CStringHelper::ConvertUTFToWide(Outstr, szCurAnimTrackTag);
+
+    if (GUI::BeginCombo("AnimTrack Tag", Outstr)) // 드롭다운 시작
+    {
+        for (int i = 0; i < m_AnimTrackTags.size(); ++i)
+        {
+            bool is_selected = (szCurAnimTrackTag == m_AnimTrackTags[i]);
+
+            _char szTag[MAX_PATH]{};
+            CStringHelper::ConvertWideToUTF(m_AnimTrackTags[i].c_str(), szTag);
+
+            if (GUI::Selectable(szTag, is_selected))
+            {
+                CStringHelper::ConvertWideToUTF(m_AnimTrackTags[i].c_str(), Outstr);
+            }
+
+            if (is_selected)
+                GUI::SetItemDefaultFocus(); // 기본 포커스 설정
+        }
+        GUI::EndCombo();
+    }
+}
+
+void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
+{
+    _char szText[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF((TEXT("TrackTag : ") + szTrackTag).c_str(), szText);
+
+    GUI::Text(szText);
+
+    if (szTrackTag == TEXT("Position"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::DragFloat("x", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("y", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.y, 1.f, 0.f, 0.f, "%.2f");
+            m_pTargetUI->Set_Position(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x,
+                m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.y);
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::DragFloat("x", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("y", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.y, 1.f, 0.f, 0.f, "%.2f");
+            m_pTargetUI->Set_Position(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x,
+                m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.y);
+            GUI::TreePop();
+        }
+    }
+
+    if (szTrackTag == TEXT("Size"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::DragFloat("x", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("y", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.y, 1.f, 0.f, 0.f, "%.2f");
+            m_pTargetUI->Set_Size(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x,
+                m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.y);
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::DragFloat("x", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 1.f, 0.f, 0.f, "%.2f");
+            GUI::DragFloat("y", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.y, 1.f, 0.f, 0.f, "%.2f");
+            m_pTargetUI->Set_Size(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x,
+                m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.y);
+            GUI::TreePop();
+        }
+    }
+
+    if (szTrackTag == TEXT("Alpha"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::DragFloat("Start Alpha", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 0.01f, 0.f, 1.f, "%.2f");
+            m_pTargetUI->Set_Alpha(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vStartParam.x);
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::DragFloat("End Alpha", &m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 0.01f, 0.f, 1.f, "%.2f");
+            m_pTargetUI->Set_Alpha(m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Get_UI_Track_Desc(szTrackTag)->vEndParam.x);
+            GUI::TreePop();
+        }
+    }
+}
+
+void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
+{
+    Select_AnimTrack_Tags(m_szCurrentTrackTag);
+
+    if (GUI::Button("Add"))
+    {
+        WCHAR szTrackTag[MAX_PATH]{};
+        CStringHelper::ConvertUTFToWide(m_szCurrentTrackTag, szTrackTag);
+
+        Client::CUIAnimationCom::UI_ANIM_TRACK_DESC TrackDesc{};
+        TrackDesc.szTrackTag = szTrackTag;
+
+        if (TrackDesc.szTrackTag == TEXT("Position"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
+            TrackDesc.vStartParam.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
+            TrackDesc.vEndParam.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
+        }
+        if (TrackDesc.szTrackTag == TEXT("Size"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
+            TrackDesc.vStartParam.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
+            TrackDesc.vEndParam.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
+        }
+        if (TrackDesc.szTrackTag == TEXT("Alpha"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().fAlpha;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().fAlpha;
+        }
+
+        m_pTargetUI->Get_AnimationCom()->Get_UI_Anim_Desc()->Add_UI_Track_Desc(szTrackTag, TrackDesc);
+
+
+    }
+}
+
+void CGUIManager::Select_Anim_Prefabs(_char* Outstr)
+{
+    WCHAR szCurAnimPrefabTag[MAX_PATH]{};
+    CStringHelper::ConvertUTFToWide(Outstr, szCurAnimPrefabTag);
+
+    if (GUI::BeginCombo("AnimTrack Tag", Outstr)) // 드롭다운 시작
+    {
+        for (int i = 0; i < m_AnimPrefabs.size(); ++i)
+        {
+            bool is_selected = (szCurAnimPrefabTag == m_AnimPrefabs[i]);
+
+            _char szTag[MAX_PATH]{};
+            CStringHelper::ConvertWideToUTF(m_AnimPrefabs[i].c_str(), szTag);
+
+            if (GUI::Selectable(szTag, is_selected))
+            {
+                CStringHelper::ConvertWideToUTF(m_AnimPrefabs[i].c_str(), Outstr);
+            }
+
+            if (is_selected)
+                GUI::SetItemDefaultFocus(); // 기본 포커스 설정
+        }
+        GUI::EndCombo();
     }
 }
 

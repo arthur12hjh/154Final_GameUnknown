@@ -7,6 +7,7 @@
 
 #include "UIHUD.h"
 #include "HUDLayer.h"
+#include "GameObject.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -105,31 +106,12 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	/*CUIObject::UIOBJECT_DESC	Desc{};
+	pUIHUD->Load_Anim_Files();
 
-	Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;*/
-
-	/*CUIBase::UIBASE_DESC Desc{};
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;
-	Desc.fX = g_iHalfWinSizeX;
-	Desc.fY = g_iHalfWinSizeY;
-	Desc.iDepth = 0;
-	Desc.iLevel = ENUM_CLASS(LEVEL::LOGO);
-	Desc.szLayerTag = TEXT("UIHUDLayer_Logo");
-	Desc.szUITag = TEXT("UI_Panel");
-	Desc.szProtoTag = TEXT("Prototype_GameObject_UI_Panel");
-
-	CGameObject* pObj = nullptr;
-
-	if(FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Panel"), &pObj, &Desc)))
-		return E_FAIL;*/
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Test"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
 		return E_FAIL;
+
+	pUIHUD->Anim_Play(TEXT("Test2"), TEXT("UI_Test2_Panel_0"), TEXT("Test_Anim"));
 
 	return S_OK;
 }
