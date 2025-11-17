@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Vil_Bui03_04.h"
+#include "StoneTile.h"
 #include "GameInstance.h"
 
-CVil_Bui03_04::CVil_Bui03_04(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CStoneTile::CStoneTile(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CVil_Bui03_04::CVil_Bui03_04(const CVil_Bui03_04& Prototype)
+CStoneTile::CStoneTile(const CStoneTile& Prototype)
 	: CGameObject{ Prototype }
 {
 }
 
-HRESULT CVil_Bui03_04::Initialize_Prototype()
+HRESULT CStoneTile::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Initialize(void* pArg)
+HRESULT CStoneTile::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -28,21 +28,21 @@ HRESULT CVil_Bui03_04::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVil_Bui03_04::Priority_Update(_float fTimeDelta)
+void CStoneTile::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CVil_Bui03_04::Update(_float fTimeDelta)
+void CStoneTile::Update(_float fTimeDelta)
 {
 }
 
-void CVil_Bui03_04::Late_Update(_float fTimeDelta)
+void CStoneTile::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
-HRESULT CVil_Bui03_04::Render()
+HRESULT CStoneTile::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -70,10 +70,10 @@ HRESULT CVil_Bui03_04::Render()
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Ready_Components()
+HRESULT CStoneTile::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_StoneTile"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -85,7 +85,7 @@ HRESULT CVil_Bui03_04::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Bind_ShaderResources()
+HRESULT CStoneTile::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -99,9 +99,9 @@ HRESULT CVil_Bui03_04::Bind_ShaderResources()
 	return S_OK;
 }
 
-CVil_Bui03_04* CVil_Bui03_04::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CStoneTile* CStoneTile::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVil_Bui03_04* pInstance = new CVil_Bui03_04(pDevice, pContext);
+	CStoneTile* pInstance = new CStoneTile(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -112,20 +112,20 @@ CVil_Bui03_04* CVil_Bui03_04::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 	return pInstance;
 }
 
-CGameObject* CVil_Bui03_04::Clone(void* pArg)
+CGameObject* CStoneTile::Clone(void* pArg)
 {
-	CVil_Bui03_04* pInstance = new CVil_Bui03_04(*this);
+	CStoneTile* pInstance = new CStoneTile(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CVil_Bui03_04");
+		MSG_BOX("Failed to Cloned : CStoneTile");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CVil_Bui03_04::Free()
+void CStoneTile::Free()
 {
 	__super::Free();
 

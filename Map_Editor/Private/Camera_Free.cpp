@@ -38,22 +38,22 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta * 10.f);
+		m_pTransformCom->Go_Straight(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Backward(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Left(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Right(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 8.f * fTimeDelta, 0.f, 0.f));
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) - XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) - XMVectorSet(0.f, 8.f * fTimeDelta, 0.f, 0.f));
 
 
 	_long		MouseMove = {};

@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Vil_Bui03_04.h"
+#include "CherryBlossom2.h"
 #include "GameInstance.h"
 
-CVil_Bui03_04::CVil_Bui03_04(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCherryBlossom2::CCherryBlossom2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CVil_Bui03_04::CVil_Bui03_04(const CVil_Bui03_04& Prototype)
+CCherryBlossom2::CCherryBlossom2(const CCherryBlossom2& Prototype)
 	: CGameObject{ Prototype }
 {
 }
 
-HRESULT CVil_Bui03_04::Initialize_Prototype()
+HRESULT CCherryBlossom2::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Initialize(void* pArg)
+HRESULT CCherryBlossom2::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -28,21 +28,21 @@ HRESULT CVil_Bui03_04::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVil_Bui03_04::Priority_Update(_float fTimeDelta)
+void CCherryBlossom2::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CVil_Bui03_04::Update(_float fTimeDelta)
+void CCherryBlossom2::Update(_float fTimeDelta)
 {
 }
 
-void CVil_Bui03_04::Late_Update(_float fTimeDelta)
+void CCherryBlossom2::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
-HRESULT CVil_Bui03_04::Render()
+HRESULT CCherryBlossom2::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -70,10 +70,10 @@ HRESULT CVil_Bui03_04::Render()
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Ready_Components()
+HRESULT CCherryBlossom2::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Vil_Bui03_04"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CherryBlossom2"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -85,7 +85,7 @@ HRESULT CVil_Bui03_04::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CVil_Bui03_04::Bind_ShaderResources()
+HRESULT CCherryBlossom2::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -99,9 +99,9 @@ HRESULT CVil_Bui03_04::Bind_ShaderResources()
 	return S_OK;
 }
 
-CVil_Bui03_04* CVil_Bui03_04::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCherryBlossom2* CCherryBlossom2::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVil_Bui03_04* pInstance = new CVil_Bui03_04(pDevice, pContext);
+	CCherryBlossom2* pInstance = new CCherryBlossom2(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -112,20 +112,20 @@ CVil_Bui03_04* CVil_Bui03_04::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 	return pInstance;
 }
 
-CGameObject* CVil_Bui03_04::Clone(void* pArg)
+CGameObject* CCherryBlossom2::Clone(void* pArg)
 {
-	CVil_Bui03_04* pInstance = new CVil_Bui03_04(*this);
+	CCherryBlossom2* pInstance = new CCherryBlossom2(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CVil_Bui03_04");
+		MSG_BOX("Failed to Cloned : CCherryBlossom2");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CVil_Bui03_04::Free()
+void CCherryBlossom2::Free()
 {
 	__super::Free();
 

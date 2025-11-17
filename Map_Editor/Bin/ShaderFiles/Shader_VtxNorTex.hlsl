@@ -2,7 +2,7 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D g_DiffuseTexture[2];
+texture2D g_DiffuseTexture[1];
 texture2D g_MaskTexture;
 
 
@@ -70,14 +70,14 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     
     vector vSourDiffuse = g_DiffuseTexture[0].Sample(DefaultSampler, In.vTexcoord * 30.f);
-    vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
-    vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
+    //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
     
-    vector vMtrlDiffuse = vDestDiffuse * vMask + vSourDiffuse * (1.f - vMask);
+    //vector vMtrlDiffuse = vDestDiffuse * vMask + vSourDiffuse * (1.f - vMask);
     
 
-    Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse = vSourDiffuse;
     
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);

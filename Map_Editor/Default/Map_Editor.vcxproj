@@ -169,6 +169,11 @@
     <ClInclude Include="..\Public\Bamboo.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_Tool.h" />
+    <ClInclude Include="..\public\CherryBlossom1.h" />
+    <ClInclude Include="..\public\CherryBlossom2.h" />
+    <ClInclude Include="..\public\CherryBlossom3.h" />
+    <ClInclude Include="..\public\CherryBlossom4.h" />
+    <ClInclude Include="..\public\CherryBlossom5.h" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
     <ClInclude Include="..\Public\ImGui\imgui.h" />
     <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h" />
@@ -205,6 +210,7 @@
     <ClInclude Include="..\Public\Stone2.h" />
     <ClInclude Include="..\Public\Stone3.h" />
     <ClInclude Include="..\Public\Stone4.h" />
+    <ClInclude Include="..\public\StoneTile.h" />
     <ClInclude Include="..\Public\StoneWall1.h" />
     <ClInclude Include="..\Public\StoneWall2.h" />
     <ClInclude Include="..\public\Terrain_Sand.h" />
@@ -224,6 +230,11 @@
     <ClCompile Include="..\Private\Bamboo.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_Tool.cpp" />
+    <ClCompile Include="..\private\CherryBlossom1.cpp" />
+    <ClCompile Include="..\private\CherryBlossom2.cpp" />
+    <ClCompile Include="..\private\CherryBlossom3.cpp" />
+    <ClCompile Include="..\private\CherryBlossom4.cpp" />
+    <ClCompile Include="..\private\CherryBlossom5.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -278,6 +289,7 @@
     <ClCompile Include="..\Private\Stone2.cpp" />
     <ClCompile Include="..\Private\Stone3.cpp" />
     <ClCompile Include="..\Private\Stone4.cpp" />
+    <ClCompile Include="..\private\StoneTile.cpp" />
     <ClCompile Include="..\Private\StoneWall1.cpp" />
     <ClCompile Include="..\Private\StoneWall2.cpp" />
     <ClCompile Include="..\private\Terrain_Sand.cpp" />

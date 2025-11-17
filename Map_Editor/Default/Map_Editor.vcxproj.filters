@@ -121,12 +121,6 @@
     <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\TombStone">
       <UniqueIdentifier>{020a9aac-879e-48b5-a940-8f07c88882d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{5db6257d-a35f-4f3d-b2e4-795ce8ef85f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99.Defines\PCH">
-      <UniqueIdentifier>{d725a5cc-086c-491c-a720-4a2604efa3bf}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -291,6 +285,24 @@
     <ClInclude Include="..\Public\TombStoneBase2.h">
       <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StoneTile.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom5.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom3.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom4.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -433,6 +445,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\Bamboo.cpp">
       <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\Bamboo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StoneTile.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom3.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom4.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom5.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
