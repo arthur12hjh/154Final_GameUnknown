@@ -13,6 +13,7 @@
 #include "Distortion.h"
 #include "Glow.h"
 #include "Bloom.h"
+#include "Fog.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -86,6 +87,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pBloom)
 		return E_FAIL;
 
+	m_pFog = CFog::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pFog)
+		return E_FAIL;
+
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -97,16 +102,19 @@ HRESULT CRenderer::Initialize()
 #ifdef _DEBUG
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Scene"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Diffuse"), 150.0f, 150.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Depth"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Normal"), 150.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 450.0f, 150.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_ORM"), 450.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Specular"), 450.0f, 450.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 450.0f, 450.0f, 300.f, 300.f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Specular"), 750.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shadow"), 150.0f, 750.0f, 300.f, 300.f)))
 		return E_FAIL;
+
 
 	if (FAILED(m_pGlow->Ready_Debug(m_vScreenSize.x - 450.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
@@ -114,7 +122,9 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Ready_Debug(m_vScreenSize.x - 150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
+	//if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
+	//	return E_FAIL;
+	if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
 		return E_FAIL;
 
 	m_pColliderRenderer = CColliderRenderer::Create(m_pDevice, m_pContext);
@@ -129,13 +139,15 @@ HRESULT CRenderer::Ready_RenderTargets()
 {
 	/* 후처리 쉐이딩을 위한 렌더타겟들을 준비. */
 	/* Target_Scene */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 	/* Target_Screen */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	
+	/* MRT_GameObjects */
 	/* Target_Diffuse */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	/* Target_Normal */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Normal"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
@@ -143,16 +155,26 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Depth */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
+	/* Target_ORM */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ORM"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_LightAcc */
 	/* Target_Shade */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shade"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shade"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 	/* Target_Specular */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+
 	/* Target_Shadow. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
+		return E_FAIL;
+
+	/* Target_ToneMapping */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ToneMapping"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -162,10 +184,12 @@ HRESULT CRenderer::Ready_MRTs()
 {
 	/* MRT_Scene*/
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
-		return E_FAIL;	
+		return E_FAIL;
+
 	/* MRT_Screen */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Screen"), TEXT("Target_Screen"))))
 		return E_FAIL;
+	
 	/* MRT_GameObjects */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -173,13 +197,21 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_ORM"))))
+		return E_FAIL;
+
 	/* MRT_LightAcc */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
+
 	/* MRT_Shadow */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+		return E_FAIL;
+
+	/* MRT_ToneMapping */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_ToneMapping"), TEXT("Target_ToneMapping"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -228,7 +260,7 @@ void CRenderer::Render()
 	Render_Blur();
 	Render_Glow();
 	Render_Distortion();
-	Render_Bloom();
+	Render_Fog();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
 	Render_Deferred();
 	Render_BackBuffer();
@@ -331,6 +363,12 @@ void CRenderer::Render_LightAcc()
 		return;
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
+		return;
+
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ORM"), m_pShader, "g_ORMTexture")))
+		return;
+
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return;
 
 	m_pVIBuffer->Bind_Resources();
@@ -440,6 +478,11 @@ void CRenderer::Render_Bloom()
 	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"));
 }
 
+void CRenderer::Render_Fog()
+{
+	HRESULT hr = m_pFog->Render(m_pVIBuffer);
+}
+
 void CRenderer::Render_Deferred()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
@@ -459,8 +502,37 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
-	if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
+	//fog 바인딩.
+	_float4 vFogColor = m_pFog->Get_FogColor();
+	if (FAILED(m_pShader->Bind_RawValue("g_vFogColor", &vFogColor, sizeof(_float4))))
 		return;
+	if (FAILED(m_pFog->Bind_RenderTarget(m_pShader, "g_FogTexture")))
+		return;
+
+	// 블룸은 객체들 다 찍고 적용해야함.
+	//Render_Bloom();
+	//if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
+	//	return;
+
+	//	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
+	///* 방사형 블러 내일 분리할 것..*/
+	//	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+	//		return;
+	//
+	//	Bind_WVP_Matrices();
+	//
+	//	if (true == m_isScreenRadialBlur)
+	//	{
+	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCREEN_RADIAL_BLUR));
+	//		m_pVIBuffer->Bind_Resources();
+	//		m_pVIBuffer->Render();
+	//	}
+	//	else if (false == m_isScreenRadialBlur)
+	//	{
+	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+	//		m_pVIBuffer->Bind_Resources();
+	//		m_pVIBuffer->Render();
+	//	}
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
@@ -472,24 +544,35 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_BackBuffer()
 {
-	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_ToneMapping"))))
 		return;
 
 	Bind_WVP_Matrices();
 
-	if (true == m_isScreenRadialBlur)
-	{
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCREEN_RADIAL_BLUR));
-		m_pVIBuffer->Bind_Resources();
-		m_pVIBuffer->Render();
-	}
-	else if (false == m_isScreenRadialBlur)
-	{
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-		m_pVIBuffer->Bind_Resources();
-		m_pVIBuffer->Render();
-	}
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::TONE_MAPPING));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	//============================================================================
+		//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+		//	return;
+
+		//m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+		//m_pVIBuffer->Bind_Resources();
+		//m_pVIBuffer->Render();
 }
 
 void CRenderer::Render_UI()
@@ -519,10 +602,10 @@ void CRenderer::Render_Debug()
 		return;
 
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
-	//	return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+	//	return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
@@ -534,6 +617,8 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	if (FAILED(m_pBloom->Render_Debug(m_pVIBuffer, m_pShader)))
+		return;
+	if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 }
 
@@ -628,6 +713,7 @@ void CRenderer::Free()
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pBloom);
+	Safe_Release(m_pFog);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

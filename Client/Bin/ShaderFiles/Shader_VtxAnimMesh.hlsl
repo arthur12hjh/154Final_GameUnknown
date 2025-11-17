@@ -5,6 +5,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_EmissiveTexture;
+Texture2D g_ORMTexture;
 
 vector g_vCamPosition;
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
@@ -117,6 +118,7 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
 };
 
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
@@ -132,7 +134,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse += Out.vDiffuse * g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     return Out;
 }
 
