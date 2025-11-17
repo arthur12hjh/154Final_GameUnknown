@@ -24,23 +24,42 @@ HRESULT CBlur::Initialize()
 		return E_FAIL;
 
 	/* Target_Blur. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_X. X에 대해서 우선 블러처리. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+		return E_FAIL;
+
+	/* Target_Blur. */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+		return E_FAIL;
+	/* Target_Blur_X. X에 대해서 우선 블러처리. */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+		return E_FAIL;
+	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
 	/* MRT_Blur */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
 		return E_FAIL;
+	/* MRT_Blur */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur_Weight"))))
+		return E_FAIL;
 	/* MRT_Blur_X */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur_X"), TEXT("Target_Blur_X"))))
 		return E_FAIL;
+	/* MRT_Blur_X */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur_X"), TEXT("Target_Blur_X_Weight"))))
+		return E_FAIL;
 	/* MRT_Blur_Final */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur_Final"), TEXT("Target_Blur_Final"))))
+		return E_FAIL;
+	/* MRT_Blur_Final */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Blur_Final"), TEXT("Target_Blur_Final_Weight"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -87,6 +106,8 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Weight"), m_pShader, "g_WeightTexture")))
+		return E_FAIL;
 
 	m_pShader->Begin(0);
 	pVIBuffer->Bind_Resources();
@@ -99,7 +120,9 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurXTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X_Weight"), m_pShader, "g_WeightTexture")))
 		return E_FAIL;
 
 	m_pShader->Begin(1);
@@ -111,14 +134,22 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
+	m_bisWeight = false;
 	return S_OK;
 }
 
 HRESULT CBlur::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final"), pShader, pConstantName)))
-		return E_FAIL;
-
+	if (m_bisWeight) {
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final_Weight"), pShader, pConstantName)))
+			return E_FAIL;
+		m_bisWeight = false;
+	}
+	else {
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final"), pShader, pConstantName)))
+			return E_FAIL;
+		m_bisWeight = true;
+	}
 	return S_OK;
 }
 

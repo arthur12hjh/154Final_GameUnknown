@@ -30,11 +30,11 @@ public:
 		return &m_WorldMatrix;
 	}
 
-	void Set_State(STATE eState, _vector vState);
+	void			Set_State(STATE eState, _vector vState);
 
-	void Set_Scale(_vector vScale);
-	void Set_Rotation(_vector vRotation);
-	void Set_Scale(_float fX, _float fY, _float fZ);
+	void			Set_Scale(_vector vScale);
+	void			Set_Rotation(_vector vRotation);
+	void			Set_Scale(_float fX, _float fY, _float fZ);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

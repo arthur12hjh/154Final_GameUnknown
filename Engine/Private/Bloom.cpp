@@ -26,7 +26,7 @@ HRESULT CBloom::Initialize()
     return S_OK;
 }
 
-HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRenderTargetTag)
+HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRenderTargetTag, const _wstring& strCombineRTTag)
 {
     /* 과정 1. 전체 다운 샘플링 수행먼저해주고..*/
     /* 과정 2. 업 샘플링 할떄마다 블러처리 해서 누적 가산한 뒤 처리*/
@@ -114,7 +114,7 @@ HRESULT CBloom::Ready_RenderTargets()
             
             // 다운 샘플
             /* Target_BloomDownSample4x4. */
-            if (FAILED(m_pGameInstance->Add_RenderTarget(strRenderTargetTag, m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+            if (FAILED(m_pGameInstance->Add_RenderTarget(strRenderTargetTag, m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
                 return E_FAIL;
             if (FAILED(m_pGameInstance->Add_MRT(strMRTTag, strRenderTargetTag)))
                 return E_FAIL;
@@ -123,7 +123,7 @@ HRESULT CBloom::Ready_RenderTargets()
 
     // 최종 렌더타겟. 
     /* Target_Bloom_Final */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom_Final"), m_vOriginScreenSize.x, m_vOriginScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom_Final"), m_vOriginScreenSize.x, m_vOriginScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Bloom_Final"), TEXT("Target_Bloom_Final"))))
         return E_FAIL;
@@ -308,8 +308,8 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         _wstring strBlurYRenderTargetTag = m_strRenderTargetTags[6] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomUpSample_BlurY
         _wstring strBlurYMRTTag = m_strRenderTargetTags[7] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // MRT_BloomUpSample_BlurY
 
-        // 이 레벨에 해당하는 '다운샘플링 원본' 텍스처를 가져옵니다.
-        // Additive Blend 시 이 텍스처를 g_SourTexture에 바인딩할 것입니다.
+        // 이 레벨에 해당하는 다운샘플링 원본 텍스처 가져옴.
+        // Additive Blend 시 이 텍스처를 g_SourTexture에 바인딩.
         _wstring strCurrentDownSampleOriginalTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomDownSample
 
         /* 업 샘플링 수행 (이전 레벨의 블러 결과를 현재 레벨 크기로 단순히 업샘플링) */
@@ -320,10 +320,6 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
         m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
         m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-        /* 이전 블러 결과 (m_strPreRenderTargetTag)를 g_SceneTexture에 바인딩하여 현재 레벨 크기로 업샘플링 */
-        if (FAILED(m_pGameInstance->Bind_RenderTarget(m_strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
-            return E_FAIL;
 
         m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
 
@@ -347,13 +343,13 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
             return E_FAIL;
 
-        // g_SceneTexture: 이전 단계 (단순 업샘플링)에서 현재 레벨 크기로 조정된 텍스처
-        if (FAILED(m_pGameInstance->Bind_RenderTarget(strRenderTargetTag, m_pShader, "g_SceneTexture")))
-            return E_FAIL;
-
         if (FAILED(m_pGameInstance->Bind_RenderTarget(strCurrentDownSampleOriginalTag, m_pShader, "g_SourTexture")))
             return E_FAIL;
     
+        /* 이전 블러 결과 (m_strPreRenderTargetTag)를 g_SceneTexture에 바인딩하여 현재 레벨 크기로 업샘플링 */
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(m_strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
+            return E_FAIL;
+
         m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::ADDITIVE_BLUR_X));
         pVIBuffer->Bind_Resources();
         pVIBuffer->Render();

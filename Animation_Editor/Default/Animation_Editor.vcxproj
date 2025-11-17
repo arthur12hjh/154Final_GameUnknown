@@ -151,6 +151,7 @@
     <ClInclude Include="..\Public\Camera_AnimationEditor.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Character_Manager.h" />
+    <ClInclude Include="..\Public\Data_Manager.h" />
     <ClInclude Include="..\Public\Dororong.h" />
     <ClInclude Include="..\Public\Face_Character.h" />
     <ClInclude Include="..\Public\Gigas.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="..\Private\Camera_AnimationEditor.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\Character_Manager.cpp" />
+    <ClCompile Include="..\Private\Data_Manager.cpp" />
     <ClCompile Include="..\Private\Dororong.cpp" />
     <ClCompile Include="..\Private\Face_Character.cpp" />
     <ClCompile Include="..\Private\Gigas.cpp" />

@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 
 class CCamera;
 class CInteraction_Component;
+class CCinemaTrack;
 
 class ENGINE_DLL CGameInstance final : public CBase
 {
@@ -42,7 +43,8 @@ public:
 	LONG		GetMouseAxis(_uint iAxis);
 
 	// 인풋 포커스 세팅
-	void		SetInputFoucs(_bool bFlag);
+	void		SetInputFoucs(KEY_INPUT eType, _bool bFlag);
+	_bool		GetInputFoucs(KEY_INPUT eType);
 #pragma endregion
 
 #pragma region TIMER_MANAGER
@@ -132,10 +134,11 @@ public:
 	HRESULT						End_MRT();
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
 	HRESULT						Bind_RenderTarget(const _wstring& strTargetTag, class CShader* pShader, const _char* pConstantName);
-
+	HRESULT						Clear_MRT(const _wstring& strMRTag);
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
+
 #endif
 
 #pragma endregion
@@ -266,6 +269,19 @@ public:
 	vector<CInteraction_Component*>*	GetAllInteraction();
 #pragma endregion 
 
+#pragma region Cinema Manager
+	HRESULT												ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaTrack* pData);
+
+	const CCinemaTrack*									GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag);
+	const unordered_map<_wstring, CCinemaTrack*>*		GetCinemaSceneAllDatas(const WCHAR* szSceneTag);
+	const unordered_map<_wstring, class CCutScene*>*	GetCinemaAllScenes();
+
+	HRESULT												SaveCinemaSceneData(const WCHAR* szFilePath);
+	HRESULT												LoadCinemaSceneData(const WCHAR* szFilePath);
+
+#pragma endregion
+
+
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
 
@@ -310,7 +326,7 @@ private:
 	class CBinParser*				m_pBinParser = { nullptr };
 	class CFbxParser*				m_pFbxParser = { nullptr };
 	class CInteraction_Manager*		m_pInteract_Manager = { nullptr };
-
+	class CCinematicManager*		m_pCinema_Manager = { nullptr };
 
 	_bool							m_bIsPause = false;
 	_float							m_fTimeRatio = { 1.f };
