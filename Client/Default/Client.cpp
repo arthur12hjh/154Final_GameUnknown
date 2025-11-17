@@ -19,6 +19,7 @@ bool				g_bIsMouseLock;
 
 unsigned int		g_iHalfWinSizeX;
 unsigned int		g_iHalfWinSizeY;
+bool				g_bIsImgKeyBoardFoucs;
 float 			    g_fTimeRatio;
 
 WCHAR               szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
@@ -93,7 +94,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
        
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-        pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
+        if (GetForegroundWindow() == g_hWnd)
+        {
+            if (g_bIsImgKeyBoardFoucs)
+                pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, false);
+            else
+                pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, true);
+            pGameInstance->SetInputFoucs(KEY_INPUT::MOUSE, true);
+        }
+        else
+        {
+            pGameInstance->SetInputFoucs(KEY_INPUT::KEYBOARD, false);
+            pGameInstance->SetInputFoucs(KEY_INPUT::MOUSE, false);
+        }
 
         if (fTimeAcc >= 1.f / g_fGameFrame)
         {

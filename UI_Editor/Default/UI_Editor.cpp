@@ -13,6 +13,8 @@
 // 전역 변수:
 HINSTANCE g_hInstance;                                // 현재 인스턴스입니다.
 HWND g_hWnd;
+float		        g_fGameFrame;
+
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
@@ -57,9 +59,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
+    g_fGameFrame = 60.f;
     if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
         return E_FAIL;
-    if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_60"))))
+
+    if (FAILED(pGameInstance->Add_Timer(TEXT("GameLoopTime"))))
         return E_FAIL;
 
     _float      fTimeAcc = { };
@@ -77,15 +81,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             }
         }
 
+        //pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
+
+        //fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+
+        //if (/*fTimeAcc >= 1.f / 60.f*/1)
+        //{
+        //    pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));
+
+        //    pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+        //    pMainApp->Render();
+
+        //    fTimeAcc = 0.f;
+        //}
+
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
-
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+        pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
 
-        if (/*fTimeAcc >= 1.f / 60.f*/1)
+        if (fTimeAcc >= 1.f / g_fGameFrame)
         {
-            pGameInstance->Compute_TimeDelta(TEXT("Timer_60"));
+            pGameInstance->Compute_TimeDelta(TEXT("GameLoopTime"));
 
-            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
             pMainApp->Render();
 
             fTimeAcc = 0.f;

@@ -7,7 +7,7 @@
 #include "UIText.h"
 
 #include "GameInstance.h"
-#include "GameManager.h"
+#include "UIResourceStore.h"
 
 CUI_Loader::CUI_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -43,9 +43,9 @@ HRESULT CUI_Loader::Initialize(LEVEL eNextLevelID)
 	if (0 == m_hThread)
 		return E_FAIL;
 
-	m_pGameManager = Client::CGameManager::GetInstance();
+	m_pUIResourceStore = CUIResourceStore::GetInstance();
 
-	if (!m_pGameManager)
+	if (!m_pUIResourceStore)
 		return E_FAIL;
 
 	return S_OK;
@@ -130,7 +130,7 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
 		return E_FAIL;
 
-	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Default */
@@ -138,7 +138,7 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
 		return E_FAIL;
 
-	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");

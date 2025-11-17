@@ -179,11 +179,13 @@ popd</Command>
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\CinemaTrack.h" />
     <ClInclude Include="..\public\CameraManager.h" />
     <ClInclude Include="..\Public\CCTHitReporter.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\Channel.h" />
     <ClInclude Include="..\Public\CharacterController.h" />
+    <ClInclude Include="..\public\CinematicManager.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionManager.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -191,6 +193,7 @@ popd</Command>
     <ClInclude Include="..\public\ContainerObject.h" />
     <ClInclude Include="..\Public\CCTBehaviorCallback.h" />
     <ClInclude Include="..\public\CustomFont.h" />
+    <ClInclude Include="..\public\CutScene.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\ColliderRenderer.h" />
     <ClInclude Include="..\public\Decorator.h" />
@@ -287,11 +290,13 @@ popd</Command>
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\CinemaTrack.cpp" />
     <ClCompile Include="..\private\CameraManager.cpp" />
     <ClCompile Include="..\Private\CCTHitReporter.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\Private\CharacterController.cpp" />
+    <ClCompile Include="..\private\CinematicManager.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionManager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
@@ -299,6 +304,7 @@ popd</Command>
     <ClCompile Include="..\private\ContainerObject.cpp" />
     <ClCompile Include="..\Private\CCTBehaviorCallback.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
+    <ClCompile Include="..\private\CutScene.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\ColliderRenderer.cpp" />
     <ClCompile Include="..\private\Decorator.cpp" />

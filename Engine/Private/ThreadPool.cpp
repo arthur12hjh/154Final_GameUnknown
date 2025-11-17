@@ -131,7 +131,7 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 	auto& Desc = m_DefferdContexts[ThreadID];
 
 	ID3D11CommandList* pCommandList = nullptr;
-	Desc.pContext->FinishCommandList(TRUE, &pCommandList);
+	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
 
 	unique_lock<mutex> lock(m_QueueLock);

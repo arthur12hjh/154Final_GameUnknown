@@ -45,8 +45,8 @@
     <Filter Include="999. CPP From Client\00. UIObjects">
       <UniqueIdentifier>{9326214e-d79f-491f-878d-ddbe7ea10857}</UniqueIdentifier>
     </Filter>
-    <Filter Include="999. CPP From Client\01. GameManager">
-      <UniqueIdentifier>{83d451ad-a043-4011-a1b8-4d6f42b9af7e}</UniqueIdentifier>
+    <Filter Include="02. UIResourceStore">
+      <UniqueIdentifier>{422b7335-8534-4e60-925b-d6bd8202b511}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,9 @@
     <ClInclude Include="..\Public\UI_Loader.h">
       <Filter>01.Level\Loading\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIResourceStore.h">
+      <Filter>02. UIResourceStore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UI_Editor.cpp">
@@ -172,14 +175,14 @@
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\GameManager.cpp">
-      <Filter>999. CPP From Client\01. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIResourceStore.cpp">
-      <Filter>999. CPP From Client\01. GameManager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIText.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIAnimationCom.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIResourceStore.cpp">
+      <Filter>02. UIResourceStore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

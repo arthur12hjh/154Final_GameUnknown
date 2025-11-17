@@ -34,21 +34,6 @@ void CVil_Bui03_04::Priority_Update(_float fTimeDelta)
 
 void CVil_Bui03_04::Update(_float fTimeDelta)
 {
-	_vector vPosition = m_pTransformCom->Get_State(STATE::POSITION);
-
-	// 2. _vector를 _float3 (x, y, z) 구조체로 저장합니다.
-	_float3 vPosFloat3;
-	XMStoreFloat3(&vPosFloat3, vPosition);
-
-	// 3. swprintf_s를 사용하여 문자열을 포맷팅합니다.
-	wchar_t szBuffer[256];
-	swprintf_s(szBuffer, 256, L"Position: (%.2f, %.2f, %.2f)\n",
-		vPosFloat3.x,
-		vPosFloat3.y,
-		vPosFloat3.z);
-
-	// 4. 디버그 창에 출력합니다.
-	OutputDebugStringW(szBuffer);
 }
 
 void CVil_Bui03_04::Late_Update(_float fTimeDelta)

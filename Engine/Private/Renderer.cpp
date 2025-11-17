@@ -43,24 +43,30 @@ HRESULT CRenderer::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 
 HRESULT CRenderer::Initialize()
 {
+	/* ½ºÅ©¸° »çÀÌÁî ¼¼ÆÃ */
 	m_vScreenSize = m_pGameInstance->GetScreenSize();
+	/* ¼¨µµ¿ì ¸Ê »çÀÌÁî ¼¼ÆÃ */
 	m_vShadowMapSize = _uint2{ 8192, 4608 };
 
-	if (FAILED(Ready_RenderTargets())) {
+	/* ·»´õÅ¸°Ù ¼¼ÆÃ */
+	if (FAILED(Ready_RenderTargets()))
 		return E_FAIL;
-	}
 
+	/* ¼¼ÆÃÇÑ ·»´õÅ¸°Ù MRT¿¡ µî·Ï*/
 	if (FAILED(Ready_MRTs()))
 		return E_FAIL;
 
+	/* µðÆÛµå ¼ÎÀÌ´õ ÆÄÀÏ ·Îµù */
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	/* Á÷±³¿ë ·ºÆ® ÇÏ³ª »ý¼º. */
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 
+	/* Á÷±³¿ë ¿ùµå ºä Åõ¿µ ¼¼ÆÃ */
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 1.f));
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 0.f, 1.f));
@@ -85,12 +91,14 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pFog)
 		return E_FAIL;
 
+	/* ½ºÅ©¸° »çÀÌÁî´Â ¹Ì¸® ¹ÙÀÎµù ÇÑ´Ù. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &m_vScreenSize.y, sizeof(_int))))
 		return E_FAIL;
 
+	/* µð¹ö±× ·»´õ¸µ ÁØºñ */
 #ifdef _DEBUG
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Scene"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
@@ -114,10 +122,10 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Ready_Debug(m_vScreenSize.x - 150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
-	//if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
-	//	return E_FAIL;
-	if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
+	if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
 		return E_FAIL;
+	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
+	//	return E_FAIL;
 
 	m_pColliderRenderer = CColliderRenderer::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pColliderRenderer)
@@ -129,6 +137,7 @@ HRESULT CRenderer::Initialize()
 
 HRESULT CRenderer::Ready_RenderTargets()
 {
+	/* ÈÄÃ³¸® ½¦ÀÌµùÀ» À§ÇÑ ·»´õÅ¸°ÙµéÀ» ÁØºñ. */
 	/* Target_Scene */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
@@ -238,6 +247,8 @@ void CRenderer::Render()
 		m_isScreenRadialBlur = !m_isScreenRadialBlur;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F5))
 		m_isBloom = !m_isBloom;
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
+		m_isFog = !m_isFog;
 
 	Render_Priority();
 	Render_Shadow();
@@ -247,13 +258,17 @@ void CRenderer::Render()
 	Render_NonLight();
 	Render_Blend();
 
+	//ÈÄÃ³¸® ¸¶¹«¸® ÇØ.
 	Render_Blur();
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
+	Render_Bloom();
+	//·»´õ Å¸°Ù ³»¿ëÀ» ¹é¹öÆÛ·Î ¹ñ¾î³».
 	Render_Deferred();
-	Render_BackBuffer();
+	Render_ScreenDeferred();
 
+	Render_BackBuffer();
 	Render_UI();
 
 #ifdef _DEBUG
@@ -464,7 +479,7 @@ void CRenderer::Render_Distortion()
 
 void CRenderer::Render_Bloom()
 {
-	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"));
+	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"), TEXT("MRT_Scene"));
 }
 
 void CRenderer::Render_Fog()
@@ -485,49 +500,27 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
 
-	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
-		return;
-
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
-		return;
-
-	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
-	//fog ï¿½ï¿½ï¿½Îµï¿½.
+	if (false == m_isBloom)
+		m_pGameInstance->Clear_MRT(TEXT("MRT_Bloom_Final"));
+
+	if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
+		return;
+
+	//fog ¹ÙÀÎµù.
+	if (false == m_isFog)
+		m_pGameInstance->Clear_MRT(TEXT("MRT_Fog"));
+
 	_float4 vFogColor = m_pFog->Get_FogColor();
 	if (FAILED(m_pShader->Bind_RawValue("g_vFogColor", &vFogColor, sizeof(_float4))))
 		return;
 	if (FAILED(m_pFog->Bind_RenderTarget(m_pShader, "g_FogTexture")))
 		return;
-
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½.
-	//Render_Bloom();
-	//if (FAILED(m_pBloom->Bind_RenderTarget(m_pShader, "g_BloomTexture")))
-	//	return;
-
-	//	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Target_Screenï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Û·ï¿½ ï¿½ï¿½ï¿½Îµï¿½ + ï¿½ï¿½Å©ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
-	///* ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½ï¿½ï¿½ ï¿½ï¿½..*/
-	//	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
-	//		return;
-	//
-	//	Bind_WVP_Matrices();
-	//
-	//	if (true == m_isScreenRadialBlur)
-	//	{
-	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::SCREEN_RADIAL_BLUR));
-	//		m_pVIBuffer->Bind_Resources();
-	//		m_pVIBuffer->Render();
-	//	}
-	//	else if (false == m_isScreenRadialBlur)
-	//	{
-	//		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-	//		m_pVIBuffer->Bind_Resources();
-	//		m_pVIBuffer->Render();
-	//	}
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
@@ -535,6 +528,10 @@ void CRenderer::Render_Deferred()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+}
+
+void CRenderer::Render_ScreenDeferred()
+{
 }
 
 void CRenderer::Render_BackBuffer()
@@ -557,17 +554,25 @@ void CRenderer::Render_BackBuffer()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
 		return;
 
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-	m_pVIBuffer->Bind_Resources();
-	m_pVIBuffer->Render();
+	/* ÃÖÁ¾ÀûÀ¸·Î Target_ScreenÀ» ¹é¹öÆÛ·Î ¹ÙÀÎµù + ½ºÅ©¸° È¿°ú±îÁö Àû¿ë. */
+	/* ¹æ»çÇü ºí·¯ ³»ÀÏ ºÐ¸®ÇÒ °Í..*/
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		return;
 
-	//============================================================================
-		//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
-		//	return;
+	Bind_WVP_Matrices();
 
-		//m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-		//m_pVIBuffer->Bind_Resources();
-		//m_pVIBuffer->Render();
+	if (true == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::RADIAL_BLUR));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
+	else if (false == m_isScreenRadialBlur)
+	{
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+		m_pVIBuffer->Bind_Resources();
+		m_pVIBuffer->Render();
+	}
 }
 
 void CRenderer::Render_UI()
@@ -596,10 +601,11 @@ void CRenderer::Render_Debug()
 	if (false == m_isDebugVisible)
 		return;
 
+	/* MRT¿¡ Æ÷ÇÔµÈ ·»´õÅ¸°ÙµéÀ» µð¹ö±×·Î Á÷±³Åõ¿µÀ» ÅëÇØ ±×·Á¶ó. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
-	//	return;
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
@@ -637,8 +643,8 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
-	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. */
-	/* ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
+	/* ±íÀÌ ¹öÆÛÀÇ ÇÈ¼¿Àº ¹é¹öÆÛÀÇ ÇÈ¼¿°ú °¹¼ö°¡ µ¿ÀÏÇØ¾ß¸¸ ±íÀÌ ÅØ½ºÆ®°¡ °¡´ÉÇØÁø´Ù. */
+	/* ÇÈ¼¿ÀÇ ¼ö°¡ ´Ù¸£¸é ¾Æ¿¡ ·»´õ¸µÀ» ¸øÇÔ. */
 	TextureDesc.Width = iSizeX;
 	TextureDesc.Height = iSizeY;
 	TextureDesc.MipLevels = 1;
@@ -646,8 +652,8 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
-	TextureDesc.Usage = D3D11_USAGE_DEFAULT /* ï¿½ï¿½ï¿½ï¿½ */;
-	/* ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½î¶² ï¿½ëµµï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ViewÅ¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Texture2Dï¿½Ô´Ï±ï¿½? */
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT /* Á¤Àû */;
+	/* ÃßÈÄ¿¡ ¾î¶² ¿ëµµ·Î ¹ÙÀÎµù µÉ ¼ö ÀÖ´Â ViewÅ¸ÀÔÀÇ ÅØ½ºÃÄ¸¦ ¸¸µé±âÀ§ÇÑ Texture2DÀÔ´Ï±î? */
 	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/
 	TextureDesc.CPUAccessFlags = 0;

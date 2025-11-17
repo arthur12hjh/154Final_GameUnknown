@@ -222,10 +222,10 @@
     <ClInclude Include="..\Public\Task_Wait.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Terrain_Sand.h" />
+    <ClInclude Include="..\Public\UIAnimationCom.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
-    <ClInclude Include="..\Public\UIResourceStore.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
     <ClInclude Include="..\public\Vil_Bui03_04.h" />
@@ -320,10 +320,10 @@
     <ClCompile Include="..\Private\Task_Wait.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Terrain_Sand.cpp" />
+    <ClCompile Include="..\Private\UIAnimationCom.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
-    <ClCompile Include="..\Private\UIResourceStore.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\private\Vil_Bui03_04.cpp" />

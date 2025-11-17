@@ -253,6 +253,13 @@ namespace Engine
 		float			fTrackPosition;
 	}KEYFRAME;
 
+	typedef struct tagCameraKeyFrame : public KEYFRAME
+	{
+		float			fFov;
+		float			fNear;
+		float			fFar;
+	}CAMERA_KEYFRAME;
+
 #pragma region MODEL_IMPORT
 
 	typedef struct binFace

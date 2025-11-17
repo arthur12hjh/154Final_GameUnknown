@@ -16,7 +16,7 @@ HRESULT CFog::Initialize()
 
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* Target_Fog. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Fog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Fog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
 		return E_FAIL;
 	/* MRT_Fog */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))

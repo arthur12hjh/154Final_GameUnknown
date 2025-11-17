@@ -2,7 +2,6 @@
 
 #include "Client_Defines.h"
 #include "GameHUD.h"
-#include "UIBase.h"
 
 NS_BEGIN(Engine)
 class CHUDLayer;
@@ -10,6 +9,8 @@ class CTexture;
 NS_END
 
 NS_BEGIN(Client)
+
+class CUIBase;
 
 class CUIHUD final : public CGameHUD
 {
@@ -29,15 +30,29 @@ public:
 
 	_bool Get_Show_Debug_Rect() { return m_bShowDebugRect;}
 
+	HRESULT Export_Anim_Prefab(_wstring szAnimTag, void* pDesc);
+	HRESULT Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut);
+
+	HRESULT Load_Anim_Files();
+	vector<_wstring> Get_AnimDatas() { return m_AnimDatas; }
+
+	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_All_Stop();
+
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);
 
 private:
+	// 한글 때문에 만듦
 	string WStringToUTF8(const _wstring& wstr);
 	_wstring UTF8ToWString(const string& str);
 
 	_bool m_bShowDebugRect{ true };
+
+	vector<_wstring> m_AnimDatas{};
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
