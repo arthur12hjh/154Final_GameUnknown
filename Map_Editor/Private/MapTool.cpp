@@ -77,6 +77,7 @@ void CMapTool::Update(_float fTimeDelta)
 				return;
 
 			_float3 vPickedPoint = {};
+			_float fHeight = m_fHeight;
 			if (true == m_pGameInstance->isPicking(&vPickedPoint))
 			{
 				_vector vPickPoint = XMVectorSet(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
@@ -88,10 +89,117 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_Player"); layerTag = TEXT("Layer_Player");
 				}
-
 				else if (m_eCurrentObject == ADD_OBJECT::VIL_BUI03_04)
 				{
 					protoTag = TEXT("Prototype_GameObject_Vil_Bui03_04"); layerTag = TEXT("Layer_Vil_Bui03_04");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::INSCRIPTION_L)
+				{
+					protoTag = TEXT("Prototype_GameObject_Inscription_L"); layerTag = TEXT("Layer_Inscription_L");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::INSCRIPTION_R)
+				{
+					protoTag = TEXT("Prototype_GameObject_Inscription_R"); layerTag = TEXT("Layer_Inscription_R");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TOMBSTONE)
+				{
+					protoTag = TEXT("Prototype_GameObject_TombStone"); layerTag = TEXT("Layer_TombStone");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TOMBSTONEBASE1)
+				{
+					protoTag = TEXT("Prototype_GameObject_TombStoneBase1"); layerTag = TEXT("Layer_TombStoneBase1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TOMBSTONEBASE2)
+				{
+					protoTag = TEXT("Prototype_GameObject_TombStoneBase2"); layerTag = TEXT("Layer_TombStoneBase2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONEWALL1)
+				{
+					protoTag = TEXT("Prototype_GameObject_StoneWall1"); layerTag = TEXT("Layer_StoneWall1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONEWALL2)
+				{
+					protoTag = TEXT("Prototype_GameObject_StoneWall2"); layerTag = TEXT("Layer_StoneWall2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONE1)
+				{
+					protoTag = TEXT("Prototype_GameObject_Stone1"); layerTag = TEXT("Layer_Stone1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONE2)
+				{
+					protoTag = TEXT("Prototype_GameObject_Stone2"); layerTag = TEXT("Layer_Stone2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONE3)
+				{
+					protoTag = TEXT("Prototype_GameObject_Stone3"); layerTag = TEXT("Layer_Stone3");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONE4)
+				{
+					protoTag = TEXT("Prototype_GameObject_Stone4"); layerTag = TEXT("Layer_Stone4");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STAIR)
+				{
+					protoTag = TEXT("Prototype_GameObject_Stair"); layerTag = TEXT("Layer_Stair");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::BAMBOO)
+				{
+					protoTag = TEXT("Prototype_GameObject_Bamboo"); layerTag = TEXT("Layer_Bamboo");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::REED)
+				{
+					protoTag = TEXT("Prototype_GameObject_Reed"); layerTag = TEXT("Layer_Reed");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK1)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock1"); layerTag = TEXT("Layer_Rock1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK2)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock2"); layerTag = TEXT("Layer_Rock2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK3)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock3"); layerTag = TEXT("Layer_Rock3");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK4)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock4"); layerTag = TEXT("Layer_Rock4");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK5)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock5"); layerTag = TEXT("Layer_Rock5");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK6)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock6"); layerTag = TEXT("Layer_Rock6");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK7)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock7"); layerTag = TEXT("Layer_Rock7");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::ROCK8)
+				{
+					protoTag = TEXT("Prototype_GameObject_Rock8"); layerTag = TEXT("Layer_Rock8");
+				}
+				
+				
+				if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DECREASE_RECT)
+				{
+					if (fHeight > 0)
+						fHeight *= -1.f;
+
+					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_INCREASE_RECT)
+				{
+					if (fHeight < 0)
+						fHeight;
+
+					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_FLAT)
+				{
+					m_pTerrain->Change_Height_Flat(vPickPoint, fHeight, m_fRadius);
 				}
 
 				hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag, ENUM_CLASS(LEVEL::VILLAGE), layerTag, nullptr);
@@ -192,6 +300,39 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+	// 1. 하이트맵 높이 조절 메뉴
+	/*if (ImGui::Button("INCREASE_CIRCLE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_INCREASE_CIRCLE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("DECREASE_CIRCLE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_DECREASE_CIRCLE;
+	}*/
+	if (ImGui::Button("INCREASE_RECT"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_INCREASE_RECT;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("DECREASE_RECT"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_DECREASE_RECT;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Flatting"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_FLAT;
+	}
+
+	ImGui::InputFloat("Height", &m_fHeight, 0.1f, 100.f);
+	ImGui::InputFloat("Radius", &m_fRadius, 0.01f, 10.f);
+
+	ImGui::Text("Change Terrain Height.");
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
 
 	// 4. 네비게이션 편집 메뉴
 	ImGui::Text("Navigation Editor");
@@ -262,42 +403,184 @@ HRESULT CMapTool::Render()
 
 	ImGui::Text("Registered Models");
 
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
-	// 2. 모델 배치 / 삭제메뉴
-	_int nSelectedModel = -1;
-	_int nSelectedBuilding = -1;
-	_int nSelectedEnvironment = -1;
+	// ----------------------------------------------------
+	// 1. 메인 테마/레벨 선택 드롭다운 (콤보 박스 사용 권장)
+	// ----------------------------------------------------
+	ImGui::Text("Current Theme Selection");
+	const _char* themeNames[] = { "Tutorial", "Gorilla", "Scarlet" };
+	_int nSelectedTheme = (_int)m_eCurrentMap;
 
-	const _char* modelNames[] = { "Player" };
-	const _char* buildingNames[] = { "Vil_Bui03_04" };
-	const _char* environmentNames[] = { "BirchTree1" };
-
-	if (ImGui::CollapsingHeader("Models"))
+	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
 	{
-		if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
-		{
-			if (nSelectedModel == 0) // Player
-			{
-				m_eCurrentObject = ADD_OBJECT::PLAYER;
-				m_CurrentLayerName = TEXT("Layer_Player");
-			}
-
-		}
+		// 테마가 변경되면 현재 오브젝트 선택을 초기화할 수 있습니다.
+		m_eCurrentObject = ADD_OBJECT::END;
+		m_eCurrentMap = (MAP_THEME)nSelectedTheme;
 	}
 
-	if (ImGui::CollapsingHeader("Buildings"))
+	if (m_eCurrentMap == MAP_THEME::TUTORIAL)
 	{
-		if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(modelNames), 7))
-		{
-			if (nSelectedBuilding == 0) // Vil_Bui03_04
-			{
-				m_eCurrentObject = ADD_OBJECT::VIL_BUI03_04;
-				m_CurrentLayerName = TEXT("Layer_Vil_Bui03_04");
-			}
-
-		}
 	}
 
+	else if(m_eCurrentMap == MAP_THEME::SCARLET)
+	{
+
+		ImGui::Text("Scarlet Map Objects");
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
+		// 2. 모델 배치 / 삭제메뉴
+		_int nSelectedModel = -1;
+		_int nSelectedBuilding = -1;
+		_int nSelectedEnvironment = -1;
+
+		const _char* modelNames[] = { "Player" };
+		const _char* buildingNames[] = { "Vil_Bui03_04", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2", 
+										 "Stone1", "Stone2", "Stone3", "Stone4", "Tile", "Giwajip" };
+		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8", 
+											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4" };
+
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0) // Player
+				{
+					m_eCurrentObject = ADD_OBJECT::PLAYER;
+					m_CurrentLayerName = TEXT("Layer_Player");
+				}
+
+			}
+		}
+		if (ImGui::CollapsingHeader("Buildings"))
+		{
+			if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(buildingNames), 7))
+			{
+				if (nSelectedBuilding == 0) // Vil_Bui03_04
+				{
+					m_eCurrentObject = ADD_OBJECT::VIL_BUI03_04;
+					m_CurrentLayerName = TEXT("Layer_Vil_Bui03_04");
+				}
+				else if (nSelectedBuilding == 1)
+				{
+					m_eCurrentObject = ADD_OBJECT::INSCRIPTION_L;
+					m_CurrentLayerName = TEXT("Layer_Inscription_L");
+				}
+				else if (nSelectedBuilding == 2)
+				{
+					m_eCurrentObject = ADD_OBJECT::INSCRIPTION_R;
+					m_CurrentLayerName = TEXT("Layer_Inscription_R");
+				}
+				else if (nSelectedBuilding == 3)
+				{
+					m_eCurrentObject = ADD_OBJECT::TOMBSTONE;
+					m_CurrentLayerName = TEXT("Layer_TombStone");
+				}
+				else if (nSelectedBuilding == 4)
+				{
+					m_eCurrentObject = ADD_OBJECT::TOMBSTONEBASE1;
+					m_CurrentLayerName = TEXT("Layer_TombStoneBase1");
+				}
+				else if (nSelectedBuilding == 5)
+				{
+					m_eCurrentObject = ADD_OBJECT::TOMBSTONEBASE2;
+					m_CurrentLayerName = TEXT("Layer_TombStoneBase2");
+				}
+				else if (nSelectedBuilding == 6)
+				{
+					m_eCurrentObject = ADD_OBJECT::STAIR;
+					m_CurrentLayerName = TEXT("Layer_Stair");
+				}
+				else if (nSelectedBuilding == 7)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONEWALL1;
+					m_CurrentLayerName = TEXT("Layer_StoneWall1");
+				}
+				else if (nSelectedBuilding == 8)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONEWALL2;
+					m_CurrentLayerName = TEXT("Layer_StoneWall2");
+				}
+				else if (nSelectedBuilding == 9)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONE1;
+					m_CurrentLayerName = TEXT("Layer_Stone1");
+				}
+				else if (nSelectedBuilding == 10)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONE2;
+					m_CurrentLayerName = TEXT("Layer_Stone2");
+				}
+				else if (nSelectedBuilding == 11)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONE3;
+					m_CurrentLayerName = TEXT("Layer_Stone3");
+				}
+				else if (nSelectedBuilding == 12)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONE4;
+					m_CurrentLayerName = TEXT("Layer_Stone4");
+				}
+
+			}
+		}
+		if (ImGui::CollapsingHeader("Environments"))
+		{
+			if (ImGui::ListBox("##Environments", &nSelectedEnvironment, environmentNames, IM_ARRAYSIZE(environmentNames), 7))
+			{
+				if (nSelectedEnvironment == 0)
+				{
+					m_eCurrentObject = ADD_OBJECT::BAMBOO;
+					m_CurrentLayerName = TEXT("Layer_Bamboo");
+				}
+				else if (nSelectedEnvironment == 1)
+				{
+					m_eCurrentObject = ADD_OBJECT::REED;
+					m_CurrentLayerName = TEXT("Layer_Reed");
+				}
+				else if (nSelectedEnvironment == 2)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK1;
+					m_CurrentLayerName = TEXT("Layer_Rock1");
+				}
+				else if (nSelectedEnvironment == 3)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK2;
+					m_CurrentLayerName = TEXT("Layer_Rock2");
+				}
+				else if (nSelectedEnvironment == 4)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK3;
+					m_CurrentLayerName = TEXT("Layer_Rock3");
+				}
+				else if (nSelectedEnvironment == 5)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK4;
+					m_CurrentLayerName = TEXT("Layer_Rock4");
+				}
+				else if (nSelectedEnvironment == 6)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK5;
+					m_CurrentLayerName = TEXT("Layer_Rock5");
+				}
+				else if (nSelectedEnvironment == 7)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK6;
+					m_CurrentLayerName = TEXT("Layer_Rock6");
+				}
+				else if (nSelectedEnvironment == 8)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK7;
+					m_CurrentLayerName = TEXT("Layer_Rock7");
+				}
+				else if (nSelectedEnvironment == 9)
+				{
+					m_eCurrentObject = ADD_OBJECT::ROCK8;
+					m_CurrentLayerName = TEXT("Layer_Rock8");
+				}
+
+			}
+		}
+
+	}
+	
 	// 삭제 버튼
 	if (ImGui::Button("Delete All"))
 	{
@@ -482,6 +765,15 @@ HRESULT CMapTool::Render()
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
 	{
+		if (FAILED(Save_Terrain_HeightMap()))
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 성공.", L"알림", MB_OK);
+		}
+
 		// 맵 오브젝트 저장
 		if (FAILED(Save_Map_Objects()))
 		{
@@ -528,7 +820,7 @@ void CMapTool::Update_Rotation()
 HRESULT CMapTool::Save_Map_Objects()
 {
 	// 맵 데이터 파일 열기
-	std::ofstream ofs("C:/coding/jusin/MapData.bin", std::ios::binary);
+	std::ofstream ofs("../Bin/DataFiles/MapData.bin", std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
@@ -598,20 +890,17 @@ HRESULT CMapTool::Load_Map_Objects()
 					_vector vPosition = {};
 					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-					_float fX, fY, fZ;
-					fX = XMVectorGetX(vScale);
-					fY = XMVectorGetY(vScale);
-					fZ = XMVectorGetZ(vScale);
-
-					pTransform->Set_Scale(fX, fY, fZ);
-
-					pTransform->Set_State(STATE::POSITION, vPosition);
-
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
 					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
 
-					pTransform->Set_State(STATE::RIGHT, matRotation.r[0]);
-					pTransform->Set_State(STATE::UP, matRotation.r[1]);
-					pTransform->Set_State(STATE::LOOK, matRotation.r[2]);
+					// 순서: Scale * Rotation * Translation (SRT 순서)
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+					// 2. [바뀐 내용] CTransform의 월드 행렬 포인터를 얻어 직접 덮어씁니다.
+					//    (Get_WorldMatrixPtr()가 쓰기 가능한 포인터를 반환한다고 가정합니다.)
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
 
 				}
 			}
@@ -621,6 +910,84 @@ HRESULT CMapTool::Load_Map_Objects()
 	ifs.close();
 
 	return S_OK;
+}
+
+HRESULT CMapTool::Save_Terrain_HeightMap()
+{
+	const _tchar* pTerrainHeightMapPath = TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp");
+	if (!m_pTerrain)
+		return E_FAIL;
+
+	CVIBuffer_Terrain* pVIBuffer = dynamic_cast<CVIBuffer_Terrain*>(m_pTerrain->Find_Component(TEXT("Com_VIBuffer")));
+	if (!pVIBuffer)
+		return E_FAIL;
+
+	_float* pHeightData = pVIBuffer->Get_HeightData();
+	_uint iNumVerticesX = pVIBuffer->Get_NumVerticesX();
+	_uint iNumVerticesZ = pVIBuffer->Get_NumVerticesZ();
+
+	if (!pHeightData || iNumVerticesX == 0 || iNumVerticesZ == 0)
+	{
+		Safe_Delete_Array(pHeightData);
+		return E_FAIL;
+	}
+
+	_ulong iNumVertices = iNumVerticesX * iNumVerticesZ;
+
+	// 2. 비트맵 파일에 저장할 픽셀 데이터(RGB)를 생성
+	_uint* pPixels = new _uint[iNumVertices];
+	ZeroMemory(pPixels, sizeof(_uint) * iNumVertices);
+
+	for (_uint i = 0; i < iNumVerticesZ; ++i)
+	{
+		for (_uint j = 0; j < iNumVerticesX; ++j)
+		{
+			_uint iIndex = i * iNumVerticesX + j;
+
+			// 높이 값을 0-255 범위의 unsigned char로 변환
+			_float fHeightValue = pHeightData[iIndex] * 10.f;
+
+			// 정수형으로 변환 (0 ~ 255)
+			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+
+			// R, G, B 채널에 동일한 높이 값을 설정
+			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+		}
+	}
+
+	// 3. 비트맵 파일 헤더를 설정합니다.
+	BITMAPFILEHEADER fh{};
+	fh.bfType = 0x4D42;
+	fh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + (iNumVerticesX * iNumVerticesZ * 4);
+	fh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+	BITMAPINFOHEADER ih{};
+	ih.biSize = sizeof(BITMAPINFOHEADER);
+	ih.biWidth = iNumVerticesX;
+	ih.biHeight = iNumVerticesZ;
+	ih.biPlanes = 1;
+	ih.biBitCount = 32; // 32비트
+	ih.biCompression = BI_RGB; // 압축 없음
+	ih.biSizeImage = iNumVerticesX * iNumVerticesZ * 4;
+
+	HANDLE hFile = CreateFile(pTerrainHeightMapPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		Safe_Delete_Array(pPixels);
+		Safe_Delete_Array(pHeightData);
+		return E_FAIL;
+	}
+
+	DWORD dwBytesWritten = 0;
+	WriteFile(hFile, &fh, sizeof(BITMAPFILEHEADER), &dwBytesWritten, nullptr);
+	WriteFile(hFile, &ih, sizeof(BITMAPINFOHEADER), &dwBytesWritten, nullptr);
+	WriteFile(hFile, pPixels, ih.biSizeImage, &dwBytesWritten, nullptr);
+
+
+	CloseHandle(hFile);
+	Safe_Delete_Array(pPixels);
+	Safe_Delete_Array(pHeightData);
 }
 
 void CMapTool::Set_NaviEditMode(_bool bMode)
@@ -720,7 +1087,7 @@ HRESULT CMapTool::Save_NavigationData()
 		return S_OK;
 	}
 
-	std::ofstream ofs("C:/coding/jusin/Navigation2.bin", std::ios::binary);
+	std::ofstream ofs("../Bin/DataFiles/Navigation.bin", std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open Navigation", L"Error", MB_OK | MB_ICONERROR);
