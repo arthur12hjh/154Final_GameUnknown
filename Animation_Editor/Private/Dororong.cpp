@@ -6,12 +6,12 @@
 #include "GameInstance.h"
 
 CDororong::CDororong(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CContainerObject{ pDevice, pContext }
+	: CEntity{ pDevice, pContext }
 {
 }
 
 CDororong::CDororong(const CDororong& Prototype)
-	: CContainerObject{ Prototype }
+	: CEntity{ Prototype }
 {
 }
 

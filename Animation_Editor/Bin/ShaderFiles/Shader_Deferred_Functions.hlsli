@@ -71,6 +71,13 @@ inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, textur
     return vResult;
 }
 
+float4 Calc_Fog(vector vBackBuffer, texture2D FogTexture, vector vFogColor, float2 vTexCoord)
+{
+    float fFogPower = FogTexture.Sample(DefaultSampler, vTexCoord);
+    
+    return fFogPower * vBackBuffer + (1 - fFogPower) * vFogColor;
+}
+
 /* 블룸 커브 수식 3개. HALO 책에서 나왔다는데 일단 가져옴..*/
 float GetBloomCurve(float fIntensity)
 {
@@ -78,7 +85,7 @@ float GetBloomCurve(float fIntensity)
     fIntensity *= 2.0f;
 
     /* method 1 */
-    fResult = fIntensity * 0.05 + max(0, fIntensity - 0.4f) * 0.5; // default gThreshold = 1.26
+    fResult = fIntensity * 0.05 + max(0, fIntensity - 1.4f) * 0.5; // default gThreshold = 1.26
 
     /* method 2 */
     //result = x * x / 3.2;
@@ -88,4 +95,68 @@ float GetBloomCurve(float fIntensity)
     //fResult *= fResult;
 
     return fResult * 0.5f;
+}
+
+float3 Fresnel_Shlick(in float3 f0, in float3 f90, in float x)
+{
+    return f0 + (f90 - f0) * pow(1.f - x, 5.f);
+}
+
+float Diffuse_Burley(in float NdotL, in float NdotV, in float LdotH, in float roughness)
+{
+    float fd90 = 0.5f + 2.f * roughness * LdotH * LdotH;
+    return Fresnel_Shlick(1, fd90, NdotL).x * Fresnel_Shlick(1, fd90, NdotV).x;
+}
+
+float Specular_D_GGX(in float alpha, in float NdotH)
+{
+    const float alpha2 = alpha * alpha;
+    const float lower = (NdotH * NdotH * (alpha2 - 1)) + 1;
+    return alpha2 / max(1e-6f, 3.14f * lower * lower);
+}
+
+float G_Shlick_Smith_Hable(float alpha, float LdotH)
+{
+    return rcp(lerp(LdotH * LdotH, 1, alpha * alpha * 0.25f));
+}
+
+float3 Specular_BRDF(in float alpha, in float3 specularColor, in float NdotV, in float NdotL, in float LdotH, in float NdotH)
+{
+    float specular_D = Specular_D_GGX(alpha, NdotH);
+
+    float3 specular_F = Fresnel_Shlick(specularColor, 1, LdotH);
+
+    float specular_G = G_Shlick_Smith_Hable(alpha, LdotH);
+
+    return specular_D * specular_F * specular_G;
+}
+
+float3 LightSurface(
+    in float3 V, in float3 N, in float3 lightColor, in float3 lightDirection, in float3 albedo, in float roughness, in float metallic, in float ambientOcclusion)
+{
+    const float kSpecularCoefficient = 0.04;
+    const float NdotV = saturate(dot(N, V));
+    const float alpha = roughness * roughness;
+
+    const float3 c_diff = lerp(albedo, float3(0, 0, 0), metallic) * ambientOcclusion;
+    const float3 c_spec = lerp(kSpecularCoefficient, albedo, metallic) * ambientOcclusion;
+
+    float3 acc_color = 0;
+
+    const float3 L = normalize(-lightDirection);
+
+    const float3 H = normalize(L + V);
+
+    const float NdotL = saturate(dot(N, L));
+    const float LdotH = saturate(dot(L, H));
+    const float NdotH = saturate(dot(N, H));
+
+    float diffuse_factor = Diffuse_Burley(NdotL, NdotV, LdotH, roughness);
+    float3 specular = Specular_BRDF(alpha, c_spec, NdotV, NdotL, LdotH, NdotH);
+
+    acc_color += NdotL * lightColor * (((c_diff * diffuse_factor) + specular));
+    acc_color += c_diff * float3(0.5f, 0.5f, 0.5f);
+    acc_color += c_spec * float3(0.5f, 0.5f, 0.5f);
+
+    return acc_color;
 }
