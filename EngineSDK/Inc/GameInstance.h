@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 
 class CCamera;
 class CInteraction_Component;
-class CCinemaData;
+class CCinemaTrack;
 
 class ENGINE_DLL CGameInstance final : public CBase
 {
@@ -268,10 +268,10 @@ public:
 #pragma endregion 
 
 #pragma region Cinema Manager
-	HRESULT												ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaData* pData);
+	HRESULT												ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaTrack* pData);
 
-	const CCinemaData*									GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag);
-	const unordered_map<_wstring, CCinemaData*>*		GetCinemaSceneAllDatas(const WCHAR* szSceneTag);
+	const CCinemaTrack*									GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag);
+	const unordered_map<_wstring, CCinemaTrack*>*		GetCinemaSceneAllDatas(const WCHAR* szSceneTag);
 	const unordered_map<_wstring, class CCutScene*>*	GetCinemaAllScenes();
 
 	HRESULT												SaveCinemaSceneData(const WCHAR* szFilePath);

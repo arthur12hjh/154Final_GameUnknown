@@ -4,7 +4,7 @@
 #include "Camera.h"
 
 NS_BEGIN(Engine)
-class CCinemaData;
+class CCinemaTrack;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -31,7 +31,7 @@ public:
 
 	virtual HRESULT		Render() override;
 
-	void				CameraAnimtaionTest(CCinemaData* pCinemaData, _float PlayTime);
+	void				CameraAnimtaionTest(CCinemaTrack* pCinemaData, _float PlayTime);
 
 private:
 	_float				m_fMouseSensor = {};
@@ -40,7 +40,7 @@ private:
 	_uint				m_iIndex = {};
 	_float2				m_fTime;
 
-	CCinemaData*		m_pAnimation = { nullptr };
+	CCinemaTrack*		m_pAnimation = { nullptr };
 
 public:
 	static CCamera_Free* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
