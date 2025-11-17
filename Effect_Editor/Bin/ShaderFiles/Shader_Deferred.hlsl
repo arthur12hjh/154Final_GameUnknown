@@ -26,12 +26,9 @@ texture2D g_ShadowTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
-texture2D g_BlurWeightTexture;
-texture2D g_GlowWeightTexture;
-
 texture2D g_DistortionTexture;
-texture2D g_FogTexture;
 texture2D g_BloomTexture;
+texture2D g_FogTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -86,7 +83,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vPosition = mul(vPosition, g_ProjMatrixInv);
     
     /* 로컬위치 * 월드   */
-    vPosition = mul(vPosition, g_ViewMatrixInv);
+    vPosition = mul(vPosition, g_ViewMatrixInv);   
     
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(g_vLightDir), vNormal);
@@ -100,7 +97,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, vORMDesc.b, vORMDesc.a);
     
     //ORM 마스크 없으면 그냥 Phong Shading 처리 해.
-    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    if(vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0)
     {
         Out.vShade = vDiffuse * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
         Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f);
@@ -111,6 +108,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         Out.vShade = float4(vColor, 1.f);
         Out.vSpecular = 0.f;
     }
+    
     
     return Out;
 }
@@ -206,27 +204,16 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    ////블러 샘플링.
-    //Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    ////글로우 샘플링.
-    //Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    
+    //블러 샘플링.
+    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
+    //글로우 샘플링.
+    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
     //블룸 샘플링
     Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
     //디스토션 샘플링.
     Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
     //안개 합성.
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
-    
-    
-    vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
-    
-    vector fBlur;
-    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r * fBlurAlpha.g);
-    fBlur.a = saturate(fBlurAlpha.r * fBlurAlpha.g);
-    
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
     
     return Out;
 }
@@ -236,23 +223,24 @@ PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
     PS_OUT_BACKBUFFER Out;
  
     float4 vAccumulatedColor = 0.0f;
-    int iSampleCount = 3;
-    float fSamplePower = 0.5f;
-    
+    float iSampleCount = 3;
+
     float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
-    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * fSamplePower;
+    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * 0.5f;
     
     for (int i = 0; i < iSampleCount; i++)
     {
-        float fSampleRate = (float) i / (float) iSampleCount;
+        // 샘플링 진행률 (0.0 ~ 1.0)
+        float t = (float) i / (float) iSampleCount;
         
         // 샘플링 UV 좌표: 현재 UV + (방향 벡터 * 진행률)
-        float2 vSampleUV = In.vTexcoord + vDir * fSampleRate;
+        float2 vSampleUV = In.vTexcoord + vDir * t;
         
         // 텍스처 샘플링 및 누적
         vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
     }
     
+    // 누적된 색상을 샘플 개수로 나누어 평균을 구함
     Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
 
     return Out;
