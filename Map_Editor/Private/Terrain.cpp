@@ -42,7 +42,7 @@ void CTerrain::Update(_float fTimeDelta)
 void CTerrain::Late_Update(_float fTimeDelta)
 {
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
 #endif
@@ -67,6 +67,38 @@ HRESULT CTerrain::Render()
 	return S_OK;
 }
 
+void CTerrain::Change_Height_Rect(_vector vPickingPos, _float fHeight, _float fRadius)
+{
+	if (nullptr == m_pVIBufferCom)
+		return;
+
+	const _float4x4* pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	_matrix WorldMatrix = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(pWorldMatrix));
+
+	_vector vDeterminant = XMMatrixDeterminant(WorldMatrix);
+	_matrix WorldMatrixInverse = XMMatrixInverse(&vDeterminant, WorldMatrix);
+	
+		
+	_vector vLocalPickedPos = XMVector3TransformCoord(vPickingPos, WorldMatrixInverse);
+	m_pVIBufferCom->Change_Height_Rect(vLocalPickedPos, fHeight, fRadius);
+}
+
+void CTerrain::Change_Height_Flat(_vector vPickingPos, _float fHeight, _float fRadius)
+{
+	if (nullptr == m_pVIBufferCom)
+		return;
+
+	const _float4x4* pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	_matrix WorldMatrix = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(pWorldMatrix));
+
+	_vector vDeterminant = XMMatrixDeterminant(WorldMatrix);
+	_matrix WorldMatrixInverse = XMMatrixInverse(&vDeterminant, WorldMatrix);
+
+
+	_vector vLocalPickedPos = XMVector3TransformCoord(vPickingPos, WorldMatrixInverse);
+	m_pVIBufferCom->Change_Height_Flat(vLocalPickedPos, fHeight, fRadius);
+}
+
 HRESULT CTerrain::Ready_Components()
 {
 	/* Com_VIBuffer */
@@ -80,9 +112,9 @@ HRESULT CTerrain::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Mask */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Terrain_Mask"),
+	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Terrain_Mask"),
 		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Shader_VtxNorTex"),
@@ -109,8 +141,8 @@ HRESULT CTerrain::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
 		return E_FAIL;
-	if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
-		return E_FAIL;
+	/*if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -149,5 +181,5 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pMaskCom);
+	//Safe_Release(m_pMaskCom);
 }

@@ -229,9 +229,6 @@
     <Filter Include="02.GameObjects\TestModel\ShaderTestModel">
       <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\TestProp">
-      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
     </Filter>
@@ -291,6 +288,18 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIAnimationCom">
       <UniqueIdentifier>{c2226d88-c70d-44c8-8cba-05822dee8cc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\TestProp">
+      <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\MeshEffect">
+      <UniqueIdentifier>{6a20e5b2-90b9-436f-8a46-170e59b3d406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\PointParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\SpriteUVEffect">
+      <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIImage">
       <UniqueIdentifier>{28d715db-8247-4e00-ad1d-7d3af521afad}</UniqueIdentifier>
@@ -421,7 +430,7 @@
       <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PxTestProp.h">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\TestProp</Filter>
+      <Filter>02.GameObjects\TestModel\TestProp</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Vil_Bui03_04.h">
       <Filter>02.GameObjects\Map\Village\Obj\Vil_Bui03_04</Filter>
@@ -524,6 +533,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIAnimationCom.h">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshEffect.h">
+      <Filter>03.Effects\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PointParticle.h">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpriteUVEffect.h">
+      <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIImage.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
@@ -644,7 +665,7 @@
       <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PxTestProp.cpp">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\TestProp</Filter>
+      <Filter>02.GameObjects\TestModel\TestProp</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Vil_Bui03_04.cpp">
       <Filter>02.GameObjects\Map\Village\Obj\Vil_Bui03_04</Filter>
@@ -742,6 +763,18 @@
     <ClCompile Include="..\Private\UIAnimationCom.cpp">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Effect.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshEffect.cpp">
+      <Filter>03.Effects\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PointParticle.cpp">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpriteUVEffect.cpp">
+      <Filter>03.Effects\SpriteUVEffect</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UIImage.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
     </ClCompile>
@@ -785,6 +818,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

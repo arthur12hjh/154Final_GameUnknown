@@ -6,12 +6,12 @@
 #include "GameInstance.h"
 
 CGigas::CGigas(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CContainerObject{ pDevice, pContext }
+	: CEntity{ pDevice, pContext }
 {
 }
 
 CGigas::CGigas(const CGigas& Prototype)
-	: CContainerObject{ Prototype }
+	: CEntity{ Prototype }
 {
 }
 

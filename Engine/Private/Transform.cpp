@@ -69,8 +69,6 @@ HRESULT CTransform::Initialize_Prototype()
 
 HRESULT CTransform::Initialize(void* pArg)
 {
-
-
 	if (nullptr == pArg)
 		return S_OK;
 

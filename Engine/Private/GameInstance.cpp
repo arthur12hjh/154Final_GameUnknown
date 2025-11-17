@@ -24,6 +24,7 @@
 #include "Physx_Manager.h"
 #include "BinParser.h"
 #include "Interaction_Manager.h"
+#include "CinematicManager.h"
 #include "FbxParser.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -131,8 +132,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pCameraManager)
 		return E_FAIL;
 
-
-	
+	m_pCinema_Manager = CCinematicManager::Create(*ppDevice, *ppContext);
+	if (nullptr == m_pCinema_Manager)
+		return E_FAIL;
 
 #ifdef _DEBUG
 	m_pTimer_Manager->Add_Timer(TEXT("Priority_Time"));
@@ -296,13 +298,19 @@ _bool CGameInstance::KeyUp(KEY_INPUT eType, _uint KeyState)
 	return m_pInput_Device->KeyUp(eType, KeyState);
 }
 
-LONG CGameInstance::GetMouseAxis(_uint iAxis)
+LONG CGameInstance::GetMouseAxis( _uint iAxis)
 {
 	return m_pInput_Device->GetMouseAxis(iAxis);
 }
-void CGameInstance::SetInputFoucs(_bool bFlag)
+
+void CGameInstance::SetInputFoucs(KEY_INPUT eType, _bool bFlag)
 {
-	m_pInput_Device->SetInputFoucs(bFlag);
+	m_pInput_Device->SetInputFoucs(eType, bFlag);
+}
+
+_bool CGameInstance::GetInputFoucs(KEY_INPUT eType)
+{
+	return m_pInput_Device->GetInputFoucs(eType);
 }
 #pragma endregion
 
@@ -555,6 +563,11 @@ HRESULT CGameInstance::Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Tex
 HRESULT CGameInstance::Bind_RenderTarget(const _wstring& strTargetTag, CShader* pShader, const _char* pConstantName)
 {
 	return m_pTarget_Manager->Bind_RenderTarget(strTargetTag, pShader, pConstantName);
+}
+
+HRESULT CGameInstance::Clear_MRT(const _wstring& strMRTTag)
+{
+	return m_pTarget_Manager->Clear_MRT(strMRTTag);
 }
 
 
@@ -866,8 +879,37 @@ vector<CInteraction_Component*>* CGameInstance::GetAllInteraction()
 {
 	return m_pInteract_Manager->GetAllInteraction();
 }
+
 #pragma endregion
 
+#pragma region Cinema Manager
+HRESULT CGameInstance::ADD_ChinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag, CCinemaTrack* pData)
+{
+	return m_pCinema_Manager->ADD_CutSceneData(szSceneTag, szTag, pData);
+}
+const CCinemaTrack* CGameInstance::GetCinemaSceneData(const WCHAR* szSceneTag, const WCHAR* szTag)
+{
+	return m_pCinema_Manager->GetCutSceneData(szSceneTag, szTag);
+}
+
+const unordered_map<_wstring, CCinemaTrack*>* CGameInstance::GetCinemaSceneAllDatas(const WCHAR* szSceneTag)
+{
+	return m_pCinema_Manager->GetSceneAllDatas(szSceneTag);
+}
+
+const unordered_map<_wstring, class CCutScene*>* CGameInstance::GetCinemaAllScenes()
+{
+	return m_pCinema_Manager->GetAllScenes();
+}
+HRESULT CGameInstance::SaveCinemaSceneData(const WCHAR* szFilePath)
+{
+	return m_pCinema_Manager->SaveCutSceneData(szFilePath);
+}
+HRESULT CGameInstance::LoadCinemaSceneData(const WCHAR* szFilePath)
+{
+	return m_pCinema_Manager->LoadCutSceneData(szFilePath);
+}
+#pragma endregion
 
 _float CGameInstance::GetGameSpeedfRatio()
 {
@@ -961,6 +1003,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pInteract_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pBinParser);
+	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);

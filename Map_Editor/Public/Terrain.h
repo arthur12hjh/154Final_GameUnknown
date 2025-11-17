@@ -32,6 +32,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Change_Height_Rect(_vector PickingPos, _float fHeight, _float fRadius);
+	void Change_Height_Flat(_vector PickingPos, _float fHeight, _float fRadius);
 private:
 	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };

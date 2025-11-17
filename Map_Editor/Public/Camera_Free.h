@@ -3,6 +3,10 @@
 #include "MapTool_Defines.h"
 #include "Camera.h"
 
+NS_BEGIN(Engine)
+class CCinemaTrack;
+NS_END
+
 NS_BEGIN(Tool_Map)
 
 class CCamera_Free final : public CCamera
@@ -18,15 +22,25 @@ private:
 	virtual ~CCamera_Free() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Update(_float fTimeDelta) override;
-	virtual void Update(_float fTimeDelta) override;
-	virtual void Late_Update(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT		Initialize_Prototype() override;
+	virtual HRESULT		Initialize(void* pArg) override;
+
+	virtual void		Priority_Update(_float fTimeDelta) override;
+	virtual void		Update(_float fTimeDelta) override;
+	virtual void		Late_Update(_float fTimeDelta) override;
+
+	virtual HRESULT		Render() override;
+
+	void				CameraAnimtaionTest(CCinemaTrack* pCinemaData, _float PlayTime);
 
 private:
-	_float			m_fMouseSensor = {};
+	_float				m_fMouseSensor = {};
+
+	_bool				m_bIsCameraAnimation = {};
+	_uint				m_iIndex = {};
+	_float2				m_fTime;
+
+	CCinemaTrack*		m_pAnimation = { nullptr };
 
 public:
 	static CCamera_Free* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -11,6 +11,7 @@ class CNavigation;
 class CCell;
 class CModel;
 class CLight;
+
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -63,8 +64,9 @@ private:
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
 
-	class CLightTool* m_pLightTool = { nullptr };
-	class CMapTool* m_pMapTool = { nullptr };
+	class CLightTool*		m_pLightTool = { nullptr };
+	class CMapTool*			m_pMapTool = { nullptr };
+	class CCamera_Tool*		m_pCameraTool = { nullptr };
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };

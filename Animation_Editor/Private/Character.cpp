@@ -9,12 +9,12 @@
 #include "GameInstance.h"
 
 CCharacter::CCharacter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CContainerObject{ pDevice, pContext }
+	: CEntity{ pDevice, pContext }
 {
 }
 
 CCharacter::CCharacter(const CCharacter& Prototype)
-	: CContainerObject{ Prototype }
+	: CEntity{ Prototype }
 {
 }
 

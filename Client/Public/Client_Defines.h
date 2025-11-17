@@ -21,5 +21,6 @@ extern unsigned int		g_iHalfWinSizeY;
 
 extern bool				g_bIsFocus;
 extern bool				g_bIsMouseLock;
+extern bool				g_bIsImgKeyBoardFoucs;
 
 extern HWND				g_hWnd;

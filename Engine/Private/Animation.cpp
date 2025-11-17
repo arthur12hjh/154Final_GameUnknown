@@ -27,6 +27,7 @@ HRESULT CAnimation::Initialize(class CModel* pModel, binAnimation* pAnimation)
 
 	m_iNumChannels = pAnimation->iNumChannels;
 
+
 	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 
 	strcpy_s(m_szName, pAnimation->szName);
@@ -57,7 +58,6 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 		else
 			return true;
 	}
-
 
 	_uint		iIndex = {};
 

@@ -9,6 +9,8 @@ matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_SceneTexture;
 texture2D g_SourTexture;
+texture2D g_ScreenTexture;
+texture2D g_BloomTexture;
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -40,7 +42,8 @@ PS_OUT_BACKBUFFER PS_MAIN_CURVE(PS_IN In)
   
     float3 vColor = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord).xyz;
     
-    float fIntensity = dot(vColor, float3(0.3f, 0.3f, 0.3f));
+    //0 나누기 방지..
+    float fIntensity = dot(vColor, float3(0.3f, 0.3f, 0.3f)) + 0.00001f;
     float fBloomIntensity = GetBloomCurve(dot(vColor, float3(0.3f, 0.3f, 0.3f)));
 
     float3 vBloomColor = vColor * fBloomIntensity / fIntensity;

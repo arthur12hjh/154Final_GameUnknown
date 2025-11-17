@@ -24,7 +24,7 @@ public:
 private:
 	_float4 m_vFogColor = { 1.0f, 0.89f, 0.70f, 1.f };
 	_float  m_fFogStart = { 0.f};
-	_float  m_fFogEnd	= { 250.f };
+	_float  m_fFogEnd	= { 500.f };
 public:
 	static CFog* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Animation_Editor_Defines.h"
-#include "ContainerObject.h"
+#include "Entity.h"
 
 NS_BEGIN(Engine)
 class CCollider;
@@ -9,7 +9,7 @@ NS_END
 
 NS_BEGIN(Animation_Editor)
 
-class CDororong final : public CContainerObject
+class CDororong final : public CEntity
 {
 private:
 	CDororong(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

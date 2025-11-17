@@ -42,7 +42,7 @@ void CTerrain_Sand::Update(_float fTimeDelta)
 void CTerrain_Sand::Late_Update(_float fTimeDelta)
 {
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CTerrain_Sand::Render()

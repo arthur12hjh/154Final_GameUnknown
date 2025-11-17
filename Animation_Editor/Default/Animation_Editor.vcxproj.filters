@@ -98,6 +98,9 @@
     <Filter Include="02.GameObjects\Entity\Gigas\Body_Gigas">
       <UniqueIdentifier>{5917bbec-4e89-4c88-bf2d-71a508aba4d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Manager\Data_Manager">
+      <UniqueIdentifier>{00f62eba-dd45-4845-8af0-b57e15d81e25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -205,6 +208,9 @@
     <ClInclude Include="..\Public\Body_Gigas.h">
       <Filter>02.GameObjects\Entity\Gigas\Body_Gigas</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Data_Manager.h">
+      <Filter>03.Manager\Data_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -296,6 +302,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_Gigas.cpp">
       <Filter>02.GameObjects\Entity\Gigas\Body_Gigas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Data_Manager.cpp">
+      <Filter>03.Manager\Data_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

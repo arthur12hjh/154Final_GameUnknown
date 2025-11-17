@@ -134,6 +134,20 @@ HRESULT CTarget_Manager::Bind_RenderTarget(const _wstring& strTargetTag, CShader
     return pRenderTarget->Bind_ShaderResource(pShader, pConstantName);    
 }
 
+HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
+{
+    _uint iNumRenderTargets = {};
+
+    list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+
+    for (auto& pRenderTarget : *pMRTList)
+    {
+        pRenderTarget->Clear();
+    }
+
+    return S_OK;
+}
+
 #ifdef _DEBUG
 
 HRESULT CTarget_Manager::Ready_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
