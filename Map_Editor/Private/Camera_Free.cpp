@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Camera_Free.h"
+
 #include "GameInstance.h"
+#include "CinemaTrack.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera{ pDevice, pContext }
@@ -28,28 +30,30 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_pGameInstance->Add_Camera(TEXT("MainCamera"), this);
+	m_pGameInstance->SetMainCamera(TEXT("MainCamera"));
 	return S_OK;
 }
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta * 10.f);
+		m_pTransformCom->Go_Straight(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Backward(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Left(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta * 5.f);
+		m_pTransformCom->Go_Right(fTimeDelta * 3.f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 8.f * fTimeDelta, 0.f, 0.f));
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) - XMVectorSet(0.f, 15.f * fTimeDelta, 0.f, 0.f));
+		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) - XMVectorSet(0.f, 8.f * fTimeDelta, 0.f, 0.f));
 
 
 	_long		MouseMove = {};
@@ -73,7 +77,11 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 void CCamera_Free::Update(_float fTimeDelta)
 {
-
+	if (m_pAnimation)
+	{
+		if (m_pAnimation->Play_Animation(m_pTransformCom, fTimeDelta))
+			m_pAnimation = nullptr;
+	}
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)
@@ -86,6 +94,12 @@ HRESULT CCamera_Free::Render()
 {
 
 	return S_OK;
+}
+
+void CCamera_Free::CameraAnimtaionTest(CCinemaTrack* pCinemaData, _float fPlayTime)
+{
+	m_pAnimation = pCinemaData;
+	m_pAnimation->Set_Animation(fPlayTime);
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

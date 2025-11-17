@@ -2,6 +2,7 @@
 #include "UIPanel.h"
 
 #include "GameInstance.h"
+#include "UIAnimationCom.h"
 
 CUIPanel::CUIPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -97,6 +98,8 @@ HRESULT CUIPanel::Ready_Components()
 
 HRESULT CUIPanel::Bind_ShaderResources()
 {
+	__super::Bind_ShaderResources();
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))

@@ -56,13 +56,13 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 HRESULT CLevel_GamePlay::Render()
 {
-	SetWindowText(g_hWnd, TEXT("°ÔÀÓÇÃ·¹ÀÌ·¹º§ÀÌºó´Ù"));
+	SetWindowText(g_hWnd, TEXT("ê²Œìž„í”Œë ˆì´ë ˆë²¨ì´ë¹ˆë‹¤"));
 	return S_OK;
 }
 
 void CLevel_GamePlay::FontRender()
 {
-	SetWindowText(g_hWnd, TEXT("¾²·¹µå Ç® µ¿ÀÛ"));
+	SetWindowText(g_hWnd, TEXT("ì“°ë ˆë“œ í’€ ë™ìž‘"));
 }
 
 HRESULT CLevel_GamePlay::Ready_Lights()
@@ -70,8 +70,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(0.8f, 0.8f, 0.8f, 0.8f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.5f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
@@ -245,13 +245,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _wstring& strLayerTag)
 {
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Snow"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Snow"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Explosion"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
 
 	//for (size_t i = 0; i < 50; i++)
 	//{
@@ -287,7 +287,7 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 
 		if (SUCCEEDED(hr))
 		{
-			// Add_GameObject_ToLayer È£Ãâ Á÷ÈÄ, ÀüÃ¼ ¸®½ºÆ®¿¡¼­ ¸¶Áö¸·¿¡ Ãß°¡µÈ °´Ã¼ °¡Á®¿À±â
+			// Add_GameObject_ToLayer í˜¸ì¶œ ì§í›„, ì „ì²´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ë§ˆì§€ë§‰ì— ì¶”ê°€ëœ ê°ì²´ ê°€ì ¸ì˜¤ê¸°
 			list<CGameObject*>* pVil_Bui03_04s = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Vil_Bui03_04"));
 			if (pVil_Bui03_04s && !pVil_Bui03_04s->empty())
 			{

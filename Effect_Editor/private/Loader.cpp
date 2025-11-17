@@ -84,9 +84,8 @@ HRESULT CLoader::Loading_For_Tool()
 
 
 
-	vector<string> ImageFiles;
 	char pattern[MAX_PATH] = {};
-	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/*.bin");
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.binx");
 
 	WIN32_FIND_DATAA fd{};
 	HANDLE h = FindFirstFileA(pattern, &fd);
@@ -94,24 +93,129 @@ HRESULT CLoader::Loading_For_Tool()
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 				char szFilePath[MAX_PATH] = {};
-				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/");
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/EffectMesh/");
 				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
-				ImageFiles.emplace_back(szFilePath);
+				_tchar fileName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fd.cFileName, strlen(fd.cFileName), fileName, 256);
+				_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), fileName,
+					CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix))))
+					return E_FAIL;
+
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
 	}
-	for (auto ImageFile : ImageFiles) {
-		_tchar szPath[256] = { 0, };
-		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, ImageFile.c_str(), strlen(ImageFile.c_str()), szPath, 256);
-		_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-		if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), szPath,
-			CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, ImageFile.c_str(), PreTransformMatrix))))
-			return E_FAIL;
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Mask_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
 	}
 
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/*.dds");
 
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Diffuse_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
 
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Dissolve_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Normal_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
 
 
 

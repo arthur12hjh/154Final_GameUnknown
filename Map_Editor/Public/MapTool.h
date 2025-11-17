@@ -36,6 +36,7 @@ public:
 	void Update_Rotation();
 	HRESULT Save_Map_Objects();
 	HRESULT Load_Map_Objects();
+	HRESULT Save_Terrain_HeightMap();
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -47,6 +48,8 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
+
+
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -73,29 +76,32 @@ private:
 	_float m_fScaleY = { 0.f };
 	_float m_fScaleZ = { 0.f };
 
+	_float m_fHeight = { 0.f };
+	_float m_fRadius = { 0.f };
+
 	ADD_OBJECT m_eCurrentObject = {};
 
 	const _tchar* m_CurrentLayerName = {};
 	list<CGameObject*>* m_pObjects = { nullptr };
 	CGameObject* m_pObject = { nullptr };
-	const list<CLight*>* m_pLights = { nullptr };
-	list<string>		m_LightNames = {};
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
+	MAP_THEME			m_eCurrentMap = { MAP_THEME::END };
 
 private:
 	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
 
-	class CVillage* m_pVillage = { nullptr };
-	class CPlayer* m_pPlayer = { nullptr };
-	class CTerrain* m_pTerrain = { nullptr };
+	class CVillage*		m_pVillage = { nullptr };
+	class CPlayer*		m_pPlayer = { nullptr };
+	class CTerrain*		m_pTerrain = { nullptr };
+
+
 
 	_vector				m_vNaviPoints[3] = {};
 	_float				m_fNaviSnapRadius = { 1.5f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)
 	NAVI_MODE			m_eNaviMode = { NAVI_MODE::NONE }; // 현재 네비게이션 작업 모드
 	_bool				m_bIsNaviEditMode = { false }; // 네비게이션 편집 모드
-
 
 	_bool				m_bIsDeplayMode = { false };
 	_bool				m_bIsMapMode = { false };

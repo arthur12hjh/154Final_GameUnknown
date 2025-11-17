@@ -4,12 +4,6 @@
     <Filter Include="00.MainApp">
       <UniqueIdentifier>{f7312975-447b-4c94-b3e2-701c41b88dbe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Defines">
-      <UniqueIdentifier>{5db6257d-a35f-4f3d-b2e4-795ce8ef85f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="99.Defines\PCH">
-      <UniqueIdentifier>{d725a5cc-086c-491c-a720-4a2604efa3bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Levels">
       <UniqueIdentifier>{25a30bc4-c42b-4691-9a07-48d0fae8aab8}</UniqueIdentifier>
     </Filter>
@@ -85,6 +79,48 @@
     <Filter Include="02.GameObjects\Maps\Terrain">
       <UniqueIdentifier>{d1e75dee-19d8-4ce3-a95b-f83fd2773b6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.IMGUI\Camera">
+      <UniqueIdentifier>{1d41c4a1-20fd-4e8c-8c2c-60be6d2e8729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\SpawnBox">
+      <UniqueIdentifier>{7e4af978-be7c-4c14-a7e4-810f12088af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet">
+      <UniqueIdentifier>{5b6fbeba-bf59-4cd2-8f63-f0ebe61e2a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings">
+      <UniqueIdentifier>{75612255-e028-4b6e-ac5a-b4dfd4a8ef6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\Stone">
+      <UniqueIdentifier>{4edbe6c4-8b51-48c9-aec6-65e35d6d839c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\StoneWall">
+      <UniqueIdentifier>{1d7e768a-dc20-4dd4-b129-2277f8e213aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment">
+      <UniqueIdentifier>{a7373a23-330a-4cce-810d-b366af8cd674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Rock">
+      <UniqueIdentifier>{51911e0f-4e57-4d66-964a-ca1f36a1725d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Reed">
+      <UniqueIdentifier>{0cb7093d-fe4c-4552-9dc6-8eed6a2112aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Tree">
+      <UniqueIdentifier>{2006e4f1-f44b-4a13-ab1b-602ee8d33c96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Tree\Bamboo">
+      <UniqueIdentifier>{7739bb5a-8fe2-4cdd-8be3-d447ee8b79a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\Stair">
+      <UniqueIdentifier>{89e5b218-9dd6-4837-bdcb-9f3296d2f610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\Tile">
+      <UniqueIdentifier>{d888e4cd-e1fa-4fec-b984-d5ed727cc7da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\TombStone">
+      <UniqueIdentifier>{020a9aac-879e-48b5-a940-8f07c88882d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -123,9 +159,6 @@
     <ClInclude Include="..\public\BackGround.h">
       <Filter>02.GameObjects\BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\pch.h">
-      <Filter>99.Defines\PCH</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
       <Filter>96.IMGUI\Default</Filter>
     </ClInclude>
@@ -153,9 +186,6 @@
     <ClInclude Include="..\public\Imgui_Manager.h">
       <Filter>96.IMGUI\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MapTool_Defines.h">
-      <Filter>99.Defines</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
     </ClInclude>
@@ -176,6 +206,98 @@
     </ClInclude>
     <ClInclude Include="..\public\Terrain_Sand.h">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Tool.h">
+      <Filter>96.IMGUI\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpawnBox.h">
+      <Filter>02.GameObjects\Map_Object\SpawnBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bamboo.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\Bamboo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inscription_L.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inscription_R.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Reed.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Reed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock3.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock4.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock5.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock6.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock7.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rock8.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stair.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone3.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stone4.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StoneWall1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StoneWall2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TombStone.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TombStoneBase1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TombStoneBase2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StoneTile.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapTool_Defines.h" />
+    <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\public\CherryBlossom1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom3.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom4.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CherryBlossom5.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -202,9 +324,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BackGround.cpp">
       <Filter>02.GameObjects\BackGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\pch.cpp">
-      <Filter>99.Defines\PCH</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Imgui_Manager.cpp">
       <Filter>96.IMGUI\Manager</Filter>
@@ -248,6 +367,97 @@
     <ClCompile Include="..\private\Terrain_Sand.cpp">
       <Filter>02.GameObjects\Maps\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Tool.cpp">
+      <Filter>96.IMGUI\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpawnBox.cpp">
+      <Filter>02.GameObjects\Map_Object\SpawnBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TombStone.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TombStoneBase1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TombStoneBase2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone3.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stone4.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StoneWall1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StoneWall2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stair.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Stair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock3.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock4.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock5.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock6.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock7.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rock8.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Reed.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Reed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inscription_L.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inscription_R.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\TombStone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bamboo.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\Bamboo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StoneTile.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp" />
+    <ClCompile Include="..\private\CherryBlossom1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom3.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom4.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CherryBlossom5.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Map_Editor.ico">
@@ -282,6 +492,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

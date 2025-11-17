@@ -13,8 +13,9 @@
 #include "Snow.h"
 #include "Sky.h"
 
+#include "Effect.h"
+
 #include "GameInstance.h"
-#include "GameManager.h"
 #include "Terrain_Sand.h"
 
 
@@ -93,11 +94,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 	if (0 == m_hThread)
 		return E_FAIL;
 
-	m_pGameManager = CGameManager::GetInstance();
-
-	if (!m_pGameManager)
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -121,6 +117,10 @@ HRESULT CLoader::Loading()
 
 		m_strMessage = TEXT("셰이더 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+
+		m_strMessage = TEXT("이펙트 로딩중.");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+
 
 		m_strMessage = TEXT("네비게이션 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
@@ -536,6 +536,164 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+
+	char pattern[MAX_PATH] = {};
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.bin");
+
+	WIN32_FIND_DATAA fd{};
+	HANDLE h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Models/EffectMesh/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				_tchar fileName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fd.cFileName, strlen(fd.cFileName), fileName, 256);
+				_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), fileName,
+					CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix))))
+					return E_FAIL;
+
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Mask_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Diffuse_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Dissolve_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Normal_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
+	/* For.Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMeshEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteUVEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
+		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/bin.binx"))))
+		return E_FAIL;
+	Desc->OnCompleted(this_thread::get_id());
+
+	return S_OK;
+}
+
+
 HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
@@ -704,16 +862,10 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
 		return E_FAIL;
 
-	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1);
-
 	/* For.Prototype_Component_UI_Texture_Default */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
 		return E_FAIL;
-
-	m_pGameManager->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
-		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))

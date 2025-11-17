@@ -33,16 +33,6 @@ void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
     Safe_AddRef(m_pPlayer);
 }
 
-HRESULT CGameManager::Ready_UIResourceStore()
-{
-    m_pUIResourceStore = CUIResourceStore::Create();
-
-    if (!m_pUIResourceStore)
-        return E_FAIL;
-
-    return S_OK;
-}
-
 CGameObject* CGameManager::GetGameCharacter()
 {
     Safe_AddRef(m_pPlayer);
@@ -58,27 +48,6 @@ _bool CGameManager::Is_NearCharacter(_vector vPos, _float vRange)
 
     return false;
 }
-
-#pragma region UIResourceManager
-HRESULT CGameManager::Add_UI_Texture(_uint iProtoLevel, const _wstring& szTextureProtoTag, const _wstring& szTextureTag, const _wstring& szFilePath, _uint iTextureIndex, void* pArg)
-{
-    return m_pUIResourceStore->Add_UI_Texture(iProtoLevel, szTextureProtoTag, szTextureTag, szFilePath, iTextureIndex, pArg);
-}
-CUIResourceStore::UI_TEXTURE_DESC CGameManager::Get_UI_Texture_Desc(const WCHAR* szTextureTag)
-{
-    return m_pUIResourceStore->Get_UI_Texture_Desc(szTextureTag);
-}
-const unordered_map<_wstring, CUIResourceStore::UI_TEXTURE_DESC>* CGameManager::Get_UI_Texture_Descs()
-{
-    return m_pUIResourceStore->Get_UI_Texture_Descs();
-}
-void CGameManager::Clear_UI_Texture_Descs()
-{
-    m_pUIResourceStore->Clear_UI_Texture_Descs();
-}
-
-
-#pragma endregion
 
 #pragma region DataManager
 const CHARACTER_SKILL_DESC* CGameManager::Find_SkillData(_uint iSkillID)
@@ -106,9 +75,6 @@ HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext
     Safe_AddRef(m_pContext);
     Safe_AddRef(m_pGameInstance);
 
-    if (FAILED(Ready_UIResourceStore()))
-        return E_FAIL;
-
     return S_OK;
 }
 
@@ -116,7 +82,6 @@ void CGameManager::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pUIResourceStore);
     Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
 

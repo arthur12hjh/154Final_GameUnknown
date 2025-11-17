@@ -73,6 +73,9 @@
     <Filter Include="02.Object\01.Levels\Tool">
       <UniqueIdentifier>{8b4871d6-a2e2-4638-9c57-2e7d84706571}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\Effect\SpriteEffect">
+      <UniqueIdentifier>{aaea788e-f606-488c-9468-76a155f5258a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -150,6 +153,9 @@
     <ClInclude Include="..\public\Particle.h">
       <Filter>02.Object\Effect\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpriteEffect.h">
+      <Filter>02.Object\Effect\SpriteEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Effect_Editor.ico">
@@ -217,6 +223,9 @@
     <ClCompile Include="..\private\Particle.cpp">
       <Filter>02.Object\Effect\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpriteEffect.cpp">
+      <Filter>02.Object\Effect\SpriteEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Effect_Editor.rc">
@@ -227,10 +236,13 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

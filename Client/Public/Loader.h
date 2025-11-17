@@ -11,7 +11,6 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CGameManager;
 class CUIResourceManager;
 
 class CLoader final : public CBase
@@ -43,7 +42,6 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
-	CGameManager*		m_pGameManager = { nullptr };
 
 private:
 	HRESULT Loading_For_Logo();
@@ -52,6 +50,7 @@ private:
 	HRESULT Loading_For_GamePlay_Player(void* pArg);
 	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
+	HRESULT Loading_For_GamePlay_Effect(void* pArg);
 	HRESULT Loading_For_GamePlay_Map(void* pArg);
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Components(void* pArg);

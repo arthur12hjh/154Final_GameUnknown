@@ -69,7 +69,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 		}
 		else
 		{
-			// ���⼭ lerp ����
+			// Somooth Lerp
 			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
 			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
 
