@@ -77,6 +77,7 @@ void CMapTool::Update(_float fTimeDelta)
 				return;
 
 			_float3 vPickedPoint = {};
+			_float fHeight = m_fHeight;
 			if (true == m_pGameInstance->isPicking(&vPickedPoint))
 			{
 				_vector vPickPoint = XMVectorSet(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
@@ -180,6 +181,26 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_Rock8"); layerTag = TEXT("Layer_Rock8");
 				}
+				
+				
+				if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DECREASE_RECT)
+				{
+					if (fHeight > 0)
+						fHeight *= -1.f;
+
+					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_INCREASE_RECT)
+				{
+					if (fHeight < 0)
+						fHeight;
+
+					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_FLAT)
+				{
+					m_pTerrain->Change_Height_Flat(vPickPoint, fHeight, m_fRadius);
+				}
 
 				hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag, ENUM_CLASS(LEVEL::VILLAGE), layerTag, nullptr);
 
@@ -279,6 +300,39 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+	// 1. 하이트맵 높이 조절 메뉴
+	/*if (ImGui::Button("INCREASE_CIRCLE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_INCREASE_CIRCLE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("DECREASE_CIRCLE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_DECREASE_CIRCLE;
+	}*/
+	if (ImGui::Button("INCREASE_RECT"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_INCREASE_RECT;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("DECREASE_RECT"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_DECREASE_RECT;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Flatting"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_FLAT;
+	}
+
+	ImGui::InputFloat("Height", &m_fHeight, 0.1f, 100.f);
+	ImGui::InputFloat("Radius", &m_fRadius, 0.01f, 10.f);
+
+	ImGui::Text("Change Terrain Height.");
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
 
 	// 4. 네비게이션 편집 메뉴
 	ImGui::Text("Navigation Editor");
@@ -379,8 +433,9 @@ HRESULT CMapTool::Render()
 
 		const _char* modelNames[] = { "Player" };
 		const _char* buildingNames[] = { "Vil_Bui03_04", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2", 
-										 "Stone1", "Stone2", "Stone3", "Stone4" };
-		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8" };
+										 "Stone1", "Stone2", "Stone3", "Stone4", "Tile", "Giwajip" };
+		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8", 
+											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -710,6 +765,15 @@ HRESULT CMapTool::Render()
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
 	{
+		if (FAILED(Save_Terrain_HeightMap()))
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 성공.", L"알림", MB_OK);
+		}
+
 		// 맵 오브젝트 저장
 		if (FAILED(Save_Map_Objects()))
 		{
@@ -826,20 +890,17 @@ HRESULT CMapTool::Load_Map_Objects()
 					_vector vPosition = {};
 					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-					_float fX, fY, fZ;
-					fX = XMVectorGetX(vScale);
-					fY = XMVectorGetY(vScale);
-					fZ = XMVectorGetZ(vScale);
-
-					pTransform->Set_Scale(fX, fY, fZ);
-
-					pTransform->Set_State(STATE::POSITION, vPosition);
-
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
 					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
 
-					pTransform->Set_State(STATE::RIGHT, matRotation.r[0]);
-					pTransform->Set_State(STATE::UP, matRotation.r[1]);
-					pTransform->Set_State(STATE::LOOK, matRotation.r[2]);
+					// 순서: Scale * Rotation * Translation (SRT 순서)
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+					// 2. [바뀐 내용] CTransform의 월드 행렬 포인터를 얻어 직접 덮어씁니다.
+					//    (Get_WorldMatrixPtr()가 쓰기 가능한 포인터를 반환한다고 가정합니다.)
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
 
 				}
 			}
@@ -849,6 +910,84 @@ HRESULT CMapTool::Load_Map_Objects()
 	ifs.close();
 
 	return S_OK;
+}
+
+HRESULT CMapTool::Save_Terrain_HeightMap()
+{
+	const _tchar* pTerrainHeightMapPath = TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp");
+	if (!m_pTerrain)
+		return E_FAIL;
+
+	CVIBuffer_Terrain* pVIBuffer = dynamic_cast<CVIBuffer_Terrain*>(m_pTerrain->Find_Component(TEXT("Com_VIBuffer")));
+	if (!pVIBuffer)
+		return E_FAIL;
+
+	_float* pHeightData = pVIBuffer->Get_HeightData();
+	_uint iNumVerticesX = pVIBuffer->Get_NumVerticesX();
+	_uint iNumVerticesZ = pVIBuffer->Get_NumVerticesZ();
+
+	if (!pHeightData || iNumVerticesX == 0 || iNumVerticesZ == 0)
+	{
+		Safe_Delete_Array(pHeightData);
+		return E_FAIL;
+	}
+
+	_ulong iNumVertices = iNumVerticesX * iNumVerticesZ;
+
+	// 2. 비트맵 파일에 저장할 픽셀 데이터(RGB)를 생성
+	_uint* pPixels = new _uint[iNumVertices];
+	ZeroMemory(pPixels, sizeof(_uint) * iNumVertices);
+
+	for (_uint i = 0; i < iNumVerticesZ; ++i)
+	{
+		for (_uint j = 0; j < iNumVerticesX; ++j)
+		{
+			_uint iIndex = i * iNumVerticesX + j;
+
+			// 높이 값을 0-255 범위의 unsigned char로 변환
+			_float fHeightValue = pHeightData[iIndex] * 10.f;
+
+			// 정수형으로 변환 (0 ~ 255)
+			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+
+			// R, G, B 채널에 동일한 높이 값을 설정
+			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+		}
+	}
+
+	// 3. 비트맵 파일 헤더를 설정합니다.
+	BITMAPFILEHEADER fh{};
+	fh.bfType = 0x4D42;
+	fh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + (iNumVerticesX * iNumVerticesZ * 4);
+	fh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+	BITMAPINFOHEADER ih{};
+	ih.biSize = sizeof(BITMAPINFOHEADER);
+	ih.biWidth = iNumVerticesX;
+	ih.biHeight = iNumVerticesZ;
+	ih.biPlanes = 1;
+	ih.biBitCount = 32; // 32비트
+	ih.biCompression = BI_RGB; // 압축 없음
+	ih.biSizeImage = iNumVerticesX * iNumVerticesZ * 4;
+
+	HANDLE hFile = CreateFile(pTerrainHeightMapPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		Safe_Delete_Array(pPixels);
+		Safe_Delete_Array(pHeightData);
+		return E_FAIL;
+	}
+
+	DWORD dwBytesWritten = 0;
+	WriteFile(hFile, &fh, sizeof(BITMAPFILEHEADER), &dwBytesWritten, nullptr);
+	WriteFile(hFile, &ih, sizeof(BITMAPINFOHEADER), &dwBytesWritten, nullptr);
+	WriteFile(hFile, pPixels, ih.biSizeImage, &dwBytesWritten, nullptr);
+
+
+	CloseHandle(hFile);
+	Safe_Delete_Array(pPixels);
+	Safe_Delete_Array(pHeightData);
 }
 
 void CMapTool::Set_NaviEditMode(_bool bMode)

@@ -36,6 +36,7 @@ public:
 	void Update_Rotation();
 	HRESULT Save_Map_Objects();
 	HRESULT Load_Map_Objects();
+	HRESULT Save_Terrain_HeightMap();
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -47,6 +48,8 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
+
+
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -72,6 +75,9 @@ private:
 	_float m_fScaleX = { 0.f };
 	_float m_fScaleY = { 0.f };
 	_float m_fScaleZ = { 0.f };
+
+	_float m_fHeight = { 0.f };
+	_float m_fRadius = { 0.f };
 
 	ADD_OBJECT m_eCurrentObject = {};
 
