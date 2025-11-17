@@ -374,6 +374,8 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 		if (m_szBindTags[eType][0] != '\0')
 			m_Materials[iMaterialIndex]->Bind_SRV(pShader, m_szBindTags[eType], Convert_TextureType((TEXTURE_TYPE)eType), iTextureIndex);
 	}
+
+	return S_OK;
 }
 
 _bool CModel::Play_Animation(_float fTimeDelta)
