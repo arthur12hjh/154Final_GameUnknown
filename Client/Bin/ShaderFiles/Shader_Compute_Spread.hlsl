@@ -16,7 +16,7 @@ cbuffer ParticleBuffer : register(b0)
     float4 vfPivot;
     float4 vfGravity;
     float2 vfTimeDelta;
-    int2 viLoopAndCount;
+    int2   viLoopAndCount;
 }
 
 

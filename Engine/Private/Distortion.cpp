@@ -58,7 +58,7 @@ HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer)
     return S_OK;
 }
 
-HRESULT CDistortion::Bind_RenderTarget(CShader* pShader, const _char* pConstantName, _bool bisWeight)
+HRESULT CDistortion::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Distortion"), pShader, pConstantName)))
         return E_FAIL;

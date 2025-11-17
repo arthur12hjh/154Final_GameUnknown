@@ -654,13 +654,45 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 		FindClose(h);
 	}
 
+	memset(pattern, 0, sizeof(pattern));
+	strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/*.dds");
+
+	h = FindFirstFileA(pattern, &fd);
+	if (h != INVALID_HANDLE_VALUE) {
+		do {
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				char szFilePath[MAX_PATH] = {};
+				char szProtoName[MAX_PATH] = {};
+				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/");
+				strcat_s(szFilePath, MAX_PATH, fd.cFileName);
+				strcat_s(szProtoName, MAX_PATH, "Prototype_Component_Texture_Normal_");
+				strcat_s(szProtoName, MAX_PATH, fd.cFileName);
+
+				_tchar sztProtoName[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szProtoName, strlen(szProtoName), sztProtoName, 256);
+				_tchar szPath[256] = { 0, };
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
+
+				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
+					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
+					return E_FAIL;
+			}
+		} while (FindNextFileA(h, &fd));
+		FindClose(h);
+	}
+
 	/* For.Prototype_Component_Shader_VtxMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMeshEffect"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteUVEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/bin.bin"))))
+		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/bin.binx"))))
 		return E_FAIL;
 	Desc->OnCompleted(this_thread::get_id());
 

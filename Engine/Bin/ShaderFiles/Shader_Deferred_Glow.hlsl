@@ -52,8 +52,6 @@ PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
     
     Out.vWeight = vWeight / 10.f;
     
-    Out.vWeight.rgb *= 5;
-    Out.vWeight.a *= 5;
     //Out.vWeight *= 0.01;
     return Out;
 }
@@ -85,7 +83,7 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_REAL_FINAL(PS_IN In)
 {
     PS_OUT_GLOW_FINAL Out;
     Out.vGlowY = saturate(g_GlowTexture.Sample(ClampSampler, In.vTexcoord) * 6);
-    Out.vGlowY.a *= max(max(Out.vGlowY.r, Out.vGlowY.g), Out.vGlowY.b);
+    Out.vWeight = max(max(Out.vGlowY.r, Out.vGlowY.g), Out.vGlowY.b) * g_WeightTexture.Sample(ClampSampler, In.vTexcoord).g;
     return Out;
 }
 

@@ -302,7 +302,7 @@ void CParticle_Setting::Delete_Particle()
         for (auto j = m_pParticles.begin(); j != m_pParticles.end();) {
             if (m_iSelectParticle == i) {
                 Safe_Release((*j));
-                m_pParticles.erase(j);
+                j = m_pParticles.erase(j);
                 m_iSelectParticle = max(0, m_iSelectParticle - 1);
                 m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
                 break;
@@ -540,6 +540,30 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
     }
+    WriteInt(fileBinaryStream, m_pSprites.size());
+    for (auto pSprite : m_pSprites) {
+        char szImageFile[MAX_PATH] = {};
+        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szNormalTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fPosition);
+        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fColor);
+        WriteFloat2(fileBinaryStream, pSprite->Get_Data().fSize);
+        WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
+        WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
+        WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
+        WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
+    }
     return S_OK;
 }
 
@@ -557,8 +581,15 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
             Delete_Particle();
         }
     }
+    if (0 < m_pSprites.size()) {
+        _uint iSpriteCount = m_pSprites.size();
+        for (_uint i = 0; i < iSpriteCount; ++i) {
+            Delete_SpriteEffect();
+        }
+    }
     CMeshEffect::MeshEffectData		MeshDesc{};
     CParticle::ParticleData		    ParticleDesc{};
+    CSpriteEffect::SPRITE_DATA		    SpriteDesc{};
     char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
     strcat_s(szBinModelFilePath, MAX_PATH, szFile);
     strcat_s(szBinModelFilePath, MAX_PATH, ".binx");
@@ -671,6 +702,37 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_iSelectParticle = m_pParticles.size();
         m_pParticles.push_back(pParticle);
         m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+    }
+    _int iSpriteCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iSpriteCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szNormalTexture = szTemp;
+        Safe_Delete(szTemp);
+
+        SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
+        SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
+        SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
+        SpriteDesc.iUV = ReadInt2(fileBinaryStream);
+        SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
+        SpriteDesc.iBegin = ReadInt(fileBinaryStream);
+        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+        SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
+
+
+        CSpriteEffect* pSprite = CSpriteEffect::Create(m_pDevice, m_pContext);
+        pSprite->Initialize(nullptr);
+
+        pSprite->Set_Components(SpriteDesc);
+        pSprite->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+        m_iSelectSprite = m_pSprites.size();
+        m_pSprites.push_back(pSprite);
+        m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
     }
     return S_OK;
 }
@@ -1574,6 +1636,11 @@ void CParticle_Setting::WriteFloat(ofstream& fileBinaryStream, _float vTmp)
     fileBinaryStream.write((_char*)&vTmp, sizeof(_float));
 }
 
+void CParticle_Setting::WriteInt2(ofstream& fileBinaryStream, _int2 vTmp)
+{
+    fileBinaryStream.write((_char*)&vTmp, sizeof(_int2));
+}
+
 void CParticle_Setting::WriteBool(ofstream& fileBinaryStream, _bool vTmp)
 {
     fileBinaryStream.write((_char*)&vTmp, sizeof(_bool));
@@ -1624,6 +1691,13 @@ _float CParticle_Setting::ReadFloat(ifstream& fileBinaryStream)
     _float fValue;
     fileBinaryStream.read((_char*)&fValue, sizeof(_float));
     return fValue;
+}
+
+_int2 CParticle_Setting::ReadInt2(ifstream& fileBinaryStream)
+{
+    _int2 iValue;
+    fileBinaryStream.read((_char*)&iValue, sizeof(_int2));
+    return iValue;
 }
 
 _bool CParticle_Setting::ReadBool(ifstream& fileBinaryStream)

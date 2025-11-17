@@ -44,9 +44,24 @@ public:
 		_float2				fLifeTime;
 		_float2				fSpeed;
 
+
+		_float2				fMaskUV;
+		_float2				fMaskUVSpeed;
+		_float2				fMaskUVSize;
+		_float2				fDiffuseUV;
+		_float2				fDiffuseUVSpeed;
+		_float2				fDiffuseUVSize;
+		_float2				fDissolveUV;
+		_float2				fDissolveUVSpeed;
+		_float2				fDissolveUVSize;
+
+		_float				fDelayTime;
+		_float				fEndTime;
+
 		_int				iBegin;
 		_int				iNumInstance;
 		_int				iSelectRender;
+		_bool				bisBillboard;
 		_bool				bisLoop;
 	}POINT_PARTICLE_DATA;
 
@@ -78,6 +93,7 @@ private:
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_float			m_fTime = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 
 private:

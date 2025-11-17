@@ -41,7 +41,7 @@ HRESULT CPointParticle::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
+	m_fTime = -m_tData.fDelayTime;
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 	//m_pVIBufferCom->Initialize(nullptr);
@@ -82,11 +82,22 @@ HRESULT CPointParticle::Initialize(void* pArg)
 
 void CPointParticle::Priority_Update(_float fTimeDelta)
 {
-	m_pTransformCom->Set_Scale(1, 1, 1);
 }
 
 void CPointParticle::Update(_float fTimeDelta)
 {
+	m_fTime += fTimeDelta;
+	if (m_tData.fDelayTime > m_fTime)
+	{
+		return;
+	}
+	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
+		m_tData.bisLoop = false;
+		if (m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime) {
+			m_isDead = true;
+			return;
+		}
+	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 	Spread(fTimeDelta);
@@ -94,6 +105,10 @@ void CPointParticle::Update(_float fTimeDelta)
 
 void CPointParticle::Late_Update(_float fTimeDelta)
 {
+	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
+	{
+		return;
+	}
 	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
 }
 
@@ -161,19 +176,40 @@ HRESULT CPointParticle::Bind_ShaderResources()
 		return E_FAIL;
 
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
+		return E_FAIL;
+
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 		return E_FAIL;
 
 	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
 		return E_FAIL;
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV)))
-		return E_FAIL;
+
+	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
 

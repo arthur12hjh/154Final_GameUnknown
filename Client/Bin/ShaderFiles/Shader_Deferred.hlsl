@@ -224,8 +224,8 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
     
     vector fBlur;
-    fBlur.rgb = fBlurColor.rgb / fBlurAlpha.r;
-    fBlur.a = saturate(fBlurAlpha.r);
+    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r * fBlurAlpha.g);
+    fBlur.a = saturate(fBlurAlpha.r * fBlurAlpha.g);
     
     Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
     

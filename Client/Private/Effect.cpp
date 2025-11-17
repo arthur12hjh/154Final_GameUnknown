@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "MeshEffect.h"
 #include "PointParticle.h"
+#include "SpriteUVEffect.h"
 
 CEffect::CEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CGameObject{ pDevice, pContext }
@@ -18,6 +19,9 @@ CEffect::CEffect(const CEffect& Prototype)
     }
     for (auto pParticle : Prototype.m_pPointParticles) {
         m_pPointParticles.push_back(dynamic_cast<CPointParticle*>(pParticle->Clone(nullptr)));
+    }
+    for (auto pSpriteEffect : Prototype.m_pSpriteEffects) {
+        m_pSpriteEffects.push_back(dynamic_cast<CSpriteUVEffect*>(pSpriteEffect->Clone(nullptr)));
     }
 }
 
@@ -37,12 +41,15 @@ HRESULT CEffect::Initialize(void* pArg)
         EFFECT_TRANSFORM_DESC* pDesc = static_cast<EFFECT_TRANSFORM_DESC*>(pArg);
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
     }
-
+    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(5, 5, 5, 1));
     for (auto pMeshEffect : m_pMeshEffects) {
         pMeshEffect->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
     }
     for (auto pParticle : m_pPointParticles) {
         pParticle->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
+    }
+    for (auto pSpriteEffect : m_pSpriteEffects) {
+        pSpriteEffect->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
     }
     return S_OK;
 }
@@ -55,12 +62,16 @@ void CEffect::Priority_Update(_float fTimeDelta)
     for (auto pParticle : m_pPointParticles) {
         pParticle->Priority_Update(fTimeDelta);
     }
+    for (auto pSpriteEffect : m_pSpriteEffects) {
+        pSpriteEffect->Priority_Update(fTimeDelta);
+    }
 }
 
 HRESULT CEffect::Load_Binary(const _char* szFile)
 {
     CMeshEffect::MESH_EFFECT_DATA	MeshEffectDesc{};
     CPointParticle::POINT_PARTICLE_DATA    PointParticleDesc{};
+    CSpriteUVEffect::SPRITE_DATA    SpriteDesc{};
     ifstream fileBinaryStream;
     fileBinaryStream.open(szFile, ios_base::binary);
     _int iMeshCount = ReadInt(fileBinaryStream);
@@ -81,6 +92,24 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         MeshEffectDesc.fPosition = ReadFloat4(fileBinaryStream);
         MeshEffectDesc.fScale = ReadFloat3(fileBinaryStream);
         MeshEffectDesc.fRotation = ReadFloat3(fileBinaryStream);
+
+
+
+
+        MeshEffectDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+        MeshEffectDesc.fDelayTime = ReadFloat(fileBinaryStream);
+        MeshEffectDesc.fEndTime = ReadFloat(fileBinaryStream);
+
+
+
         MeshEffectDesc.iBegin = ReadInt(fileBinaryStream);
         MeshEffectDesc.iSelectRender = ReadInt(fileBinaryStream);
 
@@ -117,13 +146,56 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         PointParticleDesc.fSize = ReadFloat2(fileBinaryStream);
         PointParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
         PointParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+
+
+        PointParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+        PointParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
+        PointParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
+
+
         PointParticleDesc.iBegin = ReadInt(fileBinaryStream);
         PointParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
         PointParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+
+        PointParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         PointParticleDesc.bisLoop = ReadBool(fileBinaryStream);
 
-        CPointParticle* pPointParticle = CPointParticle::Create(m_pDevice, m_pContext, &PointParticleDesc);
-        m_pPointParticles.push_back(pPointParticle);
+        CPointParticle* pParticle = CPointParticle::Create(m_pDevice, m_pContext, &PointParticleDesc);
+        m_pPointParticles.push_back(pParticle);
+    }
+
+    _int iSpriteCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iSpriteCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteDesc.szNormalTexture = szTemp;
+        Safe_Delete(szTemp);
+
+        SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
+        SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
+        SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
+        SpriteDesc.iUV = ReadInt2(fileBinaryStream);
+        SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
+        SpriteDesc.iBegin = ReadInt(fileBinaryStream);
+        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+        SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
+
+
+        CSpriteUVEffect* pSprite = CSpriteUVEffect::Create(m_pDevice, m_pContext, &SpriteDesc);
+        m_pSpriteEffects.push_back(pSprite);
     }
     return S_OK;
 }
@@ -136,15 +208,73 @@ void CEffect::Update(_float fTimeDelta)
     for (auto pParticle : m_pPointParticles) {
         pParticle->Update(fTimeDelta);
     }
+    for (auto pSpriteEffect : m_pSpriteEffects) {
+        pSpriteEffect->Update(fTimeDelta);
+    }
 }
 
 void CEffect::Late_Update(_float fTimeDelta)
 {
-    for (auto pMeshEffect : m_pMeshEffects) {
-        pMeshEffect->Late_Update(fTimeDelta);
+
+    if (1 < m_pMeshEffects.size()) {
+        for (auto i = m_pMeshEffects.begin(); i != m_pMeshEffects.end();) {
+            if ((*i)->isDead()) {
+                Safe_Release((*i));
+                i = m_pMeshEffects.erase(i);
+            }
+            else {
+                (*i)->Late_Update(fTimeDelta);
+            }
+        }
     }
-    for (auto pParticle : m_pPointParticles) {
-        pParticle->Late_Update(fTimeDelta);
+    else if(1 == m_pMeshEffects.size()){
+        if (m_pMeshEffects[0]->isDead()) {
+            Safe_Release(m_pMeshEffects[0]);
+            m_pMeshEffects.clear();
+        }
+        else {
+            m_pMeshEffects[0]->Late_Update(fTimeDelta);
+        }
+    }
+    if (1 < m_pPointParticles.size()) {
+        for (auto i = m_pPointParticles.begin(); i != m_pPointParticles.end();) {
+            if ((*i)->isDead()) {
+                Safe_Release((*i));
+                i = m_pPointParticles.erase(i);
+            }
+            else {
+                (*i)->Late_Update(fTimeDelta);
+            }
+        }
+    }
+    else if (1 == m_pPointParticles.size()) {
+        if (m_pPointParticles[0]->isDead()) {
+            Safe_Release(m_pPointParticles[0]);
+            m_pPointParticles.clear();
+        }
+        else {
+            m_pPointParticles[0]->Late_Update(fTimeDelta);
+        }
+    }
+    if (1 < m_pSpriteEffects.size()) {
+        for (auto i = m_pSpriteEffects.begin(); i != m_pSpriteEffects.end();) {
+            if ((*i)->isDead()) {
+                Safe_Release((*i));
+                i = m_pSpriteEffects.erase(i);
+            }
+            else {
+                (*i)->Late_Update(fTimeDelta);
+            }
+        }
+    }
+    else if (1 == m_pSpriteEffects.size()) {
+        if (m_pSpriteEffects[0]->isDead()) {
+            Safe_Release(m_pSpriteEffects[0]);
+            m_pSpriteEffects.clear();
+        }
+        else {
+            m_pSpriteEffects[0]->Late_Update(fTimeDelta);
+        }
     }
 }
 
@@ -187,6 +317,9 @@ void CEffect::Free()
     for (auto pParticle : m_pPointParticles)
         Safe_Release(pParticle);
     m_pPointParticles.clear();
+    for (auto pSpriteEffect : m_pSpriteEffects)
+        Safe_Release(pSpriteEffect);
+    m_pSpriteEffects.clear();
 }
 
 
@@ -228,6 +361,20 @@ _float2 CEffect::ReadFloat2(ifstream& fileBinaryStream)
     _float2 fValue;
     fileBinaryStream.read((_char*)&fValue, sizeof(_float2));
     return fValue;
+}
+
+_float CEffect::ReadFloat(ifstream& fileBinaryStream)
+{
+    _float fValue;
+    fileBinaryStream.read((_char*)&fValue, sizeof(_float));
+    return fValue;
+}
+
+_int2 CEffect::ReadInt2(ifstream& fileBinaryStream)
+{
+    _int2 iValue;
+    fileBinaryStream.read((_char*)&iValue, sizeof(_int2));
+    return iValue;
 }
 
 _bool CEffect::ReadBool(ifstream& fileBinaryStream)

@@ -298,6 +298,9 @@
     <Filter Include="03.Effects\PointParticle">
       <UniqueIdentifier>{f36f41a3-36bc-478b-a935-38080c6a1f7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\SpriteEffect">
+      <UniqueIdentifier>{ae86be2c-3ab0-4309-a651-521dcec54b94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -537,6 +540,9 @@
     <ClInclude Include="..\Public\MeshEffect.h">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpriteUVEffect.h">
+      <Filter>03.Effects\SpriteEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -760,6 +766,9 @@
     <ClCompile Include="..\Private\MeshEffect.cpp">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpriteUVEffect.cpp">
+      <Filter>03.Effects\SpriteEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -800,6 +809,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

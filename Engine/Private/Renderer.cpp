@@ -43,30 +43,24 @@ HRESULT CRenderer::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 
 HRESULT CRenderer::Initialize()
 {
-	/* ��ũ�� ������ ���� */
 	m_vScreenSize = m_pGameInstance->GetScreenSize();
-	/* ������ �� ������ ���� */
 	m_vShadowMapSize = _uint2{ 8192, 4608 };
 
-	/* ����Ÿ�� ���� */
-	if (FAILED(Ready_RenderTargets()))
+	if (FAILED(Ready_RenderTargets())) {
 		return E_FAIL;
+	}
 
-	/* ������ ����Ÿ�� MRT�� ���*/
 	if (FAILED(Ready_MRTs()))
 		return E_FAIL;
 
-	/* ���۵� ���̴� ���� �ε� */
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	/* ������ ��Ʈ �ϳ� ����. */
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 
-	/* ������ ���� �� ���� ���� */
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 1.f));
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)m_vScreenSize.x, (_float)m_vScreenSize.y, 0.f, 1.f));
@@ -91,14 +85,12 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pFog)
 		return E_FAIL;
 
-	/* ��ũ�� ������� �̸� ���ε� �Ѵ�. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &m_vScreenSize.y, sizeof(_int))))
 		return E_FAIL;
 
-	/* ����� ������ �غ� */
 #ifdef _DEBUG
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Scene"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
@@ -137,7 +129,6 @@ HRESULT CRenderer::Initialize()
 
 HRESULT CRenderer::Ready_RenderTargets()
 {
-	/* ��ó�� ���̵��� ���� ����Ÿ�ٵ��� �غ�. */
 	/* Target_Scene */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
@@ -256,12 +247,10 @@ void CRenderer::Render()
 	Render_NonLight();
 	Render_Blend();
 
-	//��ó�� ������ ��.
 	Render_Blur();
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
-	//���� Ÿ�� ������ ����۷� ��.
 	Render_Deferred();
 	Render_BackBuffer();
 
@@ -496,13 +485,13 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
 
-	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture", true)))
+	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
 		return;
 
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
 		return;
 
-	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture", true)))
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
@@ -607,7 +596,6 @@ void CRenderer::Render_Debug()
 	if (false == m_isDebugVisible)
 		return;
 
-	/* MRT�� ���Ե� ����Ÿ�ٵ��� ����׷� ���������� ���� �׷���. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))

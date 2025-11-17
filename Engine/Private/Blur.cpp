@@ -134,18 +134,21 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
+	m_bisWeight = false;
 	return S_OK;
 }
 
-HRESULT CBlur::Bind_RenderTarget(CShader* pShader, const _char* pConstantName, _bool bisWeight)
+HRESULT CBlur::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
-	if (bisWeight) {
+	if (m_bisWeight) {
 		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final_Weight"), pShader, pConstantName)))
 			return E_FAIL;
+		m_bisWeight = false;
 	}
 	else {
 		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Final"), pShader, pConstantName)))
 			return E_FAIL;
+		m_bisWeight = true;
 	}
 	return S_OK;
 }

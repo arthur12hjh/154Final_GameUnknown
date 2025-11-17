@@ -469,7 +469,8 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     float depth = In.vProjPos.w / 500;
     float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
-    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a;
+    Out.vWeight.g = weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     

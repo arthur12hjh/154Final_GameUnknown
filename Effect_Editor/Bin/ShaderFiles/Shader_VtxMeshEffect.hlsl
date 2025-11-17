@@ -144,16 +144,17 @@ PS_OUT PS_MAIN(PS_IN In)
             discard;
     }
     
-    float maxColor = max(max(Out.vColor.r, Out.vColor.g), Out.vColor.b);
-    Out.vColor.r = 1 - (maxColor - Out.vColor.r);
-    Out.vColor.g = 1 - (maxColor - Out.vColor.g);
-    Out.vColor.b = 1 - (maxColor - Out.vColor.b);
-    Out.vColor.a -= (1 - maxColor);
-    if (Out.vColor.a <= 0.1f || 0 > fmod(g_fTime, 1))
-        discard;
+    //float maxColor = max(max(Out.vColor.r, Out.vColor.g), Out.vColor.b);
+    //Out.vColor.r = 1 - (maxColor - Out.vColor.r);
+    //Out.vColor.g = 1 - (maxColor - Out.vColor.g);
+    //Out.vColor.b = 1 - (maxColor - Out.vColor.b);
+    //Out.vColor.a -= (1 - maxColor);
+    //if (Out.vColor.a <= 0.1f || 0 > fmod(g_fTime, 1))
+    //    discard;
     
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
-    Out.vWeight.r = Out.vColor.a * weight;
+    Out.vWeight.r = Out.vColor.a;
+    Out.vWeight.g = weight;
     Out.vColor.a = 1;
     Out.vWeight.a = 1;
     

@@ -47,11 +47,12 @@ PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
     
     Out.vGlowX.rgb *= 5;
     Out.vGlowX.a *= 5;
-    Out.vGlowX *= 0.01;
+    //Out.vGlowX *= 0.01;
     
     
     Out.vWeight = vWeight / 10.f;
-    Out.vWeight *= 0.01;
+    
+    //Out.vWeight *= 0.01;
     return Out;
 }
 
@@ -67,8 +68,8 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
         vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
-        vColor += g_fBloomWeights[i + 10] * g_GlowTexture.Sample(ClampSampler, vTexcoord) * 100;
-        vWeight += g_fBloomWeights[i + 10] * g_WeightTexture.Sample(ClampSampler, vTexcoord) * 100;
+        vColor += g_fBloomWeights[i + 10] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
+        vWeight += g_fBloomWeights[i + 10] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
     }
     vColor /= 6.5f;
     
@@ -82,7 +83,7 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_REAL_FINAL(PS_IN In)
 {
     PS_OUT_GLOW_FINAL Out;
     Out.vGlowY = saturate(g_GlowTexture.Sample(ClampSampler, In.vTexcoord) * 6);
-    Out.vGlowY.a *= max(max(Out.vGlowY.r, Out.vGlowY.g), Out.vGlowY.b);
+    Out.vWeight = max(max(Out.vGlowY.r, Out.vGlowY.g), Out.vGlowY.b) * g_WeightTexture.Sample(ClampSampler, In.vTexcoord).g;
     return Out;
 }
 

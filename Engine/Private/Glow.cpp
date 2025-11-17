@@ -136,25 +136,30 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
         return E_FAIL;
 
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
+        return E_FAIL;
+
     m_pShader->Begin(2);
     pVIBuffer->Bind_Resources();
     pVIBuffer->Render();
 
     if (FAILED(m_pGameInstance->End_MRT()))
         return E_FAIL;
-
+    m_bisWeight = false;
     return S_OK;
 }
 
-HRESULT CGlow::Bind_RenderTarget(CShader* pShader, const _char* pConstantName, _bool bisWeight)
+HRESULT CGlow::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
-    if (bisWeight) {
+    if (m_bisWeight) {
         if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final_Weight"), pShader, pConstantName)))
             return E_FAIL;
+        m_bisWeight = false;
     }
     else {
         if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final"), pShader, pConstantName)))
             return E_FAIL;
+        m_bisWeight = true;
     }
     return S_OK;
 }

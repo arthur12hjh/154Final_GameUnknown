@@ -33,13 +33,15 @@ public:
     void    WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp);
     void    WriteFloat2(ofstream& fileBinaryStream, _float2 vTmp);
     void    WriteFloat(ofstream& fileBinaryStream, _float vTmp);
+    void    WriteInt2(ofstream& fileBinaryStream, _int2 vTmp);
     void    WriteBool(ofstream& fileBinaryStream, _bool vTmp);
     _char*  ReadString(ifstream& fileBinaryStream);
     _int    ReadInt(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);
     _float2 ReadFloat2(ifstream& fileBinaryStream);
-    _float ReadFloat(ifstream& fileBinaryStream);
+    _float  ReadFloat(ifstream& fileBinaryStream);
+    _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
     _uint   m_iSelectMeshParticle = { 0 };

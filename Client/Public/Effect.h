@@ -14,6 +14,7 @@ NS_BEGIN(Client)
 
 class CMeshEffect;
 class CPointParticle;
+class CSpriteUVEffect;
 class CEffect : public CGameObject
 {
 public:
@@ -42,10 +43,13 @@ private:
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);
     _float2 ReadFloat2(ifstream& fileBinaryStream);
+    _float  ReadFloat(ifstream& fileBinaryStream);
+    _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
     vector<CMeshEffect*> m_pMeshEffects;
     vector<CPointParticle*> m_pPointParticles;
+    vector<CSpriteUVEffect*> m_pSpriteEffects;
 public:
     static  CEffect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile);
     virtual CGameObject* Clone(void* pArg) override;
