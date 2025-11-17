@@ -70,8 +70,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
+	LightDesc.vDiffuse = _float4(0.8f, 0.8f, 0.8f, 0.8f);
+	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.5f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
@@ -245,20 +245,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Snow"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Snow"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Explosion"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Explosion"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
-	for (size_t i = 0; i < 50; i++)
-	{
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sprite_Explosion"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-			return E_FAIL;
-	}
+	//for (size_t i = 0; i < 50; i++)
+	//{
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sprite_Explosion"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//		return E_FAIL;
+	//}
 
 
 	return S_OK;

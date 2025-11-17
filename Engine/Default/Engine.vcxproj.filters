@@ -317,6 +317,9 @@
     <ClInclude Include="..\Public\Interaction_Component.h">
       <Filter>01.Utility\21.Interraction</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Fog.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Fog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -550,9 +553,6 @@
     <ClCompile Include="..\private\Query.cpp">
       <Filter>01.Utility\19.Query</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Deferred.cpp">
-      <Filter>01.Utility\05.Renderer\Deferred</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Blur.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Blur</Filter>
     </ClCompile>
@@ -606,6 +606,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Interaction_Component.cpp">
       <Filter>01.Utility\21.Interraction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fog.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Fog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Deferred.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -951,6 +957,12 @@
     <Filter Include="01.Utility\21.Interraction\Manager">
       <UniqueIdentifier>{f781438a-73ea-4d9a-8926-c871c4b66e44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Fog">
+      <UniqueIdentifier>{9708f143-2ba9-4625-9561-98919a41881b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Fog\ShaderFile">
+      <UniqueIdentifier>{101693b1-d65b-44d1-8019-2fe017761922}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -976,6 +988,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Bloom\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Fog\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

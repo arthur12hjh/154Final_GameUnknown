@@ -278,7 +278,7 @@ HRESULT CMainApp::Ready_Prototypes()
 	 /* For.Prototype_Component_Model_Dororong */
 	_fmatrix PreWorlMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/CH_NPC_Dororong.bin", PreWorlMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/ORM_Eve.binx", PreWorlMatrix))))
 		return E_FAIL;
 
 #endif

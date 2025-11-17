@@ -11,28 +11,6 @@ float g_fBloomWeights[21] =
     0.7370f, 0.5741f, 0.4259f, 0.3019f, 0.2052f, 0.1332f, 0.0818f, 0.0469f, 0.0249f, 0.0125f
 };
 
-/* 툰 셰이딩을 위한 라플라시안 필터 계수. 추후 수정할수도 있음 */
-float g_fLaplacianMask[9] =
-{
-    -1, -1, -1,
-    -1, 8, -1,
-    -1, -1, -1,
-};
-
-float g_fPixelsX[9] =
-{
-    -1.f, 0.f, 1.f,
-    -1.f, 0.f, 1.f,
-    -1.f, 0.f, 1.f
-};
-float g_fPixelsY[9] =
-{
-    -1.f, -1.f, -1.f,
-    0.f, 0.f, 0.f,
-    1.f, 1.f, 1.f
-};
-
-
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -80,6 +58,11 @@ struct PS_OUT_GLOW_X
 struct PS_OUT_GLOW_FINAL
 {
     float4 vGlowY : SV_TARGET0;
+};
+
+struct PS_OUT_FOG
+{
+    float fFogPower : SV_TARGET0;
 };
 
 
