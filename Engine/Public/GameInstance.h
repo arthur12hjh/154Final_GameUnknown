@@ -43,7 +43,8 @@ public:
 	LONG		GetMouseAxis(_uint iAxis);
 
 	// 인풋 포커스 세팅
-	void		SetInputFoucs(_bool bFlag);
+	void		SetInputFoucs(KEY_INPUT eType, _bool bFlag);
+	_bool		GetInputFoucs(KEY_INPUT eType);
 #pragma endregion
 
 #pragma region TIMER_MANAGER

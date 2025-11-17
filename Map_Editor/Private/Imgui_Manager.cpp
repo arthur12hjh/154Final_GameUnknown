@@ -65,10 +65,12 @@ void CImgui_Manager::Priority_Update(_float fTimeDelta)
 
 void CImgui_Manager::Update(_float fTimeDelta)
 {
-	if (ImGui::GetIO().WantCaptureMouse)
+	if( ImGui::GetIO().WantCaptureKeyboard)
 	{
-		return;
+		g_bIsImgKeyBoardFoucs = true;
 	}
+	else
+		g_bIsImgKeyBoardFoucs = false;
 	
 	m_pMapTool->Update(fTimeDelta);
 	m_pLightTool->Update(fTimeDelta);

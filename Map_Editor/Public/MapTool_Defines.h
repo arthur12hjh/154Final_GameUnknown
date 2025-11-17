@@ -24,5 +24,6 @@ namespace Tool_Map
 
 using namespace Tool_Map;
 
-extern HINSTANCE g_hInstance;
-extern HWND g_hWnd;
+extern HINSTANCE	g_hInstance;
+extern HWND			g_hWnd;
+extern bool		g_bIsImgKeyBoardFoucs;

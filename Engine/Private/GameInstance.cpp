@@ -298,13 +298,19 @@ _bool CGameInstance::KeyUp(KEY_INPUT eType, _uint KeyState)
 	return m_pInput_Device->KeyUp(eType, KeyState);
 }
 
-LONG CGameInstance::GetMouseAxis(_uint iAxis)
+LONG CGameInstance::GetMouseAxis( _uint iAxis)
 {
 	return m_pInput_Device->GetMouseAxis(iAxis);
 }
-void CGameInstance::SetInputFoucs(_bool bFlag)
+
+void CGameInstance::SetInputFoucs(KEY_INPUT eType, _bool bFlag)
 {
-	m_pInput_Device->SetInputFoucs(bFlag);
+	m_pInput_Device->SetInputFoucs(eType, bFlag);
+}
+
+_bool CGameInstance::GetInputFoucs(KEY_INPUT eType)
+{
+	return m_pInput_Device->GetInputFoucs(eType);
 }
 #pragma endregion
 
