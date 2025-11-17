@@ -648,6 +648,21 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
+void CGameInstance::Bind_CasCadeSRV()
+{
+	m_pFrustum->Bind_CasCadeSRV();
+}
+
+void CGameInstance::Bind_CasCadeMatrix()
+{
+	m_pFrustum->Bind_ShadowMatrix();
+}
+
+ID3D11DepthStencilView* CGameInstance::GetCasCadeShadowDSV()
+{
+	return m_pFrustum->GetShadowDSV();
+}
+
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()
 {

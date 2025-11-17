@@ -21,6 +21,14 @@ namespace Engine
 		return value1 + ((value2 - value1) * Time);
 	}
 
+	// 이거 혼합 하는 공식 넣어뒀음 
+	// 이전 값 + 섞을값을 비율에 따라 섞어줌
+	template <typename T>
+	T Mix(const T& value1, const T& value2, const T& Percent)
+	{
+		return value1 * (1.f - Percent) + value2 * Percent;
+	}
+
 	// 베지어 구현해서 넣어두기
 	// 시작점 0 -> n-1 까지 보간하고
 	// 보간된 점들을 가지고 다시 선형보간해서

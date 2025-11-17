@@ -39,9 +39,9 @@ HRESULT CFrustum::Initialize()
 
 	// 케스케이드 숫자 + 1은 케스케이드에서 상이 맺어지는 부분의 평면임
 	m_CascadeFar.resize(m_iNumCascadeCount + 1);
-	m_CascadeMatrix.resize(m_iNumCascadeCount);
-	for (_uint j = 0; j < m_iNumCascadeCount; ++j)
-		XMStoreFloat4x4(&m_CascadeMatrix[j], XMMatrixIdentity());
+	if (FAILED(Ready_CasCadeTexture()))
+		return E_FAIL;
+
 
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
@@ -64,6 +64,11 @@ HRESULT CFrustum::Initialize()
 void CFrustum::Update()
 {
 	_matrix ShadowCamWorldMatrix = XMLoadFloat4x4(m_pGameInstance->GetInverseShadowMatrix(D3DTS::VIEW));
+	XMStoreFloat4x4(&m_CaseCadeMatrix.World, ShadowCamWorldMatrix);
+
+	for(_uint i = 0; i < 3; ++i)
+		m_CaseCadeMatrix.ViewMatrix[i] = *m_pGameInstance->GetShadowMatrix(D3DTS::VIEW);
+
 	auto& ShadowLightDesc = m_pGameInstance->GetShadowCameraInfo();
 
 	// 수직 시야각을 이용하여 수평시야각을 구함
@@ -74,9 +79,9 @@ void CFrustum::Update()
 	// 케스케이드 개수에 따라서 로그 + 선형 분할로 나눈다.
 	// 이러면 좀더 품질좋은 그림자가 나온다고한다.
 	m_CascadeFar[0] = ShadowLightDesc.fNear;
-	m_CascadeFar[m_iNumCascadeCount - 1] = ShadowLightDesc.fFar;
-	for (_uint i = 1; i < m_iNumCascadeCount - 1; ++i)
-		m_CascadeFar[i] = Mix<_float>(ShadowLightDesc.fNear, ShadowLightDesc.fFar, i / m_iNumCascadeCount);
+	m_CascadeFar[m_iNumCascadeCount] = ShadowLightDesc.fFar;
+	for (_uint i = 1; i < m_iNumCascadeCount; ++i)
+		m_CascadeFar[i] = Mix<_float>(ShadowLightDesc.fNear, ShadowLightDesc.fFar, _float(i) / m_iNumCascadeCount);
 
 	for (_uint i = 0; i < m_iNumCascadeCount; ++i)
 	{
@@ -111,7 +116,7 @@ void CFrustum::Update()
 		_float	fRadius = {};
 		for (_uint j = 0; j < 8; ++j)
 		{
-			_float Distance = XMVectorGetX(XMVector3Length(XMLoadFloat4(&m_vCascadeFrustumConers[i]) - vCenterPos));
+			_float Distance = XMVectorGetX(XMVector3Length(XMLoadFloat4(&m_vCascadeFrustumConers[j]) - vCenterPos));
 			fRadius = max(fRadius, Distance);
 		}
 
@@ -125,12 +130,14 @@ void CFrustum::Update()
 
 		_vector CasCadeExtents = MaxExtents - MinExtents;
 
+		if (0 < m_CascadeFar[i])
+		{
+			_matrix OrthMatrix = XMMatrixOrthographicLH(MaxExtents.m128_f32[0] - MinExtents.m128_f32[0],
+				MaxExtents.m128_f32[1] - MinExtents.m128_f32[1],
+				m_CascadeFar[i], m_CascadeFar[i + 1]);
 
-		 _matrix OrthMatrix = XMMatrixOrthographicLH(MaxExtents.m128_f32[0] - MinExtents.m128_f32[0],
-													 MaxExtents.m128_f32[1] - MinExtents.m128_f32[1],
-													 m_CascadeFar[i], m_CascadeFar[i + 1]);
-
-		 XMStoreFloat4x4(&m_CascadeMatrix[i], OrthMatrix);
+			XMStoreFloat4x4(&m_CaseCadeMatrix.ProjMatrix[i], OrthMatrix);
+		}
 	}
 
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
@@ -240,6 +247,19 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
+void CFrustum::Bind_CasCadeSRV()
+{
+	m_pContext->PSSetShaderResources(0, 1, &m_pCasCadeSRV);
+}
+
+void CFrustum::Bind_ShadowMatrix()
+{
+	// 상수 버퍼를 통해서 넘길거임
+	// 여기서 구한 View, Proj 전부 넘겨줄거임
+	m_pContext->UpdateSubresource(m_pCaseCadeCB, 0, nullptr, &m_CaseCadeMatrix, 0, 0);
+	m_pContext->GSSetConstantBuffers(0, 1, &m_pCaseCadeCB);
+}
+
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 {
 	XMStoreFloat4(&pPlanes[0], XMPlaneFromPoints(XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[5]), XMLoadFloat4(&pPoints[6])));
@@ -252,6 +272,19 @@ void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 
 HRESULT CFrustum::Ready_CasCadeTexture()
 {
+#pragma region CB
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.ByteWidth = sizeof(CASCADE_DESC);
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = &m_CaseCadeMatrix;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &m_pCaseCadeCB)))
+		return E_FAIL;
+#pragma endregion
+
 	D3D11_TEXTURE2D_DESC texDesc = {};
 	texDesc.Width = 2048;
 	texDesc.Height = 2048;
@@ -315,6 +348,10 @@ void CFrustum::Free()
 	Safe_Delete(m_pEffect);
 	Safe_Release(m_pInputLayout);
 #endif // _DEBUG
+
+	Safe_Release(m_pCaseCadeCB);
+	Safe_Release(m_pCasecasdeDSV);
+	Safe_Release(m_pCasCadeSRV);
 
 	Safe_Release(m_pGameInstance);
 	Safe_Delete(m_OrizinBoundingFrustom);

@@ -3,17 +3,21 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class CShader;
 
 class CFrustum final : public CBase
 {
+public :
+	typedef struct CascadeDesc
+	{
+		_float4x4	World;
+		_float4x4	ViewMatrix[3];
+		_float4x4	ProjMatrix[3];
+	}CASCADE_DESC;
+
+
 private:
-#ifdef _DEBUG
 	CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
-#else
-	CFrustum();
-#endif // _DEBUG
-
-
 	virtual ~CFrustum() = default;
 
 public:
@@ -25,13 +29,29 @@ public:
 #endif
 
 public:
-	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
-	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+	void					Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool					isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
+	_bool					isIn_WorldFrustum(class CCollider* pCollider);
 
-	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
+	_bool					isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
+
+	void					Bind_CasCadeSRV();
+	void					Bind_ShadowMatrix();
+
+	ID3D11DepthStencilView* GetShadowDSV() { return m_pCasecasdeDSV; }
 
 private:
+	_uint						m_iNumCascadeCount = {};
+	vector<_float>				m_CascadeFar;
+
+	_float4						m_vCascadeFrustumConers[8] = {};
+
+	ID3D11Buffer*				m_pCaseCadeCB = { nullptr };
+	ID3D11ShaderResourceView*	m_pCasCadeSRV = { nullptr };
+	ID3D11DepthStencilView*		m_pCasecasdeDSV = { nullptr };
+
+	CASCADE_DESC				m_CaseCadeMatrix = {};
+
 	_float4				m_vOriginalPoints[8] = {};
 	_float4				m_vWorldPoints[8] = {};
 	
@@ -54,16 +74,11 @@ private:
 #endif // _DEBUG
 
 private:
-	void Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	void			Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	HRESULT			Ready_CasCadeTexture();
 
 public:
-#ifdef _DEBUG
 	static CFrustum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#else
-	static CFrustum* Create();
-#endif // _DEBUG
-
-
 	virtual void Free() override;
 };
 

@@ -311,11 +311,16 @@ void CRenderer::Render_Priority()
 
 void CRenderer::Render_Shadow()
 {
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
+	//if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
+	//	return;
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV())))
 		return;
 
-	Set_ScreenSize(m_vShadowMapSize.x, m_vShadowMapSize.y);
+	m_pGameInstance->Bind_CasCadeSRV();
+	m_pGameInstance->Bind_CasCadeMatrix();
 
+	Set_ScreenSize(2048, 2048);
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::SHADOW)])
 	{
 		if (nullptr != pRenderObject)
@@ -608,15 +613,15 @@ void CRenderer::Render_Debug()
 		return;
 
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
-		return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
+	//	return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 		return;
-	if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	/*if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
@@ -625,7 +630,7 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pBloom->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
+		return;*/
 }
 
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)

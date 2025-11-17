@@ -67,7 +67,7 @@ namespace Engine
 	typedef struct tagShadowLight
 	{
 		XMFLOAT4		vEye, vAt;
-		float			fNear, fFar, fFovy, fAspect;
+		float			fNear, fFar, fFov, fAspect;
 	}SHADOW_LIGHT_DESC;
 
 	typedef struct tagVertexPosition

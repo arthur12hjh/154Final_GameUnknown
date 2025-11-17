@@ -104,7 +104,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	SHADOW_LIGHT_DESC		ShadowDesc{};
 	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
 	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
-	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
+	ShadowDesc.fFov = XMConvertToRadians(120.0f);
 	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
 	ShadowDesc.fNear = 0.1f;
 	ShadowDesc.fFar = 500.f;
