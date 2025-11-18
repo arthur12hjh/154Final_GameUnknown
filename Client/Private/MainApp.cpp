@@ -321,7 +321,6 @@ void CMainApp::Free()
 	__super::Free();
 
 	CGameManager::DestroyInstance();
-	CGameManager::DestroyInstance();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

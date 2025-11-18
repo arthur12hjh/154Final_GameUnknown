@@ -329,6 +329,15 @@
     <ClInclude Include="..\Public\Fog.h">
       <Filter>01.Utility\05.Renderer\Deferred\Fog</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RadialBlur.h">
+      <Filter>01.Utility\05.Renderer\Deferred\RadialBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DepthofField.h">
+      <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>01.Utility\03.Components\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -630,6 +639,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Deferred.cpp">
       <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RadialBlur.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\RadialBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DepthofField.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>01.Utility\03.Components\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -990,6 +1008,21 @@
     <Filter Include="01.Utility\03.Components\Percetion">
       <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\RadialBlur">
+      <UniqueIdentifier>{db8c3139-83e9-413a-b5b5-1f41e01bfb79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\RadialBlur\ShaderFile">
+      <UniqueIdentifier>{63dc60d6-15aa-4c63-a4fb-76656881ab23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\DoF">
+      <UniqueIdentifier>{18c418b9-06a1-4b4d-81a5-74fb04fc3c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\DoF\ShaderFile">
+      <UniqueIdentifier>{92854abc-ff3c-4e22-a211-b150eaf6d061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1018,6 +1051,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Fog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\RadialBlur\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\DoF\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

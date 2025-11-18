@@ -477,6 +477,21 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     return Out;
 }
 
+PS_NONLIGHT_OUT PS_SMOK(PS_NONLIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    Out.vDiffuse = g_vColor * g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord);
+    Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (Out.vDiffuse.a < g_DissolveTexture.Sample(MirrorSampler, DissolveTexcoord).r || 0 > In.vLifeTime.x)
+        discard;
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass NonBlend
@@ -507,6 +522,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_WEIGHT();
+    }
+
+    pass Smok
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_SMOK();
     }
  
 }

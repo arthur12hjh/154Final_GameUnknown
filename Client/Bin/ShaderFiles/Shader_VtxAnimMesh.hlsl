@@ -11,9 +11,12 @@ vector g_vCamPosition;
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_BoneMatrices[512];
 
+bool g_IsMotionBlur;
+
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -68,6 +71,9 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
 
+    //여기서 본 정보 저장
+    //이전 프레임 본 정보 저장.
+    
     return Out;
 }
 
@@ -178,6 +184,7 @@ PS_OUT PS_MAIN_MS_TEST(PS_IN In)
    
     Out.vDiffuse = vMtrlDiffuse;
     //Out.vDiffuse += Out.vDiffuse * g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
+   
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
 
@@ -192,6 +199,26 @@ PS_OUT PS_MAIN_MS_TEST(PS_IN In)
     
     Out.vDiffuse += vRimLight;
 
+    return Out;
+}
+
+PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
+{
+    PS_OUT Out;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    Out.vDiffuse = vMtrlDiffuse;
+    
+    if(Out.vDiffuse.r <= 0.7f)
+        discard;
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     return Out;
 }
 
@@ -215,8 +242,25 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
     return Out;
 }
 
+PS_OUT PS_MAIN_NOT_VISIBLE(PS_IN In)
+{
+    PS_OUT Out;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    Out.vDiffuse = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
+    // 0
     pass Default
     {
         SetRasterizerState(RS_Default);
@@ -226,7 +270,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
+    // 1
     pass Shadow
     {
         SetRasterizerState(RS_Default);
@@ -238,6 +282,7 @@ technique11 DefaultTechnique
     }
 
     //림 라이트 켠 버전
+    // 2
     pass RimLight
     {
         SetRasterizerState(RS_Default);
@@ -248,7 +293,18 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_RIMLIGHT();
     }
 
-    //서민석 셰이더 테스트용 패스. 지우려면 디코좀.
+    //눈 마스킹용.
+    // 3 
+    pass Mask
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_EYEMASKING();
+    }
+    // 4
     pass MS_Test
     {
         SetRasterizerState(RS_Default);
@@ -256,6 +312,6 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_MS_TEST();
+        PixelShader = compile ps_5_0 PS_MAIN_NOT_VISIBLE();
     }
 }

@@ -3,6 +3,8 @@
 #include "Particle.h"
 #include "MeshEffect.h"
 #include "SpriteEffect.h"
+#include "TrailEffect.h"
+#include "SpriteParticle.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Point_Instance;
@@ -51,8 +53,10 @@ private:
     _float3  m_fRotation;
     _float  m_fTime;
     CParticle::PARTICLE_DATA m_tParticleData;
+    CSpriteParticle::SPRITE_PARTICLE_DATA m_tSpriteParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
     CSpriteEffect::SPRITE_DATA m_tSpriteData;
+    CTrailEffect::TRAIL_DATA    m_tTrailData;
     CTransform* m_pTransform = nullptr;
     vector<string> m_ImageFiles[4];
     vector<string> m_ShaderFiles;
@@ -60,9 +64,13 @@ private:
     vector<string> m_ModelFilePaths;
     vector<ID3D11ShaderResourceView*>	m_SRVs[4];
     vector<CParticle*> m_pParticles;
+    vector<CSpriteParticle*> m_pSpriteParticles;
     vector<CMeshEffect*> m_pMeshs;
     vector<CSpriteEffect*> m_pSprites;
+    CTrailEffect*    m_pTrailEffect = nullptr;
+    CTrailEffect* m_pDistortionTrailEffect = nullptr;
     _int       m_iSelectParticle;
+    _int       m_iSelectSpriteParticle;
     _int       m_iSelectMesh = { 0 };
     _uint       m_iSelectModel = { 0 };
     _uint       m_iImageType = { 0 };
@@ -75,6 +83,8 @@ private:
 private:
     void    Add_Particle();
     void    Delete_Particle();
+    void    Add_SpriteParticle();
+    void    Delete_SpriteParticle();
     void    Add_MeshEffect();
     void    Delete_MeshEffect();
     void    Add_SpriteEffect();
