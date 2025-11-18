@@ -27,12 +27,17 @@ public:
 public:
 	void Set_Active(_bool bIsActive);
 
-private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
+	HRESULT Save_Data();
 
-	CGameInstance* m_pGameInstance = { nullptr };
-	class CImGui_Manager* m_pImGuiManager = { nullptr };
+	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(_wstring szAnimationTag);
+	unordered_map<_wstring, vector<ANIM_NOTIFY>>* Get_AnimationEventMapPtr();
+private:
+	ID3D11Device*			m_pDevice = { nullptr };
+	ID3D11DeviceContext*	m_pContext = { nullptr };
+
+	CGameInstance*			m_pGameInstance = { nullptr };
+	class CImGui_Manager*	m_pImGuiManager = { nullptr };
+	class CData_Manager*	m_pDataManager = { nullptr };
 
 public:
 	void Release_Manager();

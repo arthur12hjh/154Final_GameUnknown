@@ -42,7 +42,7 @@ private:
 	void Update_ToolBar_Editor_Preferences();
 
 	void Update_AnimationList();
-	void Update_AnimNotifyList();
+	void Update_AnimNotifyList(class CAnimation* pAnimation);
 
 	void Update_KeyFrameTool();
 	void Update_TimeLine();
@@ -58,7 +58,8 @@ private:
 	CGameObject*						m_pSelectedObject = { nullptr };
 	vector<CAnimation*>*				m_pAnimationList = { nullptr };
 
-	vector<ANIM_NOTIFY>*				m_pCurrentAnimationEventList = { nullptr };
+	vector<ANIM_NOTIFY>*							m_pCurrentAnimationEventList = { nullptr };
+	unordered_map<_wstring, vector<ANIM_NOTIFY>>*	m_pAnimationEventMap = { nullptr };
 
 	_int								m_iSelectedAnimationIndex = 0;
 	_int								m_iBeforeAnimationIndex = -1;

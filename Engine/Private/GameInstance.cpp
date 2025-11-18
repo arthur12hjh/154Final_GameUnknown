@@ -434,6 +434,12 @@ HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 {
 	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
 }
+
+void CGameInstance::Set_DebugVisible(_bool isVisible)
+{
+	m_pRenderer->Set_DebugVisible(isVisible);
+}
+
 #endif
 
 #pragma endregion

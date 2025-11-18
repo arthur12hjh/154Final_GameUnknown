@@ -200,6 +200,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\MousePointer.h" />
+    <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\PointParticle.h" />
     <ClInclude Include="..\public\Prob_Box.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\MeshEffect.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
+    <ClCompile Include="..\Private\Notify.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
