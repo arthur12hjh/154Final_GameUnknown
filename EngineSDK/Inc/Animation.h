@@ -20,6 +20,13 @@ public:
 	_uint Get_AnimationKeyFrameIndex() { return m_CurrentKeyFrameIndices[0]; }
 	_float Get_Duration() { return m_fDuration; }
 
+	_uint Get_TrackPosition() { return (_uint)m_fCurrentTrackPosition; }
+	_float Get_SaturatedTrackPosition() {
+		return max(m_fCurrentTrackPosition / m_fDuration, 0.f);
+	}
+	
+
+
 	_bool CompareAnimationTag(const _char* szAnimationTag)
 	{
 		if (0 == strcmp(szAnimationTag, m_szName))
@@ -33,6 +40,14 @@ public:
 	HRESULT Swap_AnimationChannel(_uint iSrc, _uint iDst);
 
 	_char* Get_Name() { return m_szName; }
+
+	void Set_CurrentTrackPosition(_float fPosition) {
+
+		m_fCurrentTrackPosition = fPosition;
+
+		for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
+			iKeyFrameIndex = 0;
+	}
 
 	void Reset();
 private:

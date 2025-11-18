@@ -292,6 +292,18 @@
     <Filter Include="02.GameObjects\TestModel\TestProp">
       <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\MeshEffect">
+      <UniqueIdentifier>{6a20e5b2-90b9-436f-8a46-170e59b3d406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\PointParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\SpriteUVEffect">
+      <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ShaderDebugger">
+      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -522,6 +534,21 @@
     <ClInclude Include="..\Public\UIAnimationCom.h">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Effect.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshEffect.h">
+      <Filter>03.Effects\MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PointParticle.h">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpriteUVEffect.h">
+      <Filter>03.Effects\SpriteUVEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShaderDebugger.h">
+      <Filter>30.ImGui\ShaderDebugger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -736,6 +763,21 @@
     <ClCompile Include="..\Private\UIAnimationCom.cpp">
       <Filter>02.GameObjects\UIObjects\UIAnimationCom</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Effect.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshEffect.cpp">
+      <Filter>03.Effects\MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PointParticle.cpp">
+      <Filter>03.Effects\PointParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpriteUVEffect.cpp">
+      <Filter>03.Effects\SpriteUVEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShaderDebugger.cpp">
+      <Filter>30.ImGui\ShaderDebugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -776,6 +818,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

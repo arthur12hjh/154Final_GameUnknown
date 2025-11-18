@@ -47,7 +47,6 @@ HRESULT CRock2::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; i++)

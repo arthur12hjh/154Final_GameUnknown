@@ -39,6 +39,21 @@ CModel::CModel(const CModel& Prototype)
 	memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
 }
 
+_uint CModel::Get_Mesh_MaterialIndex(_uint iIdx) const
+{
+	return m_Meshes[iIdx]->Get_MaterialIndex();
+}
+
+const _char* CModel::Get_MeshName(_uint iIdx) const
+{
+	return m_Meshes[iIdx]->Get_Name();
+}
+
+const _char* CModel::Get_MaterialName(_uint iIdx) const
+{
+	return m_Materials[iIdx]->Get_Name();
+}
+
 _int CModel::Get_BoneIndex(const _char* pBoneName) const
 {
 	_int	iBoneIndex = {};
@@ -356,7 +371,6 @@ HRESULT CModel::Bind_Material(_uint iMeshIndex, CShader* pShader, const _char* p
 		return E_FAIL;
 
 	return m_Materials[iMaterialIndex]->Bind_SRV(pShader, pConstantName, eType, iTextureIndex);
-	
 }
 
 HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTextureIndex)

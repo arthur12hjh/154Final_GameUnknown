@@ -11,6 +11,10 @@ private:
 	virtual ~CMaterial() = default;
 
 public:
+	const _char* Get_Name() const {
+		return m_szName;
+	}
+public:
 	HRESULT Initialize(const _char* pModelFilePath, const binMaterial* pBinMaterial);
 	HRESULT Bind_SRV(class CShader* pShader , const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 

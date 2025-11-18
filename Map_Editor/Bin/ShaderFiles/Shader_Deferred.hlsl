@@ -26,6 +26,9 @@ texture2D g_ShadowTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
+texture2D g_BlurWeightTexture;
+texture2D g_GlowWeightTexture;
+
 texture2D g_DistortionTexture;
 texture2D g_FogTexture;
 texture2D g_BloomTexture;
@@ -203,10 +206,11 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    //블러 샘플링.
-    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    //글로우 샘플링.
-    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    ////블러 샘플링.
+    //Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
+    ////글로우 샘플링.
+    //Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    
     //블룸 샘플링
     Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
     //디스토션 샘플링.
@@ -214,33 +218,16 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     //안개 합성.
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     
-    return Out;
-}
-
-PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
- 
-    float4 vAccumulatedColor = 0.0f;
-    int iSampleCount = 3;
-    float fSamplePower = 0.5f;
     
-    float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
-    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * fSamplePower;
+    vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
     
-    for (int i = 0; i < iSampleCount; i++)
-    {
-        float fSampleRate = (float) i / (float) iSampleCount;
-        
-        // 샘플링 UV 좌표: 현재 UV + (방향 벡터 * 진행률)
-        float2 vSampleUV = In.vTexcoord + vDir * fSampleRate;
-        
-        // 텍스처 샘플링 및 누적
-        vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
-    }
+    vector fBlur;
+    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r * fBlurAlpha.g);
+    fBlur.a = saturate(fBlurAlpha.r * fBlurAlpha.g);
     
-    Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
-
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
+    
     return Out;
 }
 
@@ -333,16 +320,6 @@ technique11 DefaultTechnique
     }
 
     // idx 5
-    pass Screen_RadialBlur
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SCREEN_RADIAL_BLUR();
-    }
-    // idx 6
     pass ToneMapping
     {
         SetRasterizerState(RS_Default);
@@ -353,7 +330,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_TONE_MAPPING();
     }
 
-    // idx 7
+    // idx 6
     pass Final
     {
         SetRasterizerState(RS_Default);

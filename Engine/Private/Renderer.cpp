@@ -9,11 +9,13 @@
 
 #include "ColliderRenderer.h"
 
+#include "RadialBlur.h"
 #include "Blur.h"
 #include "Distortion.h"
 #include "Glow.h"
 #include "Bloom.h"
 #include "Fog.h"
+#include "DepthofField.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -91,6 +93,14 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pFog)
 		return E_FAIL;
 
+	m_pRadialBlur = CRadialBlur::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pRadialBlur)
+		return E_FAIL; 
+
+	m_pDepthofField = CDepthofField::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pDepthofField)
+		return E_FAIL;
+
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -133,6 +143,26 @@ HRESULT CRenderer::Initialize()
 #endif
 
     return S_OK;
+}
+
+void CRenderer::Update(_float fTimeDelta)
+{
+#ifdef _DEBUG
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
+		m_isDebugVisible = !m_isDebugVisible;
+#endif
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F4))
+		m_pRadialBlur->Set_Active(2.f);
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F5))
+		m_isBloom = !m_isBloom;
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
+		m_isFog = !m_isFog;
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F7))
+		m_isHDR = !m_isHDR;
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F8))
+		m_pDepthofField->Set_Active();
+
+	m_pRadialBlur->Update(fTimeDelta);
 }
 
 HRESULT CRenderer::Ready_RenderTargets()
@@ -239,17 +269,6 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 
 void CRenderer::Render()
 {
-#ifdef _DEBUG
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
-		m_isDebugVisible = !m_isDebugVisible;
-#endif
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F4))
-		m_isScreenRadialBlur = !m_isScreenRadialBlur;
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F5))
-		m_isBloom = !m_isBloom;
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
-		m_isFog = !m_isFog;
-
 	Render_Priority();
 	Render_Shadow();
 	Render_NonBlend();
@@ -267,6 +286,8 @@ void CRenderer::Render()
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
 	Render_Deferred();
 	Render_ScreenDeferred();
+
+	ToneMapping();
 
 	Render_BackBuffer();
 	Render_UI();
@@ -500,7 +521,13 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
 
+	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
+		return;
+
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
+		return;
+
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
@@ -532,9 +559,12 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_ScreenDeferred()
 {
+	// DOF 먼저 적용.
+	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
+	m_pRadialBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 }
 
-void CRenderer::Render_BackBuffer()
+void CRenderer::ToneMapping()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_ToneMapping"))))
 		return;
@@ -544,35 +574,28 @@ void CRenderer::Render_BackBuffer()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
 		return;
 
-	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::TONE_MAPPING));
+	if(true == m_isHDR)
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::TONE_MAPPING));
+	else
+		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+}
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
-		return;
-
-	/* 최종적으로 Target_Screen을 백버퍼로 바인딩 + 스크린 효과까지 적용. */
-	/* 방사형 블러 내일 분리할 것..*/
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
-		return;
-
+void CRenderer::Render_BackBuffer()
+{	
 	Bind_WVP_Matrices();
 
-	if (true == m_isScreenRadialBlur)
-	{
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::RADIAL_BLUR));
-		m_pVIBuffer->Bind_Resources();
-		m_pVIBuffer->Render();
-	}
-	else if (false == m_isScreenRadialBlur)
-	{
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-		m_pVIBuffer->Bind_Resources();
-		m_pVIBuffer->Render();
-	}
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
 }
 
 void CRenderer::Render_UI()
@@ -714,6 +737,7 @@ void CRenderer::Free()
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pFog);
+	Safe_Release(m_pRadialBlur);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

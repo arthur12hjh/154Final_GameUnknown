@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Animation_Editor_Defines.h"
-#include "ContainerObject.h"
+#include "Entity.h"
 
 NS_BEGIN(Engine)
 class CCollider;
@@ -9,7 +9,7 @@ NS_END
 
 NS_BEGIN(Animation_Editor)
 
-class CCharacter final : public CContainerObject
+class CCharacter final : public CEntity
 {
 public:
 	enum STATE {

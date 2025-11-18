@@ -25,22 +25,44 @@ public:
 	};
 	typedef struct ParticleData
 	{
-		_int	iBegin;
-		_int    iNumInstance;
-		_float3 fCenter;
-		_float3 fPivot;
-		_float3 fRange;
-		_float2 fSize;
-		_float2 fLifeTime;
-		_float2 fSpeed;
-		_float4 fGravityDiagram = {};
-		_float4 fPosition = {0,0,0,1};
-		_float3 fRotation = {};
-		_bool   bisLoop;
-		_uint	iSelectRender = {};
-		_float4 fColor = {};
-		string szCS;
-		vector<_float3> fSizeDiagrams;
+		string				szMaskTexture;
+		string				szDiffuseTexture;
+		string				szDissolveTexture;
+		string				szCS;
+		vector<_float3>		fSizeDiagrams;
+
+		_float4				fGravityDiagram;
+		_float4				fPosition;
+		_float4				fColor;         
+
+		_float3				fCenter;        
+		_float3				fPivot;         
+		_float3				fRange;         
+		_float3				fRotation;      
+
+		_float2				fSize;
+		_float2				fLifeTime;      
+		_float2				fSpeed;
+
+
+		_float2				fMaskUV;
+		_float2				fMaskUVSpeed;
+		_float2				fMaskUVSize;
+		_float2				fDiffuseUV;
+		_float2				fDiffuseUVSpeed;
+		_float2				fDiffuseUVSize;
+		_float2				fDissolveUV;
+		_float2				fDissolveUVSpeed;
+		_float2				fDissolveUVSize;
+
+		_float				fDelayTime;
+		_float				fEndTime;
+
+		_int				iBegin;         
+		_int				iNumInstance;
+		_int				iSelectRender;
+		_bool				bisBillboard;
+		_bool				bisLoop;
 	}PARTICLE_DATA;
 
 private:
@@ -60,8 +82,11 @@ public:
 	void	Set_Begin(_int iBegin) { m_iBegin = iBegin; }
 	PARTICLE_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
-	void	Set_Texture(_int iIndex, CTexture* pTexture, string szFile) { m_pTexture[iIndex] = pTexture; m_szFile[iIndex] = szFile; }
+	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
+	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
+	_float	Stop() { return m_fTime; }
 private:
+	const _float4x4* m_pParentMat = { nullptr };
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
@@ -73,8 +98,11 @@ private:
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	PARTICLE_DATA	m_tData;
+	_float			m_fTime = {};
+	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_float4x4		m_CombinedWorldMatrix = {};
 
 private:
 	HRESULT							Ready_Components();
