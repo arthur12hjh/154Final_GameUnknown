@@ -36,27 +36,34 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 	m_fMouseSensor = 0.1f;
 	if (false == m_bIsCameraAnimation)
 	{
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-			m_pTransformCom->Go_Straight(fTimeDelta);
 
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-			m_pTransformCom->Go_Backward(fTimeDelta);
-
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-			m_pTransformCom->Go_Left(fTimeDelta);
-
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-			m_pTransformCom->Go_Right(fTimeDelta);
-
-		_long		MouseMove = {};
-		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+		if (false == m_bIsLock[0])
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+				m_pTransformCom->Go_Straight(fTimeDelta);
+
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+				m_pTransformCom->Go_Backward(fTimeDelta);
+
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+				m_pTransformCom->Go_Left(fTimeDelta);
+
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+				m_pTransformCom->Go_Right(fTimeDelta);
 		}
 
-		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+		if (false == m_bIsLock[1])
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+			_long		MouseMove = {};
+			if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+			{
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+			}
+
+			if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+			{
+				m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+			}
 		}
 	}
 	else
@@ -110,6 +117,18 @@ void CCamera_Free::SetCameraAnimation(const _float4x4* StartLerpMatrix, const _f
 		memcpy(&m_fStartLerpMatrix, StartLerpMatrix, sizeof(_float4x4));
 		memcpy(&m_fEndLerpMatrix, EndLerpMatrix, sizeof(_float4x4));
 	}
+}
+
+void CCamera_Free::CameraLock(_bool bIsKeyBoard, _bool bIsMouse)
+{
+	m_bIsLock[0] = bIsKeyBoard;
+	m_bIsLock[1] = bIsMouse;
+}
+
+void CCamera_Free::GetCameraLock(_bool (&pOut)[2])
+{
+	pOut[0] = m_bIsLock[0];
+	pOut[1] = m_bIsLock[1];
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
