@@ -13,6 +13,9 @@ private:
 	virtual ~CModel() = default;
 
 public:
+	_uint Get_Mesh_MaterialIndex(_uint iIdx) const;
+	const _char* Get_MeshName(_uint iIdx) const;
+	const _char* Get_MaterialName(_uint iIdx) const;
 	_uint Get_NumMeshes() const {
 		return m_iNumMeshes;
 	}

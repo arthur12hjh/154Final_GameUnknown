@@ -206,7 +206,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_Component_Model_Face_Eve */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_p_EVE_Face_NodeTest.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Hair_Eve */

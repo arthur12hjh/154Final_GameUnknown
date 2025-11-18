@@ -209,6 +209,7 @@
     <ClInclude Include="..\Public\PonyTail_Player.h" />
     <ClInclude Include="..\public\Prob_Interaction.h" />
     <ClInclude Include="..\Public\PxTestProp.h" />
+    <ClInclude Include="..\Public\ShaderDebugger.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="..\Private\PonyTail_Player.cpp" />
     <ClCompile Include="..\private\Prob_Interaction.cpp" />
     <ClCompile Include="..\Private\PxTestProp.cpp" />
+    <ClCompile Include="..\Private\ShaderDebugger.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />

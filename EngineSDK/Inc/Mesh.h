@@ -12,6 +12,10 @@ private:
 	virtual ~CMesh() = default;
 
 public:
+	const _char* Get_Name() const {
+		return m_szName;
+	}
+
 	_uint Get_MaterialIndex() const {
 		return m_iMaterialIndex;
 	}

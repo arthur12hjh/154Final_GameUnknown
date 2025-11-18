@@ -43,7 +43,10 @@ HRESULT CFace_Player::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
-
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
 	return S_OK;
 }
@@ -107,19 +110,21 @@ HRESULT CFace_Player::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
+		if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_EVE_Eyeshadow_Occlusion") == 0
+			|| strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "EyeLight_Inst") == 0)
+		{
+			//if (FAILED(m_pShaderCom->Begin()))
+			//	return E_FAIL;
+
+			//if (FAILED(m_pModelCom->Render(i)))
+			//	return E_FAIL;
+			continue;
+		}
+
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
