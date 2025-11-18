@@ -42,7 +42,7 @@ vector g_vLightSpecular;
 
 bool            g_bDebugTextureArray;
 int             g_CasCadeIndex;
-Texture2DArray  g_CasCadeMap : register(t0);
+Texture2DArray  g_CasCadeMap : register(t5);
 cbuffer g_ConstantCasCadeBuffer : register(b0)
 {
     matrix ShadowWorld;
@@ -211,8 +211,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float fDist = length(g_vCamPosition - vPosition);
 
     //그림자 연산
-    //Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    float3 vShadow = Calc_Shadow3x3(g_CasCadeMap, ShadowSampler, CasCadeDist, ShadowVPMatrix, vPosition, fDist);
+    Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
+    //float3 vShadow = Calc_Shadow3x3(g_CasCadeMap, ShadowSampler, CasCadeDist, ShadowVPMatrix, vPosition, fDist);
     Out.vBackBuffer.xyz *= vShadow;
     return Out;
 }

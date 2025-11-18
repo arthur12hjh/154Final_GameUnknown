@@ -257,7 +257,7 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 
 void CFrustum::Bind_CasCadeSRV()
 {
-	m_pContext->PSSetShaderResources(0, 1, &m_pCasCadeSRV);
+	m_pContext->PSSetShaderResources(5, 1, &m_pCasCadeSRV);
 }
 
 void CFrustum::Bind_ShadowMatrix()
@@ -342,6 +342,8 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	if (nullptr == m_pCasecasdeDSV)
 		return E_FAIL;
 
+	m_pContext->ClearDepthStencilView(m_pCasecasdeDSV, D3D11_CLEAR_DEPTH, 1.f, 0);
+
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
@@ -352,6 +354,17 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
 	if (nullptr == m_pCasCadeSRV)
 		return E_FAIL;
+
+	D3D11_TEXTURE2D_DESC stagingDesc = texDesc;
+	stagingDesc.Usage = D3D11_USAGE_STAGING;
+	stagingDesc.BindFlags = 0;
+	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+
+	m_pDevice->CreateTexture2D(&stagingDesc, nullptr, &pStagingTex);
+	m_pContext->CopyResource(pStagingTex, pTex);
+
+
 	Safe_Release(pTex);
 	return S_OK;
 }

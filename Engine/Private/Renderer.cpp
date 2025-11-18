@@ -311,11 +311,11 @@ void CRenderer::Render_Priority()
 
 void CRenderer::Render_Shadow()
 {
-	//if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
-	//	return;
-
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV(), true)))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
 		return;
+
+	/*if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV(), true)))
+		return;*/
 	
 	m_pGameInstance->Bind_CasCadeMatrix();
 
@@ -415,8 +415,8 @@ void CRenderer::Render_Combined()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
 		return;
 
-	m_pGameInstance->Bind_CasCadeSRV();
-	m_pGameInstance->Bind_ShadowDefferd();
+	/*m_pGameInstance->Bind_CasCadeSRV();
+	m_pGameInstance->Bind_ShadowDefferd();*/
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
 	m_pVIBuffer->Bind_Resources();
@@ -610,8 +610,8 @@ void CRenderer::Render_Debug()
 {
 	m_pColliderRenderer->Render(m_pShader);
 
-	if (false == m_isDebugVisible)
-		return;
+	/*if (false == m_isDebugVisible)
+		return;*/
 
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
@@ -623,8 +623,11 @@ void CRenderer::Render_Debug()
 
 	_bool bIsCasCase = true;
 	_uint i = 0;
+	Bind_WVP_Matrices();
+
 	m_pShader->Bind_RawValue("g_bDebugTextureArray", &bIsCasCase, sizeof(bool));
 	m_pShader->Bind_RawValue("g_CasCadeIndex", &i, sizeof(int));
+	m_pGameInstance->Bind_CasCadeSRV();
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 		return;
 

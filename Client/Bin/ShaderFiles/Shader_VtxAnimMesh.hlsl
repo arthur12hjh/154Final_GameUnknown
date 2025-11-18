@@ -115,22 +115,22 @@ struct GS_SHADOW_OUT
     uint RTIndex : SV_RenderTargetArrayIndex;
 };
 
-[maxvertexcount(3 * 3)]
-void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
-{
-    GS_SHADOW_OUT OutPut[3];
-    for (uint i = 0; i < 3; ++i)
-    {
-        for (uint j = 0; j < 3; ++j)
-        {
-            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
-            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
-            OutPut[j].RTIndex = i;
-            TriStream.Append(OutPut[j]);
-        }
-        TriStream.RestartStrip();
-    }
-}
+//[maxvertexcount(3 * 3)]
+//void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
+//{
+//    GS_SHADOW_OUT OutPut[3];
+//    for (uint i = 0; i < 3; ++i)
+//    {
+//        for (uint j = 0; j < 3; ++j)
+//        {
+//            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
+//            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
+//            OutPut[j].RTIndex = i;
+//            TriStream.Append(OutPut[j]);
+//        }
+//        TriStream.RestartStrip();
+//    }
+//}
 
 struct PS_IN
 {

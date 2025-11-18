@@ -42,7 +42,7 @@ vector g_vLightSpecular;
 
 bool            g_bDebugTextureArray;
 int             g_CasCadeIndex;
-Texture2DArray  g_CasCadeMap : register(t0);
+Texture2DArray  g_CasCadeMap : register(t5);
 cbuffer g_ConstantCasCadeBuffer : register(b0)
 {
     matrix ShadowWorld;

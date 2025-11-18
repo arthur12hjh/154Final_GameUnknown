@@ -55,6 +55,7 @@ private:
 	ID3D11Buffer*				m_pCaseCadeCB[2] = {nullptr, nullptr};
 	ID3D11ShaderResourceView*	m_pCasCadeSRV = { nullptr };
 	ID3D11DepthStencilView*		m_pCasecasdeDSV = { nullptr };
+	ID3D11Texture2D*			pStagingTex = nullptr;
 
 	CASCADE_DESC				m_CaseCadeMatrix = {};
 	CASCADE_DEFFERD_DESC		m_CaseCadeDefferdDesc = {};
