@@ -335,6 +335,9 @@
     <ClInclude Include="..\Public\DepthofField.h">
       <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>01.Utility\03.Components\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -642,6 +645,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DepthofField.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>01.Utility\03.Components\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1013,6 +1019,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\DoF\ShaderFile">
       <UniqueIdentifier>{92854abc-ff3c-4e22-a211-b150eaf6d061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
