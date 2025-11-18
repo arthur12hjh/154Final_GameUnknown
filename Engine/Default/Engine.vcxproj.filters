@@ -329,6 +329,9 @@
     <ClInclude Include="..\Public\Fog.h">
       <Filter>01.Utility\05.Renderer\Deferred\Fog</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>01.Utility\03.Components\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -630,6 +633,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Deferred.cpp">
       <Filter>01.Utility\05.Renderer\Deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>01.Utility\03.Components\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -989,6 +995,9 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Percetion">
       <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{4bba834b-163c-41e7-802e-3aae0b6988ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

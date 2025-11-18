@@ -1,36 +1,36 @@
 #include "pch.h"
-#include "Particle.h"
+#include "SpriteParticle.h"
 
 #include "GameInstance.h"
 
-CParticle::CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CParticle::CParticle(const CParticle& Prototype)
+CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
 	: CGameObject{ Prototype }
 {
 }
 
-HRESULT CParticle::Initialize_Prototype()
+HRESULT CSpriteParticle::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CParticle::Initialize(void* pArg)
+HRESULT CSpriteParticle::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	return S_OK;
 }
 
-void CParticle::Priority_Update(_float fTimeDelta)
+void CSpriteParticle::Priority_Update(_float fTimeDelta)
 {
 
 }
 
-void CParticle::Update(_float fTimeDelta)
+void CSpriteParticle::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
 	if (m_tData.fDelayTime > m_fTime)
@@ -47,7 +47,7 @@ void CParticle::Update(_float fTimeDelta)
 	Spread(fTimeDelta);
 }
 
-void CParticle::Late_Update(_float fTimeDelta)
+void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
 	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
 	{
@@ -56,7 +56,7 @@ void CParticle::Late_Update(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
 }
 
-HRESULT CParticle::Render()
+HRESULT CSpriteParticle::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -70,7 +70,7 @@ HRESULT CParticle::Render()
 	return S_OK;
 }
 
-void CParticle::Set_Components(PARTICLE_DATA tData)
+void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 {
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pComputeShader);
@@ -88,7 +88,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Desc.isLoop = tData.bisLoop;
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
@@ -97,7 +97,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	m_bisLoop = tData.bisLoop;
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
-	Set_Texture(2, m_tData.szDissolveTexture.c_str());
+	Set_Texture(2, m_tData.szNormalTexture.c_str());
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
@@ -130,14 +130,14 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Ready_ComputeShader();
 }
 
-void CParticle::Update(PARTICLE_DATA tData)
+void CSpriteParticle::Update(SPRITE_PARTICLE_DATA tData)
 {
 	m_tData = tData;
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
 }
-HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
+HRESULT CSpriteParticle::Set_Texture(_int iIndex, const char* szPrototype)
 {
 	Safe_Release(m_pTexture[iIndex]);
 	_tchar sztPrototype[256] = { 0, };
@@ -159,12 +159,12 @@ HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
 		return E_FAIL;
 	return S_OK;
 }
-HRESULT CParticle::Ready_Components()
+HRESULT CSpriteParticle::Ready_Components()
 {
 	return S_OK;
 }
 
-HRESULT CParticle::Bind_ShaderResources()
+HRESULT CSpriteParticle::Bind_ShaderResources()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -205,7 +205,9 @@ HRESULT CParticle::Bind_ShaderResources()
 	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", 0)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iUV", &m_tData.iUV, sizeof(_int2))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
 		return E_FAIL;
@@ -217,7 +219,7 @@ HRESULT CParticle::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CParticle::Ready_ComputeShader()
+HRESULT CSpriteParticle::Ready_ComputeShader()
 {
 	D3D11_MAPPED_SUBRESOURCE pIntanceData = {};
 	m_pVIBufferCom->Lock(D3D11_MAP_WRITE_NO_OVERWRITE, &pIntanceData);
@@ -298,7 +300,7 @@ HRESULT CParticle::Ready_ComputeShader()
 	return S_OK;
 }
 
-void CParticle::Spread(_float fTimeDelta)
+void CSpriteParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
@@ -341,9 +343,9 @@ void CParticle::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CParticle* CParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSpriteParticle* CSpriteParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CParticle* pInstance = new CParticle(pDevice, pContext);
+	CSpriteParticle* pInstance = new CSpriteParticle(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -354,20 +356,20 @@ CParticle* CParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CParticle::Clone(void* pArg)
+CGameObject* CSpriteParticle::Clone(void* pArg)
 {
-	CParticle* pInstance = new CParticle(*this);
+	CSpriteParticle* pInstance = new CSpriteParticle(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CParticle");
+		MSG_BOX("Failed to Cloned : CSpriteParticle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CParticle::Free()
+void CSpriteParticle::Free()
 {
 	__super::Free();
 	Safe_Release(m_pVIBufferCom);

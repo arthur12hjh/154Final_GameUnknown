@@ -185,52 +185,53 @@ HRESULT CParticle_Setting::Initialize()
         } while (FindNextFileA(h, &fd));
         FindClose(h);
     }
-
-    //m_pParticles.clear();
-    //CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
-    //pParticle->Initialize(nullptr);
-    //
-    //pParticle->Set_Components(m_tParticleData);
-    //
-    //for (_uint i = 0; i < 3; ++i) {
-    //    pParticle->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
-    //}
     m_iSelectParticle = 0;
-    //m_pParticles.push_back(pParticle);
-    //
-    //CParticle* pParticle2 = CParticle::Create(m_pDevice, m_pContext);
-    //pParticle2->Initialize(nullptr);
-    //
-    //pParticle2->Set_Components(m_tParticleData);
-    //
-    //for (_uint i = 0; i < 3; ++i) {
-    //    pParticle2->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
-    //}
-    //
-    //m_pParticles.push_back(pParticle2);
-    //
-    //CMeshEffect::MeshEffectData		MeshDesc{};
-    //MeshDesc.fColor = { 0,0,0,1 };
-    //MeshDesc.iBegin = 0;
-    //MeshDesc.iSelectRender = 3;
-    //MeshDesc.fScale = { 1,1,1 };
-    //
-    //
-    //CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
-    //pMeshEffect->Initialize(nullptr);
-    //
-    //pMeshEffect->Set_Components(MeshDesc);
-    //_tchar szPath[256] = { 0, };
-    //MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFiles[0].c_str(), strlen(m_ModelFiles[0].c_str()), szPath, 256);
-    //pMeshEffect->Set_Model(szPath);
-    //
-    //for (_uint i = 0; i < 3; ++i) {
-    //    pMeshEffect->Set_Texture(i, m_pTextures[0], m_ImageFiles[0]);
-    //}
-
     m_iSelectMesh = 0;
-    //m_pMeshs.push_back(pMeshEffect);
-    //m_tMeshData = MeshDesc;
+
+    CTrailEffect::TRAIL_DATA tTrailData;
+
+    for (_uint i = 0; i < 3; ++i) {
+        switch (i) {
+        case 0:
+            tTrailData.szMaskTexture = m_ImageFiles[i][0];
+            break;
+        case 1:
+            tTrailData.szDiffuseTexture = m_ImageFiles[i][0];
+            break;
+        case 2:
+            tTrailData.szDissolveTexture = m_ImageFiles[i][0];
+            break;
+        }
+    }
+    tTrailData.fColor = _float4(0, 0, 0, 1);
+
+    tTrailData.fMaskUV = _float2(0, 0);
+    tTrailData.fMaskUVSpeed = _float2(0, 0);
+    tTrailData.fMaskUVSize = _float2(1, 1);
+    tTrailData.fDiffuseUV = _float2(0, 0);
+    tTrailData.fDiffuseUVSpeed = _float2(0, 0);
+    tTrailData.fDiffuseUVSize = _float2(1, 1);
+    tTrailData.fDissolveUV = _float2(0, 0);
+    tTrailData.fDissolveUVSpeed = _float2(0, 0);
+    tTrailData.fDissolveUVSize = _float2(1, 1);
+    tTrailData.iBegin = 0;
+    tTrailData.iSelectRender = 3;
+
+    m_pTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
+    m_pTrailEffect->Initialize(nullptr);
+
+    m_pTrailEffect->Set_Components(tTrailData);
+    m_tTrailData = m_pTrailEffect->Get_Data();
+
+    tTrailData.fColor = _float4(1, 1, 1, 1);
+    tTrailData.iBegin = 1;
+    tTrailData.iSelectRender = 6;
+
+    m_pDistortionTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
+    m_pDistortionTrailEffect->Initialize(nullptr);
+
+    m_pDistortionTrailEffect->Set_Components(tTrailData);
+
     return S_OK;
 }
 
@@ -269,6 +270,11 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fDelayTime = 0.f;
     tParticleData.fEndTime = 5.f;
     tParticleData.bisBillboard = true;
+
+
+    tParticleData.fTurnPower = _float2(1.f, 1.f);
+    tParticleData.bisSphere = false;
+    tParticleData.fSphereSize = 1.f;
 
     for (_uint i = 0; i < 3; ++i) {
         switch (i) {
@@ -314,6 +320,85 @@ void CParticle_Setting::Delete_Particle()
     else {
         Safe_Release(m_pParticles[0]);
         m_pParticles.clear();
+    }
+}
+
+void CParticle_Setting::Add_SpriteParticle()
+{
+    CSpriteParticle::SPRITE_PARTICLE_DATA tSpriteParticleData;
+
+    tSpriteParticleData.iNumInstance = 100;
+    tSpriteParticleData.iBegin = 0;
+    tSpriteParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
+    tSpriteParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
+    tSpriteParticleData.fRange = _float3(1.f, 1.f, 1.f);
+    tSpriteParticleData.fSize = _float2(0.5f, 1.f);
+    tSpriteParticleData.fLifeTime = _float2(0.5f, 1.f);
+    tSpriteParticleData.fSpeed = _float2(1.f, 0.5f);
+    tSpriteParticleData.bisLoop = true;
+    tSpriteParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
+    tSpriteParticleData.iSelectRender = 3;
+    tSpriteParticleData.fColor = { 0,0,0,1 };
+    tSpriteParticleData.szCS = "CS";
+    tSpriteParticleData.fSizeDiagrams.clear();
+    tSpriteParticleData.fSizeDiagrams.push_back(_float3(0, 1, 0));
+    tSpriteParticleData.fSizeDiagrams.push_back(_float3(1, 1, 0));
+    tSpriteParticleData.fPosition = _float4(0, 0, 0, 1);
+    tSpriteParticleData.fRotation = _float3(0, 0, 0);
+
+    tSpriteParticleData.fMaskUV = _float2(0, 0);
+    tSpriteParticleData.fMaskUVSpeed = _float2(0, 0);
+    tSpriteParticleData.fMaskUVSize = _float2(1, 1);
+    tSpriteParticleData.fDiffuseUV = _float2(0, 0);
+    tSpriteParticleData.fDiffuseUVSpeed = _float2(0, 0);
+    tSpriteParticleData.fDiffuseUVSize = _float2(1, 1);
+    tSpriteParticleData.fDissolveUV = _float2(0, 0);
+    tSpriteParticleData.fDissolveUVSpeed = _float2(0, 0);
+    tSpriteParticleData.fDissolveUVSize = _float2(1, 1);
+    tSpriteParticleData.fDelayTime = 0.f;
+    tSpriteParticleData.fEndTime = 5.f;
+    tSpriteParticleData.bisBillboard = true;
+
+
+    tSpriteParticleData.fTurnPower = _float2(1.f, 1.f);
+    tSpriteParticleData.bisSphere = false;
+    tSpriteParticleData.fSphereSize = 1.f;
+    tSpriteParticleData.iUV = _int2(1, 1);
+
+    tSpriteParticleData.szMaskTexture = m_ImageFiles[0][0];
+    tSpriteParticleData.szDiffuseTexture = m_ImageFiles[1][0];
+    tSpriteParticleData.szNormalTexture = m_ImageFiles[3][0];
+
+    CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
+    pParticle->Initialize(nullptr);
+
+    pParticle->Set_Components(tSpriteParticleData);
+    pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+
+    m_iSelectSpriteParticle = m_pSpriteParticles.size();
+    m_pSpriteParticles.push_back(pParticle);
+    m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+}
+
+void CParticle_Setting::Delete_SpriteParticle()
+{
+    if (1 < m_pSpriteParticles.size()) {
+        _uint i = 0;
+        for (auto j = m_pSpriteParticles.begin(); j != m_pSpriteParticles.end();) {
+            if (m_iSelectSpriteParticle == i) {
+                Safe_Release((*j));
+                j = m_pSpriteParticles.erase(j);
+                m_iSelectSpriteParticle = max(0, m_iSelectSpriteParticle - 1);
+                m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+                break;
+            }
+            ++i;
+            ++j;
+        }
+    }
+    else {
+        Safe_Release(m_pSpriteParticles[0]);
+        m_pSpriteParticles.clear();
     }
 }
 
@@ -522,7 +607,8 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
-
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fTurnPower);
+        
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUV);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSpeed);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSize);
@@ -534,11 +620,69 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
+    }
+    WriteInt(fileBinaryStream, m_pSpriteParticles.size());
+    for (auto pSpriteParticle : m_pSpriteParticles) {
+
+
+        char szImageFile[MAX_PATH] = {};
+        strncpy_s(szImageFile, sizeof(szImageFile), pSpriteParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pSpriteParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pSpriteParticle->Get_Data().szNormalTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+
+        strncpy_s(szImageFile, sizeof(szImageFile), pSpriteParticle->Get_Data().szCS.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+
+        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().fSizeDiagrams.size());
+        for (auto fSizeDiagram : pSpriteParticle->Get_Data().fSizeDiagrams) {
+            WriteFloat3(fileBinaryStream, fSizeDiagram);
+        }
+        WriteFloat4(fileBinaryStream, pSpriteParticle->Get_Data().fGravityDiagram);
+        WriteFloat4(fileBinaryStream, pSpriteParticle->Get_Data().fPosition);
+        WriteFloat4(fileBinaryStream, pSpriteParticle->Get_Data().fColor);
+        WriteFloat3(fileBinaryStream, pSpriteParticle->Get_Data().fCenter);
+        WriteFloat3(fileBinaryStream, pSpriteParticle->Get_Data().fPivot);
+        WriteFloat3(fileBinaryStream, pSpriteParticle->Get_Data().fRange);
+        WriteFloat3(fileBinaryStream, pSpriteParticle->Get_Data().fRotation);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fSize);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fLifeTime);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fSpeed);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fTurnPower);
+
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fMaskUV);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fMaskUVSpeed);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fMaskUVSize);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDiffuseUV);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDiffuseUVSpeed);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDiffuseUVSize);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUV);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUVSpeed);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUVSize);
+        WriteInt2(fileBinaryStream, pSpriteParticle->Get_Data().iUV);
+        WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fDelayTime);
+        WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fEndTime);
+        WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fSphereSize);
+        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
+        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
     }
     WriteInt(fileBinaryStream, m_pSprites.size());
     for (auto pSprite : m_pSprites) {
@@ -581,6 +725,12 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
             Delete_Particle();
         }
     }
+    if (0 < m_pSpriteParticles.size()) {
+        _uint iSpriteParticleCount = m_pSpriteParticles.size();
+        for (_uint i = 0; i < iSpriteParticleCount; ++i) {
+            Delete_SpriteParticle();
+        }
+    }
     if (0 < m_pSprites.size()) {
         _uint iSpriteCount = m_pSprites.size();
         for (_uint i = 0; i < iSpriteCount; ++i) {
@@ -589,6 +739,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
     }
     CMeshEffect::MeshEffectData		MeshDesc{};
     CParticle::ParticleData		    ParticleDesc{};
+    CSpriteParticle::SpriteParticleData		    SpriteParticleDesc{};
     CSpriteEffect::SPRITE_DATA		    SpriteDesc{};
     char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
     strcat_s(szBinModelFilePath, MAX_PATH, szFile);
@@ -672,7 +823,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
         ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
         ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
-
+        ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
 
         ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
         ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
@@ -685,7 +836,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
         ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
         ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
-
+        ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
@@ -693,6 +844,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+        ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
 
         CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
         pParticle->Initialize(nullptr);
@@ -702,6 +854,68 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_iSelectParticle = m_pParticles.size();
         m_pParticles.push_back(pParticle);
         m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+    }
+    _int iSpriteParticleCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iSpriteParticleCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        SpriteParticleDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteParticleDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteParticleDesc.szNormalTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        SpriteParticleDesc.szCS = szTemp;
+        Safe_Delete(szTemp);
+        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+        SpriteParticleDesc.fSizeDiagrams.clear();
+        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+            SpriteParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+        }
+        SpriteParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
+        SpriteParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
+        SpriteParticleDesc.fColor = ReadFloat4(fileBinaryStream);
+        SpriteParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
+        SpriteParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
+        SpriteParticleDesc.fRange = ReadFloat3(fileBinaryStream);
+        SpriteParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
+        SpriteParticleDesc.fSize = ReadFloat2(fileBinaryStream);
+        SpriteParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
+        SpriteParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+        SpriteParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
+
+       SpriteParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.iUV = ReadInt2(fileBinaryStream);
+       SpriteParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
+       SpriteParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
+       SpriteParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+
+       SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
+       SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
+       SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+
+       SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+
+        CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
+        pParticle->Initialize(nullptr);
+
+        pParticle->Set_Components(SpriteParticleDesc);
+        pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+        m_iSelectSpriteParticle = m_pSpriteParticles.size();
+        m_pSpriteParticles.push_back(pParticle);
+        m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
     }
     _int iSpriteCount = ReadInt(fileBinaryStream);
     for (_uint i = 0; i < iSpriteCount; ++i) {
@@ -754,12 +968,14 @@ void CParticle_Setting::Update(_float fTimeDelta)
     ImGui::Text(pattern);
     if (ImGui::Button("Pause", btn)) {
         m_bisPause = !m_bisPause;
+        m_pTrailEffect->Pause();
+        m_pDistortionTrailEffect->Pause();
     }
-    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "Particle" : m_iSelectMeshParticle == 1 ? "MeshEffect" : "SpriteEffect"))
+    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "Particle" : m_iSelectMeshParticle == 1 ? "SpriteParticle" : m_iSelectMeshParticle == 2 ? "MeshEffect" : m_iSelectMeshParticle == 3 ? "SpriteEffect" : "TrailEffect"))
     {
-        for (_uint i = 0; i < 3; ++i) {
+        for (_uint i = 0; i < 5; ++i) {
             _bool sel = i == m_iSelectMeshParticle;
-            if (ImGui::Selectable(i == 0 ? "Particle" : i == 1 ? "MeshEffect" : "SpriteEffect", sel)) {
+            if (ImGui::Selectable(i == 0 ? "Particle" : i == 1 ? "SpriteParticle" : i == 2 ? "MeshEffect" : i == 3 ? "SpriteEffect" : "TrailEffect", sel)) {
                 m_iSelectMeshParticle = i;
             }
             if (sel)
@@ -829,6 +1045,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_fTime = 0.f;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
                 }
                 for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                     m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
@@ -1145,8 +1364,15 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::EndCombo();
                 }
                 ImGui::Checkbox("Billboard", &m_tParticleData.bisBillboard);
-
-
+                ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
+                if (m_tParticleData.bisSphere) {
+                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (ImGui::TreeNode("TurnPower"))
+                {
+                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tParticleData.fTurnPower), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
                 if (ImGui::TreeNode("MaskUV"))
                 {
                     ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tParticleData.fMaskUV), 0.1f, -100.f, 100.f);
@@ -1206,6 +1432,435 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
         break;
     case 1:
+        if (ImGui::Button("Add SpriteParticle", btn)) {
+            Add_SpriteParticle();
+        }
+        if (0 < m_pSpriteParticles.size())
+        {
+            ImGui::SameLine();
+            if (ImGui::Button("Delete SpriteParticle", btn)) {
+                Delete_SpriteParticle();
+                if (0 >= m_pSpriteParticles.size()) {
+                    ImGui::End();
+                    return;
+                }
+            }
+            if (ImGui::Button("Effect", btn)) {
+                m_iLevel = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Shader", btn)) {
+                m_iLevel = 1;
+            }
+            char str[3];
+            snprintf(str, sizeof(str), "%d", m_iSelectSpriteParticle);
+            if (ImGui::BeginCombo("SpriteParticles", str))
+            {
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    _bool sel = i == m_iSelectSpriteParticle;
+                    snprintf(str, sizeof(str), "%d", i);
+                    if (ImGui::Selectable(str, sel)) {
+                        m_iSelectSpriteParticle = i;
+                        m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::Button("All Replay", btn)) {
+                m_fTime = 0.f;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
+                }
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_fTime = 0.f;
+                m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
+            }
+            if (ImGui::Button("Stop", btn)) {
+                m_tSpriteParticleData.fEndTime = m_pSpriteParticles[m_iSelectSpriteParticle]->Stop();
+                m_tSpriteParticleData.bisLoop = false;
+            }
+
+            m_pSpriteParticles[m_iSelectSpriteParticle]->Update(m_tSpriteParticleData);
+
+
+            ImGui::BeginChild("Menu", ImVec2(300, 500), true);
+            switch (m_iLevel)
+            {
+            case 0:
+            {
+                m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+                CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+                Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
+                Desc.vCenter = m_tSpriteParticleData.fCenter;
+                Desc.vPivot = m_tSpriteParticleData.fPivot;
+                Desc.vRange = m_tSpriteParticleData.fRange;
+                Desc.vSize = m_tSpriteParticleData.fSize;
+                Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
+                Desc.vSpeed = m_tSpriteParticleData.fSpeed;
+                Desc.isLoop = m_tSpriteParticleData.bisLoop;
+                _float4 fGravity = m_tSpriteParticleData.fGravityDiagram;
+                vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
+                _float fDelayTime = m_tSpriteParticleData.fDelayTime;
+                _float fEndTime = m_tSpriteParticleData.fEndTime;
+
+                _float time = 1.f / 100;
+                _float fMax = 5;
+                float values[100] = {};
+
+                if (ImGui::TreeNode("SpriteParticle"))
+                {
+                    if (ImGui::TreeNode("SpriteParticle Transform"))
+                    {
+                        ImGui::DragFloat3("SpriteParticle Position", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPosition), 0.1f, -1000.f, 1000.f);
+                        ImGui::DragFloat3("SpriteParticle Rotation", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRotation), 1.f, 0.f, 360.f);
+                        ImGui::TreePop();
+                    }
+                    if (ImGui::TreeNode("SpriteParticle Data"))
+                    {
+                        ImGui::DragInt("NumInstance", &m_tSpriteParticleData.iNumInstance, 1, 1, 0);
+                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCenter), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPivot), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRange), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSize), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tSpriteParticleData.fLifeTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSpeed), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDelayTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fEndTime), 0.1f, 0.f, 100.f);
+                        ImGui::Checkbox("Loop", &m_tSpriteParticleData.bisLoop);
+
+
+                        ImGui::TreePop();
+                    }
+
+                    ImGui::TreePop();
+                }
+
+                ImGui::SetNextItemWidth(180);
+
+                for (_uint i = 0; i < 100; ++i) {
+                    _float t = time * i;
+                    if (fabsf(m_tSpriteParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tSpriteParticleData.fGravityDiagram.w) >= 90.f) {
+                        values[i] = m_tSpriteParticleData.fGravityDiagram.x;
+                    }
+                    else {
+
+                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tSpriteParticleData.fGravityDiagram.x
+                            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.y)) * 100
+                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tSpriteParticleData.fGravityDiagram.z
+                            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.w)) * 100;
+                    }
+                    fMax = max(fMax, fabsf(values[i]));
+                }
+
+
+                if (ImGui::TreeNode("Size Diagram")) {
+                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                        _float time = 1.f / 100;
+                        _float fMax = 5;
+                        for (_uint i = 0; i < 100; ++i) {
+                            _float3* in = {};
+                            _float3* out = {};
+                            for (_uint j = 0; j < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++j) {
+                                if (m_tSpriteParticleData.fSizeDiagrams[j].x <= time * i) {
+                                    in = &m_tSpriteParticleData.fSizeDiagrams[j];
+                                }
+                                if (m_tSpriteParticleData.fSizeDiagrams[j].x > time * i) {
+                                    out = &m_tSpriteParticleData.fSizeDiagrams[j];
+                                    break;
+                                }
+                            }
+                            if (nullptr == out)
+                                values[i] = in->y;
+                            else {
+                                _float t = (time * i - in->x) / (out->x - in->x);
+                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                    values[i] = in->y;
+                                }
+                                else {
+                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                                }
+                            }
+                            fMax = max(fMax, fabsf(values[i]));
+                        }
+                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                            "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                        char str[10];
+                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x);
+
+                        if (ImGui::BeginCombo("TimeValue", str))
+                        {
+                            for (_uint i = 0; i < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++i) {
+                                _bool sel = i == m_iSelectSize;
+                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tSpriteParticleData.fSizeDiagrams[i].x);
+                                if (ImGui::Selectable(str, sel))
+                                    m_iSelectSize = i;
+                                if (sel)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                    }
+                    if (ImGui::Button("AddTime", btn)) {
+                        if (0 < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                            _float3 val = m_tSpriteParticleData.fSizeDiagrams.back();
+                            val.y = 0;
+                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        else {
+                            _float3 val = { 0,0,0 };
+                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        m_iSelectSize = m_tSpriteParticleData.fSizeDiagrams.size() - 1;
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("DeleteTime", btn)) {
+                        _uint iCount = 0;
+                        for (auto i = m_tSpriteParticleData.fSizeDiagrams.begin(); i != m_tSpriteParticleData.fSizeDiagrams.end();) {
+                            if (iCount == m_iSelectSize) {
+                                m_tSpriteParticleData.fSizeDiagrams.erase(i);
+                                break;
+                            }
+                            ++i;
+                            ++iCount;
+                        }
+                        m_iSelectSize = max(m_iSelectSize - 1, 0);
+                    }
+
+                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                        if (0 < m_iSelectSize)
+                            ImGui::DragFloat("Size Time", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tSpriteParticleData.fSizeDiagrams.size() - 1 ? m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                        ImGui::DragFloat("Size fx", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                        ImGui::DragFloat("Size", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                    }
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Gravity Diagram")) {
+                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
+
+                    ImGui::DragFloat("Start Gravity", &m_tSpriteParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("Start Gravity fx", &m_tSpriteParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("End Gravity", &m_tSpriteParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("End Gravity fx", &m_tSpriteParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
+                    ImGui::TreePop();
+                }
+
+                if (Desc.iNumInstance != m_tSpriteParticleData.iNumInstance ||
+                    Desc.vCenter.x != m_tSpriteParticleData.fCenter.x ||
+                    Desc.vCenter.y != m_tSpriteParticleData.fCenter.y ||
+                    Desc.vCenter.z != m_tSpriteParticleData.fCenter.z ||
+                    Desc.vPivot.x != m_tSpriteParticleData.fPivot.x ||
+                    Desc.vPivot.y != m_tSpriteParticleData.fPivot.y ||
+                    Desc.vPivot.z != m_tSpriteParticleData.fPivot.z ||
+                    Desc.vRange.x != m_tSpriteParticleData.fRange.x ||
+                    Desc.vRange.y != m_tSpriteParticleData.fRange.y ||
+                    Desc.vRange.z != m_tSpriteParticleData.fRange.z ||
+                    Desc.vSize.x != m_tSpriteParticleData.fSize.x ||
+                    Desc.vSize.y != m_tSpriteParticleData.fSize.y ||
+                    Desc.vLifeTime.x != m_tSpriteParticleData.fLifeTime.x ||
+                    Desc.vLifeTime.y != m_tSpriteParticleData.fLifeTime.y ||
+                    Desc.vSpeed.x != m_tSpriteParticleData.fSpeed.x ||
+                    Desc.vSpeed.y != m_tSpriteParticleData.fSpeed.y ||
+                    Desc.isLoop != m_tSpriteParticleData.bisLoop ||
+                    fGravity.x != m_tSpriteParticleData.fGravityDiagram.x ||
+                    fGravity.y != m_tSpriteParticleData.fGravityDiagram.y ||
+                    fGravity.z != m_tSpriteParticleData.fGravityDiagram.z ||
+                    fGravity.w != m_tSpriteParticleData.fGravityDiagram.w ||
+                    fDelayTime != m_tSpriteParticleData.fDelayTime ||
+                    fSizeDiagrams.size() != m_tSpriteParticleData.fSizeDiagrams.size()) {
+                    Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
+                    Desc.vCenter = m_tSpriteParticleData.fCenter;
+                    Desc.vPivot = m_tSpriteParticleData.fPivot;
+                    Desc.vRange = m_tSpriteParticleData.fRange;
+                    Desc.vSize = m_tSpriteParticleData.fSize;
+                    Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
+                    Desc.vSpeed = m_tSpriteParticleData.fSpeed;
+                    Desc.isLoop = m_tSpriteParticleData.bisLoop;
+                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                }
+                for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
+                    if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
+                        fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
+                        fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
+                        m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                    }
+                }
+            }
+            break;
+            case 1:
+            {
+
+                if (ImGui::TreeNode("Color")) {
+                    ImGui::ColorPicker4("Color", (_float*)&m_tSpriteParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Shader")) {
+                    ImGui::TreePop();
+                }
+                string szRender;
+                switch (m_tSpriteParticleData.iSelectRender)
+                {
+                case 2:
+                    szRender = "NONBLEND";
+                    break;
+                case 3:
+                    szRender = "NONLIGHT";
+                    break;
+                case 4:
+                    szRender = "BLUR";
+                    break;
+                case 5:
+                    szRender = "GLOW";
+                    break;
+                case 6:
+                    szRender = "DISTORTION";
+                    break;
+                case 7:
+                    szRender = "BLEND";
+                    break;
+                }
+                if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+                {
+                    for (_uint i = 2; i <= 7; ++i) {
+                        _bool sel = i == m_tSpriteParticleData.iSelectRender;
+                        switch (i)
+                        {
+                        case 2:
+                            szRender = "NONBLEND";
+                            break;
+                        case 3:
+                            szRender = "NONLIGHT";
+                            break;
+                        case 4:
+                            szRender = "BLUR";
+                            break;
+                        case 5:
+                            szRender = "GLOW";
+                            break;
+                        case 6:
+                            szRender = "DISTORTION";
+                            break;
+                        case 7:
+                            szRender = "BLEND";
+                            break;
+                        }
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tSpriteParticleData.iSelectRender = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+                char szName[30] = {};
+                strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
+                if (ImGui::InputText("File", szName, sizeof(szName))) {
+                    m_szCS = szName;
+                }
+                if (ImGui::Button("Refresh Shader", btn)) {
+                    m_tSpriteParticleData.szCS = m_szCS;
+                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                }
+                ImGui::InputInt("Shader Begine", &m_tSpriteParticleData.iBegin);
+                if (ImGui::BeginCombo("ImageType", m_iSpriteImageType == 0 ? "Mask" : m_iSpriteImageType == 1 ? "Diffuse" : "Normal"))
+                {
+                    if (ImGui::Selectable("Mask", 0 == m_iSpriteImageType))
+                        m_iSpriteImageType = 0;
+                    if (0 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    if (ImGui::Selectable("Diffuse", 1 == m_iSpriteImageType))
+                        m_iSpriteImageType = 1;
+                    if (1 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    if (ImGui::Selectable("Normal", 3 == m_iSpriteImageType))
+                        m_iSpriteImageType = 3;
+                    if (3 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    ImGui::EndCombo();
+                }
+                ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
+                ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
+                if (m_tSpriteParticleData.bisSphere) {
+                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (ImGui::TreeNode("TurnPower"))
+                {
+                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tSpriteParticleData.fTurnPower), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("MaskUV"))
+                {
+                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DiffuseUV"))
+                {
+                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DissolveUV"))
+                {
+                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+
+                ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteParticleData.iUV));
+
+                ImGui::Separator();
+
+                ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+                if (0 < m_SRVs[m_iSpriteImageType].size()) {
+                    _uint i = 0;
+                    for (auto SRV : m_SRVs[m_iSpriteImageType]) {
+                        if (ImGui::ImageButton(m_ImageFiles[m_iSpriteImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                            m_pSpriteParticles[m_iSelectSprite]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
+                            switch (m_iSpriteImageType) {
+                            case 0:
+                                m_tSpriteParticleData.szMaskTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            case 1:
+                                m_tSpriteParticleData.szDiffuseTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            case 3:
+                                m_tSpriteParticleData.szNormalTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            }
+                        }
+                        if (1 == ++i % 2)
+                            ImGui::SameLine();
+                    }
+                }
+                ImGui::EndChild();
+            }
+            break;
+            }
+            ImGui::EndChild();
+        }
+        break;
+    case 2:
 
         if (ImGui::Button("Add MeshEffect", btn)) {
             Add_MeshEffect();
@@ -1229,7 +1884,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         m_iSelectModel = i;
                         _tchar szPath[256] = { 0, };
                         MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[m_iSelectModel].c_str(), strlen(m_ModelFilePaths[m_iSelectModel].c_str()), szPath, 256);
-                        
+
                         char szModelPath[MAX_PATH] = {};
                         strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[m_iSelectModel].c_str(), _TRUNCATE);
                         m_tMeshData.szModel = szModelPath;
@@ -1258,6 +1913,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
             if (ImGui::Button("All Replay", btn)) {
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
                 }
                 for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                     m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
@@ -1402,7 +2060,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
         break;
 
-    case 2:
+    case 3:
         if (ImGui::Button("Add SpriteEffect", btn)) {
             Add_SpriteEffect();
         }
@@ -1497,8 +2155,8 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
             if (ImGui::TreeNode("Sprite Color"))
             {
-            ImGui::ColorPicker4("MyColor", (_float*)&m_tSpriteData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-            ImGui::TreePop();
+                ImGui::ColorPicker4("MyColor", (_float*)&m_tSpriteData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                ImGui::TreePop();
             }
 
             if (ImGui::TreeNode("MaskUV"))
@@ -1537,36 +2195,190 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
         }
         break;
+    case 4: {
+        ImGui::SameLine();
 
+        if (ImGui::Button("Replay", btn)) {
+            m_fTime = 0.f;
+            m_pTrailEffect->Set_Components(m_tTrailData);
+
+            m_pDistortionTrailEffect->Set_Components(m_pDistortionTrailEffect->Get_Data());
+        }
+        string szRender;
+        switch (m_tTrailData.iSelectRender)
+        {
+        case 2:
+            szRender = "NONBLEND";
+            break;
+        case 3:
+            szRender = "NONLIGHT";
+            break;
+        case 4:
+            szRender = "BLUR";
+            break;
+        case 5:
+            szRender = "GLOW";
+            break;
+        case 6:
+            szRender = "DISTORTION";
+            break;
+        case 7:
+            szRender = "BLEND";
+            break;
+        }
+        if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+        {
+            for (_uint i = 2; i <= 7; ++i) {
+                _bool sel = i == m_tTrailData.iSelectRender;
+                switch (i)
+                {
+                case 2:
+                    szRender = "NONBLEND";
+                    break;
+                case 3:
+                    szRender = "NONLIGHT";
+                    break;
+                case 4:
+                    szRender = "BLUR";
+                    break;
+                case 5:
+                    szRender = "GLOW";
+                    break;
+                case 6:
+                    szRender = "DISTORTION";
+                    break;
+                case 7:
+                    szRender = "BLEND";
+                    break;
+                }
+                if (ImGui::Selectable(szRender.c_str(), sel))
+                    m_tTrailData.iSelectRender = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        if (ImGui::Button("Refresh Shader", btn)) {
+            m_pTrailEffect->Set_Components(m_tTrailData);
+            m_pDistortionTrailEffect->Set_Components(m_pDistortionTrailEffect->Get_Data());
+        }
+        ImGui::InputInt("Shader Begine", &m_tTrailData.iBegin);
+        if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+        {
+            for (_uint i = 0; i < 3; ++i) {
+                _bool sel = i == m_iImageType;
+                if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                    m_iImageType = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        if (ImGui::TreeNode("Sprite Color"))
+        {
+            ImGui::ColorPicker4("MyColor", (_float*)&m_tTrailData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("MaskUV"))
+        {
+            ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tTrailData.fMaskUV), 0.01f, -100.f, 100.f);
+            ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSpeed), 0.01f, -100.f, 100.f);
+            ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSize), 0.01f, -100.f, 100.f);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("DiffuseUV"))
+        {
+            ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUV), 0.1f, -100.f, 100.f);
+            ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+            ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("DissolveUV"))
+        {
+            ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUV), 0.1f, -100.f, 100.f);
+            ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+            ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+            ImGui::TreePop();
+        }
+
+
+        ImGui::Separator();
+
+        ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+        if (0 < m_SRVs[m_iImageType].size()) {
+            _uint i = 0;
+            for (auto SRV : m_SRVs[m_iImageType]) {
+                if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                    m_pTrailEffect->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+                    switch (m_iImageType) {
+                    case 0:
+                        m_tTrailData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                        break;
+                    case 1:
+                        m_tTrailData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                        break;
+                    case 2:
+                        m_tTrailData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                        break;
+                    }
+                }
+                if (1 == ++i % 2)
+                    ImGui::SameLine();
+            }
+        }
+        m_pTrailEffect->Update(m_tTrailData);
+        ImGui::EndChild();
+    }
+          break;
     }
     ImGui::End();
 
-    if (m_bisPause) {
-        for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-            m_pMeshs[i]->Priority_Update(fTimeDelta);
-            m_pMeshs[i]->Update(fTimeDelta);
-            m_pMeshs[i]->Late_Update(fTimeDelta);
-        }
-        for (_uint i = 0; i < m_pParticles.size(); ++i) {
-            m_pParticles[i]->Priority_Update(fTimeDelta);
-            m_pParticles[i]->Update(fTimeDelta);
-            m_pParticles[i]->Late_Update(fTimeDelta);
-        }
-        for (_uint i = 0; i < m_pSprites.size(); ++i) {
-            m_pSprites[i]->Priority_Update(fTimeDelta);
-            m_pSprites[i]->Update(fTimeDelta);
-            m_pSprites[i]->Late_Update(fTimeDelta);
-        }
+    if (m_iSelectMeshParticle == 4) {
+        m_pTrailEffect->Priority_Update(fTimeDelta);
+        m_pTrailEffect->Update(fTimeDelta);
+        m_pTrailEffect->Late_Update(fTimeDelta);
+        //m_pDistortionTrailEffect->Priority_Update(fTimeDelta);
+        //m_pDistortionTrailEffect->Update(fTimeDelta);
+        //m_pDistortionTrailEffect->Late_Update(fTimeDelta);
     }
     else {
-        for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-            m_pMeshs[i]->Late_Update(0);
+        if (m_bisPause) {
+            for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                m_pMeshs[i]->Priority_Update(fTimeDelta);
+                m_pMeshs[i]->Update(fTimeDelta);
+                m_pMeshs[i]->Late_Update(fTimeDelta);
+            }
+            for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                m_pParticles[i]->Priority_Update(fTimeDelta);
+                m_pParticles[i]->Update(fTimeDelta);
+                m_pParticles[i]->Late_Update(fTimeDelta);
+            }
+            for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                m_pSpriteParticles[i]->Priority_Update(fTimeDelta);
+                m_pSpriteParticles[i]->Update(fTimeDelta);
+                m_pSpriteParticles[i]->Late_Update(fTimeDelta);
+            }
+            for (_uint i = 0; i < m_pSprites.size(); ++i) {
+                m_pSprites[i]->Priority_Update(fTimeDelta);
+                m_pSprites[i]->Update(fTimeDelta);
+                m_pSprites[i]->Late_Update(fTimeDelta);
+            }
         }
-        for (_uint i = 0; i < m_pParticles.size(); ++i) {
-            m_pParticles[i]->Late_Update(0);
-        }
-        for (_uint i = 0; i < m_pSprites.size(); ++i) {
-            m_pSprites[i]->Late_Update(0);
+        else {
+            for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                m_pMeshs[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                m_pParticles[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                m_pSpriteParticles[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pSprites.size(); ++i) {
+                m_pSprites[i]->Late_Update(0);
+            }
         }
     }
     //m_pVIBufferCom->Spread(fTimeDelta);
@@ -1603,6 +2415,10 @@ void CParticle_Setting::Free()
         }
         m_SRVs[i].clear();
     }
+    Safe_Release(m_pTrailEffect);
+    Safe_Release(m_pDistortionTrailEffect);
+    
+    
     Safe_Release(m_pTransform);
 }
 

@@ -12,7 +12,7 @@ NS_END
 
 NS_BEGIN(Tool_Effect)
 
-class CParticle final : public CGameObject
+class CSpriteParticle final : public CGameObject
 {
 public:
 	struct PointConstBufferData
@@ -25,25 +25,25 @@ public:
 		_float2			fisSphere;
 		_int2			iLoopAndCount;
 	};
-	typedef struct ParticleData
+	typedef struct SpriteParticleData
 	{
 		string				szMaskTexture;
 		string				szDiffuseTexture;
-		string				szDissolveTexture;
+		string				szNormalTexture;
 		string				szCS;
 		vector<_float3>		fSizeDiagrams;
 
 		_float4				fGravityDiagram;
 		_float4				fPosition;
-		_float4				fColor;         
+		_float4				fColor;
 
-		_float3				fCenter;        
-		_float3				fPivot;         
-		_float3				fRange;         
-		_float3				fRotation;      
+		_float3				fCenter;
+		_float3				fPivot;
+		_float3				fRange;
+		_float3				fRotation;
 
 		_float2				fSize;
-		_float2				fLifeTime;      
+		_float2				fLifeTime;
 		_float2				fSpeed;
 		_float2				fTurnPower;
 
@@ -57,23 +57,26 @@ public:
 		_float2				fDissolveUV;
 		_float2				fDissolveUVSpeed;
 		_float2				fDissolveUVSize;
+		_int2				iUV;
 
 		_float				fDelayTime;
 		_float				fEndTime;
 		_float				fSphereSize;
 
-		_int				iBegin;         
+
+
+		_int				iBegin;
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;
-	}PARTICLE_DATA;
+	}SPRITE_PARTICLE_DATA;
 
 private:
-	CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CParticle(const CParticle& Prototype);
-	virtual ~CParticle() = default;
+	CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CSpriteParticle(const CSpriteParticle& Prototype);
+	virtual ~CSpriteParticle() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -82,10 +85,10 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void	Set_Components(PARTICLE_DATA tData);
-	void	Update(PARTICLE_DATA tData);
+	void	Set_Components(SPRITE_PARTICLE_DATA tData);
+	void	Update(SPRITE_PARTICLE_DATA tData);
 	void	Set_Begin(_int iBegin) { m_iBegin = iBegin; }
-	PARTICLE_DATA	Get_Data() { return m_tData; }
+	SPRITE_PARTICLE_DATA Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
 	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
@@ -102,7 +105,7 @@ private:
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
-	PARTICLE_DATA	m_tData;
+	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
@@ -118,7 +121,7 @@ private:
 	void							Spread(_float fTimeDelta);
 
 public:
-	static CParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CSpriteParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void					Free() override;
 };
