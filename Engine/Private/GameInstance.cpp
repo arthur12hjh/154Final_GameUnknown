@@ -212,6 +212,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 	m_pPhysx_Manager->Update(fGameSpeed); // isdead 체크해서 뺴고
+	m_pRenderer->Update(fTimeDelta);
 
 	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
 	m_pLight_Manager->Clear_DeadLight(); // -> 죽은 객체 빠지고

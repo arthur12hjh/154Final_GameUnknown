@@ -14,7 +14,7 @@ HRESULT CDistortion::Initialize()
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 
     /* Target_Distortion.*/
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Distortion"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Distortion"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
 
     /* MRT_Distortion */
