@@ -532,6 +532,8 @@ void CRenderer::Render_Deferred()
 		return;
 	if (FAILED(m_pFog->Bind_RenderTarget(m_pShader, "g_FogTexture")))
 		return;
+	m_pGameInstance->Bind_CasCadeSRV();
+	m_pGameInstance->Bind_ShadowDefferd();
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();
@@ -619,8 +621,14 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
 	//	return;
+
+	_bool bIsCasCase = true;
+	_uint i = 0;
+	m_pShader->Bind_RawValue("g_bDebugTextureArray", &bIsCasCase, sizeof(bool));
+	m_pShader->Bind_RawValue("g_CasCadeIndex", &i, sizeof(int));
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 		return;
+
 	/*if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))

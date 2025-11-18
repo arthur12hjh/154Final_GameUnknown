@@ -55,6 +55,15 @@ RasterizerState RS_Cull_None
     CullMode = None;
 };
 
+/* 기본 뎁스 비교 */
+SamplerComparisonState ShadowSampler
+{
+    Filter = COMPARISON_MIN_MAG_MIP_POINT;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+    ComparisonFunc = LESS_EQUAL; // depth 비교 방식
+};
+
 /* DSS 기본 설정 */
 DepthStencilState DSS_Default
 {

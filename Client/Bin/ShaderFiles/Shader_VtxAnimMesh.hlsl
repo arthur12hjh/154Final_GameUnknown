@@ -11,6 +11,15 @@ vector g_vCamPosition;
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_BoneMatrices[512];
 
+int g_CaseCadeNum = 3;
+Texture2DArray g_ShadowMap : register(t0);
+cbuffer g_ConstantBuffer : register(b0)
+{
+    matrix ShadowWorld;
+    matrix ShadowViewMatrix[3];
+    matrix ShadowProjMatrix[3];
+};
+
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -71,10 +80,10 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+
 struct VS_OUT_SHADOW
 {
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    float4 vPosition : POSITION;
 };
 
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
@@ -90,16 +99,38 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
-   
-    matrix matWV, matWVP;
-    
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-    
-    Out.vPosition = mul(vPosition, matWVP);
-    Out.vProjPos = Out.vPosition;
+  
+    Out.vPosition = mul(vPosition, g_WorldMatrix);
 
     return Out;
+}
+
+struct GS_SHADOW_INPUT
+{
+    float4 vPosition : POSITION;
+};
+
+struct GS_SHADOW_OUT
+{
+    float4 vPosition : SV_POSITION;
+    uint RTIndex : SV_RenderTargetArrayIndex;
+};
+
+[maxvertexcount(3 * 3)]
+void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
+{
+    GS_SHADOW_OUT OutPut[3];
+    for (uint i = 0; i < 3; ++i)
+    {
+        for (uint j = 0; j < 3; ++j)
+        {
+            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
+            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
+            OutPut[j].RTIndex = i;
+            TriStream.Append(OutPut[j]);
+        }
+        TriStream.RestartStrip();
+    }
 }
 
 struct PS_IN
@@ -198,7 +229,7 @@ PS_OUT PS_MAIN_MS_TEST(PS_IN In)
 struct PS_IN_SHADOW
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    uint RTIndex : SV_RenderTargetArrayIndex;
 };
 
 struct PS_OUT_SHADOW
@@ -210,8 +241,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = In.vProjPos.w / 500.0f;
-    
+    Out.vShadowLightDepth.x = 0.0f;
     return Out;
 }
 
@@ -233,7 +263,7 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
-        GeometryShader = NULL;
+        GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 

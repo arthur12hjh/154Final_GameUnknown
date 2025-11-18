@@ -166,6 +166,7 @@ public:
 	
 	void						Bind_CasCadeSRV();
 	void						Bind_CasCadeMatrix();
+	void						Bind_ShadowDefferd();
 
 	ID3D11DepthStencilView*		GetCasCadeShadowDSV();
 #ifdef _DEBUG

@@ -1,5 +1,7 @@
 #include "Engine_Shader_Defines.hlsli"
 
+uint MAX_CASCADE_NUM = 3;
+
 inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition)
 { 
     float2 vTexcoord;
@@ -25,6 +27,40 @@ inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vP
     vBackBuffer *= lerp(1.0f, 0.6f, fSum); // 그림자 강도 적용
 
     return vBackBuffer;
+}
+
+inline float3 Calc_Shadow3x3(Texture2DArray ShadowTexture, SamplerComparisonState samplerComp, float ShadowConst[3], float4x4 MatShadowVP[3], float4 vPosition, float Dist)
+{
+    float3 vShadowColor = float3(1.f, 1.f, 1.f);
+    uint iIndex = MAX_CASCADE_NUM - 1;
+    for (uint i = 0; i < MAX_CASCADE_NUM; ++i)
+    {
+        if (Dist <= ShadowConst[MAX_CASCADE_NUM])
+        {
+            iIndex = i;
+            break;
+        }
+    }
+    
+    float4 vPosShadowSpace = mul(vPosition, MatShadowVP[iIndex]);
+    float3 vTexcoord = vPosShadowSpace.xyz / vPosShadowSpace.w;   
+    
+    float cmp_z = vTexcoord.z;
+    float litSum = 0;
+    
+    //// PCF 3x3 샘플
+    //// 주변 픽셀을 가져와서 랜더링
+    for (int x = -1; x <= 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            litSum += ShadowTexture.SampleCmpLevelZero(ShadowSampler, float3(vTexcoord.xy, iIndex), cmp_z, int2(x, y));
+        }
+    }
+   
+    float shadowValue = litSum / 9.0f;
+    vShadowColor = lerp(float3(0.f, 0.f, 0.f), float3(1.f,1.f,1.f), shadowValue); // 그림자 강도 적용
+    return vShadowColor;
 }
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)

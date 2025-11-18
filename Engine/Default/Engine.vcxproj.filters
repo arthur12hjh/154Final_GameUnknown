@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
-      <Filter>01.Utility\99.SuperClass</Filter>
+      <Filter>99.SuperClass</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Engine_Defines.h">
       <Filter>99.Defines</Filter>
@@ -332,7 +332,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
-      <Filter>01.Utility\99.SuperClass</Filter>
+      <Filter>99.SuperClass</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GameInstance.cpp">
       <Filter>01.Utility\00.GameInstance</Filter>
@@ -636,9 +636,6 @@
     <Filter Include="01.Utility">
       <UniqueIdentifier>{b96ac28b-812c-4488-9b7a-915ac186c966}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\99.SuperClass">
-      <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\01.Levels">
       <UniqueIdentifier>{69534a59-b5fe-42e4-98d2-d352d2d2a90b}</UniqueIdentifier>
     </Filter>
@@ -843,18 +840,6 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\Bloom\ShaderFile">
       <UniqueIdentifier>{3a823ccd-5933-44fe-9521-f7a11b4332f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\98.ShaderFiles">
-      <UniqueIdentifier>{f518d6b3-555c-47e6-8466-4a2d704bb85d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer">
-      <UniqueIdentifier>{434b643b-122d-46ff-bbe4-9e1e9de03a6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer\Point">
-      <UniqueIdentifier>{656dfd05-f455-4091-b61b-089fef8ba0e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\98.ShaderFiles\VIBuffer\Model">
-      <UniqueIdentifier>{cec658a0-d100-4324-845c-b2b18cbeed21}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\21.Interraction">
       <UniqueIdentifier>{3daaf3e5-f5c4-40dc-8f00-e37b67e87046}</UniqueIdentifier>
     </Filter>
@@ -990,22 +975,37 @@
     <Filter Include="01.Utility\03.Components\Percetion">
       <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.ShaderFiles">
+      <UniqueIdentifier>{f518d6b3-555c-47e6-8466-4a2d704bb85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ShaderFiles\VIBuffer">
+      <UniqueIdentifier>{434b643b-122d-46ff-bbe4-9e1e9de03a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ShaderFiles\VIBuffer\Point">
+      <UniqueIdentifier>{656dfd05-f455-4091-b61b-089fef8ba0e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ShaderFiles\VIBuffer\Model">
+      <UniqueIdentifier>{cec658a0-d100-4324-845c-b2b18cbeed21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.SuperClass">
+      <UniqueIdentifier>{f4be3592-8a1b-4f99-a50d-6e46242fccba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl">
-      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Model</Filter>
+      <Filter>98.ShaderFiles\VIBuffer\Model</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl">
-      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Point</Filter>
+      <Filter>98.ShaderFiles\VIBuffer\Point</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\ShaderFile</Filter>
@@ -1022,13 +1022,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_Deferred_Defines.hlsli">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_Deferred_Functions.hlsli">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
+      <Filter>98.ShaderFiles</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -66,11 +66,6 @@ struct VS_OUT_SHADOW
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
-
-    matrix matWV, matWVP;
-    
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), ShadowWorld);
     return Out;
@@ -96,8 +91,6 @@ void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_S
         for (uint j = 0; j < 3; ++j)
         {
             float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
-            PosView.z += 2.5f;
-            
             OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
             OutPut[j].RTIndex = i;
             TriStream.Append(OutPut[j]);
@@ -166,14 +159,7 @@ struct PS_OUT_SHADOW
 PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
-    
-   if(0 == In.RTIndex)
-        Out.vShadowLightDepth = float4(1.f, 0.f, 0.f, 1.f);
-    else if(1 == In.RTIndex)
-        Out.vShadowLightDepth = float4(0.f, 0.f, 1.f, 1.f);
-    else
-        Out.vShadowLightDepth = float4(0.f, 1.f, 0.f, 1.f);
-        
+    Out.vShadowLightDepth.x = 0.f;
     return Out;
 }
 

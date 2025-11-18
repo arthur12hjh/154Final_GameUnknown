@@ -63,25 +63,30 @@ HRESULT CFrustum::Initialize()
 
 void CFrustum::Update()
 {
-	_matrix ShadowCamWorldMatrix = XMLoadFloat4x4(m_pGameInstance->GetInverseShadowMatrix(D3DTS::VIEW));
-	XMStoreFloat4x4(&m_CaseCadeMatrix.World, ShadowCamWorldMatrix);
+	_matrix ShadowViewMatrix = XMLoadFloat4x4(m_pGameInstance->GetShadowMatrix(D3DTS::VIEW));
+	_matrix WorldMatrix = m_pGameInstance->GetMainCameraWorldMatrix();
 
 	for(_uint i = 0; i < 3; ++i)
 		m_CaseCadeMatrix.ViewMatrix[i] = *m_pGameInstance->GetShadowMatrix(D3DTS::VIEW);
 
-	auto& ShadowLightDesc = m_pGameInstance->GetShadowCameraInfo();
+	auto pCamera = m_pGameInstance->GetMainCamera();
+	if (nullptr == pCamera)
+		return;
+
+	auto& CameraDesc = pCamera->GetCameraInfo();
 
 	// 수직 시야각을 이용하여 수평시야각을 구함
-	_float fHalfHFov = (ShadowLightDesc.fFov / 2.f) * ShadowLightDesc.fAspect;
+	_float fHalfHFov = (CameraDesc.fFov / 2.f) * CameraDesc.fAspect;
 
 	// 그림자 품질은 로그 + 선형 분할
 	// 선형 분할
 	// 케스케이드 개수에 따라서 로그 + 선형 분할로 나눈다.
 	// 이러면 좀더 품질좋은 그림자가 나온다고한다.
-	m_CascadeFar[0] = ShadowLightDesc.fNear;
-	m_CascadeFar[m_iNumCascadeCount] = ShadowLightDesc.fFar;
+	m_CascadeFar[0] = CameraDesc.fNear;
+	m_CaseCadeDefferdDesc.CasCadeDist[m_iNumCascadeCount - 1] = m_CascadeFar[m_iNumCascadeCount] = CameraDesc.fFar;
+	
 	for (_uint i = 1; i < m_iNumCascadeCount; ++i)
-		m_CascadeFar[i] = Mix<_float>(ShadowLightDesc.fNear, ShadowLightDesc.fFar, _float(i) / m_iNumCascadeCount);
+		m_CaseCadeDefferdDesc.CasCadeDist[i-1] = m_CascadeFar[i] = Mix<_float>(CameraDesc.fNear, CameraDesc.fFar, _float(i) / m_iNumCascadeCount);
 
 	for (_uint i = 0; i < m_iNumCascadeCount; ++i)
 	{
@@ -99,15 +104,15 @@ void CFrustum::Update()
 
 		m_vCascadeFrustumConers[4] = { FarX, FarY, m_CascadeFar[i + 1], 1.f };
 		m_vCascadeFrustumConers[5] = { -FarX, FarY, m_CascadeFar[i + 1], 1.f };
-		m_vCascadeFrustumConers[6] = { NearX, -NearY, m_CascadeFar[i + 1], 1.f };
-		m_vCascadeFrustumConers[7] = { -NearX, -NearY, m_CascadeFar[i + 1], 1.f };
+		m_vCascadeFrustumConers[6] = { FarX, -FarY, m_CascadeFar[i + 1], 1.f };
+		m_vCascadeFrustumConers[7] = { -FarX, -FarY, m_CascadeFar[i + 1], 1.f };
 
 		// AABB 박스의 중점을 구하는 수식
 		_vector vCenterPos = {};
 		for (_uint j = 0; j < 8; ++j)
 		{
-			_vector ConerWorld =  XMVector3TransformNormal(XMLoadFloat4(&m_vCascadeFrustumConers[j]), ShadowCamWorldMatrix);
-			XMStoreFloat4(&m_vCascadeFrustumConers[i], ConerWorld);
+			_vector ConerWorld =  XMVector3TransformNormal(XMLoadFloat4(&m_vCascadeFrustumConers[j]), WorldMatrix);
+			XMStoreFloat4(&m_vCascadeFrustumConers[j], ConerWorld);
 			vCenterPos += ConerWorld;
 		}
 		vCenterPos /= 8.0f;
@@ -121,11 +126,12 @@ void CFrustum::Update()
 		}
 
 		// 카메라가 보는 시점이 변경될때 떨리는걸 방지하기 위한 공식이라고함
-		fRadius = std::ceil(fRadius * 16.0f) / 16.0f;
+		fRadius = ceil(fRadius * 16.0f) / 16.0f;
 		_vector MaxExtents = { fRadius, fRadius, fRadius };
-		_vector MinExtents = MaxExtents * -1.f;
-
-		_vector vShadowDir = XMVector3Normalize(XMLoadFloat4(&ShadowLightDesc.vEye) - XMLoadFloat4(&ShadowLightDesc.vAt));
+  		_vector MinExtents = MaxExtents * -1.f;
+		
+		auto& ShadowLightDesc = m_pGameInstance->GetShadowCameraInfo();
+		_vector vShadowDir = XMVector3Normalize(XMLoadFloat4(&ShadowLightDesc.vAt) - XMLoadFloat4(&ShadowLightDesc.vEye) );
 		_vector vShadowCameraPos = vCenterPos + vShadowDir * MaxExtents.m128_f32[2];
 
 		_vector CasCadeExtents = MaxExtents - MinExtents;
@@ -134,12 +140,14 @@ void CFrustum::Update()
 		{
 			_matrix OrthMatrix = XMMatrixOrthographicLH(MaxExtents.m128_f32[0] - MinExtents.m128_f32[0],
 				MaxExtents.m128_f32[1] - MinExtents.m128_f32[1],
-				m_CascadeFar[i], m_CascadeFar[i + 1]);
+				0.f, CasCadeExtents.m128_f32[2]);
 
 			XMStoreFloat4x4(&m_CaseCadeMatrix.ProjMatrix[i], OrthMatrix);
+			XMStoreFloat4x4(&m_CaseCadeDefferdDesc.VPMatrix[i], ShadowViewMatrix * OrthMatrix);
 		}
 	}
 
+	Safe_Release(pCamera);
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
 	_matrix		matPV = ProjMatrixInverse * ViewMatrixInverse;
@@ -256,8 +264,14 @@ void CFrustum::Bind_ShadowMatrix()
 {
 	// 상수 버퍼를 통해서 넘길거임
 	// 여기서 구한 View, Proj 전부 넘겨줄거임
-	m_pContext->UpdateSubresource(m_pCaseCadeCB, 0, nullptr, &m_CaseCadeMatrix, 0, 0);
-	m_pContext->GSSetConstantBuffers(0, 1, &m_pCaseCadeCB);
+	m_pContext->UpdateSubresource(m_pCaseCadeCB[0], 0, nullptr, &m_CaseCadeMatrix, 0, 0);
+	m_pContext->GSSetConstantBuffers(0, 1, &m_pCaseCadeCB[0]);
+}
+
+void CFrustum::Bind_ShadowDefferd()
+{
+	m_pContext->UpdateSubresource(m_pCaseCadeCB[1], 0, nullptr, &m_CaseCadeDefferdDesc, 0, 0);
+	m_pContext->GSSetConstantBuffers(0, 1, &m_pCaseCadeCB[1]);
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
@@ -281,7 +295,17 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
 	ConstBufferSubResource.pSysMem = &m_CaseCadeMatrix;
 
-	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &m_pCaseCadeCB)))
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &m_pCaseCadeCB[0])))
+		return E_FAIL;
+
+	BufferDesc.ByteWidth = sizeof(CASCADE_DEFFERD_DESC);
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = &m_CaseCadeDefferdDesc;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &m_pCaseCadeCB[1])))
 		return E_FAIL;
 #pragma endregion
 
@@ -306,6 +330,8 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	DSVDesc.Texture2DArray.ArraySize = m_iNumCascadeCount;
 	DSVDesc.Texture2DArray.FirstArraySlice = 0;
 	DSVDesc.Texture2DArray.MipSlice = 0;
+
+	_float vColor[4] = { 0.f, 0.f, 0.f, 0.f };
 	m_pDevice->CreateDepthStencilView(pTex, &DSVDesc, &m_pCasecasdeDSV);
 	if (nullptr == m_pCasecasdeDSV)
 		return E_FAIL;
@@ -318,7 +344,9 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
 	if (nullptr == m_pCasCadeSRV)
 		return E_FAIL;
-
+	
+	//vColor[4] = { 1.f, 1.f, 1.f, 1.f };
+	//m_pContext->ClearRenderTargetView(, vColor);
 	Safe_Release(pTex);
 	return S_OK;
 }
@@ -349,7 +377,8 @@ void CFrustum::Free()
 	Safe_Release(m_pInputLayout);
 #endif // _DEBUG
 
-	Safe_Release(m_pCaseCadeCB);
+	Safe_Release(m_pCaseCadeCB[0]);
+	Safe_Release(m_pCaseCadeCB[1]);
 	Safe_Release(m_pCasecasdeDSV);
 	Safe_Release(m_pCasCadeSRV);
 

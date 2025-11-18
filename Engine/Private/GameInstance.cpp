@@ -658,6 +658,11 @@ void CGameInstance::Bind_CasCadeMatrix()
 	m_pFrustum->Bind_ShadowMatrix();
 }
 
+void CGameInstance::Bind_ShadowDefferd()
+{
+	m_pFrustum->Bind_ShadowDefferd();
+}
+
 ID3D11DepthStencilView* CGameInstance::GetCasCadeShadowDSV()
 {
 	return m_pFrustum->GetShadowDSV();

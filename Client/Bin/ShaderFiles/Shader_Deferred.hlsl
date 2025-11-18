@@ -40,6 +40,17 @@ vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
 
+bool            g_bDebugTextureArray;
+int             g_CasCadeIndex;
+Texture2DArray  g_CasCadeMap : register(t0);
+cbuffer g_ConstantCasCadeBuffer : register(b0)
+{
+    matrix ShadowWorld;
+    matrix ShadowVPMatrix[3];
+    float CasCadeDist[3];
+    float Padding; // <- 이거 무의미한 값이긴한데 나중에 패딩 제거해주겠음
+};
+
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;   
@@ -59,7 +70,13 @@ PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
     
-    Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    if(g_bDebugTextureArray)
+    {
+        float3 vTexcoord = float3(In.vTexcoord, g_CasCadeIndex);
+        Out.vBackBuffer = g_CasCadeMap.Sample(DefaultSampler, vTexcoord);
+    }
+    else
+        Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;   
 }
@@ -189,15 +206,12 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     /* 로컬위치 * 월드   */
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
-    vPosition = mul(vPosition, g_LightViewMatrix);
-    vPosition = mul(vPosition, g_LightProjMatrix);
-    
-    /* -1, 1 -> 0, 0  */
-    /* 1, -1 -> 1, 1  */
-    
+    float fDist = length(g_vCamPosition - vPosition);
+
     //그림자 연산
-    Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-   
+    //Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
+    float3 vShadow = Calc_Shadow3x3(g_CasCadeMap, ShadowSampler, CasCadeDist, ShadowVPMatrix, vPosition, fDist);
+    Out.vBackBuffer.xyz *= vShadow;
     return Out;
 }
 
