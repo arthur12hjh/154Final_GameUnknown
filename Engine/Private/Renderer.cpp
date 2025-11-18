@@ -46,7 +46,7 @@ HRESULT CRenderer::Initialize()
 	/* 스크린 사이즈 세팅 */
 	m_vScreenSize = m_pGameInstance->GetScreenSize();
 	/* 섀도우 맵 사이즈 세팅 */
-	m_vShadowMapSize = _uint2{ 8192, 4608 };
+	m_vShadowMapSize = _uint2{ 2048, 2048 };
 
 	/* 렌더타겟 세팅 */
 	if (FAILED(Ready_RenderTargets()))
@@ -168,7 +168,7 @@ HRESULT CRenderer::Ready_RenderTargets()
 		return E_FAIL;
 
 	/* Target_Shadow. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
 		return E_FAIL;
@@ -314,10 +314,9 @@ void CRenderer::Render_Shadow()
 	//if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
 	//	return;
 
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV())))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV(), true)))
 		return;
-
-	m_pGameInstance->Bind_CasCadeSRV();
+	
 	m_pGameInstance->Bind_CasCadeMatrix();
 
 	Set_ScreenSize(2048, 2048);
@@ -416,6 +415,8 @@ void CRenderer::Render_Combined()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
 		return;
 
+	m_pGameInstance->Bind_CasCadeSRV();
+	m_pGameInstance->Bind_ShadowDefferd();
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
 	m_pVIBuffer->Bind_Resources();
@@ -532,8 +533,6 @@ void CRenderer::Render_Deferred()
 		return;
 	if (FAILED(m_pFog->Bind_RenderTarget(m_pShader, "g_FogTexture")))
 		return;
-	m_pGameInstance->Bind_CasCadeSRV();
-	m_pGameInstance->Bind_ShadowDefferd();
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::DEFERRED));
 	m_pVIBuffer->Bind_Resources();

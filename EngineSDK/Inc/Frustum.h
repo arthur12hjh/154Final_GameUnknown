@@ -30,7 +30,7 @@ public:
 	void Update();
 
 #ifdef _DEBUG
-	void				FrustomRender();
+	void						FrustomRender();
 #endif
 
 public:
@@ -44,7 +44,7 @@ public:
 	void						Bind_ShadowMatrix();
 	void						Bind_ShadowDefferd();
 
-	ID3D11DepthStencilView*		GetShadowDSV() { return m_pCasecasdeDSV; }
+	ID3D11DepthStencilView*		GetShadowDSV();
 
 private:
 	_uint						m_iNumCascadeCount = {};

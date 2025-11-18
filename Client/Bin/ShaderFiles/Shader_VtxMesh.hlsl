@@ -8,7 +8,6 @@ texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 
 int             g_CaseCadeNum = 3;
-Texture2DArray  g_ShadowMap: register(t0);
 cbuffer g_ConstantBuffer : register(b0)
 {
     matrix ShadowWorld;
@@ -86,7 +85,7 @@ struct GS_SHADOW_OUT
 void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
 {
     GS_SHADOW_OUT OutPut[3];
-    for (uint i = 0; i < g_CaseCadeNum; ++i)
+    for (uint i = 0; i < 3; ++i)
     {
         for (uint j = 0; j < 3; ++j)
         {
@@ -182,7 +181,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+        PixelShader = NULL;
     }
 
     pass SKYBOX 

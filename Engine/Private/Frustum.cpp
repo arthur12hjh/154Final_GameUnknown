@@ -271,7 +271,14 @@ void CFrustum::Bind_ShadowMatrix()
 void CFrustum::Bind_ShadowDefferd()
 {
 	m_pContext->UpdateSubresource(m_pCaseCadeCB[1], 0, nullptr, &m_CaseCadeDefferdDesc, 0, 0);
-	m_pContext->GSSetConstantBuffers(0, 1, &m_pCaseCadeCB[1]);
+	m_pContext->PSSetConstantBuffers(0, 1, &m_pCaseCadeCB[1]);
+}
+
+ID3D11DepthStencilView* CFrustum::GetShadowDSV()
+{
+	ID3D11ShaderResourceView* nullSRV[8] = {};
+	m_pContext->PSSetShaderResources(0, 8, nullSRV);
+	return m_pCasecasdeDSV;
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
@@ -331,7 +338,6 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	DSVDesc.Texture2DArray.FirstArraySlice = 0;
 	DSVDesc.Texture2DArray.MipSlice = 0;
 
-	_float vColor[4] = { 0.f, 0.f, 0.f, 0.f };
 	m_pDevice->CreateDepthStencilView(pTex, &DSVDesc, &m_pCasecasdeDSV);
 	if (nullptr == m_pCasecasdeDSV)
 		return E_FAIL;
@@ -340,13 +346,12 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	SRVDesc.Texture2DArray.MipLevels = 1;
-	SRVDesc.Texture2DArray.ArraySize = 3;
+	SRVDesc.Texture2DArray.MostDetailedMip = 0;
+	SRVDesc.Texture2DArray.FirstArraySlice = 0;
+	SRVDesc.Texture2DArray.ArraySize = m_iNumCascadeCount;
 	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
 	if (nullptr == m_pCasCadeSRV)
 		return E_FAIL;
-	
-	//vColor[4] = { 1.f, 1.f, 1.f, 1.f };
-	//m_pContext->ClearRenderTargetView(, vColor);
 	Safe_Release(pTex);
 	return S_OK;
 }

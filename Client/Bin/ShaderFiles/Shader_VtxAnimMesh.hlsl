@@ -12,7 +12,6 @@ vector g_vCamPosition;
 matrix g_BoneMatrices[512];
 
 int g_CaseCadeNum = 3;
-Texture2DArray g_ShadowMap : register(t0);
 cbuffer g_ConstantBuffer : register(b0)
 {
     matrix ShadowWorld;
@@ -264,7 +263,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+        PixelShader = NULL;
     }
 
     //림 라이트 켠 버전

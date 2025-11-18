@@ -43,7 +43,7 @@ inline float3 Calc_Shadow3x3(Texture2DArray ShadowTexture, SamplerComparisonStat
     }
     
     float4 vPosShadowSpace = mul(vPosition, MatShadowVP[iIndex]);
-    float3 vTexcoord = vPosShadowSpace.xyz / vPosShadowSpace.w;   
+    float3 vTexcoord = vPosShadowSpace.xyz / vPosShadowSpace.w;
     
     float cmp_z = vTexcoord.z;
     float litSum = 0;

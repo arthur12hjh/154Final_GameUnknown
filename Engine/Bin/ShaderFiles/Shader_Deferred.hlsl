@@ -72,8 +72,10 @@ PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
     
     if(g_bDebugTextureArray)
     {
-        float3 vTexcoord = float3(In.vTexcoord, g_CasCadeIndex);
-        Out.vBackBuffer = g_CasCadeMap.Sample(DefaultSampler, vTexcoord);
+        float vData = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 0)).r;
+        float vData1 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 1)).r;
+        float vData2 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 2)).r;
+        Out.vBackBuffer = float4(vData, vData1, vData2, 1.f);
     }
     else
         Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
