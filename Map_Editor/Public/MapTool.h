@@ -32,11 +32,19 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
+	HRESULT Render_Area();
+
 
 	void Update_Rotation();
 	HRESULT Save_Map_Objects();
+	HRESULT Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag);
+
 	HRESULT Load_Map_Objects();
+	HRESULT Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	void Delete_All_Before_Load(const _tchar* pLayerTag);
+
 	HRESULT Save_Terrain_HeightMap();
+
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -48,7 +56,6 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
-
 
 
 private:
@@ -87,6 +94,12 @@ private:
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 	MAP_THEME			m_eCurrentMap = { MAP_THEME::END };
+
+	ID3D11Buffer* m_pDebugVB = nullptr; // <--- 이 변수를 만듭니다.
+	ID3D11InputLayout* m_pDebugInputLayout = nullptr;
+	ID3D11VertexShader* m_pDebugVS = nullptr;
+	ID3D11PixelShader* m_pDebugPS = nullptr;
+	const UINT DEBUG_MAX_VERTICES = 8;
 
 private:
 	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트

@@ -27,7 +27,7 @@ HRESULT CReed::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	D3D11_MAPPED_SUBRESOURCE MappedResource{};
+	/*D3D11_MAPPED_SUBRESOURCE MappedResource{};
 
 	m_pModelCom->Lock(D3D11_MAP_WRITE_DISCARD, &MappedResource);
 
@@ -36,7 +36,7 @@ HRESULT CReed::Initialize(void* pArg)
 	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	_vector vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f);
 
-	for(_uint i = 0; i < 1000; ++i)
+	for(_uint i = 0; i < 2000; ++i)
 	{
 		XMStoreFloat4(&pInstanceData[i].vRight, vRight);
 		XMStoreFloat4(&pInstanceData[i].vUp, vUp);
@@ -44,7 +44,7 @@ HRESULT CReed::Initialize(void* pArg)
 
 	}
 
-	m_pModelCom->UnLock();
+	m_pModelCom->UnLock();*/
 
 	return S_OK;
 }

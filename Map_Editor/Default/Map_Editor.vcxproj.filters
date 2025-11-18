@@ -121,6 +121,27 @@
     <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\TombStone">
       <UniqueIdentifier>{020a9aac-879e-48b5-a940-8f07c88882d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom">
+      <UniqueIdentifier>{0a24bfb1-5f5b-4b7e-a633-25f8c181cfa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\StoneLantern">
+      <UniqueIdentifier>{01534af5-716f-46c8-b867-b346dd31400f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Buildings\Giwajip">
+      <UniqueIdentifier>{7b6cbce0-701a-4ef1-898b-4897af3f0dd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Grass">
+      <UniqueIdentifier>{3c04b960-9c3d-4105-b42a-106af95ff552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass">
+      <UniqueIdentifier>{0be50ddb-4c1d-4d71-9f94-d3cc7a2488fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map_Object\Scarlet\Environment\Grass\Grass">
+      <UniqueIdentifier>{ab62b6ee-76e6-4a9e-b01d-1416cfff418a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Brush">
+      <UniqueIdentifier>{e98fe592-bf2c-4929-99aa-6d6ae7a157c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -285,19 +306,46 @@
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\CherryBlossom1.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom2.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom3.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom4.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CherryBlossom5.h">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StoneLantern1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneLantern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StoneLantern2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneLantern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Giwajip.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Giwajip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DryGrass3.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DryGrass1.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DryGrass2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grass.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\Grass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Brush.h">
+      <Filter>02.GameObjects\Brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Giwajip2.h">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Giwajip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -444,19 +492,46 @@
     </ClCompile>
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom2.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom3.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom4.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CherryBlossom5.cpp">
-      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree</Filter>
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Tree\CherryBlossom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StoneLantern1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneLantern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StoneLantern2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\StoneLantern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Giwajip.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Giwajip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DryGrass1.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DryGrass2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DryGrass3.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\DryGrass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grass.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Environment\Grass\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Brush.cpp">
+      <Filter>02.GameObjects\Brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Giwajip2.cpp">
+      <Filter>02.GameObjects\Map_Object\Scarlet\Buildings\Giwajip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
