@@ -17,6 +17,8 @@ public :
 	const CHARACTER_SKILL_DESC*				Find_SkillData(_uint iSkillID);
 	const BOSS_NETWORK_DESC*				Find_BossData(_uint iBossID);
 
+	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(const _wstring& szAnimationTag);
+
 private:
 	// 캐릭터 구조체는 이거 하나만있으도 될거같아서 픽스
 	// map<_uint, CHARACTER_NETWORK_DESC>			m_pTextures = {};
@@ -27,9 +29,14 @@ private:
 	//보스 데이터
 	map<_uint, BOSS_NETWORK_DESC>			m_pBossDatas = {};
 
+	// 애니메이션 노티파이(이벤트) 데이터
+	unordered_map<_wstring, vector<ANIM_NOTIFY>>		m_AnimationNotifyDatas = {};
+
+
 private:
 	HRESULT									LoadBossData(void* pArg);
 	HRESULT									LoadSkillData();
+	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 
 public:
 	static CDataManager*					Create();

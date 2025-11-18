@@ -384,6 +384,25 @@ namespace Engine
 		vector<binAnimation>		vAnimations;
 	}BINMODEL;
 
+
+	///  -> 애니메이션 이벤트 관련 구조체
+	typedef struct AnimNotify
+	{
+		std::string						szNotifyTag;
+		std::string						szNotifyArg01;
+		std::string						szNotifyArg02;
+		std::string						szSocketTag;
+		bool							bIsLocalPos;
+		XMFLOAT3						vNotifyPosition;
+		XMFLOAT3						vNotifyRotation;
+		unsigned int					iNotifyKeyFrame;
+
+		bool operator<(const AnimNotify s) const {
+			return this->iNotifyKeyFrame > s.iNotifyKeyFrame;
+		}
+	}ANIM_NOTIFY;
+
+
 #pragma endregion
 
 }

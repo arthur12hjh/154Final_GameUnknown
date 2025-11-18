@@ -8,6 +8,9 @@
 #include "ContainerObject.h"
 #include "Animation.h"
 
+
+#include "StringHelper.h"
+
 CImGui_Manager::CImGui_Manager()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 	, m_pTool_Manager{ CTool_Manager::GetInstance() }
@@ -132,6 +135,11 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 	m_pSelectedObject = pObjLists->back();
 
 	m_pAnimationList = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_AnimationList();
+
+	if (nullptr == m_pAnimationEventMap)
+	{
+		m_pAnimationEventMap = m_pTool_Manager->Get_AnimationEventMapPtr();
+	}
 }
 
 void CImGui_Manager::Kill_Character()
@@ -161,7 +169,7 @@ void CImGui_Manager::Update_ToolBar()
 	ImGui::SameLine();
 	if (ImGui::Button("Save"))
 	{
-		ImGui::OpenPopup("Save");
+		m_pTool_Manager->Save_Data();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Editor Preferences"))
@@ -186,7 +194,7 @@ void CImGui_Manager::Update_ToolBar()
 
 	Update_ToolBar_LoadCharacter();
 	Update_ToolBar_Save_Animation();
-
+	Update_ToolBar_Editor_Preferences();
 
 	ImGui::End();
 }
@@ -235,46 +243,29 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 
 void CImGui_Manager::Update_ToolBar_Save_Animation()
 {
-	int a = 10;
+
 }
 
 void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 {
-	static int iCurrentIndex = 0;
-	static int iBeforeIndex = 0;
+	static _int iCurrentIndex = 0;
+	static _int iBeforeIndex = 0;
 
-	if (ImGui::BeginPopup("Load"))
+	static _bool iDebugRenderTargetIndex = FALSE;
+	static _bool iDebugPhysicsIndex = FALSE;
+
+	if (ImGui::BeginPopup("EditorPreferences"))
 	{
-		ImGui::Text("Load Character");
-		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
-		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
-		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
-
-		ImGui::EndPopup();
-	}
-
-	if (iCurrentIndex != iBeforeIndex)
-	{
-		// 구조
-		// 캐릭터 객체 코드를 따로 만들 것인가?
-		// 캐릭터 객체 코드를 같이 만들면 PartObject 관련 처리는 어떻게 할 것인가?
-		switch (iCurrentIndex)
+		ImGui::Text("RenderTargets");
+		if (ImGui::Checkbox("Debug RenderTargets", &iDebugRenderTargetIndex))
 		{
-		case 0:
-			Kill_Character();
-			break;
-		case 1:
-			Create_Character(TEXT("Prototype_GameObject_Character"));
-			break;
-		case 2:
-			Create_Character(TEXT("Prototype_GameObject_Dororong"));
-			break;
-		case 3:
-			Create_Character(TEXT("Prototype_GameObject_Gigas"));
-			break;
+			iDebugRenderTargetIndex = !iDebugRenderTargetIndex;
+			m_pGameInstance->Set_DebugVisible(iDebugRenderTargetIndex);
 		}
 
-		iBeforeIndex = iCurrentIndex;
+		ImGui::Separator();
+
+		ImGui::EndPopup();
 	}
 }
 
@@ -330,7 +321,7 @@ void CImGui_Manager::Update_AnimationList()
 			m_iSelectedAnimationIndex = i;
 			m_iSelectedEventIndex = 0;
 			m_iBeforeEventIndex = 0;
-			Update_AnimNotifyList();	// 애니메이션 이름을 기반으로한 map에서 받아오면 될듯. 일단 미루자
+			Update_AnimNotifyList(pAnimation);	// 애니메이션 이름을 기반으로한 map에서 받아오면 될듯. 일단 미루자
 		}
 	}
 
@@ -346,23 +337,34 @@ void CImGui_Manager::Update_AnimationList()
 
 }
 
-void CImGui_Manager::Update_AnimNotifyList()
+void CImGui_Manager::Update_AnimNotifyList(CAnimation* pAnimation)
 {
-	m_pCurrentAnimationEventList = nullptr;
-	/***********************************************************************
-		██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ 
-		██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ 
-		██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
-		██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║
-		╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
-		 ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-                                                          
-		████████████████████████████████████████████████████████████████████████████
-	⚠ 이후 DataManager 제작 시 map에서 vector<ANIM_NOTIFY>* 받아오게끔 만들어야함 ⚠
-		████████████████████████████████████████████████████████████████████████████
-************************************************************************/
+	if (nullptr == pAnimation)
+		return;
 
-	m_pCurrentAnimationEventList = new vector<ANIM_NOTIFY>;
+	m_pCurrentAnimationEventList = nullptr;
+	
+	if (nullptr == m_pAnimationEventMap)
+	{
+		m_pAnimationEventMap = m_pTool_Manager->Get_AnimationEventMapPtr();
+	}
+
+	_wstring szAbsoluteAnimationTag;
+	WCHAR szAnimationTag[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(pAnimation->Get_Name(), szAnimationTag);
+	szAbsoluteAnimationTag = szAnimationTag;
+
+
+	auto iter = m_pAnimationEventMap->find(szAbsoluteAnimationTag);
+	if(iter == m_pAnimationEventMap->end())
+	{
+		vector<ANIM_NOTIFY>& notifyList = (*m_pAnimationEventMap)[szAbsoluteAnimationTag];
+		m_pCurrentAnimationEventList = &notifyList;
+		return;
+	}
+
+	m_pCurrentAnimationEventList = &iter->second;
+
 }
 
 void CImGui_Manager::Update_KeyFrameTool()
@@ -551,7 +553,7 @@ void CImGui_Manager::Update_TimeLine()
 
 						if (nullptr == m_pCurrentAnimationEventList)
 						{
-							Update_AnimNotifyList();
+							Update_AnimNotifyList(pAnimation);
 						}
 
 						m_iSelectedEventIndex = iIndex;
@@ -569,7 +571,7 @@ void CImGui_Manager::Update_TimeLine()
 
 			if (nullptr == m_pCurrentAnimationEventList)
 			{
-				Update_AnimNotifyList();
+				Update_AnimNotifyList(pAnimation);
 			}
 
 			ANIM_NOTIFY AnimNotify;
@@ -577,6 +579,10 @@ void CImGui_Manager::Update_TimeLine()
 			AnimNotify.szNotifyTag.clear();
 			AnimNotify.szNotifyArg01.clear();
 			AnimNotify.szNotifyArg02.clear();
+			AnimNotify.szSocketTag.clear();
+			AnimNotify.bIsLocalPos = TRUE;
+			AnimNotify.vNotifyPosition = _float3(0.f, 0.f, 0.f);
+			AnimNotify.vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
 			m_pCurrentAnimationEventList->push_back(AnimNotify);
 			m_iSelectedEventIndex = m_pCurrentAnimationEventList->size() - 1;
@@ -600,6 +606,12 @@ void CImGui_Manager::Update_EventMaker()
 	static _char szNotifyEditTag[MAX_PATH];
 	static _char szNotifyArg01[MAX_PATH];
 	static _char szNotifyArg02[MAX_PATH];
+	static _char szSocketTag[MAX_PATH];
+
+	static _bool bIsLocalPos = TRUE;
+
+	static _float3 vNotifyPosition = _float3(0.f, 0.f, 0.f);
+	static _float3 vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
 	// 먼저 기존 이벤트랑 다르면 초기화시켜줘야한다.
 	if (m_iBeforeEventIndex != m_iSelectedEventIndex)
@@ -611,6 +623,12 @@ void CImGui_Manager::Update_EventMaker()
 			strcpy_s(szNotifyEditTag, SelectedAnimNotify.szNotifyTag.c_str());
 			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg01.c_str());
 			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg02.c_str());
+			strcpy_s(szSocketTag, SelectedAnimNotify.szSocketTag.c_str());
+
+			bIsLocalPos = SelectedAnimNotify.bIsLocalPos;
+
+			vNotifyPosition = SelectedAnimNotify.vNotifyPosition;
+			vNotifyRotation = SelectedAnimNotify.vNotifyRotation;
 
 			m_iClickedKeyFrame = SelectedAnimNotify.iNotifyKeyFrame;
 
@@ -620,6 +638,12 @@ void CImGui_Manager::Update_EventMaker()
 			szNotifyEditTag[0] = '\0';
 			szNotifyArg01[0] = '\0';
 			szNotifyArg02[0] = '\0';
+			szSocketTag[0] = '\0';
+
+			bIsLocalPos = TRUE;
+
+			vNotifyPosition = _float3(0.f, 0.f, 0.f);
+			vNotifyRotation = _float3(0.f, 0.f, 0.f);
 		}
 
 		m_iBeforeEventIndex = m_iSelectedEventIndex;
@@ -633,6 +657,13 @@ void CImGui_Manager::Update_EventMaker()
 		ImGui::InputText("Event Tag", szNotifyEditTag, sizeof(szNotifyEditTag));
 		ImGui::InputText("Event Arg01", szNotifyArg01, sizeof(szNotifyArg01));
 		ImGui::InputText("Event Arg02", szNotifyArg02, sizeof(szNotifyArg02));
+		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
+
+		ImGui::Checkbox("Is Local Position", &bIsLocalPos);
+
+		ImGui::InputFloat3("Position", reinterpret_cast<float*>(&vNotifyPosition), "%.3f");
+		ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&vNotifyRotation));
+
 		ImGui::InputInt("KeyFrame", &m_iClickedKeyFrame);
 		if(m_iClickedKeyFrame < 0)
 			m_iClickedKeyFrame = 0;
@@ -646,6 +677,10 @@ void CImGui_Manager::Update_EventMaker()
 			SelectedAnimNotify.szNotifyTag = szNotifyEditTag;
 			SelectedAnimNotify.szNotifyArg01 = szNotifyArg01;
 			SelectedAnimNotify.szNotifyArg02 = szNotifyArg02;
+			SelectedAnimNotify.szSocketTag = szSocketTag;
+			SelectedAnimNotify.bIsLocalPos = bIsLocalPos;
+			SelectedAnimNotify.vNotifyPosition = vNotifyPosition;
+			SelectedAnimNotify.vNotifyRotation = vNotifyRotation;
 			SelectedAnimNotify.iNotifyKeyFrame = m_iClickedKeyFrame;
 
 			m_iBeforeEventIndex = -1;

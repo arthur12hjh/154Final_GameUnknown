@@ -43,6 +43,9 @@ public:
 
 		m_iCurrentAnimIndex = iAnimIndex;
 		m_isLoop = isLoop;
+		
+		if(AnimationChanged)
+			AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
 
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 	}
@@ -71,11 +74,15 @@ public:
 
 	virtual HRESULT Render(_uint iMeshIndex);
 
+public:
+	std::function<void(const _char*)> AnimationChanged;
+
 private:
 	MODEL_TYPE					m_eType = {};
 	_float4x4					m_PreTransformMatrix = {};
 
 	binModel* m_pModel;
+
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
