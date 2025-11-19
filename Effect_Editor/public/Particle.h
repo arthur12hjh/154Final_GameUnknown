@@ -21,6 +21,8 @@ public:
 		_float4			vPivot;
 		_float4			vGravity;
 		_float2			fTimeDelta;
+		_float2			fTurnPower;
+		_float2			fisSphere;
 		_int2			iLoopAndCount;
 	};
 	typedef struct ParticleData
@@ -43,6 +45,7 @@ public:
 		_float2				fSize;
 		_float2				fLifeTime;      
 		_float2				fSpeed;
+		_float2				fTurnPower;
 
 
 		_float2				fMaskUV;
@@ -57,12 +60,14 @@ public:
 
 		_float				fDelayTime;
 		_float				fEndTime;
+		_float				fSphereSize;
 
 		_int				iBegin;         
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisBillboard;
 		_bool				bisLoop;
+		_bool				bisSphere;
 	}PARTICLE_DATA;
 
 private:
@@ -102,6 +107,7 @@ private:
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_bool			m_bisLoop = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 
 private:

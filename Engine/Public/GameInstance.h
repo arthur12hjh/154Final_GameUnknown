@@ -90,6 +90,7 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	void	Set_DebugVisible(_bool isVisible);
 #endif
 #pragma endregion
 

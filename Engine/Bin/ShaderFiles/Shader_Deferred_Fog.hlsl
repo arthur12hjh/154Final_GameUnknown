@@ -31,7 +31,7 @@ VS_OUT VS_MAIN(VS_IN In)
 PS_OUT_FOG PS_MAIN_FOG(PS_IN In)
 {
     PS_OUT_FOG Out;
-    Out.fFogPower = 1.f;
+    Out.fFogPower = 1.0f;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     

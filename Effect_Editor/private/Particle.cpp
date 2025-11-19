@@ -38,7 +38,7 @@ void CParticle::Update(_float fTimeDelta)
 		return;
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
-		m_tData.bisLoop = false;
+		m_bisLoop = false;
 		if (m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime)
 			return;
 	}
@@ -94,7 +94,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	//m_pShaderCom = pShaderCom;
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
-
+	m_bisLoop = tData.bisLoop;
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
@@ -236,6 +236,9 @@ HRESULT CParticle::Ready_ComputeShader()
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
+	m_CBData.fTurnPower = m_tData.fTurnPower;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 
@@ -297,9 +300,12 @@ HRESULT CParticle::Ready_ComputeShader()
 
 void CParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.matWorld = m_CombinedWorldMatrix;
+	m_CBData.fTurnPower = m_tData.fTurnPower;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지

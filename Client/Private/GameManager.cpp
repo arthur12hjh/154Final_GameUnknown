@@ -60,6 +60,11 @@ const BOSS_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
     return m_pDataManager->Find_BossData(iBossID);
 }
 
+const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
+{
+    return m_pDataManager->Find_AnimationNotifyData(szAnimationTag);
+}
+
 #pragma endregion
 
 

@@ -1,0 +1,102 @@
+[
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 5,
+                "szNotifyArg01": "dae",
+                "szNotifyArg02": "Min",
+                "szNotifyTag": "Save Test",
+                "szSocketTag": "Seok",
+                "vNotifyPosition": [
+                    123.0,
+                    123.0,
+                    123.0
+                ],
+                "vNotifyRotation": [
+                    46.0,
+                    -73.0,
+                    17.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 44,
+                "szNotifyArg01": "King",
+                "szNotifyArg02": "Chan",
+                "szNotifyTag": "Load Test",
+                "szSocketTag": "Bin",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    -50.0,
+                    -56.0,
+                    40.0
+                ]
+            }
+        ],
+        "szAnimationTag": "CH_P_EVE_09|EVE_BarSwing_Idle"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "szNotifyArg01": "sdf",
+                "szNotifyArg02": "sdfvzsdv",
+                "szNotifyTag": "Palertaser",
+                "szSocketTag": "sdfv",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 17,
+                "szNotifyArg01": "zdfbv",
+                "szNotifyArg02": "aevrvaer",
+                "szNotifyTag": "aergaesrg",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 10,
+                "szNotifyArg01": "fvzdfv",
+                "szNotifyArg02": "zdfv",
+                "szNotifyTag": "vzdfvzd",
+                "szSocketTag": "zdfv",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Jump_Walk"
+    }
+]

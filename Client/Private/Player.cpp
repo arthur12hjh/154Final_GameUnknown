@@ -201,17 +201,17 @@ HRESULT CPlayer::Ready_PartObjects()
 	HairDesc.pParentState = &m_iState;
 	HairDesc.pParentTransform = m_pTransformCom;
 	HairDesc.pBodyPtr = m_pPart_Body;
-
+	
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
 		TEXT("Part_Hair"), &HairDesc)))
 		return E_FAIL;
-
+	
 	CPonyTail_Player::PONYTAIL_PLAYER_DESC PonyTailDesc{};
 	PonyTailDesc.pParentState = &m_iState;
 	PonyTailDesc.pParentTransform = m_pTransformCom;
 	PonyTailDesc.pBodyPtr = m_pPart_Body;
-
+	
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))

@@ -31,9 +31,12 @@ public:
 	virtual		HRESULT			Render() override;
 
 	void						SetCameraAnimation(const _float4x4*	StartLerpMatrix, const _float4x4* EndLerpMatrix, _bool bIsLerp = true);
+	void						CameraLock(_bool bIsKeyBoard = false, _bool bIsMouse = false);
+	void						GetCameraLock(_bool(&pOut)[2]);
 
 private:
 	_bool						m_bIsCameraAnimation = { false };
+	_bool						m_bIsLock[2] = {false};
 
 	_float						m_fAccTime = {};
 	_float						m_fLerpTime = { 5.f };

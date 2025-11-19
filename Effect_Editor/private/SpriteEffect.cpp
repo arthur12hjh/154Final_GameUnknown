@@ -184,5 +184,6 @@ void CSpriteEffect::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTexture[0]);
 	Safe_Release(m_pTexture[1]);
+	Safe_Release(m_pTexture[2]);
 	Safe_Release(m_pShaderCom);
 }

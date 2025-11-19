@@ -38,7 +38,7 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
 
     DrawObjectDebug();
     ImGui::Separator();
-    DrawCaemraDebug();
+    DrawCameraDebug();
     ImGui::Separator();
     DrawLightDebug();
     ImGui::Separator();
@@ -81,11 +81,12 @@ void CDebugCheatUI::DrawObjectDebug()
 #endif // _DEBUG
 }
 
-void CDebugCheatUI::DrawCaemraDebug()
+void CDebugCheatUI::DrawCameraDebug()
 {
 #ifdef _DEBUG
     ImGui::Text("Camera Debug");
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
+
     if (ImGui::BeginCombo("Camera Change", m_szSelectCamera))
     {
         auto pCameras = m_pGameInstance->GetAllCamera();
@@ -97,15 +98,37 @@ void CDebugCheatUI::DrawCaemraDebug()
                 strcpy_s(m_szSelectCamera, m_szCameraComboTag);
 
                 _float4x4 PrePosMatrix = {};
-                m_pGameInstance->SetMainCamera(iter.first.c_str(), &PrePosMatrix);
-                auto pCamera = m_pGameInstance->GetMainCamera();
+                if (m_pSelectCamera != iter.second)
+                {
+                    Safe_Release(m_pSelectCamera);
+                    m_pGameInstance->SetMainCamera(iter.first.c_str(), &PrePosMatrix);
+                    m_pSelectCamera = m_pGameInstance->GetMainCamera();
+                }
 
-                static_cast<CCamera_Free*>(pCamera)->SetCameraAnimation(&PrePosMatrix, pCamera->GetTransform()->Get_WorldMatrixPtr(), m_bIsCamLerp);
-                Safe_Release(pCamera);
+                auto pFree_Camera = static_cast<CCamera_Free*>(m_pSelectCamera);
+                pFree_Camera->GetCameraLock(m_bIsCameraLock);
+                pFree_Camera->SetCameraAnimation(&PrePosMatrix, m_pSelectCamera->GetTransform()->Get_WorldMatrixPtr(), m_bIsCamLerp);
             }
         }
 
         ImGui::EndCombo();
+    }
+
+    if (ImGui::Checkbox("KeyBoard Lock", &m_bIsCameraLock[0]))
+    {
+        // 이거 일단 프리카메라만 했는데 필요하다면 Camera쪽에다가 이전하겠음
+        if (m_pSelectCamera)
+            static_cast<CCamera_Free*>(m_pSelectCamera)->CameraLock(m_bIsCameraLock[0], m_bIsCameraLock[1]);
+        else
+            MSG_BOX("Not Select Camera");
+    }
+    if (ImGui::Checkbox("Mouse Lock", &m_bIsCameraLock[1]))
+    {
+        // 이거 일단 프리카메라만 했는데 필요하다면 Camera쪽에다가 이전하겠음
+        if (m_pSelectCamera)
+            static_cast<CCamera_Free*>(m_pSelectCamera)->CameraLock(m_bIsCameraLock[0], m_bIsCameraLock[1]);
+        else
+            MSG_BOX("Not Select Camera");
     }
 #endif // _DEBUG
 }
@@ -239,6 +262,7 @@ void CDebugCheatUI::Free()
     __super::Free();
 
 #ifdef _DEBUG
+    Safe_Release(m_pSelectCamera);
     Safe_Release(m_pGameManager);
 #endif // _DEBUG
 }
