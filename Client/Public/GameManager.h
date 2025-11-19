@@ -8,9 +8,11 @@ NS_BEGIN(Engine)
 class CGameInstance;
 class CGameObject;
 class CTexture;
+class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
+class CQuestManager;
 class CDataManager;
 
 class CGameManager final : public CBase
@@ -46,13 +48,28 @@ public :
 	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(const _wstring& szAnimationTag);
 #pragma endregion
 
+#pragma region Quest Manager
+	class CQuest*				Find_Quest(_uint iQuestID);
+
+	// 레벨에 맞는 퀘스트들 받아오거나 퀘스트 전체리스트를 들고있자.
+	// 퀘스트는  천천히 로드해도됨
+	HRESULT						Ready_Quest(const WCHAR* szFilePath);
+
+	// 퀘스트를 받는다.
+	// 수락한 퀘스트가 어떤 이벤트를 참조해야하는지는 매개변수로
+	_bool						Accept_Quest(_uint iQuestID);
+
+	// 완료된 퀘스트들 여기다가 보관
+	void						CompletedQuest(_uint iQuestID);
+#pragma endregion
+
 private :
 	ID3D11Device*				m_pDevice = nullptr;
 	ID3D11DeviceContext*		m_pContext = nullptr;
 	CGameInstance*				m_pGameInstance = nullptr;
+	CQuestManager*				m_pQuestManager = nullptr;
 
 	CGameObject*				m_pPlayer = nullptr;
-	
 	CDataManager*				m_pDataManager = nullptr;
 
 private :
