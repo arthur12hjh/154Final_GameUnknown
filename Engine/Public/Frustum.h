@@ -44,7 +44,8 @@ public:
 	void						Bind_ShadowMatrix();
 	void						Bind_ShadowDefferd();
 
-	ID3D11DepthStencilView*		GetShadowDSV();
+	void						Begin_ShadowTarget();
+	void						End_ShadowTarget();
 
 private:
 	_uint						m_iNumCascadeCount = {};
@@ -54,8 +55,11 @@ private:
 
 	ID3D11Buffer*				m_pCaseCadeCB[2] = {nullptr, nullptr};
 	ID3D11ShaderResourceView*	m_pCasCadeSRV = { nullptr };
+	ID3D11RenderTargetView*		m_pCasCadeRTV = { nullptr };
+
 	ID3D11DepthStencilView*		m_pCasecasdeDSV = { nullptr };
-	ID3D11Texture2D*			pStagingTex = nullptr;
+	ID3D11RenderTargetView*		m_pOrizinRTV = { nullptr };
+	ID3D11DepthStencilView*		m_pOrizinDSV = { nullptr };
 
 	CASCADE_DESC				m_CaseCadeMatrix = {};
 	CASCADE_DEFFERD_DESC		m_CaseCadeDefferdDesc = {};

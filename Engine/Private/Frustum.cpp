@@ -257,7 +257,7 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 
 void CFrustum::Bind_CasCadeSRV()
 {
-	m_pContext->PSSetShaderResources(5, 1, &m_pCasCadeSRV);
+	m_pContext->PSSetShaderResources(0, 1, &m_pCasCadeSRV);
 }
 
 void CFrustum::Bind_ShadowMatrix()
@@ -274,11 +274,31 @@ void CFrustum::Bind_ShadowDefferd()
 	m_pContext->PSSetConstantBuffers(0, 1, &m_pCaseCadeCB[1]);
 }
 
-ID3D11DepthStencilView* CFrustum::GetShadowDSV()
+void CFrustum::End_ShadowTarget()
+{
+	ID3D11RenderTargetView* RTVs[] = {
+		m_pOrizinRTV
+	};
+
+	m_pContext->OMSetRenderTargets(1, RTVs, m_pOrizinDSV);
+
+	Safe_Release(m_pOrizinRTV);
+	Safe_Release(m_pOrizinDSV);
+}
+
+void CFrustum::Begin_ShadowTarget()
 {
 	ID3D11ShaderResourceView* nullSRV[8] = {};
 	m_pContext->PSSetShaderResources(0, 8, nullSRV);
-	return m_pCasecasdeDSV;
+
+	ID3D11RenderTargetView* RTVs[] = {
+		nullptr
+	};
+
+	m_pContext->OMGetRenderTargets(1, &m_pOrizinRTV, &m_pOrizinDSV);
+
+	m_pContext->ClearDepthStencilView(m_pCasecasdeDSV, D3D11_CLEAR_DEPTH, 1.f, 0);
+	m_pContext->OMSetRenderTargets(0, RTVs, m_pCasecasdeDSV);
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
@@ -331,6 +351,17 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 	if (nullptr == pTex)
 		return E_FAIL;
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	SRVDesc.Texture2DArray.MipLevels = 1;
+	SRVDesc.Texture2DArray.MostDetailedMip = 0;
+	SRVDesc.Texture2DArray.FirstArraySlice = 0;
+	SRVDesc.Texture2DArray.ArraySize = m_iNumCascadeCount;
+	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
+	if (nullptr == m_pCasCadeSRV)
+		return E_FAIL;
+
 	D3D11_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
 	DSVDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	DSVDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
@@ -343,29 +374,12 @@ HRESULT CFrustum::Ready_CasCadeTexture()
 		return E_FAIL;
 
 	m_pContext->ClearDepthStencilView(m_pCasecasdeDSV, D3D11_CLEAR_DEPTH, 1.f, 0);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-	SRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	SRVDesc.Texture2DArray.MipLevels = 1;
-	SRVDesc.Texture2DArray.MostDetailedMip = 0;
-	SRVDesc.Texture2DArray.FirstArraySlice = 0;
-	SRVDesc.Texture2DArray.ArraySize = m_iNumCascadeCount;
-	m_pDevice->CreateShaderResourceView(pTex, &SRVDesc, &m_pCasCadeSRV);
-	if (nullptr == m_pCasCadeSRV)
-		return E_FAIL;
-
-	D3D11_TEXTURE2D_DESC stagingDesc = texDesc;
-	stagingDesc.Usage = D3D11_USAGE_STAGING;
-	stagingDesc.BindFlags = 0;
-	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-
-	m_pDevice->CreateTexture2D(&stagingDesc, nullptr, &pStagingTex);
-	m_pContext->CopyResource(pStagingTex, pTex);
-
-
 	Safe_Release(pTex);
+
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	m_pDevice->CreateTexture2D(&texDesc, nullptr, &pTex);
+	if (nullptr == pTex)
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -397,6 +411,7 @@ void CFrustum::Free()
 
 	Safe_Release(m_pCaseCadeCB[0]);
 	Safe_Release(m_pCaseCadeCB[1]);
+
 	Safe_Release(m_pCasecasdeDSV);
 	Safe_Release(m_pCasCadeSRV);
 

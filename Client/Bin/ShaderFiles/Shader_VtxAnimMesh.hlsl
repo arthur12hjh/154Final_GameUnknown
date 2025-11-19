@@ -11,10 +11,8 @@ vector g_vCamPosition;
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_BoneMatrices[512];
 
-int g_CaseCadeNum = 3;
 cbuffer g_ConstantBuffer : register(b0)
 {
-    matrix ShadowWorld;
     matrix ShadowViewMatrix[3];
     matrix ShadowProjMatrix[3];
 };
@@ -83,6 +81,7 @@ VS_OUT VS_MAIN(VS_IN In)
 struct VS_OUT_SHADOW
 {
     float4 vPosition : POSITION;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
@@ -100,37 +99,42 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
   
     Out.vPosition = mul(vPosition, g_WorldMatrix);
-
+    Out.vTexcoord = In.vTexcoord;
     return Out;
 }
 
 struct GS_SHADOW_INPUT
 {
     float4 vPosition : POSITION;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 struct GS_SHADOW_OUT
 {
     float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vPorj : TEXCOORD1;
     uint RTIndex : SV_RenderTargetArrayIndex;
 };
 
-//[maxvertexcount(3 * 3)]
-//void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
-//{
-//    GS_SHADOW_OUT OutPut[3];
-//    for (uint i = 0; i < 3; ++i)
-//    {
-//        for (uint j = 0; j < 3; ++j)
-//        {
-//            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
-//            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
-//            OutPut[j].RTIndex = i;
-//            TriStream.Append(OutPut[j]);
-//        }
-//        TriStream.RestartStrip();
-//    }
-//}
+[maxvertexcount(3 * 3)]
+void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
+{
+    GS_SHADOW_OUT OutPut[3];
+    for (uint i = 0; i < 3; ++i)
+    {
+        for (uint j = 0; j < 3; ++j)
+        {
+            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
+            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
+            OutPut[j].vTexcoord = OutPut[j].vTexcoord;
+            OutPut[j].vPorj = OutPut[j].vPosition;
+            OutPut[j].RTIndex = i;
+            TriStream.Append(OutPut[j]);
+        }
+        TriStream.RestartStrip();
+    }
+}
 
 struct PS_IN
 {
@@ -228,19 +232,21 @@ PS_OUT PS_MAIN_MS_TEST(PS_IN In)
 struct PS_IN_SHADOW
 {
     float4 vPosition : SV_POSITION;
-    uint RTIndex : SV_RenderTargetArrayIndex;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vPorj : TEXCOORD1;
 };
 
 struct PS_OUT_SHADOW
 {
-    float4 vShadowLightDepth : SV_TARGET0;
+    float4  vPosition : SV_TARGET0;
 };
 
 PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = 0.0f;
+    Out.vPosition.x = In.vPorj.w / 500.f;
+    Out.vPosition = float4(1.f, 1.f, 1.f, 1.f);
     return Out;
 }
 
@@ -263,7 +269,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
-        PixelShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
     //림 라이트 켠 버전

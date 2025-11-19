@@ -663,11 +663,15 @@ void CGameInstance::Bind_ShadowDefferd()
 	m_pFrustum->Bind_ShadowDefferd();
 }
 
-ID3D11DepthStencilView* CGameInstance::GetCasCadeShadowDSV()
+void CGameInstance::Begin_ShadowTarget()
 {
-	return m_pFrustum->GetShadowDSV();
+	m_pFrustum->Begin_ShadowTarget();
 }
 
+void CGameInstance::End_ShadowTarget()
+{
+	m_pFrustum->End_ShadowTarget();
+}
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()
 {

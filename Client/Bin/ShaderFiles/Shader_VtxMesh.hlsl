@@ -7,10 +7,8 @@ float4 g_vCamPosition;
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 
-int             g_CaseCadeNum = 3;
 cbuffer g_ConstantBuffer : register(b0)
 {
-    matrix ShadowWorld;
     matrix ShadowViewMatrix[3];
     matrix ShadowProjMatrix[3];
 };
@@ -66,7 +64,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
     
-    Out.vPosition = mul(vector(In.vPosition, 1.f), ShadowWorld);
+    Out.vPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
     return Out;
 }
 
@@ -81,22 +79,22 @@ struct GS_SHADOW_OUT
     uint RTIndex : SV_RenderTargetArrayIndex;
 };
 
-//[maxvertexcount(3 * 3)]
-//void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
-//{
-//    GS_SHADOW_OUT OutPut[3];
-//    for (uint i = 0; i < 3; ++i)
-//    {
-//        for (uint j = 0; j < 3; ++j)
-//        {
-//            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
-//            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
-//            OutPut[j].RTIndex = i;
-//            TriStream.Append(OutPut[j]);
-//        }
-//        TriStream.RestartStrip();
-//    }
-//}
+[maxvertexcount(3 * 3)]
+void GS_MAIN_SHADOW(triangle GS_SHADOW_INPUT GS_In[3], inout TriangleStream<GS_SHADOW_OUT> TriStream)
+{
+    GS_SHADOW_OUT OutPut[3];
+    for (uint i = 0; i < 3; ++i)
+    {
+        for (uint j = 0; j < 3; ++j)
+        {
+            float4 PosView = mul(GS_In[j].vPosition, ShadowViewMatrix[i]);
+            OutPut[j].vPosition = mul(PosView, ShadowProjMatrix[i]);
+            OutPut[j].RTIndex = i;
+            TriStream.Append(OutPut[j]);
+        }
+        TriStream.RestartStrip();
+    }
+}
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 

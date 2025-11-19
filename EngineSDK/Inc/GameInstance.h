@@ -156,6 +156,8 @@ public:
 
 	const _float4x4*			GetInverseShadowMatrix(D3DTS eType);
 	const _float4x4*			GetShadowMatrix(D3DTS eType);
+
+
 #pragma endregion
 
 #pragma region FRUSTUM
@@ -168,7 +170,8 @@ public:
 	void						Bind_CasCadeMatrix();
 	void						Bind_ShadowDefferd();
 
-	ID3D11DepthStencilView*		GetCasCadeShadowDSV();
+	void						Begin_ShadowTarget();
+	void						End_ShadowTarget();
 #ifdef _DEBUG
 	void				FrustomRender();
 #endif

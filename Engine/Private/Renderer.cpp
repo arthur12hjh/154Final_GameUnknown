@@ -311,13 +311,10 @@ void CRenderer::Render_Priority()
 
 void CRenderer::Render_Shadow()
 {
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
-		return;
-
-	/*if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pGameInstance->GetCasCadeShadowDSV(), true)))
+	/*if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
 		return;*/
-	
-	m_pGameInstance->Bind_CasCadeMatrix();
+
+	m_pGameInstance->Begin_ShadowTarget();
 
 	Set_ScreenSize(2048, 2048);
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::SHADOW)])
@@ -330,9 +327,7 @@ void CRenderer::Render_Shadow()
 
 	m_RenderObjects[ENUM_CLASS(RENDER::SHADOW)].clear();
 
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
-
+	m_pGameInstance->End_ShadowTarget();
 	Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
 }
 
@@ -415,8 +410,8 @@ void CRenderer::Render_Combined()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
 		return;
 
-	/*m_pGameInstance->Bind_CasCadeSRV();
-	m_pGameInstance->Bind_ShadowDefferd();*/
+	m_pGameInstance->Bind_CasCadeSRV();
+	m_pGameInstance->Bind_ShadowDefferd();
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
 	m_pVIBuffer->Bind_Resources();
@@ -631,9 +626,9 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 		return;
 
-	/*if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
-	if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
+	/*if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;

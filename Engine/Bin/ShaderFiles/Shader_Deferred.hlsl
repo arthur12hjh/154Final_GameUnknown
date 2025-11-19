@@ -41,8 +41,7 @@ vector g_vLightAmbient;
 vector g_vLightSpecular;
 
 bool            g_bDebugTextureArray;
-int             g_CasCadeIndex;
-Texture2DArray  g_CasCadeMap : register(t5);
+Texture2DArray  g_CasCadeMap : register(t0);
 cbuffer g_ConstantCasCadeBuffer : register(b0)
 {
     matrix ShadowWorld;
@@ -69,13 +68,11 @@ VS_OUT VS_MAIN(VS_IN In)
 PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
-    
     if(g_bDebugTextureArray)
     {
-        float vData = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 0)).r;
-        float vData1 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 1)).r;
-        float vData2 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 2)).r;
-        Out.vBackBuffer = float4(vData, vData1, vData2, 1.f);
+        //float vData1 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 1)).r;
+        //float vData2 = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 2)).r;
+        Out.vBackBuffer = g_CasCadeMap.Sample(DefaultSampler, float3(In.vTexcoord, 0));
     }
     else
         Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
@@ -211,8 +208,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float fDist = length(g_vCamPosition - vPosition);
 
     //그림자 연산
-    Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    //float3 vShadow = Calc_Shadow3x3(g_CasCadeMap, ShadowSampler, CasCadeDist, ShadowVPMatrix, vPosition, fDist);
+    //Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
+    float3 vShadow = Calc_Shadow3x3(g_CasCadeMap, ShadowSampler, CasCadeDist, ShadowVPMatrix, vPosition, fDist);
     Out.vBackBuffer.xyz *= vShadow;
     return Out;
 }
