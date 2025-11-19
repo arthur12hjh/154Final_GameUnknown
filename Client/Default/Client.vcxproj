@@ -224,7 +224,8 @@
     <ClInclude Include="..\Public\Task_Wait.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Terrain_Sand.h" />
-    <ClInclude Include="..\Public\UIAnimationCom.h" />
+    <ClInclude Include="..\Public\UIAnimInstance.h" />
+    <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
@@ -325,7 +326,8 @@
     <ClCompile Include="..\Private\Task_Wait.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Terrain_Sand.cpp" />
-    <ClCompile Include="..\Private\UIAnimationCom.cpp" />
+    <ClCompile Include="..\Private\UIAnimInstance.cpp" />
+    <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />

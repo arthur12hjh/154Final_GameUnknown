@@ -2,9 +2,8 @@
 #include "UIButton.h"
 
 #include "GameInstance.h"
-#include "MousePointer.h"
 #include "UIHUD.h"
-#include "UIAnimationCom.h"
+//#include "UIAnimationCom.h"
 
 CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -29,9 +28,6 @@ HRESULT CUIButton::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pMousePointer = dynamic_cast<CMousePointer*>(
-		m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"))->front());
-
 	return S_OK;
 }
 
@@ -45,18 +41,9 @@ void CUIButton::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	if (MouseEnter())
-	{
-		//m_pUIHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
 		m_eBtnState = BTN_STATE::HOVER;
-	}
 	else
-	{
-		//m_pUIHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 		m_eBtnState = BTN_STATE::DEFAULT;
-		/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
-		Safe_Release(pHUD);*/
-	}
 }
 
 void CUIButton::Late_Update(_float fTimeDelta)
@@ -69,17 +56,15 @@ void CUIButton::Late_Update(_float fTimeDelta)
 		{
 		case Client::CUIButton::BTN_STATE::DEFAULT:
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-			Safe_Release(pHUD);
+			Safe_Release(pHUD);*/
+			//m_pUIHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 			break;
 		}
 		case Client::CUIButton::BTN_STATE::HOVER:
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
-			Safe_Release(pHUD);
-			//m_pUIAnimCom->Play(TEXT("Test_Anim"));
+			//m_pUIHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
 			break;
 		}
 		case Client::CUIButton::BTN_STATE::CLICK:
@@ -199,6 +184,4 @@ CGameObject* CUIButton::Clone(void* pArg)
 void CUIButton::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pMousePointer);
 }

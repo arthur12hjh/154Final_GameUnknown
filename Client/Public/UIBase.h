@@ -45,12 +45,18 @@ public:
 		_uint iDepth{ 0 };
 		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };
 
+		_uint iVisiblity{ ENUM_CLASS(VISIBILITY::VISIBLE) };
+
+		_wstring szUIID{};
 		_wstring szUITag{};
 		_wstring szLayerTag{};
 		_wstring szProtoTag{};
 
 		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
 		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
+
+		vector<_wstring> m_EventTags{};
+		map<_wstring, _wstring> m_AnimTags{}; // 애니메이션, 프리팹 이름
 
 	public:
 		// 텍스트
@@ -73,6 +79,33 @@ public:
 			return m_pUITextureDesc;
 		}
 
+		void Add_UI_Anim(_wstring szAnimTag, _wstring szAnimFileName) {
+			//_bool bVali = (find(m_AnimTags.begin(), m_AnimTags.end(), szAnimTag) != m_AnimTags.end());
+
+			auto Anim = m_AnimTags.find(szAnimTag);
+
+			if (Anim != m_AnimTags.end())
+			{
+				Anim->second = szAnimFileName;
+				return;
+			}
+
+			m_AnimTags.emplace(szAnimTag, szAnimFileName);
+		}
+
+		void Delete_UI_Anim(_wstring szAnimTag)
+		{
+			auto Anim = m_AnimTags.find(szAnimTag);
+
+			if (Anim != m_AnimTags.end())
+			{
+				Anim->second = TEXT("Unknown");
+				return;
+			}
+		}
+		
+		map<_wstring, _wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
+
 	}UIBASE_DESC;
 
 protected:
@@ -88,7 +121,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	UIBASE_DESC Get_UIBase_Desc() { return m_tUIDesc; }
+	UIBASE_DESC& Get_UIBase_Desc() { return m_tUIDesc; }
 	void Set_UIBase_Desc(UIBASE_DESC pDesc) {
 		m_tUIDesc = pDesc;
 	}
@@ -111,6 +144,8 @@ public:
 		return dynamic_cast<CUIBase*>(m_pParent);
 	}
 
+	void Set_HUD(CUIHUD* pUIHUD);
+
 	HRESULT Add_Child(CGameObject* pObj);
 
 	const vector<CUIBase*>* Get_Children() {
@@ -123,7 +158,7 @@ public:
 	void Set_Pass(_uint iPass);
 	HRESULT Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex);
 
-	void Play_Anim(_wstring szAnimTag) {
+	/*void Play_Anim(_wstring szAnimTag) {
 		m_eAnimState = ANIM_STATE::PLAY;
 		m_szCurrentAnimTag = szAnimTag;
 	}
@@ -132,12 +167,15 @@ public:
 	}
 	void Stop_Anim() {
 		m_eAnimState = ANIM_STATE::STOP;
-	}
+	}*/
 
 	ANIM_STATE Get_Anim_State() { return m_eAnimState; }
 	void Set_Anim_State(ANIM_STATE eState) { m_eAnimState = eState; }
 
-	CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
+	//CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
+
+	_bool Get_Follow_Parent() { return m_bFollowParent; }
+	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
 
 #ifdef _DEBUG
 	void Render_Debug_Rect();
@@ -152,16 +190,17 @@ protected:
 	UIBASE_DESC m_tOriginUIDesc{};
 
 	vector<CUIBase*>		m_Children = {};
-	CUIAnimationCom*		m_pUIAnimCom = { nullptr };
+	//CUIAnimationCom*		m_pUIAnimCom = { nullptr };
 	CUIHUD*					m_pUIHUD = { nullptr };
 
-	_wstring				m_szCurrentAnimTag = {};
+	//_wstring				m_szCurrentAnimTag = {};
+	ANIM_STATE m_eAnimState{ ANIM_STATE::IDLE };
+	_bool					m_bFollowParent{ true };
 
 private:
 	HRESULT Ready_Texture();
-	HRESULT Ready_UIAnimation();
+	//HRESULT Ready_UIAnimation();
 
-	ANIM_STATE m_eAnimState{ ANIM_STATE::IDLE };
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();

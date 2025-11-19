@@ -2,7 +2,7 @@
 #include "UIImage.h"
 
 #include "GameInstance.h"
-#include "UIAnimationCom.h"
+//#include "UIAnimationCom.h"
 
 CUIImage::CUIImage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }

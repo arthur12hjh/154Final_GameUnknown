@@ -97,7 +97,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
         fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-        pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
+        //pGameInstance->SetInputFoucs(GetForegroundWindow() == g_hWnd);
 
         if (fTimeAcc >= 1.f / g_fGameFrame)
         {

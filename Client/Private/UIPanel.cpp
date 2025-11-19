@@ -2,7 +2,7 @@
 #include "UIPanel.h"
 
 #include "GameInstance.h"
-#include "UIAnimationCom.h"
+//#include "UIAnimationCom.h"
 
 CUIPanel::CUIPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }

@@ -57,52 +57,17 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	/*if (FAILED(pUIHUD->Add_UserInterface(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Wrapper"), TEXT("UIHUDLayer_Logo"), TEXT("UI_Logo_Wrapper"))))
-		return E_FAIL;*/
-
-	/*if(FAILED(pUIHUD->Load_Data(TEXT("Test"))))
-		return E_FAIL;*/
-	
-	pUIHUD->Load_Anim_Files();
-
-	if(FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
+	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
 
-	//pUIHUD->Anim_Play(TEXT("Test2"), TEXT("UI_Test2_Panel_0"), TEXT("Test_Anim"));
+	//if(FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
+	//	return E_FAIL;
+
+	// 이벤트 추가해서 이벤트가 Intro일 때 이거 돌려주고 하면 될듯?
+	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("FadeIn_1_5"));
 
 	return S_OK;
 }
-
-//HRESULT CUI_Level_Logo::Ready_Textures()
-//{
-//	CUIHUD* pUIHUD = dynamic_cast<Client::CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-//
-//	_wstring prefix = TEXT("Prototype_Component_UI_Texture_");
-//	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::STATIC)))
-//	{
-//		if (pTexture.first.find(prefix) == 0)
-//		{
-//			size_t pos = pTexture.first.find(prefix);
-//			_wstring szTextureTag = pTexture.first.substr(pos + prefix.length());
-//
-//			if(FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::STATIC), pTexture.first, szTextureTag)))
-//				return E_FAIL;
-//		}
-//	}
-//	for (auto& pTexture : *m_pGameInstance->Get_Prototypes_InLevel(ENUM_CLASS(LEVEL::LOGO)))
-//	{
-//		if (pTexture.first.find(prefix) == 0)
-//		{
-//			size_t pos = pTexture.first.find(prefix);
-//			_wstring szTextureTag = pTexture.first.substr(pos + prefix.length());
-//
-//			if (FAILED(pUIHUD->Add_Texture(ENUM_CLASS(LEVEL::LOGO), pTexture.first, szTextureTag)))
-//				return E_FAIL;
-//		}
-//	}
-//
-//	return S_OK;
-//}
 
 CUI_Level_Logo* CUI_Level_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
@@ -117,11 +82,7 @@ CUI_Level_Logo* CUI_Level_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-
-
 void CUI_Level_Logo::Free()
 {
 	__super::Free();
-
-
 }

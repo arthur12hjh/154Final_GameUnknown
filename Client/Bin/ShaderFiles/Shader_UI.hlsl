@@ -69,9 +69,9 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vColor.a = g_Alpha;
+    Out.vColor *= g_Alpha;
     
-    if (Out.vColor.a == 0.f)
+    if (Out.vColor.a <= 0.05f)
         discard;
     
     return Out;
@@ -114,36 +114,6 @@ struct GS_OUT_DEBUG
 {
     float4 vPosition : SV_POSITION;
 };
-
-//[maxvertexcount(6)]
-//void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout LineStream<GS_OUT_DEBUG> OutStream)
-//{
-//    float2 halfSize = g_UISize * 0.5f;
-//    
-//    // 사각형 4개의 꼭짓점
-//    float2 p[4] =
-//    {
-//        In[0].vPosition.xy + float2(-halfSize.x, -halfSize.y),
-//        In[0].vPosition.xy + float2(halfSize.x, -halfSize.y),
-//        In[0].vPosition.xy + float2(halfSize.x, halfSize.y),
-//        In[0].vPosition.xy + float2(-halfSize.x, halfSize.y)
-//    };
-//    
-//    GS_OUT_DEBUG Out;
-//    
-//     // 4개의 edge 생성
-//    [unroll]
-//    for (int i = 0; i < 4; i++)
-//    {
-//        Out.vPosition = float4(p[i], 0.f, 1.f);
-//        OutStream.Append(Out);
-//
-//        Out.vPosition = float4(p[(i + 1) % 4], 0.f, 1.f);
-//        OutStream.Append(Out);
-//
-//        OutStream.RestartStrip();
-//    }
-//}
 
 [maxvertexcount(6)]
 void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout TriangleStream<GS_OUT_DEBUG> OutStream)
@@ -217,7 +187,7 @@ technique11 DefaultTechnique
 
     pass UI_Blend
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

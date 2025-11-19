@@ -4,7 +4,6 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
-#include "UIAnimationCom.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -31,6 +30,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
+	m_eVisibility = (VISIBILITY)m_tUIDesc.iVisiblity;
 
 #ifdef _DEBUG
 	if (FAILED(Ready_Components_For_Debug()))
@@ -40,18 +40,14 @@ HRESULT CUIBase::Initialize(void* pArg)
 	if (FAILED(Ready_Texture()))
 		return E_FAIL;
 
-	if (FAILED(Ready_UIAnimation()))
-		return E_FAIL;
+	/*if (FAILED(Ready_UIAnimation()))
+		return E_FAIL;*/
 
 	return S_OK;
 }
 
 void CUIBase::Priority_Update(_float fTimeDelta)
 {
-	/*if (!m_pUIHUD)
-	{
-		m_pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	}*/
 }
 
 void CUIBase::Update(_float fTimeDelta)
@@ -59,9 +55,16 @@ void CUIBase::Update(_float fTimeDelta)
 	////부모 따라가기
 	if (m_pParent)
 	{
+		m_eVisibility = m_pParent->GetVisibility();
+		
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		m_tUIDesc.fAlpha = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
+		// 알파 부모따라가기 바꾸긴 해야할듯
+		//if(m_bFollowParent)
+		
+		//m_tUIDesc.bVisible = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
 		//m_eAnimState = dynamic_cast<CUIBase*>(m_pParent)->Get_Anim_State();
 	}
 	
@@ -70,35 +73,51 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	switch (m_eAnimState)
-	{
-	case ANIM_STATE::PLAY :
-		m_pUIAnimCom->Play(m_szCurrentAnimTag);
-		break;
-	case ANIM_STATE::PAUSE :
-		m_pUIAnimCom->Pause();
-		break;
-	case ANIM_STATE::STOP :
-	{
-		m_pUIAnimCom->Stop();
-		m_eAnimState = ANIM_STATE::IDLE;
-	}
-		break;
-	case ANIM_STATE::IDLE:
-	{
-		m_pUIAnimCom->Stop();
-		//m_tUIDesc = m_tOriginUIDesc;
-	}
-		break;
-	}
+	//switch (m_eAnimState)
+	//{
+	//case ANIM_STATE::PLAY :
+	//	m_pUIAnimCom->Play(m_szCurrentAnimTag);
+	//	break;
+	//case ANIM_STATE::PAUSE :
+	//	m_pUIAnimCom->Pause();
+	//	break;
+	//case ANIM_STATE::STOP :
+	//{
+	//	m_pUIAnimCom->Stop();
+	//	m_eAnimState = ANIM_STATE::IDLE;
+	//}
+	//	break;
+	//case ANIM_STATE::IDLE:
+	//{
+	//	//m_pUIAnimCom->Stop();
+	//	//m_tUIDesc = m_tOriginUIDesc;
+	//}
+	//	break;
+	//}
 
+	//if (m_tUIDesc.bVisible)
+	//	m_eVisibility = VISIBILITY::VISIBLE;
+	//else
+	//	m_eVisibility = VISIBILITY::HIDDEN;
+
+#ifdef _DEBUG
+	if (m_eVisibility == VISIBILITY::VISIBLE)
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#elif
 	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#endif
 }
 
 HRESULT CUIBase::Render()
 {
 	return S_OK;
+}
+
+void CUIBase::Set_HUD(CUIHUD* pUIHUD)
+{
+	m_pUIHUD = pUIHUD;
+	Safe_AddRef(m_pUIHUD);
 }
 
 HRESULT CUIBase::Add_Child(CGameObject* pObj)
@@ -173,19 +192,6 @@ HRESULT CUIBase::Ready_Texture()
 
 	if (m_pTextureCom == nullptr)
 		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CUIBase::Ready_UIAnimation()
-{
-	m_pUIAnimCom = CUIAnimationCom::Create();
-	
-	if (!m_pUIAnimCom)
-		return E_FAIL;
-
-	m_pUIAnimCom->Initialize();
-	m_pUIAnimCom->Set_Owner(this);
 
 	return S_OK;
 }
@@ -290,7 +296,6 @@ void CUIBase::Free()
 #endif
 
 	Safe_Release(m_pUIHUD);
-	Safe_Release(m_pUIAnimCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

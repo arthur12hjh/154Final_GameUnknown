@@ -15,8 +15,6 @@ NS_BEGIN(Client)
 	hover, selected는 버튼이면 무조건 갖게 해야함
 */
 
-class CMousePointer;
-
 class CUIButton final : public CUIBase
 {
 public:
@@ -42,8 +40,6 @@ protected:
 private:
 	_bool MouseEnter();
 
-	CMousePointer* m_pMousePointer{ nullptr };
-	
 	BTN_STATE m_eBtnState{BTN_STATE::DEFAULT};
 	BTN_STATE m_ePrevBtnState{ m_eBtnState };
 

@@ -11,7 +11,7 @@ NS_BEGIN(Client)
 
 class CUIBase;
 
-class CUIAnimationCom final : public CBase
+class CUIAnimInstance final : public CBase
 {
 public:
 	typedef struct tagUIAnimTrackDesc
@@ -29,6 +29,7 @@ public:
 		_wstring szAnimTag{};
 		_float fDuration{ 1.f };
 		_bool isLoop = false;
+		_bool isInfluenceChildren = true;
 		map<_wstring, UI_ANIM_TRACK_DESC*> m_Tracks{};
 
 	public:
@@ -57,18 +58,12 @@ public:
 		}
 
 	}UI_ANIM_DESC;
-
 private:
-	CUIAnimationCom();
-	virtual ~CUIAnimationCom() = default;
+	CUIAnimInstance();
+	virtual ~CUIAnimInstance() = default;
 
 public:	
-	HRESULT Initialize();
-
-	void Play(_wstring szAnimTag);
-	void Pause();
-	void Stop();
-	void Tick(_float fTimeDelta);
+	HRESULT Initialize(CUIBase* pUI, void* Desc);
 
 	void Set_UI_Anim_Desc(const UI_ANIM_DESC& Desc)
 	{
@@ -77,14 +72,13 @@ public:
 
 	UI_ANIM_DESC* Get_UI_Anim_Desc() { return &m_tUIAnimDesc; }
 
-	void Play_Anim(void* pAnimDesc, void* pTrackDesc);
+	_bool Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pTrackDesc, _float fTimeDelta);
 
-	void Set_Owner(CUIBase* pOwner) {
-		m_pOwner = pOwner;
-	}
-
+	// 디버그 용
 	_float Get_PlayTime() { return m_fTimeStack; }
-	_float Get_DeltaTime() { return m_fDeltaTime; }
+	//_float Get_DeltaTime() { return m_fDeltaTime; }
+
+	_bool Update(_float fTimeDelta);
 
 private:
 	CGameInstance* m_pGameInstance{ nullptr };
@@ -94,12 +88,12 @@ private:
 
 	_bool m_isAnimFinish = false;
 
-	CUIBase* m_pOwner{ nullptr };
-
 	UI_ANIM_DESC m_tUIAnimDesc{};
 
+	CUIBase* m_pTargetUI{ nullptr };
+
 public:
-	static CUIAnimationCom* Create();
+	static CUIAnimInstance* Create(CUIBase* pUI, void* Desc);
 	virtual void Free() override;
 };
 

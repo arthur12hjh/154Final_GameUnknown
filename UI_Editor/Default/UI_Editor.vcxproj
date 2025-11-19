@@ -165,7 +165,8 @@
     <ClInclude Include="UI_Editor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Client\Private\UIAnimationCom.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIAnimInstance.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBase.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
