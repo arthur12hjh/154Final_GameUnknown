@@ -125,15 +125,21 @@ float3 Specular_BRDF(in float alpha, in float3 specularColor, in float NdotV, in
 }
 
 float3 LightSurface(
-    in float3 V, in float3 N, in float3 lightColor, in float3 lightDirection, in float3 albedo, in float roughness, in float metallic, in float ambientOcclusion)
+    in float3 V, in float3 N, in float3 lightColor, in float3 lightDirection, in float3 albedo, in float roughness, in float metallic, in float ambientOcclusion, bool isSpecular = false)
 {
     const float kSpecularCoefficient = 0.04;
     const float NdotV = saturate(dot(N, V));
     const float alpha = roughness * roughness;
 
     const float3 c_diff = lerp(albedo, float3(0, 0, 0), metallic) * ambientOcclusion;
-    const float3 c_spec = lerp(kSpecularCoefficient, albedo, metallic) * ambientOcclusion;
-
+    
+    float3 c_spec;
+    if(false == isSpecular)
+        c_spec = lerp(kSpecularCoefficient, albedo, metallic) * ambientOcclusion;
+    else
+        c_spec = float3(metallic, metallic, metallic);
+    
+    
     float3 acc_color = 0;
 
     const float3 L = normalize(-lightDirection);
