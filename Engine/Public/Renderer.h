@@ -19,15 +19,18 @@ public:
 	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 
 public:
+	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	HRESULT Initialize();
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	void	Update(_float fTimeDelta);
 	void	Render();
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 	void	Render_Debug();
+
+	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
 
 private:
@@ -47,15 +50,18 @@ private:
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
-	_bool								m_isScreenRadialBlur = { false };
 	_bool								m_isBloom = { false };
 	_bool								m_isFog = { false };
+	_bool								m_isHDR = { true };
+
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
 	class CBloom*						m_pBloom = { nullptr };
 	class CFog*							m_pFog = { nullptr };
+	class CRadialBlur*					m_pRadialBlur = { nullptr }; 
+	class CDepthofField*				m_pDepthofField = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -77,6 +83,9 @@ private:
 	void		Render_Fog();
 	void		Render_Deferred();
 	void		Render_ScreenDeferred();
+
+
+	void		ToneMapping();
 	void		Render_BackBuffer();
 	void		Render_UI();
 

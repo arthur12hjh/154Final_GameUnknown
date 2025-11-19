@@ -82,9 +82,12 @@ namespace Engine
 
 	enum class SHADER_DEFERRED_IDX {
 		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		//후처리 합성용
 		DEFERRED,
-		RADIAL_BLUR,
-		TONE_MAPPING, FINAL
+		//톤 매핑
+		TONE_MAPPING, 
+		//진짜 렌더타겟으로 넘기기
+		FINAL
 	};
 
 	

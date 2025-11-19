@@ -301,6 +301,15 @@
     <Filter Include="03.Effects\SpriteUVEffect">
       <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Component">
+      <UniqueIdentifier>{c084d823-b71b-4b86-92f5-2da66e30db1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Component\Notify">
+      <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ShaderDebugger">
+      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -543,6 +552,12 @@
     <ClInclude Include="..\public\SpriteUVEffect.h">
       <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Notify.h">
+      <Filter>02.GameObjects\Character\Component\Notify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShaderDebugger.h">
+      <Filter>30.ImGui\ShaderDebugger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -768,6 +783,12 @@
     </ClCompile>
     <ClCompile Include="..\private\SpriteUVEffect.cpp">
       <Filter>03.Effects\SpriteUVEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Notify.cpp">
+      <Filter>02.GameObjects\Character\Component\Notify</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShaderDebugger.cpp">
+      <Filter>30.ImGui\ShaderDebugger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

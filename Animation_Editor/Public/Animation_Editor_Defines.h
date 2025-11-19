@@ -15,18 +15,6 @@ namespace Animation_Editor
 
 	enum class LEVEL { STATIC, LOADING, EDITOR, END };
 	
-	///  -> string szEventTag
-	///  -> string szEventArgument
-	///  -> string szEvent 관련 정보들
-	///  -> _uint  iEventKeyFrame
-	typedef struct AnimNotify
-	{
-		unsigned int					iNotifyKeyFrame;
-		std::string						szNotifyTag;
-		std::string						szNotifyArg01;
-		std::string						szNotifyArg02;
-	}ANIM_NOTIFY;
-
 }
 
 using namespace Animation_Editor;

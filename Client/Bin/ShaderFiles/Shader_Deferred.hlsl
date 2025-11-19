@@ -231,33 +231,6 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
- 
-    float4 vAccumulatedColor = 0.0f;
-    int iSampleCount = 3;
-    float fSamplePower = 0.5f;
-    
-    float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
-    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * fSamplePower;
-    
-    for (int i = 0; i < iSampleCount; i++)
-    {
-        float fSampleRate = (float) i / (float) iSampleCount;
-        
-        // »ùÇÃ¸µ UV ÁÂÇ¥: ÇöÀç UV + (¹æÇâ º¤ÅÍ * ÁøÇà·ü)
-        float2 vSampleUV = In.vTexcoord + vDir * fSampleRate;
-        
-        // ÅØ½ºÃ³ »ùÇÃ¸µ ¹× ´©Àû
-        vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
-    }
-    
-    Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
-
-    return Out;
-}
-
 PS_OUT_BACKBUFFER PS_MAIN_TONE_MAPPING(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
@@ -347,16 +320,6 @@ technique11 DefaultTechnique
     }
 
     // idx 5
-    pass Screen_RadialBlur
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SCREEN_RADIAL_BLUR();
-    }
-    // idx 6
     pass ToneMapping
     {
         SetRasterizerState(RS_Default);
@@ -367,7 +330,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_TONE_MAPPING();
     }
 
-    // idx 7
+    // idx 6
     pass Final
     {
         SetRasterizerState(RS_Default);

@@ -198,6 +198,7 @@ popd</Command>
     <ClInclude Include="..\Public\ColliderRenderer.h" />
     <ClInclude Include="..\public\Decorator.h" />
     <ClInclude Include="..\Public\Deferred.h" />
+    <ClInclude Include="..\Public\DepthofField.h" />
     <ClInclude Include="..\Public\Distortion.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
@@ -244,6 +245,7 @@ popd</Command>
     <ClInclude Include="..\Public\PxUserData.h" />
     <ClInclude Include="..\Public\QuadTree.h" />
     <ClInclude Include="..\public\Query.h" />
+    <ClInclude Include="..\Public\RadialBlur.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\EffectResourceManager.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
@@ -264,6 +266,7 @@ popd</Command>
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
+    <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\UIObject.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
@@ -309,6 +312,7 @@ popd</Command>
     <ClCompile Include="..\Private\ColliderRenderer.cpp" />
     <ClCompile Include="..\private\Decorator.cpp" />
     <ClCompile Include="..\Private\Deferred.cpp" />
+    <ClCompile Include="..\Private\DepthofField.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\Entity.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
@@ -346,6 +350,7 @@ popd</Command>
     <ClCompile Include="..\Private\Prototype_Manager.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\private\Query.cpp" />
+    <ClCompile Include="..\Private\RadialBlur.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\EffectResourceManager.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
@@ -366,6 +371,7 @@ popd</Command>
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
+    <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
     <ClCompile Include="..\private\UIObject.cpp" />
     <ClCompile Include="..\private\VIBuffer.cpp" />
@@ -386,8 +392,10 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>
   <ItemGroup>
