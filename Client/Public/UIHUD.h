@@ -34,12 +34,6 @@ public:
 
 	_bool Get_Show_Debug_Rect() { return m_bShowDebugRect;}
 
-	//HRESULT Export_Anim_Prefab(_wstring szAnimTag, void* pDesc);
-	//HRESULT Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut);
-
-	//HRESULT Load_Anim_Files();
-	//vector<_wstring> Get_AnimDatas() { return m_AnimDatas; }
-
 	CUIAnimManager* Get_AnimMgr() { return m_pUIAnimMgr; }
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
@@ -57,8 +51,6 @@ private:
 	_wstring UTF8ToWString(const string& str);
 
 	_bool m_bShowDebugRect{ true };
-
-	//vector<_wstring> m_AnimDatas{};
 
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
 

@@ -45,7 +45,7 @@ void CUIAnimManager::Update(_float fTimeDelta)
 
 HRESULT CUIAnimManager::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
 {
-	CUIAnimInstance::UI_ANIM_DESC AnimDesc = *static_cast<CUIAnimInstance::UI_ANIM_DESC*>(pDesc);
+	UI_ANIM_DESC AnimDesc = *static_cast<UI_ANIM_DESC*>(pDesc);
 
 	Json jAnim;
 
@@ -112,7 +112,6 @@ HRESULT CUIAnimManager::Load_Anim_Files()
 
 	if (hFind == INVALID_HANDLE_VALUE)
 		return E_FAIL;
-
 	do
 	{
 		if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
@@ -121,7 +120,7 @@ HRESULT CUIAnimManager::Load_Anim_Files()
 
 			size_t pos = szfileName.find_last_of(L'.');
 
-			CUIAnimInstance::UI_ANIM_DESC AnimDesc{};
+			UI_ANIM_DESC AnimDesc{};
 
 			Import_Anim_Prefab(szfileName.substr(0, pos), &AnimDesc);
 			m_AnimDatas.emplace(szfileName.substr(0, pos), AnimDesc);
@@ -253,7 +252,7 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 
 	WCHAR szText[MAX_PATH]{};
 
-	CUIAnimInstance::UI_ANIM_DESC* AnimDesc = new CUIAnimInstance::UI_ANIM_DESC();
+	UI_ANIM_DESC* AnimDesc = new UI_ANIM_DESC();
 
 	CStringHelper::ConvertUTFToWide(jAnim["szAnimTag"].get<string>().c_str(), szText);
 	AnimDesc->szAnimTag = szText;
@@ -263,7 +262,7 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 
 	for (auto& Track : jAnim["Tracks"])
 	{
-		CUIAnimInstance::UI_ANIM_TRACK_DESC TrackDesc{};
+		UI_ANIM_TRACK_DESC TrackDesc{};
 
 		CStringHelper::ConvertUTFToWide(Track["szTrackTag"].get<string>().c_str(), szText);
 		TrackDesc.szTrackTag = szText;
@@ -283,14 +282,14 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 		AnimDesc->Add_UI_Track_Desc(szText, TrackDesc);
 	}
 
-	*static_cast<CUIAnimInstance::UI_ANIM_DESC*>(pAnimOut) = *AnimDesc;
+	*static_cast<UI_ANIM_DESC*>(pAnimOut) = *AnimDesc;
 
 	Safe_Delete(AnimDesc);
 
 	return S_OK;
 }
 
-CUIAnimInstance::UI_ANIM_DESC* CUIAnimManager::Get_AnimData(_wstring szAnimTag)
+UI_ANIM_DESC* CUIAnimManager::Get_AnimData(_wstring szAnimTag)
 {
 	auto iter = m_AnimDatas.find(szAnimTag);
 
@@ -307,8 +306,7 @@ HRESULT CUIAnimManager::Create_Prefab(_wstring szAnimTag)
 	if (iter != m_AnimDatas.end())
 		return E_FAIL;
 
-	//CUIAnimInstance::UI_ANIM_DESC AnimDesc = *static_cast<CUIAnimInstance::UI_ANIM_DESC*>(pDesc);
-	CUIAnimInstance::UI_ANIM_DESC* AnimDesc = new CUIAnimInstance::UI_ANIM_DESC();
+	UI_ANIM_DESC* AnimDesc = new UI_ANIM_DESC();
 	AnimDesc->szAnimTag = szAnimTag;
 
 	m_AnimDatas.emplace(szAnimTag, *AnimDesc);

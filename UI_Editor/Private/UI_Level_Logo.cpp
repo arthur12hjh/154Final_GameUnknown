@@ -63,8 +63,7 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	//if(FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
 	//	return E_FAIL;
 
-	// 이벤트 추가해서 이벤트가 Intro일 때 이거 돌려주고 하면 될듯?
-	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("FadeIn_1_5"));
+	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }

@@ -573,6 +573,9 @@
     <ClInclude Include="..\Public\UIAnimManager.h">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIStruct.h">
+      <Filter>99.Defines\GameStruct</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

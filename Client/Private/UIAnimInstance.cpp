@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "UIAnimInstance.h"
 
-#include "GameInstance.h"
 #include "UIBase.h"
 
 CUIAnimInstance::CUIAnimInstance()
@@ -10,15 +9,9 @@ CUIAnimInstance::CUIAnimInstance()
 
 HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc)
 {
-	m_pGameInstance = CGameInstance::GetInstance();
-
-	if (!m_pGameInstance)
-		return E_FAIL;
-
 	m_pTargetUI = pUI;
-	m_tUIAnimDesc = *static_cast<CUIAnimInstance::UI_ANIM_DESC*>(Desc);
-
-	m_fDeltaTime = m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime"));
+	Safe_AddRef(m_pTargetUI);
+	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
 
 	return S_OK;
 }
@@ -70,12 +63,9 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 {
 	//m_pTargetUI->Set_Anim_State(CUIBase::ANIM_STATE::PLAY);
 
-	m_pTargetUI->Set_Follow_Parent(m_tUIAnimDesc.isInfluenceChildren);
+	UI_ANIM_DESC AnimDesc = *pAnimDesc;
+	UI_ANIM_TRACK_DESC TrackDesc = *pTrackDesc;
 
-	CUIAnimInstance::UI_ANIM_DESC AnimDesc = *pAnimDesc;
-	CUIAnimInstance::UI_ANIM_TRACK_DESC TrackDesc = *pTrackDesc;
-
-	m_fDeltaTime = m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime"));
 	m_fTimeStack += fTimeDelta;
 	
 	_vector vStartParam{ XMLoadFloat4(&TrackDesc.vStartParam) };
@@ -123,8 +113,6 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			if (TrackDesc.szTrackTag == TEXT("Alpha"))
 				m_pTargetUI->Set_Alpha(XMVectorGetX(vEndParam));
 
-			//m_pTargetUI->Set_Anim_State(CUIBase::ANIM_STATE::IDLE);
-			m_pTargetUI->Set_Follow_Parent(!m_tUIAnimDesc.isInfluenceChildren);
 			return true;
 		}
 	}
@@ -149,9 +137,9 @@ void CUIAnimInstance::Free()
 {
 	__super::Free();
 
-	/*for (auto& TrackDesc : m_tUIAnimDesc.m_Tracks)
-	{
+	Safe_Release(m_pTargetUI);
+
+	for (auto& TrackDesc : m_tUIAnimDesc.m_Tracks)
 		Safe_Delete(TrackDesc.second);
-	}
-	m_tUIAnimDesc.m_Tracks.clear();*/
+	m_tUIAnimDesc.m_Tracks.clear();
 }

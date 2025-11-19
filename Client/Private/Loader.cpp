@@ -61,6 +61,7 @@
 #include "UIPanel.h"
 #include "UIButton.h"
 #include "UIText.h"
+#include "UIImage.h"
 
 #include "Vil_Bui03_04.h"
 
@@ -857,6 +858,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 HRESULT CLoader::Loading_UI_For_Logo_Level()
 {
 	m_strMessage = TEXT("UI 로딩중 입니다..");
+	// 텍스쳐
 	/* For.Prototype_Component_UI_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
@@ -867,6 +869,17 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Dot_Select */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1))))
+		return E_FAIL;
+
+	// 객체 원형
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -881,6 +894,10 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Text"),
 		CUIText::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Image"),
+		CUIImage::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

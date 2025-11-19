@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "UIObject.h"
+#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Rect;
@@ -16,98 +17,6 @@ class CUIHUD;
 
 class CUIBase abstract : public CUIObject
 {
-public:
-	enum class ANIM_STATE { STOP, PLAY, PAUSE, IDLE };
-
-public:
-	typedef struct tagUITextDesc
-	{
-		_wstring szText{};
-		_float4 vColor{ 1.f, 1.f, 1.f, 1.f };
-
-	}UI_TEXT_DESC;
-
-	typedef struct tagUITextureDesc
-	{
-		_wstring szTextureComTag{};
-		_wstring szProtoTag{};
-		_uint iTextureIndex{ 0 };
-		_uint iPass{ 0 };
-
-	}UI_TEXTURE_DESC;
-
-public:
-	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
-	{
-		_float fOffsetX{ 0.f }, fOffsetY{ 0.f };
-		_float fAlpha{ 1.f };
-		_uint iLevel{ 0 };
-		_uint iDepth{ 0 };
-		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };
-
-		_uint iVisiblity{ ENUM_CLASS(VISIBILITY::VISIBLE) };
-
-		_wstring szUIID{};
-		_wstring szUITag{};
-		_wstring szLayerTag{};
-		_wstring szProtoTag{};
-
-		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
-		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
-
-		vector<_wstring> m_EventTags{};
-		map<_wstring, _wstring> m_AnimTags{}; // 애니메이션, 프리팹 이름
-
-	public:
-		// 텍스트
-		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
-			Safe_Delete(m_pUITextDesc);
-			m_pUITextDesc = new UI_TEXT_DESC(Desc);
-		}
-
-		UI_TEXT_DESC* Get_UI_Text_Desc() {
-			return m_pUITextDesc;
-		}
-
-		// 텍스쳐
-		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
-			Safe_Delete(m_pUITextureDesc);
-			m_pUITextureDesc = new UI_TEXTURE_DESC(Desc);
-		}
-
-		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
-			return m_pUITextureDesc;
-		}
-
-		void Add_UI_Anim(_wstring szAnimTag, _wstring szAnimFileName) {
-			//_bool bVali = (find(m_AnimTags.begin(), m_AnimTags.end(), szAnimTag) != m_AnimTags.end());
-
-			auto Anim = m_AnimTags.find(szAnimTag);
-
-			if (Anim != m_AnimTags.end())
-			{
-				Anim->second = szAnimFileName;
-				return;
-			}
-
-			m_AnimTags.emplace(szAnimTag, szAnimFileName);
-		}
-
-		void Delete_UI_Anim(_wstring szAnimTag)
-		{
-			auto Anim = m_AnimTags.find(szAnimTag);
-
-			if (Anim != m_AnimTags.end())
-			{
-				Anim->second = TEXT("Unknown");
-				return;
-			}
-		}
-		
-		map<_wstring, _wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
-
-	}UIBASE_DESC;
-
 protected:
 	CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext); 
 	CUIBase(const CUIBase& Prototype);
@@ -169,11 +78,6 @@ public:
 		m_eAnimState = ANIM_STATE::STOP;
 	}*/
 
-	ANIM_STATE Get_Anim_State() { return m_eAnimState; }
-	void Set_Anim_State(ANIM_STATE eState) { m_eAnimState = eState; }
-
-	//CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
-
 	_bool Get_Follow_Parent() { return m_bFollowParent; }
 	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
 
@@ -194,13 +98,10 @@ protected:
 	CUIHUD*					m_pUIHUD = { nullptr };
 
 	//_wstring				m_szCurrentAnimTag = {};
-	ANIM_STATE m_eAnimState{ ANIM_STATE::IDLE };
 	_bool					m_bFollowParent{ true };
 
 private:
 	HRESULT Ready_Texture();
-	//HRESULT Ready_UIAnimation();
-
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();

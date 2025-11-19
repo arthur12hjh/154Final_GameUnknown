@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Base.h"
-#include "UIAnimInstance.h"
+#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CHUDLayer;
@@ -11,10 +11,10 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIAnimInstance;
+class CUIBase;
 
 class CUIAnimManager final : public CBase
 {
-
 private:
 	CUIAnimManager();
 	virtual ~CUIAnimManager() = default;
@@ -28,8 +28,8 @@ public:
 
 	HRESULT Load_Anim_Files();
 	vector<CUIAnimInstance*> Get_AnimInstances() { return m_AnimInstances; }
-	map<_wstring, CUIAnimInstance::UI_ANIM_DESC> Get_AnimDatas() { return m_AnimDatas; }
-	CUIAnimInstance::UI_ANIM_DESC* Get_AnimData(_wstring szAnimTag);
+	map<_wstring, UI_ANIM_DESC> Get_AnimDatas() { return m_AnimDatas; }
+	UI_ANIM_DESC* Get_AnimData(_wstring szAnimTag);
 
 	HRESULT Create_Prefab(_wstring szAnimTag);
 	HRESULT Delete_Prefab(_wstring szAnimTag);
@@ -44,7 +44,7 @@ public:
 
 private:
 	vector<CUIAnimInstance*> m_AnimInstances{};
-	map<_wstring, CUIAnimInstance::UI_ANIM_DESC> m_AnimDatas{};
+	map<_wstring, UI_ANIM_DESC> m_AnimDatas{};
 
 public:
 	static CUIAnimManager* Create();

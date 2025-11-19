@@ -150,7 +150,7 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
 		TEXT("Com_Texture_UI_Logo_Main_Title"), TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1);
 
-	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
+	/* For.Prototype_Component_UI_Texture_Dot_Select */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1))))
 		return E_FAIL;

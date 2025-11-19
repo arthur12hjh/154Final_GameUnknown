@@ -59,13 +59,8 @@ void CUIBase::Update(_float fTimeDelta)
 		
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
-		m_tUIDesc.fAlpha = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
-
-		// 알파 부모따라가기 바꾸긴 해야할듯
-		//if(m_bFollowParent)
 		
-		//m_tUIDesc.bVisible = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
-		//m_eAnimState = dynamic_cast<CUIBase*>(m_pParent)->Get_Anim_State();
+		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -73,33 +68,6 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	//switch (m_eAnimState)
-	//{
-	//case ANIM_STATE::PLAY :
-	//	m_pUIAnimCom->Play(m_szCurrentAnimTag);
-	//	break;
-	//case ANIM_STATE::PAUSE :
-	//	m_pUIAnimCom->Pause();
-	//	break;
-	//case ANIM_STATE::STOP :
-	//{
-	//	m_pUIAnimCom->Stop();
-	//	m_eAnimState = ANIM_STATE::IDLE;
-	//}
-	//	break;
-	//case ANIM_STATE::IDLE:
-	//{
-	//	//m_pUIAnimCom->Stop();
-	//	//m_tUIDesc = m_tOriginUIDesc;
-	//}
-	//	break;
-	//}
-
-	//if (m_tUIDesc.bVisible)
-	//	m_eVisibility = VISIBILITY::VISIBLE;
-	//else
-	//	m_eVisibility = VISIBILITY::HIDDEN;
-
 #ifdef _DEBUG
 	if (m_eVisibility == VISIBILITY::VISIBLE)
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
@@ -159,7 +127,7 @@ void CUIBase::Set_Pass(_uint iPass)
 // 툴에서 텍스쳐 변경할 때 사용
 HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex)
 {
-	CUIBase::UI_TEXTURE_DESC Desc{};
+	UI_TEXTURE_DESC Desc{};
 	Desc.iTextureIndex = iTextureIndex;
 	Desc.szTextureComTag = szTextureTag;
 	Desc.szProtoTag = szProtoTag;
@@ -209,9 +177,9 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 void CUIBase::Render_Debug_Rect()
 {
 #ifdef _DEBUG
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	//CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	if (pHUD && pHUD->Get_Show_Debug_Rect())
+	if (m_pUIHUD && m_pUIHUD->Get_Show_Debug_Rect())
 	{
 		if (FAILED(Bind_Debug_ShaderResources()))
 			return;
@@ -225,7 +193,7 @@ void CUIBase::Render_Debug_Rect()
 		if (FAILED(m_pVIDebugBufferCom->Render()))
 			return;
 
-		Safe_Release(pHUD);
+		//Safe_Release(pHUD);
 		return;
 	}
 #endif
@@ -274,7 +242,11 @@ HRESULT CUIBase::Bind_ShaderResources()
 {
 	if (m_pShaderCom)
 	{
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
+		_float fAlpha{ m_tUIDesc.fAlpha };
+		if(m_pParent)
+			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
 			return E_FAIL;
 	}
 
@@ -287,6 +259,8 @@ void CUIBase::Free()
 
 	Safe_Delete(m_tOriginUIDesc.m_pUITextDesc);
 	Safe_Delete(m_tOriginUIDesc.m_pUITextureDesc);
+
+	//m_tOriginUIDesc.Clear();
 
 	for (auto iter : m_Children)
 		Safe_Release(iter);
