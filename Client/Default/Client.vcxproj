@@ -209,6 +209,7 @@
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
     <ClInclude Include="..\Public\PonyTail_Player.h" />
+    <ClInclude Include="..\public\Prob_Building.h" />
     <ClInclude Include="..\public\Prob_Interaction.h" />
     <ClInclude Include="..\Public\PxTestProp.h" />
     <ClInclude Include="..\public\Quest.h" />
@@ -234,6 +235,7 @@
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\public\Prob_Vehicle.h" />
     <ClInclude Include="..\public\Vending.h" />
     <ClInclude Include="..\public\Vil_Bui03_04.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
@@ -314,6 +316,7 @@
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
     <ClCompile Include="..\Private\PonyTail_Player.cpp" />
+    <ClCompile Include="..\private\Prob_Building.cpp" />
     <ClCompile Include="..\private\Prob_Interaction.cpp" />
     <ClCompile Include="..\Private\PxTestProp.cpp" />
     <ClCompile Include="..\private\Quest.cpp" />
@@ -339,6 +342,7 @@
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\private\Prob_Vehicle.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\private\Vil_Bui03_04.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
