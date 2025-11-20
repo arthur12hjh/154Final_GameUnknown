@@ -161,9 +161,9 @@ HRESULT CLoader::Loading_For_Logo()
 	m_strMessage = TEXT("Loading.");
 	
 	m_strMessage = TEXT("Loading.");
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	Loading_UI_For_Logo_Level();
 

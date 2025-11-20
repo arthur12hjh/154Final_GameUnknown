@@ -53,8 +53,6 @@ public:
 		return dynamic_cast<CUIBase*>(m_pParent);
 	}
 
-	void Set_HUD(CUIHUD* pUIHUD);
-
 	HRESULT Add_Child(CGameObject* pObj);
 
 	const vector<CUIBase*>* Get_Children() {
@@ -95,7 +93,6 @@ protected:
 
 	vector<CUIBase*>		m_Children = {};
 	//CUIAnimationCom*		m_pUIAnimCom = { nullptr };
-	CUIHUD*					m_pUIHUD = { nullptr };
 
 	//_wstring				m_szCurrentAnimTag = {};
 	_bool					m_bFollowParent{ true };

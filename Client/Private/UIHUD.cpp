@@ -24,13 +24,12 @@ CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CUIHUD::Initialize()
 {
-	//m_pUIAnimMgr = CUIAnimManager::Create();
+	m_pUIAnimMgr = CUIAnimManager::Create();
 
-	//if (!m_pUIAnimMgr)
-	//	return E_FAIL;
-	////Safe_AddRef(m_pUIAnimMgr);
+	if (!m_pUIAnimMgr)
+		return E_FAIL;
 
-	//m_pUIAnimMgr->Load_Anim_Files();
+	m_pUIAnimMgr->Load_Anim_Files();
 
 	return S_OK;
 }
@@ -39,7 +38,7 @@ void CUIHUD::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	//m_pUIAnimMgr->Update(fTimeDelta);
+	m_pUIAnimMgr->Update(fTimeDelta);
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
@@ -118,6 +117,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	for (auto& AnimTag : pDesc.m_AnimTags)
 	{
 		Json jAnim;
+
 		CStringHelper::ConvertWideToUTF(AnimTag.first.c_str(), szText);
 		jAnim["szAnimTag"] = szText;
 		CStringHelper::ConvertWideToUTF(AnimTag.second.c_str(), szText);
@@ -136,6 +136,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		TextureDesc["szProtoTag"] = szText;
 		TextureDesc["iTextureIndex"] = pDesc.Get_UI_Texture_Desc()->iTextureIndex;
 		TextureDesc["iPass"] = pDesc.Get_UI_Texture_Desc()->iPass;
+		//jObj["isHasTextureDesc"] = pDesc.m_isHasTextureDesc;
 		jObj["TextureDesc"] = TextureDesc;
 	}
 
@@ -150,6 +151,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			pDesc.Get_UI_Text_Desc()->vColor.z,
 			pDesc.Get_UI_Text_Desc()->vColor.w
 		};
+		//jObj["isHasTextDesc"] = pDesc.m_isHasTextDesc;
 		jObj["TextDesc"] = TextDesc;
 	}
 
@@ -258,8 +260,6 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		if (!pCreatedObj)
 			return E_FAIL;
 
-		pCreatedObj->Set_HUD(this);
-
 		if (pUIObject.contains("Children"))
 		{
 			for (const auto& pChild : pUIObject["Children"])
@@ -357,9 +357,9 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	if (!pCreatedObj)
 		return;
 
-	pCreatedObj->Set_HUD(this);
 	pCreatedObj->Set_Parent(pUIParent);
-	pUIParent->Add_Child(pUI);
+
+	pUIParent->Add_Child(pCreatedObj);
 
 	if (jData.contains("Children"))
 	{
@@ -429,6 +429,6 @@ void CUIHUD::Free()
 {
 	__super::Free();
 
-	//Safe_Release(m_pUIAnimMgr);
+	Safe_Release(m_pUIAnimMgr);
 }
 

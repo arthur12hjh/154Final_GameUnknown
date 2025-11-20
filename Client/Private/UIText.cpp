@@ -52,11 +52,15 @@ HRESULT CUIText::Render()
 	{
 		_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), m_tUIDesc.Get_UI_Text_Desc()->szText.c_str());
 
+		_float fAlpha{ m_tUIDesc.fAlpha };
+		if (m_pParent)
+			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
 		_vector vColor = XMVectorSet(
-			m_tUIDesc.Get_UI_Text_Desc()->vColor.x * m_tUIDesc.fAlpha,
-			m_tUIDesc.Get_UI_Text_Desc()->vColor.y * m_tUIDesc.fAlpha,
-			m_tUIDesc.Get_UI_Text_Desc()->vColor.z * m_tUIDesc.fAlpha,
-			m_tUIDesc.Get_UI_Text_Desc()->vColor.w * m_tUIDesc.fAlpha
+			m_tUIDesc.Get_UI_Text_Desc()->vColor.x * fAlpha,
+			m_tUIDesc.Get_UI_Text_Desc()->vColor.y * fAlpha,
+			m_tUIDesc.Get_UI_Text_Desc()->vColor.z * fAlpha,
+			m_tUIDesc.Get_UI_Text_Desc()->vColor.w * fAlpha
 			);
 
 		m_pGameInstance->Render_Text(TEXT("KoPub"),

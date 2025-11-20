@@ -63,16 +63,16 @@ HRESULT CUIAnimManager::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
 		CStringHelper::ConvertWideToUTF(TrackDesc.first.c_str(), szText);
 		jTrack["szTrackTag"] = szText;
 		jTrack["vStartParam"] = {
-			TrackDesc.second->vStartParam.x,
-			TrackDesc.second->vStartParam.y,
-			TrackDesc.second->vStartParam.z,
-			TrackDesc.second->vStartParam.w
+			TrackDesc.second.vStartParam.x,
+			TrackDesc.second.vStartParam.y,
+			TrackDesc.second.vStartParam.z,
+			TrackDesc.second.vStartParam.w
 		};
 		jTrack["vEndParam"] = {
-			TrackDesc.second->vEndParam.x,
-			TrackDesc.second->vEndParam.y,
-			TrackDesc.second->vEndParam.z,
-			TrackDesc.second->vEndParam.w
+			TrackDesc.second.vEndParam.x,
+			TrackDesc.second.vEndParam.y,
+			TrackDesc.second.vEndParam.z,
+			TrackDesc.second.vEndParam.w
 		};
 
 		jAnim["Tracks"].push_back(jTrack);
@@ -93,17 +93,7 @@ HRESULT CUIAnimManager::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
 
 HRESULT CUIAnimManager::Load_Anim_Files()
 {
-	for (auto& AnimData : m_AnimDatas)
-	{
-		for (auto& Track : AnimData.second.m_Tracks)
-			Safe_Delete(Track.second);
-		AnimData.second.m_Tracks.clear();
-	}
-	m_AnimDatas.clear();
-
-	for (auto& AnimInstance : m_AnimInstances)
-		Safe_Release(AnimInstance);
-	m_AnimInstances.clear();
+	Clear_AnimInstances();
 
 	WIN32_FIND_DATAW fd;
 	_wstring search = L"../Bin/DataFiles/UI/UI_Anims/*.json";
@@ -132,112 +122,6 @@ HRESULT CUIAnimManager::Load_Anim_Files()
 	return S_OK;
 }
 
-//void CUIAnimManager::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
-//{
-//	auto pLayer = m_pLayers.find(szLayerTag);
-//
-//	if (pLayer == m_pLayers.end())
-//		return;
-//
-//	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
-//
-//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
-//
-//	if (pUI == nullptr)
-//		return;
-//
-//	for (auto& Track : pUI->Get_AnimationCom()->Get_UI_Anim_Desc()->m_Tracks)
-//		Safe_Delete(Track.second);
-//	pUI->Get_AnimationCom()->Get_UI_Anim_Desc()->m_Tracks.clear();
-//
-//	CUIAnimationCom::UI_ANIM_DESC AnimDesc{};
-//
-//	Import_Anim_Prefab(szAnimTag, &AnimDesc);
-//
-//	pUI->Get_AnimationCom()->Set_UI_Anim_Desc(AnimDesc);
-//
-//	pUI->Play_Anim(szAnimTag);
-//}
-//
-//void CUIAnimManager::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
-//{
-//	auto pLayer = m_pLayers.find(szLayerTag);
-//
-//	if (pLayer == m_pLayers.end())
-//		return;
-//
-//	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
-//
-//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
-//
-//	if (pUI == nullptr)
-//		return;
-//
-//	pUI->Stop_Anim();
-//}
-//
-//void CUIAnimManager::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
-//{
-//	auto pLayer = m_pLayers.find(szLayerTag);
-//
-//	if (pLayer == m_pLayers.end())
-//		return;
-//
-//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
-//	
-//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
-//
-//	if (pUI == nullptr)
-//		return;
-//
-//	pUI->Play_Anim(szAnimTag);
-//}
-//
-//void CUIAnimManager::Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
-//{
-//	auto pLayer = m_pLayers.find(szLayerTag);
-//
-//	if (pLayer == m_pLayers.end())
-//		return;
-//
-//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
-//
-//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
-//
-//	if (pUI == nullptr)
-//		return;
-//
-//	pUI->Pause_Anim();
-//}
-//
-//void CUIAnimManager::Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
-//{
-//	auto pLayer = m_pLayers.find(szLayerTag);
-//
-//	if (pLayer == m_pLayers.end())
-//		return;
-//
-//	auto pObj = pLayer->second->Find_GameObject(szUITag.c_str());
-//
-//	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj);
-//
-//	if (pUI == nullptr)
-//		return;
-//
-//	pUI->Stop_Anim();
-//}
-//
-//void CUIAnimManager::Anim_All_Stop()
-//{
-//	for (auto& pLayer : m_pLayers)
-//	{
-//		for (auto& pUI : *pLayer.second->Get_UserInterfaces())
-//		{
-//			dynamic_cast<CUIBase*>(pUI.second)->Stop_Anim();
-//		}
-//	}
-//}
-
 HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 {
 	Json jAnim;
@@ -252,13 +136,13 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 
 	WCHAR szText[MAX_PATH]{};
 
-	UI_ANIM_DESC* AnimDesc = new UI_ANIM_DESC();
+	UI_ANIM_DESC AnimDesc{};
 
 	CStringHelper::ConvertUTFToWide(jAnim["szAnimTag"].get<string>().c_str(), szText);
-	AnimDesc->szAnimTag = szText;
-	AnimDesc->isLoop = jAnim["isLoop"].get<_bool>();
-	AnimDesc->fDuration = jAnim["fDuration"].get<_float>();
-	AnimDesc->isInfluenceChildren = jAnim["isInfluenceChildren"].get<_bool>();
+	AnimDesc.szAnimTag = szText;
+	AnimDesc.isLoop = jAnim["isLoop"].get<_bool>();
+	AnimDesc.fDuration = jAnim["fDuration"].get<_float>();
+	AnimDesc.isInfluenceChildren = jAnim["isInfluenceChildren"].get<_bool>();
 
 	for (auto& Track : jAnim["Tracks"])
 	{
@@ -279,12 +163,10 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 			Track["vEndParam"][3].get<_float>()
 		};
 
-		AnimDesc->Add_UI_Track_Desc(szText, TrackDesc);
+		AnimDesc.Add_UI_Track_Desc(szText, TrackDesc);
 	}
 
-	*static_cast<UI_ANIM_DESC*>(pAnimOut) = *AnimDesc;
-
-	Safe_Delete(AnimDesc);
+	*static_cast<UI_ANIM_DESC*>(pAnimOut) = AnimDesc;
 
 	return S_OK;
 }
@@ -306,10 +188,10 @@ HRESULT CUIAnimManager::Create_Prefab(_wstring szAnimTag)
 	if (iter != m_AnimDatas.end())
 		return E_FAIL;
 
-	UI_ANIM_DESC* AnimDesc = new UI_ANIM_DESC();
-	AnimDesc->szAnimTag = szAnimTag;
+	UI_ANIM_DESC AnimDesc{};
+	AnimDesc.szAnimTag = szAnimTag;
 
-	m_AnimDatas.emplace(szAnimTag, *AnimDesc);
+	m_AnimDatas.emplace(szAnimTag, AnimDesc);
 	
 	return S_OK;
 }
@@ -334,7 +216,6 @@ void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag)
 		return;
 
 	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second);
-	Safe_AddRef(pAnimInstance);
 
 	m_AnimInstances.push_back(pAnimInstance);
 }
@@ -364,13 +245,5 @@ void CUIAnimManager::Free()
 	__super::Free();
 
 	Clear_AnimInstances();
-
-	for (auto& AnimData : m_AnimDatas)
-	{
-		for (auto& Track : AnimData.second.m_Tracks)
-			Safe_Delete(Track.second);
-		AnimData.second.m_Tracks.clear();
-	}
-	m_AnimDatas.clear();
 }
 

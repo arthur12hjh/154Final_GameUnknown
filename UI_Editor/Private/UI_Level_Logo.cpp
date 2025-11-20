@@ -12,7 +12,6 @@ CUI_Level_Logo::CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
 	
 {
-
 }
 
 HRESULT CUI_Level_Logo::Initialize()
@@ -57,12 +56,12 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
-		return E_FAIL;
-
-	//if(FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
+	//if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 	//	return E_FAIL;
 
+	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
+		return E_FAIL;
+	
 	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;

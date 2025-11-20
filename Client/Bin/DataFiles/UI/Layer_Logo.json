@@ -87,6 +87,12 @@
                 "iLevel": 2,
                 "iRenderGroup": 8,
                 "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Hover",
+                        "szPrefabTag": "FadeIn_0_5"
+                    }
+                ],
                 "szLayerTag": "Layer_Logo",
                 "szProtoTag": "Prototype_GameObject_UI_Button",
                 "szUIID": "Logo_Panel_Button_1-2",

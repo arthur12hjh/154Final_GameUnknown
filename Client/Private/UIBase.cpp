@@ -40,9 +40,6 @@ HRESULT CUIBase::Initialize(void* pArg)
 	if (FAILED(Ready_Texture()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_UIAnimation()))
-		return E_FAIL;*/
-
 	return S_OK;
 }
 
@@ -80,12 +77,6 @@ void CUIBase::Late_Update(_float fTimeDelta)
 HRESULT CUIBase::Render()
 {
 	return S_OK;
-}
-
-void CUIBase::Set_HUD(CUIHUD* pUIHUD)
-{
-	m_pUIHUD = pUIHUD;
-	Safe_AddRef(m_pUIHUD);
 }
 
 HRESULT CUIBase::Add_Child(CGameObject* pObj)
@@ -177,9 +168,9 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 void CUIBase::Render_Debug_Rect()
 {
 #ifdef _DEBUG
-	//CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	if (m_pUIHUD && m_pUIHUD->Get_Show_Debug_Rect())
+	if (pUIHUD && pUIHUD->Get_Show_Debug_Rect())
 	{
 		if (FAILED(Bind_Debug_ShaderResources()))
 			return;
@@ -193,9 +184,10 @@ void CUIBase::Render_Debug_Rect()
 		if (FAILED(m_pVIDebugBufferCom->Render()))
 			return;
 
-		//Safe_Release(pHUD);
+		Safe_Release(pUIHUD);
 		return;
 	}
+
 #endif
 }
 
@@ -257,11 +249,6 @@ void CUIBase::Free()
 {
 	__super::Free();
 
-	Safe_Delete(m_tOriginUIDesc.m_pUITextDesc);
-	Safe_Delete(m_tOriginUIDesc.m_pUITextureDesc);
-
-	//m_tOriginUIDesc.Clear();
-
 	for (auto iter : m_Children)
 		Safe_Release(iter);
 
@@ -269,7 +256,6 @@ void CUIBase::Free()
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
-	Safe_Release(m_pUIHUD);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

@@ -10,7 +10,7 @@ CUIAnimInstance::CUIAnimInstance()
 HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc)
 {
 	m_pTargetUI = pUI;
-	Safe_AddRef(m_pTargetUI);
+	//Safe_AddRef(m_pTargetUI);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
 
 	return S_OK;
@@ -22,7 +22,7 @@ _bool CUIAnimInstance::Update(_float fTimeDelta)
 
 	for (auto& pTrackDesc : TrackDescs)
 	{
-		return Play_Anim(&m_tUIAnimDesc, pTrackDesc.second, fTimeDelta);
+		return Play_Anim(&m_tUIAnimDesc, &pTrackDesc.second, fTimeDelta);
 	}
 
 	return true;
@@ -137,9 +137,9 @@ void CUIAnimInstance::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTargetUI);
+	//Safe_Release(m_pTargetUI);
 
-	for (auto& TrackDesc : m_tUIAnimDesc.m_Tracks)
+	/*for (auto& TrackDesc : m_tUIAnimDesc.m_Tracks)
 		Safe_Delete(TrackDesc.second);
-	m_tUIAnimDesc.m_Tracks.clear();
+	m_tUIAnimDesc.m_Tracks.clear();*/
 }

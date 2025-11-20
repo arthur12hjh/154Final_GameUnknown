@@ -3,7 +3,6 @@
 
 #include "GameInstance.h"
 #include "UIHUD.h"
-//#include "UIAnimationCom.h"
 
 CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -64,6 +63,17 @@ void CUIButton::Late_Update(_float fTimeDelta)
 		}
 		case Client::CUIButton::BTN_STATE::HOVER:
 		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				break;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+			Safe_Release(pHUD);
+
+			//m_pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 			//m_pUIHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
 			break;
 		}

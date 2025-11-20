@@ -43,7 +43,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(GetHUD());
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pHUD);
 
 		for (auto& pLayers : pUIHUD->Get_Layers())
 		{
@@ -56,7 +56,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 		}
 
 		pUIHUD->Set_Show_Debug_Rect(true);
-		Safe_Release(pUIHUD);
 		
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
@@ -106,13 +105,13 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Test"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
 	
 	//pUIHUD->Load_Anim_Files();
 	//
-	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
-	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+	
+	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }

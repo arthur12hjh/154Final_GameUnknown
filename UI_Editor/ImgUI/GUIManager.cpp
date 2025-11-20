@@ -272,7 +272,7 @@ void CGUIManager::Create_Layer()
         WCHAR szTextureComTag[MAX_PATH]{};
         CStringHelper::ConvertUTFToWide("Prototype_Component_UI_Texture_BackGround", szTextureComTag);
 
-        CUIBase::UIBASE_DESC Desc{};
+        UIBASE_DESC Desc{};
         Desc.fSizeX = g_iWinSizeX;
         Desc.fSizeY = g_iWinSizeY;
         Desc.fX = g_iHalfWinSizeX;
@@ -322,7 +322,7 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
 
         CGameObject* pCreatedObj = nullptr;
 
-        CUIBase::UIBASE_DESC Desc{};
+        UIBASE_DESC Desc{};
         Desc.fSizeX = 100.f;
         Desc.fSizeY = 100.f;
         //Desc.fX = 0.f;
@@ -723,7 +723,7 @@ void CGUIManager::Set_Size()
     {
         //*pOldSize = *pEditedSize;
 
-        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
+        UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
         Desc.fSizeX = m_pTargetUI->Get_UIBase_Desc().fSizeX;
         Desc.fSizeY = m_pTargetUI->Get_UIBase_Desc().fSizeY;
 
@@ -767,7 +767,7 @@ void CGUIManager::Set_Position()
     {
         //*pOldPos = *pEditedPos;
 
-        Client::CUIBase::UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
+        UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
         Desc.fOffsetX = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
         Desc.fOffsetY = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
 
@@ -823,7 +823,7 @@ void CGUIManager::Set_Texture()
     GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
     if (GUI::Button("Apply"))
     {
-        Client::CUIBase::UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
+        UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
 
         m_pTargetUI->Set_UIBase_OriginDesc(UIDesc);
     }
@@ -832,8 +832,8 @@ void CGUIManager::Set_Texture()
 
 void CGUIManager::Set_Text()
 {
-    Client::CUIBase::UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
-    Client::CUIBase::UI_TEXT_DESC TextDesc{};
+    UIBASE_DESC UIDesc = m_pTargetUI->Get_UIBase_Desc();
+    UI_TEXT_DESC TextDesc{};
 
     GUI::InputText("Input Text", m_szInputText, IM_ARRAYSIZE(m_szInputText));
 
@@ -844,9 +844,6 @@ void CGUIManager::Set_Text()
         
         m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc()->szText = szInputText;
         m_pTargetUI->Get_UIBase_OriginDesc().Get_UI_Text_Desc()->szText = szInputText;
-        //UIDesc.Set_UI_Text_Desc(TextDesc);
-
-        //m_pTargetUI->Set_UIBase_OriginDesc(m_pTargetUI->Get_UIBase_Desc());
     }
 
     if (UIDesc.Get_UI_Text_Desc())
@@ -876,7 +873,6 @@ void CGUIManager::Set_Animation()
         strcpy_s(m_szInputAnimName, sizeof(m_szInputAnimName), "");
         GUI::OpenPopup("Add Anim");
     }
-    // GUI::SameLine();
 
     if (GUI::BeginPopup("Add Anim"))
     {
@@ -893,24 +889,9 @@ void CGUIManager::Set_Animation()
         _char szAnimTag[MAX_PATH]{};
         CStringHelper::ConvertWideToUTF((TEXT("AnimTag : ") + AnimTag.first).c_str(), szAnimTag);
 
-        //CUIAnimInstance::UI_ANIM_DESC AnimDesc{};
-        //
-        //auto Anim = m_pUIHUD->Get_AnimMgr()->Get_AnimData(AnimTag.second);
-
         if (GUI::TreeNode(szAnimTag))
         {
             GUI::Separator();
-
-            //if (Anim != nullptr)
-            //{
-            //    Edit_Animation(AnimTag.first, m_pUIHUD->Get_AnimMgr()->Get_AnimData(AnimTag.second));
-            //    //AnimDesc = *m_pUIHUD->Get_AnimMgr()->Get_AnimData(AnimTag.second);
-            //}
-            //else
-            //{
-            //    AnimDesc.szAnimTag = AnimTag.second;
-            //    Edit_Animation(AnimTag.first, &AnimDesc);
-            //}
 
             Edit_Animation(AnimTag.first, AnimTag.second);
             GUI::TreePop();
@@ -970,7 +951,7 @@ void CGUIManager::Add_Animation()
                 WCHAR szAnimNameTag[MAX_PATH]{};
                 CStringHelper::ConvertUTFToWide(m_szCurrentAnimPrefab, szAnimNameTag);
 
-                Client::CUIAnimInstance::UI_ANIM_DESC AnimDesc{};
+                UI_ANIM_DESC AnimDesc{};
                 m_pUIHUD->Get_AnimMgr()->Import_Anim_Prefab(szAnimNameTag, &AnimDesc);
 
                 m_pTargetUI->Get_UIBase_Desc().Add_UI_Anim(szAnimTag, AnimDesc.szAnimTag);
@@ -1295,7 +1276,7 @@ void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
         WCHAR szTrackTag[MAX_PATH]{};
         CStringHelper::ConvertUTFToWide(m_szCurrentTrackTag, szTrackTag);
 
-        Client::CUIAnimInstance::UI_ANIM_TRACK_DESC TrackDesc{};
+        UI_ANIM_TRACK_DESC TrackDesc{};
         TrackDesc.szTrackTag = szTrackTag;
 
         if (TrackDesc.szTrackTag == TEXT("Position"))

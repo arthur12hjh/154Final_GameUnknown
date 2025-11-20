@@ -22,18 +22,19 @@ namespace Client
 		float fDuration{ 1.f };
 		bool isLoop = false;
 		bool isInfluenceChildren = true;
-		map<wstring, UI_ANIM_TRACK_DESC*> m_Tracks{};
+
+		_bool m_isHasTracks{ false };
+		map<wstring, UI_ANIM_TRACK_DESC> m_Tracks{};
 
 	public:
 		void Add_UI_Track_Desc(wstring szTrackTag, const UI_ANIM_TRACK_DESC& Desc) {
-
 			auto TrackDesc = m_Tracks.find(szTrackTag);
 
 			if (TrackDesc != m_Tracks.end())
 				return;
 
-			UI_ANIM_TRACK_DESC* pDesc = new UI_ANIM_TRACK_DESC(Desc);
-			m_Tracks.emplace(szTrackTag, pDesc);
+			m_isHasTracks = true;
+			m_Tracks.emplace(szTrackTag, Desc);
 		}
 
 		UI_ANIM_TRACK_DESC* Get_UI_Track_Desc(wstring szTrackTag) {
@@ -42,10 +43,10 @@ namespace Client
 			if (TrackDesc == m_Tracks.end())
 				return nullptr;
 
-			return TrackDesc->second;
+			return m_isHasTracks ? &TrackDesc->second : nullptr;
 		}
 
-		map<wstring, UI_ANIM_TRACK_DESC*> Get_UI_Track_Descs() {
+		map<wstring, UI_ANIM_TRACK_DESC> Get_UI_Track_Descs() {
 			return m_Tracks;
 		}
 
@@ -82,8 +83,10 @@ namespace Client
 		wstring szLayerTag{};
 		wstring szProtoTag{};
 
-		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
-		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
+		_bool m_isHasTextDesc{ false };
+		UI_TEXT_DESC m_tUITextDesc{ };
+		_bool m_isHasTextureDesc{ false };
+		UI_TEXTURE_DESC m_tUITextureDesc{ };
 
 		vector<wstring> m_EventTags{};
 		map<wstring, wstring> m_AnimTags{}; // 애니메이션 태그, 프리팹 이름
@@ -91,22 +94,22 @@ namespace Client
 	public:
 		// 텍스트
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
-			Safe_Delete(m_pUITextDesc);
-			m_pUITextDesc = new UI_TEXT_DESC(Desc);
+			m_isHasTextDesc = true;
+			m_tUITextDesc = Desc;
 		}
 
 		UI_TEXT_DESC* Get_UI_Text_Desc() {
-			return m_pUITextDesc;
+			return m_isHasTextDesc ? &m_tUITextDesc : nullptr;
 		}
 
 		// 텍스쳐
 		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
-			Safe_Delete(m_pUITextureDesc);
-			m_pUITextureDesc = new UI_TEXTURE_DESC(Desc);
+			m_isHasTextureDesc = true;
+			m_tUITextureDesc = Desc;
 		}
 
 		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
-			return m_pUITextureDesc;
+			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
 		}
 
 		void Add_UI_Anim(wstring szAnimTag, wstring szAnimFileName) {
@@ -127,17 +130,12 @@ namespace Client
 
 			if (Anim != m_AnimTags.end())
 			{
-				Anim->second = TEXT("Unknown");
+				Anim->second = TEXT("");
 				return;
 			}
 		}
 
 		map<wstring, wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
-
-		void Clear() {
-			Safe_Delete(m_pUITextDesc);
-			Safe_Delete(m_pUITextureDesc);
-		}
 
 	}UIBASE_DESC;
 }
