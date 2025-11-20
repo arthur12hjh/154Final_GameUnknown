@@ -161,7 +161,7 @@ PS_OUT PS_MASK(PS_IN In)
     int iV = g_fTime / g_fFPS / g_iUV.x;
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse.a *= g_MaskTexture.Sample(DefaultSampler, fTexcoord).r;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
     
     float depth = In.vProjPos.w / 500;
     float weight = saturate(pow(1 - depth, 3));
@@ -170,6 +170,18 @@ PS_OUT PS_MASK(PS_IN In)
     Out.vWeight.g = weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
+    return Out;
+}
+
+/* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
+PS_OUT PS_NONLIGHT(PS_IN In)
+{
+    PS_OUT Out;
+    int iU = (g_fTime / g_fFPS);
+    int iV = g_fTime / g_fFPS / g_iUV.x;
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
     return Out;
 }
 
@@ -192,5 +204,14 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MASK();
+    }
+    pass SpriteNonLightEffect
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_NONLIGHT();
     }
 }

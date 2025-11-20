@@ -1,0 +1,23 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 1.5,
+    "isInfluenceChildren": true,
+    "isLoop": false,
+    "szAnimTag": "FadeIn_1_5"
+}

@@ -2,7 +2,7 @@
 #include "UIPanel.h"
 
 #include "GameInstance.h"
-#include "UIAnimationCom.h"
+//#include "UIAnimationCom.h"
 
 CUIPanel::CUIPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -20,14 +20,7 @@ HRESULT CUIPanel::Initialize_Prototype()
 }
 
 HRESULT CUIPanel::Initialize(void* pArg)
-{
-	/*CUIObject::UIOBJECT_DESC	Desc{};
-
-	Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = g_iWinSizeX;
-	Desc.fSizeY = g_iWinSizeY;*/
-	
+{	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -71,6 +64,10 @@ HRESULT CUIPanel::Render()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
+	__super::Render_Debug_Rect();
+#endif
+
 	return S_OK;
 }
 
@@ -82,16 +79,6 @@ HRESULT CUIPanel::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
-
-	///* Com_Texture */
-	//if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
-	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-	//	return E_FAIL;
-
-	///* Com_Shader */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-	//	return E_FAIL;
 
 	return S_OK;
 }

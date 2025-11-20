@@ -738,6 +738,7 @@ void CRenderer::Free()
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pFog);
 	Safe_Release(m_pRadialBlur);
+	Safe_Release(m_pDepthofField);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

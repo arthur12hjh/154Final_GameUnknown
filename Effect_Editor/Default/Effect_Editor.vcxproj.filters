@@ -76,6 +76,12 @@
     <Filter Include="02.Object\Effect\SpriteEffect">
       <UniqueIdentifier>{aaea788e-f606-488c-9468-76a155f5258a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\Effect\TrailEffect">
+      <UniqueIdentifier>{fb308207-601c-4fd7-aac6-06bdc6438ec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\Effect\Particle\SpriteParticle">
+      <UniqueIdentifier>{2f26a5ed-9479-4b36-8ba5-03e3db05269d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -156,6 +162,12 @@
     <ClInclude Include="..\public\SpriteEffect.h">
       <Filter>02.Object\Effect\SpriteEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailEffect.h">
+      <Filter>02.Object\Effect\TrailEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpriteParticle.h">
+      <Filter>02.Object\Effect\Particle\SpriteParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Effect_Editor.ico">
@@ -226,6 +238,12 @@
     <ClCompile Include="..\private\SpriteEffect.cpp">
       <Filter>02.Object\Effect\SpriteEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TrailEffect.cpp">
+      <Filter>02.Object\Effect\TrailEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpriteParticle.cpp">
+      <Filter>02.Object\Effect\Particle\SpriteParticle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Effect_Editor.rc">
@@ -243,6 +261,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

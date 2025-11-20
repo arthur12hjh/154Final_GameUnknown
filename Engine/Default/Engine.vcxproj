@@ -209,6 +209,8 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\Public\Entity.h" />
+    <ClInclude Include="..\public\EventHandle.h" />
+    <ClInclude Include="..\public\EventManager.h" />
     <ClInclude Include="..\Public\FbxParser.h" />
     <ClInclude Include="..\Public\Fog.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
@@ -266,6 +268,7 @@ popd</Command>
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
+    <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\UIObject.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
@@ -314,6 +317,8 @@ popd</Command>
     <ClCompile Include="..\Private\DepthofField.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\Entity.cpp" />
+    <ClCompile Include="..\private\EventHandle.cpp" />
+    <ClCompile Include="..\private\EventManager.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\Private\Fog.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
@@ -370,6 +375,7 @@ popd</Command>
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
+    <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
     <ClCompile Include="..\private\UIObject.cpp" />
     <ClCompile Include="..\private\VIBuffer.cpp" />

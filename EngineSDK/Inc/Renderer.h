@@ -29,6 +29,8 @@ public:
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 	void	Render_Debug();
+
+	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
 
 private:

@@ -161,13 +161,13 @@
     <ClInclude Include="..\public\Bamboo.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
+    <ClInclude Include="..\public\BoxOpenEvent.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\CanBox.h" />
     <ClInclude Include="..\public\CherryBlossom1.h" />
     <ClInclude Include="..\public\CherryBlossom2.h" />
     <ClInclude Include="..\public\CherryBlossom3.h" />
     <ClInclude Include="..\public\CherryBlossom4.h" />
-    <ClInclude Include="..\public\CherryBlossom5.h" />
     <ClInclude Include="..\Public\CM_Rock1.h" />
     <ClInclude Include="..\Public\CM_Rock10.h" />
     <ClInclude Include="..\Public\CM_Rock11.h" />
@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\MousePointer.h" />
+    <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\PointParticle.h" />
     <ClInclude Include="..\public\Prob_Box.h" />
@@ -246,6 +247,9 @@
     <ClInclude Include="..\Public\Rock6.h" />
     <ClInclude Include="..\Public\Rock7.h" />
     <ClInclude Include="..\Public\Rock8.h" />
+    <ClInclude Include="..\public\Quest.h" />
+    <ClInclude Include="..\public\QuestManager.h" />
+    <ClInclude Include="..\public\RewordEvent.h" />
     <ClInclude Include="..\Public\ShaderDebugger.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
@@ -272,10 +276,14 @@
     <ClInclude Include="..\public\TombStone.h" />
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
-    <ClInclude Include="..\Public\UIAnimationCom.h" />
+    <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\Public\UIAnimInstance.h" />
+    <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
+    <ClInclude Include="..\Public\UIImage.h" />
+    <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
@@ -292,13 +300,13 @@
     <ClCompile Include="..\private\Bamboo.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
+    <ClCompile Include="..\private\BoxOpenEvent.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\CanBox.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp" />
     <ClCompile Include="..\private\CherryBlossom2.cpp" />
     <ClCompile Include="..\private\CherryBlossom3.cpp" />
     <ClCompile Include="..\private\CherryBlossom4.cpp" />
-    <ClCompile Include="..\private\CherryBlossom5.cpp" />
     <ClCompile Include="..\Private\CM_Rock1.cpp" />
     <ClCompile Include="..\Private\CM_Rock10.cpp" />
     <ClCompile Include="..\Private\CM_Rock11.cpp" />
@@ -372,6 +380,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\MeshEffect.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
+    <ClCompile Include="..\Private\Notify.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -393,6 +402,9 @@
     <ClCompile Include="..\Private\Rock6.cpp" />
     <ClCompile Include="..\Private\Rock7.cpp" />
     <ClCompile Include="..\Private\Rock8.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
+    <ClCompile Include="..\private\QuestManager.cpp" />
+    <ClCompile Include="..\private\RewordEvent.cpp" />
     <ClCompile Include="..\Private\ShaderDebugger.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
@@ -419,10 +431,13 @@
     <ClCompile Include="..\private\TombStone.cpp" />
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
-    <ClCompile Include="..\Private\UIAnimationCom.cpp" />
+    <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\Private\UIAnimInstance.cpp" />
+    <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
+    <ClCompile Include="..\Private\UIImage.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />

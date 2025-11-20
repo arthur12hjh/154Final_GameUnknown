@@ -97,7 +97,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vector H = normalize(L + V);
 
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, vORMDesc.b, vORMDesc.a);
     
     //ORM 마스크 없으면 그냥 Phong Shading 처리 해.
     if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
@@ -106,8 +105,15 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f);
     }
     //Shade 처리해서 
+    else if(vORMDesc.a == 2.f)
+    {
+        float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, 0.f, vORMDesc.a, true);
+        Out.vShade = float4(vColor, 1.f);
+        Out.vSpecular = 0.f;
+    }
     else
     {
+        float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, vORMDesc.b, vORMDesc.a);
         Out.vShade = float4(vColor, 1.f);
         Out.vSpecular = 0.f;
     }

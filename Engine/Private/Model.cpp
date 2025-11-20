@@ -141,6 +141,9 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop)
 			m_isLoop = isLoop;
 
 			m_Animations[m_iCurrentAnimIndex]->Reset();
+
+			if (AnimationChanged)
+				AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
 			return;
 		}
 

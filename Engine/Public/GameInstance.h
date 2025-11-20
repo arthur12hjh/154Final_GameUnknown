@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 
 class CCamera;
 class CInteraction_Component;
+class CEventHandle;
 class CCinemaTrack;
 
 class ENGINE_DLL CGameInstance final : public CBase
@@ -90,6 +91,7 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	void	Set_DebugVisible(_bool isVisible);
 #endif
 #pragma endregion
 
@@ -264,6 +266,7 @@ public:
 #pragma region Interact Manager
 	void								SetInteractionBaseObject(CGameObject* pObject);
 	void								ADD_Interaction(CInteraction_Component* pInteraction_Com);
+	void								Remove_Interaction(CInteraction_Component* pInteraction_Com);
 
 	CInteraction_Component*				GetNearInteraction();
 	vector<CInteraction_Component*>*	GetAllInteraction();
@@ -281,6 +284,14 @@ public:
 
 #pragma endregion
 
+
+#pragma region Event  Manager
+	HRESULT									Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									Remove_Event(const WCHAR* szEventTag);
+
+	HRESULT									Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
+#pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 	_bool							IsGamePasue() { return m_bIsPause; }
@@ -327,6 +338,8 @@ private:
 	class CFbxParser*				m_pFbxParser = { nullptr };
 	class CInteraction_Manager*		m_pInteract_Manager = { nullptr };
 	class CCinematicManager*		m_pCinema_Manager = { nullptr };
+	class CEventManager*			m_pEventManager = { nullptr };
+
 
 	_bool							m_bIsPause = false;
 	_float							m_fTimeRatio = { 1.f };

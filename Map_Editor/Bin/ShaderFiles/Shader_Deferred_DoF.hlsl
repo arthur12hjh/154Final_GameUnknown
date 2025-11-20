@@ -73,8 +73,8 @@ PS_OUT_BACKBUFFER PS_MAIN_DOF(PS_IN In)
     float fViewZ = vDepthDesc.y * 500.f;
     vector vPosition;
 
-    float fFocusDistance = 15.0f; // 카메라 초점 거리
-    float fMaxRange = 300.f;      // 블러가 최대로 적용될 거리
+    float fFocusDistance = 20.f; // 카메라 초점 거리
+    float fMaxRange = 20.f;      // 블러가 최대로 적용될 거리
     float fBlurAmount = saturate(abs(fViewZ - fFocusDistance) / fMaxRange);
     
     Out.vBackBuffer = lerp(Out.vBackBuffer, vBlurColor, fBlurAmount);

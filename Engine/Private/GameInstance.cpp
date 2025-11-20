@@ -25,6 +25,7 @@
 #include "BinParser.h"
 #include "Interaction_Manager.h"
 #include "CinematicManager.h"
+#include "EventManager.h"
 #include "FbxParser.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -134,6 +135,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 
 	m_pCinema_Manager = CCinematicManager::Create(*ppDevice, *ppContext);
 	if (nullptr == m_pCinema_Manager)
+		return E_FAIL;
+
+	m_pEventManager = CEventManager::Create();
+	if (nullptr == m_pEventManager)
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -434,6 +439,12 @@ HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 {
 	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
 }
+
+void CGameInstance::Set_DebugVisible(_bool isVisible)
+{
+	m_pRenderer->Set_DebugVisible(isVisible);
+}
+
 #endif
 
 #pragma endregion
@@ -871,6 +882,11 @@ void CGameInstance::ADD_Interaction(CInteraction_Component* pInteraction_Com)
 	m_pInteract_Manager->ADD_Interaction(pInteraction_Com);
 }
 
+void CGameInstance::Remove_Interaction(CInteraction_Component* pInteraction_Com)
+{
+	return m_pInteract_Manager->Remove_Interaction(pInteraction_Com);
+}
+
 CInteraction_Component* CGameInstance::GetNearInteraction()
 {
 	return m_pInteract_Manager->GetNearInteraction();
@@ -910,7 +926,28 @@ HRESULT CGameInstance::LoadCinemaSceneData(const WCHAR* szFilePath)
 {
 	return m_pCinema_Manager->LoadCutSceneData(szFilePath);
 }
+
 #pragma endregion
+
+#pragma region Event
+HRESULT CGameInstance::Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent)
+{
+	return m_pEventManager->Add_Event(szEventTag, pEvent);
+}
+HRESULT CGameInstance::Remove_Event(const WCHAR* szEventTag)
+{
+	return m_pEventManager->Remove_Event(szEventTag);
+}
+HRESULT CGameInstance::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+{
+	return m_pEventManager->Bind_Ovserver(szEventTag, pEvent);
+}
+HRESULT CGameInstance::UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+{
+	return m_pEventManager->UnBind_Ovserver(szEventTag, pEvent);
+}
+#pragma endregion
+
 
 _float CGameInstance::GetGameSpeedfRatio()
 {
@@ -1001,6 +1038,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionManager);
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
+	Safe_Release(m_pEventManager);
 	Safe_Release(m_pInteract_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pBinParser);

@@ -44,7 +44,7 @@ HRESULT CHUDLayer::ADD_GameObject(const WCHAR* UITag, CGameObject* pUserInterfac
 HRESULT CHUDLayer::Remove_GameObject(const WCHAR* UITag)
 {
     auto iter = m_UserInterfaces.find(UITag);
-    if (iter != m_UserInterfaces.end())
+    if (iter == m_UserInterfaces.end())
         return E_FAIL;
 
     Safe_Release(iter->second);

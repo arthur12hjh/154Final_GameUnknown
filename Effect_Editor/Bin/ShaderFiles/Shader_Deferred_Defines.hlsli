@@ -69,11 +69,6 @@ struct PS_OUT_FOG
     float fFogPower : SV_TARGET0;
 };
 
-struct PS_OUT_FOG
-{
-    float fFogPower : SV_TARGET0;
-};
-
 
 struct PS_OUT_DISTORTION
 {

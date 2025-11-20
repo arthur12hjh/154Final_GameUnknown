@@ -307,9 +307,6 @@
     <ClInclude Include="..\Public\RenderTarget.h">
       <Filter>01.Utility\09.Target_Manager\RenderTarget</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Entity.h">
-      <Filter>01.Utility\02.GameObjects\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Entity.h" />
     <ClInclude Include="..\Public\Interaction_Manager.h">
       <Filter>01.Utility\21.Interraction\Manager</Filter>
@@ -329,11 +326,23 @@
     <ClInclude Include="..\Public\Fog.h">
       <Filter>01.Utility\05.Renderer\Deferred\Fog</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Entity.h">
+      <Filter>01.Utility\02.GameObjects\Entity</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\RadialBlur.h">
       <Filter>01.Utility\05.Renderer\Deferred\RadialBlur</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DepthofField.h">
       <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>01.Utility\03.Components\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EventManager.h">
+      <Filter>01.Utility\23.Event\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EventHandle.h">
+      <Filter>01.Utility\23.Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -642,6 +651,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\DepthofField.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\DoF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>01.Utility\03.Components\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EventManager.cpp">
+      <Filter>01.Utility\23.Event\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EventHandle.cpp">
+      <Filter>01.Utility\23.Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1013,6 +1031,15 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\DoF\ShaderFile">
       <UniqueIdentifier>{92854abc-ff3c-4e22-a211-b150eaf6d061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\23.Event">
+      <UniqueIdentifier>{26c2ab48-b081-48a3-bf6b-84b7bcb5269b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\23.Event\Manager">
+      <UniqueIdentifier>{163b16a3-d18c-4067-9707-e1cd8068c34a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

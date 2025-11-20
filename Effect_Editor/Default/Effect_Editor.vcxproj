@@ -162,7 +162,9 @@
     <ClInclude Include="..\public\Particle_Setting.h" />
     <ClInclude Include="..\public\pch.h" />
     <ClInclude Include="..\public\SpriteEffect.h" />
+    <ClInclude Include="..\public\SpriteParticle.h" />
     <ClInclude Include="..\public\Tool_Effect_Defines.h" />
+    <ClInclude Include="..\public\TrailEffect.h" />
     <ClInclude Include="Effect_Editor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -202,6 +204,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\SpriteEffect.cpp" />
+    <ClCompile Include="..\private\SpriteParticle.cpp" />
+    <ClCompile Include="..\private\TrailEffect.cpp" />
     <ClCompile Include="Effect_Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +226,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

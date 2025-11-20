@@ -78,4 +78,13 @@ namespace Client
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
 
+	enum class QUEST_STATE { LOCKED, AVAILABLE, ACTIVE, COMPELETED, END };
+	typedef struct QuestStruct
+	{
+		// 기본구조체 대충 여기서 퀘스트 타입도 만들려면 만들기
+		QUEST_STATE			QuestState;
+		_uint				iQuestID;
+
+		vector<_uint>		RewardLists;
+	}QUEST_STRUCT;
 }

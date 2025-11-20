@@ -55,6 +55,9 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
 
             if (opened)
             {   
+                DrawObjectInfo(pGameObject);
+
+
                 // Ⅵ式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式忖
                 // 弛  class Logic                        弛
                 // 弛  1. ImGui TreeNode Debug            弛
@@ -104,6 +107,26 @@ void CDebugHierarchy::DarwLayerSelect()
 
         ImGui::EndCombo();
     }
+}
+
+void CDebugHierarchy::DrawObjectInfo(CGameObject* pDrawObject)
+{
+    auto pTransform = pDrawObject->GetTransform();
+    _float3 vPosition{}, vLook{}, vRight{}, vUp{};
+    _float3 vScale = pTransform->Get_Scale();
+    XMStoreFloat3(&vPosition, pTransform->Get_State(STATE::POSITION));
+    XMStoreFloat3(&vRight, pTransform->Get_State(STATE::RIGHT));
+    XMStoreFloat3(&vUp, pTransform->Get_State(STATE::UP));
+    XMStoreFloat3(&vLook, pTransform->Get_State(STATE::LOOK));
+
+    ImGui::Text("Transform Info");
+    ImGui::Separator();
+    ImGui::Text("Right -    X : %.2f Y : %.2f Z :%.2f", vRight.x, vRight.y, vRight.z);
+    ImGui::Text("Up -       X : %.2f Y : %.2f Z :%.2f", vUp.x, vUp.y, vUp.z);
+    ImGui::Text("Look -     X : %.2f Y : %.2f Z :%.2f", vLook.x, vLook.y, vLook.z);
+    ImGui::Text("Position - X : %.2f Y : %.2f Z :%.2f", vPosition.x, vPosition.y, vPosition.z);
+    ImGui::Text("Rotation - 爾盟");
+    ImGui::Text("Scale -    X : %.2f Y : %.2f Z :%.2f", vScale.x, vScale.y, vScale.z);
 }
 
 CDebugHierarchy* CDebugHierarchy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
