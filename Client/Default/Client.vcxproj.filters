@@ -310,6 +310,24 @@
     <Filter Include="30.ImGui\ShaderDebugger">
       <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="4.Quest">
+      <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4.Quest\QuestManager">
+      <UniqueIdentifier>{a265add8-4e0a-443a-a467-a78963f2b34d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4.Quest\Quests">
+      <UniqueIdentifier>{0e9fc1dd-5061-47c7-98d9-73f11ed52bed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4.Quest\Event">
+      <UniqueIdentifier>{ffe1b785-16ea-4643-a20d-39d3676f0d7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4.Quest\Event\Reword">
+      <UniqueIdentifier>{dcdbb99a-54bc-4852-875b-797962abdc7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="4.Quest\Event\BoxOpen">
+      <UniqueIdentifier>{a1c1686e-afb4-4726-9183-68a823c9243d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -558,6 +576,21 @@
     <ClInclude Include="..\Public\ShaderDebugger.h">
       <Filter>30.ImGui\ShaderDebugger</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\QuestManager.h">
+      <Filter>4.Quest\QuestManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Quest.h">
+      <Filter>4.Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestQuest.h">
+      <Filter>4.Quest\Quests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RewordEvent.h">
+      <Filter>4.Quest\Event\Reword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BoxOpenEvent.h">
+      <Filter>4.Quest\Event\BoxOpen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -789,6 +822,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\ShaderDebugger.cpp">
       <Filter>30.ImGui\ShaderDebugger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\QuestManager.cpp">
+      <Filter>4.Quest\QuestManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Quest.cpp">
+      <Filter>4.Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestQuest.cpp">
+      <Filter>4.Quest\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RewordEvent.cpp">
+      <Filter>4.Quest\Event\Reword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BoxOpenEvent.cpp">
+      <Filter>4.Quest\Event\BoxOpen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
