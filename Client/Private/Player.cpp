@@ -91,6 +91,16 @@ void CPlayer::Update(_float fTimeDelta)
 		m_iState |= STATE_IDLE;
 	}
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
+	{
+		CGameManager::GetInstance()->Accept_Quest(1);
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+	{
+		CGameManager::GetInstance()->CompletedQuest(1);
+	}
+
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
 		m_iState = STATE::STATE_ATTACK;
@@ -99,7 +109,8 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 	{
 		auto pInterraction = m_pGameInstance->GetNearInteraction();
-		pInterraction->Action_InteractionEvent(this);
+		if(pInterraction)
+			pInterraction->Action_InteractionEvent(this);
 	}
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
