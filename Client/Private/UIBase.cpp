@@ -235,8 +235,9 @@ HRESULT CUIBase::Bind_ShaderResources()
 	if (m_pShaderCom)
 	{
 		_float fAlpha{ m_tUIDesc.fAlpha };
-		if(m_pParent)
-			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
+		/*if(dynamic_cast<CUIBase*>(m_pParent))
+			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;*/
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
 			return E_FAIL;
