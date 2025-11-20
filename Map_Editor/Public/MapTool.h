@@ -64,9 +64,11 @@ private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	CTransform* m_pCameraTransform = { nullptr };
 	CTransform* m_pTransform = { nullptr };
+	CTransform* m_pPlayerTransform = { nullptr };
 
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
+
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
@@ -95,12 +97,6 @@ private:
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 	MAP_THEME			m_eCurrentMap = { MAP_THEME::END };
 
-	ID3D11Buffer* m_pDebugVB = nullptr; // <--- 이 변수를 만듭니다.
-	ID3D11InputLayout* m_pDebugInputLayout = nullptr;
-	ID3D11VertexShader* m_pDebugVS = nullptr;
-	ID3D11PixelShader* m_pDebugPS = nullptr;
-	const UINT DEBUG_MAX_VERTICES = 8;
-
 private:
 	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
 
@@ -111,7 +107,7 @@ private:
 
 
 	_vector				m_vNaviPoints[3] = {};
-	_float				m_fNaviSnapRadius = { 1.5f };
+	_float				m_fNaviSnapRadius = { 2.f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)
 	NAVI_MODE			m_eNaviMode = { NAVI_MODE::NONE }; // 현재 네비게이션 작업 모드
 	_bool				m_bIsNaviEditMode = { false }; // 네비게이션 편집 모드

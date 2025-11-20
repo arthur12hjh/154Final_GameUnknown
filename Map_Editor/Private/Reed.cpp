@@ -116,7 +116,7 @@ HRESULT CReed::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float fSpeed = 1.f;	   // 빠르기
-	_float fFrequency = 0.3f;  // 패턴 밀도
+	_float fFrequency = 0.2f;  // 패턴 밀도
 	_float fAmplitude = 0.6f;  // 흔들림 최대 폭
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveSpeed", &fSpeed, sizeof(_float))))
