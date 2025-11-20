@@ -18,6 +18,9 @@ HRESULT CMapTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
+	CGameObject* pPlayer = (m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Camera")))->back();
+	
+	m_pPlayerTransform = dynamic_cast<CTransform*>(pPlayer->Find_Component(TEXT("Com_Transform")));
 
 	if (pTerrainList != nullptr && !pTerrainList->empty())
 	{
@@ -89,9 +92,9 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_Player"); layerTag = TEXT("Layer_Player");
 				}
-				else if (m_eCurrentObject == ADD_OBJECT::VIL_BUI03_04)
+				else if (m_eCurrentObject == ADD_OBJECT::STONETILE)
 				{
-					protoTag = TEXT("Prototype_GameObject_Vil_Bui03_04"); layerTag = TEXT("Layer_Vil_Bui03_04");
+					protoTag = TEXT("Prototype_GameObject_StoneTile"); layerTag = TEXT("Layer_StoneTile");
 				}
 				else if (m_eCurrentObject == ADD_OBJECT::INSCRIPTION_L)
 				{
@@ -181,6 +184,110 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_Rock8"); layerTag = TEXT("Layer_Rock8");
 				}
+				else if (m_eCurrentObject == ADD_OBJECT::CHERRYBLOSSOM1)
+				{
+					protoTag = TEXT("Prototype_GameObject_CherryBlossom1"); layerTag = TEXT("Layer_CherryBlossom1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CHERRYBLOSSOM2)
+				{
+					protoTag = TEXT("Prototype_GameObject_CherryBlossom2"); layerTag = TEXT("Layer_CherryBlossom2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CHERRYBLOSSOM3)
+				{
+					protoTag = TEXT("Prototype_GameObject_CherryBlossom3"); layerTag = TEXT("Layer_CherryBlossom3");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CHERRYBLOSSOM4)
+				{
+					protoTag = TEXT("Prototype_GameObject_CherryBlossom4"); layerTag = TEXT("Layer_CherryBlossom4");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::GIWAJIP)
+				{
+					protoTag = TEXT("Prototype_GameObject_Giwajip"); layerTag = TEXT("Layer_Giwajip");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::GRASS)
+				{
+					protoTag = TEXT("Prototype_GameObject_Grass"); layerTag = TEXT("Layer_Grass");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::DRYGRASS1)
+				{
+					protoTag = TEXT("Prototype_GameObject_DryGrass1"); layerTag = TEXT("Layer_DryGrass1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::DRYGRASS2)
+				{
+					protoTag = TEXT("Prototype_GameObject_DryGrass2"); layerTag = TEXT("Layer_DryGrass2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::DRYGRASS3)
+				{
+					protoTag = TEXT("Prototype_GameObject_DryGrass3"); layerTag = TEXT("Layer_DryGrass3");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONELANTERN1)
+				{
+					protoTag = TEXT("Prototype_GameObject_StoneLantern1"); layerTag = TEXT("Layer_StoneLantern1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::STONELANTERN2)
+				{
+					protoTag = TEXT("Prototype_GameObject_StoneLantern2"); layerTag = TEXT("Layer_StoneLantern2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::GIWAJIP2)
+				{
+					protoTag = TEXT("Prototype_GameObject_Giwajip2"); layerTag = TEXT("Layer_Giwajip2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK1)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock1"); layerTag = TEXT("Layer_CM_Rock1");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK2)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock2"); layerTag = TEXT("Layer_CM_Rock2");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK3)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock3"); layerTag = TEXT("Layer_CM_Rock3");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK4)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock4"); layerTag = TEXT("Layer_CM_Rock4");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK5)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock5"); layerTag = TEXT("Layer_CM_Rock5");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK6)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock6"); layerTag = TEXT("Layer_CM_Rock6");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK7)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock7"); layerTag = TEXT("Layer_CM_Rock7");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK8)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock8"); layerTag = TEXT("Layer_CM_Rock8");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK9)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock9"); layerTag = TEXT("Layer_CM_Rock9");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK10)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock10"); layerTag = TEXT("Layer_CM_Rock10");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK11)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock11"); layerTag = TEXT("Layer_CM_Rock11");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK12)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock12"); layerTag = TEXT("Layer_CM_Rock12");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK13)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock13"); layerTag = TEXT("Layer_CM_Rock13");
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::CM_ROCK14)
+				{
+					protoTag = TEXT("Prototype_GameObject_CM_Rock14"); layerTag = TEXT("Layer_CM_Rock14");
+				}
 				
 				
 				if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DECREASE_RECT)
@@ -266,6 +373,40 @@ void CMapTool::Update(_float fTimeDelta)
 				}
 			}
 		}
+
+		if (m_pLastAddedObject)
+		{
+			CTransform* pTransform = dynamic_cast<CTransform*>(m_pLastAddedObject->Find_Component(TEXT("Com_Transform")));
+			if (pTransform)
+			{
+				_vector vPosition = pTransform->Get_State(STATE::POSITION);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
+				{
+					vPosition += pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+				}
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
+				{
+					vPosition -= pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+				}
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
+				{
+					vPosition -= pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+				}
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
+				{
+					vPosition += pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+				}
+
+				pTransform->Set_State(STATE::POSITION, vPosition);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
+					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
+					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) - XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
+			}
+		}
 	}
 
 }
@@ -324,6 +465,7 @@ HRESULT CMapTool::Render()
 	{
 		m_eCurrentObject = ADD_OBJECT::TERRAIN_FLAT;
 	}
+
 
 	ImGui::InputFloat("Height", &m_fHeight, 0.1f, 100.f);
 	ImGui::InputFloat("Radius", &m_fRadius, 0.01f, 10.f);
@@ -407,7 +549,7 @@ HRESULT CMapTool::Render()
 	// 1. 메인 테마/레벨 선택 드롭다운 (콤보 박스 사용 권장)
 	// ----------------------------------------------------
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Tutorial", "Gorilla", "Scarlet" };
+	const _char* themeNames[] = { "Tutorial", "Gorilla", "Scarlet", "Common" };
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -420,7 +562,10 @@ HRESULT CMapTool::Render()
 	if (m_eCurrentMap == MAP_THEME::TUTORIAL)
 	{
 	}
+	else if (m_eCurrentMap == MAP_THEME::GORILLA)
+	{
 
+	}
 	else if(m_eCurrentMap == MAP_THEME::SCARLET)
 	{
 
@@ -432,10 +577,12 @@ HRESULT CMapTool::Render()
 		_int nSelectedEnvironment = -1;
 
 		const _char* modelNames[] = { "Player" };
-		const _char* buildingNames[] = { "Vil_Bui03_04", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2", 
-										 "Stone1", "Stone2", "Stone3", "Stone4", "Tile", "Giwajip" };
+		
+		const _char* buildingNames[] = { "StoneTile", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2", 
+										 "Stone1", "Stone2", "Stone3", "Stone4", "Giwajip", "StoneLantern1", "StoneLantern2", "Giwajip2" };
+		
 		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8", 
-											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4" };
+											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3"};
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -453,10 +600,10 @@ HRESULT CMapTool::Render()
 		{
 			if (ImGui::ListBox("##Buildings", &nSelectedBuilding, buildingNames, IM_ARRAYSIZE(buildingNames), 7))
 			{
-				if (nSelectedBuilding == 0) // Vil_Bui03_04
+				if (nSelectedBuilding == 0)
 				{
-					m_eCurrentObject = ADD_OBJECT::VIL_BUI03_04;
-					m_CurrentLayerName = TEXT("Layer_Vil_Bui03_04");
+					m_eCurrentObject = ADD_OBJECT::STONETILE;
+					m_CurrentLayerName = TEXT("Layer_StoneTile");
 				}
 				else if (nSelectedBuilding == 1)
 				{
@@ -518,6 +665,26 @@ HRESULT CMapTool::Render()
 					m_eCurrentObject = ADD_OBJECT::STONE4;
 					m_CurrentLayerName = TEXT("Layer_Stone4");
 				}
+				else if (nSelectedBuilding == 13)
+				{
+					m_eCurrentObject = ADD_OBJECT::GIWAJIP;
+					m_CurrentLayerName = TEXT("Layer_Giwajip");
+				}
+				else if (nSelectedBuilding == 14)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONELANTERN1;
+					m_CurrentLayerName = TEXT("Layer_StoneLantern1");
+				}
+				else if (nSelectedBuilding == 15)
+				{
+					m_eCurrentObject = ADD_OBJECT::STONELANTERN2;
+					m_CurrentLayerName = TEXT("Layer_StoneLantern2");
+				}
+				else if (nSelectedBuilding == 16)
+				{
+					m_eCurrentObject = ADD_OBJECT::GIWAJIP2;
+					m_CurrentLayerName = TEXT("Layer_Giwajip2");
+				}
 
 			}
 		}
@@ -575,37 +742,225 @@ HRESULT CMapTool::Render()
 					m_eCurrentObject = ADD_OBJECT::ROCK8;
 					m_CurrentLayerName = TEXT("Layer_Rock8");
 				}
+				else if (nSelectedEnvironment == 10)
+				{
+					m_eCurrentObject = ADD_OBJECT::CHERRYBLOSSOM1;
+					m_CurrentLayerName = TEXT("Layer_CherryBlossom1");
+				}
+				else if (nSelectedEnvironment == 11)
+				{
+					m_eCurrentObject = ADD_OBJECT::CHERRYBLOSSOM2;
+					m_CurrentLayerName = TEXT("Layer_CherryBlossom2");
+				}
+				else if (nSelectedEnvironment == 12)
+				{
+					m_eCurrentObject = ADD_OBJECT::CHERRYBLOSSOM3;
+					m_CurrentLayerName = TEXT("Layer_CherryBlossom3");
+				}
+				else if (nSelectedEnvironment == 13)
+				{
+					m_eCurrentObject = ADD_OBJECT::CHERRYBLOSSOM4;
+					m_CurrentLayerName = TEXT("Layer_CherryBlossom4");
+				}
+				else if (nSelectedEnvironment == 14)
+				{
+					m_eCurrentObject = ADD_OBJECT::GRASS;
+					m_CurrentLayerName = TEXT("Layer_Grass");
+				}
+				else if (nSelectedEnvironment == 15)
+				{
+					m_eCurrentObject = ADD_OBJECT::DRYGRASS1;
+					m_CurrentLayerName = TEXT("Layer_DryGrass1");
+				}
+				else if (nSelectedEnvironment == 16)
+				{
+					m_eCurrentObject = ADD_OBJECT::DRYGRASS2;
+					m_CurrentLayerName = TEXT("Layer_DryGrass2");
+				}
+				else if (nSelectedEnvironment == 17)
+				{
+					m_eCurrentObject = ADD_OBJECT::DRYGRASS3;
+					m_CurrentLayerName = TEXT("Layer_DryGrass3");
+				}
 
 			}
 		}
 
 	}
 	
+	else if (m_eCurrentMap == MAP_THEME::COMMON)
+	{
+		ImGui::Text("Scarlet Common Objects");
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
+		// 2. 모델 배치 / 삭제메뉴
+		_int nSelectedModel = -1;
+		_int nSelectedBuilding = -1;
+		_int nSelectedEnvironment = -1;
+
+		const _char* modelNames[] = { "" };
+
+		const _char* buildingNames[] = { "" };
+
+		const _char* environmentNames[] = { "CM_Rock1", "CM_Rock2", "CM_Rock3", "CM_Rock4", "CM_Rock5", "CM_Rock6", "CM_Rock7", "CM_Rock8", "CM_Rock9", "CM_Rock10", "CM_Rock11", "CM_Rock12", "CM_Rock13", "CM_Rock14" };
+
+		if (ImGui::CollapsingHeader("Environments"))
+		{
+			if (ImGui::ListBox("##Environments", &nSelectedEnvironment, environmentNames, IM_ARRAYSIZE(environmentNames), 7))
+			{
+				if (nSelectedEnvironment == 0)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK1;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock1");
+				}
+				else if (nSelectedEnvironment == 1)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK2;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock2");
+				}
+				else if (nSelectedEnvironment == 2)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK3;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock3");
+				}
+				else if (nSelectedEnvironment == 3)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK4;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock4");
+				}
+				else if (nSelectedEnvironment == 4)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK5;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock5");
+				}
+				else if (nSelectedEnvironment == 5)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK6;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock6");
+				}
+				else if (nSelectedEnvironment == 6)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK7;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock7");
+				}
+				else if (nSelectedEnvironment == 7)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK8;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock8");
+				}
+				else if (nSelectedEnvironment == 8)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK9;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock9");
+				}
+				else if (nSelectedEnvironment == 9)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK10;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock10");
+				}
+				else if (nSelectedEnvironment == 10)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK11;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock11");
+				}
+				else if (nSelectedEnvironment == 11)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK12;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock12");
+				}
+				else if (nSelectedEnvironment == 12)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK13;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock13");
+				}
+				else if (nSelectedEnvironment == 13)
+				{
+					m_eCurrentObject = ADD_OBJECT::CM_ROCK14;
+					m_CurrentLayerName = TEXT("Layer_CM_Rock14");
+				}
+			}
+		}
+	}
+
 	// 삭제 버튼
 	if (ImGui::Button("Delete All"))
 	{
-		if (m_eCurrentObject == ADD_OBJECT::END) return E_FAIL;
-
 		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
+		if (m_eCurrentObject == ADD_OBJECT::END || m_pObjects == nullptr || m_pObjects->empty()) return E_FAIL;
 
-		if (m_pObjects)
+
+		if (m_pObjects != nullptr)
 		{
 			for (auto pObject : *m_pObjects)
 			{
 				pObject->Set_Dead(true);
 			}
+
+			m_pObjects->clear();
 		}
 
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Delete Latest"))
 	{
-		if (m_eCurrentObject == ADD_OBJECT::END) return E_FAIL;
+		// m_pObjects는 현재 레이어의 CGameObject* 리스트 포인터입니다.
+		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
 
-		m_pObject = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName)->back();
+		// 2. 유효성 검사
+		if (m_eCurrentObject == ADD_OBJECT::END || m_pObjects == nullptr || m_pObjects->empty())
+			return E_FAIL;
 
-		m_pObject->Set_Dead(true);
+		auto iter = m_pObjects->end();
+		--iter;
+
+		CGameObject* pObjectToDelete = *iter;
+
+		if (pObjectToDelete != nullptr)
+		{
+			pObjectToDelete->Set_Dead(true);
+
+			m_pObjects->erase(iter); 
+
+			m_pObject = nullptr;
+		}
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete Pick"))
+	{
+		// m_pObjects는 현재 레이어의 CGameObject* 리스트 포인터입니다.
+		if (m_bIsDeplayMode == false)
+			return E_FAIL;
+
+		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
+
+		// 2. 유효성 검사
+		if (m_eCurrentObject == ADD_OBJECT::END || m_pPickedObject == nullptr || m_pObjects == nullptr)
+			return E_FAIL;
+
+
+		_bool bFound = false;
+		auto iter = m_pObjects->begin();
+		while (iter != m_pObjects->end())
+		{
+			if (*iter == m_pPickedObject)
+			{
+				(*iter)->Set_Dead(true); // 게임 루프에서 해제되도록 설정
+				iter = m_pObjects->erase(iter);
+				bFound = true;
+				break; // 찾았으므로 반복 종료
+			}
+			else
+			{
+				++iter;
+			}
+		}
+
+		if (bFound)
+		{
+			m_pPickedObject = nullptr;
+		}
+		
+	}
+
 	ImGui::SameLine();
 	if (ImGui::Button("NONE"))
 	{
@@ -630,7 +985,7 @@ HRESULT CMapTool::Render()
 
 	if (ImGui::Button("Teleport"))
 	{
-		m_pCameraTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
+		m_pPlayerTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
 	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -802,6 +1157,13 @@ HRESULT CMapTool::Render()
 	return S_OK;
 }
 
+HRESULT CMapTool::Render_Area()
+{
+	
+
+	return S_OK;
+}
+
 
 void CMapTool::Update_Rotation()
 {
@@ -827,14 +1189,85 @@ HRESULT CMapTool::Save_Map_Objects()
 		return E_FAIL;
 	}
 
-	// vil_bui03_04 객체 정보 저장
-	list<CGameObject*>* pVil_Bui03_04 = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
-	_uint iNumMonsters = (pVil_Bui03_04) ? (_uint)pVil_Bui03_04->size() : 0;
-	ofs.write(reinterpret_cast<const char*>(&iNumMonsters), sizeof(_uint));
+	// 35
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Giwajip")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_StoneLantern1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_StoneLantern2")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Stair")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Stone1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Stone2")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Stone3")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Stone4")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_StoneWall1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_StoneWall2")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_StoneTile")))) return S_OK;
+	   
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Inscription_L")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Inscription_R")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_TombStone")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_TombStoneBase1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_TombStoneBase2")))) return S_OK;
 
-	if (pVil_Bui03_04)
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_DryGrass1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_DryGrass2")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_DryGrass3")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Grass")))) return S_OK;
+	
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Reed")))) return S_OK;
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock2")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock3")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock4")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock5")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock6")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock7")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Rock8")))) return S_OK;
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Bamboo")))) return S_OK;
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CherryBlossom1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CherryBlossom2")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CherryBlossom3")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CherryBlossom4")))) return S_OK;
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Giwajip2")))) return S_OK;
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock1")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock2")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock3")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock4")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock5")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock6")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock7")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock8")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock9")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock10")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock11")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock12")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock13")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock14")))) return S_OK;
+
+	ofs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag)
+{
+
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
 	{
-		for (auto pObject : *pVil_Bui03_04)
+		for (auto pObject : *pObj)
 		{
 			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
 			if (pTransform)
@@ -848,8 +1281,6 @@ HRESULT CMapTool::Save_Map_Objects()
 		}
 	}
 
-	ofs.close();
-
 	return S_OK;
 }
 
@@ -862,25 +1293,94 @@ HRESULT CMapTool::Load_Map_Objects()
 		return E_FAIL;
 	}
 
-	_uint iNumVil_Bui03_04s = 0;
-	ifs.read(reinterpret_cast<char*>(&iNumVil_Bui03_04s), sizeof(_uint));
 
-	for (_uint i = 0; i < iNumVil_Bui03_04s; ++i)
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Giwajip"), TEXT("Layer_Giwajip")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_StoneLantern1"), TEXT("Layer_StoneLantern1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_StoneLantern2"), TEXT("Layer_StoneLantern2")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Stair"), TEXT("Layer_Stair")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Stone1"), TEXT("Layer_Stone1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Stone2"), TEXT("Layer_Stone2")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Stone3"), TEXT("Layer_Stone3")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Stone4"), TEXT("Layer_Stone4")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_StoneWall1"), TEXT("Layer_StoneWall1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_StoneWall2"), TEXT("Layer_StoneWall2")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_StoneTile"), TEXT("Layer_StoneTile")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Inscription_L"), TEXT("Layer_Inscription_L")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Inscription_R"), TEXT("Layer_Inscription_R")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_TombStone"), TEXT("Layer_TombStone")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_TombStoneBase1"), TEXT("Layer_TombStoneBase1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_TombStoneBase2"), TEXT("Layer_TombStoneBase2")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DryGrass1"), TEXT("Layer_DryGrass1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DryGrass2"), TEXT("Layer_DryGrass2")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DryGrass3"), TEXT("Layer_DryGrass3")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Grass"), TEXT("Layer_Grass")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Reed"), TEXT("Layer_Reed")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock1"), TEXT("Layer_Rock1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock2"), TEXT("Layer_Rock2")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock3"), TEXT("Layer_Rock3")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock4"), TEXT("Layer_Rock4")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock6"), TEXT("Layer_Rock6")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock7"), TEXT("Layer_Rock7")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock8"), TEXT("Layer_Rock8")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom1"), TEXT("Layer_CherryBlossom1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom2"), TEXT("Layer_CherryBlossom2")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom3"), TEXT("Layer_CherryBlossom3")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom4"), TEXT("Layer_CherryBlossom4")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Giwajip2"), TEXT("Layer_Giwajip2")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock1"), TEXT("Layer_CM_Rock1")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock2"), TEXT("Layer_CM_Rock2")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock3"), TEXT("Layer_CM_Rock3")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock4"), TEXT("Layer_CM_Rock4")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock5"), TEXT("Layer_CM_Rock5")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock6"), TEXT("Layer_CM_Rock6")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock7"), TEXT("Layer_CM_Rock7")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock8"), TEXT("Layer_CM_Rock8")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock9"), TEXT("Layer_CM_Rock9")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock10"), TEXT("Layer_CM_Rock10")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock14"), TEXT("Layer_CM_Rock14")))) return S_OK;
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
 	{
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Vil_Bui03_04"),
-			ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag,
+			ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
 
 		if (SUCCEEDED(hr))
 		{
-			// Add_GameObject_ToLayer 호출 직후, 전체 리스트에서 마지막에 추가된 객체 가져오기
-			list<CGameObject*>* pVil_Bui03_04s = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Vil_Bui03_04"));
-			if (pVil_Bui03_04s && !pVil_Bui03_04s->empty())
+			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
+			if (pObjs && !pObjs->empty())
 			{
-				CGameObject* pVil_Bui03_04 = pVil_Bui03_04s->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pVil_Bui03_04->Find_Component(TEXT("Com_Transform")));
+				CGameObject* pObj = pObjs->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
 				if (pTransform)
 				{
 					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
@@ -897,8 +1397,6 @@ HRESULT CMapTool::Load_Map_Objects()
 					// 순서: Scale * Rotation * Translation (SRT 순서)
 					_matrix matFinalWorld = matScale * matRotation * matTranslation;
 
-					// 2. [바뀐 내용] CTransform의 월드 행렬 포인터를 얻어 직접 덮어씁니다.
-					//    (Get_WorldMatrixPtr()가 쓰기 가능한 포인터를 반환한다고 가정합니다.)
 					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
 					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
 
@@ -907,10 +1405,21 @@ HRESULT CMapTool::Load_Map_Objects()
 		}
 	}
 
-	ifs.close();
-
 	return S_OK;
 }
+
+void CMapTool::Delete_All_Before_Load(const _tchar* pLayerTag)
+{
+	m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
+	if (m_pObjects)
+	{
+		for (auto pObject : *m_pObjects)
+		{
+			pObject->Set_Dead(true);
+		}
+	}
+}
+
 
 HRESULT CMapTool::Save_Terrain_HeightMap()
 {
