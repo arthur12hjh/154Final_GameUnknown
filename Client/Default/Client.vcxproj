@@ -160,6 +160,7 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
+    <ClInclude Include="..\public\BoxOpenEvent.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\CanBox.h" />
     <ClInclude Include="..\public\DataManager.h" />
@@ -210,6 +211,9 @@
     <ClInclude Include="..\Public\PonyTail_Player.h" />
     <ClInclude Include="..\public\Prob_Interaction.h" />
     <ClInclude Include="..\Public\PxTestProp.h" />
+    <ClInclude Include="..\public\Quest.h" />
+    <ClInclude Include="..\public\QuestManager.h" />
+    <ClInclude Include="..\public\RewordEvent.h" />
     <ClInclude Include="..\Public\ShaderDebugger.h" />
     <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
@@ -224,6 +228,7 @@
     <ClInclude Include="..\Public\Task_Wait.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Terrain_Sand.h" />
+    <ClInclude Include="..\public\TestQuest.h" />
     <ClInclude Include="..\Public\UIAnimationCom.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
@@ -244,6 +249,7 @@
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
+    <ClCompile Include="..\private\BoxOpenEvent.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\CanBox.cpp" />
     <ClCompile Include="..\private\DataManager.cpp" />
@@ -310,6 +316,9 @@
     <ClCompile Include="..\Private\PonyTail_Player.cpp" />
     <ClCompile Include="..\private\Prob_Interaction.cpp" />
     <ClCompile Include="..\Private\PxTestProp.cpp" />
+    <ClCompile Include="..\private\Quest.cpp" />
+    <ClCompile Include="..\private\QuestManager.cpp" />
+    <ClCompile Include="..\private\RewordEvent.cpp" />
     <ClCompile Include="..\Private\ShaderDebugger.cpp" />
     <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
@@ -324,6 +333,7 @@
     <ClCompile Include="..\Private\Task_Wait.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Terrain_Sand.cpp" />
+    <ClCompile Include="..\private\TestQuest.cpp" />
     <ClCompile Include="..\Private\UIAnimationCom.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />

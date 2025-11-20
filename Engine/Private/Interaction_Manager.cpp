@@ -37,6 +37,7 @@ void CInteraction_Manager::Update()
         m_pNearInteraction = m_pInteractionList.front();
     else
         m_pNearInteraction = nullptr;
+
 }
 
 void CInteraction_Manager::SetInteractionBaseObject(CGameObject* pObject)
@@ -49,6 +50,13 @@ void CInteraction_Manager::ADD_Interaction(CInteraction_Component* pInteraction_
     auto iter = find(m_pInteractionList.begin(), m_pInteractionList.end(), pInteraction_Com);
     if (iter == m_pInteractionList.end())
         m_pInteractionList.push_back(pInteraction_Com);
+}
+
+void CInteraction_Manager::Remove_Interaction(CInteraction_Component* pInteraction_Com)
+{
+    auto iter = find(m_pInteractionList.begin(), m_pInteractionList.end(), pInteraction_Com);
+    if (iter != m_pInteractionList.end())
+        m_pInteractionList.erase(iter);
 }
 
 CInteraction_Manager* CInteraction_Manager::Create()

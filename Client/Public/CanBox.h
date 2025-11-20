@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CModel;
+class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
@@ -28,6 +29,7 @@ public:
 
 private:
 	CModel*							m_pModelCom = { nullptr };
+	CEventHandle*					m_pEventHandle = { nullptr };
 	BOX_STATE						m_eState = { BOX_STATE::LOCK };
 
 private:
