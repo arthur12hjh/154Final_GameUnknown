@@ -4,7 +4,6 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
-#include "UIAnimationCom.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -31,15 +30,14 @@ HRESULT CUIBase::Initialize(void* pArg)
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
+	m_eVisibility = (VISIBILITY)m_tUIDesc.iVisiblity;
+
 #ifdef _DEBUG
 	if (FAILED(Ready_Components_For_Debug()))
 		return E_FAIL;
 #endif
 
 	if (FAILED(Ready_Texture()))
-		return E_FAIL;
-
-	if (FAILED(Ready_UIAnimation()))
 		return E_FAIL;
 
 	return S_OK;
@@ -54,10 +52,12 @@ void CUIBase::Update(_float fTimeDelta)
 	////부모 따라가기
 	if (m_pParent)
 	{
+		m_eVisibility = m_pParent->GetVisibility();
+		
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
-		m_tUIDesc.fAlpha = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
-		//m_eAnimState = dynamic_cast<CUIBase*>(m_pParent)->Get_Anim_State();
+		
+		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -65,40 +65,17 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	switch (m_eAnimState)
-	{
-	case ANIM_STATE::PLAY :
-		m_pUIAnimCom->Play(m_szCurrentAnimTag);
-		break;
-	case ANIM_STATE::PAUSE :
-		m_pUIAnimCom->Pause();
-		break;
-	case ANIM_STATE::STOP :
-	{
-		m_pUIAnimCom->Stop();
-		m_eAnimState = ANIM_STATE::IDLE;
-	}
-		break;
-	case ANIM_STATE::IDLE:
-		break;
-	}
-
+#ifdef _DEBUG
+	if (m_eVisibility == VISIBILITY::VISIBLE)
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#elif
 	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#endif
 }
 
 HRESULT CUIBase::Render()
 {
-#ifdef _DEBUG
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	if (pHUD && pHUD->Get_Show_Debug_Rect())
-	{
-		Render_Debug_Rect();
-		Safe_Release(pHUD);
-	}
-#endif
-
 	return S_OK;
 }
 
@@ -141,7 +118,7 @@ void CUIBase::Set_Pass(_uint iPass)
 // 툴에서 텍스쳐 변경할 때 사용
 HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex)
 {
-	CUIBase::UI_TEXTURE_DESC Desc{};
+	UI_TEXTURE_DESC Desc{};
 	Desc.iTextureIndex = iTextureIndex;
 	Desc.szTextureComTag = szTextureTag;
 	Desc.szProtoTag = szProtoTag;
@@ -178,19 +155,6 @@ HRESULT CUIBase::Ready_Texture()
 	return S_OK;
 }
 
-HRESULT CUIBase::Ready_UIAnimation()
-{
-	m_pUIAnimCom = CUIAnimationCom::Create();
-	
-	if (!m_pUIAnimCom)
-		return E_FAIL;
-
-	m_pUIAnimCom->Initialize();
-	m_pUIAnimCom->Set_Owner(this);
-
-	return S_OK;
-}
-
 #ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
@@ -203,17 +167,28 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 
 void CUIBase::Render_Debug_Rect()
 {
-	if (FAILED(Bind_Debug_ShaderResources()))
-		return;
+#ifdef _DEBUG
+	CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	if (FAILED(m_pShaderCom->Begin(1)))
-		return;
+	if (pUIHUD && pUIHUD->Get_Show_Debug_Rect())
+	{
+		if (FAILED(Bind_Debug_ShaderResources()))
+			return;
 
-	if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
-		return;
+		if (FAILED(m_pShaderCom->Begin(1)))
+			return;
 
-	if (FAILED(m_pVIDebugBufferCom->Render()))
+		if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
+			return;
+
+		if (FAILED(m_pVIDebugBufferCom->Render()))
+			return;
+
+		Safe_Release(pUIHUD);
 		return;
+	}
+
+#endif
 }
 
 HRESULT CUIBase::Bind_Debug_ShaderResources()
@@ -259,7 +234,11 @@ HRESULT CUIBase::Bind_ShaderResources()
 {
 	if (m_pShaderCom)
 	{
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
+		_float fAlpha{ m_tUIDesc.fAlpha };
+		if(m_pParent)
+			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
 			return E_FAIL;
 	}
 
@@ -270,9 +249,6 @@ void CUIBase::Free()
 {
 	__super::Free();
 
-	Safe_Delete(m_tOriginUIDesc.m_pUITextDesc);
-	Safe_Delete(m_tOriginUIDesc.m_pUITextureDesc);
-
 	for (auto iter : m_Children)
 		Safe_Release(iter);
 
@@ -280,7 +256,6 @@ void CUIBase::Free()
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
-	Safe_Release(m_pUIAnimCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

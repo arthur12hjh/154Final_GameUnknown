@@ -2,7 +2,7 @@
 #include "UIButton.h"
 
 #include "GameInstance.h"
-#include "UIAnimationCom.h"
+#include "UIHUD.h"
 
 CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -20,14 +20,7 @@ HRESULT CUIButton::Initialize_Prototype()
 }
 
 HRESULT CUIButton::Initialize(void* pArg)
-{
-	//CUIObject::UIOBJECT_DESC	Desc = *static_cast<CUIObject::UIOBJECT_DESC*>(pArg);
-
-	/*Desc.fX = g_iWinSizeX >> 1;
-	Desc.fY = g_iWinSizeY >> 1;
-	Desc.fSizeX = 100.f;
-	Desc.fSizeY = 100.f;*/
-	
+{	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -45,13 +38,55 @@ void CUIButton::Priority_Update(_float fTimeDelta)
 void CUIButton::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (MouseEnter())
+		m_eBtnState = BTN_STATE::HOVER;
+	else
+		m_eBtnState = BTN_STATE::DEFAULT;
 }
 
 void CUIButton::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	//m_pUIAnimCom->Play(fTimeDelta/*, &m_tUIDesc.m_pUIAnimDescs[0]*/);
+	if (m_ePrevBtnState != m_eBtnState)
+	{
+		switch (m_eBtnState)
+		{
+		case Client::CUIButton::BTN_STATE::DEFAULT:
+		{
+			/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+			Safe_Release(pHUD);*/
+			//m_pUIHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+			break;
+		}
+		case Client::CUIButton::BTN_STATE::HOVER:
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				break;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+			Safe_Release(pHUD);
+
+			//m_pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+			//m_pUIHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
+			break;
+		}
+		case Client::CUIButton::BTN_STATE::CLICK:
+			break;
+		case Client::CUIButton::BTN_STATE::SELECT:
+			break;
+		default:
+			break;
+		}
+
+		m_ePrevBtnState = m_eBtnState;
+	}
 }
 
 HRESULT CUIButton::Render()
@@ -73,6 +108,10 @@ HRESULT CUIButton::Render()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
+	__super::Render_Debug_Rect();
+#endif
+
 	return S_OK;
 }
 
@@ -84,16 +123,6 @@ HRESULT CUIButton::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
-
-	///* Com_Texture */
-	//if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, m_tUIDesc.szTextureComTag,
-	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-	//	return E_FAIL;
-
-	///* Com_Shader */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -112,6 +141,28 @@ HRESULT CUIButton::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CUIButton::MouseEnter()
+{
+	/*_float4 fMousePos{};
+	XMStoreFloat4(&fMousePos,
+		dynamic_cast<CTransform*>(m_pMousePointer->Find_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));*/
+
+	POINT MousePoint = m_pGameInstance->GetMousePoint();
+
+	_float4 fRect = {
+		m_tUIDesc.fX + m_tUIDesc.fOffsetX - m_tUIDesc.fSizeX * 0.5f,
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY - m_tUIDesc.fSizeY * 0.5f,
+		m_tUIDesc.fX + m_tUIDesc.fOffsetX + m_tUIDesc.fSizeX * 0.5f,
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY + m_tUIDesc.fSizeY * 0.5f
+	};
+
+	return (
+		MousePoint.x >= fRect.x &&
+		MousePoint.y >= fRect.y &&
+		MousePoint.x <= fRect.z &&
+		MousePoint.y <= fRect.w);
 }
 
 CUIButton* CUIButton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

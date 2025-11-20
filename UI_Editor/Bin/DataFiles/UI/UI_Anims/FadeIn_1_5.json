@@ -17,7 +17,7 @@
         }
     ],
     "fDuration": 1.5,
-    "isLoop": false,
     "isInfluenceChildren": true,
-    "szAnimTag": "Test_Anim"
+    "isLoop": false,
+    "szAnimTag": "FadeIn_1_5"
 }

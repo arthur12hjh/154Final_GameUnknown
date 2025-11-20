@@ -14,8 +14,8 @@ NS_BEGIN(Client)
 class CUIBase;
 class CUIPanel;
 class CUIWrapper;
+class CUIImage;
 class CUIHUD;
-class UIAnimationCom;
 NS_END
 
 namespace GUI
@@ -88,6 +88,7 @@ private:
 
 	_char m_szCloneProtoTag[MAX_PATH]{};
 	_char m_szCloneLayerTag[MAX_PATH]{};
+	_char m_szCloneUITag[MAX_PATH]{};
 	_char m_szCloneTextureComTag[MAX_PATH]{};
 	_uint m_iCloneProtoLevel{ 0 };
 
@@ -106,6 +107,11 @@ private:
 
 	_float2 m_vEditedPos = { };
 	_float2 m_vEditedSize = { };
+
+	_bool m_bRatioLock{ false };
+	_float2 m_vRatio{1.f, 1.f};
+
+	_bool m_bVisible{ true };
 	
 	_char m_szInputText[MAX_PATH]{};
 	_float4 m_vColor{ 1.f, 1.f, 1.f, 1.f };
@@ -117,16 +123,16 @@ private:
 	vector<_wstring> m_AnimTrackTags{};
 	_char m_szCurrentTrackTag[MAX_PATH]{};
 
-	vector<_wstring> m_AnimPrefabs{};
+	vector<_wstring> m_AnimPrefabTags{};
 	_char m_szCurrentAnimPrefab[MAX_PATH]{};
-
-	class Client::UIAnimationCom* m_pUIAnimCom{ nullptr };
 
 	vector<_wstring> m_UILayerTags{};
 	_char m_szCurrentUILayerTag[MAX_PATH]{};
 
 	vector<_wstring> m_UITags{};
 	_char m_szCurrentUITag[MAX_PATH]{};
+
+	_char m_szInputAnimName[MAX_PATH]{};
 
 private:
 	void ViewMode();
@@ -149,13 +155,15 @@ private:
 
 	void View_Options();
 
-	void Set_Size(_float2* pOldSize, _float2* pEditedSize);
-	void Set_Position(_float2* pOldPos, _float2* pEditedPos);
+	void Set_Size();
+	void Set_Position();
 	void Set_Texture();
 	void Set_Text();
 
 	void Set_Animation();
-	void Edit_Animation(void* pDesc);
+	void Add_Animation();
+
+	void Edit_Animation(_wstring szAnimTag, _wstring szPrefabTag);
 
 	void Select_AnimTrack_Tags(_char* Outstr);
 

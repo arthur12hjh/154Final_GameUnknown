@@ -11,19 +11,12 @@ NS_END
 
 NS_BEGIN(Client)
 
-/*
-	hover, selected는 버튼이면 무조건 갖게 해야함
-*/
-
-class CUIButton final : public CUIBase
+class CUIImage final : public CUIBase
 {
-public:
-	enum class BTN_STATE { DEFAULT, HOVER, CLICK, SELECT };
-
 private:
-	CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUIButton(const CUIButton& Prototype);
-	virtual ~CUIButton() = default;
+	CUIImage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUIImage(const CUIImage& Prototype);
+	virtual ~CUIImage() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -37,14 +30,8 @@ protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
 
-private:
-	_bool MouseEnter();
-
-	BTN_STATE m_eBtnState{BTN_STATE::DEFAULT};
-	BTN_STATE m_ePrevBtnState{ m_eBtnState };
-
 public:
-	static CUIButton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUIImage* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
