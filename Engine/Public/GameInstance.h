@@ -97,6 +97,8 @@ public:
 
 #pragma region PIPELINE
 	void								Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix);
+	const _float4x4*					Get_PreTransform_Float4x4(D3DTS eState);
+	_matrix								Get_PreTransform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4(D3DTS eState);
 	_matrix								Get_Transform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4_Inverse(D3DTS eState);

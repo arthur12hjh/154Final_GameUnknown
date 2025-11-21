@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Component.h"
+#include "Deferred.h"
 
 NS_BEGIN(Engine)
 
-class CMotionBlur final : public CComponent
+class CMotionBlur final : public CDeferred
 {
 private:
 	CMotionBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -12,8 +12,16 @@ private:
 	virtual ~CMotionBlur() = default;
 
 public:
-	virtual HRESULT	Initialize_Prototype();
-	virtual HRESULT	Initialize(void* pArg);
+	virtual HRESULT	Initialize() override;
+	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override { return S_OK;  }
+	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) { return S_OK; }
+	HRESULT Render(class CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRTTag, const _wstring& strReturnRTTag);
+	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
+
+#ifdef _DEBUG
+	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) override;
+	virtual HRESULT Render_Debug(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader) override;
+#endif
 
 private:
 	
@@ -21,7 +29,6 @@ private:
 
 public:
 	static CMotionBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CComponent* Clone(void* pArg);
 	virtual void Free() override;
 };
 
