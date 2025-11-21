@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "StaticMap.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -10,7 +10,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CTombStoneBase1 final : public CGameObject
+class CTombStoneBase1 final : public CStaticMap
 {
 private:
 	CTombStoneBase1(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,8 +26,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
+
 
 private:
 	HRESULT Ready_Components();
@@ -35,7 +34,7 @@ private:
 
 public:
 	static CTombStoneBase1* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CStaticMap* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

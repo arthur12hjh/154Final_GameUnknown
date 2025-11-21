@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CCherryBlossom3::CCherryBlossom3(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CCherryBlossom3::CCherryBlossom3(const CCherryBlossom3& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -34,13 +34,16 @@ void CCherryBlossom3::Priority_Update(_float fTimeDelta)
 
 void CCherryBlossom3::Update(_float fTimeDelta)
 {
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
 void CCherryBlossom3::Late_Update(_float fTimeDelta)
 {
-
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 }
 
 HRESULT CCherryBlossom3::Render()
@@ -83,6 +86,16 @@ HRESULT CCherryBlossom3::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 10.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -113,7 +126,7 @@ CCherryBlossom3* CCherryBlossom3::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CGameObject* CCherryBlossom3::Clone(void* pArg)
+CStaticMap* CCherryBlossom3::Clone(void* pArg)
 {
 	CCherryBlossom3* pInstance = new CCherryBlossom3(*this);
 
@@ -129,7 +142,4 @@ CGameObject* CCherryBlossom3::Clone(void* pArg)
 void CCherryBlossom3::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

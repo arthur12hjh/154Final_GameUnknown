@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CCM_Rock14::CCM_Rock14(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CCM_Rock14::CCM_Rock14(const CCM_Rock14& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -112,7 +112,7 @@ CCM_Rock14* CCM_Rock14::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CGameObject* CCM_Rock14::Clone(void* pArg)
+CStaticMap* CCM_Rock14::Clone(void* pArg)
 {
 	CCM_Rock14* pInstance = new CCM_Rock14(*this);
 
@@ -128,7 +128,4 @@ CGameObject* CCM_Rock14::Clone(void* pArg)
 void CCM_Rock14::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

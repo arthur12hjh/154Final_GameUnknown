@@ -225,6 +225,7 @@
     <ClInclude Include="..\Public\Rock8.h" />
     <ClInclude Include="..\public\SpawnBox.h" />
     <ClInclude Include="..\Public\Stair.h" />
+    <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Stone1.h" />
     <ClInclude Include="..\Public\Stone2.h" />
     <ClInclude Include="..\Public\Stone3.h" />
@@ -324,6 +325,7 @@
     <ClCompile Include="..\Private\Rock8.cpp" />
     <ClCompile Include="..\private\SpawnBox.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
+    <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Stone1.cpp" />
     <ClCompile Include="..\Private\Stone2.cpp" />
     <ClCompile Include="..\Private\Stone3.cpp" />

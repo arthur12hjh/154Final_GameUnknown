@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "StaticMap.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -10,7 +10,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CInscription_R final : public CGameObject
+class CInscription_R final : public CStaticMap
 {
 private:
 	CInscription_R(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,8 +26,6 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();
@@ -35,7 +33,7 @@ private:
 
 public:
 	static CInscription_R* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CStaticMap* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

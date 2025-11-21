@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CBamboo::CBamboo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CBamboo::CBamboo(const CBamboo& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -34,13 +34,16 @@ void CBamboo::Priority_Update(_float fTimeDelta)
 
 void CBamboo::Update(_float fTimeDelta)
 {
-
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CBamboo::Late_Update(_float fTimeDelta)
 {
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CBamboo::Render()
@@ -83,6 +86,15 @@ HRESULT CBamboo::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+
+	OBBDesc.vSize = _float3(1.f, 5.f, 1.f);
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+	OBBDesc.vAngles = _float3(0.f, 0.f/*XMConvertToRadians(45.0f)*/, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -113,7 +125,7 @@ CBamboo* CBamboo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CBamboo::Clone(void* pArg)
+CStaticMap* CBamboo::Clone(void* pArg)
 {
 	CBamboo* pInstance = new CBamboo(*this);
 
@@ -129,7 +141,4 @@ CGameObject* CBamboo::Clone(void* pArg)
 void CBamboo::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

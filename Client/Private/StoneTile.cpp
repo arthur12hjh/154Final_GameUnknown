@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CStoneTile::CStoneTile(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CStoneTile::CStoneTile(const CStoneTile& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -84,6 +84,16 @@ HRESULT CStoneTile::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 5.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -114,7 +124,7 @@ CStoneTile* CStoneTile::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CGameObject* CStoneTile::Clone(void* pArg)
+CStaticMap* CStoneTile::Clone(void* pArg)
 {
 	CStoneTile* pInstance = new CStoneTile(*this);
 

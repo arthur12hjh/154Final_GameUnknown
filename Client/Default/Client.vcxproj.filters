@@ -798,6 +798,9 @@
     <ClInclude Include="..\Public\CM_Rock14.h">
       <Filter>02.GameObjects\Map\Common\Rock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1191,6 +1194,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIAnimManager.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
