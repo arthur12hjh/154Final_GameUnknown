@@ -16,6 +16,7 @@
 #include "Bloom.h"
 #include "Fog.h"
 #include "DepthofField.h"
+#include "MotionBlur.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -101,6 +102,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pDepthofField)
 		return E_FAIL;
 
+	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pMotionBlur)
+		return E_FAIL;
+
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -124,7 +129,8 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shadow"), 150.0f, 750.0f, 300.f, 300.f)))
 		return E_FAIL;
-
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 150.0f, 150.0f, 300.f, 300.f)))
+		return E_FAIL;
 
 	if (FAILED(m_pGlow->Ready_Debug(m_vScreenSize.x - 450.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
@@ -207,6 +213,10 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ToneMapping"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 
+	/* Target_Velocity */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Velocity"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -229,7 +239,7 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_ORM"))))
 		return E_FAIL;
-
+	
 	/* MRT_LightAcc */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -242,6 +252,10 @@ HRESULT CRenderer::Ready_MRTs()
 
 	/* MRT_ToneMapping */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_ToneMapping"), TEXT("Target_ToneMapping"))))
+		return E_FAIL;
+
+	/* MRT_Velocity */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Velocity"), TEXT("Target_Velocity"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -282,7 +296,8 @@ void CRenderer::Render()
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
-	//Render_Bloom();
+	Render_Bloom();
+	Render_MotionBlur();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
 	Render_Deferred();
 	Render_ScreenDeferred();
@@ -351,6 +366,26 @@ void CRenderer::Render_Shadow()
 		return;
 
 	Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
+}
+
+void CRenderer::Render_MotionBlur()
+{
+	// 모션블러 pass로는 클라이언트에서 처리
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Velocity"))))
+		return;
+
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::MOTIONBLUR)])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render_MotionBlur();
+
+		Safe_Release(pRenderObject);
+	}
+
+	m_RenderObjects[ENUM_CLASS(RENDER::MOTIONBLUR)].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
 }
 
 void CRenderer::Render_NonBlend()
@@ -561,6 +596,7 @@ void CRenderer::Render_ScreenDeferred()
 {
 	// DOF 먼저 적용.
 	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
+	m_pMotionBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 	m_pRadialBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 }
 
@@ -627,21 +663,25 @@ void CRenderer::Render_Debug()
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pBloom->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pBloom->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
 		return;
 }
 
@@ -738,6 +778,8 @@ void CRenderer::Free()
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pFog);
 	Safe_Release(m_pRadialBlur);
+	Safe_Release(m_pDepthofField);
+	Safe_Release(m_pMotionBlur);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

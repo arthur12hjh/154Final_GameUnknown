@@ -43,7 +43,6 @@ void CMousePointer::Priority_Update(_float fTimeDelta)
 
 void CMousePointer::Update(_float fTimeDelta)
 {
-
 }
 
 void CMousePointer::Late_Update(_float fTimeDelta)

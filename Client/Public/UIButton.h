@@ -17,6 +17,9 @@ NS_BEGIN(Client)
 
 class CUIButton final : public CUIBase
 {
+public:
+	enum class BTN_STATE { DEFAULT, HOVER, CLICK, SELECT };
+
 private:
 	CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUIButton(const CUIButton& Prototype);
@@ -33,6 +36,12 @@ public:
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
+
+private:
+	_bool MouseEnter();
+
+	BTN_STATE m_eBtnState{BTN_STATE::DEFAULT};
+	BTN_STATE m_ePrevBtnState{ m_eBtnState };
 
 public:
 	static CUIButton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

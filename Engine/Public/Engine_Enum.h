@@ -19,7 +19,7 @@ namespace Engine
 
 	enum class WINMODE			{ FULL, WIN, END };
 	enum class KEY_INPUT		{ KEYBOARD, MOUSE, END };
-								
+								// 이전 프레임 뷰 투영도 추가
 	enum class D3DTS			{ VIEW, PROJ, END };
 	enum class MODEL_TYPE		{ ANIM, NONANIM, END };
 								
@@ -70,6 +70,7 @@ namespace Engine
 	enum class RENDER {
 		PRIORITY,
 		SHADOW,
+		MOTIONBLUR,
 		NONBLEND,
 		NONLIGHT,
 		BLUR,

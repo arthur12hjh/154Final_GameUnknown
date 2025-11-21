@@ -256,10 +256,10 @@ void CVIBuffer_Terrain::Change_Height_Rect(_vector vPickingPos, _float fHeight, 
 		_float fVertexX = XMVectorGetX(vVertexPos);
 		_float fVertexZ = XMVectorGetZ(vVertexPos);
 
-		// 변경된 부분: 원형 범위가 아닌 사각형 범위 내에 있는지 체크
+		// 완전 평평한 사각형으로 일단 변경
 		if (fVertexX >= fMinX && fVertexX <= fMaxX && fVertexZ >= fMinZ && fVertexZ <= fMaxZ)
 		{
-			m_pVertexPositions[i].y += fHeight;
+			m_pVertexPositions[i].y = fHeight;
 		}
 	}
 

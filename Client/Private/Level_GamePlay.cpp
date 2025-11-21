@@ -23,7 +23,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Terrain_Sand(TEXT("Layer_Terrain_Sand"))))
+	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
@@ -74,7 +77,7 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-	LIGHT_DESC			LightDesc{};
+	/*LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
@@ -83,7 +86,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	Load_Light_Data();
 
@@ -124,10 +127,6 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-	
 	CActor::ACTOR_DESC ProbDesc = {};
 	ProbDesc.bIsApplyTransform = true;
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
@@ -168,21 +167,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-
 	return S_OK;
 
-}
-
-HRESULT CLevel_GamePlay::Ready_Layer_Terrain_Sand(const _wstring& strLayerTag)
-{
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Sand"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
-
-	return S_OK;
 }
 
 HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
@@ -207,6 +193,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &CameraDesc)))
 		return E_FAIL;*/
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -276,25 +280,93 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 		return E_FAIL;
 	}
 
-	_uint iNumVil_Bui03_04s = 0;
-	ifs.read(reinterpret_cast<char*>(&iNumVil_Bui03_04s), sizeof(_uint));
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Giwajip"), TEXT("Layer_Giwajip")))) return S_OK;
 
-	for (_uint i = 0; i < iNumVil_Bui03_04s; ++i)
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_StoneLantern1"), TEXT("Layer_StoneLantern1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_StoneLantern2"), TEXT("Layer_StoneLantern2")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Stair"), TEXT("Layer_Stair")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Stone1"), TEXT("Layer_Stone1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Stone2"), TEXT("Layer_Stone2")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Stone3"), TEXT("Layer_Stone3")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Stone4"), TEXT("Layer_Stone4")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_StoneWall1"), TEXT("Layer_StoneWall1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_StoneWall2"), TEXT("Layer_StoneWall2")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_StoneTile"), TEXT("Layer_StoneTile")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Inscription_L"), TEXT("Layer_Inscription_L")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Inscription_R"), TEXT("Layer_Inscription_R")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_TombStone"), TEXT("Layer_TombStone")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_TombStoneBase1"), TEXT("Layer_TombStoneBase1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_TombStoneBase2"), TEXT("Layer_TombStoneBase2")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_DryGrass1"), TEXT("Layer_DryGrass1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_DryGrass2"), TEXT("Layer_DryGrass2")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_DryGrass3"), TEXT("Layer_DryGrass3")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Grass"), TEXT("Layer_Grass")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Reed"), TEXT("Layer_Reed")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock1"), TEXT("Layer_Rock1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock2"), TEXT("Layer_Rock2")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock3"), TEXT("Layer_Rock3")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock4"), TEXT("Layer_Rock4")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock6"), TEXT("Layer_Rock6")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock7"), TEXT("Layer_Rock7")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Rock8"), TEXT("Layer_Rock8")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom1"), TEXT("Layer_CherryBlossom1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom2"), TEXT("Layer_CherryBlossom2")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom3"), TEXT("Layer_CherryBlossom3")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom4"), TEXT("Layer_CherryBlossom4")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Giwajip2"), TEXT("Layer_Giwajip2")))) return S_OK;
+
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock1"), TEXT("Layer_CM_Rock1")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock2"), TEXT("Layer_CM_Rock2")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock3"), TEXT("Layer_CM_Rock3")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock4"), TEXT("Layer_CM_Rock4")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock5"), TEXT("Layer_CM_Rock5")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock6"), TEXT("Layer_CM_Rock6")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock7"), TEXT("Layer_CM_Rock7")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock8"), TEXT("Layer_CM_Rock8")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock9"), TEXT("Layer_CM_Rock9")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock10"), TEXT("Layer_CM_Rock10")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock14"), TEXT("Layer_CM_Rock14")))) return S_OK;
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
 	{
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Vil_Bui03_04"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Vil_Bui03_04"));
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
 
 		if (SUCCEEDED(hr))
 		{
-			// Add_GameObject_ToLayer 호출 직후, 전체 리스트에서 마지막에 추가된 객체 가져오기
-			list<CGameObject*>* pVil_Bui03_04s = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Vil_Bui03_04"));
-			if (pVil_Bui03_04s && !pVil_Bui03_04s->empty())
+			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
+			if (pObjs && !pObjs->empty())
 			{
-				CGameObject* pVil_Bui03_04 = pVil_Bui03_04s->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pVil_Bui03_04->Find_Component(TEXT("Com_Transform")));
+				CGameObject* pObj = pObjs->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
 				if (pTransform)
 				{
 					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
@@ -304,34 +376,26 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 					_vector vPosition = {};
 					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-					_float fX, fY, fZ;
-					fX = XMVectorGetX(vScale);
-					fY = XMVectorGetY(vScale);
-					fZ = XMVectorGetZ(vScale);
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
 
-					pTransform->Set_Scale(fX, fY, fZ);
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
 
-					pTransform->Set_State(STATE::POSITION, vPosition);
-
-					XMMATRIX matRotation = XMMatrixRotationQuaternion(vRotation);
-
-					pTransform->Set_State(STATE::RIGHT, matRotation.r[0]);
-					pTransform->Set_State(STATE::UP, matRotation.r[1]);
-					pTransform->Set_State(STATE::LOOK, matRotation.r[2]);
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
 
 				}
 			}
 		}
+
 	}
-
-	ifs.close();
-
 	return S_OK;
 }
 
 HRESULT CLevel_GamePlay::Load_Light_Data()
 {
-	std::ifstream ifs("../Bin/DataFiles/LightData2.bin", std::ios::binary);
+	std::ifstream ifs("../Bin/DataFiles/LightData.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);

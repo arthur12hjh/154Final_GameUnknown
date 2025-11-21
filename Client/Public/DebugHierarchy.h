@@ -34,6 +34,7 @@ private:
 
 private :
 	void						DarwLayerSelect();
+	void						DrawObjectInfo(CGameObject* pDrawObject);
 
 public:
 	static	CDebugHierarchy*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

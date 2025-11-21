@@ -60,6 +60,11 @@ void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 	Set_State(STATE::LOOK, XMVector3Normalize(Get_State(STATE::LOOK)) * fZ);
 }
 
+void CTransform::Update_PreWorldMatrix()
+{
+	memcpy(&m_PreWorldMatrix, &m_WorldMatrix, sizeof(_float4x4));
+}
+
 HRESULT CTransform::Initialize_Prototype()
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -82,11 +87,14 @@ HRESULT CTransform::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName)
+HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, _bool IsPreWorldMatrix)
 {
-	return pShader->Bind_Matrix(pConstantName, &m_WorldMatrix);
-	
+	if (false == IsPreWorldMatrix)
+		return pShader->Bind_Matrix(pConstantName, &m_WorldMatrix);
+	else
+		return pShader->Bind_Matrix(pConstantName, &m_PreWorldMatrix);
 }
+
 
 // 결과벡터의 주소 D3DXVec3Normalize(&결과, &누구를);
 // 길이1짜리벡터 XMVector3Normalize(누구를);

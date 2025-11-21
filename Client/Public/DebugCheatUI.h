@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 class CLight;
+class CCamera;
 NS_END
 
 NS_BEGIN(Client)
@@ -36,15 +37,18 @@ private:
 	char						m_szVisbility[MAX_PATH] = {};
 	CLight*						m_pSelectLight = nullptr;
 
+	CCamera*					m_pSelectCamera = nullptr;
+
 	_float						m_fGameSpeed = {1.f};
 	_bool						m_bIsCamLerp = false;
+	_bool						m_bIsCameraLock[2] = { false, false };
 	_bool						m_bIsTeleport = false;
 	_bool						m_ShowLightInfo = false;
 #endif // _DEBUG
 
 private :
 	void						DrawObjectDebug();
-	void						DrawCaemraDebug();
+	void						DrawCameraDebug();
 	void						DrawLightDebug();
 	void						DrawGameSpeedDebug();
 

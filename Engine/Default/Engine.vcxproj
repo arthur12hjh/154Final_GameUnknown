@@ -209,6 +209,8 @@ popd</Command>
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\Public\Entity.h" />
+    <ClInclude Include="..\public\EventHandle.h" />
+    <ClInclude Include="..\public\EventManager.h" />
     <ClInclude Include="..\Public\FbxParser.h" />
     <ClInclude Include="..\Public\Fog.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
@@ -232,6 +234,7 @@ popd</Command>
     <ClInclude Include="..\public\Material.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\Public\MotionBlur.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\OBBCollider.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
@@ -315,6 +318,8 @@ popd</Command>
     <ClCompile Include="..\Private\DepthofField.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\Entity.cpp" />
+    <ClCompile Include="..\private\EventHandle.cpp" />
+    <ClCompile Include="..\private\EventManager.cpp" />
     <ClCompile Include="..\Private\FbxParser.cpp" />
     <ClCompile Include="..\Private\Fog.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
@@ -338,6 +343,7 @@ popd</Command>
     <ClCompile Include="..\private\Material.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\Private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\OBBCollider.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
@@ -395,6 +401,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>

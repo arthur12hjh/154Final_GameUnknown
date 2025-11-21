@@ -29,6 +29,8 @@ public:
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 	void	Render_Debug();
+
+	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
 
 private:
@@ -60,6 +62,7 @@ private:
 	class CFog*							m_pFog = { nullptr };
 	class CRadialBlur*					m_pRadialBlur = { nullptr }; 
 	class CDepthofField*				m_pDepthofField = { nullptr };
+	class CMotionBlur*					m_pMotionBlur = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -68,6 +71,7 @@ private:
 private:
 	void		Render_Priority();
 	void		Render_Shadow();
+	void		Render_MotionBlur();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
 	/* 기		록은 Combined 이전에. */
