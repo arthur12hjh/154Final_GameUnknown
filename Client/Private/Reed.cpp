@@ -27,25 +27,6 @@ HRESULT CReed::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	/*D3D11_MAPPED_SUBRESOURCE MappedResource{};
-
-	m_pModelCom->Lock(D3D11_MAP_WRITE_DISCARD, &MappedResource);
-
-	VTX_INSTANCE_MODEL* pInstanceData = (VTX_INSTANCE_MODEL*)MappedResource.pData;
-	_vector vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f);
-	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-	_vector vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f);
-
-	for(_uint i = 0; i < 2000; ++i)
-	{
-		XMStoreFloat4(&pInstanceData[i].vRight, vRight);
-		XMStoreFloat4(&pInstanceData[i].vUp, vUp);
-		XMStoreFloat4(&pInstanceData[i].vLook, vLook);
-
-	}
-
-	m_pModelCom->UnLock();*/
-
 	return S_OK;
 }
 
@@ -116,14 +97,26 @@ HRESULT CReed::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float fSpeed = 1.f;	   // 빠르기
-	_float fFrequency = 0.3f;  // 패턴 밀도
-	_float fAmplitude = 0.6f;  // 흔들림 최대 폭
+	_float fFrequency = 0.4f;  // 패턴 밀도
+	_float fAmplitude = 0.8f;  // 흔들림 최대 폭
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveSpeed", &fSpeed, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveFrequency", &fFrequency, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveAmplitude", &fAmplitude, sizeof(_float))))
+		return E_FAIL;
+
+	struct MinMaxScale
+	{
+		_float fMinScale = 0.7f;
+		_float fMaxScale = 1.0f;
+		_float fReserved = 0.0f;
+	};
+
+	MinMaxScale scaleInfo;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinMaxScale", &scaleInfo, sizeof(scaleInfo))))
 		return E_FAIL;
 
 	return S_OK;

@@ -254,7 +254,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* For.Prototype_Component_Texture_Sky1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_skybox_06.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sky */
@@ -1598,7 +1598,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	ReedDesc.iNumInstance = 4500;
 	ReedDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	ReedDesc.vRange = _float3(130.f, 0.f, 120.f);
-	ReedDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed1.binx";
+	ReedDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed5.binx";
 	ReedDesc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Reed");
