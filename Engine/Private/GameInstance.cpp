@@ -456,6 +456,16 @@ void CGameInstance::Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix)
 	m_pPipeLine->Set_Transform(eState, TransformStateMatrix);
 }
 
+const _float4x4* CGameInstance::Get_PreTransform_Float4x4(D3DTS eState)
+{
+	return m_pPipeLine->Get_PreTransform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_PreTransform_Matrix(D3DTS eState)
+{
+	return m_pPipeLine->Get_PreTransform_Matrix(eState);
+}
+
 const _float4x4* CGameInstance::Get_Transform_Float4x4(D3DTS eState)
 {
 	return m_pPipeLine->Get_Transform_Float4x4(eState);

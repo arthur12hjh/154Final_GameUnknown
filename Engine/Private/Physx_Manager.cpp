@@ -87,6 +87,8 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 
             const PxQuat& vPxRotation = pPxTransform.q;
             pTransform->Rotation(vPxRotation.x, vPxRotation.y, vPxRotation.z, vPxRotation.w);
+
+            pTransform->Update_PreWorldMatrix();
         }
 
         for (auto& Pair : m_CCTs)

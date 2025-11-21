@@ -234,6 +234,7 @@ popd</Command>
     <ClInclude Include="..\public\Material.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\Public\MotionBlur.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\OBBCollider.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
@@ -342,6 +343,7 @@ popd</Command>
     <ClCompile Include="..\private\Material.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\Private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\OBBCollider.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
@@ -399,6 +401,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>

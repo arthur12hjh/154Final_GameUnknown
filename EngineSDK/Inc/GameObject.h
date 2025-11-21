@@ -33,7 +33,7 @@ public:
 
 	virtual HRESULT		Render();
 	virtual HRESULT		Render_Shadow() { return S_OK; }
-
+	virtual HRESULT		Render_MotionBlur() { return S_OK; }
 public:
 	_bool isDead() const {
 		return m_isDead;
