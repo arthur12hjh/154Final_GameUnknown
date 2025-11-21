@@ -176,7 +176,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_skybox_06.png"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 4))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Brush */
@@ -477,10 +477,10 @@ HRESULT CLoader::Loading_For_Village()
 	/* For.Prototype_Component_Model_Reed */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 4500;
+	ModelDesc.iNumInstance = 3000;
 	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	ModelDesc.vRange = _float3(130.f, 0.f, 120.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed1.binx";
+	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed5.fbx";
 	ModelDesc.PreModelMatrix = PreTransformMatrix;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Reed"),

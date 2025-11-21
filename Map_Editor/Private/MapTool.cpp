@@ -1116,6 +1116,13 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	ImGui::InputText("Map Save File Path", szSaveFilePath, sizeof(szSaveFilePath));
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
 	// 에디터 세이브 / 로드
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
@@ -1130,7 +1137,7 @@ HRESULT CMapTool::Render()
 		}
 
 		// 맵 오브젝트 저장
-		if (FAILED(Save_Map_Objects()))
+		if (FAILED(Save_Map_Objects(szSaveFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"맵 오브젝트 저장 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -1139,10 +1146,17 @@ HRESULT CMapTool::Render()
 			MessageBoxW(g_hWnd, L"맵 오브젝트 저장 성공.", L"알림", MB_OK);
 		}
 	}
-	ImGui::SameLine();
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
+
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_Map_Objects()))
+		if (FAILED(Load_Map_Objects(szLoadFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"맵 오브젝트 로드 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -1179,10 +1193,10 @@ void CMapTool::Update_Rotation()
 	}
 }
 
-HRESULT CMapTool::Save_Map_Objects()
+HRESULT CMapTool::Save_Map_Objects(const _char* cFilePath)
 {
 	// 맵 데이터 파일 열기
-	std::ofstream ofs("../Bin/DataFiles/MapData.bin", std::ios::binary);
+	std::ofstream ofs(cFilePath, std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
@@ -1284,9 +1298,9 @@ HRESULT CMapTool::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayer
 	return S_OK;
 }
 
-HRESULT CMapTool::Load_Map_Objects()
+HRESULT CMapTool::Load_Map_Objects(const _char* cFilePath)
 {
-	std::ifstream ifs("../Bin/DataFiles/MapData.bin", std::ios::binary);
+	std::ifstream ifs(cFilePath, std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);

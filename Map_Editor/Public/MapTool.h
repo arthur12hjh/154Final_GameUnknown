@@ -36,10 +36,10 @@ public:
 
 
 	void Update_Rotation();
-	HRESULT Save_Map_Objects();
+	HRESULT Save_Map_Objects(const _char* cFilePath);
 	HRESULT Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag);
 
-	HRESULT Load_Map_Objects();
+	HRESULT Load_Map_Objects(const _char* cFilePath);
 	HRESULT Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
