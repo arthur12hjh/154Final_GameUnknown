@@ -24,7 +24,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECT_DESC	Desc{};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 10.f;
+	Desc.fSpeedPerSec = 30.f;
 
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
@@ -41,6 +41,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 
 void CShaderTestModel::Priority_Update(_float fTimeDelta)
 {
+	m_pTransformCom->Update_PreWorldMatrix();
 	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 }
 
@@ -63,15 +64,6 @@ void CShaderTestModel::Update(_float fTimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 		m_pModelCom->Set_AnimationIndex(1, true);
 	}
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
-	{
-		m_iShaderPassIdx = 2;
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
-	{
-		m_iShaderPassIdx = 3;
-	}
 }
 
 void CShaderTestModel::Late_Update(_float fTimeDelta)
@@ -80,6 +72,7 @@ void CShaderTestModel::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
@@ -148,6 +141,38 @@ HRESULT CShaderTestModel::Render_Shadow()
 	return S_OK;
 }
 
+HRESULT CShaderTestModel::Render_MotionBlur()
+{
+	/* 이전 프레임 월드매트릭스도 바인딩 */
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_PreWorldMatrix", true)))
+		return E_FAIL;
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	/* 이전 뷰 매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreViewMatrix", m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(4)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CShaderTestModel::Ready_Components()
 {
 	/* Com_Model */
@@ -188,10 +213,13 @@ HRESULT CShaderTestModel::Bind_ShaderResources()
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
+	
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 

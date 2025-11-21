@@ -32,12 +32,12 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
-
+	virtual HRESULT Render_MotionBlur() override;
 private:
 	CCharacterController* m_pCCT = { nullptr };
 	CModel*				  m_pModelCom = { nullptr };
 	CShader*			  m_pShaderCom = { nullptr };
-	_uint				  m_iShaderPassIdx = { 3 };
+	_uint				  m_iShaderPassIdx = { 2 };
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
