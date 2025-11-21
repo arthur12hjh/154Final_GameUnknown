@@ -685,8 +685,15 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteParticle"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
+		return E_FAIL;
+
+	
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/bin.binx"))))
+		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx"))))
 		return E_FAIL;
 	Desc->OnCompleted(this_thread::get_id());
 

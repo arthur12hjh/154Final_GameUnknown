@@ -20,6 +20,7 @@ public:
 	{
 		_float4	vRoot;
 		_float2 vSpeeds;
+		_float	vSize;
 	}VTX_INSTANCE_VERTEX_PARTICLE;
 
 protected:

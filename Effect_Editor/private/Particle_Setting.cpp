@@ -169,6 +169,7 @@ HRESULT CParticle_Setting::Initialize()
         FindClose(h);
     }
 
+    memset(pattern, 0, sizeof(pattern));
     strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Models/EffectMesh/*.binx");
 
     h = FindFirstFileA(pattern, &fd);
@@ -185,6 +186,20 @@ HRESULT CParticle_Setting::Initialize()
         } while (FindNextFileA(h, &fd));
         FindClose(h);
     }
+
+    memset(pattern, 0, sizeof(pattern));
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Effect/*.binx");
+
+    h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                m_Effects.push_back(fd.cFileName);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
+    }
+    m_iSelectEffect = 0;
     m_iSelectParticle = 0;
     m_iSelectMesh = 0;
 
@@ -274,7 +289,9 @@ void CParticle_Setting::Add_Particle()
 
     tParticleData.fTurnPower = _float2(1.f, 1.f);
     tParticleData.bisSphere = false;
+    tParticleData.bisCircle = false;
     tParticleData.fSphereSize = 1.f;
+    tParticleData.fCircleSpeed = 1.f;
 
     for (_uint i = 0; i < 3; ++i) {
         switch (i) {
@@ -355,6 +372,7 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.fDissolveUV = _float2(0, 0);
     tSpriteParticleData.fDissolveUVSpeed = _float2(0, 0);
     tSpriteParticleData.fDissolveUVSize = _float2(1, 1);
+    tSpriteParticleData.fParticleSize = _float2(1, 1);
     tSpriteParticleData.fDelayTime = 0.f;
     tSpriteParticleData.fEndTime = 5.f;
     tSpriteParticleData.bisBillboard = true;
@@ -362,7 +380,9 @@ void CParticle_Setting::Add_SpriteParticle()
 
     tSpriteParticleData.fTurnPower = _float2(1.f, 1.f);
     tSpriteParticleData.bisSphere = false;
+    tSpriteParticleData.bisCircle = false;
     tSpriteParticleData.fSphereSize = 1.f;
+    tSpriteParticleData.fCircleSpeed = 1.f;
     tSpriteParticleData.iUV = _int2(1, 1);
 
     tSpriteParticleData.szMaskTexture = m_ImageFiles[0][0];
@@ -618,15 +638,18 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUV);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSpeed);
         WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fCircle);
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
     }
     WriteInt(fileBinaryStream, m_pSpriteParticles.size());
     for (auto pSpriteParticle : m_pSpriteParticles) {
@@ -673,16 +696,21 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUV);
         WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUVSpeed);
         WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fDissolveUVSize);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fParticleSize);
+        WriteFloat2(fileBinaryStream, pSpriteParticle->Get_Data().fCircle);
         WriteInt2(fileBinaryStream, pSpriteParticle->Get_Data().iUV);
         WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fDelayTime);
         WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fEndTime);
         WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fSphereSize);
+        WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fAngle);
+        WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisCircle);
     }
     WriteInt(fileBinaryStream, m_pSprites.size());
     for (auto pSprite : m_pSprites) {
@@ -743,7 +771,6 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
     CSpriteEffect::SPRITE_DATA		    SpriteDesc{};
     char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
     strcat_s(szBinModelFilePath, MAX_PATH, szFile);
-    strcat_s(szBinModelFilePath, MAX_PATH, ".binx");
     ifstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
     _int iMeshCount = ReadInt(fileBinaryStream);
@@ -834,9 +861,11 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
         ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
         ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
         ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
         ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
         ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+        ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
@@ -845,6 +874,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
         ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+        ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
 
         CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
         pParticle->Initialize(nullptr);
@@ -895,10 +925,14 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
        SpriteParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
        SpriteParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
        SpriteParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fParticleSize = ReadFloat2(fileBinaryStream);
+       SpriteParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
        SpriteParticleDesc.iUV = ReadInt2(fileBinaryStream);
        SpriteParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
        SpriteParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
        SpriteParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+       SpriteParticleDesc.fAngle = ReadFloat(fileBinaryStream);
+       SpriteParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
 
        SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
        SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
@@ -907,6 +941,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
        SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
 
         CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
         pParticle->Initialize(nullptr);
@@ -971,6 +1006,8 @@ void CParticle_Setting::Update(_float fTimeDelta)
         m_pTrailEffect->Pause();
         m_pDistortionTrailEffect->Pause();
     }
+    ImGui::SameLine();
+    ImGui::DragFloat("Speed", &m_fSpeed, 0.1f, 0.1f, 100.f);
     if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "Particle" : m_iSelectMeshParticle == 1 ? "SpriteParticle" : m_iSelectMeshParticle == 2 ? "MeshEffect" : m_iSelectMeshParticle == 3 ? "SpriteEffect" : "TrailEffect"))
     {
         for (_uint i = 0; i < 5; ++i) {
@@ -994,12 +1031,46 @@ void CParticle_Setting::Update(_float fTimeDelta)
         ImGui::TreePop();
     }
 
+    ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
     if (ImGui::Button("Save", btn)) {
-        Save_Binary("bin");
+        Save_Binary(m_SaveFile);
+    }
+    if (ImGui::Button("Refresh", btn)) {
+        m_Effects.clear();
+        char pattern[MAX_PATH] = {};
+        strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Effect/*.binx");
+
+        WIN32_FIND_DATAA fd{};
+        HANDLE h = FindFirstFileA(pattern, &fd);
+        if (h != INVALID_HANDLE_VALUE) {
+            do {
+                if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                    m_Effects.push_back(fd.cFileName);
+                }
+            } while (FindNextFileA(h, &fd));
+            FindClose(h);
+        }
+    }
+
+
+    if (ImGui::BeginCombo("Save Effect", m_Effects[m_iSelectEffect].c_str()))
+    {
+        for (_uint i = 0; i < m_Effects.size(); ++i) {
+            _bool sel = i == m_iSelectEffect;
+            if (ImGui::Selectable(m_Effects[i].c_str(), sel)) {
+                m_iSelectEffect = i;
+                _tchar szPath[256] = { 0, };
+                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_Effects[m_iSelectEffect].c_str(), strlen(m_Effects[m_iSelectEffect].c_str()), szPath, 256);
+
+            }
+            if (sel)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
     }
 
     if (ImGui::Button("Load", btn)) {
-        Load_Binary("bin");
+        Load_Binary(m_Effects[m_iSelectEffect].c_str());
     }
     
     switch (m_iSelectMeshParticle)
@@ -1043,6 +1114,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
             if (ImGui::Button("All Replay", btn)) {
                 m_fTime = 0.f;
+                m_bisReplay = true;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
                 }
@@ -1052,12 +1124,17 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                     m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
                 }
+                ImGui::End();
+                return;
             }
 
             ImGui::SameLine();
             if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
                 m_fTime = 0.f;
                 m_pParticles[m_iSelectParticle]->Set_Components(m_pParticles[m_iSelectParticle]->Get_Data());
+                ImGui::End();
+                return;
             }
             if (ImGui::Button("Stop", btn)) {
                 m_tParticleData.fEndTime = m_pParticles[m_iSelectParticle]->Stop();
@@ -1364,9 +1441,17 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::EndCombo();
                 }
                 ImGui::Checkbox("Billboard", &m_tParticleData.bisBillboard);
-                ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
+                if(!m_tParticleData.bisCircle)
+                    ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
+                if (!m_tParticleData.bisSphere)
+                ImGui::Checkbox("Circle Pointer", &m_tParticleData.bisCircle);
                 if (m_tParticleData.bisSphere) {
                     ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (m_tParticleData.bisCircle) {
+                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircle), 0.1f, 0.f, 100.f);
                 }
                 if (ImGui::TreeNode("TurnPower"))
                 {
@@ -1469,6 +1554,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 ImGui::EndCombo();
             }
             if (ImGui::Button("All Replay", btn)) {
+                m_bisReplay = true;
                 m_fTime = 0.f;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
@@ -1479,12 +1565,17 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                     m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
                 }
+                ImGui::End();
+                return;
             }
 
             ImGui::SameLine();
             if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
                 m_fTime = 0.f;
                 m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
+                ImGui::End();
+                return;
             }
             if (ImGui::Button("Stop", btn)) {
                 m_tSpriteParticleData.fEndTime = m_pSpriteParticles[m_iSelectSpriteParticle]->Stop();
@@ -1795,10 +1886,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         ImGui::SetItemDefaultFocus();
                     ImGui::EndCombo();
                 }
+                ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fParticleSize), 0.1f, 0.f, 100.f);
                 ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
-                ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
+                if(!m_tSpriteParticleData.bisCircle)
+                    ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
+                if (!m_tSpriteParticleData.bisSphere)
+                ImGui::Checkbox("Circle Pointer", &m_tSpriteParticleData.bisCircle);
                 if (m_tSpriteParticleData.bisSphere) {
                     ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (m_tSpriteParticleData.bisCircle) {
+                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircle), 0.1f, 0.f, 100.f);
                 }
                 if (ImGui::TreeNode("TurnPower"))
                 {
@@ -1827,6 +1927,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
 
+                ImGui::DragFloat("Sprite Angle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fAngle), 0.1f, 0.f, 360.f);
                 ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteParticleData.iUV));
 
                 ImGui::Separator();
@@ -1836,7 +1937,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     _uint i = 0;
                     for (auto SRV : m_SRVs[m_iSpriteImageType]) {
                         if (ImGui::ImageButton(m_ImageFiles[m_iSpriteImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                            m_pSpriteParticles[m_iSelectSprite]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
+                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
                             switch (m_iSpriteImageType) {
                             case 0:
                                 m_tSpriteParticleData.szMaskTexture = m_ImageFiles[m_iSpriteImageType][i];
@@ -1911,6 +2012,8 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 ImGui::EndCombo();
             }
             if (ImGui::Button("All Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
                 }
@@ -1920,11 +2023,16 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                     m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
                 }
+                ImGui::End();
+                return;
             }
 
             ImGui::SameLine();
             if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
                 m_pMeshs[m_iSelectMesh]->Set_Components(m_pMeshs[m_iSelectMesh]->Get_Data());
+                ImGui::End();
+                return;
             }
             m_pMeshs[m_iSelectMesh]->Update(m_tMeshData);
 
@@ -2074,6 +2182,23 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     return;
                 }
             }
+
+            char str[3];
+            snprintf(str, sizeof(str), "%d", m_iSelectSprite);
+            if (ImGui::BeginCombo("Particles", str))
+            {
+                for (_uint i = 0; i < m_pSprites.size(); ++i) {
+                    _bool sel = i == m_iSelectSprite;
+                    snprintf(str, sizeof(str), "%d", i);
+                    if (ImGui::Selectable(str, sel)) {
+                        m_iSelectSprite = i;
+                        m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
             ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteData.fSize), 0.1f, 0.f, 100.f);
             ImGui::DragFloat3("Sprite Position", reinterpret_cast<_float*>(&m_tSpriteData.fPosition), 0.1f, -1000.f, 1000.f);
             ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
@@ -2163,6 +2288,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
             {
                 ImGui::DragFloat("Sprite FPS", reinterpret_cast<_float*>(&m_tSpriteData.fFPS), 0.01f, 0.f, 100.f);
                 ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteData.iUV));
+                ImGui::DragFloat("Sprite Angle", reinterpret_cast<_float*>(&m_tSpriteData.fAngle), 0.1f, 0.f, 360.f);
                 ImGui::TreePop();
             }
 
@@ -2335,10 +2461,15 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
     ImGui::End();
 
+    if (m_bisReplay)
+    {
+        m_bisReplay = false;
+        return;
+    }
     if (m_iSelectMeshParticle == 4) {
-        m_pTrailEffect->Priority_Update(fTimeDelta);
-        m_pTrailEffect->Update(fTimeDelta);
-        m_pTrailEffect->Late_Update(fTimeDelta);
+        m_pTrailEffect->Priority_Update(fTimeDelta* m_fSpeed);
+        m_pTrailEffect->Update(fTimeDelta* m_fSpeed);
+        m_pTrailEffect->Late_Update(fTimeDelta* m_fSpeed);
         //m_pDistortionTrailEffect->Priority_Update(fTimeDelta);
         //m_pDistortionTrailEffect->Update(fTimeDelta);
         //m_pDistortionTrailEffect->Late_Update(fTimeDelta);
@@ -2346,24 +2477,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
     else {
         if (m_bisPause) {
             for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-                m_pMeshs[i]->Priority_Update(fTimeDelta);
-                m_pMeshs[i]->Update(fTimeDelta);
-                m_pMeshs[i]->Late_Update(fTimeDelta);
+                m_pMeshs[i]->Priority_Update(fTimeDelta * m_fSpeed);
+                m_pMeshs[i]->Update(fTimeDelta* m_fSpeed);
+                m_pMeshs[i]->Late_Update(fTimeDelta* m_fSpeed);
             }
             for (_uint i = 0; i < m_pParticles.size(); ++i) {
-                m_pParticles[i]->Priority_Update(fTimeDelta);
-                m_pParticles[i]->Update(fTimeDelta);
-                m_pParticles[i]->Late_Update(fTimeDelta);
+                m_pParticles[i]->Priority_Update(fTimeDelta* m_fSpeed);
+                m_pParticles[i]->Update(fTimeDelta* m_fSpeed);
+                m_pParticles[i]->Late_Update(fTimeDelta* m_fSpeed);
             }
             for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
-                m_pSpriteParticles[i]->Priority_Update(fTimeDelta);
-                m_pSpriteParticles[i]->Update(fTimeDelta);
-                m_pSpriteParticles[i]->Late_Update(fTimeDelta);
+                m_pSpriteParticles[i]->Priority_Update(fTimeDelta* m_fSpeed);
+                m_pSpriteParticles[i]->Update(fTimeDelta* m_fSpeed);
+                m_pSpriteParticles[i]->Late_Update(fTimeDelta* m_fSpeed);
             }
             for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                m_pSprites[i]->Priority_Update(fTimeDelta);
-                m_pSprites[i]->Update(fTimeDelta);
-                m_pSprites[i]->Late_Update(fTimeDelta);
+                m_pSprites[i]->Priority_Update(fTimeDelta* m_fSpeed);
+                m_pSprites[i]->Update(fTimeDelta* m_fSpeed);
+                m_pSprites[i]->Late_Update(fTimeDelta* m_fSpeed);
             }
         }
         else {

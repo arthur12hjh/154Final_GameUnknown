@@ -20,7 +20,8 @@ public:
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
-		_float2			fTimeDelta;
+		_float4			fTimeDelta;
+		_float2			fCircle;
 		_float2			fTurnPower;
 		_float2			fisSphere;
 		_int2			iLoopAndCount;
@@ -57,11 +58,15 @@ public:
 		_float2				fDissolveUV;
 		_float2				fDissolveUVSpeed;
 		_float2				fDissolveUVSize;
+		_float2				fParticleSize;
+		_float2				fCircle;
 		_int2				iUV;
 
 		_float				fDelayTime;
 		_float				fEndTime;
 		_float				fSphereSize;
+		_float				fAngle;
+		_float				fCircleSpeed;
 
 
 
@@ -71,6 +76,7 @@ public:
 		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;
+		_bool				bisCircle;
 	}SPRITE_PARTICLE_DATA;
 
 private:

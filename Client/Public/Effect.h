@@ -14,6 +14,7 @@ NS_BEGIN(Client)
 
 class CMeshEffect;
 class CPointParticle;
+class CSpriteParticle;
 class CSpriteUVEffect;
 class CEffect : public CGameObject
 {
@@ -49,6 +50,7 @@ private:
 private:
     vector<CMeshEffect*> m_pMeshEffects;
     vector<CPointParticle*> m_pPointParticles;
+    vector<CSpriteParticle*> m_pSpriteParticles;
     vector<CSpriteUVEffect*> m_pSpriteEffects;
 public:
     static  CEffect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile);

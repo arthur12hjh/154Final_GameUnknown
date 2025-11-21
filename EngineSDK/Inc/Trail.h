@@ -25,9 +25,9 @@ public:
 private:
 	_float4			m_vHigh = { 0.f, -1.f, 0.f, 1.f };
 	_float4			m_vLow = { 0.f, 0.f, 0.f, 1.f };
-	ID3D11Buffer* m_pVB = { nullptr };
-	ID3D11Buffer* m_pIB = { nullptr };
-	VTXPOSTEX* m_pVTXPOSTEXs = { nullptr };
+	ID3D11Buffer*	m_pVB = { nullptr };
+	ID3D11Buffer*	m_pIB = { nullptr };
+	VTXPOSTEX*		m_pVTXPOSTEXs = { nullptr };
 	_uint			m_iNumPresent = {};
 	_uint			m_iEndIndex = {};
 	_uint			m_iNumVertices = {};

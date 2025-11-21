@@ -34,6 +34,7 @@ private:
 
 	HRESULT Load_Map_Data();
 	HRESULT Load_Light_Data();
+	_float	m_fTime = 10;
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

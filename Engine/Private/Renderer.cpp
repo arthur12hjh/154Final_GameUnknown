@@ -282,7 +282,7 @@ void CRenderer::Render()
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
-	Render_Bloom();
+	//Render_Bloom();
 	//렌더 타겟 내용을 백버퍼로 뱉어내.
 	Render_Deferred();
 	Render_ScreenDeferred();

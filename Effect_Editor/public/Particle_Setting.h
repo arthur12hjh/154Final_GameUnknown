@@ -52,6 +52,7 @@ private:
     _float3  m_fScale;
     _float3  m_fRotation;
     _float  m_fTime;
+    _float  m_fSpeed = { 1.f };
     CParticle::PARTICLE_DATA m_tParticleData;
     CSpriteParticle::SPRITE_PARTICLE_DATA m_tSpriteParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
@@ -62,6 +63,7 @@ private:
     vector<string> m_ShaderFiles;
     vector<string> m_ModelFiles;
     vector<string> m_ModelFilePaths;
+    vector<string> m_Effects;
     vector<ID3D11ShaderResourceView*>	m_SRVs[4];
     vector<CParticle*> m_pParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
@@ -69,6 +71,7 @@ private:
     vector<CSpriteEffect*> m_pSprites;
     CTrailEffect*    m_pTrailEffect = nullptr;
     CTrailEffect* m_pDistortionTrailEffect = nullptr;
+    _char m_SaveFile[128] = "SaveEffect";
     _int       m_iSelectParticle;
     _int       m_iSelectSpriteParticle;
     _int       m_iSelectMesh = { 0 };
@@ -76,9 +79,11 @@ private:
     _uint       m_iImageType = { 0 };
     _uint       m_iSpriteImageType = { 1 };
     _uint       m_iSelectSize = { 0 };
+    _uint       m_iSelectEffect = { 0 };
     _int       m_iShaderBegine = { 0 };
     _int       m_iSelectSprite = { 0 };
     _bool       m_bisPause = true;
+    _bool       m_bisReplay = false;
     string      m_szCS;
 private:
     void    Add_Particle();

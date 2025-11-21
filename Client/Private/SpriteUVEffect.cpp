@@ -40,14 +40,18 @@ void CSpriteUVEffect::Update(_float fTimeDelta)
 	m_fTime += fTimeDelta;
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-	if (m_fTime <= m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y)
+	if (m_fTime > m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y) {
+		m_isDead = true;
 		return;
+	}
 }
 
 void CSpriteUVEffect::Late_Update(_float fTimeDelta)
 {
-	Compute_Depth();
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	if (m_fTime <= m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y) {
+		Compute_Depth();
+		m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	}
 }
 
 HRESULT CSpriteUVEffect::Render()
@@ -76,12 +80,14 @@ HRESULT CSpriteUVEffect::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szNormalTexture.c_str(), strlen(m_tData.szNormalTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
@@ -132,6 +138,8 @@ HRESULT CSpriteUVEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iUV", &m_tData.iUV, sizeof(_int2))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFPS", &m_tData.fFPS, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
 		return E_FAIL;

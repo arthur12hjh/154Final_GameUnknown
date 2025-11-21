@@ -6,7 +6,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_MaskTexture, g_DiffuseTexture, g_NormalTexture;
 float2 g_fSize;
 int2 g_iUV;
-float g_fFPS, g_fTime;
+float g_fFPS, g_fTime, g_fAngle;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 vector g_vCamPosition;
@@ -55,23 +55,35 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
 {
     GS_OUT Out[4];
     
+
     float3 vLook = (g_vCamPosition - In[0].vPosition).xyz;
-    float3 vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * g_fSize.x * 0.5f;
-    float3 vUp = normalize(cross(vLook, vRight)) * g_fSize.y * 0.5f;
+    float3 vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook));
+    float3 vUp = normalize(cross(vLook, vRight));
     matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
-    Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp, 1.f), matVP);
+    float angle = radians(g_fAngle);
+    
+    float s = sin(angle);
+    float c = cos(angle);
+    
+    float3 vRightRot = vRight * c + vUp * s;
+    float3 vUpRot = vUp * c - vRight * s;
+    
+    float3 vR = vRightRot * (g_fSize.x * 0.5f);
+    float3 vU = vUpRot * (g_fSize.y * 0.5f);
+    
+    Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU, 1.f), matVP);
     Out[0].vTexcoord = float2(0.f, 0.f);
     Out[0].vProjPos = Out[0].vPosition;
     
-    Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight + vUp, 1.f), matVP);
+    Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU, 1.f), matVP);
     Out[1].vTexcoord = float2(1.f, 0.f);
     Out[1].vProjPos = Out[1].vPosition;
     
-    Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight - vUp, 1.f), matVP);
+    Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU, 1.f), matVP);
     Out[2].vTexcoord = float2(1.f, 1.f);
     Out[2].vProjPos = Out[2].vPosition;
     
-    Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vRight - vUp, 1.f), matVP);
+    Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU, 1.f), matVP);
     Out[3].vTexcoord = float2(0.f, 1.f);
     Out[3].vProjPos = Out[3].vPosition;
     
@@ -199,8 +211,8 @@ technique11 DefaultTechnique
     pass SpriteMaskEffect
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MASK();

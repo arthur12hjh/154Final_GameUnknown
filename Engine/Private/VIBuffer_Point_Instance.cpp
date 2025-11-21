@@ -86,6 +86,7 @@ HRESULT CVIBuffer_Point_Instance::Initialize_Prototype(const INSTANCE_DESC* pIns
 		if (m_bIsLoop)
 			m_pInstanceVertices[i].vLifeTime.x = -m_pGameInstance->Random(0, pDesc->vLifeTime.y);
 		m_pInstanceVertices[i].vSpeeds.x = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
+		m_pInstanceVertices[i].vSize = fScale;
 	}
 
 	m_InstanceInitialDesc.pSysMem = m_pInstanceVertices;

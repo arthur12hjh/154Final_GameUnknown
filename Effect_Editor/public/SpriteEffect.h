@@ -25,6 +25,7 @@ public:
 		_float2				fSize;
 		_int2				iUV;
 		_float				fFPS;
+		_float				fAngle;
 
 		_int				iBegin;
 		_int				iSelectRender;
@@ -53,6 +54,7 @@ private:
 	CTexture* m_pTexture[3] = {};
 	CShader* m_pShaderCom = { nullptr };
 	const _float4x4* m_pParentMat = { nullptr };
+	_float4x4		m_CombinedWorldMatrix = {};
 
 private:
 	_float				m_fTime = {  };

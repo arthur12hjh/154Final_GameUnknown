@@ -179,6 +179,9 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fSize", &m_tData.fParticleSize, sizeof(_float2))))
+		return E_FAIL;
+
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
 		return E_FAIL;
@@ -208,6 +211,8 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", 0)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iUV", &m_tData.iUV, sizeof(_int2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
 		return E_FAIL;
@@ -239,10 +244,13 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
 	m_CBData.fTurnPower = m_tData.fTurnPower;
-	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
+	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
+	m_CBData.fTimeDelta.w = m_tData.fEndTime;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
@@ -304,10 +312,12 @@ void CSpriteParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
+	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;
 	m_CBData.fTurnPower = m_tData.fTurnPower;
-	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지

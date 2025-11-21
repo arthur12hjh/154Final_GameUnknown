@@ -77,18 +77,21 @@ HRESULT CMeshEffect::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))	
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDissolveTexture.c_str(), strlen(m_tData.szDissolveTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
@@ -149,7 +152,6 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
 		return E_FAIL;
-	return S_OK;
 	return S_OK;
 }
 

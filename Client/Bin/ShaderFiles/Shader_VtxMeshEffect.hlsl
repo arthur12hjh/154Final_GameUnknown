@@ -59,6 +59,26 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+VS_OUT VS_CONE(VS_IN In)
+{
+    VS_OUT Out;
+  
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    float3 vPosition = In.vPosition;
+    vPosition.y = length(In.vPosition) * 1.5;
+    Out.vPosition = mul(vector(vPosition, 1.f), matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vWorldPos = mul(vector(vPosition, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+    return Out;
+}
+
 struct VS_OUT_SHADOW
 {
     float4 vPosition : SV_POSITION;
@@ -116,33 +136,33 @@ PS_OUT PS_MAIN(PS_IN In)
     float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
     float weight = saturate(pow(1 - depth, 3));
     float time = g_fTime;
-    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + time * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + time * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + min(time * g_fMaskUVSpeed.x, 1)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + time * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + time * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + time * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + time * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + time * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
-    if (In.vTexcoord.y < 0.5)
-    {
+    //if (In.vTexcoord.y < 0.5)
+    //{
         Out.vColor = g_vColor;
-        vector color = g_DiffuseTexture.Sample(MirrorSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y * 2)) * g_vColor;
+        vector color = g_DiffuseTexture.Sample(MirrorSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y)) * g_vColor;
         color.a = (1 - abs(MaskTexcoord.x * 1.2));
         Out.vColor.rgb = Out.vColor.rgb * (1 - color.a) + color.rgb * color.a;
-        Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
-        if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y * 2)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x))
+    Out.vColor.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x * max((abs(1 - saturate(time * 3))) * 4, 0.8), MaskTexcoord.y)).r;
+        if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + time * 2)
             discard;
 
-    }
-    else
-    {
-        Out.vColor = g_vColor;
-        //Out.vDiffuse *= (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2);
-        vector color = g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, 1 - (DiffuseTexcoord.y - 0.5) * 2)) * g_vColor;
-        color.a = (1 - abs(MaskTexcoord.x * 1.2));
-        Out.vColor.rgb = Out.vColor.rgb * (1 - color.a) + color.rgb * color.a;
-        Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, 1 - (MaskTexcoord.y - 0.5) * 2)).r;
-        
-        if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, 1 - (DissolveTexcoord.y - 0.5) * 2)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x))
-            discard;
-    }
+    //}
+    //else
+    //{
+    //    Out.vColor = g_vColor;
+    //    //Out.vDiffuse *= (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2);
+    //    vector color = g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, 1 - (DiffuseTexcoord.y - 0.5) * 2)) * g_vColor;
+    //    color.a = (1 - abs(MaskTexcoord.x * 1.2));
+    //    Out.vColor.rgb = Out.vColor.rgb * (1 - color.a) + color.rgb * color.a;
+    //    Out.vColor.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x * max((abs(1 - time * 3.5)) * 4, 1), 1 - (MaskTexcoord.y - 0.5) * 2)).r;
+    //    
+    //    if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, 1 - (DissolveTexcoord.y - 0.5) * 2)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + time * 2.5)
+    //        discard;
+    //}
     
     //float maxColor = max(max(Out.vColor.r, Out.vColor.g), Out.vColor.b);
     //Out.vColor.r = 1 - (maxColor - Out.vColor.r);
@@ -172,21 +192,60 @@ PS_OUT PS_DISTORTION(PS_IN In)
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
-    if (0 > MaskTexcoord.x || 1 < MaskTexcoord.x)
+    if (0 > MaskTexcoord.x || 1 < MaskTexcoord.x || 0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
         discard;
-    if (In.vTexcoord.y < 0.5)
-    {
-        Out.vColor = g_vColor;
-        Out.vColor *= (1 - abs(MaskTexcoord.x)) * abs(MaskTexcoord.y) * 4;
-        //Out.vDiffuse.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
+    Out.vColor = g_vColor;
+    Out.vColor *= (1 - abs(MaskTexcoord.x)) * abs(MaskTexcoord.y) * 2;
+    return Out;
+}
 
-    }
-    else
-    {
-        Out.vColor = g_vColor;
-        Out.vColor *= (1 - MaskTexcoord.x) * (1 - (MaskTexcoord.y - 0.5) * 2) * 2;
-        //Out.vDiffuse.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, 1 - (MaskTexcoord.y - 0.5) * 2)).r;
-    }
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_OUT PS_Hit(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
+    float weight = saturate(pow(1 - depth, 3));
+    float time = g_fTime;
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    
+    Out.vColor = g_vColor;
+    vector color = g_DiffuseTexture.Sample(MirrorSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y)) * g_vColor;
+    //color.a = (1 - abs(MaskTexcoord.x * 1.2));
+    Out.vColor.rgb = Out.vColor.rgb * (1 - color.a) + color.rgb * color.a;
+    Out.vColor.a = color.a * g_MaskTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y)).r * (In.vTexcoord.y >= 0.8 ? 1 - (In.vTexcoord.y - 0.8) * 5 : 1);
+    if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r > abs(MaskTexcoord.y))
+        discard;
+    
+    Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
+    Out.vWeight.r = Out.vColor.a;
+    Out.vWeight.g = weight;
+    Out.vColor.a = 1;
+    Out.vWeight.a = 1;
+    
+    return Out;
+}
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_OUT PS_CIRCLE_DISTORTION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    Out.vColor = g_vColor;
+    Out.vColor *= abs(MaskTexcoord.y) * 2;
     return Out;
 }
 
@@ -214,7 +273,7 @@ technique11 DefaultTechnique
 { 
     pass UI
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -224,12 +283,32 @@ technique11 DefaultTechnique
 
     pass Distortion
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION();
+    }
+
+    pass Hit
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_CONE();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_Hit();
+    }
+
+    pass CircleDistortion
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_CONE();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_CIRCLE_DISTORTION();
     }
 
 

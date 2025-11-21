@@ -36,6 +36,8 @@ void CSpriteEffect::Priority_Update(_float fTimeDelta)
 void CSpriteEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 	if (m_fTime <= m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y)
 		return;
 }
@@ -118,7 +120,7 @@ HRESULT CSpriteEffect::Ready_Components()
 
 HRESULT CSpriteEffect::Bind_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
@@ -145,6 +147,8 @@ HRESULT CSpriteEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iUV", &m_tData.iUV, sizeof(_int2))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFPS", &m_tData.fFPS, sizeof(_float))))
+		return E_FAIL;
+ 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
 		return E_FAIL;
