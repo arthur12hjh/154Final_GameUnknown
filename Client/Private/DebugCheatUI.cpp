@@ -25,6 +25,7 @@ HRESULT CDebugCheatUI::Initialize()
     m_pImGuiManager = CImGuiManager::GetInstance();
 
     strcpy_s(m_szSelectCamera, "FreeCamera");
+
 #endif
 
     return S_OK;
@@ -78,6 +79,7 @@ void CDebugCheatUI::DrawObjectDebug()
         ImGui::Text("Mesh or Terrian Picking Move Object");
         ImGui::EndTooltip();
     }
+
 #endif // _DEBUG
 }
 

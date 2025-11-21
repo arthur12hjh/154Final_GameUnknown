@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "StaticMap.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -10,7 +10,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CCherryBlossom1 final : public CGameObject
+class CCherryBlossom1 final : public CStaticMap
 {
 private:
 	CCherryBlossom1(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,16 +26,12 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-
-private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
 
 public:
 	static CCherryBlossom1* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CStaticMap* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

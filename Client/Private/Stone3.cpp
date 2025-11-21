@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CStone3::CStone3(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CStone3::CStone3(const CStone3& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -113,7 +113,7 @@ CStone3* CStone3::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CStone3::Clone(void* pArg)
+CStaticMap* CStone3::Clone(void* pArg)
 {
 	CStone3* pInstance = new CStone3(*this);
 

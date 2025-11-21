@@ -162,6 +162,7 @@
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
     <ClInclude Include="..\public\BoxOpenEvent.h" />
+    <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\CanBox.h" />
     <ClInclude Include="..\public\CherryBlossom1.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
     <ClCompile Include="..\private\BoxOpenEvent.cpp" />
+    <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\CanBox.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp" />

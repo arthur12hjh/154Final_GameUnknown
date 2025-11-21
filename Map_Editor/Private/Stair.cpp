@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CStair::CStair(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CStair::CStair(const CStair& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -34,12 +34,20 @@ void CStair::Priority_Update(_float fTimeDelta)
 
 void CStair::Update(_float fTimeDelta)
 {
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
 }
 
 void CStair::Late_Update(_float fTimeDelta)
 {
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CStair::Render()
@@ -82,6 +90,16 @@ HRESULT CStair::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 5.f;
+	SphereDesc.vCenter = _float3(5.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -112,7 +130,7 @@ CStair* CStair::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CStair::Clone(void* pArg)
+CStaticMap* CStair::Clone(void* pArg)
 {
 	CStair* pInstance = new CStair(*this);
 

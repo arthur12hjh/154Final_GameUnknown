@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CStoneLantern2::CStoneLantern2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CStoneLantern2::CStoneLantern2(const CStoneLantern2& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -34,13 +34,16 @@ void CStoneLantern2::Priority_Update(_float fTimeDelta)
 
 void CStoneLantern2::Update(_float fTimeDelta)
 {
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
 void CStoneLantern2::Late_Update(_float fTimeDelta)
 {
-
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 }
 
 HRESULT CStoneLantern2::Render()
@@ -83,6 +86,16 @@ HRESULT CStoneLantern2::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 3.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -113,7 +126,7 @@ CStoneLantern2* CStoneLantern2::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CGameObject* CStoneLantern2::Clone(void* pArg)
+CStaticMap* CStoneLantern2::Clone(void* pArg)
 {
 	CStoneLantern2* pInstance = new CStoneLantern2(*this);
 
