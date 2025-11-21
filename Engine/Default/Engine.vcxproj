@@ -167,6 +167,8 @@ popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\AIController.h" />
+    <ClInclude Include="..\public\AISenceComponent.h" />
     <ClInclude Include="..\public\BehaviorNode.h" />
     <ClInclude Include="..\public\BehaviorTree.h" />
     <ClInclude Include="..\Public\BinParser.h" />
@@ -283,6 +285,8 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\AIController.cpp" />
+    <ClCompile Include="..\private\AISenceComponent.cpp" />
     <ClCompile Include="..\private\BehaviorNode.cpp" />
     <ClCompile Include="..\private\BehaviorTree.cpp" />
     <ClCompile Include="..\Private\BinParser.cpp" />

@@ -2,6 +2,8 @@
 #include "Engine_Defines.h"
 #include <vector>
 
+using namespace std; 
+
 namespace Client
 {
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
@@ -50,31 +52,37 @@ namespace Client
 	}CHARACTER_SKILL_DESC;
 
 
-	// 보스몬스터 구조체
+	// 몬스터 구조체
 	// 인게임용
-	typedef struct Boss_NetWork_Desc
+	typedef struct Naytiba_NetWork_Desc
 	{
-		unsigned int	iNumPhase;
+		unsigned int		iNumPhase;
 
-		char			szBossName[256];
-		long long		iMaxHealth;
-		long long		iMaxShield;
+		char				szName[256];
+		_bool				bIsBoss;
+
+		char				szModelPrototype[256];
+		char				szAIControllerPrototype[256];
+		char				szAIBehaviorPrototype[256];
+
+		long long			iMaxHealth;
+		long long			iMaxShield;
 
 		//여기서 사용하는 스킬 정보
-		std::vector<_uint>		iAttackList;
-	}BOSS_NETWORK_DESC;
+		vector<_uint>		iAttackList;
+	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
-	typedef struct Boss_Desc
+	typedef struct Naytiba_Desc
 	{
-		unsigned int	iCurrentPhase;
+		unsigned int		iCurrentPhase;
 
-		long long		iCurrentHealth;
-		long long		iCurrentShield;
+		long long			iCurrentHealth;
+		long long			iCurrentShield;
 
-		std::vector<CHARACTER_SKILL_DESC>	iAttackList;
+		vector<CHARACTER_SKILL_DESC>	iAttackList;
 
-	}BOSS_DESC;
+	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
 

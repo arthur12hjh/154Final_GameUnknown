@@ -6,6 +6,10 @@
 #include "Shader.h"
 #pragma endregion
 
+#pragma region AI
+#include "AISenceComponent.h"
+#pragma endregion
+
 #include "Texture.h"
 #include "Transform.h"
 #include "Navigation.h"

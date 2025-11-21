@@ -49,7 +49,6 @@ void CGorilla_Body::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-
 #endif
 }
 

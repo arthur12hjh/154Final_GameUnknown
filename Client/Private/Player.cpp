@@ -12,12 +12,12 @@
 #include "Interaction_Component.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CEntity {pDevice, pContext}
+	: CCharacter {pDevice, pContext}
 {
 }
 
 CPlayer::CPlayer(const CPlayer& Prototype)
-	: CEntity{ Prototype }
+	: CCharacter{ Prototype }
 {
 }
 
