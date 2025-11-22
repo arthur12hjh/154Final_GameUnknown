@@ -13,6 +13,7 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 	, m_iNumChannels{ Prototype.m_iNumChannels }
 	, m_Channels{ Prototype.m_Channels }
 	, m_CurrentKeyFrameIndices{ Prototype.m_CurrentKeyFrameIndices }
+	, m_BoneToChannelMappingLists{ Prototype.m_BoneToChannelMappingLists }
 {
 	for (auto& pChannel : m_Channels)
 		Safe_AddRef(pChannel);
@@ -41,8 +42,6 @@ HRESULT CAnimation::Initialize(class CModel* pModel, binAnimation* pAnimation)
 		m_Channels.push_back(pChannel);
 	}
 
-
-
 	return S_OK;
 }
 
@@ -68,6 +67,55 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 
 	return false;
 }
+
+_bool CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta)
+{
+	/* 내 애니메이션의 현재 재생위치. */
+	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
+
+	if (m_fCurrentTrackPosition >= m_fDuration)
+	{
+		if (true == isLoop)
+		{
+			m_fCurrentTrackPosition = 0.f;
+			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
+				iKeyFrameIndex = 0;
+		}
+		else
+			return true;
+	}
+
+	return false;
+}
+
+_bool CAnimation::Update_CurrentKeyFrameIndices()
+{
+	float t = m_fCurrentTrackPosition;
+
+	for (size_t c = 0; c < m_Channels.size(); c++)
+	{
+		CChannel* pChannel = m_Channels[c];
+		_uint& k = m_CurrentKeyFrameIndices[c]; 
+
+		auto& Frames = pChannel->Get_KeyFrames();
+		if (Frames.size() <= 1)
+			continue;
+
+		// 현재 구간 찾기
+		while (k + 1 < Frames.size() &&
+			Frames[k + 1].fTrackPosition <= t)
+		{
+			k++;
+		}
+
+		// 애니메이션 끝 처리
+		if (k >= (int)Frames.size() - 1)
+			k = (int)Frames.size() - 1;
+	}
+
+	return false;
+}
+
 
 HRESULT CAnimation::Swap_AnimationChannel(_uint iSrc, _uint iDst)
 {

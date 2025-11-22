@@ -4,6 +4,13 @@ vector g_vMtrlAmbient = 1.f;
 vector g_vMtrlSpecular = 1.f;
 
 
+struct BoneTransformMatrix
+{
+    row_major float4x4 BoneLocalTransformMatrix;
+    row_major float4x4 BoneCombinedTransformMatrix;
+};
+
+
 sampler ClampSampler = sampler_state
 {
     Filter = MIN_MAG_MIP_POINT;

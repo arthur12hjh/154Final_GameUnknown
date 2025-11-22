@@ -82,7 +82,7 @@ HRESULT CCanBox::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-        if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
