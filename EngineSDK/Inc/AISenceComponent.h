@@ -23,9 +23,10 @@ private:
 public:
 	virtual HRESULT						Initialize_Prototype() override;
 	virtual HRESULT						Initialize(void* pArg) override;
+	virtual void						SetOwner(CGameObject* pGameObject);
 
 	void								UpdatSenceComponent(_float fDeletaTime);
-
+	const list<CGameObject*>*			GetSearchAllObject() { return &m_pSearchList; }
 
 	// 이벤트 바인딩 함수들
 	void								Bind_TargetSearch(function<void(CGameObject*)> Func);
@@ -40,10 +41,11 @@ private:
 	CSphereCollider*					m_pTargetSearchCol = nullptr;
 
 	// 현재프레임에 시야안에 들어와있는 오브젝트들
-	set<CGameObject*>					m_pSearchList = {};
+	set<CGameObject*>					m_pCurSearchList = {};
 
 	// 이전프레임에 시야안에 들어왔던 오브젝트들
 	unordered_map<CGameObject*, _float>			m_pPreSearchList = {};
+	list<CGameObject*>							m_pSearchList = {};
 
 	// 이건 이벤트로 받아서 쏴줄 녀석들
 	function<void(CGameObject*)>		m_SearchFunc = nullptr;

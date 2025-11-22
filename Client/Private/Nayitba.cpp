@@ -8,6 +8,7 @@
 
 #include "TargetComponent.h"
 #include "BossController.h"
+#include "MonsterHitState.h"
 #include "GameManager.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -34,7 +35,16 @@ HRESULT CNayitba::Initialize(void* pArg)
 	m_iMonsterID = pDesc->iMonsterID;
 	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
 	if (nullptr != pNayitbaInfo)
+	{
 		m_pInitMonsterInfo = pNayitbaInfo;
+		size_t iNumSkill = m_pInitMonsterInfo->iAttackList.size();
+
+		m_MonsterInfo.iAttackList.resize(iNumSkill);
+		for (size_t i = 0; i < iNumSkill; ++i)
+		{
+			m_MonsterInfo.iAttackList[i] = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[i]);
+		}
+	}
 	
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
@@ -58,6 +68,32 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 void CNayitba::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
+	{
+		// 이거 나중에 재훈이형이랑 연동할거임
+		CHARACTER_SKILL_DESC SkillDesc = {};
+		SkillDesc.eATK_Direction = ATTACK_DIRECTION::ATK_LEFT;
+
+		CMonsterHitState::MONSTER_HIT_STATE_DESC pHitDesc = {};
+		pHitDesc.pSkillData = &SkillDesc;
+		pHitDesc.pAttacker = m_pGameManager->GetGameCharacter();
+		m_MonsterInfo.iCurrentHealth -= 50.f;
+		m_pAIController->Damage(&pHitDesc);
+
+		Safe_Release(pHitDesc.pAttacker);
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	{
+		// 이거 나중에 재훈이형이랑 연동할거임
+		m_MonsterInfo.bIsBattle = !m_MonsterInfo.bIsBattle;
+		
+
+
+	}
+
+	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
 }
 
@@ -65,6 +101,11 @@ void CNayitba::Late_Update(_float fTimeDelta)
 {
 	// 여기에서 컬링 할거임
 	__super::Late_Update(fTimeDelta);
+
+#ifdef _DEBUG
+	m_pAISenceCom->Update_Debuge();
+#endif // _DEBUG
+
 
 }
 
@@ -78,12 +119,27 @@ _uint CNayitba::GetMonsterID()
 	return _uint();
 }
 
+const list<CGameObject*>* CNayitba::GetTargetList()
+{
+	return m_pAISenceCom->GetSearchAllObject();
+}
+
 HRESULT CNayitba::ADD_Components()
 {
 	// 여기서 충돌처리용 콜라이더 달고
 	// AI 센서 달아서 충돌 처리한번 보자
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT(""), TEXT("AI_Sence"), (CComponent**)&m_pAISenceCom)))
 		return E_FAIL;*/
+
+	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
+	SenceComDesc.fAiSearchRadius = 30.f;
+	SenceComDesc.fAiTargetSearchDistance = 10.f;
+	SenceComDesc.m_fAiTargetLostTime = 5.f;
+
+	/* Prototype_Component_TargetComponent */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
+		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
+		return E_FAIL;
 
 	// 그다음 여기서 FSM 인지 행동트리아
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
@@ -159,7 +215,6 @@ void CNayitba::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTargetCom);
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
 }

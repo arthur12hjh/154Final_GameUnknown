@@ -58,16 +58,18 @@ HRESULT CDataManager::LoadBossData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/BossData/Boss.csv", BossDataList);
 
-    NAYTIBA_NETWORK_DESC BossDesc = {};
+
     size_t iMaxSize = BossDataList.size();
 
     for (auto i = 11; i < iMaxSize;)
     {
+        NAYTIBA_NETWORK_DESC BossDesc = {};
         _uint iBossID = atoi(BossDataList[i++].c_str());
         BossDesc.iNumPhase = atoi(BossDataList[i++].c_str());
-        BossDesc.bIsBoss = atoi(BossDataList[i++].c_str());
+       
 
         strcpy_s(BossDesc.szName, BossDataList[i++].c_str());
+        BossDesc.bIsBoss = atoi(BossDataList[i++].c_str());
         strcpy_s(BossDesc.szModelPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIControllerPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIBehaviorPrototype, BossDataList[i++].c_str());

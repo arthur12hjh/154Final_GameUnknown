@@ -3,11 +3,19 @@
 #include "State.h"
 
 NS_BEGIN(Client)
-class CMonsterPatrolState final : public CState
+struct Naytiba_Desc;
+
+class CMonsterMoveState final : public CState
 {
+public :
+	typedef struct MoveStateDesc
+	{
+		const vector<_float3>*				PathFindingPoints;
+	}MOVE_STATE_DESC;
+
 private:
-	CMonsterPatrolState();
-	virtual ~CMonsterPatrolState() = default;
+	CMonsterMoveState();
+	virtual ~CMonsterMoveState() = default;
 
 public:
 	//생성 할때 Create 함수에 집어넣어 주세요
@@ -20,8 +28,12 @@ public:
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
 
+private :
+	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
+	_float3										m_vMovePoint;
+
 public:
-	static	CMonsterPatrolState*				Create(void* pArg);
+	static	CMonsterMoveState*					Create(void* pArg);
 	virtual	void								Free() override;
 };
 NS_END

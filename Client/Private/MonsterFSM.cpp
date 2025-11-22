@@ -2,7 +2,14 @@
 #include "MonsterFSM.h"
 
 #include "GameInstance.h"
+
+#pragma region State
 #include "MonsterIdleState.h"
+#include "MonsterAttackState.h"
+#include "MonsterMoveState.h"
+#include "MonsterHitState.h"
+#include "MonsterDeadState.h"
+#pragma endregion
 
 CMonsterFSM::CMonsterFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CStateMachine(pDevice, pContext)
@@ -23,10 +30,15 @@ HRESULT CMonsterFSM::Initialize(void* pArg)
 void CMonsterFSM::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (m_pCurrentState->Is_FinishedState())
+		Change_State(TEXT("Idle"));
 }
 
 HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg)
 {
+	// 여기서 바로바꾸는게 아니라 현재 스테이트에서 가능한 동작을 받아다가
+	// 변경한다.
 	auto iter = m_pStates.find(LayerTag);
 	if (iter == m_pStates.end())
 		return E_FAIL;
@@ -57,6 +69,18 @@ HRESULT CMonsterFSM::Ready_State()
 	Desc.pOwner = m_pOwner;
 
 	if(FAILED(Add_State(TEXT("Idle"), CMonsterIdleState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(Add_State(TEXT("Attack"), CMonsterAttackState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(Add_State(TEXT("Move"), CMonsterMoveState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(Add_State(TEXT("Dead"), CMonsterDeadState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(Add_State(TEXT("Hit"), CMonsterHitState::Create(&Desc))))
 		return E_FAIL;
 
 	Change_State(TEXT("Idle"));

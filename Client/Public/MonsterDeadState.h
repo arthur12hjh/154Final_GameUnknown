@@ -5,6 +5,13 @@
 NS_BEGIN(Client)
 class CMonsterDeadState final : public CState
 {
+public:
+	typedef struct MonsterDeadStateDesc
+	{
+		CGameObject*		pAttacker;
+		void*				pSkillData;
+	}MONSTER_DEAD_STATE_DESC;
+
 private:
 	CMonsterDeadState();
 	virtual ~CMonsterDeadState() = default;
@@ -19,6 +26,10 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
+
+private :
+	DIRECTION									m_eDeadDir = {};
+	_float2										m_fDeadEndTime = {};
 
 public:
 	static	CMonsterDeadState*					Create(void* pArg);

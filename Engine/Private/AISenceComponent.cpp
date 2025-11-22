@@ -25,7 +25,21 @@ HRESULT CAISenceComponent::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	AI_SENCE_COMPONENT_DESC* pSenceDesc = static_cast<AI_SENCE_COMPONENT_DESC*>(pArg);
+	m_fAiSearchRadius = pSenceDesc->fAiSearchRadius;
+	m_fAiTargetLostTime = pSenceDesc->m_fAiTargetLostTime;
+	m_fAiTargetSearchDistance = pSenceDesc->fAiTargetSearchDistance;
+
+	if (FAILED(ADD_Components()))
+		return E_FAIL;
+
 	return S_OK;
+}
+
+void CAISenceComponent::SetOwner(CGameObject* pGameObject)
+{
+	m_pOwner = pGameObject;
+	m_pTargetSearchCol->SetOwner(m_pOwner);
 }
 
 void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
@@ -51,6 +65,7 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 						m_SearchFunc(pTarget);
 
 					m_pPreSearchList.emplace(pTarget, 0.f);
+					m_pSearchList.push_back(pTarget);
 				}
 				else
 				{
@@ -63,18 +78,24 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 		}
 		else
 		{
-			iter->second += fDeletaTime;
-			if (iter->second >= m_fAiTargetLostTime)
+			if (iter != m_pPreSearchList.end())
 			{
-				if (m_TargetLostFunc)
-					m_TargetLostFunc(iter->first);
+				iter->second += fDeletaTime;
+				if (iter->second >= m_fAiTargetLostTime)
+				{
+					if (m_TargetLostFunc)
+						m_TargetLostFunc(iter->first);
 
-				m_pPreSearchList.erase(iter);
+					auto pObject = find(m_pSearchList.begin(), m_pSearchList.end(), iter->first);
+					m_pSearchList.erase(pObject);
+
+					m_pPreSearchList.erase(iter);
+				}
 			}
 		}
 	}
 
-	m_pSearchList.clear();
+	m_pCurSearchList.clear();
 	_matrix OwnerWorldMatrix = XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr());
 	m_pTargetSearchCol->UpdateColiision(OwnerWorldMatrix);
 
@@ -115,13 +136,14 @@ HRESULT CAISenceComponent::ADD_Components()
 	if (FAILED(m_pTargetSearchCol->Initialize(&SphereColDesc)))
 		return E_FAIL;
 
+	
 	m_pTargetSearchCol->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlapEvent(vHitDir, pHitActor); });
 	return S_OK;
 }
 
 void CAISenceComponent::OverlapEvent(_float3 vDir, CGameObject* pHitObject)
 {
-	m_pSearchList.insert(pHitObject);
+	m_pCurSearchList.insert(pHitObject);
 }
 
 CAISenceComponent* CAISenceComponent::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

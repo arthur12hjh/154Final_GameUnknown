@@ -26,6 +26,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	virtual void					Damage(void* pArg) = 0;
 
 protected :
 	CGameObject*					m_pOwner = { nullptr };

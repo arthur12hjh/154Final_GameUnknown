@@ -3,6 +3,8 @@
 #include "State.h"
 
 NS_BEGIN(Client)
+struct Character_Skill_Desc;
+
 class CMonsterAttackState final : public CState
 {
 private:
@@ -19,6 +21,10 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
+
+private :
+	const Character_Skill_Desc*					m_pSkillData = { nullptr };
+
 
 public:
 	static	CMonsterAttackState*				Create(void* pArg);

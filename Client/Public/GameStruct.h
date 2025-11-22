@@ -39,6 +39,7 @@ namespace Client
 	}PLAYER_DESC;
 
 	// 스킬 구조체
+	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
 	enum class SKILL_TYPE { PARRYABLE, END };
 	typedef struct Character_Skill_Desc
 	{
@@ -47,8 +48,9 @@ namespace Client
 		char			szAnimationName[256];
 		long long		iSkillDamage;
 
-		DIRECTION		eDirection;
-		SKILL_TYPE		eSkillType;
+		ATTACK_DIRECTION	eATK_Direction;
+		DIRECTION			eDirection;
+		SKILL_TYPE			eSkillType;
 	}CHARACTER_SKILL_DESC;
 
 
@@ -68,6 +70,8 @@ namespace Client
 		long long			iMaxHealth;
 		long long			iMaxShield;
 
+		float				fAttackCoolTime;
+
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
@@ -80,7 +84,12 @@ namespace Client
 		long long			iCurrentHealth;
 		long long			iCurrentShield;
 
-		vector<CHARACTER_SKILL_DESC>	iAttackList;
+		_float2				fAttackCoolTime;
+		_float				fMoveSpeed;
+
+		_bool				bIsBattle;
+
+		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
 
 	}NAYTIBA_DESC;
 

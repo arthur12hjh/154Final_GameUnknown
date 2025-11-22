@@ -7,6 +7,10 @@ class CStateMachine;
 NS_END
 
 NS_BEGIN(Client)
+class CTargetComponent;
+struct Character_Skill_Desc;
+struct Naytiba_Desc;
+
 class CMonsterController final : public CAIController
 {
 private:
@@ -24,11 +28,24 @@ public:
 
 	virtual HRESULT					Render() override;
 
-private :
-	CStateMachine*					m_pFSM = { nullptr };
+	// 이거 일단 스킬데이터만 넣어주세요
+	// 다른거 넣을거 있으면 말해주고 추가하면됨
+	virtual	void					Damage(void* pArg) override;
 
 private :
+	CTargetComponent*				m_pTargetCom = { nullptr };
+	CStateMachine*					m_pFSM = { nullptr };
+
+	const		Naytiba_Desc*		m_pOwnerData = { nullptr };
+	_float							m_fAttackDelay = {};
+	_float2							m_vAttackTime = {};
+
+private :
+	HRESULT							Ready_Components();
 	HRESULT							Ready_FSM();
+
+	void							Battle_Action(_float fTimeDelta);
+	void							Default_Action(_float fTimeDelta);
 
 public:
 	static	CMonsterController*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

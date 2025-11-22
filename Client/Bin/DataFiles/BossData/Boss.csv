@@ -1,3 +1,6 @@
- ID,페이즈 인덱스,보스 이름,보스인가?,모델 프로토타입,컨트롤러 프로토타입,비헤비어 프로토 타입,보스 체력,보스 실드,패턴 개수,패턴 인덱스
+ ID,        Phase Count   ,Animation Name,IsBoss?,Model ProtoTypeName ,FSM ProtoType Name,Behavior ProtoType Name, Max Health,Max Shield,Skill Count,Skills
 1,2,CH_M_NA_51.ao|M_Gigas,1,Prototype_Component_Model_Gorilla,None,None,1000,500,1,1
-2,1,CH_M_NA_51.ao|M_Beholder,0,Prototype_Component_Model_Beholder,Prototype_GameObject_MonsterController,None,1000,500,1,1
+2,1,CH_M_NA_51.ao|M_Beholder,0,Prototype_Component_Model_Beholder,Prototype_GameObject_MonsterController,None,200,100,3,"511, 512, 513"
+3,1,MI_M_NA_08.ao|M_BarnacleA,0,Prototype_Component_Model_BanacleA,Prototype_GameObject_MonsterController,None,200,100,1,1
+4,1,CH_M_NA_40.ao|M_StatueA,0,Prototype_Component_Model_StatueA,Prototype_GameObject_MonsterController,None,200,100,1,1
+5,1,CH_M_NA_54.ao|M_StatueB,0,Prototype_Component_Model_StatueB,Prototype_GameObject_MonsterController,None,200,100,1,1

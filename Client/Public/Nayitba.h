@@ -8,7 +8,6 @@ NS_END
 
 NS_BEGIN(Client)
 class CMonsterFSM;
-class CTargetComponent;
 
 class CNayitba final : public CCharacter
 {
@@ -34,11 +33,12 @@ public:
 	virtual HRESULT					Render() override;
 
 	_uint							GetMonsterID();
+	const list<CGameObject*>*		GetTargetList();
+
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
 
 private:
-	CTargetComponent*				m_pTargetCom = { nullptr };
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
 

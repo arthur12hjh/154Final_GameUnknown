@@ -13,11 +13,11 @@ public :
 		CGameObject*					pOwner;
 	}STATE_DESC;
 
-protected:
+protected :
 	CState();
 	virtual ~CState() = default;
 
-public:
+public :
 	//생성 할때 Create 함수에 집어넣어 주세요
 	virtual		HRESULT							Initialize(void* pArg);
 
@@ -27,12 +27,17 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
-	
-protected:
-	CGameObject*								m_pOwner = { nullptr };
-	CGameInstance*								m_pGameInstance = { nullptr };
 
-public:
+	_bool										Is_FinishedState() { return m_bIsFinished; }
+
+protected :
+	CGameObject*								m_pOwner = { nullptr };
+	CGameInstance*				               	m_pGameInstance = { nullptr };
+
+	_uint										m_iSectionIndex = {};
+	_bool										m_bIsFinished = { false };
+
+public :
 	virtual	void								Free() override;
 
 };

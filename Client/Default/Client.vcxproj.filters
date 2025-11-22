@@ -358,9 +358,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State">
       <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
-      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead">
       <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
     </Filter>
@@ -370,7 +367,10 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle">
       <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Patrol">
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Move">
       <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -666,8 +666,8 @@
     <ClInclude Include="..\public\MonsterIdleState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MonsterPatrolState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Patrol</Filter>
+    <ClInclude Include="..\public\MonsterMoveState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterHitState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
@@ -955,8 +955,8 @@
     <ClCompile Include="..\private\MonsterIdleState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MonsterPatrolState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Patrol</Filter>
+    <ClCompile Include="..\private\MonsterMoveState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterHitState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>

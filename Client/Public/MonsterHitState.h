@@ -5,6 +5,13 @@
 NS_BEGIN(Client)
 class CMonsterHitState final : public CState
 {
+public :
+	typedef struct MonsterHitStateDesc
+	{
+		CGameObject*		pAttacker;
+		void*				pSkillData;
+	}MONSTER_HIT_STATE_DESC;
+
 private:
 	CMonsterHitState();
 	virtual ~CMonsterHitState() = default;
@@ -19,6 +26,9 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
+
+private :
+	_bool										m_bIsGroggy = { false };
 
 public:
 	static	CMonsterHitState*					Create(void* pArg);

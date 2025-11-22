@@ -208,7 +208,7 @@
     <ClInclude Include="..\public\MonsterFSM.h" />
     <ClInclude Include="..\public\MonsterHitState.h" />
     <ClInclude Include="..\public\MonsterIdleState.h" />
-    <ClInclude Include="..\public\MonsterPatrolState.h" />
+    <ClInclude Include="..\public\MonsterMoveState.h" />
     <ClInclude Include="..\public\MousePointer.h" />
     <ClInclude Include="..\public\Nayitba.h" />
     <ClInclude Include="..\public\NayitbaPartBody.h" />
@@ -324,7 +324,7 @@
     <ClCompile Include="..\private\MonsterFSM.cpp" />
     <ClCompile Include="..\private\MonsterHitState.cpp" />
     <ClCompile Include="..\private\MonsterIdleState.cpp" />
-    <ClCompile Include="..\private\MonsterPatrolState.cpp" />
+    <ClCompile Include="..\private\MonsterMoveState.cpp" />
     <ClCompile Include="..\private\MousePointer.cpp" />
     <ClCompile Include="..\private\Nayitba.cpp" />
     <ClCompile Include="..\private\NayitbaPartBody.cpp" />
