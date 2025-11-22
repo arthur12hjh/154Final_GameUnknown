@@ -76,7 +76,6 @@ PS_OUT PS_MAIN(PS_IN In)
     
     //vector vMtrlDiffuse = vDestDiffuse * vMask + vSourDiffuse * (1.f - vMask);
     
-
     Out.vDiffuse = vSourDiffuse;
     
     /* -1 ~ 1 -> 0 ~ 1 */

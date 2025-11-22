@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D   g_DiffuseTexture;
 Texture2D   g_NormalTexture;
+Texture2D   g_MaskTexture;
 
 float       g_CamFar;
 float       g_fTime;
@@ -71,6 +72,8 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     vector vPosition = vector(In.vPosition, 1.f);
     vector vTranslation = In.TransformMatrix[3];
     
+    VS_OUT Out;
+    
     float fScale = g_fMinMaxScale.x + Random(vTranslation.xz) * (g_fMinMaxScale.y - g_fMinMaxScale.x);
     vPosition.xyz *= float3(1.f, fScale, 1.f);
     
@@ -86,9 +89,6 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     // 3. 변위 적용 (X축)
     float fDisplacement = waveOffset * g_fWaveAmplitude * fHeightFactor;
     vPosition.x += fDisplacement;
-    
-    VS_OUT Out;
-    
     
     float fRand = Random(vTranslation.xz);
     float fMinAngle = radians(-45.f);
@@ -123,7 +123,8 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), g_WorldMatrix)).xyz;
-    Out.vWorldPos = mul(vector(In.vPosition, 1.f), matFixedRotation);
+    //Out.vWorldPos = mul(vector(In.vPosition, 1.f), matFixedRotation);
+    Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
 
     return Out;
@@ -155,6 +156,17 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
+    float2 vMaskUV;
+    const float fTexelSize = 512.f;
+    
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    
+    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
+    
+     if(fMaskValue < 0.1f)
+        discard;
+    
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
@@ -163,7 +175,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
     float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
     
-    Out.vDiffuse = vMtrlDiffuse;
+    
+    Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
+    //Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
     return Out;

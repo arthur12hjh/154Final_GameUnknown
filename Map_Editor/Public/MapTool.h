@@ -32,19 +32,18 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
-	HRESULT Render_Area();
-
 
 	void Update_Rotation();
-	HRESULT Save_Map_Objects(const _char* cFilePath);
+	HRESULT Save_Map_Objects(const _char* szFilePath);
 	HRESULT Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag);
 
-	HRESULT Load_Map_Objects(const _char* cFilePath);
+	HRESULT Load_Map_Objects(const _char* szFilePath);
 	HRESULT Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
 	HRESULT Save_Terrain_HeightMap();
-
+	HRESULT Save_MaskMap(const _char* szFilePath);
+	HRESULT Set_NewMaskMap();
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -69,6 +68,7 @@ private:
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
 
+	ID3D11Texture2D* m_pMaskTexture2D = { nullptr };
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
