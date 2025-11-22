@@ -59,7 +59,7 @@ VS_OUT VS_MAIN(VS_IN In)
     //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
     
     //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-    //    g_OffsetMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
     //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
     //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
     
@@ -103,14 +103,25 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
     
+    // CPU와 동일한 행렬 순서
+    float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
+    float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
+    float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
+    float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
+
+    
     //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
-    matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
+    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
     
-    matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OffsetMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
+    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
+    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
     
+    matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
+        MatrixY * In.vBlendWeight.y +
+        MatrixZ * In.vBlendWeight.z +
+        MatrixW * In.vBlendWeight.w;
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
    
@@ -137,11 +148,25 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
     
-    matrix BoneMatrix = g_BoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_BoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_BoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_BoneMatrices[In.vBlendIndex.w] * fWeightW;
+    // CPU와 동일한 행렬 순서
+    float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
+    float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
+    float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
+    float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
+
     
+    //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
+    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
+    
+    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
+    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
+        MatrixY * In.vBlendWeight.y +
+        MatrixZ * In.vBlendWeight.z +
+        MatrixW * In.vBlendWeight.w;
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     
