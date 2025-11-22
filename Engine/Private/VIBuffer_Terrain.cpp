@@ -174,6 +174,61 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	return S_OK;
 }
 
+_float CVIBuffer_Terrain::Get_Interpolated_Height_Local(_float fLocalX, _float fLocalZ) const
+{
+	_int iX = (_int)fLocalX;
+	_int iZ = (_int)fLocalZ;
+
+	if (iX < 0 || iX >= m_iNumVerticesX - 1 || iZ < 0 || iZ >= m_iNumVerticesZ - 1)
+	{
+		return 0.0f;
+	}
+
+	_uint iIndexLT = iZ * m_iNumVerticesX + iX;           // Left Top
+	_uint iIndexRT = iZ * m_iNumVerticesX + (iX + 1);     // Right Top
+	_uint iIndexLB = (iZ + 1) * m_iNumVerticesX + iX;     // Left Bottom
+	_uint iIndexRB = (iZ + 1) * m_iNumVerticesX + (iX + 1);// Right Bottom
+
+	const _float3& vPosLT = m_pVertexPositions[iIndexLT];
+	const _float3& vPosRT = m_pVertexPositions[iIndexRT];
+	const _float3& vPosLB = m_pVertexPositions[iIndexLB];
+	const _float3& vPosRB = m_pVertexPositions[iIndexRB];
+
+	// 4. 사각형 내 로컬 좌표 (0~1 범위) 계산
+	_float fU = fLocalX - iX; // X축 방향 비율 (0~1)
+	_float fV = fLocalZ - iZ; // Z축 방향 비율 (0~1)
+
+	// 5. 삼각형 선택 및 보간
+	// 사각형을 나누는 두 삼각형 중 어느 쪽에 속하는지 판별
+	_float fInterPolatedY = 0.0f;
+
+	if (fU + fV <= 1.0f) // 삼각형 1 (LT - LB - RT)
+	{
+		// baricentric 좌표 또는 간단한 선형 보간
+		// fInterPolatedY = (1 - fU - fV) * vPosLT.y + fU * vPosRT.y + fV * vPosLB.y;
+
+		// 선형 보간 (X, Z 평면에서 평평하다고 가정)
+		_float fY_X = vPosLT.y + fU * (vPosRT.y - vPosLT.y); // X축 방향 보간된 높이
+		_float fY_Z = vPosLT.y + fV * (vPosLB.y - vPosLT.y); // Z축 방향 보간된 높이
+
+		fInterPolatedY = fY_X + (fV * (vPosLB.y - fY_X));
+	}
+	else // 삼각형 2 (RB - RT - LB) 또는 (LB - RB - RT)
+	{
+		_float fU_prime = fU - 1.0f; // (fU - 1)
+		_float fV_prime = fV - 1.0f; // (fV - 1)
+
+
+		_float fY_X = vPosRB.y + fU_prime * (vPosLB.y - vPosRB.y); // X축 방향 보간된 높이
+		_float fY_Z = vPosRB.y + fV_prime * (vPosRT.y - vPosRB.y); // Z축 방향 보간된 높이
+
+		fInterPolatedY = fY_X + (fV_prime * (vPosRT.y - fY_X));
+	}
+
+
+	return fInterPolatedY;
+}
+
 HRESULT CVIBuffer_Terrain::Initialize(void* pArg)
 {
 	return S_OK;
