@@ -1091,6 +1091,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\MotionBlur\Shaderfile</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">

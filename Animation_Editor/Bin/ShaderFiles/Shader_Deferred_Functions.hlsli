@@ -78,21 +78,14 @@ float4 Calc_Fog(vector vBackBuffer, texture2D FogTexture, vector vFogColor, floa
     return fFogPower * vBackBuffer + (1 - fFogPower) * vFogColor;
 }
 
-/* 블룸 커브 수식 3개. HALO 책에서 나왔다는데 일단 가져옴..*/
+/* 블룸 커브 수식 3개. HALO3 에서 나왔다는데 일단 가져옴..*/
 float GetBloomCurve(float fIntensity)
 {
     float fResult = fIntensity;
     fIntensity *= 2.0f;
 
-    /* method 1 */
-    fResult = fIntensity * 0.05 + max(0, fIntensity - 1.4f) * 0.5; // default gThreshold = 1.26
+    fResult = max(0, fIntensity - 1.4f) * 0.5; // default gThreshold = 1.26
 
-    /* method 2 */
-    //result = x * x / 3.2;
-
-    /* method 3 */
-    //fResult = max(0, fIntensity - 0.6f); // default gThreshold = 1.0
-    //fResult *= fResult;
 
     return fResult * 0.5f;
 }

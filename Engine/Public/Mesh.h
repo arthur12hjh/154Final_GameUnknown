@@ -20,10 +20,14 @@ public:
 		return m_iMaterialIndex;
 	}
 
+	const vector<_float4x4>& Get_OffsetMatrices() const { return m_OffsetMatrices; }
+	const vector<_int>& Get_BoneIndices() const { return m_BoneIndices; }
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
 	HRESULT Bind_BoneMatrices(const vector<class CBone*>& Bones, class CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_OffsetMatrices(const vector<class CBone*>& Bones, class CShader* pShader, const _char* pConstantName);
 
 private:
 	_char							m_szName[MAX_PATH] = {};
