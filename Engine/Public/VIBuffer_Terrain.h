@@ -23,6 +23,7 @@ public:
 
 	void Change_Height_Rect(_vector vPickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Flat(_vector vPickingPos, _float fHeight, _float fRadius);
+	_float Get_Interpolated_Height_Local(_float fLocalX, _float fLocalZ) const;
 
 private:
 	_uint			m_iNumVerticesX = {};

@@ -32,7 +32,7 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
+	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 0.5f);
 
 	return S_OK;
 }
@@ -43,7 +43,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(GetHUD());
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pHUD);
 
 		for (auto& pLayers : pUIHUD->Get_Layers())
 		{
@@ -56,7 +56,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 		}
 
 		pUIHUD->Set_Show_Debug_Rect(true);
-		Safe_Release(pUIHUD);
 		
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
@@ -106,12 +105,13 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	pUIHUD->Load_Anim_Files();
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Test2"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
-
-	pUIHUD->Anim_Play(TEXT("Test2"), TEXT("UI_Test2_Panel_0"), TEXT("Test_Anim"));
+	
+	//pUIHUD->Load_Anim_Files();
+	//
+	
+	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }

@@ -5,6 +5,7 @@
 #include "UIWrapper.h"
 #include "UIButton.h"
 #include "UIText.h"
+#include "UIImage.h"
 
 #include "GameInstance.h"
 #include "UIResourceStore.h"
@@ -141,6 +142,22 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
 		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
 
+	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
+		TEXT("Com_Texture_UI_Logo_Main_Title"), TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1);
+
+	/* For.Prototype_Component_UI_Texture_Dot_Select */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
+		TEXT("Com_Texture_UI_Dot_Select"), TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1);
+
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
@@ -156,6 +173,10 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Text"),
 		CUIText::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Image"),
+		CUIImage::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

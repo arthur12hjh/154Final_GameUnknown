@@ -77,7 +77,7 @@ void CThreadPool::Update_WorkThread()
 		}
 
 		// 맨 앞의 job 을 뺀다.
-		THREAD_JOB job = move(m_ThreadJobs.front());
+		THREAD_JOB job = m_ThreadJobs.front();
 		m_ThreadJobs.pop();
 		lock.unlock();
 

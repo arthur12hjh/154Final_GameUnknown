@@ -4,12 +4,14 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D   g_DiffuseTexture;
 Texture2D   g_NormalTexture;
+Texture2D   g_MaskTexture;
 
 float       g_CamFar;
 float       g_fTime;
 float       g_fWaveSpeed;
 float       g_fWaveFrequency;
 float       g_fWaveAmplitude;
+float3      g_fMinMaxScale;
 
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
@@ -60,12 +62,26 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+float Random(float2 v)
+{
+    return frac(sin(dot(v, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
 VS_OUT VS_MAIN_REED(VS_IN In)
 {
     vector vPosition = vector(In.vPosition, 1.f);
+    vector vTranslation = In.TransformMatrix[3];
+    
+    VS_OUT Out;
+    
+    float fScale = g_fMinMaxScale.x + Random(vTranslation.xz) * (g_fMinMaxScale.y - g_fMinMaxScale.x);
+    vPosition.xyz *= float3(1.f, fScale, 1.f);
+    
+    float fTimeOffSet = Random(vTranslation.xz);
+    float fNewTime = g_fTime + fTimeOffSet * 100.f;
     
     // 1. 흔들림 
-    float waveOffset = sin(g_fTime * g_fWaveSpeed + (vPosition.x + vPosition.z) * g_fWaveFrequency);
+    float waveOffset = sin(fNewTime * g_fWaveSpeed + (vPosition.x + vPosition.z) * g_fWaveFrequency);
     
     // 2. 높이에 비례 흔들림 강도 조절 
     float fHeightFactor = clamp(vPosition.y / 1.5f, 0.0f, 1.0f);
@@ -74,13 +90,31 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     float fDisplacement = waveOffset * g_fWaveAmplitude * fHeightFactor;
     vPosition.x += fDisplacement;
     
-    VS_OUT Out;
+    float fRand = Random(vTranslation.xz);
+    float fMinAngle = radians(-45.f);
+    float fMaxAngle = radians(45.f);
+    float fRange = fMaxAngle - fMinAngle;
+    
+    float fRotationAngle = fMinAngle + fRand * fRange;
+    
+    float sinA = sin(fRotationAngle);
+    float cosA = cos(fRotationAngle);
+    
+    matrix matFixedRotation = (matrix)0;
+    
+    matFixedRotation[0][0] = cosA;
+    matFixedRotation[0][2] = -sinA;
+    matFixedRotation[1][1] = 1.f;
+    matFixedRotation[2][0] = sinA;
+    matFixedRotation[2][2] = cosA;
+    
+    matFixedRotation[3] = vTranslation;
     
     /* In.vPosition * 월드 * 뷰 * 투영 */    
     //float4x4 == matrix
     matrix matWV, matWVP;
     
-    vPosition = mul(vPosition, In.TransformMatrix);
+    vPosition = mul(vPosition, matFixedRotation);
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
     
@@ -89,7 +123,8 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), g_WorldMatrix)).xyz;
-    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    //Out.vWorldPos = mul(vector(In.vPosition, 1.f), matFixedRotation);
+    Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
 
     return Out;
@@ -121,6 +156,17 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
+    float2 vMaskUV;
+    const float fTexelSize = 512.f;
+    
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    
+    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
+    
+     if(fMaskValue < 0.1f)
+        discard;
+    
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
@@ -129,7 +175,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
     float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
     
-    Out.vDiffuse = vMtrlDiffuse;
+    
+    Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
+    //Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
     return Out;

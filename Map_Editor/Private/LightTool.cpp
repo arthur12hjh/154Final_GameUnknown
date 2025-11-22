@@ -162,6 +162,21 @@ HRESULT CLightTool::Render()
 
 	}
 
+	if (ImGui::Button("Delete_Latest"))
+	{
+		m_pLights = m_pGameInstance->GetAllLight();
+
+		if (m_pLights && !m_pLights->empty())
+		{
+			
+			CLight* pLight = m_pLights->back();
+			pLight->SetDead(true);
+			
+			
+		}
+
+	}
+
 	ImGui::Spacing();
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
@@ -358,7 +373,7 @@ HRESULT CLightTool::Save_Light_Objects()
 	}
 
 	// 라이트 데이터
-	std::ofstream ofs("C:/coding/jusin/LightData.bin", std::ios::binary);
+	std::ofstream ofs("../Bin/DataFiles/LightData.bin", std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);

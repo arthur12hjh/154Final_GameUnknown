@@ -34,9 +34,16 @@ public:
 	HRESULT Render();
 
 	void Update_Rotation();
-	HRESULT Save_Map_Objects();
-	HRESULT Load_Map_Objects();
+	HRESULT Save_Map_Objects(const _char* szFilePath);
+	HRESULT Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag);
+
+	HRESULT Load_Map_Objects(const _char* szFilePath);
+	HRESULT Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	void Delete_All_Before_Load(const _tchar* pLayerTag);
+
 	HRESULT Save_Terrain_HeightMap();
+	HRESULT Save_MaskMap(const _char* szFilePath);
+	HRESULT Set_NewMaskMap();
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -50,16 +57,18 @@ public:
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
 
 
-
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	CGameInstance* m_pGameInstance = { nullptr };
 	CTransform* m_pCameraTransform = { nullptr };
 	CTransform* m_pTransform = { nullptr };
+	CTransform* m_pPlayerTransform = { nullptr };
 
 	CGameObject* m_pLastAddedObject = { nullptr };
 	CGameObject* m_pPickedObject = { nullptr };
+
+	ID3D11Texture2D* m_pMaskTexture2D = { nullptr };
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
@@ -98,7 +107,7 @@ private:
 
 
 	_vector				m_vNaviPoints[3] = {};
-	_float				m_fNaviSnapRadius = { 1.5f };
+	_float				m_fNaviSnapRadius = { 2.f };
 	_uint				m_iNaviPointCount = { 0 }; // 현재 선택된 점의 개수 (0, 1, 2)
 	NAVI_MODE			m_eNaviMode = { NAVI_MODE::NONE }; // 현재 네비게이션 작업 모드
 	_bool				m_bIsNaviEditMode = { false }; // 네비게이션 편집 모드

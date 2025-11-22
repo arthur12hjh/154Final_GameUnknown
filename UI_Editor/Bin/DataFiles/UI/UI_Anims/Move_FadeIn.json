@@ -33,5 +33,6 @@
     ],
     "fDuration": 1.0,
     "isLoop": false,
+    "isInfluenceChildren": true,
     "szAnimTag": "Move_FadeIn"
 }

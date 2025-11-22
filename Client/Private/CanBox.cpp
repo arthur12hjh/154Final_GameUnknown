@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "BoxOpenEvent.h"
 #include "Interaction_Component.h"
 #include "UIBase.h"
 
@@ -159,6 +160,12 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
     // 없으면 충돌 안됨
     m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
+    m_pEventHandle = CBoxOpenEvent::Create([&](void* pArg) {});
+    if (nullptr == m_pEventHandle)
+        return E_FAIL;
+
+    m_pGameInstance->Add_Event(TEXT("Box_Open"), m_pEventHandle);
+
     return S_OK;
 }
 
@@ -188,11 +195,14 @@ HRESULT CCanBox::Begin_OverlapCallBack()
 
 void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 {
-
     if (BOX_STATE::UNLCOK == m_eState)
     {
         m_pModelCom->Set_AnimationIndex(1, false);
+
+        if (m_pEventHandle)
+            m_pEventHandle->Notify(nullptr);
         m_eState = BOX_STATE::OPEN;
+        m_pGameInstance->Remove_Interaction(m_pInteractionCom);
     }
 }
 
@@ -231,5 +241,6 @@ void CCanBox::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pEventHandle);
     Safe_Release(m_pModelCom);
 }

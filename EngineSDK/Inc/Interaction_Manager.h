@@ -21,6 +21,7 @@ public :
 
 	void									SetInteractionBaseObject(CGameObject* pObject);
 	void									ADD_Interaction(CInteraction_Component* pInteraction_Com);
+	void									Remove_Interaction(CInteraction_Component* pInteraction_Com);
 
 	CInteraction_Component*					GetNearInteraction() { return m_pNearInteraction; }
 	vector<CInteraction_Component*>*		GetAllInteraction() { return &m_pInteractionList; }

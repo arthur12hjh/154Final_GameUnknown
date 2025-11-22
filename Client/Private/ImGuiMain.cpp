@@ -98,10 +98,9 @@ void CImGuiMain::Update(_float fTimeDelta)
 		{
 			pHUD->Set_Show_Debug_Rect(m_bIsToggleShowUIDebug);
 		}
+		
 	}
-
 	Safe_Release(pHUD);
-
 
 	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();

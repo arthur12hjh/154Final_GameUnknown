@@ -11,6 +11,7 @@ NS_END
 NS_BEGIN(Client)
 
 class CUIBase;
+class CUIAnimManager;
 
 class CUIHUD final : public CGameHUD
 {
@@ -19,6 +20,9 @@ private:
 	virtual ~CUIHUD() = default;
 
 public:
+	virtual HRESULT Initialize() override;
+	virtual void Update(_float fTimeDelta) override;
+
 	unordered_map<_wstring, CHUDLayer*> Get_Layers() { return m_pLayers; }
 
 	HRESULT Save_Data(_wstring szLayerTag);
@@ -30,16 +34,12 @@ public:
 
 	_bool Get_Show_Debug_Rect() { return m_bShowDebugRect;}
 
-	HRESULT Export_Anim_Prefab(_wstring szAnimTag, void* pDesc);
-	HRESULT Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut);
-
-	HRESULT Load_Anim_Files();
-	vector<_wstring> Get_AnimDatas() { return m_AnimDatas; }
+	CUIAnimManager* Get_AnimMgr() { return m_pUIAnimMgr; }
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
-	//void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
-	//void Anim_Stop(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
-	//void Anim_All_Stop();
+	////void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	//void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
+	////void Anim_All_Stop();
 
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
@@ -52,7 +52,7 @@ private:
 
 	_bool m_bShowDebugRect{ true };
 
-	vector<_wstring> m_AnimDatas{};
+	CUIAnimManager* m_pUIAnimMgr{ nullptr };
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
