@@ -1,6 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-// Helper Functions
-//-------------------------------------------------------------------------------------------------
 float4x4 MakeScaleMatrix(float4 vScale)
 {
     return float4x4(
@@ -73,9 +70,6 @@ float4 QuaternionSlerp(float4 q1, float4 q2, float t)
     return normalize(q1 * w1 + q2 * w2);
 }
 
-//-------------------------------------------------------------------------------------------------
-// Structs
-//-------------------------------------------------------------------------------------------------
 struct BoneInfo
 {
     int iParentIndex;
@@ -105,9 +99,6 @@ struct BoneTransformMatrixOut
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
-//-------------------------------------------------------------------------------------------------
-// Constant Buffer
-//-------------------------------------------------------------------------------------------------
 cbuffer AnimationGlobalBuffer : register(b0)
 {
     row_major float4x4 g_PreTransformMatrix;
@@ -122,20 +113,12 @@ cbuffer AnimationGlobalBuffer : register(b0)
     uint g_BatchOffset;
 }
 
-//-------------------------------------------------------------------------------------------------
-// Buffers
-//-------------------------------------------------------------------------------------------------
 StructuredBuffer<BoneInfo> InputBone : register(t0);
 StructuredBuffer<ChannelInfo> InputChannel : register(t1);
 StructuredBuffer<KeyFrameInfo> InputKeyFrame : register(t2);
 StructuredBuffer<BoneTransformMatrixOut> InputLocalMatrix : register(t3);
 RWStructuredBuffer<BoneTransformMatrixOut> g_CombinedOut : register(u0);
 
-//-------------------------------------------------------------------------------------------------
-// Local Matrix 계산 함수
-//  - CPU 쪽 CChannel::Update_TransformationMatrix + Update_CurrentKeyFrameIndices 흐름을
-//    GPU용으로 옮긴 버전
-//-------------------------------------------------------------------------------------------------
 float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
 {
     ChannelInfo channel = InputChannel[iBoneIndex];
@@ -195,12 +178,6 @@ float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
     }
 }
 
-//-------------------------------------------------------------------------------------------------
-// Main Kernel
-//  - 각 Bone마다: LocalMatrix 계산 → 부모 체인 Local을 전부 곱해서 CombinedMatrix 완성
-//  - Combined = Local(Self) * Local(Parent) * ... * Local(Root) * PreTransform
-//    (CPU의 CBone::Update_CombinedTransformationMatrix와 같은 순서)
-//-------------------------------------------------------------------------------------------------
 [numthreads(128, 1, 1)]
 void CombinedMatrices(uint3 Gid : SV_GroupID,
                       uint3 DTid : SV_DispatchThreadID,
@@ -232,10 +209,7 @@ void CombinedMatrices(uint3 Gid : SV_GroupID,
     while (parentIndex >= 0)
     {
         float4x4 ParentLocal = ComputeLocalMatrixForBone(parentIndex, t);
-
-        // CPU: Combined = TransformationMatrix * ParentCombined;
-        // 여기서는 ParentCombined를 직접 재귀 구성하므로,
-        //   Combined = Combined * ParentLocal;  (row-vector 기준)
+        
         Combined = mul(Combined, ParentLocal);
 
         parentIndex = InputBone[parentIndex].iParentIndex;
