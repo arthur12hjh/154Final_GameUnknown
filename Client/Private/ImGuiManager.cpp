@@ -7,6 +7,7 @@
 #include "DebugProfiler.h"
 #include "DebugCheatUI.h"
 #include "DebugHierarchy.h"
+#include "ShaderDebugger.h"
 
 IMPLEMENT_SINGLETON(CImGuiManager);
 
@@ -62,7 +63,6 @@ void CImGuiManager::SetImGuiObjectVisiblilty(const WCHAR* ImGuiTag, VISIBILITY e
 
 HRESULT CImGuiManager::ADD_ImGuiObject()
 {
-
 #pragma region Profiler
 	auto pDebugProfiler = CDebugProfiler::Create(m_pDevice, m_pContext);
 	if (nullptr == pDebugProfiler)
@@ -85,6 +85,14 @@ HRESULT CImGuiManager::ADD_ImGuiObject()
 		return E_FAIL;
 
 	m_ImGuis.emplace(TEXT("ImGui_Hierarchy"), pDebugHierarchy);
+#pragma endregion
+
+#pragma region ShaderDebugger
+	auto pShaderDebugger = CShaderDebugger::Create(m_pDevice, m_pContext);
+	if (nullptr == pShaderDebugger)
+		return E_FAIL;
+
+	m_ImGuis.emplace(TEXT("ImGui_ShaderDebuffer"), pShaderDebugger);
 #pragma endregion
 
 	return S_OK;

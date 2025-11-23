@@ -448,12 +448,14 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 	if (!m_GlobalOffsetMatrices.empty())
 	{
 		_uint iNumOffsets = (_uint)m_GlobalOffsetMatrices.size();
+		//512
 		if (iNumOffsets > 512)
 			iNumOffsets = 512;
 
 		hr = pShader->Bind_Matrices("g_OffsetMatrices",
 			m_GlobalOffsetMatrices.data(),
-			(_uint)m_GlobalOffsetMatrices.size());
+			iNumOffsets);
+
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Bind_BoneSRV: Bind_Matrices(g_OffsetMatrices) FAILED\n");

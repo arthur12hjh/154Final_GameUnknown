@@ -405,6 +405,37 @@ namespace Engine
 
 #pragma endregion
 
+
+	//여기에 안넣으면 헤더 다떄려박아야돼서 여따 넣어놨어요
+#pragma region SHADER_STRUCT
+	typedef struct tagFogInfo {
+		XMFLOAT4* vFogColor;
+		float*	  fFogStart;
+		float*    fFogEnd;
+		float*    fFogPowerMin;
+		float*	  fFogPowerMax;
+	} FOG_DESC;
+
+	typedef struct tagDoFInfo {
+		float*	  fFocusDistance;
+		float*    fMaxRange;
+		float*    fIntensity;
+	} DOF_DESC;
+
+	typedef struct tagBloomInfo {
+		unsigned int* iBloomLevel;
+		unsigned int* iSampleLevel;
+	} BLOOM_DESC;
+
+	typedef struct tagSSAOInfo {
+		float* fRadiusMin;
+		float* fRadiusMax;
+		float* fBiasMin;
+		float* fBiasMax;
+		float* fIntensity;
+	} SSAO_DESC;
+
+#pragma endregion
 }
 
 #endif // Engine_Struct_h__

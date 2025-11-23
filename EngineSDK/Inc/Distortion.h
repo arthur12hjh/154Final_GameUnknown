@@ -2,6 +2,7 @@
 
 #include "Deferred.h"
 
+/* 당장 인자로 뺼 필요는 없어보임.. */
 NS_BEGIN(Engine)
 
 class CDistortion final : public CDeferred
