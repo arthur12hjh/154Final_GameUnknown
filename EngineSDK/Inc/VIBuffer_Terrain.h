@@ -13,8 +13,10 @@ private:
 
 public:
 	_float* Get_HeightData();
-	_uint Get_NumVerticesX() { return m_iNumVerticesX; }
-	_uint Get_NumVerticesZ() { return m_iNumVerticesZ; }
+	//인덱스에 맞춰 그에 따른 높이를 반환한다.
+	_float  Get_Height(_uint iIdx);
+	_uint	Get_NumVerticesX() { return m_iNumVerticesX; }
+	_uint	Get_NumVerticesZ() { return m_iNumVerticesZ; }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pHeightMapFilePath);

@@ -53,7 +53,7 @@ private:
 	_bool								m_isBloom = { false };
 	_bool								m_isFog = { false };
 	_bool								m_isHDR = { true };
-
+	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -63,6 +63,7 @@ private:
 	class CRadialBlur*					m_pRadialBlur = { nullptr }; 
 	class CDepthofField*				m_pDepthofField = { nullptr };
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
+	class CSSAO*						m_pSSAO = { nullptr }; 
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };

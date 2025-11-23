@@ -385,6 +385,9 @@
     <Filter Include="02.GameObjects\Map\Common\Rock">
       <UniqueIdentifier>{7024ad07-df2e-4e8a-ace9-b25670999847}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TestModel\TestHead">
+      <UniqueIdentifier>{dbda2ddf-accc-4123-8dcf-f91d6603ca11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -798,6 +801,9 @@
     <ClInclude Include="..\Public\CM_Rock14.h">
       <Filter>02.GameObjects\Map\Common\Rock</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TestEveHead.h">
+      <Filter>02.GameObjects\TestModel\TestHead</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\StaticMap.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
@@ -1194,6 +1200,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIAnimManager.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestEveHead.cpp">
+      <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMap.cpp">
       <Filter>02.GameObjects\Map</Filter>

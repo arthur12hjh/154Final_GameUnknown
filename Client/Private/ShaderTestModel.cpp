@@ -24,7 +24,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECT_DESC	Desc{};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 30.f;
+	Desc.fSpeedPerSec = 10.f;
 
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
@@ -34,6 +34,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 
 	m_pModelCom->Set_AnimationIndex(0, true);
 
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 10.f, 0.f, 1.f));
 	//m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
 	return S_OK;
