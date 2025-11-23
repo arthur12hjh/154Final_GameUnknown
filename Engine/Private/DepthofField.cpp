@@ -12,6 +12,15 @@ void CDepthofField::Set_Active()
 	m_isActive = !m_isActive;
 }
 
+void* CDepthofField::Get_Desc()
+{
+	m_Desc.fFocusDistance = &m_fFocusDistance;
+	m_Desc.fMaxRange = &m_fMaxRange;
+	m_Desc.fIntensity = &m_fIntensity;
+
+	return &m_Desc;
+}
+
 HRESULT CDepthofField::Initialize()
 {
 	/* 셰이더 파일 로딩 */
@@ -83,6 +92,10 @@ HRESULT CDepthofField::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTa
 	m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
 	m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
 	m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+	m_pShader->Bind_RawValue("g_fFocusDistance", &m_fFocusDistance, sizeof(_float));
+	m_pShader->Bind_RawValue("g_fMaxRange", &m_fMaxRange, sizeof(_float));
+	m_pShader->Bind_RawValue("g_fIntensity", &m_fIntensity, sizeof(_float));
 
 	m_pShader->Begin(1);
 	pVIBuffer->Bind_Resources();

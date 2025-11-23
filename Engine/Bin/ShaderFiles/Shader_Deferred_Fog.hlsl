@@ -5,6 +5,7 @@ int g_iWinSizeX;
 int g_iWinSizeY;
 
 float g_fFogStart, g_fFogEnd;
+float g_fFogPowerMin, g_fFogPowerMax;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -52,11 +53,10 @@ PS_OUT_FOG PS_MAIN_FOG(PS_IN In)
     /* 로컬위치 * 월드 * 뷰  */
     vPosition = mul(vPosition, g_ProjMatrixInv);
 
-    Out.fFogPower = clamp((g_fFogEnd - vPosition.z) / (g_fFogEnd - g_fFogStart), 0.5f, 1.0f);
+    Out.fFogPower = clamp((g_fFogEnd - vPosition.z) / (g_fFogEnd - g_fFogStart), g_fFogPowerMin, g_fFogPowerMax);
     
     return Out;
 }
-
 
 technique11 DefaultTechnique
 { 

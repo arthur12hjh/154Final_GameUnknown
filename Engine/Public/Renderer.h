@@ -18,6 +18,10 @@ private:
 public:
 	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 
+	void*	Get_DoF_Desc();
+	void*   Get_Bloom_Desc();
+	void*   Get_Fog_Desc();
+	void*   Get_SSAO_Desc();
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
@@ -32,7 +36,7 @@ public:
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
-
+	
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
