@@ -26,6 +26,9 @@ private:
 	virtual ~CSSAO() = default;
 
 public:
+	virtual void* Get_Desc() override;
+
+public:
 	virtual HRESULT Initialize() override;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override { return S_OK; }
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override { return S_OK; }
@@ -34,14 +37,21 @@ public:
 	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
 
 	void Create_RandomNoise();
+
 #ifdef _DEBUG
 	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) override;
 	virtual HRESULT Render_Debug(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader) override;
 #endif
 
 private:
+	SSAO_DESC m_Desc = {};
 	_float3 m_vRandomNoise[16] = {};
-
+	//0.2 ~ 1.5
+	_float m_fRadiusMin = { 0.2f }, m_fRadiusMax = { 1.5f };
+	//0.001  ~ 1 
+	_float m_fBiasMin = { 0.001f }, m_fBiasMax = { 1.f };
+	//0 ~ 3
+	_float m_fIntensity = { 1.f };
 public:
 	static CSSAO* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

@@ -1,0 +1,136 @@
+[
+    {
+        "Children": [
+            {
+                "TextureDesc": {
+                    "iPass": 2,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Logo_Main_Title",
+                    "szTextureComTag": "Com_Texture_UI_Logo_Main_Title"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -420.0,
+                "fOffsetY": -150.0,
+                "fSizeX": 650.0,
+                "fSizeY": 162.5,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iLevel": 2,
+                "iRenderGroup": 8,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Logo",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Image_1-1",
+                "szUITag": "Main_Title"
+            },
+            {
+                "Children": [
+                    {
+                        "TextureDesc": {
+                            "iPass": 2,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_Dot_Select",
+                            "szTextureComTag": "Com_Texture_UI_Dot_Select"
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -85.0,
+                        "fOffsetY": 0.0,
+                        "fSizeX": 20.0,
+                        "fSizeY": 20.0,
+                        "fX": 153.0,
+                        "fY": 450.0,
+                        "iDepth": 2,
+                        "iLevel": 2,
+                        "iRenderGroup": 8,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Hover",
+                                "szPrefabTag": "FadeIn_0_5"
+                            }
+                        ],
+                        "szLayerTag": "Layer_Logo",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "StartButton_Image_2-1",
+                        "szUITag": "Dot_Select"
+                    },
+                    {
+                        "TextDesc": {
+                            "szText": "새게임 시작",
+                            "vColor": [
+                                0.4954545497894287,
+                                0.4954545497894287,
+                                0.4954545497894287,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -22.0,
+                        "fOffsetY": 0.0,
+                        "fSizeX": 152.0,
+                        "fSizeY": 25.0,
+                        "fX": 153.0,
+                        "fY": 450.0,
+                        "iDepth": 2,
+                        "iLevel": 2,
+                        "iRenderGroup": 8,
+                        "iVisibility": 0,
+                        "szLayerTag": "Layer_Logo",
+                        "szProtoTag": "Prototype_GameObject_UI_Text",
+                        "szUIID": "StartButton_Text_2-2",
+                        "szUITag": "Button_Text"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": -647.0,
+                "fOffsetY": 0.0,
+                "fSizeX": 198.0,
+                "fSizeY": 38.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iLevel": 2,
+                "iRenderGroup": 8,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Hover",
+                        "szPrefabTag": "FadeIn_0_5"
+                    }
+                ],
+                "szLayerTag": "Layer_Logo",
+                "szProtoTag": "Prototype_GameObject_UI_Button",
+                "szUIID": "Logo_Panel_Button_1-2",
+                "szUITag": "StartButton"
+            }
+        ],
+        "TextureDesc": {
+            "iPass": 2,
+            "iTextureIndex": 0,
+            "szProtoTag": "Prototype_Component_UI_Texture_BackGround",
+            "szTextureComTag": "Com_Texture_UI_BackGround"
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 0,
+        "iLevel": 2,
+        "iRenderGroup": 8,
+        "iVisibility": 0,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Intro",
+                "szPrefabTag": "FadeIn_1_5"
+            }
+        ],
+        "szLayerTag": "Layer_Logo",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_Logo_Panel_0",
+        "szUITag": "Logo_Panel"
+    }
+]

@@ -7,6 +7,17 @@ CSSAO::CSSAO(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
+void* CSSAO::Get_Desc()
+{
+    m_Desc.fBiasMax = &m_fBiasMax;
+    m_Desc.fBiasMin = &m_fBiasMin;
+    m_Desc.fIntensity = &m_fIntensity;
+    m_Desc.fRadiusMax = &m_fRadiusMax;
+    m_Desc.fRadiusMin = &m_fRadiusMin;
+
+    return &m_Desc;
+}
+
 HRESULT CSSAO::Initialize()
 {
     Create_RandomNoise();
@@ -66,9 +77,20 @@ HRESULT CSSAO::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strDepthRTTag, 
 
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strDepthRTTag, m_pShader, "g_DepthTexture")))
         return E_FAIL;
-
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strNormalRTTag, m_pShader, "g_NormalTexture")))
         return E_FAIL;
+
+    if (FAILED(m_pShader->Bind_RawValue("g_fRadiusMin", &m_fRadiusMin, sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShader->Bind_RawValue("g_fRadiusMax", &m_fRadiusMax, sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShader->Bind_RawValue("g_fBiasMin", &m_fBiasMin, sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShader->Bind_RawValue("g_fBiasMax", &m_fBiasMax, sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShader->Bind_RawValue("g_fIntensity", &m_fIntensity, sizeof(_float))))
+        return E_FAIL;
+
 
     m_pShader->Begin(0);
     pVIBuffer->Bind_Resources();

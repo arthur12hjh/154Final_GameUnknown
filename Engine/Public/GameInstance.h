@@ -91,8 +91,13 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-	void	Set_DebugVisible(_bool isVisible);
+	void   Set_DebugVisible(_bool isVisible);
+	void*  Get_DoF_Desc();
+	void*  Get_Bloom_Desc();
+	void*  Get_Fog_Desc();
+	void*  Get_SSAO_Desc();
 #endif
+
 #pragma endregion
 
 #pragma region PIPELINE
@@ -291,8 +296,8 @@ public:
 	HRESULT									Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent);
 	HRESULT									Remove_Event(const WCHAR* szEventTag);
 
-	HRESULT									Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
-	HRESULT									UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
 #pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }

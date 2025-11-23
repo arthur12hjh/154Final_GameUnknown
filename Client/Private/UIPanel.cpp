@@ -99,6 +99,20 @@ HRESULT CUIPanel::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CUIPanel::Execute(const UI_EVENT_DESC& EventDesc)
+{
+	return S_OK;
+}
+
+//HRESULT CUIPanel::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIPanel::CallbackEvent(void* pArg)
+{
+}
+
 CUIPanel* CUIPanel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CUIPanel* pInstance = new CUIPanel(pDevice, pContext);

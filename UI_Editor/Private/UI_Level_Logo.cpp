@@ -35,6 +35,8 @@ void CUI_Level_Logo::Update(_float fTimeDelta)
 
 	if (GetKeyState(VK_F3) & 0x8000)
 	{
+		
+
 		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}

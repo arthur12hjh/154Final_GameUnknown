@@ -6,6 +6,7 @@
 NS_BEGIN(Client)
 
 class CGameManager;
+class CChangeLevelEvent;
 
 class CLevel_Logo final : public CLevel
 {
@@ -26,6 +27,9 @@ public:
 
 private:
 	CGameManager* m_pGameManager{ nullptr };
+	CChangeLevelEvent* m_pLevelChangeEvent{ nullptr };
+
+	_bool m_bChangeLevel{ false };
 	
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

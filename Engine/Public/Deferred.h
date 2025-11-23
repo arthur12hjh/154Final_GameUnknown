@@ -11,6 +11,9 @@ protected:
 	virtual ~CDeferred() = default;
 
 public:
+	virtual void* Get_Desc() { return nullptr; }
+
+public:
 	virtual HRESULT Initialize() = 0;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) = 0;
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) = 0;

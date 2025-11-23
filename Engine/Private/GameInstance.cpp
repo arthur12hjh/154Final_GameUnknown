@@ -259,7 +259,6 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 {
 	m_pPrototype_Manager->Clear(iLevelIndex);
 	m_pObject_Manager->Clear(iLevelIndex);
-	m_pPhysx_Manager->Clear();
 }
 
 _float CGameInstance::Random_Normal()
@@ -444,6 +443,26 @@ HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 void CGameInstance::Set_DebugVisible(_bool isVisible)
 {
 	m_pRenderer->Set_DebugVisible(isVisible);
+}
+
+void* CGameInstance::Get_DoF_Desc()
+{
+	return m_pRenderer->Get_DoF_Desc();
+}
+
+void* CGameInstance::Get_Bloom_Desc()
+{
+	return m_pRenderer->Get_Bloom_Desc();
+}
+
+void* CGameInstance::Get_Fog_Desc()
+{
+	return m_pRenderer->Get_Fog_Desc();
+}
+
+void* CGameInstance::Get_SSAO_Desc()
+{
+	return m_pRenderer->Get_SSAO_Desc();
 }
 
 #endif
@@ -954,13 +973,13 @@ HRESULT CGameInstance::Remove_Event(const WCHAR* szEventTag)
 {
 	return m_pEventManager->Remove_Event(szEventTag);
 }
-HRESULT CGameInstance::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->Bind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->Bind_Observer(szEventTag, pEvent);
 }
-HRESULT CGameInstance::UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->UnBind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->UnBind_Observer(szEventTag, pEvent);
 }
 #pragma endregion
 
@@ -1054,9 +1073,9 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionManager);
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
-	Safe_Release(m_pEventManager);
 	Safe_Release(m_pInteract_Manager);
 	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);

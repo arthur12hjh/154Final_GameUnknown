@@ -16,6 +16,13 @@ texture2D g_SSAOBlurXTexture;
 
 float3 g_NoiseValue[16];
 
+//0.2 ~ 1.5
+float g_fRadiusMin, g_fRadiusMax;
+//0.001  ~ 1 
+float g_fBiasMin, g_fBiasMax;
+//0 ~ 3
+float g_fIntensity;
+
 /* 미리 생성된 커널 랜덤 노멀들 */
 float3 g_vRandom[16] =
 {
@@ -28,21 +35,6 @@ float3 g_vRandom[16] =
     float3(0.7119f, -0.0154f, -0.0918f), float3(-0.0533f, 0.0596f, -0.5411f),
     float3(0.0352f, -0.0631f, 0.5460f), float3(-0.4776f, 0.2847f, -0.0271f)
 };
-
-/* 랜덤한 노멀을 생성하는 수식. 단, 진짜 랜덤이 아니라 uv 값에 따라 고정된 패턴이 
-나와야 값이여야 매 프레임 SSAO 텍스쳐가 튀지 않게 된다. */
-
-float3 RandNormal(float2 vTexCoord)
-{
-    //frac? -> 정수 부분은 버리고 소수 부분만 남겨주는 함수. 0 ~ 1.0 사이로 출력해낸다.
-    //clamp, saturate랑은 다르게 값의 입력에 따라 반복되는 특성때문에 그 둘로 대신할 수 없다.
-    float fNoiseX = (frac(sin(dot(vTexCoord, float2(15.8989f, 76.132f) * 1.f)) * 46336.23745f));
-    float fNoiseY = (frac(sin(dot(vTexCoord, float2(11.9899f, 62.223f) * 2.0f)) * 34748.34744f));
-    float fNoiseZ = (frac(sin(dot(vTexCoord, float2(13.3238f, 63.122f) * 3.0f)) * 59998.47362f));
-    
-    // 노멀라이즈
-    return normalize(float3(fNoiseX, fNoiseY, fNoiseZ));
-}
 
 float3 Calc_ViewSpace(float fDepth, float2 vTexCoord)
 {
@@ -109,7 +101,7 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     float fViewDepth = vDepth.g * 500.0f;
     
     // 0 ~ 0.5f
-    float fRadius = lerp(0.2f, 1.5f, saturate(vDepth.g));
+    float fRadius = lerp(g_fRadiusMin, g_fRadiusMax, saturate(vDepth.g));
     
     if (vDepth.r == 0.f && vDepth.g == 1.f && vDepth.b == 0.f && vDepth.a == 0.f)
         return Out;
@@ -163,7 +155,7 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
         float fRangeCheck = smoothstep(0.0f, 1.0f, fRadius / abs(vViewPos.z - fGeometryZ));
         
         //깊이 기반 비교.
-        float fBias = lerp(0.005f, 1.f, vDepth.g);
+        float fBias = lerp(g_fBiasMin, g_fBiasMax, vDepth.g);
         
         if (fGeometryZ <= vSamplePos.z - fBias)
         {
@@ -174,6 +166,8 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     // 샘플링 평균
     fOcclusion = 1.0f - (fOcclusion / iSampleCount);
 
+    fOcclusion = pow(fOcclusion, g_fIntensity);
+    
     Out.vBackBuffer = float4(fOcclusion, fOcclusion, fOcclusion, 1.f);
     return Out;
 }

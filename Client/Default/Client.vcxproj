@@ -183,6 +183,7 @@
     <ClInclude Include="..\Public\CM_Rock7.h" />
     <ClInclude Include="..\Public\CM_Rock8.h" />
     <ClInclude Include="..\Public\CM_Rock9.h" />
+    <ClInclude Include="..\Public\ChangeLevelEvent.h" />
     <ClInclude Include="..\public\DataManager.h" />
     <ClInclude Include="..\Public\ClientStruct.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
@@ -279,10 +280,12 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\Public\UIActionEvent.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
     <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIButton.h" />
+    <ClInclude Include="..\Public\UIPlayAnimEvent.h" />
     <ClInclude Include="..\Public\UIHUD.h" />
     <ClInclude Include="..\Public\UIImage.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
@@ -324,6 +327,7 @@
     <ClCompile Include="..\Private\CM_Rock7.cpp" />
     <ClCompile Include="..\Private\CM_Rock8.cpp" />
     <ClCompile Include="..\Private\CM_Rock9.cpp" />
+    <ClCompile Include="..\Private\ChangeLevelEvent.cpp" />
     <ClCompile Include="..\private\DataManager.cpp" />
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
@@ -436,10 +440,12 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
+    <ClCompile Include="..\Private\UIPlayAnimEvent.cpp" />
     <ClCompile Include="..\Private\UIHUD.cpp" />
     <ClCompile Include="..\Private\UIImage.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />

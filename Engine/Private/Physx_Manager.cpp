@@ -130,6 +130,7 @@ void CPhysx_Manager::Clear()
     for (auto& Terrain : m_pTerrains)
     {
         m_PxScene->removeActor(*Terrain);
+        Terrain->release();
     }
 
     m_pTerrains.clear();
@@ -232,6 +233,7 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 
     m_pTerrains.push_back(hfActor);
 
+    pHeightField->release();
     Safe_Delete_Array(pHeightData);
     Safe_Delete_Array(pSamples);
 
@@ -308,6 +310,7 @@ void CPhysx_Manager::Free()
     for (auto& Terrain : m_pTerrains)
     {
         m_PxScene->removeActor(*Terrain);
+        Terrain->release();
     }
 
     m_pTerrains.clear();
