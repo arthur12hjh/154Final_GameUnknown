@@ -8,6 +8,14 @@ CBloom::CBloom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
+void* CBloom::Get_Desc()
+{
+    m_Desc.iBloomLevel = &m_iBloomLevel;
+    m_Desc.iSampleLevel = &m_iSampleLevel;
+
+    return &m_Desc;
+}
+
 HRESULT CBloom::Initialize()
 {
     m_vOriginScreenSize = m_pGameInstance->GetScreenSize();

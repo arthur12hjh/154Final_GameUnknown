@@ -91,8 +91,13 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-	void	Set_DebugVisible(_bool isVisible);
+	void   Set_DebugVisible(_bool isVisible);
+	void*  Get_DoF_Desc();
+	void*  Get_Bloom_Desc();
+	void*  Get_Fog_Desc();
+	void*  Get_SSAO_Desc();
 #endif
+
 #pragma endregion
 
 #pragma region PIPELINE

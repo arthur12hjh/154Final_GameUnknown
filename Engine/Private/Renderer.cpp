@@ -306,14 +306,14 @@ void CRenderer::Render()
 	Render_NonLight();
 	Render_Blend();
 
-	//후처리 마무리 해.
+	//후처리 마무리 하기.
 	Render_Blur();
 	Render_Glow();
 	Render_Distortion();
 	Render_Fog();
 	Render_Bloom();
 	Render_MotionBlur();
-	//렌더 타겟 내용을 백버퍼로 뱉어내.
+	//렌더 타겟 내용을 백버퍼로 뱉어내게 하기.
 	Render_Deferred();
 	Render_ScreenDeferred();
 
@@ -338,6 +338,26 @@ const _float4x4* CRenderer::Get_Renderer_Matrix(D3DTS eType)
 	default:
 		return &m_WorldMatrix;
 	}
+}
+
+void* CRenderer::Get_DoF_Desc()
+{
+	return m_pDepthofField->Get_Desc();
+}
+
+void* CRenderer::Get_Bloom_Desc()
+{
+	return m_pBloom->Get_Desc();
+}
+
+void* CRenderer::Get_Fog_Desc()
+{
+	return m_pFog->Get_Desc();
+}
+
+void* CRenderer::Get_SSAO_Desc()
+{
+	return m_pSSAO->Get_Desc();
 }
 
 void CRenderer::Render_Priority()

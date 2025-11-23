@@ -259,7 +259,6 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 {
 	m_pPrototype_Manager->Clear(iLevelIndex);
 	m_pObject_Manager->Clear(iLevelIndex);
-	m_pPhysx_Manager->Clear();
 }
 
 _float CGameInstance::Random_Normal()
@@ -444,6 +443,26 @@ HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 void CGameInstance::Set_DebugVisible(_bool isVisible)
 {
 	m_pRenderer->Set_DebugVisible(isVisible);
+}
+
+void* CGameInstance::Get_DoF_Desc()
+{
+	return m_pRenderer->Get_DoF_Desc();
+}
+
+void* CGameInstance::Get_Bloom_Desc()
+{
+	return m_pRenderer->Get_Bloom_Desc();
+}
+
+void* CGameInstance::Get_Fog_Desc()
+{
+	return m_pRenderer->Get_Fog_Desc();
+}
+
+void* CGameInstance::Get_SSAO_Desc()
+{
+	return m_pRenderer->Get_SSAO_Desc();
 }
 
 #endif
