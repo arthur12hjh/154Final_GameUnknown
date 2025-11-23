@@ -52,6 +52,7 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();
 	HRESULT Loading_UI_For_Logo_Level();
+	HRESULT Loading_UI_For_GamePlay_Level();
 
 public:
 	static CUI_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

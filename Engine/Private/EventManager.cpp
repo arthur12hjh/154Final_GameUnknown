@@ -29,7 +29,7 @@ HRESULT CEventManager::Remove_Event(const WCHAR* szEventTag)
 	return S_OK;
 }
 
-HRESULT CEventManager::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CEventManager::Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
 	auto iter = m_Events.find(szEventTag);
 	if (iter == m_Events.end())
@@ -39,7 +39,7 @@ HRESULT CEventManager::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEve
 	return S_OK;
 }
 
-HRESULT CEventManager::UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CEventManager::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
 	auto iter = m_Events.find(szEventTag);
 	if (iter == m_Events.end())

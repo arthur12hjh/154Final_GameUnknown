@@ -316,9 +316,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIImage">
       <UniqueIdentifier>{28d715db-8247-4e00-ad1d-7d3af521afad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIHUD\UIEventMgr">
-      <UniqueIdentifier>{7f852d7b-e820-4439-a2aa-b49f79394122}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIHUD\UIAnimMgr">
       <UniqueIdentifier>{78d2f7a7-821e-4aee-a420-e2f9b018ecc4}</UniqueIdentifier>
     </Filter>
@@ -384,6 +381,18 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Common\Rock">
       <UniqueIdentifier>{7024ad07-df2e-4e8a-ace9-b25670999847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent">
+      <UniqueIdentifier>{6f8fe44c-f05b-43d6-9898-37bbf3910374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent">
+      <UniqueIdentifier>{e34ee1b7-79b1-4d3d-8af6-6072c8f22b90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent\UIActionEvent">
+      <UniqueIdentifier>{3007689d-2278-4c0f-af12-01e7674da8ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\ChangeLevelEvent">
+      <UniqueIdentifier>{6181ac97-462e-4277-aa69-a330d891d0ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\TestHead">
       <UniqueIdentifier>{dbda2ddf-accc-4123-8dcf-f91d6603ca11}</UniqueIdentifier>
@@ -807,6 +816,15 @@
     <ClInclude Include="..\public\StaticMap.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIPlayAnimEvent.h">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIActionEvent.h">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIActionEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ChangeLevelEvent.h">
+      <Filter>01.Levels\ChangeLevelEvent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1200,6 +1218,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIAnimManager.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPlayAnimEvent.cpp">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIActionEvent.cpp">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIActionEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ChangeLevelEvent.cpp">
+      <Filter>01.Levels\ChangeLevelEvent</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestEveHead.cpp">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>

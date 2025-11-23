@@ -2,6 +2,7 @@
 #include "UI_Level_GamePlay.h"
 
 #include "GameInstance.h"
+#include "UIHUD.h"
 
 CUI_Level_GamePlay::CUI_Level_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -20,6 +21,7 @@ HRESULT CUI_Level_GamePlay::Initialize()
 
 void CUI_Level_GamePlay::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
 }
 
 HRESULT CUI_Level_GamePlay::Render()
@@ -30,8 +32,14 @@ HRESULT CUI_Level_GamePlay::Render()
 
 HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_BackGround"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
+
+	if (pUIHUD == nullptr)
+		return E_FAIL;
+
+	SetHUD(pUIHUD);
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
 
 	return S_OK;

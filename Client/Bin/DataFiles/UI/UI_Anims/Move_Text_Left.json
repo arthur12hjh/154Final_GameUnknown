@@ -1,0 +1,38 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Text_Color",
+            "vEndParam": [
+                0.4954545497894287,
+                0.4954545497894287,
+                0.4954545497894287,
+                1.0
+            ],
+            "vStartParam": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                -22.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                5.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.5,
+    "isInfluenceChildren": true,
+    "isLoop": false,
+    "szAnimTag": "Move_Text_Center"
+}

@@ -7,6 +7,8 @@
 #include "Actor.h"
 #include "Camera_Free.h"
 
+#include "UIHUD.h"
+
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}	
 {
@@ -43,6 +45,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
 
 	Load_Map_Data();
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
@@ -54,7 +58,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-
+	__super::Update(fTimeDelta);
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -268,6 +272,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _wstring& strLayerTag)
 	//		return E_FAIL;
 	//}
 
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
+{
+	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
+
+	if (pUIHUD == nullptr)
+		return E_FAIL;
+
+	SetHUD(pUIHUD);
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
+		return E_FAIL;
+	
+	pUIHUD->Set_Show_Debug_Rect(false);
 
 	return S_OK;
 }
