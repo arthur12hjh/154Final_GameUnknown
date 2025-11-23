@@ -235,4 +235,5 @@ CGameObject* CPonyTail_Player::Clone(void* pArg)
 void CPonyTail_Player::Free()
 {
 	__super::Free();
+
 }

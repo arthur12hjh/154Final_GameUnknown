@@ -33,7 +33,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
-
+	
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
@@ -158,7 +158,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		ProbDesc.vPosition = { 10.f * i,
 							   m_pGameInstance->Random(0, 50),
 							   m_pGameInstance->Random(0, 50) };
-
+	
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
