@@ -73,6 +73,10 @@ private:
 	PxVec3				 m_vPosition = { 0.f, 0.f, 0.f };
 	PxUserData			 m_tUserData = {};
 
+	_float				 m_fGravityVelocity = {};
+	_float				 m_fGravity = { 9.8f };
+	_float				 m_fGravityTimeAcc = { 0.f };
+
 private:
 	HRESULT Ready_CapsuleController(CCT_DESC* pDesc);
 	HRESULT Ready_BoxController(CCT_DESC* pDesc);

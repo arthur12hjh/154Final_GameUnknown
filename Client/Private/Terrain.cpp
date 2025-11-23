@@ -26,6 +26,8 @@ HRESULT CTerrain::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_pGameInstance->Add_Terrain_ToPhysx(m_pVIBufferCom);
+
 	return S_OK;
 }
 
@@ -36,9 +38,7 @@ void CTerrain::Priority_Update(_float fTimeDelta)
 
 void CTerrain::Update(_float fTimeDelta)
 {
-
-	//m_pVIBufferCom->Culling(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-	
+	//m_pVIBufferCom->Culling(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));	
 }
 
 void CTerrain::Late_Update(_float fTimeDelta)

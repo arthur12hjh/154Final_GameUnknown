@@ -259,6 +259,7 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 {
 	m_pPrototype_Manager->Clear(iLevelIndex);
 	m_pObject_Manager->Clear(iLevelIndex);
+	m_pPhysx_Manager->Clear();
 }
 
 _float CGameInstance::Random_Normal()
@@ -848,6 +849,11 @@ HRESULT CGameInstance::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterContr
 HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBody* pRigidBody)
 {
 	return m_pPhysx_Manager->Add_RigidBody_ToPhysx(pGameObject, pRigidBody);
+}
+
+HRESULT CGameInstance::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
+{
+	return m_pPhysx_Manager->Add_Terrain_ToPhysx(pTerrainVIBuffer);
 }
 
 #pragma endregion

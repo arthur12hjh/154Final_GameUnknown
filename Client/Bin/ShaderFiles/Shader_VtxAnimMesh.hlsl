@@ -155,14 +155,6 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
 
     
-    //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
-    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
-    
-    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
-    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
-    
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
@@ -181,7 +173,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     matOldWVP = mul(matOldWV, g_ProjMatrix);
     vector vOldPos = mul(vPosition, matOldWVP);
     
-    float3 vDir = vNewPos.xyz - vOldPos.xyz;
+    float3 vDir = vOldPos.xyz - vNewPos.xyz;
     vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
     
     Out.vPosition = vNewPos;

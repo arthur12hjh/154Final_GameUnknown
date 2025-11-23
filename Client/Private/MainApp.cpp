@@ -17,7 +17,7 @@
 #include "Model.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
-
+#include "TestEveHead.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -282,6 +282,15 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 
 #endif
+	_fmatrix HeadPreWorlMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_TestEveHead"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MS_EVE_HEAD/Eve_Face.fbx", HeadPreWorlMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TestEveHead */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TestEveHead"), 
+		CTestEveHead::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }

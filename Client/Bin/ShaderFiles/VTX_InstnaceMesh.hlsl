@@ -165,7 +165,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
     return Out;
 }
 
@@ -184,7 +184,7 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
     return Out;
 }
 

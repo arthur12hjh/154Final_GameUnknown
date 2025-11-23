@@ -17,6 +17,7 @@
 #include "Fog.h"
 #include "DepthofField.h"
 #include "MotionBlur.h"
+#include "SSAO.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -106,6 +107,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pMotionBlur)
 		return E_FAIL;
 
+	m_pSSAO = CSSAO::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pSSAO)
+		return E_FAIL;
+
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -140,6 +145,8 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
 		return E_FAIL;
+	if (FAILED(m_pSSAO->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
 	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
 	//	return E_FAIL;
 
@@ -167,6 +174,9 @@ void CRenderer::Update(_float fTimeDelta)
 		m_isHDR = !m_isHDR;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F8))
 		m_pDepthofField->Set_Active();
+	// SSAO 토글.
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
+		m_isSSAO = !m_isSSAO;
 
 	m_pRadialBlur->Update(fTimeDelta);
 }
@@ -176,6 +186,9 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* 후처리 쉐이딩을 위한 렌더타겟들을 준비. */
 	/* Target_Scene */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
+		return E_FAIL;
+	/* Target_BloomScene */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_BloomScene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 	/* Target_Screen */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
@@ -224,6 +237,8 @@ HRESULT CRenderer::Ready_MRTs()
 {
 	/* MRT_Scene*/
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_Scene"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Scene"), TEXT("Target_BloomScene"))))
 		return E_FAIL;
 
 	/* MRT_Screen */
@@ -438,6 +453,9 @@ void CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+
+	//SSAO 차폐 연산.
+	m_pSSAO->Render(m_pVIBuffer, TEXT("Target_Depth"), TEXT("Target_Normal"), TEXT("NON_USE"));
 }
 
 void CRenderer::Render_Combined()
@@ -466,6 +484,13 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
 		return;
+
+	if (false == m_isSSAO)
+		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
+
+	if (FAILED(m_pSSAO->Bind_RenderTarget(m_pShader, "g_SSAOTexture")))
+		return;
+
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
@@ -535,7 +560,7 @@ void CRenderer::Render_Distortion()
 
 void CRenderer::Render_Bloom()
 {
-	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_Scene"), TEXT("MRT_Scene"));
+	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_BloomScene"), TEXT("MRT_Scene"));
 }
 
 void CRenderer::Render_Fog()
@@ -681,7 +706,10 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
+
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
+		return;
+	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 }
 
@@ -780,6 +808,7 @@ void CRenderer::Free()
 	Safe_Release(m_pRadialBlur);
 	Safe_Release(m_pDepthofField);
 	Safe_Release(m_pMotionBlur);
+	Safe_Release(m_pSSAO);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);
