@@ -1269,11 +1269,15 @@ void CModel::Free()
 	for (auto& pMesh : m_Meshes)
 		Safe_Release(pMesh);
 	m_Meshes.clear();
+
+	m_GlobalOffsetMatrices.clear();
     
 	Safe_Release(m_pBoneSource);
 	Safe_Release(m_pChannelSource);
 	Safe_Release(m_pKeyFrameSource);
 	Safe_Release(m_pOutReadBack);
+
+	Safe_Release(m_pBoneMatricesSRV);
 
 	Safe_Release(m_pComputeShaderCom);
 

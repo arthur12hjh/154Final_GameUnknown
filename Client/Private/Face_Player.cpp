@@ -239,4 +239,5 @@ CGameObject* CFace_Player::Clone(void* pArg)
 void CFace_Player::Free()
 {
 	__super::Free();
+
 }
