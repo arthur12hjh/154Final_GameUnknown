@@ -54,6 +54,10 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 	m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 	m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+
+	m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
+	m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
+
 	m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
 	return S_OK;
@@ -124,6 +128,12 @@ const list<CGameObject*>* CNayitba::GetTargetList()
 	return m_pAISenceCom->GetSearchAllObject();
 }
 
+CAIController* CNayitba::GetController()
+{
+	Safe_AddRef(m_pAIController);
+	return m_pAIController;
+}
+
 HRESULT CNayitba::ADD_Components()
 {
 	// 여기서 충돌처리용 콜라이더 달고
@@ -146,7 +156,7 @@ HRESULT CNayitba::ADD_Components()
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
 	CBase* pInstnace = nullptr;
-	if (m_pInitMonsterInfo->bIsBoss)
+	if (NAYTIBA_TYPE::ELITE == m_pInitMonsterInfo->eNaytiba_Type)
 	{
 		WCHAR	BehaviorTreePrototpye[MAX_PATH] = {};
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIBehaviorPrototype, BehaviorTreePrototpye);

@@ -7,6 +7,8 @@
 #include "Nayitba.h"
 #include "GameManager.h"
 #include "TargetComponent.h"
+
+#include "MonsterAttackState.h"
 #include "MonsterMoveState.h"
 
 #include "MonsterFSM.h"
@@ -54,11 +56,14 @@ void CMonsterController::Priority_Update(_float fTimeDelta)
 
 void CMonsterController::Update(_float fTimeDelta)
 {
-	if (m_pOwnerData->bIsBattle)
-		Battle_Action(fTimeDelta);
-	else
-		Default_Action(fTimeDelta);
-	
+	m_vDelayTime.x += fTimeDelta;
+	if (m_vDelayTime.x >= m_vDelayTime.y)
+	{
+		if (m_pOwnerData->bIsBattle)
+			Battle_Action(fTimeDelta);
+		else
+			Default_Action(fTimeDelta);
+	}
 
 	m_pFSM->Update(fTimeDelta);
 }
@@ -93,10 +98,8 @@ HRESULT CMonsterController::Ready_Components()
 	// 여기서 타겟 컴포넌트 만들어서 붙이자
 
 	/* 시야 센서가 Controller에 달려있어야하나?*/
-
-
 	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
-	TargetComDesc.fRadius = 10.f;
+	TargetComDesc.fRadius = 3.f;
 	TargetComDesc.iNumPoints = 10.f;
 
 	 /* Prototype_Component_TargetComponent */
@@ -131,9 +134,19 @@ HRESULT CMonsterController::Ready_FSM()
 void CMonsterController::Battle_Action(_float fTimeDelta)
 {
 	// 이거 배틀상태가 아니라면 안되게 하자
+	auto pNayitba = static_cast<CNayitba*>(m_pOwner);
 	m_vAttackTime.x += fTimeDelta;
 
+	list<CGameObject*> pObjectList;
 	auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+	pObjectList.push_back(pPlayer);
+
+	m_pTargetCom->Target_Search(&pObjectList);
+	auto pTarget = m_pTargetCom->GetTarget();
+
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
+	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
 	// 이거 전부 배틀상태일때 입력이 되는거임
 	// 공격을 하면 공격 입력
@@ -141,31 +154,18 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_vAttackTime.y <= m_vAttackTime.x)
 	{
-		if (SUCCEEDED(m_pFSM->Change_State(TEXT("Attack"))))
+		if (fDistance <= m_pOwnerData->fAttackRange)
 		{
-			m_vAttackTime.x = 0.f;
-			//m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
-			m_vAttackTime.y = m_pGameInstance->Random(2.f, 10.f);
+			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 		}
 	}
-	if(m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	else
 	{
-		// 이동을 하면 이동입력
-		// 여기서 이동 경로 넘겨주자
-		// 이동 포인트 넘겨야 하네
-		auto pNayitba = static_cast<CNayitba*>(m_pOwner);
-		list<CGameObject*> pObjectList;
-		pObjectList.push_back(pPlayer);
-		m_pTargetCom->Target_Search(&pObjectList);
-		
-		// 이걸로 넘겨서 타겟 기준으로 원형으로 돌수있게
-		CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
-		MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
-		if (SUCCEEDED(m_pFSM->Change_State(TEXT("Move"), &MoveStateDesc)))
-		{
-
-		}
+		MoveAction(true);
 	}
+	
 	Safe_Release(pPlayer);
 }
 
@@ -175,10 +175,33 @@ void CMonsterController::Default_Action(_float fTimeDelta)
 	// 로직을 결정하면 될거같음
 	// 가만히 있는 녀석들도 있으니까
 	// 플레그로 줘서 
+	MoveAction(false);
+}
 
+void CMonsterController::AttackCompleted(_float fDelayTime)
+{
+	m_vAttackTime.x = 0.f;
+	//m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
+	m_vAttackTime.y = m_pGameInstance->Random(15.f, 20.f);
+}
 
+void CMonsterController::DelayAction(_float fDelayTime)
+{
+	m_vDelayTime = { 0.f, fDelayTime };
+}
 
+void CMonsterController::MoveAction(_bool bIsTarget)
+{
+	CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
+	MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
+	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };
 
+	if (bIsTarget)
+		MoveStateDesc.pTarget = m_pTargetCom->GetTarget();
+	else
+		MoveStateDesc.pTarget = nullptr;
+
+	m_pFSM->Change_State(TEXT("Move"), &MoveStateDesc);
 }
 
 CMonsterController* CMonsterController::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

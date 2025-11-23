@@ -22,7 +22,7 @@ void CMonsterDeadState::Start(void* pArg)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 
-	string   szAnimationName = "CH_M_NA_51.ao|Result_State_KnockDown_S";
+	string   szAnimationName = "Result_State_KnockDown_S";
 	auto pDesc = static_cast<MONSTER_DEAD_STATE_DESC*>(pArg);
 
 	auto pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);

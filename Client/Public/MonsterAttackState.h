@@ -7,6 +7,12 @@ struct Character_Skill_Desc;
 
 class CMonsterAttackState final : public CState
 {
+public :
+	typedef struct MonsterAttackDesc
+	{
+		function<void(_float)>			AttackCompletedFunc;
+	}MONSTER_ATTACK_DESC;
+
 private:
 	CMonsterAttackState();
 	virtual ~CMonsterAttackState() = default;
@@ -24,7 +30,7 @@ public:
 
 private :
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };
-
+	function<void(_float)>						m_AttackCompletedFunc;
 
 public:
 	static	CMonsterAttackState*				Create(void* pArg);

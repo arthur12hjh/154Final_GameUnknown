@@ -45,6 +45,22 @@ namespace Engine
 		PointList[0].m128_f32[3] = 1.f;
 		return PointList[0];
 	}
+
+	// 2D 공간 상에서 입니다.
+	// X, Z 만 사용됨
+	// 이값은 라디안으로 반환됩니다.
+	static float	GetAngleVecToVecRadian2D(_vector vSrc, _vector vDest)
+	{
+		return XMVectorGetX(XMVector3Dot(vSrc, vDest));
+	}
+
+	// 2D 공간 상에서 입니다.
+	// X, Z 만 사용됨
+	// 이값은 각도로 반환됩니다.
+	static float	GetAngleVecToVecDegree2D(_vector vSrc, _vector vDest)
+	{
+		return XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(vSrc, vDest))));
+	}
 	
 	// 스플라인 곡선
 }

@@ -19,6 +19,9 @@ HRESULT CMonsterAttackState::Initialize(void* pArg)
 
 void CMonsterAttackState::Start(void* pArg)
 {
+	MONSTER_ATTACK_DESC* pDesc = static_cast<MONSTER_ATTACK_DESC*>(pArg);
+	m_AttackCompletedFunc = pDesc->AttackCompletedFunc;
+
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	auto SkillList = pEntity->GetMonsterData().iAttackList;
 
@@ -36,6 +39,9 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	// 여기서 공격 분기
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
+
+	if (m_bIsFinished)
+		m_AttackCompletedFunc(0.f);
 }
 
 void CMonsterAttackState::End()

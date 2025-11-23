@@ -61,21 +61,27 @@ HRESULT CDataManager::LoadBossData(void* pArg)
 
     size_t iMaxSize = BossDataList.size();
 
-    for (auto i = 11; i < iMaxSize;)
+    for (auto i = 15; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         _uint iBossID = atoi(BossDataList[i++].c_str());
         BossDesc.iNumPhase = atoi(BossDataList[i++].c_str());
        
+        strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szMonsterName, BossDataList[i++].c_str());
+        
+        BossDesc.eNaytiba_Type = NAYTIBA_TYPE(atoi(BossDataList[i++].c_str()));
+        BossDesc.eAI_Type = AI_TYPE(atoi(BossDataList[i++].c_str()));
 
-        strcpy_s(BossDesc.szName, BossDataList[i++].c_str());
-        BossDesc.bIsBoss = atoi(BossDataList[i++].c_str());
         strcpy_s(BossDesc.szModelPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIControllerPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIBehaviorPrototype, BossDataList[i++].c_str());
 
         BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
         BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
+
+        BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
+        BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
 
         _uint iNumSkill = atoi(BossDataList[i++].c_str());
         for (_uint j = 0; j < iNumSkill; ++j)

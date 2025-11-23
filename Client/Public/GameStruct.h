@@ -56,12 +56,16 @@ namespace Client
 
 	// 몬스터 구조체
 	// 인게임용
+	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
+	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFEMSOVE, END };
 	typedef struct Naytiba_NetWork_Desc
 	{
 		unsigned int		iNumPhase;
 
-		char				szName[256];
-		_bool				bIsBoss;
+		char				szAnimationName[256];
+		char				szMonsterName[256];
+		NAYTIBA_TYPE		eNaytiba_Type;
+		AI_TYPE				eAI_Type;
 
 		char				szModelPrototype[256];
 		char				szAIControllerPrototype[256];
@@ -71,6 +75,7 @@ namespace Client
 		long long			iMaxShield;
 
 		float				fAttackCoolTime;
+		float				fAttackRange;
 
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
@@ -85,6 +90,7 @@ namespace Client
 		long long			iCurrentShield;
 
 		_float2				fAttackCoolTime;
+		_float				fAttackRange;
 		_float				fMoveSpeed;
 
 		_bool				bIsBattle;

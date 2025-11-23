@@ -224,8 +224,11 @@ void CTransform::Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQ
 void CTransform::LookAt(_fvector vAt)
 {
 	_float3		vScale = Get_Scale();
-
 	_vector		vLook = vAt - Get_State(STATE::POSITION);
+
+	if (XMVector3Equal(vLook, XMVectorZero()))
+		return;
+
 	_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	_vector		vUp = XMVector3Cross(vLook, vRight);
 

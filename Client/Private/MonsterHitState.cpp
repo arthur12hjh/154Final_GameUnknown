@@ -25,7 +25,7 @@ void CMonsterHitState::Start(void* pArg)
     // 여기안에서 그로기 만들던가 하거나 아님 따로 상태주거나 이건
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
 
-    string   szAnimationName = "CH_M_NA_51.ao|Result_Hit_Stand_Light";
+    string   szAnimationName = "Result_Hit_Stand_Light";
     auto pDesc = static_cast<MONSTER_HIT_STATE_DESC*>(pArg);
 
     auto pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);

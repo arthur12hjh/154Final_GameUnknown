@@ -946,9 +946,6 @@
     <ClCompile Include="..\private\Nayitba.cpp">
       <Filter>02.GameObjects\Character\Naytiba</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MonsterController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
     </ClCompile>
@@ -966,6 +963,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MonsterAttackState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

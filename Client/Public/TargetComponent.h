@@ -21,7 +21,7 @@ public :
 	virtual HRESULT					Initialize(void* pArg);
 
 	void							Target_Search(const list<CGameObject*>* pList, function<_bool(CGameObject*, CGameObject*)> Func = nullptr);
-	const 	CGameObject*			GetTarget() { return m_pTarget; }
+	CGameObject*					GetTarget() { return m_pTarget; }
 
 	vector<_float3>*				GetPathFinding() { return &m_vPoints; }
 

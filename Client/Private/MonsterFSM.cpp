@@ -32,7 +32,9 @@ void CMonsterFSM::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	if (m_pCurrentState->Is_FinishedState())
+	{
 		Change_State(TEXT("Idle"));
+	}
 }
 
 HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg)
@@ -41,6 +43,9 @@ HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg)
 	// 변경한다.
 	auto iter = m_pStates.find(LayerTag);
 	if (iter == m_pStates.end())
+		return E_FAIL;
+
+	if (iter->second == m_pCurrentState)
 		return E_FAIL;
 
 	if (m_pCurrentState)

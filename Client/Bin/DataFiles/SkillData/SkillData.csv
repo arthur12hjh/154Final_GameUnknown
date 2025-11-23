@@ -1,7 +1,7 @@
 스킬 ID,애니메이션 이름,스킬 데미지,방향,스킬 타입
-1,CH_M_NA_05|M_Gorilla_S22_RightAttack,10,3,0
-511,CH_M_NA_51.ao|M_Beholder_SwingDouble,11,3,0
-512,CH_M_NA_51.ao|M_Beholder_Swing,12,3,0
-513,CH_M_NA_51.ao|M_Beholder_SpinSwing,13,3,0
-5,CH_M_NA_05|M_Gorilla_S26_RightAttack,14,3,0
-6,CH_M_NA_05|M_Gorilla_S27_RightAttack,15,3,0
+1,M_Gorilla_S22_RightAttack,10,3,0
+511,M_Beholder_SwingDouble,11,3,0
+512,M_Beholder_Swing,12,3,0
+513,M_Beholder_SpinSwing,13,3,0
+5,M_Gorilla_S26_RightAttack,14,3,0
+6,M_Gorilla_S27_RightAttack,15,3,0

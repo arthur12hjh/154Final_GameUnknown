@@ -37,8 +37,11 @@ private :
 	CStateMachine*					m_pFSM = { nullptr };
 
 	const		Naytiba_Desc*		m_pOwnerData = { nullptr };
+
 	_float							m_fAttackDelay = {};
 	_float2							m_vAttackTime = {};
+
+	_float2							m_vDelayTime = { 0.f, 1.f };
 
 private :
 	HRESULT							Ready_Components();
@@ -46,6 +49,10 @@ private :
 
 	void							Battle_Action(_float fTimeDelta);
 	void							Default_Action(_float fTimeDelta);
+
+	void							AttackCompleted(_float fDelayTime);
+	void							DelayAction(_float fDelayTime);
+	void							MoveAction(_bool bIsTarget);
 
 public:
 	static	CMonsterController*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

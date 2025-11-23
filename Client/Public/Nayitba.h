@@ -38,6 +38,9 @@ public:
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
 
+	//레퍼런스 카운트 증가
+	CAIController*					GetController();
+
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };

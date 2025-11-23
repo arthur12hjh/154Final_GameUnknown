@@ -24,7 +24,7 @@ void CMonsterIdleState::Start(void* pArg)
 void CMonsterIdleState::Update(_float fTimeDelta)
 {
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
-    string AnimationName = pEntity->GetStaticMonsterData()->szName;
+    string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
     AnimationName += "_Idle01";
 
     pEntity->Set_Animation(AnimationName.c_str());

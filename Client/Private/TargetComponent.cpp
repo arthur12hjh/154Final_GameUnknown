@@ -49,12 +49,13 @@ void CTargetComponent::Target_Search(const list<CGameObject*>* pList, function<_
 	}
 
 	m_pTarget = TargetCandidate.front();
-	_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 	_float fDegree = 360.f / m_iNumPoints;
 
 	for (_uint i = 0; i < m_iNumPoints; ++i)
 	{
 		_float fRadian = XMConvertToRadians(fDegree * i);
+
+		_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 		vTargetPos.m128_f32[0] += cosf(fRadian) * m_fRadius;
 		vTargetPos.m128_f32[2] += sinf(fRadian) * m_fRadius;
 
