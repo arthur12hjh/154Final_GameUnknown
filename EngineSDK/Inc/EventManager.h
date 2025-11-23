@@ -14,8 +14,8 @@ public :
 	HRESULT									Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent);
 	HRESULT									Remove_Event(const WCHAR* szEventTag);
 
-	HRESULT									Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
-	HRESULT									UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
 
 private :
 	unordered_map<_wstring, CEventHandle*>	m_Events;

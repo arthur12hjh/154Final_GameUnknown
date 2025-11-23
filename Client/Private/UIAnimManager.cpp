@@ -216,8 +216,24 @@ void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag)
 		return;
 
 	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second);
-
 	m_AnimInstances.push_back(pAnimInstance);
+}
+
+void CUIAnimManager::Anim_Stop(CUIBase* pUI)
+{
+	for (auto iter = m_AnimInstances.begin(); iter != m_AnimInstances.end();)
+	{
+		CUIAnimInstance* pAnimInstance = *iter;
+
+		if (pAnimInstance->Get_TargetUI() == pUI)
+		{
+			pAnimInstance->Stop_Anim();
+			Safe_Release(pAnimInstance);
+			iter = m_AnimInstances.erase(iter);
+		}
+		else
+			++iter;
+	}
 }
 
 void CUIAnimManager::Clear_AnimInstances()

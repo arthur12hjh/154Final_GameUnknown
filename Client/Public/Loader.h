@@ -58,6 +58,7 @@ private:
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
 public:
 	HRESULT Loading_UI_For_Logo_Level();
+	HRESULT Loading_UI_For_GamePlay_Level();
 
 
 public:

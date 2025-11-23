@@ -9,6 +9,7 @@ class CVIBuffer_Rect;
 class CVIBuffer_Point;
 class CTexture;
 class CShader;
+class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
@@ -63,18 +64,14 @@ public:
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);
+	void Set_Text_Color(_float4 vColor);
+	void Set_TextureUV(_float4 vUV);
+	void Set_FillAmount(_float fFillAmount);
 	HRESULT Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex);
 
-	/*void Play_Anim(_wstring szAnimTag) {
-		m_eAnimState = ANIM_STATE::PLAY;
-		m_szCurrentAnimTag = szAnimTag;
-	}
-	void Pause_Anim() {
-		m_eAnimState = ANIM_STATE::PAUSE;
-	}
-	void Stop_Anim() {
-		m_eAnimState = ANIM_STATE::STOP;
-	}*/
+	void Trigger_Event(const _wstring& TriggerTag, void* pArg); // ActionTag에 의해 이벤트 동작 수행(Execute) 및 이벤트 전달(Notify)
+	void Bind_Event(vector<_wstring> SubEvents, vector<CEventHandle*> Events); // 내가 구독할 이벤트 등록
+	void UnBind_Event(); // 이벤트 구독 취소
 
 	_bool Get_Follow_Parent() { return m_bFollowParent; }
 	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
@@ -91,14 +88,23 @@ protected:
 	UIBASE_DESC m_tUIDesc{};
 	UIBASE_DESC m_tOriginUIDesc{};
 
-	vector<CUIBase*>		m_Children = {};
-	//CUIAnimationCom*		m_pUIAnimCom = { nullptr };
+	vector<CUIBase*>						m_Children = {};
+	map<_wstring, vector<CEventHandle*>>	m_pEventHandles{}; // 내가 들고있을 이벤트 핸들 목록
+	vector<_wstring>						m_SubscribeEvents{}; // 내가 구독할 이벤트 목록
 
-	//_wstring				m_szCurrentAnimTag = {};
 	_bool					m_bFollowParent{ true };
 
 private:
 	HRESULT Ready_Texture();
+	HRESULT Ready_Events();
+	HRESULT Initialize_ShaderResources();
+
+	// ★ 중앙 브로드캐스트: 파생형에서 더 이상 오버라이드 필요 없음
+	virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg);
+
+	// ★ 공통 유효성 검사: 항상 UI_EVENT_ARG_DESC* 만 허용
+	bool ValidateEventArg(void* pArg) const;
+
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();
@@ -110,6 +116,15 @@ private:
 protected:
 	virtual HRESULT Ready_Components();
 	virtual HRESULT Bind_ShaderResources();
+	//virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE; // 이벤트 동작 수행
+	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) PURE; // 어떤 데이터를 감지할지
+	//virtual void CallbackEvent(void* pArg) PURE; // 콜백 함수
+
+	// 각 객체가 [본인]의 이벤트를 ‘수행’하는 로직(애니메이션/액션 등)
+	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE;
+
+	// 각 객체가 [구독하는 이벤트가 Notify하는 값에 의해] 콜백을 받는 지점(타입별 분기는 여기서)
+	virtual void CallbackEvent(void* pArg) PURE;
 
 public:
 	virtual void Free() override;
