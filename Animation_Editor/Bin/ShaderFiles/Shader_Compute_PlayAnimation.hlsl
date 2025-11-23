@@ -48,12 +48,14 @@ float4 QuaternionSlerp(float4 q1, float4 q2, float t)
 {
     float fCosTheta = dot(q1, q2);
     
+    // 반대방향 보정
     if (fCosTheta < 0.0f)
     {
         q2 = -q2;
         fCosTheta = -fCosTheta;
     }
     
+    // 거의 같은 방향이면 Lerp 사용
     if (fCosTheta > 0.9995f)
     {
         return normalize(lerp(q1, q2, t));
@@ -97,7 +99,6 @@ struct BoneTransformMatrixOut
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
-// Const Buffer
 cbuffer AnimationGlobalBuffer : register(b0)
 {
     row_major float4x4 g_PreTransformMatrix;
@@ -105,7 +106,7 @@ cbuffer AnimationGlobalBuffer : register(b0)
     float g_fTimeDelta;
     float g_fTickPerSecond;
     float g_fDuration;
-    
+
     uint g_bIsLoop;
     uint g_iNumBones;
     uint g_iNumChannels;
@@ -118,114 +119,105 @@ StructuredBuffer<KeyFrameInfo> InputKeyFrame : register(t2);
 StructuredBuffer<BoneTransformMatrixOut> InputLocalMatrix : register(t3);
 RWStructuredBuffer<BoneTransformMatrixOut> g_CombinedOut : register(u0);
 
+float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
+{
+    ChannelInfo channel = InputChannel[iBoneIndex];
+
+    // 키프레임이 없거나 1개 이하인 경우 → 애니메이션 없이 초기 로컬 행렬 사용
+    if (channel.iNumKeyFrames <= 1)
+    {
+        return InputLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
+    }
+
+    uint baseIndex = channel.iKeyFrameOffset;
+    uint localIndex = channel.iCurrentKeyFrameIndex;
+    uint lastIndex = baseIndex + (channel.iNumKeyFrames - 1);
+
+    // CPU에서 이미 인덱스는 관리하므로, 안전용으로 클램프만
+    uint currentIndex = baseIndex + localIndex;
+    currentIndex = min(currentIndex, lastIndex);
+    uint nextIndex = min(currentIndex + 1, lastIndex);
+
+    // 마지막 키프레임 이후면 마지막 키프레임 고정
+    if (t >= InputKeyFrame[lastIndex].fTrackPosition)
+    {
+        float3 vScale = InputKeyFrame[lastIndex].vScale;
+        float4 vRotation = InputKeyFrame[lastIndex].vRotation;
+        float3 vTranslation = InputKeyFrame[lastIndex].vTranslation;
+
+        float4x4 matScale = MakeScaleMatrix(float4(vScale, 1.f));
+        float4x4 matRotation = MakeRotationMatrix(vRotation);
+        float4x4 matTranslation = MakeTranslationMatrix(float4(vTranslation, 1.f));
+
+        return mul(mul(matScale, matRotation), matTranslation); // S * R * T
+    }
+    else
+    {
+        float3 vSourScale = InputKeyFrame[currentIndex].vScale;
+        float3 vDestScale = InputKeyFrame[nextIndex].vScale;
+        float4 vSourRotation = InputKeyFrame[currentIndex].vRotation;
+        float4 vDestRotation = InputKeyFrame[nextIndex].vRotation;
+        float3 vSourTranslation = InputKeyFrame[currentIndex].vTranslation;
+        float3 vDestTranslation = InputKeyFrame[nextIndex].vTranslation;
+
+        float fStartTime = InputKeyFrame[currentIndex].fTrackPosition;
+        float fEndTime = InputKeyFrame[nextIndex].fTrackPosition;
+        float fDuration = max(fEndTime - fStartTime, 0.0001f);
+
+        float fRatio = saturate((t - fStartTime) / fDuration);
+
+        float3 vScale = lerp(vSourScale, vDestScale, fRatio);
+        float4 vRotation = QuaternionSlerp(vSourRotation, vDestRotation, fRatio);
+        float3 vTranslation = lerp(vSourTranslation, vDestTranslation, fRatio);
+
+        float4x4 matScale = MakeScaleMatrix(float4(vScale, 1.f));
+        float4x4 matRotation = MakeRotationMatrix(vRotation);
+        float4x4 matTranslation = MakeTranslationMatrix(float4(vTranslation, 1.f));
+
+        return mul(mul(matScale, matRotation), matTranslation); // S * R * T
+    }
+}
+
 [numthreads(128, 1, 1)]
 void CombinedMatrices(uint3 Gid : SV_GroupID,
-                   uint3 DTid : SV_DispatchThreadID,
-                   uint3 GTid : SV_GroupThreadID,
-                   uint GI : SV_GroupIndex)
+                      uint3 DTid : SV_DispatchThreadID,
+                      uint3 GTid : SV_GroupThreadID,
+                      uint GI : SV_GroupIndex)
 {
-    // DTid를 현재 본 인덱스로 받는다.
     uint iBoneIndex = DTid.x;
     if (iBoneIndex >= g_iNumBones)
         return;
 
-    // boneIndex -> ChannelInfo
-    ChannelInfo CurrentChannel = InputChannel[iBoneIndex];
-
-    // Model에서는, Local과 Combined를 나눠서 작업해줬지만, 그럼 GPU는 투패스가 돼버린다. ㅈㄴ귀찮다 ㅇㅇ;
-    // 그래서 우리는 원패스로 해줄거다
-    float4x4 BoneLocalTransformMatrix;
-    
-    // 이 본은 애니메이션 채널이 없으므로, CPU에서 미리 써둔 로컬행렬을 그대로 사용한다.
-    if (CurrentChannel.iNumKeyFrames == 0)
+    // 트랙 위치 한 번만 정리
+    float t = g_fCurrentTrackPosition;
+    if (g_bIsLoop != 0 && g_fDuration > 0.0f)
     {
-        BoneLocalTransformMatrix = InputLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
-        g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocalTransformMatrix;
+        t = fmod(t, g_fDuration);
+        if (t < 0.0f)
+            t += g_fDuration;
     }
-    else
+
+    // 1) 자기 Local Matrix 계산
+    float4x4 BoneLocal = ComputeLocalMatrixForBone(iBoneIndex, t);
+
+    // 2) Combined = Local(Self)
+    float4x4 Combined = BoneLocal;
+
+    // 3) 부모 체인을 타고 올라가면서 Local을 계속 곱해준다.
+    int parentIndex = InputBone[iBoneIndex].iParentIndex;
+
+    while (parentIndex >= 0)
     {
-        vector vScale;
-        vector vRotation;
-        vector vTranslation;
-
-        // 키프레임은 여러개가 있어서, 오프셋이랑 인덱스를 계산해 현재와 다음 키프레임 인덱스를 구한다,
-        uint iBaseIndex = CurrentChannel.iKeyFrameOffset;
-        uint iLocalKeyFrameIndex = CurrentChannel.iCurrentKeyFrameIndex;
-
-        uint iCurrentKeyFrameIndex = iBaseIndex + iLocalKeyFrameIndex;
-        uint iLastKeyFrameIndex = iBaseIndex + (CurrentChannel.iNumKeyFrames - 1);
-
-        uint iNextKeyFrameIndex = min(iCurrentKeyFrameIndex + 1, iLastKeyFrameIndex);
-    
-    
-        float t = g_fCurrentTrackPosition;
-
-        if (g_bIsLoop != 0 && g_fDuration > 0.0f)
-        {
+        float4x4 ParentLocal = ComputeLocalMatrixForBone(parentIndex, t);
         
-            t = fmod(t, g_fDuration);
-            if (t < 0.0f)
-                t += g_fDuration;
-        }
+        Combined = mul(Combined, ParentLocal);
 
-    // 마지막 키프레임 이후면 그냥 마지막 키프레임 고정
-        if (t >= InputKeyFrame[iLastKeyFrameIndex].fTrackPosition)
-        {
-            vScale = vector(InputKeyFrame[iLastKeyFrameIndex].vScale, 1.f);
-            vRotation = InputKeyFrame[iLastKeyFrameIndex].vRotation;
-            vTranslation = vector(InputKeyFrame[iLastKeyFrameIndex].vTranslation, 1.f);
-        }
-        else
-        {
-            float3 vSourScale, vDestScale;
-            float4 vSourRotation, vDestRotation;
-            float3 vSourTranslation, vDestTranslation;
-
-            vSourScale = InputKeyFrame[iCurrentKeyFrameIndex].vScale;
-            vDestScale = InputKeyFrame[iNextKeyFrameIndex].vScale;
-            vSourRotation = InputKeyFrame[iCurrentKeyFrameIndex].vRotation;
-            vDestRotation = InputKeyFrame[iNextKeyFrameIndex].vRotation;
-            vSourTranslation = InputKeyFrame[iCurrentKeyFrameIndex].vTranslation;
-            vDestTranslation = InputKeyFrame[iNextKeyFrameIndex].vTranslation;
-
-            float fStartTime = InputKeyFrame[iCurrentKeyFrameIndex].fTrackPosition;
-            float fEndTime = InputKeyFrame[iNextKeyFrameIndex].fTrackPosition;
-            float fDuration = max(fEndTime - fStartTime, 0.0001f);
-
-            float fRatio = saturate((t - fStartTime) / fDuration);
-            float fSourWeight = 1.0f - fRatio;
-            float fDestWeight = fRatio;
-
-            vScale = vector(lerp(vSourScale, vDestScale, fRatio), 1.f);
-
-        // 쿼터니언 Slerp 사용
-            //vRotation = QuaternionSlerp(vSourRotation, vDestRotation, fRatio);
-            vRotation = InputKeyFrame[iLastKeyFrameIndex].vRotation;
-
-            vTranslation = vector(lerp(vSourTranslation, vDestTranslation, fRatio), 1.f);
-        }
-
-        // 어파인 변환
-        float4x4 matScale = MakeScaleMatrix(vScale);
-        float4x4 matRotation = MakeRotationMatrix(vRotation);
-        float4x4 matTranslation = MakeTranslationMatrix(vTranslation);
-        
-        BoneLocalTransformMatrix = mul(mul(matScale, matRotation), matTranslation);
-        // 로컬 본 완성
-        g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocalTransformMatrix;
-        // 이제 부모 본과 위치 보정을 시켜주자.
+        parentIndex = InputBone[parentIndex].iParentIndex;
     }
 
-    // 이렇게 하면 각 Bone들의 LocalTransformMatrix가 나온다. 이제 그냥 InputBone의 부모 인덱스 매트릭스를 곱해주면 된다.
-    if(InputBone[iBoneIndex].iParentIndex == -1)
-    {
-        g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = mul(BoneLocalTransformMatrix, g_PreTransformMatrix);
-    }
-    else
-    {
-        g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix =
-        mul(BoneLocalTransformMatrix, g_CombinedOut[InputBone[iBoneIndex].iParentIndex].BoneCombinedTransformMatrix);
-        // 부모까지 해서 CombinedMatrix 완성. 
-    }
-       
+    // 4) 최종적으로 PreTransform까지 적용
+    Combined = mul(Combined, g_PreTransformMatrix);
+
+    g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocal;
+    g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = Combined;
 }

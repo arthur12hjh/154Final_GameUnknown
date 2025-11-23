@@ -184,4 +184,5 @@ CGameObject* CGorilla_Body::Clone(void* pArg)
 void CGorilla_Body::Free()
 {
 	__super::Free();
+
 }

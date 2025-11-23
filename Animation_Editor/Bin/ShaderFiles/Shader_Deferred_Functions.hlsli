@@ -1,4 +1,8 @@
+#ifndef SHADER_DEFERRED_FUNCTIONS
+#define SHADER_DEFERRED_FUNCTIONS
+
 #include "Engine_Shader_Defines.hlsli"
+#include "Shader_Deferred_Defines.hlsli"
 
 inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition)
 { 
@@ -90,66 +94,98 @@ float GetBloomCurve(float fIntensity)
     return fResult * 0.5f;
 }
 
-float3 Fresnel_Shlick(in float3 f0, in float3 f90, in float x)
+float NDF_ggxtr(float3 vNormal, float3 vHalfWayVector, float fAlpha) // NormalDistributionGGXTR, (H, halfWay vector), (A, Roughness), (N, Normal)
 {
-    return f0 + (f90 - f0) * pow(1.f - x, 5.f);
+    float a2 = fAlpha * fAlpha;
+    float NdotH = saturate(dot(vNormal, vHalfWayVector));
+    float NdotH2 = NdotH * NdotH;
+    
+    float nom = a2;
+    float fDenom = (NdotH2 * (a2 - 1.f) + 1.f);
+    
+    fDenom = 3.14f * fDenom * fDenom;
+    return (nom / fDenom);
 }
 
-float Diffuse_Burley(in float NdotL, in float NdotV, in float LdotH, in float roughness)
+// F->G
+// GschlickGGX(n, v, k) 
+// k는 이하 두개 조명 조건에 따라 가변적임
+// Direct //  Kdir -> ((a + 1) * (a + 1)) / 8 // direct lighting 추천
+// IBL Lighting // Kibl -> a * a / 2 // 이미지 기반 조명기법
+
+float Geometry_SchlickGGX(float NdotV, float fK)
 {
-    float fd90 = 0.5f + 2.f * roughness * LdotH * LdotH;
-    return Fresnel_Shlick(1, fd90, NdotL).x * Fresnel_Shlick(1, fd90, NdotV).x;
+    return NdotV / (NdotV * (1.0f - fK) + fK);
 }
 
-float Specular_D_GGX(in float alpha, in float NdotH)
+float Geometry_Smith(float3 vNormal, float3 vFromView, float3 vFromLight, float k)
 {
-    const float alpha2 = alpha * alpha;
-    const float lower = (NdotH * NdotH * (alpha2 - 1)) + 1;
-    return alpha2 / max(1e-6f, 3.14f * lower * lower);
+    // Geometry Obstruction     
+    // 철이 있는, 주로 튀어나온 장애물
+    float NdotV = saturate(dot(vNormal, vFromView));
+    
+    // Geometry Shadowing       
+    // 요가 있는, 주로 음푹 들어간 장애물 (그래서 셰도잉)
+    float NdotL = saturate(dot(vNormal, vFromLight));
+
+    // 요철이 골고루 있다고 가정하고 적당히 섞음
+    return Geometry_SchlickGGX(NdotV, k) * Geometry_SchlickGGX(NdotL, k);
 }
 
-float G_Shlick_Smith_Hable(float alpha, float LdotH)
+// F -> F
+float3 Fresnel_Schlick(float cosTheta, float3 F0)
 {
-    return rcp(lerp(LdotH * LdotH, 1, alpha * alpha * 0.25f));
+    // 모서리 부분의 반사
+    return F0 + (1.0f - F0) * pow(1.0f - cosTheta, 5.0f);
 }
 
-float3 Specular_BRDF(in float alpha, in float3 specularColor, in float NdotV, in float NdotL, in float LdotH, in float NdotH)
+PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
+    float3 vAlbedo, float fMetallic, float fRoughness,
+    float3 vLightColor, float fAttenuation, float3 vFO, float fSSAO)
 {
-    float specular_D = Specular_D_GGX(alpha, NdotH);
-
-    float3 specular_F = Fresnel_Shlick(specularColor, 1, LdotH);
-
-    float specular_G = G_Shlick_Smith_Hable(alpha, LdotH);
-
-    return specular_D * specular_F * specular_G;
+    PS_OUT_LIGHT Out;
+    Out.vShade = 0;
+    Out.vSpecular = 0;
+    
+    float3 vHalfVector = normalize(vFromView + vFromLight);
+    float NdotL = saturate(dot(vNormal, vFromLight));
+    float NdotV = saturate(dot(vNormal, vFromView));
+    
+    if (NdotL <= 0 || NdotV <= 0)
+    {
+        clamp(NdotL, 0.f, 1.f);
+        clamp(NdotV, 0.f, 1.f);
+    }
+    
+    float fAlpha = max(fRoughness * fRoughness, 0.04f);
+    float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;
+    
+    float D = NDF_ggxtr(vNormal, vHalfVector, fAlpha);
+    float G = Geometry_Smith(vNormal, vFromView, vFromLight, k);
+    float3 F = Fresnel_Schlick(saturate(dot(vHalfVector, vFromView)), vFO);
+    
+    float3 vNumerator = D * G * F;
+    float fDenom = max(4.f * NdotL * NdotV, 1e-7);
+    float3 specularBRDF = vNumerator / fDenom;
+    
+    float3 kS = F;
+    // 금속이여도 일부 디퓨즈 가질 수 있게 세팅
+    float3 kD = (1.f - kS) * max((1.f - fMetallic), 0.2f);
+    
+    // 직접광 연산
+    Out.vShade = float4((kD * vAlbedo) * (NdotL * fAttenuation) * vLightColor, 1.f);
+    // 환경광 연산
+    float3 vDiffuseAmbient = vAlbedo * lerp(0.04f, 0.25f, 1 - fRoughness);
+    vDiffuseAmbient *= (1 - fMetallic) * fSSAO;
+    Out.vShade.xyz += vDiffuseAmbient;
+    
+    Out.vSpecular = float4(specularBRDF * vLightColor * fAttenuation * NdotL, 1.f);
+    F = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vFO);
+    float3 vAmbientSpec = F * 0.02f * (1 - fRoughness * 0.7f);
+    Out.vSpecular.xyz += vAmbientSpec;
+    
+    
+    return Out;
 }
 
-float3 LightSurface(
-    in float3 V, in float3 N, in float3 lightColor, in float3 lightDirection, in float3 albedo, in float roughness, in float metallic, in float ambientOcclusion)
-{
-    const float kSpecularCoefficient = 0.04;
-    const float NdotV = saturate(dot(N, V));
-    const float alpha = roughness * roughness;
-
-    const float3 c_diff = lerp(albedo, float3(0, 0, 0), metallic) * ambientOcclusion;
-    const float3 c_spec = lerp(kSpecularCoefficient, albedo, metallic) * ambientOcclusion;
-
-    float3 acc_color = 0;
-
-    const float3 L = normalize(-lightDirection);
-
-    const float3 H = normalize(L + V);
-
-    const float NdotL = saturate(dot(N, L));
-    const float LdotH = saturate(dot(L, H));
-    const float NdotH = saturate(dot(N, H));
-
-    float diffuse_factor = Diffuse_Burley(NdotL, NdotV, LdotH, roughness);
-    float3 specular = Specular_BRDF(alpha, c_spec, NdotV, NdotL, LdotH, NdotH);
-
-    acc_color += NdotL * lightColor * (((c_diff * diffuse_factor) + specular));
-    acc_color += c_diff * float3(0.5f, 0.5f, 0.5f);
-    acc_color += c_spec * float3(0.5f, 0.5f, 0.5f);
-
-    return acc_color;
-}
+#endif
