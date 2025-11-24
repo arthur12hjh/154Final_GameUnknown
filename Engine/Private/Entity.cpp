@@ -63,6 +63,11 @@ _bool CEntity::Play_Animation(_float fTimeDelta)
     return m_pBodyModelCom->Play_Animation(fTimeDelta);
 }
 
+_bool CEntity::IsAnmiationFinished()
+{
+    return m_pBodyModelCom->IsAnimationFinished();
+}
+
 void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
 {
     if (nullptr == m_pBodyModelCom)

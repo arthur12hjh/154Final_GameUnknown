@@ -35,7 +35,7 @@ void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
         Safe_Release(m_pPlayer);
 
     m_pPlayer = pCharacter;
-    Safe_AddRef(m_pPlayer);
+    ///Safe_AddRef(m_pPlayer);
 }
 
 CGameObject* CGameManager::GetGameCharacter()
@@ -60,9 +60,9 @@ const CHARACTER_SKILL_DESC* CGameManager::Find_SkillData(_uint iSkillID)
     return m_pDataManager->Find_SkillData(iSkillID);
 }
 
-const BOSS_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
+const NAYTIBA_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
 {
-    return m_pDataManager->Find_BossData(iBossID);
+    return m_pDataManager->Find_NaytibaData(iBossID);
 }
 
 const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)

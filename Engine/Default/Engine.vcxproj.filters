@@ -272,28 +272,28 @@
       <Filter>01.Utility\03.Components\Percetion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BehaviorTree.h">
-      <Filter>01.Utility\20.BehaviorTree</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BlackBoard.h">
-      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Task.h">
-      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Task</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Service.h">
-      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Service</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BehaviorNode.h">
-      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Decorator.h">
-      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Decorator</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SquenceNode.h">
-      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node\Squence</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SelectNode.h">
-      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node\Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deferred.h">
       <Filter>01.Utility\05.Renderer\Deferred</Filter>
@@ -343,6 +343,12 @@
     </ClInclude>
     <ClInclude Include="..\public\EventHandle.h">
       <Filter>01.Utility\23.Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AISenceComponent.h">
+      <Filter>01.Utility\20.AI\AI_Sence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AIController.h">
+      <Filter>01.Utility\20.AI\AI_Controller</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MotionBlur.h">
       <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
@@ -596,28 +602,28 @@
       <Filter>01.Utility\03.Components\Percetion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BehaviorTree.cpp">
-      <Filter>01.Utility\20.BehaviorTree</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BlackBoard.cpp">
-      <Filter>01.Utility\20.BehaviorTree\BlackBoard</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Task.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Task</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Task</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Service.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Service</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Service</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BehaviorNode.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Node</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Decorator.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Decorator</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Decorator</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SquenceNode.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Node\Squence</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node\Squence</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SelectNode.cpp">
-      <Filter>01.Utility\20.BehaviorTree\Node\Selector</Filter>
+      <Filter>01.Utility\20.AI\BehaviorTree\Node\Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bloom.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Bloom</Filter>
@@ -667,6 +673,12 @@
     <ClCompile Include="..\private\EventHandle.cpp">
       <Filter>01.Utility\23.Event</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\AISenceComponent.cpp">
+      <Filter>01.Utility\20.AI\AI_Sence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIController.cpp">
+      <Filter>01.Utility\20.AI\AI_Controller</Filter>
+   </ClCompile>
     <ClCompile Include="..\Private\MotionBlur.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
     </ClCompile>
@@ -839,30 +851,6 @@
     </Filter>
     <Filter Include="00.System\02.Input">
       <UniqueIdentifier>{ed9f86f1-56ed-4007-b67b-0c8dbf186264}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree">
-      <UniqueIdentifier>{e47c613a-d081-4a97-a636-e7e0b804d707}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Task">
-      <UniqueIdentifier>{8ac93faa-6382-4a92-be57-fd8fb48b5c3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Decorator">
-      <UniqueIdentifier>{d4a5b2fe-4691-47d3-8d25-4d7fceef0c49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\BlackBoard">
-      <UniqueIdentifier>{358152bc-0d8b-4b2b-a066-86bcaf97a3f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Node">
-      <UniqueIdentifier>{917bbcfd-cfac-4964-b40e-cf13caff31e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Node\Squence">
-      <UniqueIdentifier>{66ae4285-b58e-4ac2-80ac-93c31c42abd8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Node\Selector">
-      <UniqueIdentifier>{a8205b58-8687-4860-81fc-0d73e5ad3b4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\20.BehaviorTree\Service">
-      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\09.Target_Manager">
       <UniqueIdentifier>{e7dc7d85-a721-46c5-b39a-9eb879aeaeaf}</UniqueIdentifier>
@@ -1052,6 +1040,39 @@
     </Filter>
     <Filter Include="01.Utility\23.Event\Manager">
       <UniqueIdentifier>{163b16a3-d18c-4067-9707-e1cd8068c34a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI">
+      <UniqueIdentifier>{abe9feab-62a8-4358-a4d0-e6aaac12b28a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree">
+      <UniqueIdentifier>{e47c613a-d081-4a97-a636-e7e0b804d707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Task">
+      <UniqueIdentifier>{8ac93faa-6382-4a92-be57-fd8fb48b5c3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Decorator">
+      <UniqueIdentifier>{d4a5b2fe-4691-47d3-8d25-4d7fceef0c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{358152bc-0d8b-4b2b-a066-86bcaf97a3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Node">
+      <UniqueIdentifier>{917bbcfd-cfac-4964-b40e-cf13caff31e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Node\Squence">
+      <UniqueIdentifier>{66ae4285-b58e-4ac2-80ac-93c31c42abd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Node\Selector">
+      <UniqueIdentifier>{a8205b58-8687-4860-81fc-0d73e5ad3b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\BehaviorTree\Service">
+      <UniqueIdentifier>{535487a2-70ee-4112-98e4-b291a850c451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\AI_Sence">
+      <UniqueIdentifier>{bfbddd0b-4c9a-47f1-b808-d3feee8238cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\20.AI\AI_Controller">
+      <UniqueIdentifier>{d1b85de5-e831-4f06-96e0-bf58ce691ec1}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\MotionBlur">
       <UniqueIdentifier>{fca9f9ec-44e3-4741-9c91-e344dc6db1d2}</UniqueIdentifier>

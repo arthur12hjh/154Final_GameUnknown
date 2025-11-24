@@ -2,16 +2,18 @@
 
 #include "State.h"
 
-CStateMachine::CStateMachine()
+CStateMachine::CStateMachine(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	CComponent(pDevice, pContext)
 {
 }
 
 HRESULT CStateMachine::Initialize(void* pArg)
 {
-	STATE_MACHINE_DESC* pDesc = static_cast<STATE_MACHINE_DESC*>(pArg);
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	STATEMACHINE_DESC* pDesc = static_cast<STATEMACHINE_DESC*>(pArg);
 	m_pOwner = pDesc->pOwner;
-
-
 	return S_OK;
 }
 
@@ -27,6 +29,11 @@ CState* CStateMachine::Find_State(const WCHAR* StateTag)
 		return nullptr;
 
 	return iter->second;
+}
+
+CComponent* CStateMachine::Clone(void* pArg)
+{
+	return nullptr;
 }
 
 void CStateMachine::Free()

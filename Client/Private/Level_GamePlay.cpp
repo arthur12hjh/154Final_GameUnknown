@@ -5,6 +5,7 @@
 #include "GameManager.h"
 
 #include "Actor.h"
+#include "Nayitba.h"
 #include "Camera_Free.h"
 
 #include "UIHUD.h"
@@ -247,6 +248,33 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 			return E_FAIL;
 	}
+
+	CNayitba::NAYITBA_DESC Desc = {};
+	Desc.bIsApplyTransform = true;
+	Desc.vScale = { 1.f, 1.f, 1.f };
+
+	Desc.iMonsterID = 2;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
+
+	//Desc.iMonsterID = 3;
+	//Desc.vPosition = { 5.f, 0.f, 5.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
+
+	//Desc.iMonsterID = 4;
+	//Desc.vPosition = { 1.f, 0.f, 5.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
+
+	//Desc.iMonsterID = 5;
+	//Desc.vPosition = { 5.f, 0.f, 1.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))

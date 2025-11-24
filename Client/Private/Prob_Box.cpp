@@ -56,6 +56,7 @@ void CProb_Box::Late_Update(_float fTimeDelta)
 
 HRESULT CProb_Box::Render()
 {
+	// Å¸Å° 21¹ø
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

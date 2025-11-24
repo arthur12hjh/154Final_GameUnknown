@@ -141,6 +141,14 @@ void CTransform::Go_Right(_float fTimeDelta)
 	Set_State(STATE::POSITION, vPosition);
 }
 
+void CTransform::Move_Direction(_float fTimeDelta, _vector vDir, _float fSpeed)
+{
+	_vector		vPosition = Get_State(STATE::POSITION);
+	vPosition += (vDir * fSpeed * fTimeDelta);
+
+	Set_State(STATE::POSITION, vPosition);
+}
+
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 {
 	_vector		vRight = Get_State(STATE::RIGHT);
@@ -224,8 +232,11 @@ void CTransform::Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQ
 void CTransform::LookAt(_fvector vAt)
 {
 	_float3		vScale = Get_Scale();
-
 	_vector		vLook = vAt - Get_State(STATE::POSITION);
+
+	if (XMVector3Equal(vLook, XMVectorZero()))
+		return;
+
 	_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	_vector		vUp = XMVector3Cross(vLook, vRight);
 

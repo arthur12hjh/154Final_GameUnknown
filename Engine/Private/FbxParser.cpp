@@ -147,8 +147,12 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		for (size_t i = 0; i < pModel->iNumAnimations; ++i)
 		{
 			binAnimation AnimTmp;
+			const char* szAnimName = strchr(m_pAIScene->mAnimations[i]->mName.data, '|');
+			if (nullptr != szAnimName && strcmp(szAnimName, ""))
+				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(m_pAIScene->mAnimations[i]->mName.data, '|') + 1);
+			else
+				strcpy_s(AnimTmp.szName, m_pAIScene->mAnimations[i]->mName.data);
 
-			strcpy_s(AnimTmp.szName, m_pAIScene->mAnimations[i]->mName.data);
 			AnimTmp.fDuration = m_pAIScene->mAnimations[i]->mDuration;
 			AnimTmp.fTicksPerSecond = m_pAIScene->mAnimations[i]->mTicksPerSecond;
 			AnimTmp.iNumChannels = m_pAIScene->mAnimations[i]->mNumChannels;
