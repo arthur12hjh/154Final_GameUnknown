@@ -241,14 +241,14 @@ HRESULT CLoader::Loading_For_Logo()
 HRESULT CLoader::Loading_For_GamePlay()
 {
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
-	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest");
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	_matrix PreMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
 
 	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
 	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/CH_P_EVE_09_nosimplify.bin",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
 		szFrontPath, PreMatrix)))
 		return E_FAIL;
 

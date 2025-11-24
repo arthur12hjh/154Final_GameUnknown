@@ -192,6 +192,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &CameraDesc)))
 		return E_FAIL;*/
 
+
+
 	return S_OK;
 }
 

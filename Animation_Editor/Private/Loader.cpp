@@ -134,7 +134,7 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_Component_Model_Gigas */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Gigas"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Gigas/CH_M_Gigas_PreTest.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Gigas/CH_M_Gigas_PreTest.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Map_Village_Mou */
@@ -290,7 +290,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_63.bin",
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.fbx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
 		szFrontPath, PreMatrix)))
 		return E_FAIL;
 

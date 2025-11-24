@@ -17,9 +17,6 @@ CBody_Player::CBody_Player(const CBody_Player& Prototype)
 
 _bool CBody_Player::isFinish_Att()
 {
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		return m_isAnimFinish;
-
 	return false;
 }
 
@@ -52,16 +49,7 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 }
 
 void CBody_Player::Update(_float fTimeDelta)
-{
-	if (*m_pParentState & CPlayer::STATE_ATTACK)
-		m_pModelCom->Set_AnimationIndex(0, false);
-	
-	if(*m_pParentState & CPlayer::STATE_IDLE)
-		m_pModelCom->Set_AnimationIndex(1);
-	
-	if (*m_pParentState & CPlayer::STATE_WALK)
-		m_pModelCom->Set_AnimationIndex(4);
-
+{ 
 	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
@@ -145,7 +133,7 @@ HRESULT CBody_Player::Render_Shadow()
 HRESULT CBody_Player::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Eve_Body_24_TypeB"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 	
