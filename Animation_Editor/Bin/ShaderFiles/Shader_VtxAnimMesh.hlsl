@@ -14,7 +14,7 @@ matrix g_OffsetMatrices[512];
 bool g_IsMotionBlur;
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
-
+StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -53,21 +53,11 @@ VS_OUT VS_MAIN(VS_IN In)
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
-
-    
-    //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
-    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
-    
-    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
-    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
     
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
-    
     
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
@@ -154,30 +144,39 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
 
+    float4x4 PreMatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_PreBoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_PreBoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_PreBoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_PreBoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
     
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
+    
+    matrix PreBoneMatrix = PreMatrixX * In.vBlendWeight.x +
+        PreMatrixY * In.vBlendWeight.y +
+        PreMatrixZ * In.vBlendWeight.z +
+        PreMatrixW * In.vBlendWeight.w;
+   
     /* 스키닝 */
-    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vCurrentPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vPrePosition = mul(vector(In.vPosition, 1.f), PreBoneMatrix);
     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-    
-    Out.vPosition = mul(vPosition, matWVP);
+        
+    Out.vPosition = mul(vCurrentPosition, matWVP);
     float4 vNewPos = Out.vPosition;
     
     matOldWV = mul(g_PreWorldMatrix, g_PreViewMatrix);
     matOldWVP = mul(matOldWV, g_ProjMatrix);
-    vector vOldPos = mul(vPosition, matOldWVP);
+    vector vOldPos = mul(vPrePosition, matOldWVP);
     
     float3 vDir = vOldPos.xyz - vNewPos.xyz;
     vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
     
-    Out.vPosition = vNewPos;
-
     float2 fVelocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
     Out.vDirection.xy = fVelocity * 0.5f;
     Out.vDirection.y *= -1.f;
@@ -336,7 +335,8 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
     //노말맵은 안..쓰지.
     PS_OUT_MOTIONBLUR Out;
     Out.vDirection.xy = In.vDirection.xy;
-
+    Out.vDirection.z = 1.f;
+    
     return Out;
 }
 

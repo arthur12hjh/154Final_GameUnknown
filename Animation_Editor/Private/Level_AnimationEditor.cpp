@@ -126,12 +126,12 @@ HRESULT CLevel_AnimationEditor::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_AnimationEditor::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	// for (size_t i = 0; i < 1; i++)
-	// {
-	// 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Dororong"),
-	// 		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
-	// 		return E_FAIL;
-	// }
+	 //for (size_t i = 0; i < 5; i++)
+	 //{
+	 //	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Dororong"),
+	 //		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
+	 //		return E_FAIL;
+	 //}
 
 
 	return S_OK;
