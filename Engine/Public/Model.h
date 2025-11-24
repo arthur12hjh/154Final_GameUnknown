@@ -118,6 +118,7 @@ public:
 	_bool Play_Animation(_float fTimeDelta, _bool isSimd = FALSE);
 
 	HRESULT Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag);
+	_bool			IsAnimationFinished() { return m_isFinish; }
 
 	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
 

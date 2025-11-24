@@ -6,9 +6,9 @@ class CModel;
 NS_END
 
 NS_BEGIN(Client)
-class CProb_Box  : public CActor
+class CProb_Box  final : public CActor
 {
-protected:
+private:
 	CProb_Box(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CProb_Box(const CProb_Box& Prototype);
 	virtual ~CProb_Box() = default;

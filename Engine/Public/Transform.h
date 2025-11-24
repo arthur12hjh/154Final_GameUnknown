@@ -51,6 +51,8 @@ public:
 	void					Go_Left(_float fTimeDelta);
 	void					Go_Right(_float fTimeDelta);
 
+	void					Move_Direction(_float fTimeDelta, _vector vDir, _float fSpeed);
+
 	void					Turn(_fvector vAxis, _float fTimeDelta);
 	void					Rotation(_fvector vAxis, _float fRadian);
 	void					Rotation(_float fRadianX, _float fRadianY, _float fRadianZ);

@@ -43,9 +43,9 @@ public :
 #pragma endregion
 
 #pragma region DataManager
-	const CHARACTER_SKILL_DESC*	Find_SkillData(_uint iSkillID);
-	const BOSS_NETWORK_DESC*	Find_BossData(_uint iBossID);
-	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
+	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
+	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 #pragma endregion
 
 #pragma region Quest Manager

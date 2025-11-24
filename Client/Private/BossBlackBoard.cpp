@@ -14,7 +14,7 @@ HRESULT CBossBlackBoard::Initialize(_uint iBossID)
     m_BossDefualtInfo = pGameManager->Find_BossData(iBossID);
 
     for (auto& iter : m_BossDefualtInfo->iAttackList)
-        m_BossCurrentInfo.iAttackList.push_back((*pGameManager->Find_SkillData(iter)));
+        m_BossCurrentInfo.iAttackList.push_back(pGameManager->Find_SkillData(iter));
    
     m_BossCurrentInfo.iCurrentHealth = m_BossDefualtInfo->iMaxHealth;
     m_BossCurrentInfo.iCurrentShield = m_BossDefualtInfo->iMaxShield;

@@ -21,14 +21,14 @@ public:
 	void								SetTarget(CGameObject* pGameObject);
 	CGameObject*						GetTarget() { return m_pTarget; }
 
-	const BOSS_NETWORK_DESC*			GetBossDefaultInfo() { return m_BossDefualtInfo; }
-	BOSS_DESC&							GetBossInfo() { return m_BossCurrentInfo; }
+	const NAYTIBA_NETWORK_DESC*			GetBossDefaultInfo() { return m_BossDefualtInfo; }
+	NAYTIBA_DESC&						GetBossInfo() { return m_BossCurrentInfo; }
 
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 
-	const BOSS_NETWORK_DESC*			m_BossDefualtInfo = { nullptr };
-	BOSS_DESC							m_BossCurrentInfo;
+	const NAYTIBA_NETWORK_DESC*			m_BossDefualtInfo = { nullptr };
+	NAYTIBA_DESC						m_BossCurrentInfo;
 
 public:
 	virtual		void					Free() override;
