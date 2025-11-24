@@ -4,6 +4,12 @@
 
 using namespace std; 
 
+namespace Engine
+{
+	class CGameObject;
+}
+
+
 namespace Client
 {
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
@@ -43,11 +49,12 @@ namespace Client
 	enum class SKILL_TYPE { PARRYABLE, END };
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int	iSkillID;
+		unsigned int		iSkillID;
 
-		char			szAnimationName[256];
-		long long		iSkillDamage;
+		char				szAnimationName[256];
+		char				szHitAnimationName[256];
 
+		long long			iSkillDamage;
 		ATTACK_DIRECTION	eATK_Direction;
 		DIRECTION			eDirection;
 		SKILL_TYPE			eSkillType;
@@ -82,6 +89,7 @@ namespace Client
 	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
+	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
 	typedef struct Naytiba_Desc
 	{
 		unsigned int		iCurrentPhase;
@@ -93,10 +101,9 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		_bool				bIsBattle;
+		NAYTIBA_STATE		eNaytiba;
 
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
-
 	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
@@ -110,4 +117,12 @@ namespace Client
 
 		vector<_uint>		RewardLists;
 	}QUEST_STRUCT;
+
+	typedef struct Default_Damage_Desc
+	{
+		CGameObject*		pAttacker;
+		void*				pSkillData;
+	}DEFAULT_DAMAGE_DESC;
+
+
 }
