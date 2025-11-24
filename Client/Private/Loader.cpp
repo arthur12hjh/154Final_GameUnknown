@@ -31,7 +31,9 @@
 #include "MonsterFSM.h"
 #include "Nayitba.h"
 #include "NayitbaPartBody.h"
+
 #include "MonsterController.h"
+#include "MonsterMimesisController.h"
 
 #pragma region BOSS
 #include "Gorilla.h"
@@ -363,6 +365,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Monster_Controller */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterController"),
 		CMonsterController::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_MonsterMimesisController */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterMimesisController"),
+		CMonsterMimesisController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion
 
