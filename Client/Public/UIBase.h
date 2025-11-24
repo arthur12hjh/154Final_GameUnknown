@@ -2,78 +2,22 @@
 
 #include "Client_Defines.h"
 #include "UIObject.h"
+#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Rect;
 class CVIBuffer_Point;
 class CTexture;
 class CShader;
+class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
 class CUIAnimationCom;
+class CUIHUD;
 
 class CUIBase abstract : public CUIObject
 {
-public:
-	enum class ANIM_STATE { STOP, PLAY, PAUSE, IDLE };
-
-public:
-	typedef struct tagUITextDesc
-	{
-		_wstring szText{};
-		_float4 vColor{ 1.f, 1.f, 1.f, 1.f };
-
-	}UI_TEXT_DESC;
-
-	typedef struct tagUITextureDesc
-	{
-		_wstring szTextureComTag{};
-		_wstring szProtoTag{};
-		_uint iTextureIndex{ 0 };
-		_uint iPass{ 0 };
-
-	}UI_TEXTURE_DESC;
-
-public:
-	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
-	{
-		_float fOffsetX{ 0.f }, fOffsetY{ 0.f };
-		_float fAlpha{ 1.f };
-		_uint iLevel{ 0 };
-		_uint iDepth{ 0 };
-		_uint iRenderGroup{ ENUM_CLASS(RENDER::UI) };
-
-		_wstring szUITag{};
-		_wstring szLayerTag{};
-		_wstring szProtoTag{};
-
-		UI_TEXT_DESC* m_pUITextDesc{ nullptr };
-		UI_TEXTURE_DESC* m_pUITextureDesc{ nullptr };
-
-	public:
-		// 텍스트
-		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
-			Safe_Delete(m_pUITextDesc);
-			m_pUITextDesc = new UI_TEXT_DESC(Desc);
-		}
-
-		UI_TEXT_DESC* Get_UI_Text_Desc() {
-			return m_pUITextDesc;
-		}
-
-		// 텍스쳐
-		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
-			Safe_Delete(m_pUITextureDesc);
-			m_pUITextureDesc = new UI_TEXTURE_DESC(Desc);
-		}
-
-		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
-			return m_pUITextureDesc;
-		}
-
-	}UIBASE_DESC;
-
 protected:
 	CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext); 
 	CUIBase(const CUIBase& Prototype);
@@ -87,7 +31,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	UIBASE_DESC Get_UIBase_Desc() { return m_tUIDesc; }
+	UIBASE_DESC& Get_UIBase_Desc() { return m_tUIDesc; }
 	void Set_UIBase_Desc(UIBASE_DESC pDesc) {
 		m_tUIDesc = pDesc;
 	}
@@ -120,23 +64,21 @@ public:
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);
+	void Set_Text_Color(_float4 vColor);
+	void Set_TextureUV(_float4 vUV);
+	void Set_FillAmount(_float fFillAmount);
 	HRESULT Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex);
 
-	void Play_Anim(_wstring szAnimTag) {
-		m_eAnimState = ANIM_STATE::PLAY;
-		m_szCurrentAnimTag = szAnimTag;
-	}
-	void Pause_Anim() {
-		m_eAnimState = ANIM_STATE::PAUSE;
-	}
-	void Stop_Anim() {
-		m_eAnimState = ANIM_STATE::STOP;
-	}
+	void Trigger_Event(const _wstring& TriggerTag, void* pArg); // ActionTag에 의해 이벤트 동작 수행(Execute) 및 이벤트 전달(Notify)
+	void Bind_Event(vector<_wstring> SubEvents, vector<CEventHandle*> Events); // 내가 구독할 이벤트 등록
+	void UnBind_Event(); // 이벤트 구독 취소
 
-	ANIM_STATE Get_Anim_State() { return m_eAnimState; }
-	void Set_Anim_State(ANIM_STATE eState) { m_eAnimState = eState; }
+	_bool Get_Follow_Parent() { return m_bFollowParent; }
+	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
 
-	CUIAnimationCom* Get_AnimationCom() { return m_pUIAnimCom; }
+#ifdef _DEBUG
+	void Render_Debug_Rect();
+#endif
 
 protected:
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
@@ -146,20 +88,26 @@ protected:
 	UIBASE_DESC m_tUIDesc{};
 	UIBASE_DESC m_tOriginUIDesc{};
 
-	vector<CUIBase*>		m_Children = {};
-	CUIAnimationCom*		m_pUIAnimCom = { nullptr };
+	vector<CUIBase*>						m_Children = {};
+	map<_wstring, vector<CEventHandle*>>	m_pEventHandles{}; // 내가 들고있을 이벤트 핸들 목록
+	vector<_wstring>						m_SubscribeEvents{}; // 내가 구독할 이벤트 목록
 
-	_wstring				m_szCurrentAnimTag = {};
+	_bool					m_bFollowParent{ true };
 
 private:
 	HRESULT Ready_Texture();
-	HRESULT Ready_UIAnimation();
+	HRESULT Ready_Events();
+	HRESULT Initialize_ShaderResources();
 
-	ANIM_STATE m_eAnimState{ ANIM_STATE::IDLE };
+	// ★ 중앙 브로드캐스트: 파생형에서 더 이상 오버라이드 필요 없음
+	virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg);
+
+	// ★ 공통 유효성 검사: 항상 UI_EVENT_ARG_DESC* 만 허용
+	bool ValidateEventArg(void* pArg) const;
+
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();
-	void Render_Debug_Rect();
 	HRESULT Bind_Debug_ShaderResources();
 
 	CVIBuffer_Point* m_pVIDebugBufferCom = { nullptr };
@@ -168,6 +116,15 @@ private:
 protected:
 	virtual HRESULT Ready_Components();
 	virtual HRESULT Bind_ShaderResources();
+	//virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE; // 이벤트 동작 수행
+	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) PURE; // 어떤 데이터를 감지할지
+	//virtual void CallbackEvent(void* pArg) PURE; // 콜백 함수
+
+	// 각 객체가 [본인]의 이벤트를 ‘수행’하는 로직(애니메이션/액션 등)
+	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE;
+
+	// 각 객체가 [구독하는 이벤트가 Notify하는 값에 의해] 콜백을 받는 지점(타입별 분기는 여기서)
+	virtual void CallbackEvent(void* pArg) PURE;
 
 public:
 	virtual void Free() override;

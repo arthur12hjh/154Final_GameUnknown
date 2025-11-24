@@ -12,7 +12,7 @@ private:
 
 public:
 	void Set_Active();
-
+	virtual void* Get_Desc() override;
 public:
 	virtual HRESULT Initialize() override;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override { return S_OK; }
@@ -26,7 +26,11 @@ public:
 #endif
 
 private:
+	DOF_DESC m_Desc = {};
 	_bool  m_isActive = { false };
+	_float m_fFocusDistance = { 20.f };
+	_float m_fMaxRange = { 20.f };
+	_float m_fIntensity = { 1.f };
 
 public:
 	static CDepthofField* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

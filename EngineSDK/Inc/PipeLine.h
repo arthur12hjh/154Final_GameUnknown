@@ -18,6 +18,8 @@ public:
 	void Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix); 
 
 public:
+	const _float4x4*	Get_PreTransform_Float4x4(D3DTS eState);
+	_matrix				Get_PreTransform_Matrix(D3DTS eState);
 	const _float4x4*	Get_Transform_Float4x4(D3DTS eState);
 	_matrix				Get_Transform_Matrix(D3DTS eState);
 	const _float4x4*	Get_Transform_Float4x4_Inverse(D3DTS eState);
@@ -36,6 +38,10 @@ public:
 private:
 	_float4x4				m_TransformStateMatrices[ENUM_CLASS(D3DTS::END)] = {};
 	_float4x4				m_TransformStateMatrixInverse[ENUM_CLASS(D3DTS::END)] = {};
+
+	_float4x4				m_PreTransformStateMatrices[ENUM_CLASS(D3DTS::END)] = {}; 
+	_float4x4				m_PreTransformStateMatrixInverse[ENUM_CLASS(D3DTS::END)] = {};
+
 	_float4x4				m_IdentityMatrix = {};
 
 	_float4					m_vCamPosition = {};

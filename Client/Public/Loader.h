@@ -52,10 +52,13 @@ private:
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
 	HRESULT Loading_For_GamePlay_Effect(void* pArg);
 	HRESULT Loading_For_GamePlay_Map(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Building(void* pArg);
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
 public:
 	HRESULT Loading_UI_For_Logo_Level();
+	HRESULT Loading_UI_For_GamePlay_Level();
 
 
 public:

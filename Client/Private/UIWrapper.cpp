@@ -20,13 +20,6 @@ HRESULT CUIWrapper::Initialize_Prototype()
 
 HRESULT CUIWrapper::Initialize(void* pArg)
 {
-	//CUIObject::UIOBJECT_DESC	Desc{};
-
-	//Desc.fX = g_iWinSizeX >> 1;
-	//Desc.fY = g_iWinSizeY >> 1;
-	//Desc.fSizeX = g_iWinSizeX;
-	//Desc.fSizeY = g_iWinSizeY;
-	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -70,6 +63,10 @@ HRESULT CUIWrapper::Render()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
+	__super::Render_Debug_Rect();
+#endif
+
 	return S_OK;
 }
 
@@ -81,17 +78,6 @@ HRESULT CUIWrapper::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
-
-	///* Com_Texture */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-	//	return E_FAIL;
-
-	///* Com_Shader */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-	//	return E_FAIL;
-
 	return S_OK;
 }
 
@@ -109,6 +95,20 @@ HRESULT CUIWrapper::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+HRESULT CUIWrapper::Execute(const UI_EVENT_DESC& EventDesc)
+{
+	return S_OK;
+}
+
+//HRESULT CUIWrapper::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIWrapper::CallbackEvent(void* pArg)
+{
 }
 
 CUIWrapper* CUIWrapper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -1,4 +1,4 @@
-#include "Model.h"
+﻿#include "Model.h"
 
 #include "Mesh.h"
 #include "Bone.h"
@@ -6,6 +6,8 @@
 #include "Material.h"
 #include "Animation.h"
 #include "Channel.h"
+#include "ComputeShader.h"
+
 
 #include "GameInstance.h"
 
@@ -22,7 +24,8 @@ CModel::CModel(const CModel& Prototype)
 	, m_iNumMaterials{ Prototype.m_iNumMaterials }
 	, m_Materials{ Prototype.m_Materials }
 	, m_PreTransformMatrix { Prototype.m_PreTransformMatrix }
-	, m_iNumAnimations { Prototype.m_iNumAnimations }
+	, m_iNumAnimations{ Prototype.m_iNumAnimations }
+	, m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
 {
 	for (auto& pPrototypeBone : Prototype.m_Bones)
 		m_Bones.push_back(pPrototypeBone->Clone());
@@ -37,6 +40,8 @@ CModel::CModel(const CModel& Prototype)
 		m_Animations.push_back(pPrototypeAnim->Clone());
 
 	memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
+
+	m_pBoneMatricesSRV = nullptr;
 }
 
 _uint CModel::Get_Mesh_MaterialIndex(_uint iIdx) const
@@ -159,16 +164,20 @@ HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
 	for (auto& pAnimation : *pAnimations)
 	{
 		Mapping_Animation(pAnimation);
+
+		m_Animations.push_back(pAnimation);
+		++m_iNumAnimations;
 	}
+
 
 	return S_OK;
 }
 
 HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, CTexture* pTexture, const _char* pBindTag)
 {
-	// 1. m_Meshes�� Get_MaterialIndex()�� �ؼ� ��Ƽ���� �ε����� �޾ƿ´�.
-	// 2. m_Materials�� Import_Texture()�� SRV�� �־��ش�.
-	// 3. pBindTag�� nullptr�� �ƴϸ� m_szBindTags�� �������ش�.
+	// 1. m_Meshes에 Get_MaterialIndex()를 해서 머티리얼 인덱스를 받아온다.
+	// 2. m_Materials에 Import_Texture()로 SRV를 넣어준다.
+	// 3. pBindTag가 nullptr가 아니면 m_szBindTags에 복사해준다.
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
 
@@ -252,6 +261,43 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11Shade
 		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
 
 	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV);
+}
+
+HRESULT CModel::Mapping_OffsetMatrix()
+{
+	_uint iNumBones = (_uint)m_Bones.size();
+	if (iNumBones == 0)
+		return S_OK;
+
+	// 1) 전역 Offset 배열 초기화
+	m_GlobalOffsetMatrices.clear();
+	m_GlobalOffsetMatrices.resize(iNumBones);
+
+	// 1-1) 기본값 (단위행렬)로 세팅
+	for (_uint i = 0; i < iNumBones; ++i)
+		XMStoreFloat4x4(&m_GlobalOffsetMatrices[i], XMMatrixIdentity());
+
+	// 2) Mesh들을 돌면서 전역 매핑
+	for (auto& pMesh : m_Meshes)
+	{
+		const auto& meshOffsets = pMesh->Get_OffsetMatrices();   // 로컬 Offset
+		const auto& meshBoneIndices = pMesh->Get_BoneIndices();      // 로컬 -> 전역 BoneIndex
+
+		_uint localCount = (_uint)meshBoneIndices.size();
+
+		for (_uint local = 0; local < localCount; ++local)
+		{
+			_int global = meshBoneIndices[local];  // 전역 BoneIndex
+
+			if (global < 0 || global >= (_int)iNumBones)
+				continue;
+
+			// 전역 인덱스 위치에 저장
+			m_GlobalOffsetMatrices[global] = meshOffsets[local];
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
@@ -344,6 +390,9 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	if (FAILED(Ready_Animations()))
 		return E_FAIL;
 
+	if (FAILED(Mapping_OffsetMatrix()))
+		return E_FAIL;
+
 	Safe_Delete(m_pModel);
 
     return S_OK;
@@ -351,6 +400,16 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
 HRESULT CModel::Initialize(void* pArg)
 {
+	
+	if (m_eType == MODEL_TYPE::NONANIM)
+		return S_OK;
+
+	m_pBoneMatricesSRV = nullptr;
+
+	if (FAILED(Ready_ComputeShader()))
+		return E_FAIL;
+
+
     return S_OK;
 }
 
@@ -361,6 +420,50 @@ HRESULT CModel::Bind_BoneMatrices(_uint iMeshIndex, CShader* pShader, const _cha
 
 	return m_Meshes[iMeshIndex]->Bind_BoneMatrices(m_Bones, pShader, pConstantName);
 	
+}
+
+HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pConstantName)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	if (m_pBoneMatricesSRV == nullptr) {
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+		SRVDesc.Buffer.NumElements = m_Bones.size();
+		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pOutSource, &SRVDesc, &m_pBoneMatricesSRV);
+		if (FAILED(hr))
+			return hr; 
+	}
+
+	ID3D11ShaderResourceView* srvs[1] = { m_pBoneMatricesSRV };
+
+	HRESULT hr = pShader->Bind_SRVs(pConstantName, srvs, 1);
+	if (FAILED(hr))
+		OutputDebugString(L"Bind_BoneSRV: Bind_SRVs FAILED\n");
+	else
+		OutputDebugString(L"Bind_BoneSRV: Bind_SRVs OK\n");
+
+	if (!m_GlobalOffsetMatrices.empty())
+	{
+		_uint iNumOffsets = (_uint)m_GlobalOffsetMatrices.size();
+		//512
+		if (iNumOffsets > 512)
+			iNumOffsets = 512;
+
+		hr = pShader->Bind_Matrices("g_OffsetMatrices",
+			m_GlobalOffsetMatrices.data(),
+			iNumOffsets);
+
+		if (FAILED(hr))
+		{
+			OutputDebugString(L"Bind_BoneSRV: Bind_Matrices(g_OffsetMatrices) FAILED\n");
+			return hr;
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT CModel::Bind_Material(_uint iMeshIndex, CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex)
@@ -394,24 +497,72 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 
 	return S_OK;
 }
-
-_bool CModel::Play_Animation(_float fTimeDelta)
+/*
+*  바인딩 필요한 값들
+*  - pass 0:
+*		*** Global ***
+*			-> g_fCurrentTrackPosition
+*			-> g_fTimeDelta
+*			-> g_fTickPerSecond
+*			-> g_fDuration
+*			-> g_bIsLoop
+*			-> g_iNumBones
+*			-> g_iNumChannels
+*		[ ] Channel
+*			-> iBoneIndex
+*			-> iCurrentKeyFrameIndex
+*			-> iNumKeyFrames
+*			-> iKeyFrameOffset
+*		[ ] KeyFrame
+*			-> vScale
+*			-> vRotation
+*			-> vTranslation
+*			-> fTrackPosition
+* 
+*	현재 산재된 문제점
+*	-> 채널과 본 수가 다름 개 씨발 매핑 되게 순서대로 정렬은 해줬는데 예외 되는지 확인 필요
+*	-> 원래 채널에서 선형보간 시 pCurrentKeyFrameIndex를 해주는데 그건 옮기지 말고 CPU에서 해주어야함
+* 
+*	바인딩을 어디서 할 것인가?
+*	-> 그래도 여기서 해야지..
+*/
+_bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 {
-	if (-1 == m_iCurrentAnimIndex || 
-		m_iCurrentAnimIndex >= m_iNumAnimations)
-		return false;
-
-	/* ���� ����ϰ����ϴ� �ִϸ��̼�(���ݸ��)�� �̿��ϰ� �ִ� ������ ���� ��ȯ����(TransformationMatrix)�� �������ش�.*/
-	m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
-
-
-	/* ��� ���� ��ȸ�ϸ鼭 CombinedTransformationMatrix�� �����Ѵ�. */
-	for (auto& pBone : m_Bones)
+	if (isSimd)
 	{
-		pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
-	}
+		if (-1 == m_iCurrentAnimIndex ||
+			m_iCurrentAnimIndex >= m_iNumAnimations)
+			return false;
 
-	return m_isFinish;
+		/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
+		m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
+
+
+		/* 모든 뼈를 순회하면서 CombinedTransformationMatrix를 갱신한다. */
+		for (auto& pBone : m_Bones)
+		{
+			pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+		}
+
+		return m_isFinish;
+	}
+	else
+	{
+		if (-1 == m_iCurrentAnimIndex ||
+			m_iCurrentAnimIndex >= m_iNumAnimations)
+			return false;
+
+		/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
+		//m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
+		m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fTimeDelta);
+
+		m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
+
+		Bind_ComputeShader(fTimeDelta);
+
+		return m_isFinish;
+	}
+	
 }
 
 HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
@@ -497,7 +648,7 @@ HRESULT CModel::Ready_Meshes()
 
 HRESULT CModel::Ready_Materials(const _char* pModelFilePath)
 {
-	/*  �ؽ��ĸ� �ε��Ѵ� .*/
+	/*  텍스쳐를 로드한다 .*/
 	m_iNumMaterials = m_pModel->iNumMaterials;
 
 	for (size_t i = 0; i < m_iNumMaterials; i++)
@@ -519,7 +670,7 @@ HRESULT CModel::Ready_Bones(binNode* pNode, _int iParentIndex)
 		return E_FAIL;
 
 	m_Bones.push_back(pBone);
-	// �θ� ������ �ڽ� ������, ��ü ���� �������� -1�� �ϸ� ��� ��ü�� �����Ѵ�.
+	// 부모 본에서 자식 본으로, 전체 본의 개수에서 -1을 하며 계속 객체를 생성한다.
 	_int iParent = m_Bones.size() - 1;
 
 	for (size_t i = 0; i < pNode->iNumChildren; ++i)
@@ -540,60 +691,536 @@ HRESULT CModel::Ready_Animations()
 		if (nullptr == pAnimation)
 			return E_FAIL;
 
+		Mapping_Animation(pAnimation);
+
 		m_Animations.push_back(pAnimation);
 	}
 
 	return S_OK;
 }
 
-/// <�ִϸ��̼� ����>
-/// 
-/// 1. ���� Bone�� unordered_map���� ���� �����ϱ� ���ϰ� �Ѵ�.
-/// 2. map�� �̸��� Bone Index�� �ִ´�.
-/// 3. ChannelList�� ��ȸ�ϸ� Channel->Get_Name()���� Bone Index�� ã�´�.
-/// 4. pAnimation�� �ش� �ε����� ���� ä�� Index�� Swap�� �Ѵ�.
-/// 5. Safe_AddRef(pAnimation) ���� m_Animations�� push_back�Ѵ�.
-///		
-/// </�ִϸ��̼� ����>
-
-HRESULT CModel::Mapping_Animation(CAnimation* pAnimation)
+HRESULT CModel::Ready_ComputeShader()
 {
-	/// 1. ���� Bone�� unordered_map���� ���� �����ϱ� ���ϰ� �Ѵ�.
-	unordered_map<string, _uint> BoneIndexMap;
-	BoneIndexMap.reserve(m_Bones.size());
-	for (size_t i = 0; i < m_Bones.size(); ++i)
+	_uint iMaxNumKeyFrames = 0;
+
+	for (auto& pAnim : m_Animations)
 	{
-		/// 2. map�� �̸��� Bone Index�� �ִ´�.
-		BoneIndexMap[m_Bones[i]->Get_Name()] = i;
+		auto pChannels = pAnim->Get_vChannels();
+		if (pChannels == nullptr)
+			continue;
+
+		_uint iTotal = 0;
+		for (auto& pChannel : *pChannels)
+			iTotal += pChannel->Get_NumKeyFrames();
+
+		if (iTotal > iMaxNumKeyFrames)
+			iMaxNumKeyFrames = iTotal;
 	}
 
-	/// 3. ChannelList�� ��ȸ�ϸ� Channel->Get_Name()���� Bone Index�� ã�´�.
-	_uint iChannelIndex = 0;
-	for (auto& pChannel : *pAnimation->Get_vChannels())
+	// Bone 개수
+	_uint iNumData = max((_uint)m_Bones.size(), iMaxNumKeyFrames);
+	if (iNumData == 0)
+		iNumData = 1;
+
+	m_pComputeShaderCom = CComputeShader::Create(
+		m_pDevice, m_pContext,
+		TEXT("../Bin/ShaderFiles/Shader_Compute_PlayAnimation.hlsl"),
+		"CombinedMatrices",
+		iNumData);
+
+	if (nullptr == m_pComputeShaderCom)
+		return E_FAIL;
+
+#pragma region GLOBAL BUFFER SETTING
+
+	// 기존의 코드로 비유하면, 전역 변수들을 세팅해주고 셰이더에 바인딩 해주는 과정이다.
+	ID3D11Buffer* pBuffer = nullptr;
+
+	m_GlobalBuffer.g_bIsLoop = TRUE;
+	m_GlobalBuffer.g_fCurrentTrackPosition = 0.f;
+	m_GlobalBuffer.g_fDuration = 0.f;
+	m_GlobalBuffer.g_fTickPerSecond = 30.f;
+	m_GlobalBuffer.g_fTimeDelta = 0.f;
+	m_GlobalBuffer.g_iNumBones = m_Bones.size();
+	m_GlobalBuffer.g_iNumChannels = 0;
+	m_GlobalBuffer.g_BatchOffset = 0;
+	XMStoreFloat4x4(&m_GlobalBuffer.g_PreTransformMatrix, XMMatrixIdentity());
+
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.ByteWidth = ((sizeof(COMPUTE_GLOBALBUFFER) + 15) / 16 * 16);
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = &m_GlobalBuffer;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return E_FAIL;
+	m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::CONSTATNT, pBuffer);
+#pragma endregion
+
+
+#pragma region STRUCTURE SETTING
+	// 기존의 코드로 비유하면 VS_IN, VS_OUT을 세팅해주는거다.
+
+	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
+
+	D3D11_SUBRESOURCE_DATA SubResource = {};
+	// 우리는 기존 컴쉐 친구들과 다르게 구조체를 3개 던져줘야한다.
+	// 첫 번째로, Bone을 넣어주자
 	{
-		auto it = BoneIndexMap.find(pChannel->Get_Name());
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
+		TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-		if (it != BoneIndexMap.end())
+		vector<COMPUTE_BONEINFO> vBoneInfos(iNumData);
+		for (_uint i = 0; i < iNumData; ++i)
 		{
-			pAnimation->Swap_AnimationChannel(iChannelIndex, it->second);
-			pChannel->Set_BoneIndex(Get_BoneIndex(pChannel->Get_Name()));
-		}
-		else
-		{
-			
+			vBoneInfos[i].iParentIndex = -1;
+			vBoneInfos[i]._padding = { 0,0,0 };
 		}
 
-		++iChannelIndex;
+		SubResource.pSysMem = vBoneInfos.data();
+
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
+			return E_FAIL;
+
+		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+			return E_FAIL;
+
+		// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+		D3D11_BUFFER_DESC ReadBufferDesc = {};
+		ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+		ReadBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
+		ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
+		ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+		if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pBoneSource)))
+			return E_FAIL;
+	}
+	// 두 번째로, Channel을 넣어주자
+	{
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+		TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
+		for (_uint i = 0; i < iNumData; ++i)
+		{
+			vChannelInfos[i].iBoneIndex = 0;
+			vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+			vChannelInfos[i].iNumKeyFrames = 0;
+			vChannelInfos[i].iKeyFrameOffset = 0;
+		}
+
+		SubResource.pSysMem = vChannelInfos.data();
+
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
+			return E_FAIL;
+
+		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+			return E_FAIL;
+
+		// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+		D3D11_BUFFER_DESC ReadBufferDesc = {};
+		ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+		ReadBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+		ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+		ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+		if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pChannelSource)))
+			return E_FAIL;
+	}
+	// 세 번째로, 키프레임을 넣어주자
+	{
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+		TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos(iNumData);
+		for (_uint i = 0; i < iNumData; ++i)
+		{
+			vKeyFrameInfos[i].vScale = { 1.f, 1.f, 1.f };
+			vKeyFrameInfos[i].padding01 = 0.f;
+			vKeyFrameInfos[i].vRotation = { 1.f, 1.f, 1.f, 1.f };
+			vKeyFrameInfos[i].vTranslation = { 1.f, 1.f, 1.f };
+			vKeyFrameInfos[i].fTrackPosition = 0.f;
+		}
+
+		SubResource.pSysMem = vKeyFrameInfos.data();
+
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
+			return E_FAIL;
+
+		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+			return E_FAIL;
+
+		// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+		D3D11_BUFFER_DESC ReadBufferDesc = {};
+		ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+		ReadBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+		ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+		ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+		if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pKeyFrameSource)))
+			return E_FAIL;
+	}
+	// 끝난줄 알았지? 본 초기화를 위한 로컬 본 행렬도 넣어주자
+	{
+		_uint iNumBones = (_uint)m_Bones.size();
+		if (iNumBones > 0)
+		{
+			std::vector<COMPUTE_BONEMATRIX_OUT> vInit(iNumData);
+
+			for (_uint i = 0; i < iNumData; ++i)
+			{
+				if(i < iNumBones)
+					XMStoreFloat4x4(&vInit[i].BoneLocalTransformMatrix, m_Bones[i]->Get_TransformationMatrix());
+				else
+					XMStoreFloat4x4(&vInit[i].BoneLocalTransformMatrix, XMMatrixIdentity());
+
+			}
+
+			D3D11_BUFFER_DESC desc{};
+			desc.Usage = D3D11_USAGE_DEFAULT;
+			desc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+			desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			desc.CPUAccessFlags = 0;
+			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+			desc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+
+			D3D11_SUBRESOURCE_DATA sub{};
+			sub.pSysMem = vInit.data();
+
+			ID3D11Buffer* pBuffer = nullptr;
+			if (FAILED(m_pDevice->CreateBuffer(&desc, &sub, &pBuffer)))
+				return E_FAIL;
+
+			// CComputeShader 쪽 INPUT 버퍼 목록에 추가
+			if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+			{
+				Safe_Release(pBuffer);
+				return E_FAIL;
+			}
+
+
+		}
+
 	}
 
-	m_Animations.push_back(pAnimation);
+	// 끝난줄 알았지? Out도 세팅해주자
+	{
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+		TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-	Safe_AddRef(pAnimation);
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, nullptr, &m_pOutSource)))
+			return E_FAIL;
 
-	++m_iNumAnimations;
+		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+			return E_FAIL;
+
+	}
+	
+	D3D11_BUFFER_DESC readbackDesc = {};
+	readbackDesc.Usage = D3D11_USAGE_STAGING;
+	readbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+	readbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	readbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+	readbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
+
+#pragma endregion
 
 	return S_OK;
 }
+
+/// <애니메이션 매핑>
+/// 
+/// 1. m_Bones의 순서대로 unordered_map에 이름들과 인덱스를 매핑해준다.
+/// 2. 이렇게 나온 맵에 따라 기존 채널들을 순서에 맞춰 재배열 해준다.
+/// 3. 채널이 없는 m_Bones를 위해 빈 껍데기 채널을 만들어줌
+/// 4. 애니메이션에 매핑된 배열을 갖고있게 한다.
+/// 
+///		
+/// </애니메이션 매핑>
+
+HRESULT CModel::Mapping_Animation(CAnimation* pAnimation)
+{
+	if (pAnimation == nullptr)
+		return E_FAIL;
+
+	auto pChannels = pAnimation->Get_vChannels();
+	if (pChannels == nullptr)
+		return E_FAIL;
+
+	_uint iNumBones = (_uint)m_Bones.size();
+
+	// BoneIndex 매핑 테이블 (BoneName → BoneIndex)
+	unordered_map<string, _uint> BoneIndexMap;
+	BoneIndexMap.reserve(iNumBones);
+
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		BoneIndexMap[m_Bones[i]->Get_Name()] = i;
+	}
+
+	// BoneIndex → ChannelIndex 매핑 리스트
+	vector<_int> BoneToChannel(iNumBones, -1);
+
+	// 채널을 돌면서 자기 이름에 해당하는 본 인덱스를 찾아 매핑
+	for (_uint iChannelIndex = 0; iChannelIndex < pChannels->size(); ++iChannelIndex)
+	{
+		CChannel* pChannel = (*pChannels)[iChannelIndex];
+		auto it = BoneIndexMap.find(pChannel->Get_Name());
+
+		if (it == BoneIndexMap.end())
+		{
+			// 이 채널 이름에 해당하는 본이 없는 경우 → 그냥 무시
+			continue;
+		}
+
+		_uint iBoneIndex = it->second;
+
+		BoneToChannel[iBoneIndex] = (_int)iChannelIndex;
+		pChannel->Set_BoneIndex(iBoneIndex);
+	}
+
+	// 애니메이션 안에 매핑 정보 저장
+	pAnimation->Set_BoneToChannelMappingLists(BoneToChannel);
+
+	return S_OK;
+}
+
+
+HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
+{
+	// COMPUTE_BONEINFO			m_BoneInfo;
+	// COMPUTE_BONEINFO			m_ChannelInfo;
+	// COMPUTE_BONEINFO			m_KeyFrameInfo;
+	// COMPUTE_BONEINFO			m_GlobalBuffer;
+
+	if (nullptr == m_pComputeShaderCom)
+		return E_FAIL;
+
+
+	m_GlobalBuffer.g_PreTransformMatrix = m_PreTransformMatrix;
+	// 고민 1: 이거 근데 여기서 이렇게 하면 Update_TransformationMatrices 호출 안되지 않나? 어떻게 해야하지?
+	// Update_TrackPosition라는 함수를 만들어서, 거기서 m_fCurrentTrackPosition을 관리해주면 어떨까?
+	//  ㄴ 거기서 CChannel::Update_TransformationMatrix를 대체하는 함수도 만들어보자
+	m_GlobalBuffer.g_fTimeDelta = fTimeDelta;
+	m_GlobalBuffer.g_fTickPerSecond = m_Animations[m_iCurrentAnimIndex]->Get_TickPerSecond();
+	m_GlobalBuffer.g_fCurrentTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+	m_GlobalBuffer.g_fDuration = m_Animations[m_iCurrentAnimIndex]->Get_Duration();
+	m_GlobalBuffer.g_BatchOffset = 0;
+
+
+	m_GlobalBuffer.g_bIsLoop = m_isLoop;
+	m_GlobalBuffer.g_iNumBones = m_Bones.size();
+	m_GlobalBuffer.g_iNumChannels = m_Animations[m_iCurrentAnimIndex]->Get_vChannels()->size();
+
+	// 버퍼 세팅?
+	// 컴퓨트 셰이더 실행 전에 최종으로 데이터 전달해주는 순간
+	// 상수 버퍼 먼저 바로 GPU에 올려준다.
+	m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_GlobalBuffer);
+
+	_uint iNumData = m_Bones.size();
+
+	// 구조체가 3개라는건.. 귀찮다는 뜻이다.
+	// 각자 별개의 방식으로 바인딩 해줘야한다는 뜻이다.
+	{
+		vector<COMPUTE_BONEINFO> vBoneInfos(iNumData);
+
+		for (_uint i = 0; i < m_Bones.size(); ++i)
+		{
+			vBoneInfos[i].iParentIndex = m_Bones[i]->Get_ParentBoneIndex();
+			vBoneInfos[i]._padding = { 0,0,0 };
+		}
+
+		if (m_pBoneSource)
+		{
+			D3D11_MAPPED_SUBRESOURCE SubResource{};
+			if (SUCCEEDED(m_pContext->Map(m_pBoneSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
+			{
+				memcpy(SubResource.pData, vBoneInfos.data(), sizeof(COMPUTE_BONEINFO) * iNumData);
+				m_pContext->Unmap(m_pBoneSource, 0);
+			}
+
+			m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 0, m_pBoneSource);
+		}
+	}
+
+	// 2) Channel이랑 KeyFrame은, uint iKeyFrameOffset 때문에 같이 바인딩 해주는걸 권한다.
+	{
+		vector<COMPUTE_CHANNELINFO> vChannelInfos(m_Bones.size());
+		vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
+
+		auto pChannels = m_Animations[m_iCurrentAnimIndex]->Get_vChannels();
+		auto& BoneToChannelMappingList = m_Animations[m_iCurrentAnimIndex]->Get_BoneToChannelMappingLists();
+
+		_uint iKeyFrameOffset = 0;
+
+		for (_uint i = 0; i < m_Bones.size(); ++i)
+		{
+			vChannelInfos[i].iBoneIndex = i;
+
+			_int iChannelIndex = BoneToChannelMappingList[i];
+
+			// 매핑된 채널이 없는 본
+			if (iChannelIndex < 0)
+			{
+				vChannelInfos[i].iNumKeyFrames = 0;
+				vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+				vChannelInfos[i].iKeyFrameOffset = 0;
+				continue;
+			}
+
+			// 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
+			if (iChannelIndex >= (_int)pChannels->size())
+			{
+				vChannelInfos[i].iNumKeyFrames = 0;
+				vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+				vChannelInfos[i].iKeyFrameOffset = 0;
+				continue;
+			}
+
+			CChannel* pChannel = (*pChannels)[iChannelIndex];
+
+			// 안전 장치 – pChannel이 null일 경우
+			if (pChannel == nullptr)
+			{
+				vChannelInfos[i].iNumKeyFrames = 0;
+				vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+				vChannelInfos[i].iKeyFrameOffset = 0;
+				continue;
+			}
+
+			// 이 본이 가진 키프레임 개수
+			_uint iNumKeyFrames = pChannel->Get_NumKeyFrames();
+			vChannelInfos[i].iNumKeyFrames = iNumKeyFrames;
+
+			// 현재 키프레임 인덱스(CAnimation이 관리하는 것)
+			vChannelInfos[i].iCurrentKeyFrameIndex =
+				m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex(iChannelIndex);
+
+			// KeyFrame 버퍼 안에서 이 본의 키 시작 위치
+			vChannelInfos[i].iKeyFrameOffset = iKeyFrameOffset;
+
+			// 키프레임 데이터 밀어넣기
+			for (_uint j = 0; j < iNumKeyFrames; ++j)
+			{
+				const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
+
+				COMPUTE_KEYFRAMEINFO OutKF = {};
+				OutKF.vScale = KF.vScale;
+				OutKF.padding01 = 0.f;
+				OutKF.vRotation = KF.vRotation;
+				OutKF.vTranslation = KF.vTranslation;
+				OutKF.fTrackPosition = KF.fTrackPosition;
+
+				vKeyFrameInfos.push_back(OutKF);
+			}
+
+			iKeyFrameOffset += iNumKeyFrames;
+		}
+
+		// ChannelInfo 업로드
+		if (m_pChannelSource)
+		{
+			D3D11_MAPPED_SUBRESOURCE SubResource{};
+			if (SUCCEEDED(m_pContext->Map(m_pChannelSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
+			{
+				memcpy(SubResource.pData, vChannelInfos.data(),
+					sizeof(COMPUTE_CHANNELINFO) * m_Bones.size());
+				m_pContext->Unmap(m_pChannelSource, 0);
+			}
+			m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelSource);
+		}
+
+		// KeyFrameInfo 업로드
+		if (m_pKeyFrameSource)
+		{
+			D3D11_MAPPED_SUBRESOURCE SubResource{};
+			if (SUCCEEDED(m_pContext->Map(m_pKeyFrameSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
+			{
+				if (!vKeyFrameInfos.empty())
+				{
+					memcpy(SubResource.pData, vKeyFrameInfos.data(),
+						sizeof(COMPUTE_KEYFRAMEINFO) * static_cast<size_t>(vKeyFrameInfos.size()));
+				}
+				m_pContext->Unmap(m_pKeyFrameSource, 0);
+			}
+			m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameSource);
+		}
+	}
+
+
+	{
+		_uint iIndex = 0; // 상수버퍼(전역변수)
+		m_pComputeShaderCom->Bind_ConstBuffer(1, &iIndex);
+	}
+
+
+	{
+		_uint iInputIndices[4] = { 0, 1, 2, 3 }; // Bone, Channel, KeyFrame, InitialLocalMatrix
+		m_pComputeShaderCom->Bind_InputBuffer(4, iInputIndices);
+	}
+
+	{
+		_uint iInputIndices[1] = { 0 };
+		m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);
+	}
+
+	_uint iGroupCount = (m_Bones.size() + 127) / 128;
+
+	
+
+	m_pComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
+
+	// 데이터 가져오는거
+	// GetBufferResource
+	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
+	// 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
+	// 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
+	m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+
+
+	//// 1) GPU → CPU 복사용 Staging Buffer로 데이터 복사
+	//m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+	//
+	//// 2) STAGING 버퍼를 읽는다
+	//D3D11_MAPPED_SUBRESOURCE MappedResource;
+	//if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedResource)))
+	//{
+	//	COMPUTE_BONEMATRIX_OUT* pOut =
+	//		reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
+	//
+	//	for (_uint i = 0; i < m_Bones.size(); i++)
+	//	{
+	//		m_Bones[i]->Set_TransformationMatrix(
+	//			XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
+	//		);
+	//		m_Bones[i]->Set_CombinedTransformationMatrix(
+	//			XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
+	//		);
+	//	}
+	//
+	//	m_pContext->Unmap(m_pOutReadBack, 0);
+	//}
+
+	
+	return S_OK;
+}
+
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
@@ -642,5 +1269,17 @@ void CModel::Free()
 	for (auto& pMesh : m_Meshes)
 		Safe_Release(pMesh);
 	m_Meshes.clear();
+
+	m_GlobalOffsetMatrices.clear();
     
+	Safe_Release(m_pBoneSource);
+	Safe_Release(m_pChannelSource);
+	Safe_Release(m_pKeyFrameSource);
+	Safe_Release(m_pOutReadBack);
+
+	Safe_Release(m_pBoneMatricesSRV);
+
+	Safe_Release(m_pComputeShaderCom);
+
+
 }

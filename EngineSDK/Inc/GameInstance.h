@@ -91,12 +91,19 @@ public:
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-	void	Set_DebugVisible(_bool isVisible);
+	void   Set_DebugVisible(_bool isVisible);
+	void*  Get_DoF_Desc();
+	void*  Get_Bloom_Desc();
+	void*  Get_Fog_Desc();
+	void*  Get_SSAO_Desc();
 #endif
+
 #pragma endregion
 
 #pragma region PIPELINE
 	void								Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix);
+	const _float4x4*					Get_PreTransform_Float4x4(D3DTS eState);
+	_matrix								Get_PreTransform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4(D3DTS eState);
 	_matrix								Get_Transform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4_Inverse(D3DTS eState);
@@ -252,7 +259,7 @@ public:
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
 	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
-
+	HRESULT		Add_Terrain_ToPhysx(class CVIBuffer_Terrain* pTerrainVIBuffer);
 #pragma endregion
 
 #pragma region MODEL_PARSER
@@ -289,8 +296,8 @@ public:
 	HRESULT									Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent);
 	HRESULT									Remove_Event(const WCHAR* szEventTag);
 
-	HRESULT									Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
-	HRESULT									UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
+	HRESULT									UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
 #pragma endregion
 
 	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }

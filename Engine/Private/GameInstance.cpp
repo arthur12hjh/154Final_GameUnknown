@@ -445,6 +445,26 @@ void CGameInstance::Set_DebugVisible(_bool isVisible)
 	m_pRenderer->Set_DebugVisible(isVisible);
 }
 
+void* CGameInstance::Get_DoF_Desc()
+{
+	return m_pRenderer->Get_DoF_Desc();
+}
+
+void* CGameInstance::Get_Bloom_Desc()
+{
+	return m_pRenderer->Get_Bloom_Desc();
+}
+
+void* CGameInstance::Get_Fog_Desc()
+{
+	return m_pRenderer->Get_Fog_Desc();
+}
+
+void* CGameInstance::Get_SSAO_Desc()
+{
+	return m_pRenderer->Get_SSAO_Desc();
+}
+
 #endif
 
 #pragma endregion
@@ -454,6 +474,16 @@ void CGameInstance::Set_DebugVisible(_bool isVisible)
 void CGameInstance::Set_Transform(D3DTS eState, _fmatrix TransformStateMatrix)
 {
 	m_pPipeLine->Set_Transform(eState, TransformStateMatrix);
+}
+
+const _float4x4* CGameInstance::Get_PreTransform_Float4x4(D3DTS eState)
+{
+	return m_pPipeLine->Get_PreTransform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_PreTransform_Matrix(D3DTS eState)
+{
+	return m_pPipeLine->Get_PreTransform_Matrix(eState);
 }
 
 const _float4x4* CGameInstance::Get_Transform_Float4x4(D3DTS eState)
@@ -840,6 +870,11 @@ HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBod
 	return m_pPhysx_Manager->Add_RigidBody_ToPhysx(pGameObject, pRigidBody);
 }
 
+HRESULT CGameInstance::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
+{
+	return m_pPhysx_Manager->Add_Terrain_ToPhysx(pTerrainVIBuffer);
+}
+
 #pragma endregion
 
 #pragma region BINPARSER
@@ -938,13 +973,13 @@ HRESULT CGameInstance::Remove_Event(const WCHAR* szEventTag)
 {
 	return m_pEventManager->Remove_Event(szEventTag);
 }
-HRESULT CGameInstance::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->Bind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->Bind_Observer(szEventTag, pEvent);
 }
-HRESULT CGameInstance::UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->UnBind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->UnBind_Observer(szEventTag, pEvent);
 }
 #pragma endregion
 
@@ -1038,9 +1073,9 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionManager);
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
-	Safe_Release(m_pEventManager);
 	Safe_Release(m_pInteract_Manager);
 	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);

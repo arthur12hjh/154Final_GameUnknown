@@ -43,6 +43,7 @@ void CTerrain::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pNavigationCom);
 #endif
@@ -99,6 +100,22 @@ void CTerrain::Change_Height_Flat(_vector vPickingPos, _float fHeight, _float fR
 	m_pVIBufferCom->Change_Height_Flat(vLocalPickedPos, fHeight, fRadius);
 }
 
+_float CTerrain::Get_Height_In_World_Space(_float fWorldX, _float fWorldZ)
+{
+	// 1. World -> Local 변환 (Terrain은 보통 World 행렬이 Identity이므로 무시될 수 있으나, 정석대로 처리)
+	_matrix WorldMatrix = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(m_pTransformCom->Get_WorldMatrixPtr()));
+	_matrix WorldMatrixInverse = XMMatrixInverse(nullptr, WorldMatrix);
+	_vector vWorldPos = XMVectorSet(fWorldX, 0.f, fWorldZ, 1.f);
+	_vector vLocalPos = XMVector3TransformCoord(vWorldPos, WorldMatrixInverse);
+
+	_float fLocalX = XMVectorGetX(vLocalPos);
+	_float fLocalZ = XMVectorGetZ(vLocalPos);
+
+	_float fLocalY = m_pVIBufferCom->Get_Interpolated_Height_Local(fLocalX, fLocalZ);
+
+	return fLocalY;
+}
+
 HRESULT CTerrain::Ready_Components()
 {
 	/* Com_VIBuffer */
@@ -141,9 +158,7 @@ HRESULT CTerrain::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
 		return E_FAIL;
-	/*if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
-		return E_FAIL;*/
-
+	
 	return S_OK;
 }
 
@@ -181,5 +196,4 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	//Safe_Release(m_pMaskCom);
 }

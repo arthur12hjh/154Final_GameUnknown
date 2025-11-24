@@ -1,5 +1,5 @@
+#include "Engine_Shader_Defines.hlsli"
 #include "Shader_Deferred_Defines.hlsli"
-#include "Shader_Deferred_Functions.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 

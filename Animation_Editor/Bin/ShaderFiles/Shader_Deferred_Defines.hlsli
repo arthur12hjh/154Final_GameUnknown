@@ -1,4 +1,5 @@
-/* ������ ���� ����þ� ���. ���� ���� �ʿ�. */
+#ifndef SHADER_DEFERRED_DEFINES
+#define SHADER_DEFERRED_DEFINES
 
 float g_fWeights[13] =
 {
@@ -32,6 +33,12 @@ struct PS_IN
 struct PS_OUT_BACKBUFFER
 {
     float4 vBackBuffer : SV_TARGET0;
+};
+
+struct PS_OUT_COMBINED
+{
+    float4 vBackBuffer : SV_TARGET0;
+    float4 vBloomScene : SV_TARGET1;
 };
 
 struct PS_OUT_LIGHT
@@ -99,3 +106,5 @@ struct PS_PHYSX_OUT
 {
     float4 vColor : SV_TARGET0;
 };
+
+#endif

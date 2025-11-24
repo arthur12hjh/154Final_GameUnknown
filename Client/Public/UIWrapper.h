@@ -29,6 +29,9 @@ public:
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
+	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
+	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) override;
+	virtual void CallbackEvent(void* pArg) override;
 
 public:
 	static CUIWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

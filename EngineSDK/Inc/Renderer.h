@@ -18,6 +18,10 @@ private:
 public:
 	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 
+	void*	Get_DoF_Desc();
+	void*   Get_Bloom_Desc();
+	void*   Get_Fog_Desc();
+	void*   Get_SSAO_Desc();
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
@@ -32,7 +36,7 @@ public:
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
-
+	
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
@@ -53,7 +57,7 @@ private:
 	_bool								m_isBloom = { false };
 	_bool								m_isFog = { false };
 	_bool								m_isHDR = { true };
-
+	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -62,6 +66,8 @@ private:
 	class CFog*							m_pFog = { nullptr };
 	class CRadialBlur*					m_pRadialBlur = { nullptr }; 
 	class CDepthofField*				m_pDepthofField = { nullptr };
+	class CMotionBlur*					m_pMotionBlur = { nullptr };
+	class CSSAO*						m_pSSAO = { nullptr }; 
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -70,6 +76,7 @@ private:
 private:
 	void		Render_Priority();
 	void		Render_Shadow();
+	void		Render_MotionBlur();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
 	/* 기		록은 Combined 이전에. */

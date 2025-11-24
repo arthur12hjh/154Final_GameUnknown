@@ -350,6 +350,12 @@
     <ClInclude Include="..\Public\AIController.h">
       <Filter>01.Utility\20.AI\AI_Controller</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MotionBlur.h">
+      <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SSAO.h">
+      <Filter>01.Utility\05.Renderer\Deferred\SSAO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -672,6 +678,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\AIController.cpp">
       <Filter>01.Utility\20.AI\AI_Controller</Filter>
+   </ClCompile>
+    <ClCompile Include="..\Private\MotionBlur.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SSAO.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\SSAO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1062,6 +1074,21 @@
     <Filter Include="01.Utility\20.AI\AI_Controller">
       <UniqueIdentifier>{d1b85de5-e831-4f06-96e0-bf58ce691ec1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\MotionBlur">
+      <UniqueIdentifier>{fca9f9ec-44e3-4741-9c91-e344dc6db1d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\MotionBlur\Shaderfile">
+      <UniqueIdentifier>{6d4c7bd7-11c4-42c6-876f-9477ba461af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\SSAO">
+      <UniqueIdentifier>{bd9ebb20-f371-4dff-957f-d90be9a3d116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\SSAO\ShaderFile">
+      <UniqueIdentifier>{24a875b6-3daa-4024-9cab-5c55dd970916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\00. STRUCT">
+      <UniqueIdentifier>{4b15b1be-61f5-4bfb-8d5c-c1141135879c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1096,6 +1123,15 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\DoF\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\MotionBlur\Shaderfile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_SSAO.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\SSAO\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

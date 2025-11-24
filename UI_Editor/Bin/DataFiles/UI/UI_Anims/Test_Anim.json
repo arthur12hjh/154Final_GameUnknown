@@ -18,5 +18,6 @@
     ],
     "fDuration": 1.5,
     "isLoop": false,
+    "isInfluenceChildren": true,
     "szAnimTag": "Test_Anim"
 }

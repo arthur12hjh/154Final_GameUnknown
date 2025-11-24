@@ -13,6 +13,15 @@ vector g_UIDebugLineColor;
 
 float g_Alpha = 1.f;
 
+float2 g_UVScale = { 1.f, 1.f }; // 반복, 확대/축소
+float2 g_UVOffset = { 0.f, 0.f }; // 스크롤, 이동
+
+bool g_bUseFillClip = { false }; // 텍스쳐 클리핑
+float g_fFillAmount = { 1.f }; // 클리핑 얼마나 할지
+
+//float g_TileCount = 23.f;
+//float g_TileTotalCount = 23.f;
+
 /*------------------[S_DEBUG]---------------*/
 
 struct VS_IN
@@ -69,9 +78,9 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vColor.a = g_Alpha;
+    Out.vColor *= g_Alpha;
     
-    if (Out.vColor.a == 0.f)
+    if (Out.vColor.a <= 0.05f)
         discard;
     
     return Out;
@@ -114,36 +123,6 @@ struct GS_OUT_DEBUG
 {
     float4 vPosition : SV_POSITION;
 };
-
-//[maxvertexcount(6)]
-//void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout LineStream<GS_OUT_DEBUG> OutStream)
-//{
-//    float2 halfSize = g_UISize * 0.5f;
-//    
-//    // 사각형 4개의 꼭짓점
-//    float2 p[4] =
-//    {
-//        In[0].vPosition.xy + float2(-halfSize.x, -halfSize.y),
-//        In[0].vPosition.xy + float2(halfSize.x, -halfSize.y),
-//        In[0].vPosition.xy + float2(halfSize.x, halfSize.y),
-//        In[0].vPosition.xy + float2(-halfSize.x, halfSize.y)
-//    };
-//    
-//    GS_OUT_DEBUG Out;
-//    
-//     // 4개의 edge 생성
-//    [unroll]
-//    for (int i = 0; i < 4; i++)
-//    {
-//        Out.vPosition = float4(p[i], 0.f, 1.f);
-//        OutStream.Append(Out);
-//
-//        Out.vPosition = float4(p[(i + 1) % 4], 0.f, 1.f);
-//        OutStream.Append(Out);
-//
-//        OutStream.RestartStrip();
-//    }
-//}
 
 [maxvertexcount(6)]
 void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout TriangleStream<GS_OUT_DEBUG> OutStream)
@@ -193,6 +172,36 @@ float4 PS_MAIN_DEBUG() : SV_TARGET
 
 /*------------------[E_DEBUG]---------------*/
 
+/*------------------[S_UV]---------------*/
+PS_OUT PS_UI_UV(PS_IN In)
+{
+    PS_OUT Out;
+
+   // 기본 UV → 스케일 → 오프셋
+    float2 uv = In.vTexcoord * g_UVScale + g_UVOffset;
+
+    // 반복하려면 fract()
+    float2 tiledUV = frac(uv);
+
+    
+    Out.vColor = g_Texture.Sample(DefaultSampler, tiledUV);
+    Out.vColor *= g_Alpha;
+
+    // Fill Clip (오른쪽부터 잘림)
+    if (g_bUseFillClip == true)
+    {
+        if (In.vTexcoord.x > g_fFillAmount)
+            discard;
+    }
+    
+    if (Out.vColor.a <= 0.05f)
+        discard;
+
+    return Out;
+}
+
+/*------------------[E_UV]---------------*/
+
 technique11 DefaultTechnique
 {
     pass UI
@@ -217,11 +226,21 @@ technique11 DefaultTechnique
 
     pass UI_Blend
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass UI_UV
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_UI_UV();
     }
 }

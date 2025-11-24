@@ -35,13 +35,15 @@ public:
 	void			Set_Scale(_vector vScale);
 	void			Set_Rotation(_vector vRotation);
 	void			Set_Scale(_float fX, _float fY, _float fZ);
-
+	/* 현재는 가장 업데이트가 늦게 도는 Physx Manager Update 단에서 돌고 있음. */
+	void			Update_PreWorldMatrix();
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	HRESULT					Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
+	/* 이전 프레임 월드 매트릭스 넣을 수 있게 변경. */
+	HRESULT					Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, _bool IsPreWorldMatrix = false);
 
 public:
 	void					Go_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr);
@@ -64,6 +66,7 @@ private:
 	_float					m_fSpeedPerSec = {};
 	_float					m_fRotationPerSec = {};
 	_float4x4				m_WorldMatrix{};
+	_float4x4				m_PreWorldMatrix{};
 
 public:
 	static CTransform*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

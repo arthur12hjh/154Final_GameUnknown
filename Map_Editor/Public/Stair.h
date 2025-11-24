@@ -1,16 +1,15 @@
 #pragma once
 
 #include "Maptool_Defines.h"
-#include "GameObject.h"
+#include "StaticMap.h"
 
 NS_BEGIN(Engine)
-class CModel;
-class CShader;
+
 NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CStair final : public CGameObject
+class CStair final : public CStaticMap
 {
 private:
 	CStair(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -25,9 +24,6 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();
@@ -35,7 +31,7 @@ private:
 
 public:
 	static CStair* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CStaticMap* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

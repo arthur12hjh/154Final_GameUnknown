@@ -1,4 +1,3 @@
-#include "Shader_Deferred_Defines.hlsli"
 #include "Shader_Deferred_Functions.hlsli"
 
 int g_iWinSizeX;
@@ -23,12 +22,16 @@ texture2D g_DepthTexture;
 texture2D g_SpecularTexture;
 texture2D g_ORMTexture;
 texture2D g_ShadowTexture;
+texture2D g_SSAOTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
+texture2D g_BlurWeightTexture;
+texture2D g_GlowWeightTexture;
+
 texture2D g_DistortionTexture;
-texture2D g_BloomTexture;
 texture2D g_FogTexture;
+texture2D g_BloomTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -83,32 +86,47 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vPosition = mul(vPosition, g_ProjMatrixInv);
     
     /* 로컬위치 * 월드   */
-    vPosition = mul(vPosition, g_ViewMatrixInv);   
+    vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(g_vLightDir), vNormal);
+    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    vector N = normalize(vNormal);
-    vector L = normalize(g_vLightDir) * -1.f;
-    vector V = normalize(vLook) * -1.f;
-    vector H = normalize(L + V);
-
-    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, vORMDesc.b, vORMDesc.a);
+    float fMetallic, fRoughness, fOcclusion, fAttenuation;
+    float3 vF0;
     
-    //ORM 마스크 없으면 그냥 Phong Shading 처리 해.
-    if(vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0)
+    float fSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    //ORM 마스크 없으면 그냥 Phong Shading 처리.
+    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
     {
-        Out.vShade = vDiffuse * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
+        Out.vShade = vAlbedo * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
         Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f);
+        
+        return Out;
     }
-    //Shade 처리해서 
+    //Specular Map은 따로 Shade 처리해서 
+    else if(vORMDesc.a == 2.f)
+    {        
+        fMetallic = 0.f;
+        fRoughness = vORMDesc.g;
+        fOcclusion = vORMDesc.b;
+        vF0 = vORMDesc.b;
+    }
+    //ORM 처리.
     else
     {
-        Out.vShade = float4(vColor, 1.f);
-        Out.vSpecular = 0.f;
+        fOcclusion = vORMDesc.r;
+        fRoughness = vORMDesc.g;
+        fMetallic = vORMDesc.b;
+        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
     }
     
+    fAttenuation = 1.f;
+    
+    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
+    
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(-g_vLightDir.xyz), vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    Out.vShade *= fDiffuseAOStrength;
     
     return Out;
 }
@@ -117,10 +135,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT_LIGHT Out;
     
+    vector vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
-    
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
     
@@ -142,21 +159,60 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vector vLightDir = vPosition - g_vLightPos;
-    float fDistance = length(vLightDir);
     
+    float fDistance = length(vLightDir);
     float  fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    
+    if(fAtt <= 0.f)
+        discard;
+    
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(vLightDir), vNormal);
+    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-    Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
+    float fMetallic, fRoughness, fOcclusion, fAttenuation;
+    float3 vF0;
+    
+    float fSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    //ORM 마스크 없으면 그냥 Phong Shading 처리.
+    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    {
+        Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));    
+        
+        return Out;
+    }
+    else if (vORMDesc.a == 2.f)
+    {
+        fMetallic = 0.f;
+        fRoughness = vORMDesc.g;
+        fOcclusion = vORMDesc.b;
+        vF0 = vORMDesc.b;
+    }
+    else
+    {
+        fOcclusion = vORMDesc.r;
+        fRoughness = vORMDesc.g;
+        fMetallic = vORMDesc.b;
+        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
+    }
+    
+    fAttenuation = 1.f;
+    
+    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
+    
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(-g_vLightDir.xyz), vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    
+    Out.vShade *= fDiffuseAOStrength * fAtt;
+    Out.vSpecular *= fAtt;
     
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
+PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
+    PS_OUT_COMBINED Out;
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (0.0f == vDiffuse.a)
@@ -166,7 +222,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
     
     Out.vBackBuffer = vShade + vSpecular; //vDiffuse * vShade + vSpecular;
-
+    Out.vBloomScene = vShade;
+    
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
     
@@ -195,7 +252,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-   
+    Out.vBloomScene = Calc_Shadow(Out.vBloomScene, g_ShadowTexture, vPosition);
+    
     return Out;
 }
 
@@ -204,10 +262,11 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    //블러 샘플링.
-    Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
-    //글로우 샘플링.
-    Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    ////블러 샘플링.
+    //Out.vBackBuffer += Calc_Blur(g_BlurFinalTexture, In.vTexcoord);
+    ////글로우 샘플링.
+    //Out.vBackBuffer += Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    
     //블룸 샘플링
     Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
     //디스토션 샘플링.
@@ -215,34 +274,16 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     //안개 합성.
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     
-    return Out;
-}
-
-PS_OUT_BACKBUFFER PS_MAIN_SCREEN_RADIAL_BLUR(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
- 
-    float4 vAccumulatedColor = 0.0f;
-    float iSampleCount = 3;
-
-    float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
-    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * 0.5f;
     
-    for (int i = 0; i < iSampleCount; i++)
-    {
-        // 샘플링 진행률 (0.0 ~ 1.0)
-        float t = (float) i / (float) iSampleCount;
-        
-        // 샘플링 UV 좌표: 현재 UV + (방향 벡터 * 진행률)
-        float2 vSampleUV = In.vTexcoord + vDir * t;
-        
-        // 텍스처 샘플링 및 누적
-        vAccumulatedColor += g_ScreenTexture.Sample(DefaultSampler, vSampleUV);
-    }
+    vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
     
-    // 누적된 색상을 샘플 개수로 나누어 평균을 구함
-    Out.vBackBuffer = vAccumulatedColor / (float) iSampleCount;
-
+    vector fBlur;
+    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r * fBlurAlpha.g);
+    fBlur.a = saturate(fBlurAlpha.r * fBlurAlpha.g);
+    
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
+    
     return Out;
 }
 
@@ -335,16 +376,6 @@ technique11 DefaultTechnique
     }
 
     // idx 5
-    pass Screen_RadialBlur
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SCREEN_RADIAL_BLUR();
-    }
-    // idx 6
     pass ToneMapping
     {
         SetRasterizerState(RS_Default);
@@ -355,7 +386,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_TONE_MAPPING();
     }
 
-    // idx 7
+    // idx 6
     pass Final
     {
         SetRasterizerState(RS_Default);

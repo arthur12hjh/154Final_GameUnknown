@@ -102,7 +102,6 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	Safe_Release(pHUD);
 
-
 	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();
 	ImGui::EndFrame();

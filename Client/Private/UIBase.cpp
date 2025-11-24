@@ -4,7 +4,8 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
-#include "UIAnimationCom.h"
+#include "UIPlayAnimEvent.h"
+#include "UIActionEvent.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -31,6 +32,8 @@ HRESULT CUIBase::Initialize(void* pArg)
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
+	m_eVisibility = (VISIBILITY)m_tUIDesc.iVisiblity;
+
 #ifdef _DEBUG
 	if (FAILED(Ready_Components_For_Debug()))
 		return E_FAIL;
@@ -39,7 +42,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 	if (FAILED(Ready_Texture()))
 		return E_FAIL;
 
-	if (FAILED(Ready_UIAnimation()))
+	if (FAILED(Ready_Events()))
 		return E_FAIL;
 
 	return S_OK;
@@ -54,10 +57,12 @@ void CUIBase::Update(_float fTimeDelta)
 	////부모 따라가기
 	if (m_pParent)
 	{
+		m_eVisibility = m_pParent->GetVisibility();
+		
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
-		m_tUIDesc.fAlpha = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;
-		//m_eAnimState = dynamic_cast<CUIBase*>(m_pParent)->Get_Anim_State();
+		
+		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -65,40 +70,17 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	switch (m_eAnimState)
-	{
-	case ANIM_STATE::PLAY :
-		m_pUIAnimCom->Play(m_szCurrentAnimTag);
-		break;
-	case ANIM_STATE::PAUSE :
-		m_pUIAnimCom->Pause();
-		break;
-	case ANIM_STATE::STOP :
-	{
-		m_pUIAnimCom->Stop();
-		m_eAnimState = ANIM_STATE::IDLE;
-	}
-		break;
-	case ANIM_STATE::IDLE:
-		break;
-	}
-
+#ifdef _DEBUG
+	if (m_eVisibility == VISIBILITY::VISIBLE)
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#elif
 	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#endif
 }
 
 HRESULT CUIBase::Render()
 {
-#ifdef _DEBUG
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	if (pHUD && pHUD->Get_Show_Debug_Rect())
-	{
-		Render_Debug_Rect();
-		Safe_Release(pHUD);
-	}
-#endif
-
 	return S_OK;
 }
 
@@ -138,10 +120,33 @@ void CUIBase::Set_Pass(_uint iPass)
 	m_tUIDesc.Get_UI_Texture_Desc()->iPass = iPass;
 }
 
+void CUIBase::Set_Text_Color(_float4 vColor)
+{
+	if (m_tUIDesc.Get_UI_Text_Desc())
+		m_tUIDesc.m_tUITextDesc.vColor = vColor;
+}
+
+void CUIBase::Set_TextureUV(_float4 vUV)
+{
+	if (m_tUIDesc.m_tUIShaderDesc.bUseUV)
+	{
+		m_tUIDesc.m_tUIShaderDesc.fUVScaleX = vUV.x;
+		m_tUIDesc.m_tUIShaderDesc.fUVScaleY = vUV.y;
+		m_tUIDesc.m_tUIShaderDesc.fUVOffsetX = vUV.z;
+		m_tUIDesc.m_tUIShaderDesc.fUVOffsetY = vUV.w;
+	}
+}
+
+void CUIBase::Set_FillAmount(_float fFillAmount)
+{
+	if (m_tUIDesc.m_tUIShaderDesc.bUseFillClip)
+		m_tUIDesc.m_tUIShaderDesc.fFillAmount = fFillAmount;
+}
+
 // 툴에서 텍스쳐 변경할 때 사용
 HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex)
 {
-	CUIBase::UI_TEXTURE_DESC Desc{};
+	UI_TEXTURE_DESC Desc{};
 	Desc.iTextureIndex = iTextureIndex;
 	Desc.szTextureComTag = szTextureTag;
 	Desc.szProtoTag = szProtoTag;
@@ -162,9 +167,32 @@ HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uin
 	return S_OK;
 }
 
+void CUIBase::Bind_Event(vector<_wstring> SubEvents, vector<CEventHandle*> Events)
+{
+	for (auto& SubEvent : SubEvents)
+	{
+		for(auto Event : Events)
+			m_pGameInstance->Bind_Observer(SubEvent.c_str(), Event);
+	}
+}
+
+void CUIBase::UnBind_Event()
+{
+	for (auto& SubEvent : m_SubscribeEvents)
+	{
+		for (auto& EventHandle : m_pEventHandles)
+		{
+			for (auto& pEvent : EventHandle.second)
+			{
+				m_pGameInstance->UnBind_Observer(SubEvent.c_str(), pEvent);
+			}
+		}
+	}
+}
+
 HRESULT CUIBase::Ready_Texture()
 {
-	if (m_tUIDesc.Get_UI_Texture_Desc() == nullptr)
+	if (!m_tUIDesc.Get_UI_Texture_Desc())
 		return S_OK;
 
 	/* Com_Texture */
@@ -172,21 +200,8 @@ HRESULT CUIBase::Ready_Texture()
 		m_tUIDesc.Get_UI_Texture_Desc()->szTextureComTag, reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
-	if (m_pTextureCom == nullptr)
+	if (!m_pTextureCom)
 		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CUIBase::Ready_UIAnimation()
-{
-	m_pUIAnimCom = CUIAnimationCom::Create();
-	
-	if (!m_pUIAnimCom)
-		return E_FAIL;
-
-	m_pUIAnimCom->Initialize();
-	m_pUIAnimCom->Set_Owner(this);
 
 	return S_OK;
 }
@@ -203,17 +218,40 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 
 void CUIBase::Render_Debug_Rect()
 {
-	if (FAILED(Bind_Debug_ShaderResources()))
-		return;
+#ifdef _DEBUG
+	CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	if (FAILED(m_pShaderCom->Begin(1)))
-		return;
+	if (pUIHUD && pUIHUD->Get_Show_Debug_Rect())
+	{
+		if (FAILED(Bind_Debug_ShaderResources()))
+		{
+			Safe_Release(pUIHUD);
+			return;
+		}
 
-	if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
-		return;
+		if (FAILED(m_pShaderCom->Begin(1)))
+		{
+			Safe_Release(pUIHUD);
+			return;
+		}
 
-	if (FAILED(m_pVIDebugBufferCom->Render()))
+		if (FAILED(m_pVIDebugBufferCom->Bind_Resources()))
+		{
+			Safe_Release(pUIHUD);
+			return;
+		}
+
+		if (FAILED(m_pVIDebugBufferCom->Render()))
+		{
+			Safe_Release(pUIHUD);
+			return;
+		}
+
+		Safe_Release(pUIHUD);
 		return;
+	}
+	Safe_Release(pUIHUD);
+#endif
 }
 
 HRESULT CUIBase::Bind_Debug_ShaderResources()
@@ -255,32 +293,185 @@ HRESULT CUIBase::Ready_Components()
 	return S_OK;
 }
 
+HRESULT CUIBase::Ready_Events()
+{
+	for (auto& EventDesc : m_tUIDesc.m_Events)
+	{
+		vector<UI_EVENT_DESC> EventDescs = EventDesc.second;
+
+		_wstring szEventTag = EventDesc.first;
+		vector<CEventHandle*> Events{};
+
+		for (auto& Desc : EventDescs)
+		{
+			CEventHandle* pEvent{ nullptr };
+
+			if (Desc.szTypeTag == TEXT("PlayAnimEvent"))
+				pEvent = CUIPlayAnimEvent::Create([&](void* pArg) {this->CallbackEvent(pArg);});
+
+			if (Desc.szTypeTag == TEXT("ActionEvent"))
+				pEvent = CUIActionEvent::Create([&](void* pArg) {this->CallbackEvent(pArg);});
+
+			if (!pEvent)
+				return E_FAIL;
+
+			m_pGameInstance->Add_Event(szEventTag.c_str(), pEvent);
+
+			Events.push_back(pEvent);
+			Bind_Event(Desc.szSubscribeEventTags, Events);
+			m_SubscribeEvents = Desc.szSubscribeEventTags;
+		}
+
+		m_pEventHandles.emplace(szEventTag, Events);
+	}
+
+	return S_OK;
+}
+
+HRESULT CUIBase::Initialize_ShaderResources()
+{
+	_float2 vUV{};
+	vUV.x = 1.f;
+	vUV.y = 1.f;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
+		return E_FAIL;
+
+	vUV.x = 0.f;
+	vUV.y = 0.f;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVOffset", &vUV, sizeof(_float2))))
+		return E_FAIL;
+
+	_bool bUseFilClip{ false };
+	_float fFillAmount{ 1.f };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseFillClip", &bUseFilClip, sizeof(_bool))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CUIBase::Trigger_Event(const _wstring& szActionTag, void* pArg)
+{
+ 	for (auto& Events : m_tUIDesc.m_Events)
+	{
+		for (auto& EventDesc : Events.second)
+		{
+			if (EventDesc.szActionTag == szActionTag)
+			{
+				Execute(EventDesc);
+				Broadcast_Event(Events.first, szActionTag, pArg);
+			}
+		}
+	}
+}
+
 HRESULT CUIBase::Bind_ShaderResources()
 {
 	if (m_pShaderCom)
 	{
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
+		if (FAILED(Initialize_ShaderResources()))
 			return E_FAIL;
+
+		_float fAlpha{ m_tUIDesc.fAlpha };
+
+		/*if(dynamic_cast<CUIBase*>(m_pParent))
+			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;*/
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
+			return E_FAIL;
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseUV)
+		{
+			_float2 vUV{};
+			vUV.x = m_tUIDesc.m_tUIShaderDesc.fUVScaleX;
+			vUV.y = m_tUIDesc.m_tUIShaderDesc.fUVScaleY;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
+				return E_FAIL;
+
+			vUV.x = m_tUIDesc.m_tUIShaderDesc.fUVOffsetX;
+			vUV.y = m_tUIDesc.m_tUIShaderDesc.fUVOffsetY;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_UVOffset", &vUV, sizeof(_float2))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseFillClip)
+		{
+			_bool bUseFilClip{ m_tUIDesc.m_tUIShaderDesc.bUseFillClip };
+			_float fFillAmount{ m_tUIDesc.m_tUIShaderDesc.fFillAmount };
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseFillClip", &bUseFilClip, sizeof(_bool))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
+				return E_FAIL;
+		}
 	}
 
 	return S_OK;
+}
+
+HRESULT CUIBase::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+{
+	// (1) 인자 유효성 검증: 반드시 UI_EVENT_ARG_DESC*
+	if (!ValidateEventArg(pArg))
+		return E_FAIL;
+
+	auto it = m_pEventHandles.find(szEventTag);
+	if (it == m_pEventHandles.end())
+		return S_OK;
+
+	UI_EVENT_ARG_DESC* pEventArg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
+	pEventArg->szActionTag = szActionTag;
+
+	// (2) 모든 핸들에 안전하게 Notify
+	for (auto* pHandle : it->second)
+	{
+		if (!pHandle) continue;
+ 		pHandle->Notify(pArg);
+	}
+	return S_OK;
+}
+
+bool CUIBase::ValidateEventArg(void* pArg) const
+{
+	if (pArg == nullptr)
+		return false;
+
+	auto* p = static_cast<UI_EVENT_ARG_DESC*>(pArg);
+	// 최소한의 sanity check (NONE은 보통 사용 금지)
+	if (p->Type == UI_EVENT_ARG_DESC::NONE)
+		return false;
+
+	return true;
 }
 
 void CUIBase::Free()
 {
 	__super::Free();
 
-	Safe_Delete(m_tOriginUIDesc.m_pUITextDesc);
-	Safe_Delete(m_tOriginUIDesc.m_pUITextureDesc);
-
 	for (auto iter : m_Children)
 		Safe_Release(iter);
+
+	UnBind_Event();
+
+	for (auto& EventHandle : m_pEventHandles)
+	{
+		for (auto& Event : EventHandle.second)
+			Safe_Release(Event);
+		EventHandle.second.clear();
+	}
+	m_pEventHandles.clear();
 
 #ifdef _DEBUG
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
-	Safe_Release(m_pUIAnimCom);
+	//Safe_Release(m_pParent);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

@@ -38,6 +38,7 @@ private:
 	CLight*						m_pSelectLight = nullptr;
 
 	CCamera*					m_pSelectCamera = nullptr;
+	CTransform*					m_pCameraTransform = nullptr;
 
 	_float						m_fGameSpeed = {1.f};
 	_bool						m_bIsCamLerp = false;
