@@ -89,9 +89,6 @@ HRESULT CDepthofField::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTa
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(strDepthRTTag, m_pShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-	m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-	m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
 	m_pShader->Bind_RawValue("g_fFocusDistance", &m_fFocusDistance, sizeof(_float));
 	m_pShader->Bind_RawValue("g_fMaxRange", &m_fMaxRange, sizeof(_float));

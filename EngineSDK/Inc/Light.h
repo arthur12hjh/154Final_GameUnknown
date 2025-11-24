@@ -30,6 +30,7 @@ public:
 	_bool					IsDead() { return m_bIsDead; }
 
 	HRESULT					Render(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	HRESULT					Render_Volumetric(class CShader* pShader, class CVIBuffer* pVIBuffer);
 
 	void					SetVisibility(VISIBILITY eVisibility);
 	VISIBILITY				GetVisbility() { return m_eVisible; }

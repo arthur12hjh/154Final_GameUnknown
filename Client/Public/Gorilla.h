@@ -27,7 +27,6 @@ public:
 	virtual void			Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT			Render() override;
-
 private:
 	CGorilla_Body*			m_pBody = { nullptr };
 	CCollider*				m_pColliderCom[ENUM_CLASS(COLLIDER::END)] = {nullptr};

@@ -44,13 +44,15 @@ private:
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-
+	ID3D11DepthStencilView*				m_pVolumetricDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
+	_float								m_fDensity = { 1.f }; 
+	_float								m_fStepSize = { 0.2f };
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	

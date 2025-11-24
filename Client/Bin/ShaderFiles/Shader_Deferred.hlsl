@@ -14,6 +14,8 @@ vector g_vLightDir;
 vector g_vLightPos;
 float g_fLightRange;
 vector g_vCamPosition;
+float g_fDensity;
+float g_fStepSize;
 
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
@@ -32,6 +34,7 @@ texture2D g_GlowWeightTexture;
 texture2D g_DistortionTexture;
 texture2D g_FogTexture;
 texture2D g_BloomTexture;
+texture2D g_VolumetricTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -125,7 +128,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
     
-    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(-g_vLightDir.xyz), vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
     Out.vShade *= fDiffuseAOStrength;
     
     return Out;
@@ -202,10 +205,32 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
     
-    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(-g_vLightDir.xyz), vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(vLook.xyz) * -1.f, normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
     
     Out.vShade *= fDiffuseAOStrength * fAtt;
     Out.vSpecular *= fAtt;
+    
+    return Out;
+}
+
+
+PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
+{
+    PS_OUT_LIGHT Out;
+    
+    Out.vShade = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vSpecular = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
+
+PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_POINT(PS_IN In)
+{
+    PS_OUT_LIGHT Out;
+    
+    Out.vShade = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vSpecular = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -221,7 +246,9 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vBackBuffer = vShade + vSpecular; //vDiffuse * vShade + vSpecular;
+    vector vVolumetric = g_VolumetricTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vBackBuffer = vShade + vVolumetric * 0.5f + vSpecular; //vDiffuse * vShade + vSpecular;
     Out.vBloomScene = vShade;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -229,26 +256,24 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     
     vector vPosition;
     
-    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    // 로컬위치 * 월드 * 뷰 * 투영 / w 
     vPosition.x = In.vTexcoord.x * 2.f - 1.f;
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
     
-    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    // 로컬위치 * 월드 * 뷰 * 투영 
+    // w 나누기 상쇄.
     vPosition = vPosition * fViewZ;
     
-    /* 로컬위치 * 월드 * 뷰  */
+    // 로컬위치 * 월드 * 뷰  
     vPosition = mul(vPosition, g_ProjMatrixInv);
     
-    /* 로컬위치 * 월드   */
+    // 로컬위치 * 월드   
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vPosition = mul(vPosition, g_LightViewMatrix);
     vPosition = mul(vPosition, g_LightProjMatrix);
-    
-    /* -1, 1 -> 0, 0  */
-    /* 1, -1 -> 1, 1  */
     
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
@@ -355,6 +380,27 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
     // idx 3
+    pass VolumetricDirectional
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_VOLUMETRIC_DIRECTIONAL();
+    }
+    // idx 4
+    pass VolumetricPoint
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_VOLUMETRIC_POINT();
+    }
+
+    // idx 5
     pass Combined
     {
         SetRasterizerState(RS_Default);
@@ -364,7 +410,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
-    // idx 4
+    // idx 6
     pass Deferred
     {
         SetRasterizerState(RS_Default);
@@ -375,7 +421,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DEFERRED();
     }
 
-    // idx 5
+    // idx 7
     pass ToneMapping
     {
         SetRasterizerState(RS_Default);
@@ -386,7 +432,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_TONE_MAPPING();
     }
 
-    // idx 6
+    // idx 8
     pass Final
     {
         SetRasterizerState(RS_Default);

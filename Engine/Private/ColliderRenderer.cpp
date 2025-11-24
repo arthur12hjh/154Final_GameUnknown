@@ -119,7 +119,7 @@ void CColliderRenderer::Render(class CShader* pShader)
 
 void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
 {
-    //m_pGameInstance->Debug_LightRender();
+    m_pGameInstance->Debug_LightRender();
 
     for (auto& pDebugCom : m_DebugComponents)
     {
