@@ -118,9 +118,14 @@ public:
 	_bool Play_Animation(_float fTimeDelta, _bool isSimd = FALSE);
 
 	HRESULT Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag);
+	HRESULT Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_PreBoneMatrixSRV(CShader* pShader);
+	HRESULT Bind_GlobalOffsetMatrices(CShader* pShader);
+
 	_bool			IsAnimationFinished() { return m_isFinish; }
 
 	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
+
 
 	virtual HRESULT Render(_uint iMeshIndex);
 

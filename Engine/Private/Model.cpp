@@ -408,47 +408,14 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
 
-	if (m_pBoneMatricesSRV == nullptr) 
-	{
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-		SRVDesc.Buffer.NumElements = m_Bones.size();
-		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pOutSource, &SRVDesc, &m_pBoneMatricesSRV);
-		if (FAILED(hr))
-			return hr; 
-	}
+	if (FAILED(Bind_BoneMatrixSRV(pShader, pConstantName)))
+		return E_FAIL;
 
-	if (m_pPreBoneMatricesSRV == nullptr)
-	{
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-		SRVDesc.Buffer.NumElements = m_Bones.size();
-		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pPreBoneMatrices, &SRVDesc, &m_pPreBoneMatricesSRV);
-		if (FAILED(hr))
-			return hr;
-	}
+	if (FAILED(Bind_PreBoneMatrixSRV(pShader)))
+		return E_FAIL;
 
-	ID3D11ShaderResourceView* srvs[1] = { m_pBoneMatricesSRV };
-	ID3D11ShaderResourceView* preSRVs[1] = { m_pPreBoneMatricesSRV }; 
-
-	HRESULT hr = pShader->Bind_SRVs(pConstantName, srvs, 1);
-
-	pShader->Bind_SRVs("g_PreBoneMatrixBuffer", preSRVs, 1);
-
-
-	if (!m_GlobalOffsetMatrices.empty())
-	{
-		_uint iNumOffsets = (_uint)m_GlobalOffsetMatrices.size();
-		//512
-		if (iNumOffsets > 512)
-			iNumOffsets = 512;
-
-		hr = pShader->Bind_Matrices("g_OffsetMatrices",
-			m_GlobalOffsetMatrices.data(),
-			iNumOffsets);
-	}
+	if (FAILED(Bind_GlobalOffsetMatrices(pShader)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -484,46 +451,32 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 
 	return S_OK;
 }
-/*
-*  바인딩 필요한 값들
-*  - pass 0:
-*		*** Global ***
-*			-> g_fCurrentTrackPosition
-*			-> g_fTimeDelta
-*			-> g_fTickPerSecond
-*			-> g_fDuration
-*			-> g_bIsLoop
-*			-> g_iNumBones
-*			-> g_iNumChannels
-*		[ ] Channel
-*			-> iBoneIndex
-*			-> iCurrentKeyFrameIndex
-*			-> iNumKeyFrames
-*			-> iKeyFrameOffset
-*		[ ] KeyFrame
-*			-> vScale
-*			-> vRotation
-*			-> vTranslation
-*			-> fTrackPosition
-* 
-*	현재 산재된 문제점
-*	현재 산재된 문제점
-*	-> 채널과 본 수가 다름 개 씨발 매핑 되게 순서대로 정렬은 해줬는데 예외 되는지 확인 필요
-*	-> 원래 채널에서 선형보간 시 pCurrentKeyFrameIndex를 해주는데 그건 옮기지 말고 CPU에서 해주어야함
-* 
-*	바인딩을 어디서 할 것인가?
-*	-> 그래도 여기서 해야지..
-*/
+
 _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 {
-	/*
-			____      _     ____                     _____        __                           _   _               _    _
-		  / ____|    | |   |  _ \                   |_   _|      / _|                         | | (_)             | |  | |
-		 | |  __  ___| |_  | |_) | ___  _ __   ___    | |  _ __ | |_ ___  _ __ _ __ ___   __ _| |_ _  ___  _ __   | |__| | ___ _ __ ___
-		 | | |_ |/ _ \ __| |  _ < / _ \| '_ \ / _ \   | | | '_ \|  _/ _ \| '__| '_ ` _ \ / _` | __| |/ _ \| '_ \  |  __  |/ _ \ '__/ _ \
-		 | |__| |  __/ |_  | |_) | (_) | | | |  __/  _| |_| | | | || (_) | |  | | | | | | (_| | |_| | (_) | | | | | |  | |  __/ | |  __/
-		  \_____|\___|\__| |____/ \___/|_| |_|\___| |_____|_| |_|_| \___/|_|  |_| |_| |_|\__,_|\__|_|\___/|_| |_| |_|  |_|\___|_|  \___|
-	*/
+	// ReadBack 버퍼를 Map 해서 읽는다. 병목현상을 최소화하기 위해 CopyResource를 Play_Animation 뒤로 옮겼다.
+	if (nullptr != m_pOutReadBack)
+	{
+		D3D11_MAPPED_SUBRESOURCE MappedResource;
+		if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedResource)))
+		{
+			COMPUTE_BONEMATRIX_OUT* pOut =
+				reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
+
+			for (_uint i = 0; i < m_Bones.size(); i++)
+			{
+				m_Bones[i]->Set_TransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
+				);
+				m_Bones[i]->Set_CombinedTransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
+				);
+			}
+
+			m_pContext->Unmap(m_pOutReadBack, 0);
+		}
+	}
+	
 
 	//이전 본 프레임 저장.
 	if (nullptr != m_pOutSource)
@@ -532,8 +485,9 @@ _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 	}
 
 
-	if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
-		return E_FAIL;
+	//if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+	//	return E_FAIL;
+
 
 	if (isSimd)
 	{
@@ -566,6 +520,8 @@ _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 		m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
 
 		Bind_ComputeShader(fTimeDelta);
+
+		m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
 
 		return m_isFinish;
 	}
@@ -944,6 +900,8 @@ HRESULT CModel::Ready_ComputeShader()
 
 		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
 			return E_FAIL;
+
+		//Safe_AddRef(m_pOutSource);
 	}
 	
 	D3D11_BUFFER_DESC readbackDesc = {};
@@ -1194,7 +1152,7 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 	{
 		_uint iInputIndices[1] = { 0 };
-		m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);
+		m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);	
 	}
 
 	_uint iGroupCount = (m_Bones.size() + 127) / 128;
@@ -1219,33 +1177,65 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 		m_pContext->CSSetUnorderedAccessViews(0, 1, pNullUAV, initialCounts);
 	}
 
-	//// 1) GPU → CPU 복사용 Staging Buffer로 데이터 복사
-	//m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-	//
-	//// 2) STAGING 버퍼를 읽는다
-	//D3D11_MAPPED_SUBRESOURCE MappedResource;
-	//if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedResource)))
-	//{
-	//	COMPUTE_BONEMATRIX_OUT* pOut =
-	//		reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
-	//
-	//	for (_uint i = 0; i < m_Bones.size(); i++)
-	//	{
-	//		m_Bones[i]->Set_TransformationMatrix(
-	//			XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
-	//		);
-	//		m_Bones[i]->Set_CombinedTransformationMatrix(
-	//			XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
-	//		);
-	//	}
-	//
-	//	m_pContext->Unmap(m_pOutReadBack, 0);
-	//}
-
+	
 	
 	return S_OK;
 }
 
+HRESULT CModel::Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName)
+{
+
+	if (m_pBoneMatricesSRV == nullptr)
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+		SRVDesc.Buffer.NumElements = m_Bones.size();
+		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pOutSource, &SRVDesc, &m_pBoneMatricesSRV);
+		if (FAILED(hr))
+			return hr;
+	}
+
+	ID3D11ShaderResourceView* srvs[1] = { m_pBoneMatricesSRV };
+
+	HRESULT hr = pShader->Bind_SRVs(pConstantName, srvs, 1);
+
+	return hr;
+}
+
+HRESULT CModel::Bind_PreBoneMatrixSRV(CShader* pShader)
+{
+	if (m_pPreBoneMatricesSRV == nullptr)
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+		SRVDesc.Buffer.NumElements = m_Bones.size();
+		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pPreBoneMatrices, &SRVDesc, &m_pPreBoneMatricesSRV);
+		if (FAILED(hr))
+			return hr;
+	}
+	ID3D11ShaderResourceView* preSRVs[1] = { m_pPreBoneMatricesSRV };
+
+	return pShader->Bind_SRVs("g_PreBoneMatrixBuffer", preSRVs, 1);
+}
+
+HRESULT CModel::Bind_GlobalOffsetMatrices(CShader* pShader)
+{
+	if (!m_GlobalOffsetMatrices.empty())
+	{
+		_uint iNumOffsets = (_uint)m_GlobalOffsetMatrices.size();
+		//512
+		if (iNumOffsets > 512)
+			iNumOffsets = 512;
+
+		return pShader->Bind_Matrices("g_OffsetMatrices",
+			m_GlobalOffsetMatrices.data(),
+			iNumOffsets);
+	}
+
+	return S_OK;
+}
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
@@ -1304,12 +1294,11 @@ void CModel::Free()
 	Safe_Release(m_pChannelSource);
 	Safe_Release(m_pKeyFrameSource);
 	Safe_Release(m_pOutReadBack);
+	//Safe_Release(m_pOutSource);
 	Safe_Release(m_pPreBoneMatrices);
 
 	Safe_Release(m_pBoneMatricesSRV);
-
+	Safe_Release(m_pPreBoneMatricesSRV);
 	Safe_Release(m_pComputeShaderCom);
 
-	/*
-	*/
 }

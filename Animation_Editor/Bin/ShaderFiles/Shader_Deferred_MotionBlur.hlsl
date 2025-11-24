@@ -53,7 +53,7 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 
     for (int i = iCnt; i < iSampleCount; i++)
     {
-        float2 offset = In.vTexcoord + vVelocity.xy * (float) i * 0.15f;
+        float2 offset = In.vTexcoord + vVelocity.xy * (float) i * 0.1f;
 
         float4 vColor = g_SceneTexture.Sample(ClampSampler, offset);
         float fSampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
