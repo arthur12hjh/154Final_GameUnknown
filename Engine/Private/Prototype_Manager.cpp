@@ -128,6 +128,11 @@ void CPrototype_Manager::Clear(_uint iLevelIndex)
 	m_pPrototypes[iLevelIndex].clear();
 }
 
+CBase* CPrototype_Manager::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
+{
+	return Find_Prototype(iLevelIndex, strPrototypeTag);
+}
+
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	if (iLevelIndex >= m_iNumLevels)

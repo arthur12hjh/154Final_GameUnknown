@@ -378,12 +378,17 @@ HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pD
 
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
-	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;
+	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);
 }
 
 const map<const _wstring, class CBase*>* CGameInstance::Get_Prototypes_InLevel(_uint iLevelIndex)
 {
 	return m_pPrototype_Manager->Get_Prototypes_InLevel(iLevelIndex);
+}
+
+CBase* CGameInstance::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
+{
+	return m_pPrototype_Manager->Get_Prototype(iLevelIndex, strPrototypeTag);
 }
 
 #pragma endregion

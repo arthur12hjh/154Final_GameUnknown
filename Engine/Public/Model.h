@@ -103,9 +103,9 @@ public:
 
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
 
-	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, class CTexture* pTexture, const _char* pBindTag = nullptr);
-	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr);
-	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag = nullptr);
+	//HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, class CTexture* pTexture, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
+	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
+	//HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
 
 	HRESULT Mapping_OffsetMatrix();
 public:
@@ -161,6 +161,11 @@ private:
 	vector<class CAnimation*>	m_Animations;
 
 	_char						m_szBindTags[ENUM_CLASS(TEXTURE_TYPE::END)][MAX_PATH];
+
+#ifdef _DEBUG
+	_char						m_ModelFilePath[MAX_PATH];
+#endif
+
 private:
 	HRESULT Ready_Meshes();
 	HRESULT Ready_Materials(const _char* pModelFilePath);

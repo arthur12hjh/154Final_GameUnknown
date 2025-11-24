@@ -21,6 +21,8 @@ public:
 	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 	void Clear(_uint iLevelIndex);
 
+	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+
 private:
 	class CGameInstance*						m_pGameInstance = { nullptr };
 
