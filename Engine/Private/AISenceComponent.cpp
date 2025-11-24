@@ -102,6 +102,11 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 	m_pGameInstance->ADD_Collider(m_pTargetSearchCol);
 }
 
+_bool CAISenceComponent::IsTagetEmpty()
+{
+	return m_pSearchList.empty();
+}
+
 #ifdef _DEBUG
 void CAISenceComponent::Update_Debuge()
 {

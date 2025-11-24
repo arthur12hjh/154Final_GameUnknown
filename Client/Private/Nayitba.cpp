@@ -88,14 +88,23 @@ void CNayitba::Update(_float fTimeDelta)
 		Safe_Release(pHitDesc.pAttacker);
 	}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	if (m_MonsterInfo.bIsBattle)
 	{
-		// 이거 나중에 재훈이형이랑 연동할거임
-		m_MonsterInfo.bIsBattle = !m_MonsterInfo.bIsBattle;
-		
-
-
+		if (m_pAISenceCom.IsTagetEmpty())
+		{
+			BattleEvent(nullptr, false);
+		}
 	}
+
+
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	//{
+	//	// 이거 나중에 재훈이형이랑 연동할거임
+	//	m_MonsterInfo.bIsBattle = !m_MonsterInfo.bIsBattle;
+	//	
+
+
+	//}
 
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
@@ -120,7 +129,7 @@ HRESULT CNayitba::Render()
 
 _uint CNayitba::GetMonsterID()
 {
-	return _uint();
+	return m_iMonsterID;
 }
 
 const list<CGameObject*>* CNayitba::GetTargetList()
@@ -151,6 +160,11 @@ HRESULT CNayitba::ADD_Components()
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
+	if (AI_TYPE::AGGRESSIVE == m_pInitMonsterInfo->eAI_Type)
+	{
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, true); });
+	}
+		
 	// 그다음 여기서 FSM 인지 행동트리아
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
@@ -197,6 +211,19 @@ HRESULT CNayitba::ADD_PartObjects()
 	Import_ModelPtr();
 
 	return S_OK;
+}
+
+void CNayitba::BattleEvent(CGameObject* pTarget, _bool bIsBattle)
+{
+	m_MonsterInfo.bIsBattle = bIsBattle;
+	// 이거 다른 플래그 넘겨서
+	// Battle Start & Battle End 상태 애니메이션 넣어 주자
+
+	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
+	if (m_MonsterInfo.bIsBattle)
+		m_szEntryAnim += "_Start_Battle01";
+	else 
+		m_szEntryAnim += "_End_Battle01";
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -49,9 +49,13 @@ private:
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 	NAYTIBA_DESC					m_MonsterInfo = {};
 
+	string							m_szEntryAnim = {};
+
 private :
 	HRESULT							ADD_Components();
 	HRESULT							ADD_PartObjects();
+
+	void							BattleEvent(CGameObject* pTarget, _bool bIsBattle);
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

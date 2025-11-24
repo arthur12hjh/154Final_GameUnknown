@@ -3,6 +3,8 @@
 #include "State.h"
 
 NS_BEGIN(Client)
+struct Naytiba_Desc;
+
 class CMonsterIdleState final : public CState
 {
 private:
@@ -19,6 +21,9 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
+
+private :
+	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
 
 public:
 	static	CMonsterIdleState*					Create(void* pArg);

@@ -27,7 +27,7 @@ public:
 
 	void								UpdatSenceComponent(_float fDeletaTime);
 	const list<CGameObject*>*			GetSearchAllObject() { return &m_pSearchList; }
-
+	_bool								IsTagetEmpty();
 	// 이벤트 바인딩 함수들
 	void								Bind_TargetSearch(function<void(CGameObject*)> Func);
 	void								Bind_TargetLost(function<void(CGameObject*)> Func);
