@@ -31,8 +31,8 @@ void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
     if (m_pPlayer == pCharacter)
         return;
 
-    if (m_pPlayer)
-        Safe_Release(m_pPlayer);
+    //if (m_pPlayer)
+    //    Safe_Release(m_pPlayer);
 
     m_pPlayer = pCharacter;
     ///Safe_AddRef(m_pPlayer);
