@@ -101,9 +101,9 @@ void CDistortion::Free()
 {
     __super::Free();
 
-    for (auto& BlurObject : m_DistortionObjects)
+    for (auto& DistortionObject : m_DistortionObjects)
     {
-        Safe_Release(BlurObject);
+        Safe_Release(DistortionObject);
     }
 
     m_DistortionObjects.clear();

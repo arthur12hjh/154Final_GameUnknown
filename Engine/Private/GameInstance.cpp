@@ -545,6 +545,11 @@ HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
 }
 
+HRESULT CGameInstance::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIBuffer)
+{
+	return m_pLight_Manager->Render_VolumetricLights(pShader, pVIBuffer);
+}
+
 #ifdef _DEBUG
 void CGameInstance::Debug_LightRender()
 {
