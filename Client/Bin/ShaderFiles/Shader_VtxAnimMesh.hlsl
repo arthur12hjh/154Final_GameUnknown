@@ -14,7 +14,7 @@ matrix g_OffsetMatrices[512];
 bool g_IsMotionBlur;
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
-
+StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -53,15 +53,8 @@ VS_OUT VS_MAIN(VS_IN In)
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
-
     
-    //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
-    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
     
-    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
-    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
     
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
