@@ -385,6 +385,12 @@
     <Filter Include="02.GameObjects\Map\Common\Rock">
       <UniqueIdentifier>{7024ad07-df2e-4e8a-ace9-b25670999847}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\PointParticle\SpriteParticle">
+      <UniqueIdentifier>{bd8b7845-2d7c-486e-a506-a4d0376dc55a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\TrailEffect">
+      <UniqueIdentifier>{40d62cb2-aaea-4129-bf6d-08cef5c289f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -798,6 +804,12 @@
     <ClInclude Include="..\Public\CM_Rock14.h">
       <Filter>02.GameObjects\Map\Common\Rock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SpriteParticle.h">
+      <Filter>03.Effects\PointParticle\SpriteParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrailEffect.h">
+      <Filter>03.Effects\TrailEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1192,6 +1204,12 @@
     <ClCompile Include="..\Private\UIAnimManager.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SpriteParticle.cpp">
+      <Filter>03.Effects\PointParticle\SpriteParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailEffect.cpp">
+      <Filter>03.Effects\TrailEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -1234,6 +1252,11 @@
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

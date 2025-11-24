@@ -6,6 +6,7 @@ float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
+float g_fEndTime = 0;
 float2 g_fMaskUV = float2(0, 0);
 float2 g_fMaskUVSpeed = float2(0, 0);
 float2 g_fMaskUVSize = float2(1, 1);
@@ -17,6 +18,8 @@ float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
+int g_iSizeCount;
+StructuredBuffer<float3> g_fSizeDiagram : register(t0);
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -48,14 +51,57 @@ VS_OUT VS_MAIN(VS_IN In)
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-    
-    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
-    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
-    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
-    Out.vProjPos = Out.vPosition;
+    if (0 < g_fEndTime)
+    {
+        float time = g_fTime / g_fEndTime;
+        float3 fInTime = float3(0, 0, 0);
+        float3 fOutTime = float3(-1, 0, 0);
+        float3 vPosition = In.vPosition;
+        for (int i = 0; i < g_iSizeCount; ++i)
+        {
+            if (g_fSizeDiagram[i].x <= time)
+            {
+                fInTime.x = g_fSizeDiagram[i].x;
+                fInTime.y = g_fSizeDiagram[i].y;
+                fInTime.z = g_fSizeDiagram[i].z;
+            }
+            if (g_fSizeDiagram[i].x > time)
+            {
+                fOutTime.x = g_fSizeDiagram[i].x;
+                fOutTime.y = g_fSizeDiagram[i].y;
+                fOutTime.z = g_fSizeDiagram[i].z;
+                break;
+            }
+        }
+        if (-1 == fOutTime.x)
+            vPosition.xyz *= fInTime.y;
+        else
+        {
+            float t = (time - fInTime.x) / (fOutTime.x - fInTime.x);
+            float fSize = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * fInTime.y
+                        + (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(fInTime.z)) * (fOutTime.x - fInTime.x) * 100
+                        + (-2 * pow(t, 3) + 3 * pow(t, 2)) * fOutTime.y
+                        + (pow(t, 3) - pow(t, 2)) * tan(radians(fOutTime.z)) * (fOutTime.x - fInTime.x) * 100;
+            vPosition.xyz *= fSize;
+        }
+        Out.vPosition = mul(vector(vPosition, 1.f), matWVP);
+        Out.vTexcoord = In.vTexcoord;
+        Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+        Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+        Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+        Out.vWorldPos = mul(vector(vPosition, 1.f), g_WorldMatrix);
+        Out.vProjPos = Out.vPosition;
+    }
+    else
+    {
+        Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+        Out.vTexcoord = In.vTexcoord;
+        Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+        Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+        Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+        Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+        Out.vProjPos = Out.vPosition;
+    }
     return Out;
 }
 
@@ -249,6 +295,14 @@ PS_OUT PS_CIRCLE_DISTORTION(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_COLOR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    Out.vColor = g_vColor;
+    return Out;
+}
+
 struct PS_IN_SHADOW
 {
     float4 vPosition : SV_POSITION;
@@ -309,6 +363,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_CONE();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_CIRCLE_DISTORTION();
+    }
+
+    pass Mesh
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COLOR();
     }
 
 

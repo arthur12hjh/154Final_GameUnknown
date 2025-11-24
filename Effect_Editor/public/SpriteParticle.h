@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tool_Effect_Defines.h"
+#include "VIBuffer_Point_Instance.h"
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
@@ -72,7 +73,7 @@ public:
 
 		_int				iBegin;
 		_int				iNumInstance;
-		_int				iSelectRender;
+		RENDER				eSelectRender;
 		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;

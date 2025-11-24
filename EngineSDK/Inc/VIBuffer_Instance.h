@@ -18,7 +18,9 @@ public:
 
 	typedef struct tagVertexInstance_Particle final : public VTX_INSTANCE_PARTICLE
 	{
+		_float4x4	WorldMat = {};
 		_float4	vRoot;
+		_float4	vStart;
 		_float2 vSpeeds;
 		_float	vSize;
 	}VTX_INSTANCE_VERTEX_PARTICLE;

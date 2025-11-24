@@ -108,7 +108,6 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		}
 		return;
 	}
-
 	memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
 	memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
 
@@ -131,43 +130,82 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		return;
 	}
 
-	_vector vHighPositions[4]{};
-	_vector vLowPositions[4]{};
-	_float fValue = {};
-	for (int j = 0; j < 3; ++j) {
-		vHighPositions[j] = XMLoadFloat4(&m_vPreHighPositions[j]);
-		vLowPositions[j] = XMLoadFloat4(&m_vPreLowPositions[j]);
-	}
-
-	for (int j = 0; j < 4; ++j) {
-		fValue = (_float)j / 3;
-
-		vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
-		vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
-
-		if (m_iNumPresent + 2 >= m_iNumVertices) {
-			m_iNumPresent -= 2;
-			memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+	_uint index = m_fTime / 0.015f;
+	m_fTime -= 0.015f * index;
+	if (1 < index) {
+		for (int i = 0; i < index; ++i) {
+			if (i != 0) {
+				memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
+				memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
+			}
+			_vector vBeforeHigh = XMLoadFloat4(&m_vPreHighPositions[1]);
+			_vector vAfterHigh = XMVector3TransformCoord(XMLoadFloat4(&m_vHigh), matCurrentWorld);
+			_vector vBeforeLow = XMLoadFloat4(&m_vPreLowPositions[1]);
+			_vector vAfterLow = XMVector3TransformCoord(XMLoadFloat4(&m_vLow), matCurrentWorld);
+			 XMStoreFloat4(&m_vPreHighPositions[2], vBeforeHigh + (vAfterHigh - vBeforeHigh) / (index - i));
+			 XMStoreFloat4(&m_vPreLowPositions[2], vBeforeLow + (vAfterLow - vBeforeLow) / (index - i));
+			 m_vPreHighPositions[2].w = 1;
+			 m_vPreLowPositions[2].w = 1;
+			 _vector vHighPositions[4]{};
+			 _vector vLowPositions[4]{};
+			 _float fValue = {};
+			 for (int i = 0; i < 3; ++i) {
+				 vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
+				 vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
+			 }
+			 for (int i = 0; i < 4; ++i) {
+				 fValue = (_float)i / 3;
+	
+				 vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
+				 vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
+	
+				 if (m_iNumPresent + 2 >= m_iNumVertices) {
+					 m_iNumPresent -= 2;
+					 memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+				 }
+				 XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
+				 XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
+	
+				 m_iNumPresent += 2;
+			 }
+	
 		}
-
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
-
-		m_iNumPresent += 2;
 	}
-	// uv 매핑
+	else {
+		_vector vHighPositions[4]{};
+		_vector vLowPositions[4]{};
+		_float fValue = {};
+		for (int i = 0; i < 3; ++i) {
+			vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
+			vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
+		}
+		for (int i = 0; i < 4; ++i) {
+			fValue = (_float)i / 3;
+
+			vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
+			vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
+
+			if (m_iNumPresent + 2 >= m_iNumVertices) {
+				m_iNumPresent -= 2;
+				memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+			}
+			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
+			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
+
+			m_iNumPresent += 2;
+		}
+	}
 	_uint iIndexLow;
 	_uint iIndexHigh;
 	for (_uint iIndex = 0; iIndex < iNumActivatedPairs; ++iIndex) {
 		_float u = (_float)iIndex / (_float)(iNumActivatedPairs - 1);
-		// 전체 UV에서 현재 노트가 위치한 u구하기 ( uv 늘이기 )
 		iIndexLow = iIndex << 1;
 		iIndexHigh = iIndexLow + 1;
 
 		m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 		m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
 	}
-	// Lock UnLock
+
 	D3D11_MAPPED_SUBRESOURCE SubResource{};
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 

@@ -43,17 +43,17 @@ void CSpriteParticle::Update(_float fTimeDelta)
 			return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+		XMMatrixTranspose(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat)));
 	Spread(fTimeDelta);
 }
 
 void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
-	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
+	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y < m_fTime))
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CSpriteParticle::Render()
@@ -166,7 +166,11 @@ HRESULT CSpriteParticle::Ready_Components()
 
 HRESULT CSpriteParticle::Bind_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	_float4x4 world = m_CombinedWorldMatrix;
+	world._41 = 0;
+	world._42 = 0;
+	world._43 = 0;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;

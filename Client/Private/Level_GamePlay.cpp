@@ -54,14 +54,6 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
-	m_fTime += fTimeDelta;
-	if (5 < m_fTime) {
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Effect"))))
-			return;
-		m_fTime = 0;
-	}
-
 }
 
 HRESULT CLevel_GamePlay::Render()

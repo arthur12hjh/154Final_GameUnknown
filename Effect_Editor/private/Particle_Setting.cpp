@@ -31,7 +31,7 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fSpeed = _float2(1.f, 0.5f);
     m_tParticleData.bisLoop = true;
     m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    m_tParticleData.iSelectRender = 3;
+    m_tParticleData.eSelectRender = RENDER::NONLIGHT;
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
     m_tParticleData.fSizeDiagrams.clear();
@@ -199,6 +199,19 @@ HRESULT CParticle_Setting::Initialize()
         } while (FindNextFileA(h, &fd));
         FindClose(h);
     }
+
+    memset(pattern, 0, sizeof(pattern));
+    strcpy_s(pattern, MAX_PATH, "../Bin/Resources/TrailEffect/*.binx");
+
+    h = FindFirstFileA(pattern, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                m_TrailEffects.push_back(fd.cFileName);
+            }
+        } while (FindNextFileA(h, &fd));
+        FindClose(h);
+    }
     m_iSelectEffect = 0;
     m_iSelectParticle = 0;
     m_iSelectMesh = 0;
@@ -230,7 +243,7 @@ HRESULT CParticle_Setting::Initialize()
     tTrailData.fDissolveUVSpeed = _float2(0, 0);
     tTrailData.fDissolveUVSize = _float2(1, 1);
     tTrailData.iBegin = 0;
-    tTrailData.iSelectRender = 3;
+    tTrailData.eSelectRender = RENDER::NONLIGHT;
 
     m_pTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
     m_pTrailEffect->Initialize(nullptr);
@@ -240,7 +253,7 @@ HRESULT CParticle_Setting::Initialize()
 
     tTrailData.fColor = _float4(1, 1, 1, 1);
     tTrailData.iBegin = 1;
-    tTrailData.iSelectRender = 6;
+    tTrailData.eSelectRender = RENDER::DISTORTION;
 
     m_pDistortionTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
     m_pDistortionTrailEffect->Initialize(nullptr);
@@ -254,25 +267,24 @@ void CParticle_Setting::Add_Particle()
 {
     CParticle::PARTICLE_DATA tParticleData;
 
-    tParticleData.iNumInstance = 100;
-    tParticleData.iBegin = 0;
-    tParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
-    tParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
-    tParticleData.fRange = _float3(1.f, 1.f, 1.f);
-    tParticleData.fSize = _float2(0.5f, 1.f);
-    tParticleData.fLifeTime = _float2(0.5f, 1.f);
-    tParticleData.fSpeed = _float2(1.f, 0.5f);
-    tParticleData.bisLoop = true;
-    tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    tParticleData.iSelectRender = 3;
-    tParticleData.fColor = { 0,0,0,1 };
+    tParticleData.szMaskTexture = m_ImageFiles[0][0];
+    tParticleData.szDiffuseTexture = m_ImageFiles[1][0];
+    tParticleData.szDissolveTexture = m_ImageFiles[2][0];
     tParticleData.szCS = "CS";
     tParticleData.fSizeDiagrams.clear();
     tParticleData.fSizeDiagrams.push_back(_float3(0, 1, 0));
     tParticleData.fSizeDiagrams.push_back(_float3(1, 1, 0));
+    tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
     tParticleData.fPosition = _float4(0, 0, 0, 1);
+    tParticleData.fColor = { 0,0,0,1 };
+    tParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
+    tParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
+    tParticleData.fRange = _float3(1.f, 1.f, 1.f);
     tParticleData.fRotation = _float3(0, 0, 0);
-
+    tParticleData.fSize = _float2(0.5f, 1.f);
+    tParticleData.fLifeTime = _float2(0.5f, 1.f);
+    tParticleData.fSpeed = _float2(1.f, 0.5f);
+    tParticleData.fTurnPower = _float2(1.f, 1.f);
     tParticleData.fMaskUV = _float2(0, 0);
     tParticleData.fMaskUVSpeed = _float2(0, 0);
     tParticleData.fMaskUVSize = _float2(1, 1);
@@ -282,30 +294,18 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fDissolveUV = _float2(0, 0);
     tParticleData.fDissolveUVSpeed = _float2(0, 0);
     tParticleData.fDissolveUVSize = _float2(1, 1);
+    tParticleData.fCircle = _float2(1, 5);
     tParticleData.fDelayTime = 0.f;
-    tParticleData.fEndTime = 5.f;
-    tParticleData.bisBillboard = true;
-
-
-    tParticleData.fTurnPower = _float2(1.f, 1.f);
-    tParticleData.bisSphere = false;
-    tParticleData.bisCircle = false;
+    tParticleData.fEndTime = 0.f;
     tParticleData.fSphereSize = 1.f;
     tParticleData.fCircleSpeed = 1.f;
-
-    for (_uint i = 0; i < 3; ++i) {
-        switch (i) {
-        case 0:
-            tParticleData.szMaskTexture = m_ImageFiles[i][0];
-            break;
-        case 1:
-            tParticleData.szDiffuseTexture = m_ImageFiles[i][0];
-            break;
-        case 2:
-            tParticleData.szDissolveTexture = m_ImageFiles[i][0];
-            break;
-        }
-    }
+    tParticleData.iBegin = 0;
+    tParticleData.iNumInstance = 100;
+    tParticleData.eSelectRender = RENDER::NONLIGHT;
+    tParticleData.bisBillboard = true;
+    tParticleData.bisLoop = true;
+    tParticleData.bisSphere = false;
+    tParticleData.bisCircle = false;
 
     CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
     pParticle->Initialize(nullptr);
@@ -343,26 +343,24 @@ void CParticle_Setting::Delete_Particle()
 void CParticle_Setting::Add_SpriteParticle()
 {
     CSpriteParticle::SPRITE_PARTICLE_DATA tSpriteParticleData;
-
-    tSpriteParticleData.iNumInstance = 100;
-    tSpriteParticleData.iBegin = 0;
-    tSpriteParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
-    tSpriteParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
-    tSpriteParticleData.fRange = _float3(1.f, 1.f, 1.f);
-    tSpriteParticleData.fSize = _float2(0.5f, 1.f);
-    tSpriteParticleData.fLifeTime = _float2(0.5f, 1.f);
-    tSpriteParticleData.fSpeed = _float2(1.f, 0.5f);
-    tSpriteParticleData.bisLoop = true;
-    tSpriteParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    tSpriteParticleData.iSelectRender = 3;
-    tSpriteParticleData.fColor = { 0,0,0,1 };
+    tSpriteParticleData.szMaskTexture = m_ImageFiles[0][0];
+    tSpriteParticleData.szDiffuseTexture = m_ImageFiles[1][0];
+    tSpriteParticleData.szNormalTexture = m_ImageFiles[3][0];
     tSpriteParticleData.szCS = "CS";
     tSpriteParticleData.fSizeDiagrams.clear();
     tSpriteParticleData.fSizeDiagrams.push_back(_float3(0, 1, 0));
     tSpriteParticleData.fSizeDiagrams.push_back(_float3(1, 1, 0));
+    tSpriteParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
     tSpriteParticleData.fPosition = _float4(0, 0, 0, 1);
+    tSpriteParticleData.fColor = { 0,0,0,1 };
+    tSpriteParticleData.fCenter = _float3(0.0f, 0.f, 0.f);
+    tSpriteParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
+    tSpriteParticleData.fRange = _float3(1.f, 1.f, 1.f);
     tSpriteParticleData.fRotation = _float3(0, 0, 0);
-
+    tSpriteParticleData.fSize = _float2(0.5f, 1.f);
+    tSpriteParticleData.fLifeTime = _float2(0.5f, 1.f);
+    tSpriteParticleData.fSpeed = _float2(1.f, 0.5f);
+    tSpriteParticleData.fTurnPower = _float2(1.f, 1.f);
     tSpriteParticleData.fMaskUV = _float2(0, 0);
     tSpriteParticleData.fMaskUVSpeed = _float2(0, 0);
     tSpriteParticleData.fMaskUVSize = _float2(1, 1);
@@ -373,21 +371,20 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.fDissolveUVSpeed = _float2(0, 0);
     tSpriteParticleData.fDissolveUVSize = _float2(1, 1);
     tSpriteParticleData.fParticleSize = _float2(1, 1);
+    tSpriteParticleData.fCircle = _float2(1, 5);
+    tSpriteParticleData.iUV = _int2(1, 1);
     tSpriteParticleData.fDelayTime = 0.f;
-    tSpriteParticleData.fEndTime = 5.f;
+    tSpriteParticleData.fEndTime = 0.f;
+    tSpriteParticleData.fSphereSize = 1.f;
+    tSpriteParticleData.fAngle = 0.f;
+    tSpriteParticleData.fCircleSpeed = 1.f;
+    tSpriteParticleData.iBegin = 0;
+    tSpriteParticleData.iNumInstance = 100;
+    tSpriteParticleData.eSelectRender = RENDER::NONLIGHT;
     tSpriteParticleData.bisBillboard = true;
-
-
-    tSpriteParticleData.fTurnPower = _float2(1.f, 1.f);
+    tSpriteParticleData.bisLoop = true;
     tSpriteParticleData.bisSphere = false;
     tSpriteParticleData.bisCircle = false;
-    tSpriteParticleData.fSphereSize = 1.f;
-    tSpriteParticleData.fCircleSpeed = 1.f;
-    tSpriteParticleData.iUV = _int2(1, 1);
-
-    tSpriteParticleData.szMaskTexture = m_ImageFiles[0][0];
-    tSpriteParticleData.szDiffuseTexture = m_ImageFiles[1][0];
-    tSpriteParticleData.szNormalTexture = m_ImageFiles[3][0];
 
     CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
     pParticle->Initialize(nullptr);
@@ -425,11 +422,19 @@ void CParticle_Setting::Delete_SpriteParticle()
 void CParticle_Setting::Add_MeshEffect()
 {
     CMeshEffect::MeshEffectData		MeshDesc{};
+
+    char szModelPath[MAX_PATH] = {};
+    strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[0].c_str(), _TRUNCATE);
+    MeshDesc.szModel = szModelPath;
+    MeshDesc.szMaskTexture = m_ImageFiles[0][0];
+    MeshDesc.szDiffuseTexture = m_ImageFiles[1][0];
+    MeshDesc.szDissolveTexture = m_ImageFiles[2][0];
+    MeshDesc.fSizeDiagrams.clear();
+    MeshDesc.fSizeDiagrams.push_back(_float3(0, 1, 0));
+    MeshDesc.fSizeDiagrams.push_back(_float3(1, 1, 0));
     MeshDesc.fColor = { 0,0,0,1 };
-    MeshDesc.iBegin = 0;
-    MeshDesc.iSelectRender = 3;
-    MeshDesc.fScale = { 1,1,1 };
     MeshDesc.fPosition = _float4(0, 0, 0, 1);
+    MeshDesc.fScale = { 1,1,1 };
     MeshDesc.fRotation = _float3(0, 0, 0);
     MeshDesc.fMaskUV = _float2(0, 0);
     MeshDesc.fMaskUVSpeed = _float2(0, 0);
@@ -440,32 +445,15 @@ void CParticle_Setting::Add_MeshEffect()
     MeshDesc.fDissolveUV = _float2(0, 0);
     MeshDesc.fDissolveUVSpeed = _float2(0, 0);
     MeshDesc.fDissolveUVSize = _float2(1, 1);
-    MeshDesc.fEndTime = 1.f;
-    char szModelPath[MAX_PATH] = {};
-    strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[0].c_str(), _TRUNCATE);
-    MeshDesc.szModel = szModelPath;
-
-    for (_uint i = 0; i < 3; ++i) {
-
-        switch (i) {
-        case 0:
-            MeshDesc.szMaskTexture = m_ImageFiles[i][0];
-            break;
-        case 1:
-            MeshDesc.szDiffuseTexture = m_ImageFiles[i][0];
-            break;
-        case 2:
-            MeshDesc.szDissolveTexture = m_ImageFiles[i][0];
-            break;
-        }
-    }
+    MeshDesc.fDelayTime = 0.f;
+    MeshDesc.fEndTime = 0.f;
+    MeshDesc.eSelectRender = RENDER::NONLIGHT;
+    MeshDesc.iBegin = 0;
 
     CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
     pMeshEffect->Initialize(nullptr);
 
     pMeshEffect->Set_Components(MeshDesc);
-    _tchar szPath[256] = { 0, };
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[0].c_str(), strlen(m_ModelFilePaths[0].c_str()), szPath, 256);
     pMeshEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
 
     m_iSelectMesh = m_pMeshs.size();
@@ -498,24 +486,23 @@ void CParticle_Setting::Delete_MeshEffect()
 void CParticle_Setting::Add_SpriteEffect()
 {
     CSpriteEffect::SPRITE_DATA		SpriteDesc{};
-
     SpriteDesc.szMaskTexture = m_ImageFiles[0][0];
     SpriteDesc.szDiffuseTexture = m_ImageFiles[1][0];
     SpriteDesc.szNormalTexture = m_ImageFiles[3][0];
     SpriteDesc.fPosition = _float4(0, 0, 0, 1);
+    SpriteDesc.fColor = _float4(0, 0, 0, 1);
     SpriteDesc.fSize = _float2(1, 1);
     SpriteDesc.iUV = _int2(1, 1);
     SpriteDesc.fFPS = 0.1f;
+    SpriteDesc.fAngle = 0.f;
     SpriteDesc.iBegin = 0;
-    SpriteDesc.iSelectRender = 3;
+    SpriteDesc.eSelectRender = RENDER::NONLIGHT;
     SpriteDesc.bisLoop = true;
 
     CSpriteEffect* pSpriteEffect = CSpriteEffect::Create(m_pDevice, m_pContext);
     pSpriteEffect->Initialize(nullptr);
 
     pSpriteEffect->Set_Components(SpriteDesc);
-    _tchar szPath[256] = { 0, };
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[0].c_str(), strlen(m_ModelFilePaths[0].c_str()), szPath, 256);
     pSpriteEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
 
     m_iSelectSprite = m_pSprites.size();
@@ -570,6 +557,10 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         strncpy_s(szImageFile, sizeof(szImageFile), pMesh->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
         WriteString(fileBinaryStream, szImageFile);
 
+        WriteInt(fileBinaryStream, pMesh->Get_Data().fSizeDiagrams.size());
+        for (auto fSizeDiagram : pMesh->Get_Data().fSizeDiagrams) {
+            WriteFloat3(fileBinaryStream, fSizeDiagram);
+        }
 
         WriteFloat4(fileBinaryStream, pMesh->Get_Data().fColor);
         WriteFloat4(fileBinaryStream, pMesh->Get_Data().fPosition);
@@ -591,7 +582,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
 
 
         WriteInt(fileBinaryStream, pMesh->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pMesh->Get_Data().iSelectRender);
+        WriteRENDER(fileBinaryStream, pMesh->Get_Data().eSelectRender);
     }
     WriteInt(fileBinaryStream, m_pParticles.size());
     for (auto pParticle : m_pParticles) {
@@ -645,7 +636,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
+        WriteRENDER(fileBinaryStream, pParticle->Get_Data().eSelectRender);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
@@ -706,7 +697,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
-        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
+        WriteRENDER(fileBinaryStream, pSpriteParticle->Get_Data().eSelectRender);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
@@ -733,7 +724,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
         WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
         WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
+        WriteRENDER(fileBinaryStream, pSprite->Get_Data().eSelectRender);
         WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
     }
     return S_OK;
@@ -787,6 +778,11 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         szTemp = ReadString(fileBinaryStream);
         MeshDesc.szDissolveTexture = szTemp;
         Safe_Delete(szTemp);
+        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+        MeshDesc.fSizeDiagrams.clear();
+        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+            MeshDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+        }
         MeshDesc.fColor = ReadFloat4(fileBinaryStream);
         MeshDesc.fPosition = ReadFloat4(fileBinaryStream);
         MeshDesc.fScale = ReadFloat3(fileBinaryStream);
@@ -810,7 +806,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
 
         MeshDesc.iBegin = ReadInt(fileBinaryStream);
-        MeshDesc.iSelectRender = ReadInt(fileBinaryStream);
+        MeshDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
         CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
         pMeshEffect->Initialize(nullptr);
@@ -869,7 +865,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+        ParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -936,7 +932,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
        SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
        SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-       SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+       SpriteParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
        SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -970,7 +966,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         SpriteDesc.iUV = ReadInt2(fileBinaryStream);
         SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
         SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+        SpriteDesc.eSelectRender = ReadRENDER(fileBinaryStream);
         SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
 
 
@@ -983,6 +979,75 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_pSprites.push_back(pSprite);
         m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
     }
+    return S_OK;
+}
+
+HRESULT CParticle_Setting::Save_TrailBinary(const _char* szFile)
+{
+    char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/TrailEffect/";
+    strcat_s(szBinModelFilePath, MAX_PATH, szFile);
+    strcat_s(szBinModelFilePath, MAX_PATH, ".binx");
+    ofstream fileBinaryStream;
+    fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+
+    char szImageFile[MAX_PATH] = {};
+    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+    WriteString(fileBinaryStream, szImageFile);
+    memset(szImageFile, 0, sizeof(szImageFile));
+
+    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+    WriteString(fileBinaryStream, szImageFile);
+    memset(szImageFile, 0, sizeof(szImageFile));
+
+    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+    WriteString(fileBinaryStream, szImageFile);
+    memset(szImageFile, 0, sizeof(szImageFile));
+
+    WriteFloat4(fileBinaryStream, m_pTrailEffect->Get_Data().fColor);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUV);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUVSpeed);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUVSize);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUV);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUVSpeed);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUVSize);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUV);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUVSpeed);
+    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUVSize);
+
+    WriteInt(fileBinaryStream, m_pTrailEffect->Get_Data().iBegin);
+    WriteRENDER(fileBinaryStream, m_pTrailEffect->Get_Data().eSelectRender);
+
+    return S_OK;
+}
+
+HRESULT CParticle_Setting::Load_TrailBinary(const _char* szFile)
+{
+    char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/TrailEffect/";
+    strcat_s(szBinModelFilePath, MAX_PATH, szFile);
+    ifstream fileBinaryStream;
+    fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+
+    _char* szTemp = ReadString(fileBinaryStream);
+    m_tTrailData.szMaskTexture = szTemp;
+    Safe_Delete(szTemp);
+    szTemp = ReadString(fileBinaryStream);
+    m_tTrailData.szDiffuseTexture = szTemp;
+    Safe_Delete(szTemp);
+    szTemp = ReadString(fileBinaryStream);
+    m_tTrailData.szDissolveTexture = szTemp;
+    Safe_Delete(szTemp);
+    m_tTrailData.fColor = ReadFloat4(fileBinaryStream);
+    m_tTrailData.fMaskUV = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fMaskUVSize = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDiffuseUV = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDissolveUV = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+    m_tTrailData.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+    m_tTrailData.iBegin = ReadInt(fileBinaryStream);
+    m_tTrailData.eSelectRender = ReadRENDER(fileBinaryStream);
     return S_OK;
 }
 
@@ -1030,47 +1095,92 @@ void CParticle_Setting::Update(_float fTimeDelta)
         m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
         ImGui::TreePop();
     }
-
-    ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
-    if (ImGui::Button("Save", btn)) {
-        Save_Binary(m_SaveFile);
-    }
-    if (ImGui::Button("Refresh", btn)) {
-        m_Effects.clear();
-        char pattern[MAX_PATH] = {};
-        strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Effect/*.binx");
-
-        WIN32_FIND_DATAA fd{};
-        HANDLE h = FindFirstFileA(pattern, &fd);
-        if (h != INVALID_HANDLE_VALUE) {
-            do {
-                if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                    m_Effects.push_back(fd.cFileName);
-                }
-            } while (FindNextFileA(h, &fd));
-            FindClose(h);
+    if (4 == m_iSelectMeshParticle) {
+        ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
+        if (ImGui::Button("Save", btn)) {
+            Save_TrailBinary(m_SaveFile);
         }
-    }
+        if (ImGui::Button("Refresh", btn)) {
+            m_TrailEffects.clear();
+            char pattern[MAX_PATH] = {};
+            strcpy_s(pattern, MAX_PATH, "../Bin/Resources/TrailEffect/*.binx");
 
-
-    if (ImGui::BeginCombo("Save Effect", m_Effects[m_iSelectEffect].c_str()))
-    {
-        for (_uint i = 0; i < m_Effects.size(); ++i) {
-            _bool sel = i == m_iSelectEffect;
-            if (ImGui::Selectable(m_Effects[i].c_str(), sel)) {
-                m_iSelectEffect = i;
-                _tchar szPath[256] = { 0, };
-                MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_Effects[m_iSelectEffect].c_str(), strlen(m_Effects[m_iSelectEffect].c_str()), szPath, 256);
-
+            WIN32_FIND_DATAA fd{};
+            HANDLE h = FindFirstFileA(pattern, &fd);
+            if (h != INVALID_HANDLE_VALUE) {
+                do {
+                    if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                        m_TrailEffects.push_back(fd.cFileName);
+                    }
+                } while (FindNextFileA(h, &fd));
+                FindClose(h);
             }
-            if (sel)
-                ImGui::SetItemDefaultFocus();
         }
-        ImGui::EndCombo();
-    }
 
-    if (ImGui::Button("Load", btn)) {
-        Load_Binary(m_Effects[m_iSelectEffect].c_str());
+
+        if (ImGui::BeginCombo("Save Effect", m_TrailEffects[m_iSelectTrailEffect].c_str()))
+        {
+            for (_uint i = 0; i < m_TrailEffects.size(); ++i) {
+                _bool sel = i == m_iSelectTrailEffect;
+                if (ImGui::Selectable(m_TrailEffects[i].c_str(), sel)) {
+                    m_iSelectTrailEffect = i;
+                    _tchar szPath[256] = { 0, };
+                    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_TrailEffects[m_iSelectTrailEffect].c_str(), strlen(m_TrailEffects[m_iSelectTrailEffect].c_str()), szPath, 256);
+
+                }
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        if (ImGui::Button("Load", btn)) {
+            Load_TrailBinary(m_TrailEffects[m_iSelectTrailEffect].c_str());
+            m_pTrailEffect->Set_Components(m_tTrailData);
+        }
+    }
+    else {
+        ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
+        if (ImGui::Button("Save", btn)) {
+            Save_Binary(m_SaveFile);
+        }
+        if (ImGui::Button("Refresh", btn)) {
+            m_Effects.clear();
+            char pattern[MAX_PATH] = {};
+            strcpy_s(pattern, MAX_PATH, "../Bin/Resources/Effect/*.binx");
+
+            WIN32_FIND_DATAA fd{};
+            HANDLE h = FindFirstFileA(pattern, &fd);
+            if (h != INVALID_HANDLE_VALUE) {
+                do {
+                    if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                        m_Effects.push_back(fd.cFileName);
+                    }
+                } while (FindNextFileA(h, &fd));
+                FindClose(h);
+            }
+        }
+
+
+        if (ImGui::BeginCombo("Save Effect", m_Effects[m_iSelectEffect].c_str()))
+        {
+            for (_uint i = 0; i < m_Effects.size(); ++i) {
+                _bool sel = i == m_iSelectEffect;
+                if (ImGui::Selectable(m_Effects[i].c_str(), sel)) {
+                    m_iSelectEffect = i;
+                    _tchar szPath[256] = { 0, };
+                    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_Effects[m_iSelectEffect].c_str(), strlen(m_Effects[m_iSelectEffect].c_str()), szPath, 256);
+
+                }
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        if (ImGui::Button("Load", btn)) {
+            Load_Binary(m_Effects[m_iSelectEffect].c_str());
+        }
     }
     
     switch (m_iSelectMeshParticle)
@@ -1215,6 +1325,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
                 if (ImGui::TreeNode("Size Diagram")) {
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
                     if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
                         _float time = 1.f / 100;
                         _float fMax = 5;
@@ -1345,11 +1456,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     Desc.isLoop = m_tParticleData.bisLoop;
                     m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
                 }
-                for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
-                    if (fSizeDiagrams[i].x != m_tParticleData.fSizeDiagrams[i].x ||
-                        fSizeDiagrams[i].y != m_tParticleData.fSizeDiagrams[i].y ||
-                        fSizeDiagrams[i].z != m_tParticleData.fSizeDiagrams[i].z) {
-                        m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
+                else if (fSizeDiagrams.size() == m_tParticleData.fSizeDiagrams.size()) {
+                    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
+                        if (fSizeDiagrams[i].x != m_tParticleData.fSizeDiagrams[i].x ||
+                            fSizeDiagrams[i].y != m_tParticleData.fSizeDiagrams[i].y ||
+                            fSizeDiagrams[i].z != m_tParticleData.fSizeDiagrams[i].z) {
+                            m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
+                        }
                     }
                 }
             }
@@ -1366,56 +1479,64 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
                 string szRender;
-                switch (m_tParticleData.iSelectRender)
-                {
-                case 2:
+                switch (m_tParticleData.eSelectRender) {
+                case RENDER::NONBLEND:
                     szRender = "NONBLEND";
                     break;
-                case 3:
+                case RENDER::NONLIGHT:
                     szRender = "NONLIGHT";
                     break;
-                case 4:
+                case RENDER::BLUR:
                     szRender = "BLUR";
                     break;
-                case 5:
+                case RENDER::GLOW:
                     szRender = "GLOW";
                     break;
-                case 6:
+                case RENDER::DISTORTION:
                     szRender = "DISTORTION";
                     break;
-                case 7:
+                case RENDER::BLEND:
                     szRender = "BLEND";
                     break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 2; i <= 7; ++i) {
-                        _bool sel = i == m_tParticleData.iSelectRender;
+                    for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
+                        _bool bisRender = false;
+                        _bool sel = i == ENUM_CLASS(m_tParticleData.eSelectRender);
                         switch (i)
                         {
-                        case 2:
+                        case ENUM_CLASS(RENDER::NONBLEND):
                             szRender = "NONBLEND";
+                            bisRender = true;
                             break;
-                        case 3:
+                        case ENUM_CLASS(RENDER::NONLIGHT):
                             szRender = "NONLIGHT";
+                            bisRender = true;
                             break;
-                        case 4:
+                        case ENUM_CLASS(RENDER::BLUR):
                             szRender = "BLUR";
+                            bisRender = true;
                             break;
-                        case 5:
+                        case ENUM_CLASS(RENDER::GLOW):
                             szRender = "GLOW";
+                            bisRender = true;
                             break;
-                        case 6:
+                        case ENUM_CLASS(RENDER::DISTORTION):
                             szRender = "DISTORTION";
+                            bisRender = true;
                             break;
-                        case 7:
+                        case ENUM_CLASS(RENDER::BLEND):
                             szRender = "BLEND";
+                            bisRender = true;
                             break;
                         }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tParticleData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
+                        if (bisRender) {
+                            if (ImGui::Selectable(szRender.c_str(), sel))
+                                m_tParticleData.eSelectRender = RENDER(i);
+                            if (sel)
+                                ImGui::SetItemDefaultFocus();
+                        }
                     }
                     ImGui::EndCombo();
                 }
@@ -1656,6 +1777,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
                 if (ImGui::TreeNode("Size Diagram")) {
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
                     if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
                         _float time = 1.f / 100;
                         _float fMax = 5;
@@ -1786,11 +1908,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     Desc.isLoop = m_tSpriteParticleData.bisLoop;
                     m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
                 }
-                for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
-                    if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
-                        fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
-                        fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
-                        m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                else if (fSizeDiagrams.size() == m_tSpriteParticleData.fSizeDiagrams.size()) {
+                    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
+                        if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
+                            fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
+                            fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
+                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                        }
                     }
                 }
             }
@@ -1807,56 +1931,65 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
                 string szRender;
-                switch (m_tSpriteParticleData.iSelectRender)
+                switch (m_tSpriteParticleData.eSelectRender)
                 {
-                case 2:
+                case RENDER::NONBLEND:
                     szRender = "NONBLEND";
                     break;
-                case 3:
+                case RENDER::NONLIGHT:
                     szRender = "NONLIGHT";
                     break;
-                case 4:
+                case RENDER::BLUR:
                     szRender = "BLUR";
                     break;
-                case 5:
+                case RENDER::GLOW:
                     szRender = "GLOW";
                     break;
-                case 6:
+                case RENDER::DISTORTION:
                     szRender = "DISTORTION";
                     break;
-                case 7:
+                case RENDER::BLEND:
                     szRender = "BLEND";
                     break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 2; i <= 7; ++i) {
-                        _bool sel = i == m_tSpriteParticleData.iSelectRender;
+                    for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
+                        _bool bisRender = false;
+                        _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.eSelectRender);
                         switch (i)
                         {
-                        case 2:
+                        case ENUM_CLASS(RENDER::NONBLEND):
                             szRender = "NONBLEND";
+                            bisRender = true;
                             break;
-                        case 3:
+                        case ENUM_CLASS(RENDER::NONLIGHT):
                             szRender = "NONLIGHT";
+                            bisRender = true;
                             break;
-                        case 4:
+                        case ENUM_CLASS(RENDER::BLUR):
                             szRender = "BLUR";
+                            bisRender = true;
                             break;
-                        case 5:
+                        case ENUM_CLASS(RENDER::GLOW):
                             szRender = "GLOW";
+                            bisRender = true;
                             break;
-                        case 6:
+                        case ENUM_CLASS(RENDER::DISTORTION):
                             szRender = "DISTORTION";
+                            bisRender = true;
                             break;
-                        case 7:
+                        case ENUM_CLASS(RENDER::BLEND):
                             szRender = "BLEND";
+                            bisRender = true;
                             break;
                         }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tSpriteParticleData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
+                        if (bisRender) {
+                            if (ImGui::Selectable(szRender.c_str(), sel))
+                                m_tSpriteParticleData.eSelectRender = RENDER(i);
+                            if (sel)
+                                ImGui::SetItemDefaultFocus();
+                        }
                     }
                     ImGui::EndCombo();
                 }
@@ -1976,6 +2109,14 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     return;
                 }
             }
+
+            vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
+            _float fDelayTime = m_tSpriteParticleData.fDelayTime;
+            _float fEndTime = m_tSpriteParticleData.fEndTime;
+
+            _float time = 1.f / 100;
+            _float fMax = 5;
+            float values[100] = {};
             char str[3];
             if (ImGui::BeginCombo("Models", m_ModelFilePaths[m_iSelectModel].c_str()))
             {
@@ -2047,56 +2188,65 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
 
             string szRender;
-            switch (m_tMeshData.iSelectRender)
+            switch (m_tMeshData.eSelectRender)
             {
-            case 2:
+            case RENDER::NONBLEND:
                 szRender = "NONBLEND";
                 break;
-            case 3:
+            case RENDER::NONLIGHT:
                 szRender = "NONLIGHT";
                 break;
-            case 4:
+            case RENDER::BLUR:
                 szRender = "BLUR";
                 break;
-            case 5:
+            case RENDER::GLOW:
                 szRender = "GLOW";
                 break;
-            case 6:
+            case RENDER::DISTORTION:
                 szRender = "DISTORTION";
                 break;
-            case 7:
+            case RENDER::BLEND:
                 szRender = "BLEND";
                 break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 2; i <= 7; ++i) {
-                    _bool sel = i == m_tMeshData.iSelectRender;
+                for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
+                    _bool   bisRender = false;
+                    _bool sel = i == ENUM_CLASS(m_tMeshData.eSelectRender);
                     switch (i)
                     {
-                    case 2:
+                    case ENUM_CLASS(RENDER::NONBLEND):
                         szRender = "NONBLEND";
+                        bisRender = true;
                         break;
-                    case 3:
+                    case ENUM_CLASS(RENDER::NONLIGHT):
                         szRender = "NONLIGHT";
+                        bisRender = true;
                         break;
-                    case 4:
+                    case ENUM_CLASS(RENDER::BLUR):
                         szRender = "BLUR";
+                        bisRender = true;
                         break;
-                    case 5:
+                    case ENUM_CLASS(RENDER::GLOW):
                         szRender = "GLOW";
+                        bisRender = true;
                         break;
-                    case 6:
+                    case ENUM_CLASS(RENDER::DISTORTION):
                         szRender = "DISTORTION";
+                        bisRender = true;
                         break;
-                    case 7:
+                    case ENUM_CLASS(RENDER::BLEND):
                         szRender = "BLEND";
+                        bisRender = true;
                         break;
                     }
-                    if (ImGui::Selectable(szRender.c_str(), sel))
-                        m_tMeshData.iSelectRender = i;
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
+                    if (bisRender) {
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tMeshData.eSelectRender = RENDER(i);
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
                 }
                 ImGui::EndCombo();
             }
@@ -2135,6 +2285,95 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUV), 0.1f, -100.f, 100.f);
                 ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
                 ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+
+
+            if (ImGui::TreeNode("Size Diagram")) {
+                m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
+                    _float time = 1.f / 100;
+                    _float fMax = 5;
+                    for (_uint i = 0; i < 100; ++i) {
+                        _float3* in = {};
+                        _float3* out = {};
+                        for (_uint j = 0; j < (_uint)m_tMeshData.fSizeDiagrams.size(); ++j) {
+                            if (m_tMeshData.fSizeDiagrams[j].x <= time * i) {
+                                in = &m_tMeshData.fSizeDiagrams[j];
+                            }
+                            if (m_tMeshData.fSizeDiagrams[j].x > time * i) {
+                                out = &m_tMeshData.fSizeDiagrams[j];
+                                break;
+                            }
+                        }
+                        if (nullptr == out)
+                            values[i] = in->y;
+                        else {
+                            _float t = (time * i - in->x) / (out->x - in->x);
+                            if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                values[i] = in->y;
+                            }
+                            else {
+                                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                    + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                    + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                            }
+                        }
+                        fMax = max(fMax, fabsf(values[i]));
+                    }
+                    ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                    char str[10];
+                    snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tMeshData.fSizeDiagrams[m_iSelectSize].x);
+
+                    if (ImGui::BeginCombo("TimeValue", str))
+                    {
+                        for (_uint i = 0; i < (_uint)m_tMeshData.fSizeDiagrams.size(); ++i) {
+                            _bool sel = i == m_iSelectSize;
+                            snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tMeshData.fSizeDiagrams[i].x);
+                            if (ImGui::Selectable(str, sel))
+                                m_iSelectSize = i;
+                            if (sel)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+                }
+                if (ImGui::Button("AddTime", btn)) {
+                    if (0 < m_tMeshData.fSizeDiagrams.size()) {
+                        _float3 val = m_tMeshData.fSizeDiagrams.back();
+                        val.y = 0;
+                        m_tMeshData.fSizeDiagrams.push_back(val);
+                    }
+                    else {
+                        _float3 val = { 0,0,0 };
+                        m_tMeshData.fSizeDiagrams.push_back(val);
+                    }
+                    m_iSelectSize = m_tMeshData.fSizeDiagrams.size() - 1;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("DeleteTime", btn)) {
+                    _uint iCount = 0;
+                    for (auto i = m_tMeshData.fSizeDiagrams.begin(); i != m_tMeshData.fSizeDiagrams.end();) {
+                        if (iCount == m_iSelectSize) {
+                            m_tMeshData.fSizeDiagrams.erase(i);
+                            break;
+                        }
+                        ++i;
+                        ++iCount;
+                    }
+                    m_iSelectSize = max(m_iSelectSize - 1, 0);
+                }
+
+                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
+                    if (0 < m_iSelectSize)
+                        ImGui::DragFloat("Size Time", &m_tMeshData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tMeshData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tMeshData.fSizeDiagrams.size() - 1 ? m_tMeshData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                    ImGui::DragFloat("Size fx", &m_tMeshData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("Size", &m_tMeshData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                }
                 ImGui::TreePop();
             }
 
@@ -2204,56 +2443,65 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
 
             string szRender;
-            switch (m_tSpriteData.iSelectRender)
+            switch (m_tSpriteData.eSelectRender)
             {
-            case 2:
+            case RENDER::NONBLEND:
                 szRender = "NONBLEND";
                 break;
-            case 3:
+            case RENDER::NONLIGHT:
                 szRender = "NONLIGHT";
                 break;
-            case 4:
+            case RENDER::BLUR:
                 szRender = "BLUR";
                 break;
-            case 5:
+            case RENDER::GLOW:
                 szRender = "GLOW";
                 break;
-            case 6:
+            case RENDER::DISTORTION:
                 szRender = "DISTORTION";
                 break;
-            case 7:
+            case RENDER::BLEND:
                 szRender = "BLEND";
                 break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 2; i <= 7; ++i) {
-                    _bool sel = i == m_tSpriteData.iSelectRender;
+                for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
+                    _bool   bisRender = false;
+                    _bool sel = i == ENUM_CLASS(m_tSpriteData.eSelectRender);
                     switch (i)
                     {
-                    case 2:
+                    case ENUM_CLASS(RENDER::NONBLEND):
                         szRender = "NONBLEND";
+                        bisRender = true;
                         break;
-                    case 3:
+                    case ENUM_CLASS(RENDER::NONLIGHT):
                         szRender = "NONLIGHT";
+                        bisRender = true;
                         break;
-                    case 4:
+                    case ENUM_CLASS(RENDER::BLUR):
                         szRender = "BLUR";
+                        bisRender = true;
                         break;
-                    case 5:
+                    case ENUM_CLASS(RENDER::GLOW):
                         szRender = "GLOW";
+                        bisRender = true;
                         break;
-                    case 6:
+                    case ENUM_CLASS(RENDER::DISTORTION):
                         szRender = "DISTORTION";
+                        bisRender = true;
                         break;
-                    case 7:
+                    case ENUM_CLASS(RENDER::BLEND):
                         szRender = "BLEND";
+                        bisRender = true;
                         break;
                     }
-                    if (ImGui::Selectable(szRender.c_str(), sel))
-                        m_tSpriteData.iSelectRender = i;
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
+                    if (bisRender) {
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tSpriteData.eSelectRender = RENDER(i);
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
                 }
                 ImGui::EndCombo();
             }
@@ -2330,57 +2578,70 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
             m_pDistortionTrailEffect->Set_Components(m_pDistortionTrailEffect->Get_Data());
         }
+        _float speed = m_pTrailEffect->Get_Speed();
+        ImGui::DragFloat("Trail Speed", reinterpret_cast<_float*>(&speed), 0.01f, -100.f, 100.f);
+        m_pTrailEffect->Set_Speed(speed);
         string szRender;
-        switch (m_tTrailData.iSelectRender)
+        switch (m_tTrailData.eSelectRender)
         {
-        case 2:
+        case RENDER::NONBLEND:
             szRender = "NONBLEND";
             break;
-        case 3:
+        case RENDER::NONLIGHT:
             szRender = "NONLIGHT";
             break;
-        case 4:
+        case RENDER::BLUR:
             szRender = "BLUR";
             break;
-        case 5:
+        case RENDER::GLOW:
             szRender = "GLOW";
             break;
-        case 6:
+        case RENDER::DISTORTION:
             szRender = "DISTORTION";
             break;
-        case 7:
+        case RENDER::BLEND:
             szRender = "BLEND";
             break;
         }
         if (ImGui::BeginCombo("RenderType", szRender.c_str()))
         {
             for (_uint i = 2; i <= 7; ++i) {
-                _bool sel = i == m_tTrailData.iSelectRender;
+
+                _bool bisRender = false;
+                _bool sel = i == ENUM_CLASS(m_tTrailData.eSelectRender);
                 switch (i)
                 {
-                case 2:
+                case ENUM_CLASS(RENDER::NONBLEND):
                     szRender = "NONBLEND";
+                    bisRender = true;
                     break;
-                case 3:
+                case ENUM_CLASS(RENDER::NONLIGHT):
                     szRender = "NONLIGHT";
+                    bisRender = true;
                     break;
-                case 4:
+                case ENUM_CLASS(RENDER::BLUR):
                     szRender = "BLUR";
+                    bisRender = true;
                     break;
-                case 5:
+                case ENUM_CLASS(RENDER::GLOW):
                     szRender = "GLOW";
+                    bisRender = true;
                     break;
-                case 6:
+                case ENUM_CLASS(RENDER::DISTORTION):
                     szRender = "DISTORTION";
+                    bisRender = true;
                     break;
-                case 7:
+                case ENUM_CLASS(RENDER::BLEND):
                     szRender = "BLEND";
+                    bisRender = true;
                     break;
                 }
-                if (ImGui::Selectable(szRender.c_str(), sel))
-                    m_tTrailData.iSelectRender = i;
-                if (sel)
-                    ImGui::SetItemDefaultFocus();
+                if (bisRender) {
+                    if (ImGui::Selectable(szRender.c_str(), sel))
+                        m_tTrailData.eSelectRender = RENDER(i);
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
             }
             ImGui::EndCombo();
         }
@@ -2467,12 +2728,14 @@ void CParticle_Setting::Update(_float fTimeDelta)
         return;
     }
     if (m_iSelectMeshParticle == 4) {
-        m_pTrailEffect->Priority_Update(fTimeDelta* m_fSpeed);
-        m_pTrailEffect->Update(fTimeDelta* m_fSpeed);
-        m_pTrailEffect->Late_Update(fTimeDelta* m_fSpeed);
-        //m_pDistortionTrailEffect->Priority_Update(fTimeDelta);
-        //m_pDistortionTrailEffect->Update(fTimeDelta);
-        //m_pDistortionTrailEffect->Late_Update(fTimeDelta);
+        if (m_bisPause) {
+            m_pTrailEffect->Priority_Update(fTimeDelta * m_fSpeed);
+            m_pTrailEffect->Update(fTimeDelta * m_fSpeed);
+            m_pTrailEffect->Late_Update(fTimeDelta * m_fSpeed);
+        }
+        else {
+            m_pTrailEffect->Late_Update(fTimeDelta * m_fSpeed);
+        }
     }
     else {
         if (m_bisPause) {
@@ -2561,6 +2824,35 @@ void CParticle_Setting::WriteString(ofstream& fileBinaryStream, _char* pStr)
     fileBinaryStream.write(pStr, iStringLength);
 }
 
+void CParticle_Setting::WriteRENDER(ofstream& fileBinaryStream, RENDER vTmp)
+{
+    _int iRenderType;
+    switch (vTmp)
+    {
+    case Engine::RENDER::NONBLEND:
+        iRenderType = 0;
+        break;
+    case Engine::RENDER::NONLIGHT:
+        iRenderType = 1;
+        break;
+    case Engine::RENDER::BLUR:
+        iRenderType = 2;
+        break;
+    case Engine::RENDER::GLOW:
+        iRenderType = 3;
+        break;
+    case Engine::RENDER::DISTORTION:
+        iRenderType = 4;
+        break;
+    case Engine::RENDER::BLEND:
+        iRenderType = 5;
+        break;
+    default:
+        iRenderType = 6;
+    }
+    fileBinaryStream.write((_char*)&iRenderType, sizeof(_int));
+}
+
 void CParticle_Setting::WriteInt(ofstream& fileBinaryStream, _int vTmp)
 {
     fileBinaryStream.write((_char*)&vTmp, sizeof(_int));
@@ -2606,6 +2898,28 @@ _char* CParticle_Setting::ReadString(ifstream& fileBinaryStream)
 
     sz[iStringLength] = '\0';
     return sz;
+}
+
+RENDER CParticle_Setting::ReadRENDER(ifstream& fileBinaryStream)
+{
+    _int iValue;
+    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
+    switch (iValue)
+    {
+    case 0:
+        return RENDER::NONBLEND;
+    case 1:
+        return RENDER::NONLIGHT;
+    case 2:
+        return RENDER::BLUR;
+    case 3:
+        return RENDER::GLOW;
+    case 4:
+        return RENDER::DISTORTION;
+    case 5:
+        return RENDER::BLEND;
+    }
+    return RENDER::UI;
 }
 
 _int CParticle_Setting::ReadInt(ifstream& fileBinaryStream)

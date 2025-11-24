@@ -38,7 +38,8 @@ private:
 
 	class CGameManager* m_pGameManager = { nullptr };
 	class CBody_Player* m_pPart_Body = { nullptr };
-
+	class CTrailEffect* m_pTrail = { nullptr };
+	_float				m_fTime = 0.f;
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();

@@ -50,7 +50,7 @@ void CSpriteUVEffect::Late_Update(_float fTimeDelta)
 {
 	if (m_fTime <= m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y) {
 		Compute_Depth();
-		m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+		m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 	}
 }
 

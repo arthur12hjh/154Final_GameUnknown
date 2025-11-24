@@ -37,26 +37,36 @@ HRESULT CEffect::Initialize_Prototype(const _char* szFile)
 
 HRESULT CEffect::Initialize(void* pArg)
 {
-    if (FAILED(__super::Initialize(pArg)))
+    if (FAILED(__super::Initialize(nullptr)))
         return E_FAIL;
 
     if (nullptr != pArg)
     {
         EFFECT_TRANSFORM_DESC* pDesc = static_cast<EFFECT_TRANSFORM_DESC*>(pArg);
+        if (nullptr != pDesc->pRootMatrix) {
+            m_pParentMat = pDesc->pRootMatrix;
+        }
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
+        m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
     }
-    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(5, 5, 5, 1));
+    if (nullptr != m_pParentMat) {
+        XMStoreFloat4x4(&m_CombinedWorldMatrix,
+            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+    }
+    else {
+        m_CombinedWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+    }
     for (auto pMeshEffect : m_pMeshEffects) {
-        pMeshEffect->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
+        pMeshEffect->Set_ParentMat(&m_CombinedWorldMatrix);
     }
     for (auto pParticle : m_pPointParticles) {
-        pParticle->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
+        pParticle->Set_ParentMat(&m_CombinedWorldMatrix);
     }
     for (auto pSpriteParticle : m_pSpriteParticles) {
-        pSpriteParticle->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
+        pSpriteParticle->Set_ParentMat(&m_CombinedWorldMatrix);
     }
     for (auto pSpriteEffect : m_pSpriteEffects) {
-        pSpriteEffect->Set_ParentMat(m_pTransformCom->Get_WorldMatrixPtr());
+        pSpriteEffect->Set_ParentMat(&m_CombinedWorldMatrix);
     }
     return S_OK;
 }
@@ -102,6 +112,11 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         szTemp = ReadString(fileBinaryStream);
         MeshDesc.szDissolveTexture = szTemp;
         Safe_Delete(szTemp);
+        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+        MeshDesc.fSizeDiagrams.clear();
+        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+            MeshDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+        }
         MeshDesc.fColor = ReadFloat4(fileBinaryStream);
         MeshDesc.fPosition = ReadFloat4(fileBinaryStream);
         MeshDesc.fScale = ReadFloat3(fileBinaryStream);
@@ -125,7 +140,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 
         MeshDesc.iBegin = ReadInt(fileBinaryStream);
-        MeshDesc.iSelectRender = ReadInt(fileBinaryStream);
+        MeshDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
         CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext, &MeshDesc);
         m_pMeshEffects.push_back(pMeshEffect);
@@ -178,7 +193,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+        ParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -239,7 +254,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
         SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
         SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+        SpriteParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
 
         SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -267,7 +282,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         SpriteDesc.iUV = ReadInt2(fileBinaryStream);
         SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
         SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+        SpriteDesc.eSelectRender = ReadRENDER(fileBinaryStream);
         SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
         CSpriteUVEffect* pSprite = CSpriteUVEffect::Create(m_pDevice, m_pContext, &SpriteDesc);
         m_pSpriteEffects.push_back(pSprite);
@@ -277,6 +292,10 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 void CEffect::Update(_float fTimeDelta)
 {
+    if (nullptr != m_pParentMat) {
+        XMStoreFloat4x4(&m_CombinedWorldMatrix,
+            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+    }
     for (auto pMeshEffect : m_pMeshEffects) {
         pMeshEffect->Update(fTimeDelta);
     }
@@ -378,6 +397,8 @@ void CEffect::Late_Update(_float fTimeDelta)
             m_pSpriteEffects[0]->Late_Update(fTimeDelta);
         }
     }
+    if (0 >= m_pMeshEffects.size() + m_pPointParticles.size() + m_pSpriteParticles.size() + m_pSpriteEffects.size())
+        m_isDead = true;
 }
 
 HRESULT CEffect::Render()
@@ -445,6 +466,28 @@ _int CEffect::ReadInt(ifstream& fileBinaryStream)
     _int iValue;
     fileBinaryStream.read((_char*)&iValue, sizeof(_int));
     return iValue;
+}
+
+RENDER CEffect::ReadRENDER(ifstream& fileBinaryStream)
+{
+    _int iValue;
+    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
+    switch (iValue)
+    {
+    case 0:
+        return RENDER::NONBLEND;
+    case 1:
+        return RENDER::NONLIGHT;
+    case 2:
+        return RENDER::BLUR;
+    case 3:
+        return RENDER::GLOW;
+    case 4:
+        return RENDER::DISTORTION;
+    case 5:
+        return RENDER::BLEND;
+    }
+    return RENDER::UI;
 }
 
 _float4 CEffect::ReadFloat4(ifstream& fileBinaryStream)

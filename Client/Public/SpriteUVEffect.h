@@ -28,7 +28,7 @@ public:
 		_float				fAngle;
 
 		_int				iBegin;
-		_int				iSelectRender;
+		RENDER				eSelectRender = {};
 		_bool				bisLoop;
 	}SPRITE_DATA;
 private:

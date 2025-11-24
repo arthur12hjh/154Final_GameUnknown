@@ -97,7 +97,7 @@ void CPointParticle::Update(_float fTimeDelta)
 		}
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+		XMMatrixTranspose(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat)));
 	Spread(fTimeDelta);
 }
 
@@ -107,7 +107,7 @@ void CPointParticle::Late_Update(_float fTimeDelta)
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CPointParticle::Render()
@@ -156,7 +156,11 @@ HRESULT CPointParticle::Ready_Components()
 
 HRESULT CPointParticle::Bind_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	_float4x4 world = m_CombinedWorldMatrix;
+	world._41 = 0;
+	world._42 = 0;
+	world._43 = 0;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;

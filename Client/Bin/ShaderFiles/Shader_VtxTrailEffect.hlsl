@@ -6,7 +6,6 @@ float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
-float g_fEndTime = 0;
 float2 g_fMaskUV = float2(0, 0);
 float2 g_fMaskUVSpeed = float2(0, 0);
 float2 g_fMaskUVSize = float2(1, 1);
@@ -16,7 +15,6 @@ float2 g_fDiffuseUVSize = float2(1, 1);
 float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
-bool g_bisEnd = false;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 struct VS_IN
@@ -35,6 +33,7 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
+    matrix matWV, matWVP;
     float4 pos = mul(vector(In.vPosition, 1.f), g_ViewMatrix);
     Out.vPosition = mul(pos, g_ProjMatrix);
     
@@ -42,84 +41,6 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     return Out;
 }
-
-struct GS_IN
-{
-    float4 vPosition : POSITION;
-    float2 vLifeTime : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
-
-struct GS_OUT
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
-
-
-
-[maxvertexcount(6)]
-void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
-{
-    GS_OUT Out[4];
-    
-    float3 vLook = (g_vCamPosition - In[0].vPosition).xyz;
-    float3 vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook)) * 8.f;
-    float3 vUp = normalize(cross(vLook, vRight)) * 0.5f;
-    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
-    if (g_bisEnd == false)
-    {
-        Out[0].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(1 - g_fTime * 3.f, -1, 1) - vUp, 1.f), matVP);
-        Out[0].vTexcoord = float2(0.f, 0.f);
-        Out[0].vProjPos = Out[0].vPosition;
-                                                                                   
-        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(3 - g_fTime * 3.f, -1, 1) - vUp, 1.f), matVP);
-        Out[1].vTexcoord = float2(1.f, 0.f);
-        Out[1].vProjPos = Out[1].vPosition;
-                                                                                   
-        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(3 - g_fTime * 3.f, -1, 1) + vUp, 1.f), matVP);
-        Out[2].vTexcoord = float2(1.f, 1.f);
-        Out[2].vProjPos = Out[2].vPosition;
-                                                                                   
-        Out[3].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(1 - g_fTime * 3.f, -1, 1) + vUp, 1.f), matVP);
-        Out[3].vTexcoord = float2(0.f, 1.f);
-        Out[3].vProjPos = Out[3].vPosition;
-    }
-    else
-    {
-        Out[0].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(1 - 0.5 * 3.f, -1, 1) - vUp, 1.f), matVP);
-        Out[0].vTexcoord = float2(0.f, 0.f);
-        Out[0].vProjPos = Out[0].vPosition;
-                                                                                   
-        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(3 - 0.5 * 3.f, -1, 1) - vUp, 1.f), matVP);
-        Out[1].vTexcoord = float2(1.f, 0.f);
-        Out[1].vProjPos = Out[1].vPosition;
-                                                                                   
-        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(3 - 0.5 * 3.f, -1, 1) + vUp, 1.f), matVP);
-        Out[2].vTexcoord = float2(1.f, 1.f);
-        Out[2].vProjPos = Out[2].vPosition;
-                                                                                   
-        Out[3].vPosition = mul(float4(In[0].vPosition.xyz - vRight * clamp(1 - 0.5 * 3.f, -1, 1) + vUp, 1.f), matVP);
-        Out[3].vTexcoord = float2(0.f, 1.f);
-        Out[3].vProjPos = Out[3].vPosition;
-    }
-    
-    
-    OutStream.Append(Out[0]);
-    OutStream.Append(Out[1]);
-    OutStream.Append(Out[2]);
-    OutStream.RestartStrip();
-    
-    OutStream.Append(Out[0]);
-    OutStream.Append(Out[2]);
-    OutStream.Append(Out[3]);
-    OutStream.RestartStrip();
-}
-
-/* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
-/* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
-/* 정점의 모든 정보를 보간하여 픽셀을 만든다. -> 래스터라이즈 */ 
 
 struct PS_IN
 {

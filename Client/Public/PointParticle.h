@@ -67,7 +67,7 @@ public:
 
 		_int				iBegin;
 		_int				iNumInstance;
-		_int				iSelectRender;
+		RENDER				eSelectRender = {};
 		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;

@@ -278,6 +278,7 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\public\TrailEffect.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
     <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
@@ -434,6 +435,7 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\private\TrailEffect.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
@@ -470,6 +472,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

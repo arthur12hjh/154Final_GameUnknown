@@ -26,9 +26,10 @@ public:
 		_int2				iUV;
 		_float				fFPS;
 		_float				fAngle;
+		_float				fDelayTime;
 
 		_int				iBegin;
-		_int				iSelectRender;
+		RENDER				eSelectRender;
 		_bool				bisLoop;
 	}SPRITE_DATA;
 private:

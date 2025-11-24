@@ -45,7 +45,7 @@ void CSpriteEffect::Update(_float fTimeDelta)
 void CSpriteEffect::Late_Update(_float fTimeDelta)
 {
 	Compute_Depth();
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CSpriteEffect::Render()
@@ -75,6 +75,7 @@ void CSpriteEffect::Set_Components(SPRITE_DATA tData)
 {
 	Safe_Release(m_pShaderCom);
 	m_tData = tData;
+	m_fTime = -m_tData.fDelayTime;
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	_tchar sztPrototype[256] = { 0, };
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
