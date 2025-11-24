@@ -90,7 +90,7 @@ void CNayitba::Update(_float fTimeDelta)
 
 	if (m_MonsterInfo.bIsBattle)
 	{
-		if (m_pAISenceCom.IsTagetEmpty())
+		if (m_pAISenceCom->IsTagetEmpty())
 		{
 			BattleEvent(nullptr, false);
 		}

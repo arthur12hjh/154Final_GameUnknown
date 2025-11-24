@@ -325,12 +325,6 @@
     <Filter Include="05.Component">
       <UniqueIdentifier>{c084d823-b71b-4b86-92f5-2da66e30db1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Event">
-      <UniqueIdentifier>{cc3df61a-94e1-4b08-9c80-d94dffa656ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Event\Notify">
-      <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\TargetComponent">
       <UniqueIdentifier>{09a81576-9048-4f27-9b79-9b850cdfb8f8}</UniqueIdentifier>
     </Filter>
@@ -441,6 +435,21 @@
     </Filter>
     <Filter Include="02.GameObjects\TestModel\TestHead">
       <UniqueIdentifier>{dbda2ddf-accc-4123-8dcf-f91d6603ca11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Event">
+      <UniqueIdentifier>{cc3df61a-94e1-4b08-9c80-d94dffa656ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Event\Notify">
+      <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller">
+      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Boss">
+      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
+      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -676,7 +685,7 @@
       <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
-      <Filter>02.GameObjects\Character\Event\Notify</Filter>
+      <Filter>06.Event\Notify</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ShaderDebugger.h">
       <Filter>30.ImGui\ShaderDebugger</Filter>
@@ -695,48 +704,6 @@
     </ClInclude>
     <ClInclude Include="..\public\BoxOpenEvent.h">
       <Filter>04.Quest\Event\BoxOpen</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Prob_Vehicle.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Prob_Building.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Character.h">
-      <Filter>02.GameObjects\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TargetComponent.h">
-      <Filter>05.Component\TargetComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterFSM.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\NayitbaPartBody.h">
-      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Nayitba.h">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\BossController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterIdleState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterMoveState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterHitState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterDeadState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MonsterAttackState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIImage.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
@@ -911,6 +878,48 @@
     </ClInclude>
     <ClInclude Include="..\Public\ChangeLevelEvent.h">
       <Filter>01.Levels\ChangeLevelEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterAttackState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterDeadState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterHitState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterMoveState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterIdleState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterFSM.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Nayitba.h">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NayitbaPartBody.h">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetComponent.h">
+      <Filter>05.Component\TargetComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prob_Building.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prob_Vehicle.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character.h">
+      <Filter>02.GameObjects\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BossController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1130,7 +1139,7 @@
       <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
-      <Filter>02.GameObjects\Character\Event\Notify</Filter>
+      <Filter>06.Event\Notify</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ShaderDebugger.cpp">
       <Filter>30.ImGui\ShaderDebugger</Filter>
@@ -1297,48 +1306,6 @@
     <ClCompile Include="..\private\BoxOpenEvent.cpp">
       <Filter>04.Quest\Event\BoxOpen</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Prob_Vehicle.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Prob_Building.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Character.cpp">
-      <Filter>02.GameObjects\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TargetComponent.cpp">
-      <Filter>05.Component\TargetComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterFSM.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\NayitbaPartBody.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Nayitba.cpp">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\BossController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterIdleState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterMoveState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterHitState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterDeadState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterAttackState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MonsterController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIImage.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
     </ClCompile>
@@ -1362,6 +1329,48 @@
     </ClCompile>
     <ClCompile Include="..\private\StaticMap.cpp">
       <Filter>02.GameObjects\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterAttackState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterDeadState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterHitState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterMoveState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterIdleState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterFSM.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Nayitba.cpp">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NayitbaPartBody.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetComponent.cpp">
+      <Filter>05.Component\TargetComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prob_Building.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prob_Vehicle.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character.cpp">
+      <Filter>02.GameObjects\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BossController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

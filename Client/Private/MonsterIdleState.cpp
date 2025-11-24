@@ -20,7 +20,7 @@ HRESULT CMonsterIdleState::Initialize(void* pArg)
 void CMonsterIdleState::Start(void* pArg)
 {
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
-    m_pOwnerInfo = pEntity->GetMonsterData();
+    m_pOwnerInfo = &pEntity->GetMonsterData();
 
 }
 
