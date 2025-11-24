@@ -37,37 +37,37 @@ VS_OUT VS_MAIN(VS_IN In)
 /* 클라단에서 Velocity만 기록해주면 된다. */
 PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
-    
-    int iSampleCount = 6;
-    
-    //Velocity Map 가져와서 세팅.
+    PS_OUT_BACKBUFFER Out = (PS_OUT_BACKBUFFER) 0;
+
+    float4 vBaseColor = g_SceneTexture.Sample(ClampSampler, In.vTexcoord);
+    float4 vAccum = vBaseColor;
+
+    int iSampleCount = 8;
+
     float4 vVelocity = g_VelocityTexture.Sample(ClampSampler, In.vTexcoord);
-    float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).x;
-    float4 vDepth;
-    float4 vColor;
-    // 텍스쳐 상에서의 2D 이동량
     vVelocity.xy /= (float) iSampleCount;
-    //속도를 샘플링 갯수만큼 나눈다. 
-    
+
+    float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).g * 500.f;
+
     int iCnt = 1;
-    
-    for (int i = iCnt; i < iSampleCount; ++i)
+
+    for (int i = iCnt; i < iSampleCount; i++)
     {
-        vColor = g_SceneTexture.Sample(ClampSampler, In.vTexcoord + vVelocity.xy * (float) iCnt * 0.15f);
-        vColor.a *= 0.8f;
-        float fSampleDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord + vVelocity.xy * (float) iCnt * 0.15f).x;
-        //뒤쪽 물체의 블러 결과가 적용되는 것을 방지.
+        float2 offset = In.vTexcoord + vVelocity.xy * (float) i * 0.1f;
+
+        float4 vColor = g_SceneTexture.Sample(ClampSampler, offset);
+        float fSampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
+
         if (fSampleDepth <= fCurrentDepth + 0.01f)
         {
+            vColor.a = 0.6f; // 가중치 조절
+            vAccum += vColor;
             iCnt++;
-            Out.vBackBuffer += vColor;
         }
-        
     }
-    
-    Out.vBackBuffer /= (float) iCnt;
-    
+
+    Out.vBackBuffer = vAccum / iCnt;
+
     return Out;
 }
 

@@ -10,6 +10,9 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "Interaction_Component.h"
+#include "Effect.h"
+#include "Trail.h"
+#include "TrailEffect.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -170,6 +173,20 @@ void CPlayer::Update(_float fTimeDelta)
 	}
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
+	m_fTime += fTimeDelta;
+	if (1 < m_fTime) {
+		CEffect::EFFECT_TRANSFORM_DESC desc;
+		desc.fRotationPerSec = 1.f;
+		desc.fSpeedPerSec = 1.f;
+		desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+		desc.vPos = XMVectorSet(0, 0, 0, 1);
+		desc.fRot = _float3(0, 0, 0);
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Effect"), &desc)))
+			return;
+		m_fTime = 0;
+	}
+	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 
 Progress:
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -272,6 +289,14 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
+
+	CTrail::TRAILHIGHLOW Traildesc;
+	Traildesc.vHigh = _float4(1, 0, 0, 0);
+	Traildesc.vLow = _float4(-1, 0, 0, 0);
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),
+		TEXT("Part_Trail"), &Traildesc)))
+		return E_FAIL;
+	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
 
 	return S_OK;
 }

@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Prob_Building.h" />
     <ClInclude Include="..\Public\Prob_Vehicle.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
+    <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\CanBox.h" />
@@ -295,6 +296,7 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\Public\TrailEffect.h" />
     <ClInclude Include="..\Public\UIActionEvent.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
     <ClInclude Include="..\Public\UIAnimManager.h" />
@@ -335,6 +337,7 @@
     <ClCompile Include="..\Private\Prob_Building.cpp" />
     <ClCompile Include="..\Private\Prob_Vehicle.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
+    <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\CanBox.cpp" />
@@ -470,6 +473,7 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\Private\TrailEffect.cpp" />
     <ClCompile Include="..\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\Private\UIAnimManager.cpp" />

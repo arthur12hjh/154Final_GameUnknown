@@ -31,7 +31,8 @@ private:
 
 
 	class CBody_Player* m_pPart_Body = { nullptr };
-
+	class CTrailEffect* m_pTrail = { nullptr };
+	_float				m_fTime = 0.f;
 #pragma region GARA_STATE
 
 

@@ -454,6 +454,12 @@
     <Filter Include="02.GameObjects\Character\Player\FSM">
       <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\TrailEffect">
+      <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Particle\SpriteParticle">
+      <UniqueIdentifier>{825607c9-65e0-47b8-8f40-d8a65e218117}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -927,6 +933,12 @@
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TrailEffect.h">
+      <Filter>03.Effects\TrailEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SpriteParticle.h">
+      <Filter>03.Effects\Particle\SpriteParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1380,6 +1392,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerFSM.cpp">
       <Filter>02.GameObjects\Character\Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TrailEffect.cpp">
+      <Filter>03.Effects\TrailEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SpriteParticle.cpp">
+      <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
