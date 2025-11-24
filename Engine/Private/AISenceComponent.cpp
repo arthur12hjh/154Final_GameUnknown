@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 
 #include "GameObject.h"
+#include "ContainerObject.h"
 #include "SphereCollider.h"
 
 CAISenceComponent::CAISenceComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -180,7 +181,12 @@ void CAISenceComponent::OverlapEvent(_float3 vDir, CGameObject* pHitObject)
 	if (pHitObject->GetTeam() == m_pOwner->GetTeam())
 		return;
 
-	m_pCurSearchList.insert(pHitObject);
+	auto Character = dynamic_cast<CContainerObject*>(pHitObject);
+	if(Character)
+		m_pCurSearchList.insert(pHitObject);
+
+
+
 }
 
 CAISenceComponent* CAISenceComponent::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
