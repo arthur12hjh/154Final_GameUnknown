@@ -252,6 +252,27 @@ HRESULT CLoader::Loading_For_GamePlay()
 		szFrontPath, PreMatrix)))
 		return E_FAIL;
 
+	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
+	/// 
+	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
+	/// -> _uint iMeshIndex = 텍스쳐를 집어넣을 메쉬(머티리얼)의 순서
+	/// -> TEXTURE_TYPE eType = 머티리얼의 어느 텍스쳐 타입인지(디퓨즈, 노말, ORM ...)
+	/// -> const _char * pTextureFilePath = 텍스쳐 경로
+	/// -> const _char * pBindTag = Render에서 머티리얼 셰이더에 바인딩 해줄 때 글로벌 값 어디에 심어줄 지
+	/// -> _bool bIsSaved = 갱신된 정보를 binx 파일에 저장해줄지 or 그냥 이 빌드버전에서만 사용할지
+	/// 
+	/// < /End >
+
+	// ** 예시 테스트 텍스쳐맵 **
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(0, TEXTURE_TYPE::DIFFUSE,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_P_EVE_24_Upper_A.png",
+	//	"g_DiffuseTexture", FALSE);
+	// 
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.png",
+	//	"g_ORSSTexture", TRUE);
+
+
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
 	//	return E_FAIL;

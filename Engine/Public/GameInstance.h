@@ -72,6 +72,7 @@ public:
 	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix);
 	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
+	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER

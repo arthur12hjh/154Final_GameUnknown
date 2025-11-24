@@ -178,29 +178,7 @@ HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
 	return S_OK;
 }
 
-HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, CTexture* pTexture, const _char* pBindTag)
-{
-	// 1. m_Meshes에 Get_MaterialIndex()를 해서 머티리얼 인덱스를 받아온다.
-	// 2. m_Materials에 Import_Texture()로 SRV를 넣어준다.
-	// 3. pBindTag가 nullptr가 아니면 m_szBindTags에 복사해준다.
-	if (iMeshIndex >= m_iNumMeshes)
-		return E_FAIL;
-
-	if(pTexture == nullptr)
-		return E_FAIL;
-
-	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
-
-	if (iMaterialIndex >= m_iNumMaterials)
-		return E_FAIL;
-
-	if (pBindTag != nullptr)
-		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
-
-	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pTexture->Get_SRV());
-}
-
-HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag)
+HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag, _bool bIsSaved)
 {
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
@@ -249,23 +227,22 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
 	if (pBindTag != nullptr)
 		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
 
-	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV);
-}
-
-HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag)
-{
-	if (iMeshIndex >= m_iNumMeshes)
+	if (FAILED(m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV)))
 		return E_FAIL;
+	if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
+	{
+		m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
+		m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
+	}
+	else
+	{
+		m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
+	}
 
-	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
-
-	if (iMaterialIndex >= m_iNumMaterials)
-		return E_FAIL;
-
-	if (pBindTag != nullptr)
-		strcpy_s(m_szBindTags[static_cast<_uint>(eType)], pBindTag);
-
-	return m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV);
+#ifdef _DEBUG
+	if (bIsSaved == TRUE)
+		m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+#endif
 }
 
 HRESULT CModel::Mapping_OffsetMatrix()
@@ -316,14 +293,15 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	if (MODEL_TYPE::NONANIM == eType)
 		iFlag |= aiProcess_PreTransformVertices;
 
+
 	char szEXT[MAX_PATH] = {};
+	char szBinModelFilePath[MAX_PATH] = {};
 	_splitpath_s(pModelFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
 	if (false == strcmp(".fbx", szEXT))
 	{
 		if (FAILED(m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel)))
 			return E_FAIL;
 
-		char szBinModelFilePath[MAX_PATH] = {};
 		char szDrive[MAX_PATH] = {};
 		char szDir[MAX_PATH] = {};
 		char szFileName[MAX_PATH] = {};
@@ -348,7 +326,6 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 		if (FAILED(m_pGameInstance->ReadFbx(pModelFilePath, eType, &m_pModel)))
 			return E_FAIL;
 
-		char szBinModelFilePath[MAX_PATH] = {};
 		char szDrive[MAX_PATH] = {};
 		char szDir[MAX_PATH] = {};
 		char szFileName[MAX_PATH] = {};
@@ -370,11 +347,13 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	}
 	else if (false == strcmp(".bin", szEXT))
 	{
+		strcpy_s(szBinModelFilePath, pModelFilePath);
 		if (FAILED(m_pGameInstance->ReadBin(pModelFilePath, eType, &m_pModel)))
 			return E_FAIL;
 	}
 	else if (false == strcmp(".binx", szEXT))
 	{
+		strcpy_s(szBinModelFilePath, pModelFilePath);
 		if (FAILED(m_pGameInstance->ReadBinx(pModelFilePath, eType, &m_pModel)))
 			return E_FAIL;
 	}
@@ -398,7 +377,9 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	if (FAILED(Mapping_OffsetMatrix()))
 		return E_FAIL;
 
-	Safe_Delete(m_pModel);
+#ifdef _DEBUG
+	strcpy_s(m_ModelFilePath, szBinModelFilePath);
+#endif
 
     return S_OK;
 }
@@ -605,6 +586,8 @@ aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
 		return aiTextureType_METALNESS;
 	case TEXTURE_TYPE::NORMAL:
 		return aiTextureType_NORMALS;
+	case TEXTURE_TYPE::ORSS:
+		return aiTextureType_CLEARCOAT;
 	case TEXTURE_TYPE::MASK:
 		return aiTextureType_DIFFUSE_ROUGHNESS;
 	case TEXTURE_TYPE::EXTRA1:
@@ -621,8 +604,6 @@ aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
 		return aiTextureType_REFLECTION;
 	case TEXTURE_TYPE::EXTRA7:
 		return aiTextureType_AMBIENT_OCCLUSION;
-	case TEXTURE_TYPE::EXTRA8:
-		return aiTextureType_CLEARCOAT;
 	case TEXTURE_TYPE::END:
 		return aiTextureType_NONE;
 	default:
@@ -1271,6 +1252,9 @@ CComponent* CModel::Clone(void* pArg)
 void CModel::Free()
 {
     __super::Free();
+
+	if(m_isCloned == FALSE)
+		Safe_Delete(m_pModel);
 
 
 	for (auto& pAnimation : m_Animations)
