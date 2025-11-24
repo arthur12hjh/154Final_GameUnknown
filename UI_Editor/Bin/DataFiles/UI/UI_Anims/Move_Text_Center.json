@@ -1,6 +1,21 @@
 {
     "Tracks": [
         {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                10.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                -22.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
             "szTrackTag": "Text_Color",
             "vEndParam": [
                 1.0,
@@ -13,21 +28,6 @@
                 0.4954545497894287,
                 0.4954545497894287,
                 1.0
-            ]
-        },
-        {
-            "szTrackTag": "Position",
-            "vEndParam": [
-                5.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            "vStartParam": [
-                -22.0,
-                0.0,
-                0.0,
-                0.0
             ]
         }
     ],

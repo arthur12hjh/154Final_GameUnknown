@@ -15,10 +15,12 @@ HRESULT CShaderDebugger::Initialize_Prototype()
 
 HRESULT CShaderDebugger::Initialize()
 {
+#ifdef _DEBUG
     m_pFogDesc = static_cast<FOG_DESC*>(m_pGameInstance->Get_Fog_Desc());
     m_pBloomDesc = static_cast<BLOOM_DESC*>(m_pGameInstance->Get_Bloom_Desc());
     m_pDoFDesc = static_cast<DOF_DESC*>(m_pGameInstance->Get_DoF_Desc());
     m_pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
+#endif
 
     return S_OK;
 }

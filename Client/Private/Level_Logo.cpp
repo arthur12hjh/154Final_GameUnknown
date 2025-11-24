@@ -44,7 +44,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_bChangeLevel)
+	if (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
 		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
 		{
@@ -55,8 +55,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 				pUIObjs.second->SetVisibility(VISIBILITY::VISIBLE);
 			}
 		}
-
-		//dynamic_cast<CUIHUD*>(m_pHUD)->Set_Show_Debug_Rect(false);
 
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;

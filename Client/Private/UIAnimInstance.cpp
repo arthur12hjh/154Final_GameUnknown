@@ -108,6 +108,13 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 		}
 		if (TrackDesc.szTrackTag == TEXT("FillClip"))
 			m_pTargetUI->Set_FillAmount(XMVectorGetX(vLerped));
+		if (TrackDesc.szTrackTag == TEXT("TintColor"))
+		{
+			_float4 vColor{};
+			XMStoreFloat4(&vColor, vLerped);
+
+			m_pTargetUI->Set_TintColor(vColor);
+		}
 	}
 	else
 	{
@@ -135,6 +142,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			}
 			if (TrackDesc.szTrackTag == TEXT("FillClip"))
 				m_pTargetUI->Set_FillAmount(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fFillAmount);
+			if (TrackDesc.szTrackTag == TEXT("TintColor"))
+				m_pTargetUI->Set_TintColor(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.vTintColor);
 
 			m_fTimeStack = 0.f;
 		}
@@ -162,6 +171,13 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			}
 			if (TrackDesc.szTrackTag == TEXT("FillClip"))
 				m_pTargetUI->Set_FillAmount(XMVectorGetX(vEndParam));
+			if (TrackDesc.szTrackTag == TEXT("TintColor"))
+			{
+				_float4 vColor{};
+				XMStoreFloat4(&vColor, vEndParam);
+
+				m_pTargetUI->Set_TintColor(vColor);
+			}
 
 			return true;
 		}

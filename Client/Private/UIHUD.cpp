@@ -130,6 +130,16 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			jShader["bUseFillClip"] = pDesc.m_tUIShaderDesc.bUseFillClip;
 			jShader["fFillAmount"] = pDesc.m_tUIShaderDesc.fFillAmount;
 		}
+		if (pDesc.m_tUIShaderDesc.bUseTintColor)
+		{
+			jShader["bUseTintColor"] = pDesc.m_tUIShaderDesc.bUseTintColor;
+			jShader["vTintColor"] = {
+				pDesc.m_tUIShaderDesc.vTintColor.x,
+				pDesc.m_tUIShaderDesc.vTintColor.y,
+				pDesc.m_tUIShaderDesc.vTintColor.z,
+				pDesc.m_tUIShaderDesc.vTintColor.x
+			};
+		}
 
 		jObj["Shader"] = jShader;
 	}
@@ -268,6 +278,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 
 		if (pUIObject.contains("Shader"))
 		{
+			Desc.m_isHasShaderDesc = true;
 			UI_SHADER_DESC ShaderDesc{};
 
 			Json jShader = pUIObject["Shader"];
@@ -285,6 +296,17 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			{
 				ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
 				ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+			}
+
+			if (jShader.contains("bUseTintColor"))
+			{
+				ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+				ShaderDesc.vTintColor = { 
+					jShader["vTintColor"][0].get<_float>(),
+					jShader["vTintColor"][1].get<_float>(),
+					jShader["vTintColor"][2].get<_float>(),
+					jShader["vTintColor"][3].get<_float>()
+				};
 			}
 
 			Desc.m_tUIShaderDesc = ShaderDesc;
@@ -438,6 +460,8 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 
 	if (jData.contains("Shader"))
 	{
+		Desc.m_isHasShaderDesc = true;
+
 		UI_SHADER_DESC ShaderDesc{};
 
 		Json jShader = jData["Shader"];
@@ -455,6 +479,17 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		{
 			ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
 			ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+		}
+
+		if (jShader.contains("bUseTintColor"))
+		{
+			ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+			ShaderDesc.vTintColor = {
+				jShader["vTintColor"][0].get<_float>(),
+				jShader["vTintColor"][1].get<_float>(),
+				jShader["vTintColor"][2].get<_float>(),
+				jShader["vTintColor"][3].get<_float>()
+			};
 		}
 
 		Desc.m_tUIShaderDesc = ShaderDesc;
