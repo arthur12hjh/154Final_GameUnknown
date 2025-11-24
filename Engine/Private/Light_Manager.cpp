@@ -152,6 +152,16 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
     return S_OK;
 }
 
+HRESULT CLight_Manager::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIBuffer)
+{
+    for (auto& pLight : m_Lights)
+    {
+        pLight->Render_Volumetric(pShader, pVIBuffer);
+    }
+
+    return S_OK;
+}
+
 #ifdef _DEBUG
 CLight_Manager* CLight_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

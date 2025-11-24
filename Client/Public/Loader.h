@@ -52,11 +52,15 @@ private:
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
 	HRESULT Loading_For_GamePlay_Effect(void* pArg);
 	HRESULT Loading_For_GamePlay_Map(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Building(void* pArg);
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
-public:
-	HRESULT Loading_UI_For_Logo_Level();
 
+	HRESULT Loading_UI_For_Logo_Level();
+	HRESULT Loading_UI_For_GamePlay_Level();
+	HRESULT Loading_UI_For_Combat_HUD_Vitals();
+	HRESULT Loading_UI_For_Combat_HUD_Skills();
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

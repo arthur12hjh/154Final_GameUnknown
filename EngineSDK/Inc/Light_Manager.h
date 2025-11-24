@@ -30,6 +30,7 @@ public:
 	void					Clear_DeadLight();
 
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	HRESULT					Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	const	list<CLight*>*	GetAllLight() { return &m_Lights; }
 
 private:

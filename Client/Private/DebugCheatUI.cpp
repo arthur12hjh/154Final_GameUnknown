@@ -25,6 +25,7 @@ HRESULT CDebugCheatUI::Initialize()
     m_pImGuiManager = CImGuiManager::GetInstance();
 
     strcpy_s(m_szSelectCamera, "FreeCamera");
+
 #endif
 
     return S_OK;
@@ -78,12 +79,14 @@ void CDebugCheatUI::DrawObjectDebug()
         ImGui::Text("Mesh or Terrian Picking Move Object");
         ImGui::EndTooltip();
     }
+
 #endif // _DEBUG
 }
 
 void CDebugCheatUI::DrawCameraDebug()
 {
 #ifdef _DEBUG
+
     ImGui::Text("Camera Debug");
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
 
@@ -122,7 +125,7 @@ void CDebugCheatUI::DrawCameraDebug()
         else
             MSG_BOX("Not Select Camera");
     }
-    if (ImGui::Checkbox("Mouse Lock", &m_bIsCameraLock[1]))
+    if (ImGui::Checkbox("Mouse Lock", &m_bIsCameraLock[1]) || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_G))
     {
         // 이거 일단 프리카메라만 했는데 필요하다면 Camera쪽에다가 이전하겠음
         if (m_pSelectCamera)

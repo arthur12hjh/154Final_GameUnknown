@@ -24,7 +24,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 {
 	CGameObject::GAMEOBJECT_DESC	Desc{};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 30.f;
+	Desc.fSpeedPerSec = 10.f;
 
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
@@ -34,6 +34,7 @@ HRESULT CShaderTestModel::Initialize(void* pArg)
 
 	m_pModelCom->Set_AnimationIndex(0, true);
 
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 10.f, 0.f, 1.f));
 	//m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
 	return S_OK;
@@ -88,7 +89,7 @@ HRESULT CShaderTestModel::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		/* 디퓨즈 바인딩 */
@@ -129,7 +130,7 @@ HRESULT CShaderTestModel::Render_Shadow()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(1)))
@@ -160,7 +161,7 @@ HRESULT CShaderTestModel::Render_MotionBlur()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(4)))

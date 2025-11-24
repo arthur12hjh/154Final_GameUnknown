@@ -163,33 +163,6 @@
     <Filter Include="02.GameObjects\Character">
       <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Boss">
-      <UniqueIdentifier>{c8e51291-6ba9-41bd-870c-e32bcc1ba89e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla">
-      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree">
-      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task">
-      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack">
-      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard">
-      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Boss\Gorilla\Body">
-      <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player">
       <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
     </Filter>
@@ -286,38 +259,101 @@
     <Filter Include="03.Effects\SpriteUVEffect">
       <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Component">
-      <UniqueIdentifier>{c084d823-b71b-4b86-92f5-2da66e30db1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Component\Notify">
-      <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="30.ImGui\ShaderDebugger">
       <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest">
+    <Filter Include="02.GameObjects\Actor\ProbActor\Vehicle">
+      <UniqueIdentifier>{1b8ff2da-fd61-4c35-a2d1-574e112582fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Building">
+      <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Construction">
+      <UniqueIdentifier>{fe6b4f7e-6183-4e3f-a56a-477fd6dc08f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba">
+      <UniqueIdentifier>{ff0e426b-3116-4f02-a27b-acc4715b278c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss">
+      <UniqueIdentifier>{c8e51291-6ba9-41bd-870c-e32bcc1ba89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla">
+      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree">
+      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task">
+      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Attack">
+      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\BlackBoard">
+      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Boss\Gorilla\Body">
+      <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster">
+      <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest\QuestManager">
+    <Filter Include="04.Quest\QuestManager">
       <UniqueIdentifier>{a265add8-4e0a-443a-a467-a78963f2b34d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest\Quests">
+    <Filter Include="04.Quest\Quests">
       <UniqueIdentifier>{0e9fc1dd-5061-47c7-98d9-73f11ed52bed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest\Event">
+    <Filter Include="04.Quest\Event">
       <UniqueIdentifier>{ffe1b785-16ea-4643-a20d-39d3676f0d7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest\Event\Reword">
+    <Filter Include="04.Quest\Event\Reword">
       <UniqueIdentifier>{dcdbb99a-54bc-4852-875b-797962abdc7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.Quest\Event\BoxOpen">
+    <Filter Include="04.Quest\Event\BoxOpen">
       <UniqueIdentifier>{a1c1686e-afb4-4726-9183-68a823c9243d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component">
+      <UniqueIdentifier>{c084d823-b71b-4b86-92f5-2da66e30db1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\TargetComponent">
+      <UniqueIdentifier>{09a81576-9048-4f27-9b79-9b850cdfb8f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM">
+      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\PartBody">
+      <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State">
+      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead">
+      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit">
+      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle">
+      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Move">
+      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIImage">
       <UniqueIdentifier>{28d715db-8247-4e00-ad1d-7d3af521afad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIHUD\UIEventMgr">
-      <UniqueIdentifier>{7f852d7b-e820-4439-a2aa-b49f79394122}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIHUD\UIAnimMgr">
       <UniqueIdentifier>{78d2f7a7-821e-4aee-a420-e2f9b018ecc4}</UniqueIdentifier>
@@ -385,11 +421,38 @@
     <Filter Include="02.GameObjects\Map\Common\Rock">
       <UniqueIdentifier>{7024ad07-df2e-4e8a-ace9-b25670999847}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\PointParticle\SpriteParticle">
-      <UniqueIdentifier>{bd8b7845-2d7c-486e-a506-a4d0376dc55a}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent">
+      <UniqueIdentifier>{6f8fe44c-f05b-43d6-9898-37bbf3910374}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\TrailEffect">
-      <UniqueIdentifier>{40d62cb2-aaea-4129-bf6d-08cef5c289f1}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent">
+      <UniqueIdentifier>{e34ee1b7-79b1-4d3d-8af6-6072c8f22b90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIEvent\UIActionEvent">
+      <UniqueIdentifier>{3007689d-2278-4c0f-af12-01e7674da8ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\ChangeLevelEvent">
+      <UniqueIdentifier>{6181ac97-462e-4277-aa69-a330d891d0ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\TestHead">
+      <UniqueIdentifier>{dbda2ddf-accc-4123-8dcf-f91d6603ca11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Event">
+      <UniqueIdentifier>{cc3df61a-94e1-4b08-9c80-d94dffa656ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Event\Notify">
+      <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller">
+      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Boss">
+      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
+      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM">
+      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -562,19 +625,19 @@
       <Filter>50.Behavior\Task\Dead</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaHit.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBlackBoard.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Gorilla.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
       <Filter>50.Behavior\Decorator\PhaseChange</Filter>
@@ -592,7 +655,7 @@
       <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Gorilla_Body.h">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Actor.h">
       <Filter>02.GameObjects\Actor</Filter>
@@ -625,25 +688,25 @@
       <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
-      <Filter>02.GameObjects\Character\Component\Notify</Filter>
+      <Filter>06.Event\Notify</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ShaderDebugger.h">
       <Filter>30.ImGui\ShaderDebugger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\QuestManager.h">
-      <Filter>4.Quest\QuestManager</Filter>
+      <Filter>04.Quest\QuestManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Quest.h">
-      <Filter>4.Quest</Filter>
+      <Filter>04.Quest</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestQuest.h">
-      <Filter>4.Quest\Quests</Filter>
+      <Filter>04.Quest\Quests</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RewordEvent.h">
-      <Filter>4.Quest\Event\Reword</Filter>
+      <Filter>04.Quest\Event\Reword</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BoxOpenEvent.h">
-      <Filter>4.Quest\Event\BoxOpen</Filter>
+      <Filter>04.Quest\Event\BoxOpen</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIImage.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
@@ -804,11 +867,65 @@
     <ClInclude Include="..\Public\CM_Rock14.h">
       <Filter>02.GameObjects\Map\Common\Rock</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SpriteParticle.h">
-      <Filter>03.Effects\PointParticle\SpriteParticle</Filter>
+    <ClInclude Include="..\Public\TestEveHead.h">
+      <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TrailEffect.h">
-      <Filter>03.Effects\TrailEffect</Filter>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPlayAnimEvent.h">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIActionEvent.h">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIActionEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ChangeLevelEvent.h">
+      <Filter>01.Levels\ChangeLevelEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterAttackState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterDeadState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterHitState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterMoveState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterIdleState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterFSM.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Nayitba.h">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NayitbaPartBody.h">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetComponent.h">
+      <Filter>05.Component\TargetComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prob_Building.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prob_Vehicle.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character.h">
+      <Filter>02.GameObjects\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BossController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -968,19 +1085,19 @@
       <Filter>50.Behavior\Task\Dead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaHit.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\Task\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\BehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Gorilla.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
       <Filter>50.Behavior\Decorator\PhaseChange</Filter>
@@ -995,7 +1112,7 @@
       <Filter>10.GameManager\CharacterDataManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Gorilla_Body.cpp">
-      <Filter>02.GameObjects\Character\Boss\Gorilla\Body</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Boss\Gorilla\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Actor.cpp">
       <Filter>02.GameObjects\Actor</Filter>
@@ -1028,7 +1145,7 @@
       <Filter>03.Effects\SpriteUVEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
-      <Filter>02.GameObjects\Character\Component\Notify</Filter>
+      <Filter>06.Event\Notify</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ShaderDebugger.cpp">
       <Filter>30.ImGui\ShaderDebugger</Filter>
@@ -1181,19 +1298,19 @@
       <Filter>02.GameObjects\Map\Common\Rock</Filter>
     </ClCompile>
     <ClCompile Include="..\private\QuestManager.cpp">
-      <Filter>4.Quest\QuestManager</Filter>
+      <Filter>04.Quest\QuestManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Quest.cpp">
-      <Filter>4.Quest</Filter>
+      <Filter>04.Quest</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestQuest.cpp">
-      <Filter>4.Quest\Quests</Filter>
+      <Filter>04.Quest\Quests</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RewordEvent.cpp">
-      <Filter>4.Quest\Event\Reword</Filter>
+      <Filter>04.Quest\Event\Reword</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BoxOpenEvent.cpp">
-      <Filter>4.Quest\Event\BoxOpen</Filter>
+      <Filter>04.Quest\Event\BoxOpen</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIImage.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIImage</Filter>
@@ -1204,11 +1321,65 @@
     <ClCompile Include="..\Private\UIAnimManager.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD\UIAnimMgr</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\SpriteParticle.cpp">
-      <Filter>03.Effects\PointParticle\SpriteParticle</Filter>
+    <ClCompile Include="..\Private\UIPlayAnimEvent.cpp">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TrailEffect.cpp">
-      <Filter>03.Effects\TrailEffect</Filter>
+    <ClCompile Include="..\Private\UIActionEvent.cpp">
+      <Filter>02.GameObjects\UIObjects\UIEvent\UIActionEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ChangeLevelEvent.cpp">
+      <Filter>01.Levels\ChangeLevelEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestEveHead.cpp">
+      <Filter>02.GameObjects\TestModel\TestHead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterAttackState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterDeadState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterHitState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterMoveState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterIdleState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterFSM.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Nayitba.cpp">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NayitbaPartBody.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetComponent.cpp">
+      <Filter>05.Component\TargetComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prob_Building.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prob_Vehicle.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character.cpp">
+      <Filter>02.GameObjects\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BossController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1252,11 +1423,6 @@
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

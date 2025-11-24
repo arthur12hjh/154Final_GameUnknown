@@ -2,6 +2,7 @@
 #include "Reed.h"
 
 #include "GameInstance.h"
+#include "Terrain.h"
 
 CReed::CReed(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CGameObject(pDevice, pContext)
@@ -27,20 +28,32 @@ HRESULT CReed::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_pTerrain = static_cast<CTerrain*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"))->back());
+
 	/*D3D11_MAPPED_SUBRESOURCE MappedResource{};
 
-	m_pModelCom->Lock(D3D11_MAP_WRITE_DISCARD, &MappedResource);
+	m_pModelCom->Lock(D3D11_MAP_WRITE, &MappedResource);
 
 	VTX_INSTANCE_MODEL* pInstanceData = (VTX_INSTANCE_MODEL*)MappedResource.pData;
-	_vector vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f);
-	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-	_vector vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f);
+	
 
-	for(_uint i = 0; i < 2000; ++i)
+	for(_uint i = 0; i < 5000; ++i)
 	{
-		XMStoreFloat4(&pInstanceData[i].vRight, vRight);
-		XMStoreFloat4(&pInstanceData[i].vUp, vUp);
-		XMStoreFloat4(&pInstanceData[i].vLook, vLook);
+		_float fReedX = m_pGameInstance->Random(-256.f, 256.f);
+		_float fReedZ = m_pGameInstance->Random(-256.f, 256.f);
+
+		_float fReedY = m_pTerrain->Get_Height_In_World_Space(fReedX, fReedZ);
+
+		_vector vTranslation = XMVectorSet(fReedX, fReedY, fReedZ, 1.f);
+
+		_matrix matInstance = XMMatrixIdentity();
+
+		matInstance.r[3] = vTranslation;
+
+		XMStoreFloat4(&pInstanceData[i].vRight, matInstance.r[0]);
+		XMStoreFloat4(&pInstanceData[i].vUp, matInstance.r[1]);
+		XMStoreFloat4(&pInstanceData[i].vLook, matInstance.r[2]);
+		XMStoreFloat4(&pInstanceData[i].vTranslation, matInstance.r[3]);
 
 	}
 
@@ -102,6 +115,11 @@ HRESULT CReed::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Texture_Mask */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Reed_Mask"),
+		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -115,15 +133,31 @@ HRESULT CReed::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
+	if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+		return E_FAIL;
+
 	_float fSpeed = 1.f;	   // 빠르기
-	_float fFrequency = 0.2f;  // 패턴 밀도
-	_float fAmplitude = 0.6f;  // 흔들림 최대 폭
+	_float fFrequency = 0.4f;  // 패턴 밀도
+	_float fAmplitude = 0.8f;  // 흔들림 최대 폭
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveSpeed", &fSpeed, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveFrequency", &fFrequency, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveAmplitude", &fAmplitude, sizeof(_float))))
+		return E_FAIL;
+
+	struct MinMaxScale
+	{
+		_float fMinScale = 0.7f; 
+		_float fMaxScale = 1.0f; 
+		_float fReserved = 0.0f;
+	};
+
+	MinMaxScale scaleInfo;
+	_float fHeight;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinMaxScale", &scaleInfo, sizeof(scaleInfo))))
 		return E_FAIL;
 
 	return S_OK;
@@ -155,6 +189,7 @@ void CReed::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pMaskCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

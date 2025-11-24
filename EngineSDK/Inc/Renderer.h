@@ -18,6 +18,10 @@ private:
 public:
 	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 
+	void*	Get_DoF_Desc();
+	void*   Get_Bloom_Desc();
+	void*   Get_Fog_Desc();
+	void*   Get_SSAO_Desc();
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
@@ -32,7 +36,7 @@ public:
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 #endif
-
+	
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
@@ -40,20 +44,22 @@ private:
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-
+	ID3D11DepthStencilView*				m_pVolumetricDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
+	_float								m_fDensity = { 1.f }; 
+	_float								m_fStepSize = { 0.2f };
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
 	_bool								m_isBloom = { false };
 	_bool								m_isFog = { false };
 	_bool								m_isHDR = { true };
-
+	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -63,6 +69,7 @@ private:
 	class CRadialBlur*					m_pRadialBlur = { nullptr }; 
 	class CDepthofField*				m_pDepthofField = { nullptr };
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
+	class CSSAO*						m_pSSAO = { nullptr }; 
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };

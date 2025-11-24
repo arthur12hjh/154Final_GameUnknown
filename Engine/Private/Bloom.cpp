@@ -8,6 +8,14 @@ CBloom::CBloom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
+void* CBloom::Get_Desc()
+{
+    m_Desc.iBloomLevel = &m_iBloomLevel;
+    m_Desc.iSampleLevel = &m_iSampleLevel;
+
+    return &m_Desc;
+}
+
 HRESULT CBloom::Initialize()
 {
     m_vOriginScreenSize = m_pGameInstance->GetScreenSize();
@@ -30,7 +38,9 @@ HRESULT CBloom::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRender
 {
     /* 과정 1. 전체 다운 샘플링 수행먼저해주고..*/
     /* 과정 2. 업 샘플링 할떄마다 블러처리 해서 누적 가산한 뒤 처리*/
-
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 #pragma region DOWN_SAMPLE
     DownSampling(pVIBuffer, strSceneRenderTargetTag);
 #pragma endregion
@@ -191,9 +201,6 @@ HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRende
             return E_FAIL;
 
         m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)));
-        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
         /* 캡쳐된 화면을 바인딩. */
         if (0 == i)
@@ -240,9 +247,7 @@ HRESULT CBloom::MiddleBlur(CVIBuffer* pVIBuffer)
         return E_FAIL;
 
     m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
     _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
         return E_FAIL;
@@ -263,9 +268,7 @@ HRESULT CBloom::MiddleBlur(CVIBuffer* pVIBuffer)
         return E_FAIL;
 
     m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
     vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
         return E_FAIL;
@@ -317,9 +320,6 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
             return E_FAIL;
 
         m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
-        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
         m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
 
@@ -334,9 +334,7 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
             return E_FAIL;
 
         m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
-        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
         _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
             return E_FAIL;
@@ -362,9 +360,7 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
             return E_FAIL;
 
         m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
-        m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-        m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-        m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
         vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
             return E_FAIL;
@@ -404,7 +400,6 @@ CBloom* CBloom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 void CBloom::Free()
 {
     __super::Free();
-
 
     for (auto& iter : m_pDSVs)
     {

@@ -58,6 +58,8 @@ HRESULT CChannel::Initialize(const CModel* pModel, binChannel* pChannel)
 	return S_OK;
 }
 
+
+
 void CChannel::Update_TransformationMatrix(const vector<class CBone*>& Bones, _float fCurrentTrackPosition, _uint* pCurrentKeyFrameIndex)
 {
 	if (-1 == m_iBoneIndex 
@@ -84,7 +86,7 @@ void CChannel::Update_TransformationMatrix(const vector<class CBone*>& Bones, _f
 	{
 		while (fCurrentTrackPosition >= m_KeyFrames[*pCurrentKeyFrameIndex+ 1].fTrackPosition)
 			++*pCurrentKeyFrameIndex;
-
+				
 		_float3		vSourScale{}, vDestScale{};
 		_float4		vSourRotation{}, vDestRotation{};
 		_float3		vSourTranslation{}, vDestTranslation{};

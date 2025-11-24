@@ -1,3 +1,8 @@
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
 #include "pch.h"
 #include "Character.h"
 
@@ -136,6 +141,8 @@ HRESULT CCharacter::Render()
 
 	return S_OK;
 }
+
+
 
 void CCharacter::Set_Animation(const _char* szAnimationTag)
 {

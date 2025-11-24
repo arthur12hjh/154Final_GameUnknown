@@ -75,8 +75,6 @@ HRESULT CShader::Initialize(void* pArg)
 	return S_OK;
 }
 
-
-
 HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength)
 {
 	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
@@ -130,6 +128,11 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
+
+	if (!pVariable->IsValid())
+	{
+		OutputDebugStringA("FX: SRV Variable is INVALID!\n");
+	}
 
 	ID3DX11EffectShaderResourceVariable* pSRVariable = pVariable->AsShaderResource();
 	if (nullptr == pSRVariable)

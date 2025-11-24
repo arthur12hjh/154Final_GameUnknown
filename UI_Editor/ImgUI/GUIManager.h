@@ -2,6 +2,7 @@
 
 #include "Tool_UI_Defines.h"
 #include "Base.h"
+#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -79,6 +80,8 @@ private:
 
 	_uint m_iUICnt = 0;
 
+	_bool m_bIsToggleShowUIDebug{ true };
+
 	class Client::CUIHUD* m_pUIHUD{ nullptr };
 
 	vector<_wstring> m_ViewModes{};
@@ -134,6 +137,10 @@ private:
 
 	_char m_szInputAnimName[MAX_PATH]{};
 
+	vector<_wstring> m_UIEventTypes{};
+	_char m_szCurrentEventType[MAX_PATH]{};
+	_char m_szInputEventTag[MAX_PATH]{};
+
 private:
 	void ViewMode();
 
@@ -171,6 +178,16 @@ private:
 	void Add_AnimTrack(_wstring szAnimTag);
 
 	void Select_Anim_Prefabs(_char* Outstr);
+
+	void Set_Event();
+	void Add_Event();
+	void Edit_Event(const _wstring& szEventTag, Client::UI_EVENT_DESC& EventDesc);
+
+	void Select_Event_Type_Tag(_char* Outstr);
+
+	void Set_Shader_Params();
+
+
 
 	ID3D11ShaderResourceView* LoadTextureSRV(const _wstring& path);
 

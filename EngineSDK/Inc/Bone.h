@@ -28,6 +28,8 @@ public:
 
 	_char* Get_Name() { return m_szName; }
 
+	_int Get_ParentBoneIndex() { return m_iParentBoneIndex; }
+
 public:
 	_matrix Get_TransformationMatrix() const {
 		return XMLoadFloat4x4(&m_TransformationMatrix);
@@ -37,6 +39,11 @@ public:
 		XMStoreFloat4x4(&m_TransformationMatrix, TransformationMatrix);
 	}
 	
+	void Set_CombinedTransformationMatrix(_fmatrix CombinedMatrix)
+	{
+		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+	}
+
 public:
 	HRESULT Initialize(binNode* pNode, _int iParentIndex);
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);

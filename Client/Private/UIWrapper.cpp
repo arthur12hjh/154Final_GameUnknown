@@ -97,6 +97,20 @@ HRESULT CUIWrapper::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CUIWrapper::Execute(const UI_EVENT_DESC& EventDesc)
+{
+	return S_OK;
+}
+
+//HRESULT CUIWrapper::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIWrapper::CallbackEvent(void* pArg)
+{
+}
+
 CUIWrapper* CUIWrapper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CUIWrapper* pInstance = new CUIWrapper(pDevice, pContext);

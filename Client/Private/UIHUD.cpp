@@ -114,6 +114,36 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	CStringHelper::ConvertWideToUTF(pDesc.szProtoTag.c_str(), szText);
 	jObj["szProtoTag"] = szText;
 
+	if (pDesc.Get_ShaderDesc())
+	{
+		Json jShader;
+		if (pDesc.m_tUIShaderDesc.bUseUV)
+		{
+			jShader["bUseUV"] = pDesc.m_tUIShaderDesc.bUseUV;
+			jShader["fUVScaleX"] = pDesc.m_tUIShaderDesc.fUVScaleX;
+			jShader["fUVScaleY"] = pDesc.m_tUIShaderDesc.fUVScaleY;
+			jShader["fUVOffsetX"] = pDesc.m_tUIShaderDesc.fUVOffsetX;
+			jShader["fUVOffsetY"] = pDesc.m_tUIShaderDesc.fUVOffsetY;
+		}
+		if (pDesc.m_tUIShaderDesc.bUseFillClip)
+		{
+			jShader["bUseFillClip"] = pDesc.m_tUIShaderDesc.bUseFillClip;
+			jShader["fFillAmount"] = pDesc.m_tUIShaderDesc.fFillAmount;
+		}
+		if (pDesc.m_tUIShaderDesc.bUseTintColor)
+		{
+			jShader["bUseTintColor"] = pDesc.m_tUIShaderDesc.bUseTintColor;
+			jShader["vTintColor"] = {
+				pDesc.m_tUIShaderDesc.vTintColor.x,
+				pDesc.m_tUIShaderDesc.vTintColor.y,
+				pDesc.m_tUIShaderDesc.vTintColor.z,
+				pDesc.m_tUIShaderDesc.vTintColor.x
+			};
+		}
+
+		jObj["Shader"] = jShader;
+	}
+
 	for (auto& AnimTag : pDesc.m_AnimTags)
 	{
 		Json jAnim;
@@ -126,6 +156,46 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		jObj["szAnimTags"].push_back(jAnim);
 	}
 
+	if (pDesc.m_Events.size() > 0)
+	{
+		Json jEvents;
+		Json jEvent;
+
+		for (auto it = pDesc.m_Events.begin(); it != pDesc.m_Events.end(); ++it)
+		{
+			const vector<UI_EVENT_DESC>& Events = it->second;
+
+			_char szEventTag[MAX_PATH]{};
+			CStringHelper::ConvertWideToUTF(it->first.c_str(), szEventTag);
+
+			for (size_t i = 0; i < Events.size(); ++i)
+			{
+				Json jEventInfo{};
+				const auto& Event = Events[i];
+
+				for (auto& SubscribeEvent : Event.szSubscribeEventTags)
+				{
+					_char szSubscribeEventTag[MAX_PATH]{};
+					CStringHelper::ConvertWideToUTF(SubscribeEvent.c_str(), szSubscribeEventTag);
+
+					jEventInfo["szSubscribeEventTags"].push_back(szSubscribeEventTag);
+				}
+
+				CStringHelper::ConvertWideToUTF(Event.szActionTag.c_str(), szText);
+				jEventInfo["szActionTag"] = szText;
+				CStringHelper::ConvertWideToUTF(Event.szTypeTag.c_str(), szText);
+				jEventInfo["szTypeTag"] = szText;
+				CStringHelper::ConvertWideToUTF(Event.szArg.c_str(), szText);
+				jEventInfo["szArg"] = szText;
+
+				jEvent.push_back(jEventInfo);
+			}
+			jEvents[szEventTag] = jEvent;
+		}
+
+		jObj["szEvents"] = jEvents;
+	}
+
 	if (pDesc.Get_UI_Texture_Desc())
 	{
 		Json TextureDesc;
@@ -136,7 +206,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		TextureDesc["szProtoTag"] = szText;
 		TextureDesc["iTextureIndex"] = pDesc.Get_UI_Texture_Desc()->iTextureIndex;
 		TextureDesc["iPass"] = pDesc.Get_UI_Texture_Desc()->iPass;
-		//jObj["isHasTextureDesc"] = pDesc.m_isHasTextureDesc;
+		
 		jObj["TextureDesc"] = TextureDesc;
 	}
 
@@ -206,6 +276,42 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		CStringHelper::ConvertUTFToWide(pUIObject["szProtoTag"].get<string>().c_str(), szText);
 		Desc.szProtoTag = szText;
 
+		if (pUIObject.contains("Shader"))
+		{
+			Desc.m_isHasShaderDesc = true;
+			UI_SHADER_DESC ShaderDesc{};
+
+			Json jShader = pUIObject["Shader"];
+
+			if (jShader.contains("bUseUV"))
+			{
+				ShaderDesc.bUseUV = jShader["bUseUV"].get<_bool>();
+				ShaderDesc.fUVScaleX = jShader["fUVScaleX"].get<_float>();
+				ShaderDesc.fUVScaleY = jShader["fUVScaleY"].get<_float>();
+				ShaderDesc.fUVOffsetX = jShader["fUVOffsetX"].get<_float>();
+				ShaderDesc.fUVOffsetY = jShader["fUVOffsetY"].get<_float>();
+			}
+
+			if (jShader.contains("bUseFillClip"))
+			{
+				ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
+				ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+			}
+
+			if (jShader.contains("bUseTintColor"))
+			{
+				ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+				ShaderDesc.vTintColor = { 
+					jShader["vTintColor"][0].get<_float>(),
+					jShader["vTintColor"][1].get<_float>(),
+					jShader["vTintColor"][2].get<_float>(),
+					jShader["vTintColor"][3].get<_float>()
+				};
+			}
+
+			Desc.m_tUIShaderDesc = ShaderDesc;
+		}
+
 		if (pUIObject.contains("szAnimTags"))
 		{
 			for (auto& AnimTag : pUIObject["szAnimTags"])
@@ -216,6 +322,55 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 				CStringHelper::ConvertUTFToWide(AnimTag["szPrefabTag"].get<string>().c_str(), szPrefabTag);
 
 				Desc.m_AnimTags.emplace(szAnimTag, szPrefabTag);
+			}
+		}
+
+		if (pUIObject.contains("szEvents"))
+		{
+			Json jEvents = pUIObject["szEvents"];
+
+			// eventObj는 {"Hover": [...]} 또는 {"Click": [...]} 형태
+			for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
+			{
+				WCHAR wTrigger[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
+
+				const auto& Events = it.value(); // Action 배열
+
+				vector<UI_EVENT_DESC> parsedEvents{};
+
+				for (const auto& Event : Events)
+				{
+					UI_EVENT_DESC EventDesc{};
+
+					if (Event.contains("szSubscribeEventTags"))
+					{
+						for (const auto& SubscribeEvent : Event["szSubscribeEventTags"])
+						{
+							WCHAR szSubEventTag[MAX_PATH]{};
+							CStringHelper::ConvertUTFToWide(SubscribeEvent.get<string>().c_str(), szSubEventTag);
+
+							EventDesc.szSubscribeEventTags.push_back(szSubEventTag);
+						}
+					}
+
+					WCHAR szActionTag[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szActionTag"].get<string>().c_str(), szActionTag);
+					EventDesc.szActionTag = szActionTag;
+
+					WCHAR szTypeTag[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szTypeTag"].get<string>().c_str(), szTypeTag);
+					EventDesc.szTypeTag = szTypeTag;
+
+					WCHAR szArg[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szArg"].get<string>().c_str(), szArg);
+					EventDesc.szArg = szArg;
+
+					parsedEvents.push_back(EventDesc);
+				}
+
+				// 최종 저장
+				Desc.m_Events.emplace(wTrigger, parsedEvents);
 			}
 		}
 
@@ -303,6 +458,43 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	CStringHelper::ConvertUTFToWide(jData["szProtoTag"].get<string>().c_str(), szText);
 	Desc.szProtoTag = szText;
 
+	if (jData.contains("Shader"))
+	{
+		Desc.m_isHasShaderDesc = true;
+
+		UI_SHADER_DESC ShaderDesc{};
+
+		Json jShader = jData["Shader"];
+
+		if (jShader.contains("bUseUV"))
+		{
+			ShaderDesc.bUseUV = jShader["bUseUV"].get<_bool>();
+			ShaderDesc.fUVScaleX = jShader["fUVScaleX"].get<_float>();
+			ShaderDesc.fUVScaleY = jShader["fUVScaleY"].get<_float>();
+			ShaderDesc.fUVOffsetX = jShader["fUVOffsetX"].get<_float>();
+			ShaderDesc.fUVOffsetY = jShader["fUVOffsetY"].get<_float>();
+		}
+
+		if (jShader.contains("bUseFillClip"))
+		{
+			ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
+			ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+		}
+
+		if (jShader.contains("bUseTintColor"))
+		{
+			ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+			ShaderDesc.vTintColor = {
+				jShader["vTintColor"][0].get<_float>(),
+				jShader["vTintColor"][1].get<_float>(),
+				jShader["vTintColor"][2].get<_float>(),
+				jShader["vTintColor"][3].get<_float>()
+			};
+		}
+
+		Desc.m_tUIShaderDesc = ShaderDesc;
+	}
+
 	if (jData.contains("szAnimTags"))
 	{
 		for (auto& AnimTag : jData["szAnimTags"])
@@ -313,6 +505,54 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 			CStringHelper::ConvertUTFToWide(AnimTag["szPrefabTag"].get<string>().c_str(), szPrefabTag);
 
 			Desc.m_AnimTags.emplace(szAnimTag, szPrefabTag);
+		}
+	}
+
+	if (jData.contains("szEvents"))
+	{	
+		Json jEvents = jData["szEvents"];
+
+		for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
+		{
+			WCHAR wTrigger[MAX_PATH]{};
+			CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
+
+			const auto& Events = it.value(); // Action 배열
+
+			vector<UI_EVENT_DESC> parsedEvents{};
+
+			for (const auto& Event : Events)
+			{
+				UI_EVENT_DESC EventDesc{};
+
+				if (Event.contains("szSubscribeEventTags"))
+				{
+					for (const auto& SubscribeEvent : Event["szSubscribeEventTags"])
+					{
+						WCHAR szSubEventTag[MAX_PATH]{};
+						CStringHelper::ConvertUTFToWide(SubscribeEvent.get<string>().c_str(), szSubEventTag);
+
+						EventDesc.szSubscribeEventTags.push_back(szSubEventTag);
+					}
+				}
+
+				WCHAR szActionTag[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szActionTag"].get<string>().c_str(), szActionTag);
+				EventDesc.szActionTag = szActionTag;
+
+				WCHAR szTypeTag[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szTypeTag"].get<string>().c_str(), szTypeTag);
+				EventDesc.szTypeTag = szTypeTag;
+
+				WCHAR szArg[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szArg"].get<string>().c_str(), szArg);
+				EventDesc.szArg = szArg;
+
+				parsedEvents.push_back(EventDesc);
+			}
+
+			// 최종 저장
+			Desc.m_Events.emplace(wTrigger, parsedEvents);
 		}
 	}
 
@@ -334,8 +574,6 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
-		//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
-		//TextDesc.szText = szText;
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.vColor = {
 			jDesc["vColor"][0].get<_float>(),
@@ -390,6 +628,23 @@ void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag
 		return;
 
 	m_pUIAnimMgr->Anim_Play(pUI, AnimTag->second);
+}
+
+void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
+{
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	if (pUI == nullptr)
+		return;
+
+	m_pUIAnimMgr->Anim_Stop(pUI);
 }
 
 string CUIHUD::WStringToUTF8(const _wstring& wstr)

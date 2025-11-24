@@ -45,15 +45,15 @@ namespace Engine
 		EMISSIVE = 4,
 		ORM = 5,
 		NORMAL = 6,
-		MASK = 7,
-		EXTRA1 = 8,
-		EXTRA2 = 9,
-		EXTRA3 = 10,
-		EXTRA4 = 11,
-		EXTRA5 = 12,
-		EXTRA6 = 13,
-		EXTRA7 = 14,
-		EXTRA8 = 15,
+		ORSS = 7,
+		MASK = 8,
+		EXTRA1 = 9,
+		EXTRA2 = 10,
+		EXTRA3 = 11,
+		EXTRA4 = 12,
+		EXTRA5 = 13,
+		EXTRA6 = 14,
+		EXTRA7 = 15,
 		END
 	};
 
@@ -82,7 +82,9 @@ namespace Engine
 	};
 
 	enum class SHADER_DEFERRED_IDX {
-		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		DEBUG, DIRECTIONAL, POINT,
+		VOLUMETRIC_DIRECTIONAL, VOLUMETRIC_POINT,
+		COMBINED,
 		//후처리 합성용
 		DEFERRED,
 		//톤 매핑

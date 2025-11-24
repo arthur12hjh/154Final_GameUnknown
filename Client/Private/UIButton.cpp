@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "UIHUD.h"
+#include "UIPlayAnimEvent.h"
+#include "Level_Loading.h"
 
 CUIButton::CUIButton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -40,7 +42,12 @@ void CUIButton::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	if (MouseEnter())
+	{
 		m_eBtnState = BTN_STATE::HOVER;
+
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+			m_eBtnState = BTN_STATE::CLICK;
+	}
 	else
 		m_eBtnState = BTN_STATE::DEFAULT;
 }
@@ -51,38 +58,31 @@ void CUIButton::Late_Update(_float fTimeDelta)
 
 	if (m_ePrevBtnState != m_eBtnState)
 	{
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.Type = UI_EVENT_ARG_DESC::BTN_STATE;
+		Arg.pData = &m_eBtnState;
+
 		switch (m_eBtnState)
 		{
-		case Client::CUIButton::BTN_STATE::DEFAULT:
+		case CUIButton::BTN_STATE::CLICK:
 		{
-			/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-			Safe_Release(pHUD);*/
-			//m_pUIHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+			_bool bTrue = true;
+			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+			Arg.pData = &bTrue;
+
+			__super::Trigger_Event(TEXT("Click"), &Arg);
 			break;
 		}
-		case Client::CUIButton::BTN_STATE::HOVER:
+		case CUIButton::BTN_STATE::DEFAULT:
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
-
-			if (AnimTag == m_tUIDesc.m_AnimTags.end())
-				break;
-
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			Safe_Release(pHUD);
-
-			//m_pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
-			//m_pUIHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Test_Anim"));
+			__super::Trigger_Event(TEXT("Default"), &Arg);
 			break;
 		}
-		case Client::CUIButton::BTN_STATE::CLICK:
+		case CUIButton::BTN_STATE::HOVER:
+		{
+			__super::Trigger_Event(TEXT("Hover"), &Arg);
 			break;
-		case Client::CUIButton::BTN_STATE::SELECT:
-			break;
-		default:
-			break;
+		}
 		}
 
 		m_ePrevBtnState = m_eBtnState;
@@ -98,7 +98,7 @@ HRESULT CUIButton::Render()
 		if (FAILED(Bind_ShaderResources()))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(m_tUIDesc.Get_UI_Texture_Desc()->iPass)))
+		if (FAILED(m_pShaderCom->Begin(m_tUIDesc.m_tUITextureDesc.iPass)))
 			return E_FAIL;
 
 		if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -137,18 +137,71 @@ HRESULT CUIButton::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.Get_UI_Texture_Desc()->iTextureIndex)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_tUIDesc.m_tUITextureDesc.iTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
+HRESULT CUIButton::Execute(const UI_EVENT_DESC& EventDesc)
+{
+	const _wstring& Type = EventDesc.szTypeTag;
+	const _wstring& Arg = EventDesc.szArg;
+	const _wstring& ActionTag = EventDesc.szActionTag;
+
+	// 애니메이션
+	if (Type == TEXT("PlayAnimation"))
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(ActionTag);
+
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		
+		Safe_Release(pHUD);
+	}
+	if (Type == TEXT("ActionEvent"))
+	{
+		if (Arg == TEXT("Change_Level"))
+		{
+			/*if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
+				return E_FAIL;*/
+		}
+	}
+	// 액션
+	//if (Type == TEXT("ActionEvent"))
+	//{
+	//	if (Arg == TEXT("Open_Popup"))
+	//	{
+	//		//팝업 오픈...
+	//	}
+	//}
+	//// 사운드
+	//if (Type == TEXT("PlaySoundEvent"))
+	//{
+	//	SoundMgr->Play()
+	//}
+	
+	return S_OK;
+}
+
+//HRESULT CUIButton::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	for (auto& pEventHandle : m_pEventHandles[szEventTag])
+//	{
+//		if (pEventHandle)
+//			pEventHandle->Notify(&m_eBtnState);
+//	}
+//
+//	return S_OK;
+//}
+
+void CUIButton::CallbackEvent(void* pArg)
+{
+}
+
 _bool CUIButton::MouseEnter()
 {
-	/*_float4 fMousePos{};
-	XMStoreFloat4(&fMousePos,
-		dynamic_cast<CTransform*>(m_pMousePointer->Find_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));*/
-
 	POINT MousePoint = m_pGameInstance->GetMousePoint();
 
 	_float4 fRect = {

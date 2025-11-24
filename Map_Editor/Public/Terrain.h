@@ -34,6 +34,9 @@ public:
 
 	void Change_Height_Rect(_vector PickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Flat(_vector PickingPos, _float fHeight, _float fRadius);
+
+	_float Get_Height_In_World_Space(_float fWorldX, _float fWorldZ);
+
 private:
 	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };

@@ -11,6 +11,10 @@ texture2D g_SceneTexture;
 texture2D g_SceneBlurXTexture;
 texture2D g_DepthTexture;
 
+float g_fFocusDistance;
+float g_fMaxRange;
+float g_fIntensity;
+
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;   
@@ -73,11 +77,9 @@ PS_OUT_BACKBUFFER PS_MAIN_DOF(PS_IN In)
     float fViewZ = vDepthDesc.y * 500.f;
     vector vPosition;
 
-    float fFocusDistance = 15.0f; // 카메라 초점 거리
-    float fMaxRange = 300.f;      // 블러가 최대로 적용될 거리
-    float fBlurAmount = saturate(abs(fViewZ - fFocusDistance) / fMaxRange);
+    float fBlurAmount = saturate(abs(fViewZ - g_fFocusDistance) / g_fMaxRange);
     
-    Out.vBackBuffer = lerp(Out.vBackBuffer, vBlurColor, fBlurAmount);
+    Out.vBackBuffer = lerp(Out.vBackBuffer, vBlurColor, fBlurAmount * g_fIntensity);
     
     return Out;
 }

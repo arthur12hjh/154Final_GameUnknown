@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CGiwajip2::CGiwajip2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CGiwajip2::CGiwajip2(const CGiwajip2& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -34,12 +34,19 @@ void CGiwajip2::Priority_Update(_float fTimeDelta)
 
 void CGiwajip2::Update(_float fTimeDelta)
 {
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CGiwajip2::Late_Update(_float fTimeDelta)
 {
+	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CGiwajip2::Render()
@@ -81,6 +88,16 @@ HRESULT CGiwajip2::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 10.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -111,7 +128,7 @@ CGiwajip2* CGiwajip2::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CGiwajip2::Clone(void* pArg)
+CStaticMap* CGiwajip2::Clone(void* pArg)
 {
 	CGiwajip2* pInstance = new CGiwajip2(*this);
 
@@ -127,7 +144,4 @@ CGameObject* CGiwajip2::Clone(void* pArg)
 void CGiwajip2::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

@@ -15,6 +15,8 @@ CMapTool::CMapTool()
 
 HRESULT CMapTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+	m_pDevice = pDevice;
+	m_pContext = pContext;
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
@@ -308,6 +310,8 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					m_pTerrain->Change_Height_Flat(vPickPoint, fHeight, m_fRadius);
 				}
+				
+
 
 				hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), protoTag, ENUM_CLASS(LEVEL::VILLAGE), layerTag, nullptr);
 
@@ -407,6 +411,60 @@ void CMapTool::Update(_float fTimeDelta)
 					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) - XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
 			}
 		}
+
+		if (!m_bIsDeplayMode && m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+		{
+			if (m_eCurrentObject == ADD_OBJECT::END)
+				return;
+
+			_float3 vPickedPoint = {};
+			_float fHeight = m_fHeight;
+			if (true == m_pGameInstance->isPicking(&vPickedPoint))
+			{
+				_vector vPickPoint = XMVectorSet(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
+
+				if (m_eCurrentObject == ADD_OBJECT::MASK_WHITE)
+				{
+					D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+					m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+					//const _float fTerrainHalfSize = 256.f;
+					const _int iTexelSize = 512;
+					const _float fTexelSize = 512;
+
+					_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
+
+					_float fFlippedZ = fTexelSize - (vPickedPoint.z);
+					_int iCenterTexelY = static_cast<_int>(fFlippedZ);
+
+
+					_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+					_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
+
+					_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+					_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+					_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+					_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+					for (_int i = iStartZ; i < iEndZ; i++)
+					{
+						for (_int j = iStartX; j < iEndX; j++)
+						{
+							_float fDistSq = (i - iCenterTexelY) * (i - iCenterTexelY) + (j - iCenterTexelX) * (j - iCenterTexelX);
+
+							if (fDistSq <= m_fRadius * m_fRadius)
+							{
+								_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
+								pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
+							}
+						}
+					}
+					m_pContext->Unmap(m_pMaskTexture2D, 0);
+				}
+			}
+		}
 	}
 
 }
@@ -466,11 +524,28 @@ HRESULT CMapTool::Render()
 		m_eCurrentObject = ADD_OBJECT::TERRAIN_FLAT;
 	}
 
-
 	ImGui::InputFloat("Height", &m_fHeight, 0.1f, 100.f);
 	ImGui::InputFloat("Radius", &m_fRadius, 0.01f, 10.f);
 
 	ImGui::Text("Change Terrain Height.");
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	if (ImGui::Button("MASK_MAP_BALCK"))
+	{
+		m_eCurrentObject = ADD_OBJECT::MASK_BLACK;
+	}
+	if (ImGui::Button("MASK_MAP_WHITE"))
+	{
+		m_eCurrentObject = ADD_OBJECT::MASK_WHITE;
+	}
+	if (ImGui::Button("NEW_MASK_MAP"))
+	{
+		Set_NewMaskMap();
+	}
+
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -566,7 +641,7 @@ HRESULT CMapTool::Render()
 	{
 
 	}
-	else if(m_eCurrentMap == MAP_THEME::SCARLET)
+	else if (m_eCurrentMap == MAP_THEME::SCARLET)
 	{
 
 		ImGui::Text("Scarlet Map Objects");
@@ -577,12 +652,12 @@ HRESULT CMapTool::Render()
 		_int nSelectedEnvironment = -1;
 
 		const _char* modelNames[] = { "Player" };
-		
-		const _char* buildingNames[] = { "StoneTile", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2", 
+
+		const _char* buildingNames[] = { "StoneTile", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2",
 										 "Stone1", "Stone2", "Stone3", "Stone4", "Giwajip", "StoneLantern1", "StoneLantern2", "Giwajip2" };
-		
-		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8", 
-											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3"};
+
+		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8",
+											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -787,7 +862,7 @@ HRESULT CMapTool::Render()
 		}
 
 	}
-	
+
 	else if (m_eCurrentMap == MAP_THEME::COMMON)
 	{
 		ImGui::Text("Scarlet Common Objects");
@@ -918,7 +993,7 @@ HRESULT CMapTool::Render()
 		{
 			pObjectToDelete->Set_Dead(true);
 
-			m_pObjects->erase(iter); 
+			m_pObjects->erase(iter);
 
 			m_pObject = nullptr;
 		}
@@ -958,7 +1033,7 @@ HRESULT CMapTool::Render()
 		{
 			m_pPickedObject = nullptr;
 		}
-		
+
 	}
 
 	ImGui::SameLine();
@@ -1116,8 +1191,14 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	ImGui::InputText("Map Save File Path", szSaveFilePath, sizeof(szSaveFilePath));
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
 	// 에디터 세이브 / 로드
-	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
 	{
 		if (FAILED(Save_Terrain_HeightMap()))
@@ -1130,7 +1211,7 @@ HRESULT CMapTool::Render()
 		}
 
 		// 맵 오브젝트 저장
-		if (FAILED(Save_Map_Objects()))
+		if (FAILED(Save_Map_Objects(szSaveFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"맵 오브젝트 저장 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -1139,10 +1220,17 @@ HRESULT CMapTool::Render()
 			MessageBoxW(g_hWnd, L"맵 오브젝트 저장 성공.", L"알림", MB_OK);
 		}
 	}
-	ImGui::SameLine();
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
+
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_Map_Objects()))
+		if (FAILED(Load_Map_Objects(szLoadFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"맵 오브젝트 로드 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -1152,14 +1240,27 @@ HRESULT CMapTool::Render()
 		}
 	}
 
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szMaskMapFilePath[256] = "../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png";
+	ImGui::InputText("MaskMap Save File Path", szMaskMapFilePath, sizeof(szMaskMapFilePath));
+
+	if (ImGui::Button("Mask_Save"))
+	{
+		if (FAILED(Save_MaskMap(szMaskMapFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"마스크 맵 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"마스크 맵 저장 성공.", L"알림", MB_OK);
+		}
+	}
+
+
 	ImGui::End();
-
-	return S_OK;
-}
-
-HRESULT CMapTool::Render_Area()
-{
-	
 
 	return S_OK;
 }
@@ -1179,10 +1280,10 @@ void CMapTool::Update_Rotation()
 	}
 }
 
-HRESULT CMapTool::Save_Map_Objects()
+HRESULT CMapTool::Save_Map_Objects(const _char* szFilePath)
 {
 	// 맵 데이터 파일 열기
-	std::ofstream ofs("../Bin/DataFiles/MapData.bin", std::ios::binary);
+	std::ofstream ofs(szFilePath, std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
@@ -1284,9 +1385,9 @@ HRESULT CMapTool::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayer
 	return S_OK;
 }
 
-HRESULT CMapTool::Load_Map_Objects()
+HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 {
-	std::ifstream ifs("../Bin/DataFiles/MapData.bin", std::ios::binary);
+	std::ifstream ifs(szFilePath, std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
@@ -1497,6 +1598,74 @@ HRESULT CMapTool::Save_Terrain_HeightMap()
 	CloseHandle(hFile);
 	Safe_Delete_Array(pPixels);
 	Safe_Delete_Array(pHeightData);
+}
+
+HRESULT CMapTool::Save_MaskMap(const _char* szFilePath)
+{
+	if (m_pMaskTexture2D == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	// 1. 와이드 문자열 버퍼 선언
+	wchar_t wszFilePath[256] = L"";
+	size_t convertedChars = 0;
+
+	// 2. 멀티바이트 문자열 (char*)을 와이드 문자열 (wchar_t*)로 변환
+	// szFilePath의 내용을 wszFilePath 버퍼로 안전하게 변환합니다.
+	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
+	{
+		return E_FAIL;
+	}
+
+	if (m_pMaskTexture2D != nullptr)
+	{
+		if (FAILED(DirectX::SaveWICTextureToFile(m_pContext, m_pMaskTexture2D, GUID_ContainerFormatPng, wszFilePath)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool::Set_NewMaskMap()
+{
+	Safe_Release(m_pMaskTexture2D);
+
+	D3D11_TEXTURE2D_DESC		TextureDesc{};
+	TextureDesc.Width = 512;
+	TextureDesc.Height = 512;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+	TextureDesc.Usage = D3D11_USAGE_STAGING;
+	TextureDesc.BindFlags = 0;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	TextureDesc.MiscFlags = 0;
+
+	_uint* pPixel = new _uint[512 * 512];
+
+	for (size_t i = 0; i < 512; i++)
+	{
+		for (size_t j = 0; j < 512; j++)
+		{
+			_uint iIndex = i * 512 + j;
+			pPixel[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);
+		}
+	}
+
+	D3D11_SUBRESOURCE_DATA		InitialDesc{};
+	InitialDesc.pSysMem = pPixel;
+	InitialDesc.SysMemPitch = 512 * 4;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &InitialDesc, &m_pMaskTexture2D)))
+		return E_FAIL;
+
+	Safe_Delete_Array(pPixel);
+
+	return S_OK;
 }
 
 void CMapTool::Set_NaviEditMode(_bool bMode)
@@ -1750,4 +1919,6 @@ _bool CMapTool::Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fve
 void CMapTool::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMaskTexture2D);
 }

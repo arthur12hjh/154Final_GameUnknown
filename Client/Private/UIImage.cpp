@@ -2,7 +2,9 @@
 #include "UIImage.h"
 
 #include "GameInstance.h"
-//#include "UIAnimationCom.h"
+#include "UIHUD.h"
+#include "UIButton.h"
+#include "UIPlayAnimEvent.h"
 
 CUIImage::CUIImage(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -37,6 +39,31 @@ void CUIImage::Priority_Update(_float fTimeDelta)
 
 void CUIImage::Update(_float fTimeDelta)
 {
+	//m_pGameInstance->Bind_Observer(TEXT("UI_Button_Action"), m_pEventHandle);
+
+	//if (dynamic_cast<CUIButton*>(m_pParent))
+	//{
+	//	CUIButton::BTN_STATE eBtnState = dynamic_cast<CUIButton*>(m_pParent)->Get_ButtonState();
+	//
+	//	if (eBtnState == CUIButton::BTN_STATE::HOVER)
+	//	{
+	//		__super::Trigger_Event(TEXT("Hover"), nullptr);
+	//		//m_pGameInstance->Bind_Observer(TEXT("UI_Button_Hover"), m_pEventHandle);
+	//		/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	//
+	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
+	//
+	//		if (AnimTag == m_tUIDesc.m_AnimTags.end())
+	//			return;
+	//
+	//		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+	//		Safe_Release(pHUD);*/
+	//	}
+	//	else
+	//		__super::Trigger_Event(TEXT("Default"), nullptr);
+	//		//m_pGameInstance->UnBind_Observer(TEXT("UI_Button_Hover"), m_pEventHandle);
+	//}
+
 	__super::Update(fTimeDelta);
 }
 
@@ -80,6 +107,40 @@ HRESULT CUIImage::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
+	// m_Events 돌면서 분기쳐서 이벤트 핸들 세팅해주기??
+	/*m_pEventHandle = CUIPlayAnimEvent::Create([&](void* pArg) {
+		CUIButton::BTN_STATE eState = *static_cast<CUIButton::BTN_STATE*>(pArg);
+
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		if (eState == CUIButton::BTN_STATE::HOVER)
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				return;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+		else if(eState == CUIButton::BTN_STATE::DEFAULT)
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Default"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				return;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+
+		Safe_Release(pHUD);
+	});
+
+	if (nullptr == m_pEventHandle)
+		return E_FAIL;
+
+	m_pGameInstance->Add_Event(TEXT("UI_Button_Action_Reaction"), m_pEventHandle);
+
+	Bind_Event();*/
+
 	return S_OK;
 }
 
@@ -98,6 +159,112 @@ HRESULT CUIImage::Bind_ShaderResources()
 
 	return S_OK;
 }
+
+HRESULT CUIImage::Execute(const UI_EVENT_DESC& EventDesc)
+{
+	const _wstring& Type = EventDesc.szTypeTag;
+	const _wstring& Arg = EventDesc.szArg;
+
+	// 애니메이션
+	if (Type == TEXT("PlayAnimation"))
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(Arg);
+
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+		Safe_Release(pHUD);
+	}
+
+	return S_OK;
+}
+
+//HRESULT CUIImage::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIImage::CallbackEvent(void* pArg)
+{
+	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
+	if (!arg) return;
+
+	switch (arg->Type)
+	{
+	case UI_EVENT_ARG_DESC::BTN_STATE:
+	{
+		auto* state = static_cast<CUIButton::BTN_STATE*>(arg->pData);
+		if (!state) break;
+
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		if (*state == CUIButton::BTN_STATE::HOVER)
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+			if (AnimTag != m_tUIDesc.m_AnimTags.end())
+				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+		else // DEFAULT/CLICK/SELECT → 필요에 맞게 매핑
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+			if (AnimTag != m_tUIDesc.m_AnimTags.end())
+				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+
+		Safe_Release(pHUD);
+		break;
+	}
+
+	case UI_EVENT_ARG_DESC::INT:
+		// int value = *static_cast<int*>(arg->pData);
+		break;
+
+	case UI_EVENT_ARG_DESC::FLOAT:
+		// float v = *static_cast<float*>(arg->pData);
+		break;
+
+	case UI_EVENT_ARG_DESC::WSTRING:
+		// auto* ws = static_cast<_wstring*>(arg->pData);
+		break;
+
+	default:
+		break;
+	}
+
+	/*UI_EVENT_ARG_DESC* pEventArg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+	_uint a = pEventArg->Type;
+
+	if (pEventArg->Type == UI_EVENT_ARG_DESC::BTN_STATE)
+	{
+		CUIButton::BTN_STATE eState = *static_cast<CUIButton::BTN_STATE*>(pEventArg->pData);
+
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		if (eState == CUIButton::BTN_STATE::HOVER)
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				return;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+		else if (eState == CUIButton::BTN_STATE::DEFAULT)
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Default"));
+
+			if (AnimTag == m_tUIDesc.m_AnimTags.end())
+				return;
+
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		}
+
+		Safe_Release(pHUD);
+	}*/
+}
+
+
 
 CUIImage* CUIImage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -128,4 +295,17 @@ CGameObject* CUIImage::Clone(void* pArg)
 void CUIImage::Free()
 {
 	__super::Free();
+
+	/*for (auto& Event : m_tUIDesc.m_Events)
+	{
+		for (auto& EventDesc : Event.second)
+		{
+			for (auto& SubEvent : EventDesc.szSubscribeEventTags)
+			{
+				m_pGameInstance->UnBind_Observer(SubEvent.c_str(), m_pEventHandle);
+			}
+		}
+	}*/
+
+	//Safe_Release(m_pEventHandle);
 }

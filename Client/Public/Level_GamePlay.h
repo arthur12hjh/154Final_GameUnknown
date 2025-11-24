@@ -32,6 +32,7 @@ private:
 	HRESULT Ready_Layer_Player(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Monster(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Effect(const _wstring& strLayerTag);
+	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
 
 	HRESULT Load_Map_Data();
 	HRESULT Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);

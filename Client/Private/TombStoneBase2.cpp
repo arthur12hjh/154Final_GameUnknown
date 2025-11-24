@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CTombStoneBase2::CTombStoneBase2(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CTombStoneBase2::CTombStoneBase2(const CTombStoneBase2& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -83,6 +83,16 @@ HRESULT CTombStoneBase2::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 5.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -113,7 +123,7 @@ CTombStoneBase2* CTombStoneBase2::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 	return pInstance;
 }
 
-CGameObject* CTombStoneBase2::Clone(void* pArg)
+CStaticMap* CTombStoneBase2::Clone(void* pArg)
 {
 	CTombStoneBase2* pInstance = new CTombStoneBase2(*this);
 
@@ -129,7 +139,4 @@ CGameObject* CTombStoneBase2::Clone(void* pArg)
 void CTombStoneBase2::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

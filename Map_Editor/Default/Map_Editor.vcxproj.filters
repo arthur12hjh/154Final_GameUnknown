@@ -371,6 +371,9 @@
     <ClInclude Include="..\public\CM_Rock14.h">
       <Filter>02.GameObjects\Maps\Common\Rock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -589,6 +592,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CM_Rock14.cpp">
       <Filter>02.GameObjects\Maps\Common\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Maps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
