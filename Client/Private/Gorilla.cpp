@@ -86,7 +86,7 @@ void CGorilla::Late_Update(_float fTimeDelta)
 	if (true == m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pBody->Late_Update(fTimeDelta);
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		//m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 #ifdef _DEBUG
 		/*for (size_t i = 0; i < ENUM_CLASS(COLLIDER::END); i++)
@@ -102,8 +102,6 @@ void CGorilla::Late_Update(_float fTimeDelta)
 
 HRESULT CGorilla::Render()
 {
-	
-
 	return S_OK;
 }
 

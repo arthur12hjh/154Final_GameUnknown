@@ -136,6 +136,8 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 150.0f, 150.0f, 300.f, 300.f)))
+		return E_FAIL;
 
 	if (FAILED(m_pGlow->Ready_Debug(m_vScreenSize.x - 450.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
@@ -194,7 +196,7 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	
-	/* MRT_GameObjects */
+	/* MRT_GameObjects. 이미시브 + 모션블러 들어갈거 생각하면 최소 6개. */
 	/* Target_Diffuse */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -221,13 +223,16 @@ HRESULT CRenderer::Ready_RenderTargets()
 		return E_FAIL;
 	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
 		return E_FAIL;
-
 	/* Target_ToneMapping */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ToneMapping"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 
 	/* Target_Velocity */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Velocity"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* Target_Volumetric */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Volumetric"), m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -259,6 +264,10 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
+		return E_FAIL;
+
+	/* MRT_Volumetric */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Volumetric"), TEXT("Target_Volumetric"))))
 		return E_FAIL;
 
 	/* MRT_Shadow */
@@ -298,13 +307,22 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 
 void CRenderer::Render()
 {
+	Bind_WVP_Matrices();
+
 	Render_Priority();
 	Render_Shadow();
 	Render_NonBlend();
 	Render_LightAcc();
+
+	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
+		return;
+
 	Render_Combined();
 	Render_NonLight();
 	Render_Blend();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
 
 	//후처리 마무리 하기.
 	Render_Blur();
@@ -449,11 +467,6 @@ void CRenderer::Render_LightAcc()
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_LightAcc"))))
 		return ;
 
-	Bind_WVP_Matrices();
-	m_pShader->Bind_Matrix("g_ViewMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::VIEW));
-	m_pShader->Bind_Matrix("g_ProjMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::PROJ));
-	m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
-
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
 		return;
 
@@ -476,24 +489,37 @@ void CRenderer::Render_LightAcc()
 
 	//SSAO 차폐 연산.
 	m_pSSAO->Render(m_pVIBuffer, TEXT("Target_Depth"), TEXT("Target_Normal"), TEXT("NON_USE"));
+
+
+	//if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric"), m_pVolumetricDSV)))
+	//	return;
+
+	//if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
+	//	return;
+
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
+	//	return;
+
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
+	//	return;
+
+	//Set_ScreenSize(m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f);
+
+	//m_pVIBuffer->Bind_Resources();
+
+	//if (FAILED(m_pGameInstance->Render_VolumetricLights(m_pShader, m_pVIBuffer)))
+	//	return;
+
+	//if (FAILED(m_pGameInstance->End_MRT()))
+	//	return;
+
+	//Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
 }
 
 void CRenderer::Render_Combined()
 {
-	/* Diffuse + Normal */
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
-	Bind_WVP_Matrices();
-
-	m_pShader->Bind_Matrix("g_ViewMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::VIEW));
-	m_pShader->Bind_Matrix("g_ProjMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::PROJ));
-
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
-		return;
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
-		return;
-
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shade"), m_pShader, "g_ShadeTexture")))
@@ -504,6 +530,8 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
 		return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Volumetric"), m_pShader, "g_VolumetricTexture")))
+		return; 
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
@@ -511,21 +539,14 @@ void CRenderer::Render_Combined()
 	if (FAILED(m_pSSAO->Bind_RenderTarget(m_pShader, "g_SSAOTexture")))
 		return;
 
-
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Render_NonLight()
 {
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)])
 	{
 		if (nullptr != pRenderObject)
@@ -535,16 +556,10 @@ void CRenderer::Render_NonLight()
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)].clear();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Render_Blend()
 {	
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
-		return;
-
 	m_RenderObjects[ENUM_CLASS(RENDER::BLEND)].sort([](CGameObject* pSour, CGameObject* pDest)->_bool {
 		return static_cast<CBlendObject*>(pSour)->Get_Depth() > static_cast<CBlendObject*>(pDest)->Get_Depth();
 	});
@@ -558,9 +573,6 @@ void CRenderer::Render_Blend()
 	}
 
 	m_RenderObjects[ENUM_CLASS(RENDER::BLEND)].clear();
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
 }
 
 void CRenderer::Render_Blur()
@@ -592,8 +604,6 @@ void CRenderer::Render_Deferred()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
 		return;
-
-	Bind_WVP_Matrices();
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
 		return;
@@ -650,8 +660,6 @@ void CRenderer::ToneMapping()
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_ToneMapping"))))
 		return;
 
-	Bind_WVP_Matrices();
-
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
 		return;
 
@@ -669,8 +677,6 @@ void CRenderer::ToneMapping()
 
 void CRenderer::Render_BackBuffer()
 {	
-	Bind_WVP_Matrices();
-
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
 		return;
 
@@ -727,10 +733,10 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
-		return;
 	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
+	//	return;
 }
 
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
@@ -778,6 +784,17 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 
 	Safe_Release(pDepthStencilTexture);
 
+	TextureDesc.Width = m_vScreenSize.x / 4.f;
+	TextureDesc.Height = m_vScreenSize.y / 4.f;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pVolumetricDSV)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
 	return S_OK;
 }
 
@@ -786,6 +803,11 @@ HRESULT CRenderer::Bind_WVP_Matrices()
 	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+	m_pShader->Bind_Matrix("g_ViewMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::VIEW));
+	m_pShader->Bind_Matrix("g_ProjMatrixInv", m_pGameInstance->Get_Transform_Float4x4_Inverse(D3DTS::PROJ));
+	m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
+	m_pShader->Bind_RawValue("g_fDensity", &m_fDensity, sizeof(_float));
+	m_pShader->Bind_RawValue("g_fStepSize", &m_fStepSize, sizeof(_float));
 
 	return S_OK;
 }
@@ -815,11 +837,14 @@ void CRenderer::Free()
 	}
 
 	Safe_Release(m_pShadowDSV);
+	Safe_Release(m_pVolumetricDSV);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pVIBuffer);
+	
 	Safe_Release(m_pShader);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);

@@ -32,6 +32,7 @@ HRESULT CGorilla_Body::Initialize(void* pArg)
 
 void CGorilla_Body::Priority_Update(_float fTimeDelta)
 {
+	Update_PreCombinedMatrix();
 }
 
 void CGorilla_Body::Update(_float fTimeDelta)
@@ -46,6 +47,7 @@ void CGorilla_Body::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -109,6 +111,39 @@ HRESULT CGorilla_Body::Render_Shadow()
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+	return S_OK;
+}
+
+HRESULT CGorilla_Body::Render_MotionBlur()
+{
+	/* 이전 프레임 월드매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreWorldMatrix", &m_PreCombinedWorldMatrix)))
+		return E_FAIL;
+
+	/* 이전 뷰 매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreViewMatrix", m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(4)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 

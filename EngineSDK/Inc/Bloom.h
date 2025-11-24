@@ -29,8 +29,8 @@ public:
 private:
 	vector<ID3D11DepthStencilView*> m_pDSVs = {};
 	BLOOM_DESC m_Desc = {};
-	_uint m_iBloomLevel = { 2 }; 
-	_uint m_iSampleLevel = { 5 };
+	_uint m_iBloomLevel = { 4 }; 
+	_uint m_iSampleLevel = { 1 };
 
 	_uint2 m_vOriginScreenSize = {};
 
