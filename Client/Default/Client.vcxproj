@@ -175,6 +175,7 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\Public\Prob_Building.h" />
     <ClInclude Include="..\Public\Prob_Vehicle.h" />
+    <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\CanBox.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\Private\Prob_Building.cpp" />
     <ClCompile Include="..\Private\Prob_Vehicle.cpp" />
+    <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\CanBox.cpp" />

@@ -41,14 +41,13 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 	_finddatai64_t  fd;
 
 	// _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
-	intptr_t handle = _findfirst64("../Bin/Resources/Models/Character/PC/Eve/Animation/*.bin*", &fd);
+	intptr_t handle = _findfirst64("../Bin/Resources/Models/Character/PC/Eve/Animation/*.binx*", &fd);
 
 	if (handle == -1)
 		return S_OK;
 
 	int iResult = 0;
 
-	/* For.Prototype_Component_Model_Eve_CombinedAnimationTest */
 	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag,
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;

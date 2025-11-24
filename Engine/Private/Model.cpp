@@ -7,8 +7,6 @@
 #include "Animation.h"
 #include "Channel.h"
 #include "ComputeShader.h"
-
-
 #include "GameInstance.h"
 
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -26,6 +24,13 @@ CModel::CModel(const CModel& Prototype)
 	, m_PreTransformMatrix { Prototype.m_PreTransformMatrix }
 	, m_iNumAnimations{ Prototype.m_iNumAnimations }
 	, m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
+	, m_pBoneSource{nullptr}
+	, m_pChannelSource{nullptr}
+	, m_pKeyFrameSource{nullptr}
+	, m_pOutSource{nullptr}
+	, m_pOutReadBack{nullptr}
+	, m_pBoneMatricesSRV{nullptr}
+	, m_pComputeShaderCom{nullptr}
 {
 	for (auto& pPrototypeBone : Prototype.m_Bones)
 		m_Bones.push_back(pPrototypeBone->Clone());
@@ -41,7 +46,6 @@ CModel::CModel(const CModel& Prototype)
 
 	memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
 
-	m_pBoneMatricesSRV = nullptr;
 }
 
 _uint CModel::Get_Mesh_MaterialIndex(_uint iIdx) const
@@ -166,6 +170,7 @@ HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
 		Mapping_Animation(pAnimation);
 
 		m_Animations.push_back(pAnimation);
+		Safe_AddRef(pAnimation);
 		++m_iNumAnimations;
 	}
 
@@ -400,14 +405,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
 HRESULT CModel::Initialize(void* pArg)
 {
-	
-	if (m_eType == MODEL_TYPE::NONANIM)
-		return S_OK;
-
-	m_pBoneMatricesSRV = nullptr;
-
-	if (FAILED(Ready_ComputeShader()))
-		return E_FAIL;
+	if (m_eType == MODEL_TYPE::ANIM)
+		Ready_ComputeShader();
 
 
     return S_OK;
@@ -520,6 +519,7 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 *			-> fTrackPosition
 * 
 *	현재 산재된 문제점
+*	현재 산재된 문제점
 *	-> 채널과 본 수가 다름 개 씨발 매핑 되게 순서대로 정렬은 해줬는데 예외 되는지 확인 필요
 *	-> 원래 채널에서 선형보간 시 pCurrentKeyFrameIndex를 해주는데 그건 옮기지 말고 CPU에서 해주어야함
 * 
@@ -528,6 +528,16 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 */
 _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 {
+	/*
+		   _____      _     ____                     _____        __                           _   _               _    _
+		  / ____|    | |   |  _ \                   |_   _|      / _|                         | | (_)             | |  | |
+		 | |  __  ___| |_  | |_) | ___  _ __   ___    | |  _ __ | |_ ___  _ __ _ __ ___   __ _| |_ _  ___  _ __   | |__| | ___ _ __ ___
+		 | | |_ |/ _ \ __| |  _ < / _ \| '_ \ / _ \   | | | '_ \|  _/ _ \| '__| '_ ` _ \ / _` | __| |/ _ \| '_ \  |  __  |/ _ \ '__/ _ \
+		 | |__| |  __/ |_  | |_) | (_) | | | |  __/  _| |_| | | | || (_) | |  | | | | | | (_| | |_| | (_) | | | | | |  | |  __/ | |  __/
+		  \_____|\___|\__| |____/ \___/|_| |_|\___| |_____|_| |_|_| \___/|_|  |_| |_| |_|\__,_|\__|_|\___/|_| |_| |_|  |_|\___|_|  \___|
+
+	
+	*/
 	if (isSimd)
 	{
 		if (-1 == m_iCurrentAnimIndex ||
@@ -939,6 +949,7 @@ HRESULT CModel::Ready_ComputeShader()
 
 	m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
 
+
 #pragma endregion
 
 	return S_OK;
@@ -1193,6 +1204,14 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 	// 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
 	m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
 
+	{
+		ID3D11UnorderedAccessView* pNullUAV[1] = { nullptr };
+		UINT initialCounts[1] = { 0 };
+
+		// CComputeShader에서 UAV를 어떤 슬롯에 물렸는지에 따라 숫자 조정
+		// 대부분 0번 슬롯일 가능성이 매우 높음
+		m_pContext->CSSetUnorderedAccessViews(0, 1, pNullUAV, initialCounts);
+	}
 
 	//// 1) GPU → CPU 복사용 Staging Buffer로 데이터 복사
 	//m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
@@ -1281,5 +1300,6 @@ void CModel::Free()
 
 	Safe_Release(m_pComputeShaderCom);
 
-
+	/*
+	*/
 }

@@ -135,10 +135,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT_LIGHT Out;
     
+    vector vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
-    
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
     
@@ -160,14 +159,53 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vector vLightDir = vPosition - g_vLightPos;
-    float fDistance = length(vLightDir);
     
+    float fDistance = length(vLightDir);
     float  fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    
+    if(fAtt <= 0.f)
+        discard;
+    
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(vLightDir), vNormal);
+    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-    Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
+    float fMetallic, fRoughness, fOcclusion, fAttenuation;
+    float3 vF0;
+    
+    float fSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    //ORM 마스크 없으면 그냥 Phong Shading 처리.
+    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    {
+        Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));    
+        
+        return Out;
+    }
+    else if (vORMDesc.a == 2.f)
+    {
+        fMetallic = 0.f;
+        fRoughness = vORMDesc.g;
+        fOcclusion = vORMDesc.b;
+        vF0 = vORMDesc.b;
+    }
+    else
+    {
+        fOcclusion = vORMDesc.r;
+        fRoughness = vORMDesc.g;
+        fMetallic = vORMDesc.b;
+        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
+    }
+    
+    fAttenuation = 1.f;
+    
+    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
+    
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(-g_vLightDir.xyz), vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    
+    Out.vShade *= fDiffuseAOStrength * fAtt;
+    Out.vSpecular *= fAtt;
     
     return Out;
 }

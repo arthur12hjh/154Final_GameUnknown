@@ -451,6 +451,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
       <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM">
+      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -921,6 +924,9 @@
     <ClInclude Include="..\Public\MonsterController.h">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1371,6 +1377,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
