@@ -10,7 +10,7 @@ CCollider::CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 
 CCollider::CCollider(const CCollider& rhs) :
     CComponent(rhs),
-    m_CollisionType(rhs.m_CollisionType)
+    m_eType(rhs.m_eType)
 #ifdef _DEBUG
     , m_pBatch{ rhs.m_pBatch }
     , m_pEffect{ rhs.m_pEffect }
@@ -85,6 +85,11 @@ HRESULT CCollider::Render(_float4 vColor)
     return Render();
 }
 #endif // _DEBUG
+
+void CCollider::SetColliderHitType(HIT_TYPE eHitType)
+{
+    m_eHitType = eHitType;
+}
 
 void CCollider::BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent)
 {

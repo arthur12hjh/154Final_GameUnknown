@@ -19,7 +19,7 @@ CSphereCollider::CSphereCollider(const CSphereCollider& rhs) :
 HRESULT CSphereCollider::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	m_CollisionType = COLLIDER::SPHERE;
+	m_eType = COLLIDER::SPHERE;
 	return S_OK;
 }
 
@@ -48,12 +48,12 @@ _bool CSphereCollider::Intersect(COLLIDER eType, CCollider* pTarget)
 
 	if (HIT_TYPE::END == m_eOnlyHitType)
 	{
-		if (!IntersectAble(pTarget->GetCollisionHitType()))
+		if (!IntersectAble(pTarget->GetCollierHitType()))
 			return false;
 	}
 	else
 	{
-		if (m_eOnlyHitType != pTarget->GetCollisionHitType())
+		if (m_eOnlyHitType != pTarget->GetCollierHitType())
 			return false;
 	}
 

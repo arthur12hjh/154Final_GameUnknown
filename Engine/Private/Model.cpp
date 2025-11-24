@@ -245,6 +245,7 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
 	if (bIsSaved == TRUE)
 		m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
+	return S_OK;
 }
 
 HRESULT CModel::Mapping_OffsetMatrix()

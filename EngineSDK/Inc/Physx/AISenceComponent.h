@@ -26,16 +26,17 @@ public:
 	virtual void						SetOwner(CGameObject* pGameObject);
 
 	void								UpdatSenceComponent(_float fDeletaTime);
+						
+	void								Add_SenceTargetObject(CGameObject* pSenceObject);
 	const list<CGameObject*>*			GetSearchAllObject() { return &m_pSearchList; }
 	_bool								IsTagetEmpty();
-	void								Add_SenceTargetObject(CGameObject* pSenceObject);
-
 	// 이벤트 바인딩 함수들
 	void								Bind_TargetSearch(function<void(CGameObject*)> Func);
 	void								Bind_TargetLost(function<void(CGameObject*)> Func);
 	void								Bind_TargetDetected(function<void(CGameObject*)> Func);
 
 	void								SetColliderHitType(HIT_TYPE eHitType);
+
 	void								ADD_SenceIgnoreTraceObejct(HIT_TYPE typeID);
 	void								ADD_SenceOnlyTraceObject(HIT_TYPE typeID);
 

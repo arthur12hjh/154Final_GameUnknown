@@ -11,7 +11,7 @@ namespace Engine
 	enum class COLLIDER			{ AABB, OBB, SPHERE, END };
 
 	// 추가 예정
-	enum class HIT_TYPE			{ ALL, OBJECT, END };
+	enum class HIT_TYPE			{ ALL, OBJECT, STATIC, END };
 	enum class LIGHT_TYPE		{ POINT = 1, SPOT, DIRECTIONAL, END };
 
 	enum class MOUSEKEYSTATE	{ LBUTTON, RBUTTON, WBUTTON, XBUTTON };
