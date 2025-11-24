@@ -460,6 +460,15 @@
     <Filter Include="03.Effects\Particle\SpriteParticle">
       <UniqueIdentifier>{825607c9-65e0-47b8-8f40-d8a65e218117}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
+      <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
+      <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -927,9 +936,6 @@
     <ClInclude Include="..\Public\BossController.h">
       <Filter>02.GameObjects\Character\Naytiba\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MonsterController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\FSM</Filter>
     </ClInclude>
@@ -938,6 +944,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\SpriteParticle.h">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterStateMimesis.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterMimesisController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MonsterController.h">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1384,9 +1399,6 @@
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Character</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MonsterController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClCompile>
@@ -1398,6 +1410,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\SpriteParticle.cpp">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterMimesisController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterController.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

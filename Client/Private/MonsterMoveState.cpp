@@ -20,17 +20,40 @@ HRESULT CMonsterMoveState::Initialize(void* pArg)
     return S_OK;
 }
 
-void CMonsterMoveState::Start(void* pArg)
+void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 {
     MOVE_STATE_DESC* pMoveStateDesc = static_cast<MOVE_STATE_DESC*>(pArg);
     size_t iNumPathFindingPoint = pMoveStateDesc->PathFindingPoints->size();
 
     CNayitba* pOwner = static_cast<CNayitba*>(m_pOwner);
     m_pTarget = pMoveStateDesc->pTarget;
+    auto pOwnerStaticInfo = pOwner->GetStaticMonsterData();
     m_pOwnerInfo = &pOwner->GetMonsterData();
     m_OnMoveCompleted = pMoveStateDesc->OnMoveCompleted;
 
-    if (m_pOwnerInfo->bIsBattle)
+    if (AI_TYPE::PASSIVE == pOwnerStaticInfo->eAI_Type)
+    {
+
+    }
+
+    switch (m_pOwnerInfo->eNaytiba)
+    {
+    case NAYTIBA_STATE::DEFAULT :
+    {
+        XMStoreFloat3(&m_vMovePoint, pOwner->GetTransform()->Get_State(STATE::POSITION));
+
+        // 이건 여기서 패트롤 또는 움직임을 제어
+        m_vMovePoint.x += m_pGameInstance->Random(-5.f, 5.f);
+        m_vMovePoint.z += m_pGameInstance->Random(-5.f, 5.f);
+    }
+        break;
+    case NAYTIBA_STATE::MIMESSIS:
+    {
+
+    }
+    break;
+
+    case NAYTIBA_STATE::BATTLE:
     {
         _vector vPreMovePoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
         vector<_float3> PathList = *pMoveStateDesc->PathFindingPoints;
@@ -45,13 +68,7 @@ void CMonsterMoveState::Start(void* pArg)
         _uint iNumPath = (_uint)m_pGameInstance->Random(1, iNumPathFindingPoint / 2);
         m_vMovePoint = (*pMoveStateDesc->PathFindingPoints)[iNumPath];
     }
-    else
-    {
-        XMStoreFloat3(&m_vMovePoint, pOwner->GetTransform()->Get_State(STATE::POSITION));
-       
-        // 이건 여기서 패트롤 또는 움직임을 제어
-        m_vMovePoint.x += m_pGameInstance->Random(-5.f, 5.f);
-        m_vMovePoint.z += m_pGameInstance->Random(-5.f, 5.f);
+    break;
     }
 }
 
@@ -60,7 +77,7 @@ void CMonsterMoveState::Update(_float fTimeDelta)
     //순찰같은거 있다면 이거 하게
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _bool bIsMove = true;
-    if (m_pOwnerInfo->bIsBattle)
+    if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytiba)
     {
         if (nullptr == m_pTarget)
         {
@@ -171,7 +188,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
-    if (m_pOwnerInfo->bIsBattle)
+    if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytiba)
     {
         if (0 == m_iSectionIndex)
         {

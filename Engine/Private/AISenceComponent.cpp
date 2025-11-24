@@ -26,7 +26,7 @@ HRESULT CAISenceComponent::Initialize(void* pArg)
 		return E_FAIL;
 
 	AI_SENCE_COMPONENT_DESC* pSenceDesc = static_cast<AI_SENCE_COMPONENT_DESC*>(pArg);
-	m_fAiSearchRadius = pSenceDesc->fAiSearchRadius;
+	m_fAiSearchRadius = XMConvertToRadians(pSenceDesc->fAiSearchRadius);
 	m_fAiTargetLostTime = pSenceDesc->m_fAiTargetLostTime;
 	m_fAiTargetSearchDistance = pSenceDesc->fAiTargetSearchDistance;
 
@@ -44,9 +44,9 @@ void CAISenceComponent::SetOwner(CGameObject* pGameObject)
 
 void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 {
-	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
+	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-	for (auto& pTarget : m_pSearchList)
+	for (auto& pTarget : m_pCurSearchList)
 	{
 		_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
@@ -102,6 +102,18 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 	m_pGameInstance->ADD_Collider(m_pTargetSearchCol);
 }
 
+void CAISenceComponent::Add_SenceTargetObject(CGameObject* pSenceObject)
+{
+	auto iter = m_pPreSearchList.find(pSenceObject);
+	if (iter == m_pPreSearchList.end())
+	{
+		m_pPreSearchList.emplace(pSenceObject, 0.f);
+	}
+	else
+		return;
+
+}
+
 _bool CAISenceComponent::IsTagetEmpty()
 {
 	return m_pSearchList.empty();
@@ -128,6 +140,21 @@ void CAISenceComponent::Bind_TargetDetected(function<void(CGameObject*)> Func)
 	m_TargetDetectedFunc = Func;
 }
 
+void CAISenceComponent::SetColliderHitType(HIT_TYPE eHitType)
+{
+	m_pTargetSearchCol->SetColliderHitType(eHitType);
+}
+
+void CAISenceComponent::ADD_SenceIgnoreTraceObejct(HIT_TYPE typeID)
+{
+	m_pTargetSearchCol->ADD_IgnoreObejct(typeID);
+}
+
+void CAISenceComponent::ADD_SenceOnlyTraceObject(HIT_TYPE typeID)
+{
+	m_pTargetSearchCol->ADD_IgnoreObejct(typeID);
+}
+
 HRESULT CAISenceComponent::ADD_Components()
 {
 	CSphereCollider::SPHERE_COLLIDER_DESC SphereColDesc = {};
@@ -148,6 +175,11 @@ HRESULT CAISenceComponent::ADD_Components()
 
 void CAISenceComponent::OverlapEvent(_float3 vDir, CGameObject* pHitObject)
 {
+	// 이건 Hit 이벤트를 안받는게 최선인데
+	// 받으면 무시
+	if (pHitObject->GetTeam() == m_pOwner->GetTeam())
+		return;
+
 	m_pCurSearchList.insert(pHitObject);
 }
 

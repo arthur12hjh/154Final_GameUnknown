@@ -7,8 +7,6 @@ class CAIController;
 NS_END
 
 NS_BEGIN(Client)
-class CMonsterFSM;
-
 class CNayitba final : public CCharacter
 {
 public :
@@ -31,6 +29,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	virtual HRESULT					Damaged(void* pArg);
 
 	_uint							GetMonsterID();
 	const list<CGameObject*>*		GetTargetList();
@@ -40,6 +39,7 @@ public:
 
 	//레퍼런스 카운트 증가
 	CAIController*					GetController();
+	const list<CGameObject*>*		GetTraceObejectList();
 
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
@@ -52,10 +52,11 @@ private:
 	string							m_szEntryAnim = {};
 
 private :
+	HRESULT							Ready_CharacterData();
 	HRESULT							ADD_Components();
 	HRESULT							ADD_PartObjects();
 
-	void							BattleEvent(CGameObject* pTarget, _bool bIsBattle);
+	void							BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
