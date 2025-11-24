@@ -552,6 +552,10 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_StatueB */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
 	/* For.Prototype_Component_Model_CM_Rock4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock4");
