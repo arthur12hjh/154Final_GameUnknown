@@ -62,7 +62,7 @@ void CUIBase::Update(_float fTimeDelta)
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
-		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
+		//m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -70,13 +70,11 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	if (m_eVisibility == VISIBILITY::VISIBLE)
-		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
-#elif
+	/*if (m_eVisibility == VISIBILITY::VISIBLE)
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);*/
+
 	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
-#endif
 }
 
 HRESULT CUIBase::Render()
@@ -141,6 +139,18 @@ void CUIBase::Set_FillAmount(_float fFillAmount)
 {
 	if (m_tUIDesc.m_tUIShaderDesc.bUseFillClip)
 		m_tUIDesc.m_tUIShaderDesc.fFillAmount = fFillAmount;
+}
+
+void CUIBase::Set_TintColor(_float4 vColor)
+{
+	if (m_tUIDesc.Get_ShaderDesc())
+		m_tUIDesc.m_tUIShaderDesc.vTintColor = vColor;
+}
+
+void CUIBase::Set_Texture_Index(_uint iTextureIndex)
+{
+	if (m_tUIDesc.Get_UI_Texture_Desc())
+		m_tUIDesc.m_tUITextureDesc.iTextureIndex = iTextureIndex;
 }
 
 // 툴에서 텍스쳐 변경할 때 사용
@@ -350,6 +360,14 @@ HRESULT CUIBase::Initialize_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
 		return E_FAIL;
 
+	_bool bUseTintColor{ false };
+	_float4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &vTintColor, sizeof(_float4))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -401,13 +419,18 @@ HRESULT CUIBase::Bind_ShaderResources()
 
 		if (m_tUIDesc.m_tUIShaderDesc.bUseFillClip)
 		{
-			_bool bUseFilClip{ m_tUIDesc.m_tUIShaderDesc.bUseFillClip };
-			_float fFillAmount{ m_tUIDesc.m_tUIShaderDesc.fFillAmount };
-
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseFillClip", &bUseFilClip, sizeof(_bool))))
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseFillClip", &m_tUIDesc.m_tUIShaderDesc.bUseFillClip, sizeof(_bool))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &m_tUIDesc.m_tUIShaderDesc.fFillAmount, sizeof(_float))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseTintColor)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &m_tUIDesc.m_tUIShaderDesc.bUseTintColor, sizeof(_bool))))
+				return E_FAIL;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &m_tUIDesc.m_tUIShaderDesc.vTintColor, sizeof(_float4))))
 				return E_FAIL;
 		}
 	}

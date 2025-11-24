@@ -3,7 +3,7 @@
         "Children": [
             {
                 "TextureDesc": {
-                    "iPass": 2,
+                    "iPass": 0,
                     "iTextureIndex": 0,
                     "szProtoTag": "Prototype_Component_UI_Texture_Logo_Main_Title",
                     "szTextureComTag": "Com_Texture_UI_Logo_Main_Title"
@@ -28,7 +28,7 @@
                 "Children": [
                     {
                         "TextureDesc": {
-                            "iPass": 2,
+                            "iPass": 0,
                             "iTextureIndex": 0,
                             "szProtoTag": "Prototype_Component_UI_Texture_Dot_Select",
                             "szTextureComTag": "Com_Texture_UI_Dot_Select"
@@ -91,7 +91,7 @@
                     },
                     {
                         "TextDesc": {
-                            "szText": "새게임 시작",
+                            "szText": "새 게임 시작",
                             "vColor": [
                                 0.4954545497894287,
                                 0.4954545497894287,
@@ -212,7 +212,7 @@
             }
         ],
         "TextureDesc": {
-            "iPass": 2,
+            "iPass": 0,
             "iTextureIndex": 0,
             "szProtoTag": "Prototype_Component_UI_Texture_BackGround",
             "szTextureComTag": "Com_Texture_UI_BackGround"

@@ -26,6 +26,9 @@ namespace Client
 
 		bool bUseFillClip{ false };
 		float fFillAmount{ 1.f };
+
+		bool bUseTintColor{ false };
+		XMFLOAT4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
 	}UI_SHADER_DESC;
 
 	// UI Event

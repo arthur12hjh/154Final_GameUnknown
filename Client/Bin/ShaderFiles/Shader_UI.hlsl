@@ -19,6 +19,9 @@ float2 g_UVOffset = { 0.f, 0.f }; // 스크롤, 이동
 bool g_bUseFillClip = { false }; // 텍스쳐 클리핑
 float g_fFillAmount = { 1.f }; // 클리핑 얼마나 할지
 
+bool g_bUseTintColor = { false };
+vector g_vTintColor = 1.f;
+
 //float g_TileCount = 23.f;
 //float g_TileTotalCount = 23.f;
 
@@ -75,14 +78,52 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
-    
-    Out.vColor *= g_Alpha;
-    
+
+    float2 uv = In.vTexcoord;
+
+    // ----------------------------
+    // 1) UV 조작
+    // ----------------------------
+    if (g_UVScale.x != 1.f || g_UVScale.y != 1.f ||
+        g_UVOffset.x != 0.f || g_UVOffset.y != 0.f)
+    {
+        uv = uv * g_UVScale + g_UVOffset;
+
+        // 반복
+        uv = frac(uv);
+    }
+
+    // ----------------------------
+    // 2) 텍스처 샘플링
+    // ----------------------------
+    Out.vColor = g_Texture.Sample(DefaultSampler, uv);
+
+    // ----------------------------
+    // 3) Fill Clip (오른쪽부터 잘림)
+    // ----------------------------
+    if (g_bUseFillClip)
+    {
+        if (In.vTexcoord.x > g_fFillAmount)
+            discard;
+    }
+
+    // ----------------------------
+    // 4) TintColor
+    // ----------------------------
+    if (g_bUseTintColor)
+    {
+        Out.vColor.rgb *= g_vTintColor.rgb;
+        Out.vColor.a *= g_vTintColor.a;
+    }
+
+    // ----------------------------
+    // 5) Alpha 적용
+    // ----------------------------
+    Out.vColor.a *= g_Alpha;
+
     if (Out.vColor.a <= 0.05f)
         discard;
-    
+
     return Out;
 }
 
@@ -155,16 +196,6 @@ void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout TriangleStream<GS_OUT_DEBUG> O
     OutStream.RestartStrip();
 }
 
-//struct PS_IN_DEBUG
-//{
-//    float2 vPosition : POSITION;
-//};
-//
-//struct PS_OUT_DEBUG
-//{
-//    float4 vColor : SV_TARGET0;
-//};
-
 float4 PS_MAIN_DEBUG() : SV_TARGET
 {
     return g_UIDebugLineColor;
@@ -172,35 +203,21 @@ float4 PS_MAIN_DEBUG() : SV_TARGET
 
 /*------------------[E_DEBUG]---------------*/
 
-/*------------------[S_UV]---------------*/
-PS_OUT PS_UI_UV(PS_IN In)
+/*------------------[S_GLOW]---------------*/
+PS_OUT PS_UI_GLOW(PS_IN In)
 {
     PS_OUT Out;
-
-   // 기본 UV → 스케일 → 오프셋
-    float2 uv = In.vTexcoord * g_UVScale + g_UVOffset;
-
-    // 반복하려면 fract()
-    float2 tiledUV = frac(uv);
-
     
-    Out.vColor = g_Texture.Sample(DefaultSampler, tiledUV);
-    Out.vColor *= g_Alpha;
-
-    // Fill Clip (오른쪽부터 잘림)
-    if (g_bUseFillClip == true)
-    {
-        if (In.vTexcoord.x > g_fFillAmount)
-            discard;
-    }
+    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     
-    if (Out.vColor.a <= 0.05f)
+    if (Out.vColor.r <= 0.05f || Out.vColor.g <= 0.05f
+        || Out.vColor.b <= 0.05f || Out.vColor.a <= 0.05f)
         discard;
 
     return Out;
 }
 
-/*------------------[E_UV]---------------*/
+/*------------------[E_GLOW]---------------*/
 
 technique11 DefaultTechnique
 {
@@ -208,7 +225,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
@@ -224,23 +241,13 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DEBUG();
     }
 
-    pass UI_Blend
-    {
-        SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
-    }
-
-    pass UI_UV
+    pass Glow
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_UI_UV();
+        PixelShader = compile ps_5_0 PS_UI_GLOW();
     }
 }

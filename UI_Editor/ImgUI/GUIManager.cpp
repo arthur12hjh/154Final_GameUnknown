@@ -63,13 +63,15 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_ViewModes.push_back(TEXT("Editor"));
     m_ViewModes.push_back(TEXT("Debug"));
 
-    m_AnimTrackTags.reserve(3);
+    m_AnimTrackTags.reserve(10);
     m_AnimTrackTags.push_back(TEXT("Position"));
     m_AnimTrackTags.push_back(TEXT("Size"));
     m_AnimTrackTags.push_back(TEXT("Alpha"));
     m_AnimTrackTags.push_back(TEXT("Text_Color"));
     m_AnimTrackTags.push_back(TEXT("Texture_UV"));
     m_AnimTrackTags.push_back(TEXT("FillClip"));
+    m_AnimTrackTags.push_back(TEXT("TintColor"));
+    m_AnimTrackTags.push_back(TEXT("SpriteAction"));
 
     return S_OK;
 }
@@ -89,6 +91,7 @@ void CGUIManager::Update(_float fTimeDelta)
     if (m_iPrevLevel != m_iCurrentLevel)
     {
         m_pLayers.clear();
+        Safe_Release(m_pUIHUD);
 
         m_pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
@@ -838,6 +841,12 @@ void CGUIManager::Set_Texture()
         GUI::InputInt("Pass", &iPass);
 
         m_pTargetUI->Set_Pass(static_cast<_uint>(iPass));
+
+        _int iZOrder = static_cast<_int>(m_pTargetUI->Get_UIBase_Desc().iDepth);
+
+        GUI::InputInt("ZOrder", &iZOrder);
+
+        m_pTargetUI->Set_Depth(static_cast<_uint>(iZOrder));
     }
 
     if(ResDesc.pTexture)
@@ -1362,6 +1371,20 @@ void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
             GUI::TreePop();
         }
     }
+
+    if (szTrackTag == TEXT("TintColor"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::ColorPicker4("MyColorPicker", (float*)&m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam);
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::ColorPicker4("MyColorPicker", (float*)&m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam);
+            GUI::TreePop();
+        }
+    }
 }
 
 void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
@@ -1417,6 +1440,11 @@ void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
         {
             TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fFillAmount;
             TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fFillAmount;
+        }
+        if (TrackDesc.szTrackTag == TEXT("Text_Color"))
+        {
+            TrackDesc.vStartParam = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.vTintColor;
+            TrackDesc.vEndParam = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.vTintColor;
         }
 
         m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Add_UI_Track_Desc(szTrackTag, TrackDesc);
@@ -1616,7 +1644,7 @@ void CGUIManager::Set_Shader_Params()
         if (Desc.m_tUIShaderDesc.bUseFillClip)
         {
             GUI::DragFloat("fFillAmount", &Desc.m_tUIShaderDesc.fFillAmount, 0.1f, 0.f, 1.f, "%.2f");
-            if (GUI::Button("Reset UV")) {
+            if (GUI::Button("Reset FillClip")) {
                 Desc.m_tUIShaderDesc.bUseFillClip = false;
                 Desc.m_tUIShaderDesc.fFillAmount = m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fFillAmount;
             }
@@ -1625,7 +1653,23 @@ void CGUIManager::Set_Shader_Params()
         GUI::TreePop();
     }
 
-    if (Desc.m_tUIShaderDesc.bUseFillClip || Desc.m_tUIShaderDesc.bUseUV)
+    if (GUI::TreeNode("TintColor"))
+    {
+        GUI::Checkbox("Use TintColor", &Desc.m_tUIShaderDesc.bUseTintColor);
+        if (Desc.m_tUIShaderDesc.bUseTintColor)
+        {
+            GUI::ColorPicker4("MyColorPicker", (float*)&Desc.m_tUIShaderDesc.vTintColor);
+
+            if (GUI::Button("Reset TintColor")) {
+                Desc.m_tUIShaderDesc.bUseTintColor = false;
+                Desc.m_tUIShaderDesc.vTintColor = m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.vTintColor;
+            }
+        }
+
+        GUI::TreePop();
+    }
+
+    if (Desc.m_tUIShaderDesc.bUseFillClip || Desc.m_tUIShaderDesc.bUseUV || Desc.m_tUIShaderDesc.bUseTintColor)
         Desc.m_isHasShaderDesc = true;
     else
         Desc.m_isHasShaderDesc = false;
@@ -1653,8 +1697,8 @@ void CGUIManager::Free()
     Safe_Release(m_pContext);
 
     Safe_Release(m_pUIHUD);
-    Safe_Release(m_pTargetUI);
     Safe_Release(m_pUIResourceStore);
+    Safe_Release(m_pTargetUI);
     
     for (auto& iter : m_pLayers)
         Safe_Release(iter.second);

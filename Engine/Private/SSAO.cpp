@@ -155,6 +155,7 @@ void CSSAO::Create_RandomNoise()
     }
 }
 
+#ifdef _DEBUG
 HRESULT CSSAO::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
     if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SSAO_BlurY"), fX, fY, fSizeX, fSizeY)))
@@ -170,6 +171,7 @@ HRESULT CSSAO::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 
     return S_OK;
 }
+#endif
 
 CSSAO* CSSAO::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
