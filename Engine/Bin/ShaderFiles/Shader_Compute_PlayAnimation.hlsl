@@ -178,6 +178,8 @@ float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
     }
 }
 
+RWTexture2D<float4> g_CurrBoneTex : register(u1);
+
 [numthreads(128, 1, 1)]
 void CombinedMatrices(uint3 Gid : SV_GroupID,
                       uint3 DTid : SV_DispatchThreadID,
@@ -218,6 +220,13 @@ void CombinedMatrices(uint3 Gid : SV_GroupID,
     // 4) 최종적으로 PreTransform까지 적용
     Combined = mul(Combined, g_PreTransformMatrix);
 
+    float4x4 M = Combined;
+    // BoneTexture에 4픽셀로 저장 (1본 = 4라인)
+    g_CurrBoneTex[int2(0, iBoneIndex)] = M[0];
+    g_CurrBoneTex[int2(1, iBoneIndex)] = M[1];
+    g_CurrBoneTex[int2(2, iBoneIndex)] = M[2];
+    g_CurrBoneTex[int2(3, iBoneIndex)] = M[3];
+    
     g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocal;
     g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = Combined;
 }

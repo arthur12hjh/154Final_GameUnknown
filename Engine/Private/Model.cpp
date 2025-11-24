@@ -389,7 +389,6 @@ HRESULT CModel::Initialize(void* pArg)
 	if (m_eType == MODEL_TYPE::ANIM)
 		Ready_ComputeShader();
 
-
     return S_OK;
 }
 
@@ -407,7 +406,8 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 	if (iMeshIndex >= m_iNumMeshes)
 		return E_FAIL;
 
-	if (m_pBoneMatricesSRV == nullptr) {
+	if (m_pBoneMatricesSRV == nullptr) 
+	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -417,13 +417,24 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 			return hr; 
 	}
 
+	if (m_pPreBoneMatricesSRV == nullptr)
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+		SRVDesc.Buffer.NumElements = m_Bones.size();
+		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pOutSource, &SRVDesc, &m_pPreBoneMatricesSRV);
+		if (FAILED(hr))
+			return hr;
+	}
+
 	ID3D11ShaderResourceView* srvs[1] = { m_pBoneMatricesSRV };
+	ID3D11ShaderResourceView* preSRVs[1] = { m_pPreBoneMatricesSRV }; 
 
 	HRESULT hr = pShader->Bind_SRVs(pConstantName, srvs, 1);
-	if (FAILED(hr))
-		OutputDebugString(L"Bind_BoneSRV: Bind_SRVs FAILED\n");
-	else
-		OutputDebugString(L"Bind_BoneSRV: Bind_SRVs OK\n");
+
+	pShader->Bind_SRVs("g_PreBoneMatrixBuffer", preSRVs, 1);
+
 
 	if (!m_GlobalOffsetMatrices.empty())
 	{
@@ -435,12 +446,6 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 		hr = pShader->Bind_Matrices("g_OffsetMatrices",
 			m_GlobalOffsetMatrices.data(),
 			iNumOffsets);
-
-		if (FAILED(hr))
-		{
-			OutputDebugString(L"Bind_BoneSRV: Bind_Matrices(g_OffsetMatrices) FAILED\n");
-			return hr;
-		}
 	}
 
 	return S_OK;
@@ -510,15 +515,44 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 {
 	/*
-		   _____      _     ____                     _____        __                           _   _               _    _
+			____      _     ____                     _____        __                           _   _               _    _
 		  / ____|    | |   |  _ \                   |_   _|      / _|                         | | (_)             | |  | |
 		 | |  __  ___| |_  | |_) | ___  _ __   ___    | |  _ __ | |_ ___  _ __ _ __ ___   __ _| |_ _  ___  _ __   | |__| | ___ _ __ ___
 		 | | |_ |/ _ \ __| |  _ < / _ \| '_ \ / _ \   | | | '_ \|  _/ _ \| '__| '_ ` _ \ / _` | __| |/ _ \| '_ \  |  __  |/ _ \ '__/ _ \
 		 | |__| |  __/ |_  | |_) | (_) | | | |  __/  _| |_| | | | || (_) | |  | | | | | | (_| | |_| | (_) | | | | | |  | |  __/ | |  __/
 		  \_____|\___|\__| |____/ \___/|_| |_|\___| |_____|_| |_|_| \___/|_|  |_| |_| |_|\__,_|\__|_|\___/|_| |_| |_|  |_|\___|_|  \___|
-
-	
 	*/
+
+	//이전 본 프레임 저장.
+	if (nullptr != m_pOutSource)
+	{
+		m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
+
+		D3D11_MAPPED_SUBRESOURCE MappedResource;
+		if (SUCCEEDED(m_pContext->Map(m_pPreBoneMatrices, 0, D3D11_MAP_READ, 0, &MappedResource)))
+		{
+			COMPUTE_BONEMATRIX_OUT* pOut =
+				reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
+
+			for (_uint i = 0; i < m_Bones.size(); i++)
+			{
+				m_Bones[i]->Set_TransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
+				);
+				m_Bones[i]->Set_CombinedTransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
+				);
+			}
+
+			m_pContext->Unmap(m_pPreBoneMatrices, 0);
+		}
+	}
+
+
+
+	if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+		return E_FAIL;
+
 	if (isSimd)
 	{
 		if (-1 == m_iCurrentAnimIndex ||
@@ -722,6 +756,15 @@ HRESULT CModel::Ready_ComputeShader()
 	if (nullptr == m_pComputeShaderCom)
 		return E_FAIL;
 
+	D3D11_BUFFER_DESC PreBoneBufferDesc = {};
+	PreBoneBufferDesc.Usage = D3D11_USAGE_STAGING;
+	PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+	PreBoneBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	PreBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+	PreBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	m_pDevice->CreateBuffer(&PreBoneBufferDesc, nullptr, &m_pPreBoneMatrices);
+
 #pragma region GLOBAL BUFFER SETTING
 
 	// 기존의 코드로 비유하면, 전역 변수들을 세팅해주고 셰이더에 바인딩 해주는 과정이다.
@@ -918,7 +961,6 @@ HRESULT CModel::Ready_ComputeShader()
 
 		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
 			return E_FAIL;
-
 	}
 	
 	D3D11_BUFFER_DESC readbackDesc = {};
@@ -1279,6 +1321,7 @@ void CModel::Free()
 	Safe_Release(m_pChannelSource);
 	Safe_Release(m_pKeyFrameSource);
 	Safe_Release(m_pOutReadBack);
+	Safe_Release(m_pPreBoneMatrices);
 
 	Safe_Release(m_pBoneMatricesSRV);
 
