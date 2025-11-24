@@ -28,8 +28,10 @@ CModel::CModel(const CModel& Prototype)
 	, m_pChannelSource{nullptr}
 	, m_pKeyFrameSource{nullptr}
 	, m_pOutSource{nullptr}
+	, m_pPreBoneMatrices{nullptr}
 	, m_pOutReadBack{nullptr}
 	, m_pBoneMatricesSRV{nullptr}
+	, m_pPreBoneMatricesSRV{nullptr}
 	, m_pComputeShaderCom{nullptr}
 {
 	for (auto& pPrototypeBone : Prototype.m_Bones)
@@ -423,7 +425,7 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
 		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 		SRVDesc.Buffer.NumElements = m_Bones.size();
-		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pOutSource, &SRVDesc, &m_pPreBoneMatricesSRV);
+		HRESULT hr = m_pDevice->CreateShaderResourceView(m_pPreBoneMatrices, &SRVDesc, &m_pPreBoneMatricesSRV);
 		if (FAILED(hr))
 			return hr;
 	}
@@ -527,27 +529,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
 	if (nullptr != m_pOutSource)
 	{
 		m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
-
-		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		if (SUCCEEDED(m_pContext->Map(m_pPreBoneMatrices, 0, D3D11_MAP_READ, 0, &MappedResource)))
-		{
-			COMPUTE_BONEMATRIX_OUT* pOut =
-				reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
-
-			for (_uint i = 0; i < m_Bones.size(); i++)
-			{
-				m_Bones[i]->Set_TransformationMatrix(
-					XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
-				);
-				m_Bones[i]->Set_CombinedTransformationMatrix(
-					XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
-				);
-			}
-
-			m_pContext->Unmap(m_pPreBoneMatrices, 0);
-		}
 	}
-
 
 
 	if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
@@ -757,9 +739,10 @@ HRESULT CModel::Ready_ComputeShader()
 		return E_FAIL;
 
 	D3D11_BUFFER_DESC PreBoneBufferDesc = {};
-	PreBoneBufferDesc.Usage = D3D11_USAGE_STAGING;
+	PreBoneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
-	PreBoneBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	PreBoneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	PreBoneBufferDesc.CPUAccessFlags = 0;
 	PreBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
 	PreBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 

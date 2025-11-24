@@ -54,13 +54,10 @@ VS_OUT VS_MAIN(VS_IN In)
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
     
-    
-    
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
-    
     
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
@@ -147,36 +144,38 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
 
+    float4x4 PreMatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_PreBoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_PreBoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_PreBoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
+    float4x4 PreMatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_PreBoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
     
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
+    
+    matrix PreBoneMatrix = PreMatrixX * In.vBlendWeight.x +
+        PreMatrixY * In.vBlendWeight.y +
+        PreMatrixZ * In.vBlendWeight.z +
+        PreMatrixW * In.vBlendWeight.w;
+   
     /* 스키닝 */
-    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vCurrentPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vPrePosition = mul(vector(In.vPosition, 1.f), PreBoneMatrix);
     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
         
-    Out.vPosition = mul(vPosition, matWVP);
+    Out.vPosition = mul(vCurrentPosition, matWVP);
     float4 vNewPos = Out.vPosition;
     
     matOldWV = mul(g_PreWorldMatrix, g_PreViewMatrix);
     matOldWVP = mul(matOldWV, g_ProjMatrix);
-    vector vOldPos = mul(vPosition, matOldWVP);
+    vector vOldPos = mul(vPrePosition, matOldWVP);
     
-    //화면상의 이동량과, 뷰 스페이스 상의 노멀을 연산하여 앞, 뒤 움직임 판정.
     float3 vDir = vOldPos.xyz - vNewPos.xyz;
     vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
-    
-    // 잔상 남기는 (공간째 블러하는 ) 코드. 근데 너무 과해서 일단 뺌..
-    //float a = dot(normalize(vDir), vNormal.xyz);
-    
-    //if (a < 0.f)
-    //    Out.vPosition = vOldPos;
-    //else
-    //    Out.vPosition = vNewPos; 
     
     float2 fVelocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
     Out.vDirection.xy = fVelocity * 0.5f;
