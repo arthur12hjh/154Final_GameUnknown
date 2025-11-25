@@ -177,26 +177,26 @@ HRESULT CLoader::Loading()
 	case LEVEL::GAMEPLAY:
 	{
 		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
 		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
 
 		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Map(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([=](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
