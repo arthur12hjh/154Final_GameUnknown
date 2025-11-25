@@ -13,6 +13,7 @@ class CMonsterTranslationState final : public CState
 public :
 	typedef struct MonsterTranslationStateDesc
 	{
+		CGameObject*						pTarget;
 		const char*							szTranslationAnimName;
 		const WCHAR*						szNextStateName;
 		void*								pArg;
@@ -38,6 +39,11 @@ public:
 private :
 	const WCHAR*								m_szNextStateName = {TEXT("")};
 	void*										m_pArg = {nullptr};
+
+	_bool										m_bIsLerp = false;
+	CGameObject*								m_pTarget = nullptr;
+	_float2										m_vLerpTime = {};
+	_float3										m_vLerpStartLook = {};
 
 	function<void(const WCHAR*, void* pArg)>	m_CompletedFunc = { nullptr };
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "Client_Defines.h"
-#include "GameStruct.h"
 #include "Entity.h"
 
 NS_BEGIN(Client)

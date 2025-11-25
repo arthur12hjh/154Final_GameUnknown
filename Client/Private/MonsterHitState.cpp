@@ -41,33 +41,39 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
+    m_bIsEnableChange = false;
     if (0 == strcmp("", pSkillData->szHitAnimationName))
     {
         _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
         _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
         if (0 <= fScalar)
         {
-            szAnimationName += "_Fw";
-            switch (pSkillData->eATK_Direction)
+            //szAnimationName += "_Fw";
+
+            // Right 백터랑 맞은 방향이랑 내적하면 스칼라가 나오고
+            // 그걸 acos해서 라디안으로 바꾸자
+            _float fRadian = atan2f(pDesc->vHitDir.y, pDesc->vHitDir.x);
+            
+            fRadian = XMConvertToDegrees(fRadian);
+            if (45.f <= fRadian && 135.f > fRadian)
             {
-            case ATTACK_DIRECTION::ATK_RIGHT:
-                szAnimationName += "_Rw";
-                break;
-            case ATTACK_DIRECTION::ATK_LEFT:
+                szAnimationName += "_Fw_Uw";
+            }
+            else if (135.f <= fRadian && 225.f > fRadian)
+            {
                 szAnimationName += "_Lw";
-                break;
-            case ATTACK_DIRECTION::ATK_DOWN:
-                szAnimationName += "_Dw";
-                break;
-            case ATTACK_DIRECTION::ATK_UP:
-                szAnimationName += "_Uw";
-                break;
+            }
+            else if (225.f <= fRadian && 315.f > fRadian)
+            {
+                szAnimationName += "_Fw_Dw";
+            }
+            else
+            {
+                szAnimationName += "_Rw";
             }
         }
         else
             szAnimationName += "_Bw";
-
-        
     }
     else
     {
@@ -80,7 +86,13 @@ void CMonsterHitState::Update(_float fTimeDelta)
 {
     //맞으면 여기서 들어온 스킬 따라서 분기해서 하기
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
-    m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
+ 
+    if (pEntity->Play_Animation(fTimeDelta))
+    {
+        m_bIsFinished = true;
+        m_bIsEnableChange = true;
+    }
+       
 }
 
 void CMonsterHitState::End()

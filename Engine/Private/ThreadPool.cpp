@@ -72,22 +72,23 @@ void CThreadPool::Update_WorkThread()
 
 		if (m_bIsThreadStopAll && m_ThreadJobs.empty())
 		{
-		
+			lock.unlock();
 			return;
 		}
 
 		// 맨 앞의 job 을 뺀다.
 		THREAD_JOB job = m_ThreadJobs.front();
 		m_ThreadJobs.pop();
+
+		auto& pData = m_DefferdContexts[this_thread::get_id()];
 		lock.unlock();
 
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
-			job.JobFunction(&m_DefferdContexts[this_thread::get_id()]);
+			job.JobFunction(&pData);
 		}
-	
 	}
 }
 

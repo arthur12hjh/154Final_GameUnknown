@@ -111,7 +111,7 @@ void CGameManager::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pPlayer);
+    //Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
 

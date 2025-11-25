@@ -7,9 +7,9 @@
 #include "NayitbaPartBody.h"
 
 #include "TargetComponent.h"
+#include "GameManager.h"
 #include "BossController.h"
 #include "MonsterHitState.h"
-#include "GameManager.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
@@ -56,18 +56,72 @@ void CNayitba::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
-	{
-		
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	strcpy_s(SkillDesc.szAnimationName, "");
 
-	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytiba)
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 0.f, -1.f, 0.f };
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 0.f, 1.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 1.f, 0.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 50.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { -1.f, 0.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+
+	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
 		{
 			BattleEvent(nullptr, NAYTIBA_STATE::DEFAULT);
 		}
 	}
+
+	// 이전프레임의 상태를 저장해둔다.
+	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
@@ -91,34 +145,12 @@ HRESULT CNayitba::Render()
 
 HRESULT CNayitba::Damaged(void* pArg)
 {
-	if (nullptr == pArg)
-	{
-		// 이거 나중에 재훈이형이랑 연동할거임
-		CHARACTER_SKILL_DESC SkillDesc = {};
-		SkillDesc.eATK_Direction = ATTACK_DIRECTION::ATK_LEFT;
+	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
-		DEFAULT_DAMAGE_DESC pHitDesc = {};
-		pHitDesc.pSkillData = &SkillDesc;
-		pHitDesc.pAttacker = m_pGameManager->GetGameCharacter();
-
-		m_MonsterInfo.iCurrentHealth -= 50.f;
-		m_pAISenceCom->Add_SenceTargetObject(pHitDesc.pAttacker);
-		m_pAIController->Damage(&pHitDesc);
-
-		Safe_Release(pHitDesc.pAttacker);
-	}
-	else
-	{
-		DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-		CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
-
-		//if(pSkillDesc->eSkillType)
-
-		m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
-		m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
-		m_pAIController->Damage(pArg);
-	}
-
+	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
+	m_pAIController->Damage(pArg);
 
 	return S_OK;
 }
@@ -131,6 +163,30 @@ _uint CNayitba::GetMonsterID()
 const list<CGameObject*>* CNayitba::GetTargetList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
+}
+
+const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom)
+{
+	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
+	size_t iSkillIndex = m_MonsterInfo.iAttackList.size();
+	if (0 == iSkillIndex)
+		return nullptr;
+
+	if (bIsRandom)
+	{
+		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)iSkillIndex);
+		pSkill = m_MonsterInfo.iAttackList[iRandomIndex];
+	}
+	else
+	{
+		if (iSkillIndex <= m_iSkillIndex)
+			m_iSkillIndex = 0;
+
+		pSkill = m_MonsterInfo.iAttackList[m_iSkillIndex];
+		m_iSkillIndex++;
+	}
+
+	return pSkill;
 }
 
 CAIController* CNayitba::GetController()
@@ -159,9 +215,9 @@ HRESULT CNayitba::Ready_CharacterData()
 		}
 	
 		if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
-			m_MonsterInfo.eNaytiba = NAYTIBA_STATE::MIMESSIS;
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::MIMESSIS;
 		else
-			m_MonsterInfo.eNaytiba = NAYTIBA_STATE::DEFAULT;
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
 		// 체력 설정
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
@@ -252,13 +308,13 @@ HRESULT CNayitba::ADD_PartObjects()
 
 void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
-	m_MonsterInfo.eNaytiba = eState;
+	m_MonsterInfo.eNaytibaState = eState;
 	// 이거 다른 플래그 넘겨서
 	// 타겟을 찾으면 바로 확인해서 달려와야할거같음
 	// Battle Start & Battle End 상태 애니메이션 넣어 주자
 
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
-	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytiba)
+	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 		m_szEntryAnim += "_BattleStart";
 	else
 		m_szEntryAnim += "_BattleEnd";

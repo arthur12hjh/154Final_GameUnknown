@@ -90,6 +90,7 @@ namespace Client
 
 	// 인게임용
 	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
+	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
 	typedef struct Naytiba_Desc
 	{
 		unsigned int		iCurrentPhase;
@@ -101,8 +102,8 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		NAYTIBA_STATE		eNaytiba;
-
+		NAYTIBA_STATE		eNaytibaState;
+		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
 	}NAYTIBA_DESC;
 
@@ -121,6 +122,9 @@ namespace Client
 	typedef struct Default_Damage_Desc
 	{
 		CGameObject*		pAttacker;
+		_float3				vHitPoint;
+		_float3				vHitDir;
+
 		void*				pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
