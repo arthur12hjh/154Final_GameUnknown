@@ -45,7 +45,7 @@ HRESULT CPhysx_Manager::Initialize()
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
 
-    TestSetting();
+    //TestSetting();
 
     return S_OK;
 }

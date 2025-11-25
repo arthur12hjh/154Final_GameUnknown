@@ -10,6 +10,7 @@
 #include "BossController.h"
 #include "MonsterHitState.h"
 #include "GameManager.h"
+#include "Player.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)

@@ -153,5 +153,6 @@ void CCameraManager::Free()
 
     for (auto& iter : m_pCameras)
         Safe_Release(iter.second);
+
     m_pCameras.clear();
 }

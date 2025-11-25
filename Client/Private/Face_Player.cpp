@@ -10,12 +10,12 @@
 #include "Player.h"
 
 CFace_Player::CFace_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
 CFace_Player::CFace_Player(const CFace_Player& Prototype)
-	: CPartObject{ Prototype }
+	: CPlayer_Parts{ Prototype }
 {
 }
 
@@ -29,7 +29,6 @@ HRESULT CFace_Player::Initialize(void* pArg)
 {
 	FACE_PLAYER_DESC* pDesc = static_cast<FACE_PLAYER_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
 	//m_pSocketMatrix = pDesc->pSocketMatrix;
 	//strcpy_s(m_szBoneTag, pDesc->szBoneTag);
 
@@ -58,16 +57,6 @@ void CFace_Player::Priority_Update(_float fTimeDelta)
 
 void CFace_Player::Update(_float fTimeDelta)
 {
-	//if (*m_pParentState & CCharacter::STATE_ATTACK)
-	//	m_pModelCom->Set_AnimationIndex(0, false);
-	//
-	//if (*m_pParentState & CCharacter::STATE_IDLE)
-	//	m_pModelCom->Set_AnimationIndex(3);
-	//
-	//if (*m_pParentState & CCharacter::STATE_WALK)
-	//	m_pModelCom->Set_AnimationIndex(4);	
-
-
 	vector<CBone*>* pFaceBone = m_pModelCom->Get_Bones();
 
 	for (auto& pBone : *pFaceBone)
@@ -88,7 +77,6 @@ void CFace_Player::Update(_float fTimeDelta)
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
 }
 
 void CFace_Player::Late_Update(_float fTimeDelta)

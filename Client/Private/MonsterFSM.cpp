@@ -9,6 +9,7 @@
 #include "MonsterMoveState.h"
 #include "MonsterHitState.h"
 #include "MonsterDeadState.h"
+#include "PlayerFSM.h"
 #pragma endregion
 
 CMonsterFSM::CMonsterFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :

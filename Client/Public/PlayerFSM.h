@@ -5,7 +5,7 @@
 
 NS_BEGIN(Client)
 
-class CPlayerFSM final : public CStateMachine
+class CPlayerFSM final : public CComponent 
 {
 public:
 	enum class FSM_STATE
@@ -22,27 +22,25 @@ public:
 
 private:
 	CPlayerFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CPlayerFSM(const CPlayerFSM& rhs);
 	virtual ~CPlayerFSM() = default;
 
 public:
+	HRESULT						Initialize_Prototype() override;
+	HRESULT						Initialize(void* pArg = nullptr) override;
+	void						Update(_float fTimeDelta);
 
-	virtual HRESULT				Initialize(void* pArg = nullptr) override;
-	virtual void				Update(_float fTimeDelta) override;
-
-	HRESULT						Change_State(const WCHAR* LayerTag, void* pArg = nullptr);
-	const						FSM_STATE& GetFSMState() { return m_eState; }
 
 private:
-	FSM_STATE					m_eState = { FSM_STATE::M_PROTO_BATTLE_IDLE };
+	FSM_STATE					m_eStateTag = { FSM_STATE::M_PROTO_BATTLE_IDLE };
+	class CPlayerState*			m_pCurrentState = { nullptr };
 
 private:
-	virtual HRESULT				Add_State(const WCHAR* StateTag, CState* pNewState) override;
-
 	HRESULT						Ready_State();
 
 public:
-	static	CPlayerFSM* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	//virtual	CStateMachine* Clone(void* pArg) override;
+	static	CPlayerFSM*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual  CComponent*	Clone(void* pArg) override;
 	virtual	void			Free() override;
 
 };

@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CCollider;
 class CNavigation;
+class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
@@ -17,6 +18,12 @@ private:
 	virtual ~CPlayer() = default;
 
 public:
+	// Desc ¹ÝÈ¯.
+	const struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
+	const class CBody_Player* Get_BodyPtr() { return m_pBody; }
+	_float Get_AnimationRatio();
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Priority_Update(_float fTimeDelta) override;
@@ -25,43 +32,19 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	_uint				m_iState = {};
-	CNavigation* m_pNavigationCom = { nullptr };
-	CCollider* m_pColliderCom = { nullptr };
+	struct Player_Desc		m_PlayerDesc = {};
 
+	class CBody_Player*		m_pBody = { nullptr };
 
-	class CBody_Player* m_pPart_Body = { nullptr };
-	class CTrailEffect* m_pTrail = { nullptr };
-	_float				m_fTime = 0.f;
-#pragma region GARA_STATE
+	class CTrailEffect*		m_pTrail = { nullptr };
+	class CPlayerFSM*		m_pPlayerFSM = { nullptr };
 
-
-	_float				m_fEvadeTime;
-	_float				m_fAttackTime;
-
-	_int				m_iAttackComboIndex;
-	_bool				m_bIsEvade;
-	_bool				m_bIsAttacking;
-
-	const _char* ComboAnims[5] = {
-	"Proto_Sword_Lightattack_01_Root",
-	"Proto_Sword_Lightattack_02_Root",
-	"Proto_Sword_Lightattack_03_Root",
-	"Proto_Sword_Lightattack_04_Root",
-	"Proto_Sword_Lightattack_05"
-	};
-
-	const _float ComboDelayTime[5] =
-	{
-		1.5f, 1.5f, 1.7f, 1.5f, 1.5f
-	};
-
-
-#pragma endregion
-
+	CCharacterController*	m_pCCT = { nullptr };
+	CCollider*				m_pColliderCom = { nullptr };
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+	HRESULT Ready_PlayerDesc();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
