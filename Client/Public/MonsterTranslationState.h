@@ -13,7 +13,11 @@ class CMonsterTranslationState final : public CState
 public :
 	typedef struct MonsterTranslationStateDesc
 	{
-		const char*				szTranslationAnimName;
+		const char*							szTranslationAnimName;
+		const WCHAR*						szNextStateName;
+		void*								pArg;
+
+		function<void(const WCHAR*, void* pArg)>	CompletedFunc;
 	}MONSTER_TRANSLATION_STATE;
 
 private:
@@ -30,6 +34,12 @@ public:
 
 	virtual		void							Update(_float fTimeDelta) override;
 	virtual		void							End() override;
+
+private :
+	const WCHAR*								m_szNextStateName = {TEXT("")};
+	void*										m_pArg = {nullptr};
+
+	function<void(const WCHAR*, void* pArg)>	m_CompletedFunc = { nullptr };
 
 public:
 	static	CMonsterTranslationState*			Create(void* pArg);
