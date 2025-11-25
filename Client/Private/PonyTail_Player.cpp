@@ -10,12 +10,12 @@
 #include "Player.h"
 
 CPonyTail_Player::CPonyTail_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
 CPonyTail_Player::CPonyTail_Player(const CPonyTail_Player& Prototype)
-	: CPartObject{ Prototype }
+	: CPlayer_Parts{ Prototype }
 {
 }
 
@@ -29,7 +29,6 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 {
 	PONYTAIL_PLAYER_DESC* pDesc = static_cast<PONYTAIL_PLAYER_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
 	//m_pSocketMatrix = pDesc->pSocketMatrix;
 	//strcpy_s(m_szBoneTag, pDesc->szBoneTag);
 
@@ -44,7 +43,6 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 
-
 	return S_OK;
 }
 
@@ -55,16 +53,6 @@ void CPonyTail_Player::Priority_Update(_float fTimeDelta)
 
 void CPonyTail_Player::Update(_float fTimeDelta)
 {
-	//if (*m_pParentState & CCharacter::STATE_ATTACK)
-	//	m_pModelCom->Set_AnimationIndex(0, false);
-	//
-	//if (*m_pParentState & CCharacter::STATE_IDLE)
-	//	m_pModelCom->Set_AnimationIndex(3);
-	//
-	//if (*m_pParentState & CCharacter::STATE_WALK)
-	//	m_pModelCom->Set_AnimationIndex(4);	
-
-
 	vector<CBone*>* pFaceBone = m_pModelCom->Get_Bones();
 
 	for (auto& pBone : *pFaceBone)

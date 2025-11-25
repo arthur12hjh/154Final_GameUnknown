@@ -27,7 +27,6 @@ public:
 	_float Get_SaturatedTrackPosition() {
 		return max(m_fCurrentTrackPosition / m_fDuration, 0.f);
 	}
-	
 	_float Get_TickPerSecond() { return m_fTickPerSecond; }
 
 	_bool CompareAnimationTag(const _char* szAnimationTag)

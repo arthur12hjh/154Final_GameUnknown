@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine_Defines.h"
 #include <vector>
+#include "Transform.h"
+#include "CharacterController.h"
 
 using namespace std; 
 
@@ -42,6 +44,8 @@ namespace Client
 		float			fCurrentCTPercent;
 		float			fCurrentCTDamage;
 		float			fCurrentLinkApplyDamage;
+		class CTransform* pPlayerTransform = { nullptr };
+		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체

@@ -109,6 +109,9 @@ public:
 	_matrix								Get_Transform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4_Inverse(D3DTS eState);
 	_matrix								Get_Transform_Matrix_Inverse(D3DTS eState);
+	const _float4*						Get_CamRight();
+	const _float4*						Get_CamUp();
+	const _float4*						Get_CamLook();
 	const _float4*						Get_CamPosition();
 	// 항등행렬 꺼내오기
 	_matrix								GetIdentityMatrix();

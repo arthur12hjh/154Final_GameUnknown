@@ -166,18 +166,6 @@
     <Filter Include="02.GameObjects\Character\Player">
       <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Face">
-      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Hair">
-      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\PonyTail">
-      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Body">
-      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player\Weapon">
       <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
     </Filter>
@@ -198,15 +186,6 @@
     </Filter>
     <Filter Include="02.GameObjects\TestModel">
       <UniqueIdentifier>{04e7b548-70aa-46b3-b69e-c395034d8e94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\TestModel\ShaderTestModel">
-      <UniqueIdentifier>{311e60cd-a7be-4ec2-a576-cb9bd1ad0e85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter">
-      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack">
-      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\ForkLift">
       <UniqueIdentifier>{86982e00-41f1-4999-8b8c-6d82e76ccfb4}</UniqueIdentifier>
@@ -460,6 +439,51 @@
     <Filter Include="03.Effects\Particle\SpriteParticle">
       <UniqueIdentifier>{825607c9-65e0-47b8-8f40-d8a65e218117}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\CCTHitReporter">
+      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
+      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Parts">
+      <UniqueIdentifier>{f9ff9b15-0039-4b3e-aded-3fa60784543f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Parts\Hair">
+      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Parts\Face">
+      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Parts\Body">
+      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\Parts\PonyTail">
+      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State">
+      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Player">
+      <UniqueIdentifier>{18c61d1c-ba06-4844-9ecb-1247c6381c0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Walk">
+      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial">
+      <UniqueIdentifier>{5440f9a3-45c6-439e-8a44-2f0068e9c5cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Attack">
+      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Landing">
+      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Jump">
+      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Attk">
+      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
       <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
@@ -508,7 +532,7 @@
       <Filter>02.GameObjects\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Body_Player.h">
-      <Filter>02.GameObjects\Character\Player\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon.h">
       <Filter>02.GameObjects\Character\Player\Weapon</Filter>
@@ -588,17 +612,14 @@
     <ClInclude Include="..\Public\UIButton.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ShaderTestModel.h">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
+      <Filter>02.GameObjects\Character\CCTHitReporter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PxTestProp.h">
       <Filter>02.GameObjects\TestModel\TestProp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack</Filter>
+      <Filter>02.GameObjects\Character\CCTBehaviorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Instance_Model.h">
       <Filter>02.GameObjects\Actor\InstanceModel</Filter>
@@ -619,13 +640,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Face_Player.h">
-      <Filter>02.GameObjects\Character\Player\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Face</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hair_Player.h">
-      <Filter>02.GameObjects\Character\Player\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Hair</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PonyTail_Player.h">
-      <Filter>02.GameObjects\Character\Player\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\PonyTail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Wait.h">
       <Filter>50.Behavior\Task\Wait</Filter>
@@ -945,6 +966,36 @@
     <ClInclude Include="..\Public\SpriteParticle.h">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_IdleState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_Parts.h">
+      <Filter>02.GameObjects\Character\Player\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Player.h">
+      <Filter>02.GameObjects\Camera\Camera_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_WalkState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_WalkEndState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_AttackState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LandingState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Landing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_JumpState.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_AerialAttack.h">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Attk</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MonsterStateMimesis.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
     </ClInclude>
@@ -991,11 +1042,8 @@
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player.cpp">
-      <Filter>02.GameObjects\Character\Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Body_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon.cpp">
       <Filter>02.GameObjects\Character\Player\Weapon</Filter>
@@ -1063,17 +1111,14 @@
     <ClCompile Include="..\Private\UIButton.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIButton</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ShaderTestModel.cpp">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTHitReporter</Filter>
+      <Filter>02.GameObjects\Character\CCTHitReporter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PxTestProp.cpp">
       <Filter>02.GameObjects\TestModel\TestProp</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp">
-      <Filter>02.GameObjects\TestModel\ShaderTestModel\CCTBehaviorCallBack</Filter>
+      <Filter>02.GameObjects\Character\CCTBehaviorCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Instance_Model.cpp">
       <Filter>02.GameObjects\Actor\InstanceModel</Filter>
@@ -1091,13 +1136,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Face_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Face</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hair_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PonyTail_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\Parts\PonyTail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Wait.cpp">
       <Filter>50.Behavior\Task\Wait</Filter>
@@ -1410,6 +1455,39 @@
     </ClCompile>
     <ClCompile Include="..\Private\SpriteParticle.cpp">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_IdleState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_Parts.cpp">
+      <Filter>02.GameObjects\Character\Player\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>02.GameObjects\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Player.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_WalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_WalkEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_AttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LandingState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Landing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_JumpState.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_AerialAttack.cpp">
+      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Attk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
