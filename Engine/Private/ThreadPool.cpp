@@ -93,6 +93,9 @@ void CThreadPool::Update_WorkThread()
 
 ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 {
+	if (nullptr == function)
+		return nullptr;
+
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
 	Handle.JobFunction = function;

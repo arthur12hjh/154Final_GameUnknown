@@ -23,6 +23,7 @@ public:
 
 	virtual		HRESULT							Change_State(const WCHAR* LayerTag, void* pArg = nullptr) = 0;
 	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) = 0;
+
 protected:
 	CState*										m_pCurrentState = nullptr;
 	unordered_map<_wstring, CState*>			m_pStates;

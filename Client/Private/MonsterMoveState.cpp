@@ -158,7 +158,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     pEntity->Set_Animation(AnimationName.c_str());
     pEntity->Play_Animation(fTimeDelta);
 
-    if (fDistance >= 0.1f)
+    if (fDistance >= 0.3f)
     {
         if (nullptr == m_pTarget)
             return;

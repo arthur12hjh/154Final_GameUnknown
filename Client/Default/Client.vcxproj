@@ -173,6 +173,7 @@
     <ClInclude Include="..\Public\MonsterMimesisController.h" />
     <ClInclude Include="..\Public\MonsterMoveState.h" />
     <ClInclude Include="..\Public\MonsterStateMimesis.h" />
+    <ClInclude Include="..\public\MonsterTranslationState.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\Public\Prob_Building.h" />
@@ -336,6 +337,7 @@
     <ClCompile Include="..\Private\MonsterMimesisController.cpp" />
     <ClCompile Include="..\Private\MonsterMoveState.cpp" />
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp" />
+    <ClCompile Include="..\private\MonsterTranslationState.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\Private\Prob_Building.cpp" />

@@ -157,26 +157,26 @@ HRESULT CNayitba::Ready_CharacterData()
 		{
 			m_MonsterInfo.iAttackList[i] = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[i]);
 		}
+	
+		if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
+			m_MonsterInfo.eNaytiba = NAYTIBA_STATE::MIMESSIS;
+		else
+			m_MonsterInfo.eNaytiba = NAYTIBA_STATE::DEFAULT;
+
+		// 체력 설정
+		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
+		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+
+		// 공격 설정
+		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
+		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
+
+		// Phase 설정하는거
+		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
+
+		// 팀 설정
+		m_eTeam = OBJECT_TEAM::ENEMY;
 	}
-
-	if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
-		m_MonsterInfo.eNaytiba = NAYTIBA_STATE::MIMESSIS;
-	else
-		m_MonsterInfo.eNaytiba = NAYTIBA_STATE::DEFAULT;
-
-	// 체력 설정
-	m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-	m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
-
-	// 공격 설정
-	m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
-	m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
-
-	// Phase 설정하는거
-	m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
-
-	// 팀 설정
-	m_eTeam = OBJECT_TEAM::ENEMY;
 
 	return S_OK;
 }

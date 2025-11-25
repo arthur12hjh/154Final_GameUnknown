@@ -68,9 +68,9 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 		{
 			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytiba)
 				Battle_Action(fTimeDelta);
-			else
-				Default_Action(fTimeDelta);
 		}
+		else
+			Default_Action(fTimeDelta);
 	}
 
 	m_pFSM->Update(fTimeDelta);
