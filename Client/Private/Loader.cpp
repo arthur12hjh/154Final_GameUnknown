@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Snow.h"
 #include "Sky.h"
+#include "AttackHitBox.h"
 
 #include "Effect.h"
 #include "Trail.h"
@@ -1541,6 +1542,13 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_GameObject_Stone4 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone4");
 	pProtoDesc.pPrototype = CStone4::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Attack_Hit_Box */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_AttackHitBox");
+	pProtoDesc.pPrototype = CAttackHitBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

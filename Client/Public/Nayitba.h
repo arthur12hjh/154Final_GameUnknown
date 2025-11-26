@@ -52,6 +52,7 @@ public:
 
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
+	CCollider*						m_pColliderCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
 
 	_uint							m_iMonsterID = {};
@@ -61,7 +62,6 @@ private:
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
 	string							m_szEntryAnim = {};
-	
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
 	size_t							m_iSkillIndex = {};
 
@@ -69,6 +69,10 @@ private :
 	HRESULT							Ready_CharacterData();
 	HRESULT							ADD_Components();
 	HRESULT							ADD_PartObjects();
+
+	void							Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void							OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void							End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 	void							BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 

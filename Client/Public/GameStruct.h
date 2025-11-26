@@ -131,6 +131,4 @@ namespace Client
 
 		void*				pSkillData;
 	}DEFAULT_DAMAGE_DESC;
-
-
 }

@@ -3,6 +3,8 @@
 
 #include "MonsterStateMimesis.h"
 #include "GameInstance.h"
+
+#include "AttackHitBox.h"
 #include "Nayitba.h"
 
 CMonsterAttackState::CMonsterAttackState() :
@@ -50,6 +52,23 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 		m_szAnimationName = m_pSkillData->szAnimationName;
 	}
 
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+
+	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
+	HitBoxDesc.bIsApplyTransform = true;
+
+	XMStoreFloat3(&HitBoxDesc.vPosition, vOwnerPos + vOwnerLook * (pOwnerInfo->fAttackRange * 0.5f));
+	HitBoxDesc.vScale = { 2.f , 2.f, 2.f};
+
+	HitBoxDesc.pData = static_cast<const void*>(m_pSkillData);
+	HitBoxDesc.pAttacker = m_pOwner;
+	HitBoxDesc.eColType = COLLIDER::AABB;
+	HitBoxDesc.eHitBoxType = HIT_TYPE::MONSTER;
+	HitBoxDesc.eHitObjectType = HIT_TYPE::PLAYER;
+	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Hit_Box_Layer"), &HitBoxDesc);
+
 	m_bIsEnableChange = false;
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false);
 }
@@ -69,6 +88,7 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 
 void CMonsterAttackState::End()
 {
+
 }
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)

@@ -137,6 +137,8 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pAISenceCom->Update_Debuge();
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif // _DEBUG
 
 }
@@ -222,18 +224,14 @@ HRESULT CNayitba::Ready_CharacterData()
 		else
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
-		// ü�� ����
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
 
-		// ���� ����
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
 
-		// Phase �����ϴ°�
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
-		// �� ����
 		m_eTeam = OBJECT_TEAM::ENEMY;
 	}
 
@@ -242,10 +240,15 @@ HRESULT CNayitba::Ready_CharacterData()
 
 HRESULT CNayitba::ADD_Components()
 {
-	// ���⼭ �浹ó���� �ݶ��̴� �ް�
-	// AI ���� �޾Ƽ� �浹 ó���ѹ� ����
-	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT(""), TEXT("AI_Sence"), (CComponent**)&m_pAISenceCom)))
-		return E_FAIL;*/
+	/* Com_Collider_AABB */
+	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		return E_FAIL;
+
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
 	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
 	SenceComDesc.fAiSearchRadius = 60.f;
@@ -257,9 +260,9 @@ HRESULT CNayitba::ADD_Components()
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
+	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 
-	// �״��� ���⼭ FSM ���� �ൿƮ����
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -307,7 +310,7 @@ HRESULT CNayitba::ADD_Components()
 	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 
 	m_pAIController = static_cast<CAIController*>(pInstnace);
-	m_pAISenceCom->ADD_SenceIgnoreTraceObject(HIT_TYPE::STATIC);
+
 
 	return S_OK;
 }

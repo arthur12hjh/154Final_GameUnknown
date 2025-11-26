@@ -499,6 +499,9 @@
     <Filter Include="02.GameObjects\Character\Player\FSM\State\Evade">
       <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\AttackHitBox">
+      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1020,6 +1023,9 @@
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h">
       <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AttackHitBox.h">
+      <Filter>02.GameObjects\AttackHitBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1521,6 +1527,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp">
       <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AttackHitBox.cpp">
+      <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

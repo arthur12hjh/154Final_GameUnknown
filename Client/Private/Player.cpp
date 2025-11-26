@@ -102,6 +102,19 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+HRESULT CPlayer::Damaged(void* pArg)
+{
+	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+
+
+
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Ready_Components()
 {
 	/* Com_Collider_AABB */
@@ -112,6 +125,7 @@ HRESULT CPlayer::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	m_pColliderCom->BindBeginOverlapEvent([](_float3 vHitPoint, _float3 vHitDir, CGameObject* pActor) {
