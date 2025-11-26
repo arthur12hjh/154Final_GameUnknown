@@ -21,7 +21,7 @@ public:
 	// Desc ¹ÝÈ¯.
 	const struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
 	const class CBody_Player* Get_BodyPtr() { return m_pBody; }
-	_float Get_AnimationRatio();
+
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -41,9 +41,6 @@ private:
 
 	class CTrailEffect*		m_pTrail = { nullptr };
 	class CPlayerFSM*		m_pPlayerFSM = { nullptr };
-
-	CCharacterController*	m_pCCT = { nullptr };
-	CCollider*				m_pColliderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();

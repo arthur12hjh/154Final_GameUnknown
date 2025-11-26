@@ -35,6 +35,7 @@ protected :
 	const _float4x4*				m_pSocketMatrix = { nullptr };
 
 	class CGameManager*				m_pGameManager = { nullptr };
+	class CCollider*				m_pColliderCom = { nullptr };
 	CCharacterController*			m_pCCT = { nullptr };
 
 public:

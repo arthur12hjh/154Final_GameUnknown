@@ -52,7 +52,6 @@ private :
 	_float2						m_vDelayDead = {};
 #endif // _DEBUG
 
-
 private :
 	HRESULT						Ready_Components(const HIT_BOX_DESC& pDesc);
 

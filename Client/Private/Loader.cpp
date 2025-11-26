@@ -1710,7 +1710,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Eve");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

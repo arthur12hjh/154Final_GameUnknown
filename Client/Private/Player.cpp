@@ -29,11 +29,6 @@ CPlayer::CPlayer(const CPlayer& Prototype)
 {
 }
 
-_float CPlayer::Get_AnimationRatio()
-{
-	return m_pBodyModelCom->Get_AnimationRatio();
-}
-
 HRESULT CPlayer::Initialize_Prototype()
 {
 	return S_OK;

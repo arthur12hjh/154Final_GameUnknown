@@ -53,14 +53,29 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
-	__super::Priority_Update(fTimeDelta);
 	m_pAIController->Priority_Update(fTimeDelta);
+	m_pCCT->Update_PrePxPosition(m_pTransformCom);
+
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
+	{
+		m_fMotionRatio -= 1.0f;
+		if (0 >= m_fMotionRatio)
+			m_fMotionRatio = 0.f;
+	}
+	
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
+	{
+		m_fMotionRatio += 1.0f;
+		if (1 <= m_fMotionRatio)
+			m_fMotionRatio = 10.f;
+	}
 
+#pragma region Hit
 	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
 	//{
 	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
@@ -116,7 +131,7 @@ void CNayitba::Update(_float fTimeDelta)
 	//	Damaged(&DamageDesc);
 	//	Safe_Release(DamageDesc.pAttacker);
 	//}
-
+#pragma endregion
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
@@ -129,11 +144,16 @@ void CNayitba::Update(_float fTimeDelta)
 
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
+
+	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 #ifdef _DEBUG
 	m_pAISenceCom->Update_Debuge();
@@ -371,6 +391,8 @@ CGameObject* CNayitba::Clone(void* pArg)
 void CNayitba::Free()
 {
 	__super::Free();
+
+
 
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
