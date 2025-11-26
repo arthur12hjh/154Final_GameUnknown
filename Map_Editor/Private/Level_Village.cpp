@@ -24,11 +24,14 @@ HRESULT CLevel_Village::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
+
+	/*if (FAILED(Ready_Layer_Reed(TEXT("Layer_Reed"))))
+		return E_FAIL;*/
 
 
 	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
@@ -104,6 +107,10 @@ HRESULT CLevel_Village::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Moon"),
+		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
+		return E_FAIL;
+
 	return S_OK;
 
 }
@@ -111,6 +118,15 @@ HRESULT CLevel_Village::Ready_Layer_BackGround(const _wstring& strLayerTag)
 HRESULT CLevel_Village::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Terrain"),
+		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Village::Ready_Layer_Reed(const _wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Reed"),
 		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
 		return E_FAIL;
 

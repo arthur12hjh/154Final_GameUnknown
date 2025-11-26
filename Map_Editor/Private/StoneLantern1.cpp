@@ -44,10 +44,6 @@ void CStoneLantern1::Late_Update(_float fTimeDelta)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-#endif
 }
 
 HRESULT CStoneLantern1::Render()

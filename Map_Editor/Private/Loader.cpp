@@ -62,6 +62,8 @@
 #include "DryGrass1.h"
 #include "DryGrass2.h"
 #include "DryGrass3.h"
+#include "Moon.h"
+#include "InstanceModel.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -171,7 +173,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Reed_Mask"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Texture_Sky */
@@ -181,7 +183,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Brush */
@@ -198,13 +200,8 @@ HRESULT CLoader::Loading_For_Village()
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp")))))
 		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Terrain */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Tutorial/Textures/Height2.bmp")))))
-		return E_FAIL;*/
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -257,10 +254,10 @@ HRESULT CLoader::Loading_For_Village()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Bamboo */
-	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	/*PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Bamboo"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/Tree1.binx", PreTransformMatrix))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* For.Prototype_Component_Model_Rock1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -283,10 +280,10 @@ HRESULT CLoader::Loading_For_Village()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock4.binx", PreTransformMatrix))))
 		return E_FAIL;
 	/* For.Prototype_Component_Model_Rock5 */
-	PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	/*PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Rock5"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock5.binx", PreTransformMatrix))))
-		return E_FAIL;
+		return E_FAIL;*/
 	/* For.Prototype_Component_Model_Rock6 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Rock6"),
@@ -478,18 +475,50 @@ HRESULT CLoader::Loading_For_Village()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CM_Rock14"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock14.binx", PreTransformMatrix))))
 		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_Moon */
+	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Moon"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Reed */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 5000;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(256.f, 0.f, 256.f);
+	ModelDesc.iNumInstance = 10000;
+	ModelDesc.vCenter = _float3(200.0f, 0.f, 200.0f);
+	ModelDesc.vRange = _float3(150.f, 0.f, 150.f);
 	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed5.binx";
 	ModelDesc.PreModelMatrix = PreTransformMatrix;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Reed"),
 		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Bamboo */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC BambooDesc{};
+	BambooDesc.iNumInstance = 1;
+	BambooDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	BambooDesc.vRange = _float3(0.f, 0.f, 0.f);
+	BambooDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
+	BambooDesc.PreModelMatrix = PreTransformMatrix;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Bamboo"),
+		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &BambooDesc))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Rock5 */
+	PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC Rock5Desc{};
+	Rock5Desc.iNumInstance = 1;
+	Rock5Desc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	Rock5Desc.vRange = _float3(0.f, 0.f, 0.f);
+	Rock5Desc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Rock/Rock5.binx";
+	Rock5Desc.PreModelMatrix = PreTransformMatrix;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Rock5"),
+		CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Rock5Desc))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");
@@ -697,6 +726,11 @@ HRESULT CLoader::Loading_For_Village()
 		CDryGrass3::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Moon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Moon"),
+		CMoon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_CherryBlossom1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_CherryBlossom1"),
 		CCherryBlossom1::Create(m_pDevice, m_pContext))))
@@ -781,6 +815,10 @@ HRESULT CLoader::Loading_For_Village()
 	/* For.Prototype_GameObject_CM_Rock14 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_CM_Rock14"),
 		CCM_Rock14::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_InstanceModel */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_InstanceModel"),
+		CInstanceModel::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion 
 

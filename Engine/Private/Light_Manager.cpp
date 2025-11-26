@@ -69,7 +69,7 @@ void CLight_Manager::Debug_LightRender()
         pVIPointBuffer->Bind_Resources();
         pVIPointBuffer->Render();
 
-        if (LIGHT_TYPE::DIRECTIONAL == pLight->Get_LightDesc()->eType)
+        if (LIGHT_TYPE::DIRECTIONAL == pLight->Get_LightDesc()->eType || LIGHT_TYPE::SPOT == pLight->Get_LightDesc()->eType)
         {
             m_pShader[1]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
             m_pShader[1]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
@@ -84,7 +84,7 @@ void CLight_Manager::Debug_LightRender()
                 pModel->Render(i);
             }
         }
-        else if (LIGHT_TYPE::POINT == pLight->Get_LightDesc()->eType)
+        if (LIGHT_TYPE::SPOT == pLight->Get_LightDesc()->eType || LIGHT_TYPE::POINT == pLight->Get_LightDesc()->eType)
         {
             pLight->Debug_Render();
         }

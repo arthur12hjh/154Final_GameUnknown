@@ -136,6 +136,12 @@
     <Filter Include="02.GameObjects\Maps\SpawnBox">
       <UniqueIdentifier>{7e4af978-be7c-4c14-a7e4-810f12088af5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\BackGround\Loading">
+      <UniqueIdentifier>{f0a74a04-a37c-4776-b886-209824d91954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Sky\Moon">
+      <UniqueIdentifier>{f1ad7657-3892-44aa-8aaa-f442e4e1edd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -374,6 +380,15 @@
     <ClInclude Include="..\public\StaticMap.h">
       <Filter>02.GameObjects\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LoadingBG.h">
+      <Filter>02.GameObjects\BackGround\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Moon.h">
+      <Filter>02.GameObjects\Sky\Moon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InstanceModel.h">
+      <Filter>02.GameObjects\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -594,6 +609,15 @@
       <Filter>02.GameObjects\Maps\Common\Rock</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadingBG.cpp">
+      <Filter>02.GameObjects\BackGround\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Moon.cpp">
+      <Filter>02.GameObjects\Sky\Moon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceModel.cpp">
       <Filter>02.GameObjects\Maps</Filter>
     </ClCompile>
   </ItemGroup>

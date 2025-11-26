@@ -204,14 +204,17 @@
     <ClInclude Include="..\public\Imgui_Manager.h" />
     <ClInclude Include="..\Public\Inscription_L.h" />
     <ClInclude Include="..\Public\Inscription_R.h" />
+    <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_Village.h" />
     <ClInclude Include="..\public\LightTool.h" />
     <ClInclude Include="..\public\Loader.h" />
+    <ClInclude Include="..\public\LoadingBG.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapTool.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
+    <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Reed.h" />
@@ -302,13 +305,16 @@
     </ClCompile>
     <ClCompile Include="..\Private\Inscription_L.cpp" />
     <ClCompile Include="..\Private\Inscription_R.cpp" />
+    <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_Village.cpp" />
     <ClCompile Include="..\private\LightTool.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingBG.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\MapTool.cpp" />
+    <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

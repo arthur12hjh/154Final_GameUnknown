@@ -425,6 +425,13 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Texture_Reed_Mask */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Texture_Snow */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Snow");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1);
@@ -1524,6 +1531,8 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
+
+
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
 	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp"));
@@ -1600,6 +1609,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
 	ModelDesc.iNumInstance = 100;
 	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
@@ -1617,9 +1627,9 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	/* For.Prototype_Component_Model_Reed */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ReedDesc{};
-	ReedDesc.iNumInstance = 4500;
+	ReedDesc.iNumInstance = 10000;
 	ReedDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ReedDesc.vRange = _float3(130.f, 0.f, 120.f);
+	ReedDesc.vRange = _float3(0.f, 0.f, 0.f);
 	ReedDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed5.binx";
 	ReedDesc.PreModelMatrix = PreTransformMatrix;
 

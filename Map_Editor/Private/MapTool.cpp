@@ -6,6 +6,7 @@
 #include "Terrain.h"
 #include <fstream>
 #include "LightTool.h"
+#include "InstanceModel.h"
 
 CMapTool::CMapTool()
 {
@@ -33,7 +34,7 @@ HRESULT CMapTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
 	}
 
-
+	
 
 	return S_OK;
 }
@@ -290,7 +291,10 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_CM_Rock14"); layerTag = TEXT("Layer_CM_Rock14");
 				}
-				
+				else if (m_eCurrentObject == ADD_OBJECT::MOON)
+				{
+					protoTag = TEXT("Prototype_GameObject_Moon"); layerTag = TEXT("Layer_Moon");
+				}
 				
 				if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DECREASE_RECT)
 				{
@@ -324,10 +328,19 @@ void CMapTool::Update(_float fTimeDelta)
 						m_pLastAddedObject = pObjects->back();
 
 						CTransform* pTransform = dynamic_cast<CTransform*>(m_pLastAddedObject->Find_Component(TEXT("Com_Transform")));
-						if (pTransform)
+
+
+						if (m_eCurrentObject == ADD_OBJECT::REED)
+						{
+							vPickPoint = XMVectorSet(vPickedPoint.x, 0.f, vPickedPoint.z, 1.f);
+
+							pTransform->Set_State(STATE::POSITION, vPickPoint);
+						}
+						else
 						{
 							pTransform->Set_State(STATE::POSITION, vPickPoint);
 						}
+
 					}
 				}
 				else
@@ -425,44 +438,25 @@ void CMapTool::Update(_float fTimeDelta)
 
 				if (m_eCurrentObject == ADD_OBJECT::MASK_WHITE)
 				{
-					D3D11_MAPPED_SUBRESOURCE		SubResource{};
-
-					m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-
-					//const _float fTerrainHalfSize = 256.f;
-					const _int iTexelSize = 512;
-					const _float fTexelSize = 512;
-
-					_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
-
-					_float fFlippedZ = fTexelSize - (vPickedPoint.z);
-					_int iCenterTexelY = static_cast<_int>(fFlippedZ);
-
-
-					_int iBrushRadius = static_cast<_int>(m_fRadius);
-
-					_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
-
-					_int iStartX = max(0, iCenterTexelX - iBrushRadius);
-					_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
-					_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
-					_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
-
-					for (_int i = iStartZ; i < iEndZ; i++)
-					{
-						for (_int j = iStartX; j < iEndX; j++)
-						{
-							_float fDistSq = (i - iCenterTexelY) * (i - iCenterTexelY) + (j - iCenterTexelX) * (j - iCenterTexelX);
-
-							if (fDistSq <= m_fRadius * m_fRadius)
-							{
-								_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
-								pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
-							}
-						}
-					}
-					m_pContext->Unmap(m_pMaskTexture2D, 0);
+					Change_MaskMap_White(vPickedPoint);
 				}
+				else if (m_eCurrentObject == ADD_OBJECT::MASK_BLACK)
+				{
+					Change_MaskMap_Black(vPickedPoint);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_UP)
+				{
+					m_pTerrain->Change_Height_Sculpt(vPickPoint, m_fHeight, m_fRadius, m_fMaxHeight);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DOWN)
+				{
+					m_pTerrain->Change_Height_Sculpt(vPickPoint, -m_fHeight, m_fRadius, m_fMaxHeight);
+				}
+				else if (m_eCurrentObject == ADD_OBJECT::TERRAIN_HILL)
+				{
+					m_pTerrain->Change_Height_Smooth(vPickPoint, m_fSmoothFactor, m_fRadius);
+				}
+
 			}
 		}
 	}
@@ -523,11 +517,51 @@ HRESULT CMapTool::Render()
 	{
 		m_eCurrentObject = ADD_OBJECT::TERRAIN_FLAT;
 	}
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+	if (ImGui::Button("TERRAIN_UP"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_UP;
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button("TERRAIN_DOWN"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_DOWN;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("TERRAIN_SMOOTH"))
+	{
+		m_eCurrentObject = ADD_OBJECT::TERRAIN_HILL;
+	}
 
 	ImGui::InputFloat("Height", &m_fHeight, 0.1f, 100.f);
 	ImGui::InputFloat("Radius", &m_fRadius, 0.01f, 10.f);
+	ImGui::InputFloat("Max Height", &m_fMaxHeight, 1.f, 30.f);
+	ImGui::InputFloat("Smooth Factor", &m_fSmoothFactor, 0.1f, 1.f);
 
 	ImGui::Text("Change Terrain Height.");
+
+	static _char szHeightMapFilePath[256] = "../Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp";
+	ImGui::InputText("HeightMap File Path", szHeightMapFilePath, sizeof(szHeightMapFilePath));
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	// 에디터 세이브 / 로드
+	if (ImGui::Button("Height Map Save"))
+	{
+		if (FAILED(Save_Terrain_HeightMap(szHeightMapFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"지형 저장 성공.", L"알림", MB_OK);
+		}
+	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -537,6 +571,7 @@ HRESULT CMapTool::Render()
 	{
 		m_eCurrentObject = ADD_OBJECT::MASK_BLACK;
 	}
+	ImGui::SameLine();
 	if (ImGui::Button("MASK_MAP_WHITE"))
 	{
 		m_eCurrentObject = ADD_OBJECT::MASK_WHITE;
@@ -544,8 +579,36 @@ HRESULT CMapTool::Render()
 	if (ImGui::Button("NEW_MASK_MAP"))
 	{
 		Set_NewMaskMap();
+		m_pTerrain->Set_MapTool(this);
 	}
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+	static _char szMaskLoadFilePath[256] = "../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png";
+	ImGui::InputText("MaskMap Load File Path", szMaskLoadFilePath, sizeof(szMaskLoadFilePath));
+	if (ImGui::Button("Load_MASK"))
+	{
+		Set_LoadMaskMap(szMaskLoadFilePath);
+		m_pTerrain->Set_MapTool(this);
+	}
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
 
+	static _char szMaskMapFilePath[256] = "../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png";
+	ImGui::InputText("MaskMap Save File Path", szMaskMapFilePath, sizeof(szMaskMapFilePath));
+
+	if (ImGui::Button("Save_MASK"))
+	{
+		if (FAILED(Save_MaskMap(szMaskMapFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"마스크 맵 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"마스크 맵 저장 성공.", L"알림", MB_OK);
+		}
+	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -657,7 +720,7 @@ HRESULT CMapTool::Render()
 										 "Stone1", "Stone2", "Stone3", "Stone4", "Giwajip", "StoneLantern1", "StoneLantern2", "Giwajip2" };
 
 		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8",
-											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3" };
+											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3", "Moon"};
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -857,6 +920,11 @@ HRESULT CMapTool::Render()
 					m_eCurrentObject = ADD_OBJECT::DRYGRASS3;
 					m_CurrentLayerName = TEXT("Layer_DryGrass3");
 				}
+				else if (nSelectedEnvironment == 18)
+				{
+					m_eCurrentObject = ADD_OBJECT::MOON;
+					m_CurrentLayerName = TEXT("Layer_Moon");
+				}
 
 			}
 		}
@@ -1008,7 +1076,7 @@ HRESULT CMapTool::Render()
 		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), m_CurrentLayerName);
 
 		// 2. 유효성 검사
-		if (m_eCurrentObject == ADD_OBJECT::END || m_pPickedObject == nullptr || m_pObjects == nullptr)
+		if (m_eCurrentObject == ADD_OBJECT::END || m_pObjects == nullptr)
 			return E_FAIL;
 
 
@@ -1191,7 +1259,7 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData4.bin";
 	ImGui::InputText("Map Save File Path", szSaveFilePath, sizeof(szSaveFilePath));
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -1201,15 +1269,6 @@ HRESULT CMapTool::Render()
 	// 에디터 세이브 / 로드
 	if (ImGui::Button("Save"))
 	{
-		if (FAILED(Save_Terrain_HeightMap()))
-		{
-			MessageBoxW(g_hWnd, L"지형 저장 실패", L"알림", MB_OK | MB_ICONERROR);
-		}
-		else
-		{
-			MessageBoxW(g_hWnd, L"지형 저장 성공.", L"알림", MB_OK);
-		}
-
 		// 맵 오브젝트 저장
 		if (FAILED(Save_Map_Objects(szSaveFilePath)))
 		{
@@ -1225,7 +1284,7 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData.bin";
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData4.bin";
 	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
 
 	if (ImGui::Button("Load"))
@@ -1239,26 +1298,6 @@ HRESULT CMapTool::Render()
 			MessageBoxW(g_hWnd, L"맵 오브젝트 로드 성공.", L"알림", MB_OK);
 		}
 	}
-
-	ImGui::Spacing(); // 메뉴 사이의 간격
-	ImGui::Separator(); // 구분선을 추가
-	ImGui::Spacing();
-
-	static _char szMaskMapFilePath[256] = "../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png";
-	ImGui::InputText("MaskMap Save File Path", szMaskMapFilePath, sizeof(szMaskMapFilePath));
-
-	if (ImGui::Button("Mask_Save"))
-	{
-		if (FAILED(Save_MaskMap(szMaskMapFilePath)))
-		{
-			MessageBoxW(g_hWnd, L"마스크 맵 저장 실패", L"알림", MB_OK | MB_ICONERROR);
-		}
-		else
-		{
-			MessageBoxW(g_hWnd, L"마스크 맵 저장 성공.", L"알림", MB_OK);
-		}
-	}
-
 
 	ImGui::End();
 
@@ -1352,7 +1391,7 @@ HRESULT CMapTool::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock13")))) return S_OK;
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock14")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Moon")))) return S_OK;
 
 	ofs.close();
 
@@ -1361,9 +1400,43 @@ HRESULT CMapTool::Save_Map_Objects(const _char* szFilePath)
 
 HRESULT CMapTool::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag)
 {
-
 	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
 	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	if (iNumObjs > 0)
+	{
+		CGameObject* pFirstObject = pObj->front();
+		CInstanceModel* pInstanceModel = dynamic_cast<CInstanceModel*>(pFirstObject);
+
+		if (pInstanceModel)
+		{
+			iNumObjs = pInstanceModel->Get_NumInstance();
+			ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+			const VTX_INSTANCE_MODEL* pInstanceData = pInstanceModel->Get_InstanceVertices();
+
+			if (!pInstanceData) return E_FAIL;
+
+			for (_uint i = 0; i < iNumObjs; ++i)
+			{
+				_matrix WorldMatrix;
+				/*_matrix WorldMatrix = { XMLoadFloat4(&pInstanceData[i].vRight) ,
+										XMLoadFloat4(&pInstanceData[i].vUp) ,
+										XMLoadFloat4(&pInstanceData[i].vLook) ,
+										XMLoadFloat4(&pInstanceData[i].vTranslation) };*/
+				WorldMatrix.r[0] = XMLoadFloat4(&pInstanceData[i].vRight);
+				WorldMatrix.r[1] = XMLoadFloat4(&pInstanceData[i].vUp);
+				WorldMatrix.r[2] = XMLoadFloat4(&pInstanceData[i].vLook);
+				WorldMatrix.r[3] = XMLoadFloat4(&pInstanceData[i].vTranslation);
+
+				SAVEDOBJECTINFO Info;
+				XMStoreFloat4x4(&Info.worldMatrix, WorldMatrix);
+				ofs.write(reinterpret_cast<const char*>(&Info), sizeof(SAVEDOBJECTINFO));
+			}
+			return S_OK;
+		}
+	}
+
 	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
 
 	if (pObj)
@@ -1429,12 +1502,12 @@ HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock2"), TEXT("Layer_Rock2")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock3"), TEXT("Layer_Rock3")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock4"), TEXT("Layer_Rock4")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
+	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Prototype_Component_Model_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock6"), TEXT("Layer_Rock6")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock7"), TEXT("Layer_Rock7")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock8"), TEXT("Layer_Rock8")))) return S_OK;
 
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
+	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Prototype_Component_Model_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom1"), TEXT("Layer_CherryBlossom1")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom2"), TEXT("Layer_CherryBlossom2")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom3"), TEXT("Layer_CherryBlossom3")))) return S_OK;
@@ -1455,9 +1528,58 @@ HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock14"), TEXT("Layer_CM_Rock14")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Moon"), TEXT("Layer_Moon")))) return S_OK;
 
 	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	if (iNumObjs == 0) 
+		return S_OK;
+
+	MODEL_INSTANCE_LOAD_DESC LoadDesc;
+	LoadDesc.iNumInstance = iNumObjs;
+	LoadDesc.InstancingData.reserve(iNumObjs);
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDOBJECTINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
+		
+		_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+		
+		_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+		_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+		_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+		// 순서: Scale * Rotation * Translation (SRT 순서)
+		_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+		VTX_INSTANCE_MODEL InstanceData{};
+		XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
+		XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
+		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
+		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+
+		LoadDesc.InstancingData.push_back(InstanceData);
+	}
+
+	Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
+	FinalLoadDesc.iNumInstance = LoadDesc.iNumInstance;
+	FinalLoadDesc.pInstancingData = &LoadDesc.InstancingData;
+	FinalLoadDesc.pPrototypeTag = protoTag;
+
+	HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_InstanceModel"),
+		ENUM_CLASS(LEVEL::VILLAGE), pLayerTag, &FinalLoadDesc);
 
 	return S_OK;
 }
@@ -1509,6 +1631,7 @@ HRESULT CMapTool::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoT
 	return S_OK;
 }
 
+
 void CMapTool::Delete_All_Before_Load(const _tchar* pLayerTag)
 {
 	m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), pLayerTag);
@@ -1522,9 +1645,17 @@ void CMapTool::Delete_All_Before_Load(const _tchar* pLayerTag)
 }
 
 
-HRESULT CMapTool::Save_Terrain_HeightMap()
+HRESULT CMapTool::Save_Terrain_HeightMap(const _char* szHeightMapFilePath)
 {
-	const _tchar* pTerrainHeightMapPath = TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp");
+	wchar_t wszFilePath[256] = L"";
+	size_t convertedChars = 0;
+
+	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szHeightMapFilePath, _TRUNCATE) != 0)
+	{
+		return E_FAIL;
+	}
+
+	const _tchar* pTerrainHeightMapPath = wszFilePath;
 	if (!m_pTerrain)
 		return E_FAIL;
 
@@ -1544,7 +1675,6 @@ HRESULT CMapTool::Save_Terrain_HeightMap()
 
 	_ulong iNumVertices = iNumVerticesX * iNumVerticesZ;
 
-	// 2. 비트맵 파일에 저장할 픽셀 데이터(RGB)를 생성
 	_uint* pPixels = new _uint[iNumVertices];
 	ZeroMemory(pPixels, sizeof(_uint) * iNumVertices);
 
@@ -1554,10 +1684,8 @@ HRESULT CMapTool::Save_Terrain_HeightMap()
 		{
 			_uint iIndex = i * iNumVerticesX + j;
 
-			// 높이 값을 0-255 범위의 unsigned char로 변환
 			_float fHeightValue = pHeightData[iIndex] * 10.f;
 
-			// 정수형으로 변환 (0 ~ 255)
 			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
 
 			// R, G, B 채널에 동일한 높이 값을 설정
@@ -1598,6 +1726,8 @@ HRESULT CMapTool::Save_Terrain_HeightMap()
 	CloseHandle(hFile);
 	Safe_Delete_Array(pPixels);
 	Safe_Delete_Array(pHeightData);
+
+	return S_OK;
 }
 
 HRESULT CMapTool::Save_MaskMap(const _char* szFilePath)
@@ -1627,9 +1757,78 @@ HRESULT CMapTool::Save_MaskMap(const _char* szFilePath)
 	return S_OK;
 }
 
+HRESULT CMapTool::Set_LoadMaskMap(const _char* szFilePath)
+{
+	// 기존 리소스 해제
+	Safe_Release(m_pMaskTexture2D);
+	Safe_Release(m_pMaskSRV);
+
+	// 1. 와이드 문자열 버퍼 선언 및 변환 (DirectX::Load 함수는 wchar_t* 경로를 받음)
+	wchar_t wszFilePath[256] = L"";
+	size_t convertedChars = 0;
+	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
+	{
+		return E_FAIL;
+	}
+
+	// 2. 파일에서 텍스처를 로드하여 GPU 렌더링용 ID3D11Texture2D 생성 (기본 Usage: D3D11_USAGE_DEFAULT)
+	ID3D11Resource* pLoadResource = nullptr;
+	ID3D11Texture2D* pRenderTexture = nullptr;
+
+	// DirectX Tool Kit의 LoadWICTextureFromFileName 함수를 사용하여 텍스처 로드 및 SRV 생성
+	// 여기서 pLoadResource는 내부적으로 생성된 ID3D11Texture2D 포인터입니다.
+	if (FAILED(DirectX::CreateWICTextureFromFile(m_pDevice, m_pContext, wszFilePath, &pLoadResource, &m_pMaskSRV)))
+	{
+		return E_FAIL;
+	}
+
+	// 3. 로드된 리소스에서 ID3D11Texture2D 포인터 가져오기
+	// 로드된 텍스처의 속성을 파악하고, GPU 리소스를 준비합니다.
+	if (pLoadResource)
+	{
+		// ID3D11Resource를 ID3D11Texture2D로 캐스팅
+		pRenderTexture = reinterpret_cast<ID3D11Texture2D*>(pLoadResource);
+	}
+	else
+	{
+		// 로드 실패 또는 캐스팅 실패 시 SRV와 pLoadResource를 정리하고 반환
+		Safe_Release(m_pMaskSRV);
+		return E_FAIL;
+	}
+
+	// 4. CPU 접근(편집)용 스테이징 Texture2D 생성 (m_pMaskTexture2D)
+	D3D11_TEXTURE2D_DESC RenderDesc{};
+	pRenderTexture->GetDesc(&RenderDesc); // 로드된 텍스처의 속성을 가져옴
+
+	D3D11_TEXTURE2D_DESC StageDesc = RenderDesc;
+	StageDesc.Usage = D3D11_USAGE_STAGING;
+	StageDesc.BindFlags = 0;
+	StageDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	StageDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&StageDesc, nullptr, &m_pMaskTexture2D)))
+	{
+		Safe_Release(pLoadResource);
+		return E_FAIL;
+	}
+
+	// 5. GPU 텍스처의 내용을 CPU 스테이징 텍스처로 복사
+	// 이제 m_pMaskTexture2D를 Map/Unmap으로 편집할 수 있습니다.
+	m_pContext->CopyResource(m_pMaskTexture2D, pRenderTexture);
+
+	// pLoadResource는 로드된 GPU 텍스처이며, SRV 생성에 사용되었으므로 Safe_Release 처리
+	Safe_Release(pLoadResource);
+
+	// 로드 성공 알림
+	MessageBoxW(g_hWnd, L"마스크 맵 로드 성공.", L"알림", MB_OK);
+
+	return S_OK;
+}
+
 HRESULT CMapTool::Set_NewMaskMap()
 {
 	Safe_Release(m_pMaskTexture2D);
+	Safe_Release(m_pMaskSRV);
 
 	D3D11_TEXTURE2D_DESC		TextureDesc{};
 	TextureDesc.Width = 512;
@@ -1663,9 +1862,136 @@ HRESULT CMapTool::Set_NewMaskMap()
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &InitialDesc, &m_pMaskTexture2D)))
 		return E_FAIL;
 
+	// 2. GPU 렌더링용 Texture2D 생성
+	D3D11_TEXTURE2D_DESC RenderTextureDesc = TextureDesc;
+	RenderTextureDesc.Usage = D3D11_USAGE_DEFAULT;				// GPU 기본 사용
+	RenderTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;	// 쉐이더 리소스로 바인드
+	RenderTextureDesc.CPUAccessFlags = 0;						// CPU 접근 불가
+
+	ID3D11Texture2D* pRenderTexture = { nullptr };
+	if (FAILED(m_pDevice->CreateTexture2D(&RenderTextureDesc, nullptr, &pRenderTexture)))
+		return E_FAIL;
+
+	// 3. Shader Resource View 생성
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc{};
+	SRVDesc.Format = RenderTextureDesc.Format;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	SRVDesc.Texture2D.MipLevels = 1;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(pRenderTexture, &SRVDesc, &m_pMaskSRV)))
+	{
+		Safe_Release(pRenderTexture);
+		return E_FAIL;
+	}
+
+	m_pContext->CopyResource(pRenderTexture, m_pMaskTexture2D);
+
+	Safe_Release(pRenderTexture);
 	Safe_Delete_Array(pPixel);
 
 	return S_OK;
+}
+
+void CMapTool::Change_MaskMap_Black(_float3 vPickedPoint)
+{
+	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+	//const _float fTerrainHalfSize = 256.f;
+	const _int iTexelSize = 512;
+	const _float fTexelSize = 512;
+
+	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
+
+	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
+	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
+
+
+	_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
+
+	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+	for (_int i = iStartZ; i < iEndZ; i++)
+	{
+		char* pRowStart = static_cast<char*>(SubResource.pData) + (i * SubResource.RowPitch);
+		_uint* pRow = reinterpret_cast<_uint*>(pRowStart);
+
+		for (_int j = iStartX; j < iEndX; j++)
+		{
+			// 픽셀 데이터 쓰기
+			pRow[j] = D3DCOLOR_ARGB(255, 0, 0, 0); // (MASK_BLACK일 경우)
+		}
+	}
+	m_pContext->Unmap(m_pMaskTexture2D, 0);
+
+	ID3D11Resource* pGpuResource = { nullptr };
+	m_pMaskSRV->GetResource(&pGpuResource);
+
+	if (pGpuResource)
+	{
+		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
+		Safe_Release(pGpuResource);
+	}
+}
+
+void CMapTool::Change_MaskMap_White(_float3 vPickedPoint)
+{
+	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+	//const _float fTerrainHalfSize = 256.f;
+	const _int iTexelSize = 512;
+	const _float fTexelSize = 512;
+
+	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
+
+	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
+	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
+
+
+	_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
+
+	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+	for (_int i = iStartZ; i < iEndZ; i++)
+	{
+		for (_int j = iStartX; j < iEndX; j++)
+		{
+			//_float fDistSq = (i - iCenterTexelY) * (i - iCenterTexelY) + (j - iCenterTexelX) * (j - iCenterTexelX);
+
+			/*if (fDistSq <= m_fRadius * m_fRadius)
+			{
+				_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
+				pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}*/
+			_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
+			pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
+		}
+	}
+	m_pContext->Unmap(m_pMaskTexture2D, 0);
+
+	// m_pMaskSRV 생성할떄 사용했던 원본ID3D11Texture2D를 다시 가져오거나
+	// MapTool에서 m_pMaskSRV의 텍스처 포인터를 저장했다면 그것을 사용
+	ID3D11Resource* pGpuResource = { nullptr };
+	m_pMaskSRV->GetResource(&pGpuResource);
+
+	if (pGpuResource)
+	{
+		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
+		Safe_Release(pGpuResource);
+	}
 }
 
 void CMapTool::Set_NaviEditMode(_bool bMode)
@@ -1920,5 +2246,6 @@ void CMapTool::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pMaskTexture2D);
 	Safe_Release(m_pMaskTexture2D);
 }

@@ -27,6 +27,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	_float Get_Height_In_World_Space(_float fWorldX, _float fWorldZ);
+
 private:
 	CVIBuffer_Terrain*	m_pVIBufferCom = { nullptr };
 	CNavigation*		m_pNavigationCom = { nullptr };

@@ -2,8 +2,10 @@
 
 #include "MapTool_Defines.h"
 #include "Base.h"
+#include "VIBuffer_Instance_Model.h"
 
 NS_BEGIN(Engine)
+//class CVIBuffer_Instance_Model;
 class CGameInstance;
 class CTransform;
 class CGameObject;
@@ -22,6 +24,14 @@ typedef struct SavedObjectInfo
 	_float4x4	    worldMatrix;
 }SAVEDOBJECTINFO;
 
+typedef struct tagModelInstanceLoadDesc
+{
+	_uint iNumInstance = 0;
+	vector<VTX_INSTANCE_MODEL> InstancingData;
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC InstanceDesc;
+
+}MODEL_INSTANCE_LOAD_DESC;
+
 public:
 	CMapTool();
 	virtual ~CMapTool() = default;
@@ -35,15 +45,20 @@ public:
 
 	void Update_Rotation();
 	HRESULT Save_Map_Objects(const _char* szFilePath);
-	HRESULT Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
-	HRESULT Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
-	HRESULT Save_Terrain_HeightMap();
+	HRESULT Save_Terrain_HeightMap(const _char* szHeightMapFilePath);
 	HRESULT Save_MaskMap(const _char* szFilePath);
+
+	HRESULT Set_LoadMaskMap(const _char* szFilePath);
 	HRESULT Set_NewMaskMap();
+	void Change_MaskMap_Black(_float3 vPickedPoint);
+	void Change_MaskMap_White(_float3 vPickedPoint);
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -55,6 +70,9 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
+
+public:
+	ID3D11ShaderResourceView* Get_MaskSRV() { return m_pMaskSRV; }
 
 
 private:
@@ -69,6 +87,9 @@ private:
 	CGameObject* m_pPickedObject = { nullptr };
 
 	ID3D11Texture2D* m_pMaskTexture2D = { nullptr };
+	ID3D11Texture2D* m_pRenderMaskTexture2D = { nullptr };
+
+	ID3D11ShaderResourceView* m_pMaskSRV = { nullptr };
 
 	// 카메라 이동할 좌표
 	_float m_fX = { 0.f };
@@ -87,6 +108,8 @@ private:
 
 	_float m_fHeight = { 0.f };
 	_float m_fRadius = { 0.f };
+	_float m_fMaxHeight = { 0.f };
+	_float m_fSmoothFactor = { 0.f };
 
 	ADD_OBJECT m_eCurrentObject = {};
 
@@ -116,6 +139,8 @@ private:
 	_bool				m_bIsMapMode = { false };
 	_bool				m_bIsDragging = { false };
 
+
+	vector<vector<VTX_INSTANCE_MODEL>*> m_vecInstancingData;
 
 public:
 	virtual void Free() override;

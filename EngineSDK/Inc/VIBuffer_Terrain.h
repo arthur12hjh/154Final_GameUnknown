@@ -23,6 +23,8 @@ public:
 
 	void Change_Height_Rect(_vector vPickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Flat(_vector vPickingPos, _float fHeight, _float fRadius);
+	void Change_Height_Sculpt(_vector vPickingPos, _float fAmount, _float fRadius, _float fMaxHeight);
+	void Change_Height_Smooth(_vector vPickingPos, _float fAmount, _float fFactor);
 	_float Get_Interpolated_Height_Local(_float fLocalX, _float fLocalZ) const;
 
 private:

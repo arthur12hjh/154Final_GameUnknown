@@ -23,7 +23,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 		return E_FAIL;
 
 	/* 이 레벨을 구성하기위한 객체를 만든다. */
-	if (FAILED(Ready_Layer_BackGround()))
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_LoadingBG"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -58,8 +58,13 @@ HRESULT CLevel_Loading::Render()
 	return S_OK;
 }
 
-HRESULT CLevel_Loading::Ready_Layer_BackGround()
+HRESULT CLevel_Loading::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_LoadingBG"),
+		ENUM_CLASS(LEVEL::LOADING), strLayerTag)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

@@ -19,6 +19,8 @@ public:
 		return m_pNavigationCom; // 이미 멤버 변수로 가지고 있으니 바로 리턴
 	}
 
+	void Set_MapTool(class CMapTool* pMapTool) { m_pMaptool = pMapTool; }
+
 private:
 	CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTerrain(const CTerrain& Prototype);
@@ -34,6 +36,8 @@ public:
 
 	void Change_Height_Rect(_vector PickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Flat(_vector PickingPos, _float fHeight, _float fRadius);
+	void Change_Height_Sculpt(_vector vPickingPos, _float fAmount, _float fRadius, _float fMaxHeight);
+	void Change_Height_Smooth(_vector vPickingPos, _float fFactor, _float fRadius);
 
 	_float Get_Height_In_World_Space(_float fWorldX, _float fWorldZ);
 
@@ -43,6 +47,8 @@ private:
 	CTexture* m_pTextureCom = { nullptr };
 	CTexture* m_pMaskCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+
+	class CMapTool* m_pMaptool = { nullptr };
 
 private:
 	HRESULT Ready_Components();

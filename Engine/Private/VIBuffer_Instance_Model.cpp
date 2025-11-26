@@ -63,6 +63,27 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 
 HRESULT CVIBuffer_Instance_Model::Initialize(void* pArg)
 {
+	/*if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
+		return E_FAIL;*/
+
+	if (nullptr != pArg)
+	{
+		const Engine::MODEL_INSTANCE_LOAD_DESC* pLoadDesc = static_cast<const Engine::MODEL_INSTANCE_LOAD_DESC*>(pArg);
+
+		if (pLoadDesc->pInstancingData != nullptr)
+		{
+			// 인스턴스 개수를 로드된 개수로 재설정
+			m_iNumInstance = pLoadDesc->iNumInstance;
+
+			// 인스턴스 버퍼 디스크립션 업데이트
+			m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
+
+			// 버퍼 생성 시 사용할 시스템 메모리 포인터를 로드된 데이터의 시작 주소로 변경
+			m_InstanceInitialDesc.pSysMem = pLoadDesc->pInstancingData->data();
+		}
+	}
+
+	// 2. 인스턴스 버퍼 생성
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
 

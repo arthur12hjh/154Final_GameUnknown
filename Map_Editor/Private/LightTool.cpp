@@ -46,49 +46,90 @@ void CLightTool::Update(_float fTimeDelta)
 
 	if (m_eToolMode == TOOL_MODE::LIGHT)
 	{
-		if (m_bIsDeplayPointLight)
+		// 마우스 좌클릭 이벤트 체크
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 		{
 
-			// 마우스 좌클릭 이벤트 체크
-			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+			_float3 vPickedPoint = {};
+			if (true == m_pGameInstance->isPicking(&vPickedPoint))
 			{
+				_float4 vPickPoint = XMFLOAT4(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
+				// 1. 네비게이션 포인트 추가
 
-				_float3 vPickedPoint = {};
-				if (true == m_pGameInstance->isPicking(&vPickedPoint))
+				if (m_bIsDeplayPointLight)
 				{
-					_float4 vPickPoint = XMFLOAT4(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
-					// 1. 네비게이션 포인트 추가
+					LIGHT_DESC			LightDesc{};
 
-					if (m_bIsDeplayPointLight)
-					{
-						LIGHT_DESC			LightDesc{};
+					LightDesc.eType = LIGHT_TYPE::POINT;
+					LightDesc.vDiffuse = _float4(0.f, 1.0f, 0.f, 1.f);
+					LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
+					LightDesc.vSpecular = _float4(0.f, 0.f, 1.f, 1.f);
+					LightDesc.vPosition = vPickPoint;
+					LightDesc.fRange = 10.f;
 
-						LightDesc.eType = LIGHT_TYPE::POINT;
-						LightDesc.vDiffuse = _float4(0.f, 1.0f, 0.f, 1.f);
-						LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
-						LightDesc.vSpecular = _float4(0.f, 0.f, 1.f, 1.f);
-						LightDesc.vPosition = vPickPoint;
-						LightDesc.fRange = 10.f;
-
-						m_pGameInstance->Add_Light(LightDesc);
-					}
-					else if (m_bIsDeplayDirLight)
-					{
-						/*LIGHT_DESC			LightDesc{};
-
-						LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-						LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-						LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-						LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 0.2f);
-						LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-
-						m_pGameInstance->Add_Light(LightDesc);*/
-					}
+					m_pGameInstance->Add_Light(LightDesc);
 				}
+				else if (m_bIsDeplaySpotLight)
+				{
+					LIGHT_DESC			LightDesc{};
 
+					LightDesc.eType = LIGHT_TYPE::SPOT;
+					LightDesc.vDiffuse = _float4(1.f, 1.0f, 1.f, 1.f);
+					LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
+					LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+					LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+					LightDesc.vPosition = vPickPoint;
+					LightDesc.fFalloff = 1.f;
+					LightDesc.fTheta = XMConvertToRadians(35.f);
+					LightDesc.fPhi = XMConvertToRadians(45.f);
+					LightDesc.fRange = 10.f;
+
+					m_pGameInstance->Add_Light(LightDesc);
+				}
+				else if (m_bIsDeplayDirLight)
+				{
+						
+				}
 			}
-			return; // 네비게이션 모드일 때는 다른 오브젝트 추가 로직은 건너뜁니다.
+
 		}
+
+
+		if (m_pSelectedLight != nullptr)
+		{
+			LIGHT_DESC newLightDesc = *m_pSelectedLight->Get_LightDesc();
+			_float4& vPos = newLightDesc.vPosition;
+
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
+			{
+				vPos.x += m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
+			{
+				vPos.x -= m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
+			{
+				vPos.z += m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
+			{
+				vPos.z -= m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
+			{
+				vPos.y += m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
+			{
+				vPos.y -= m_fMoveSpeed * fTimeDelta * 60.f;
+			}
+
+			m_pSelectedLight->SetLightInfo(newLightDesc);
+		}
+
+
+		return; // 네비게이션 모드일 때는 다른 오브젝트 추가 로직은 건너뜁니다.
 	}
 }
 
@@ -125,12 +166,14 @@ HRESULT CLightTool::Render()
 	{
 		m_bIsDeplayPointLight = true;
 		m_bIsDeplayDirLight = false;
+		m_bIsDeplaySpotLight = false;
 	}
 
 	if (ImGui::Button("Directional_Light"))
 	{
 		m_bIsDeplayDirLight = true;
 		m_bIsDeplayPointLight = false;
+		m_bIsDeplaySpotLight = false;
 		LIGHT_DESC			LightDesc{};
 
 		LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -142,10 +185,18 @@ HRESULT CLightTool::Render()
 		m_pGameInstance->Add_Light(LightDesc);
 	}
 
+	if (ImGui::Button("Spot_Light"))
+	{
+		m_bIsDeplaySpotLight = true;
+		m_bIsDeplayPointLight = false;
+		m_bIsDeplayDirLight = false;
+	}
+
 	if (ImGui::Button("Cancel"))
 	{
 		m_bIsDeplayPointLight = false;
 		m_bIsDeplayDirLight = false;
+		m_bIsDeplaySpotLight = false;
 	}
 
 	if (ImGui::Button("Delete"))
@@ -168,13 +219,18 @@ HRESULT CLightTool::Render()
 
 		if (m_pLights && !m_pLights->empty())
 		{
-			
 			CLight* pLight = m_pLights->back();
 			pLight->SetDead(true);
-			
-			
 		}
 
+	}
+
+	if (ImGui::Button("Delete_Select"))
+	{
+		if (m_pSelectedLight != nullptr)
+		{
+			m_pSelectedLight->SetDead(true);
+		}
 	}
 
 	ImGui::Spacing();
@@ -205,8 +261,15 @@ HRESULT CLightTool::Render()
 				static char nameBuffer[128][64] = {};
 				if (i < 128)
 				{
-					sprintf_s(nameBuffer[i], 64, "Light %zd (Type: %s)", i,
-						(pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL ? "Dir" : "Point"));
+					/*sprintf_s(nameBuffer[i], 64, "Light %zd (Type: %s)", i,
+						(pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL ? "Dir" : "Point"));*/
+
+					if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL)
+						sprintf_s(nameBuffer[i], 64, "Light %zd (Type: %s)", i, "Dir");
+					else if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+						sprintf_s(nameBuffer[i], 64, "Light %zd (Type: %s)", i, "Point");
+					else if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::SPOT)
+						sprintf_s(nameBuffer[i], 64, "Light %zd (Type: %s)", i, "Spot");
 
 					m_LightNames.push_back(nameBuffer[i]);
 					i++;
@@ -232,8 +295,22 @@ HRESULT CLightTool::Render()
 				const char* lightName = "";
 				if (idx < m_LightNames.size()) {
 					static char tempName[64];
-					sprintf_s(tempName, 64, "Light %d (Type: %s)", idx,
-						(pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL ? "Dir" : "Point"));
+					/*sprintf_s(tempName, 64, "Light %d (Type: %s)", idx,
+						(pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL ? "Dir" : "Point"));*/
+
+					if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL)
+					{
+						sprintf_s(tempName, 64, "Light %d (Type: %s)", idx, "Dir");
+					}
+					else if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+					{
+						sprintf_s(tempName, 64, "Light %d (Type: %s)", idx, "Point");
+					}
+					else if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::SPOT)
+					{
+						sprintf_s(tempName, 64, "Light %d (Type: %s)", idx, "Spot");
+					}
+
 					lightName = tempName;
 				}
 
@@ -271,57 +348,125 @@ HRESULT CLightTool::Render()
 
 		// Diffuse (기존 코드를 사용하여 ImGui::InputFloat에 조건부 연결)
 		ImGui::Text("Light Diffuse");
-		ImGui::PushItemWidth(50.0f);
-		if (ImGui::InputFloat("##DiffuseX", &m_fDiffuseX)) Update_Light_Properties();
+		ImGui::PushItemWidth(100.0f);
+		if (ImGui::InputFloat("##DiffuseX", &m_fDiffuseX, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##DiffuseY", &m_fDiffuseY)) Update_Light_Properties();
+		if (ImGui::InputFloat("##DiffuseY", &m_fDiffuseY, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##DiffuseZ", &m_fDiffuseZ)) Update_Light_Properties();
+		if (ImGui::InputFloat("##DiffuseZ", &m_fDiffuseZ, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::PopItemWidth();
-
 		// Ambient
 		ImGui::Text("Light Ambient");
-		ImGui::PushItemWidth(50.0f);
-		if (ImGui::InputFloat("##AmbientX", &m_fAmbientX)) Update_Light_Properties();
+		ImGui::PushItemWidth(100.0f);
+		if (ImGui::InputFloat("##AmbientX", &m_fAmbientX, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##AmbientY", &m_fAmbientY)) Update_Light_Properties();
+		if (ImGui::InputFloat("##AmbientY", &m_fAmbientY, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##AmbientZ", &m_fAmbientZ)) Update_Light_Properties();
+		if (ImGui::InputFloat("##AmbientZ", &m_fAmbientZ, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::PopItemWidth();
-
 		// Specular
 		ImGui::Text("Light Specular");
-		ImGui::PushItemWidth(50.0f);
-		if (ImGui::InputFloat("##SpecularX", &m_fSpecularX)) Update_Light_Properties();
+		ImGui::PushItemWidth(100.0f);
+		if (ImGui::InputFloat("##SpecularX", &m_fSpecularX, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##SpecularY", &m_fSpecularY)) Update_Light_Properties();
+		if (ImGui::InputFloat("##SpecularY", &m_fSpecularY, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##SpecularZ", &m_fSpecularZ)) Update_Light_Properties();
+		if (ImGui::InputFloat("##SpecularZ", &m_fSpecularZ, 0.01f, 10.f)) Update_Light_Properties();
 		ImGui::PopItemWidth();
-
 		// Directional Light 전용
 		if (m_pSelectedLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL)
 		{
 			ImGui::Spacing();
 			ImGui::Text("Light Direction");
-			ImGui::PushItemWidth(50.0f);
-			if (ImGui::InputFloat("##DirectionX", &m_fDirectionX)) Update_Light_Properties();
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionX", &m_fDirectionX, -1000.f, 1000.f)) Update_Light_Properties();
 			ImGui::SameLine();
-			if (ImGui::InputFloat("##DirectionY", &m_fDirectionY)) Update_Light_Properties();
-			ImGui::SameLine();
-			if (ImGui::InputFloat("##DirectionZ", &m_fDirectionZ)) Update_Light_Properties();
-			ImGui::PopItemWidth();
-		}
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionX_Input", &m_fDirectionX)) Update_Light_Properties();
 
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionY", &m_fDirectionY, -1000.f, 1000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionY_Input", &m_fDirectionY)) Update_Light_Properties();
+
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionZ", &m_fDirectionZ, -1000.f, 1000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionZ_Input", &m_fDirectionZ)) Update_Light_Properties();
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+		}
 		// Point Light 전용
-		if (m_pSelectedLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+		else if (m_pSelectedLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
 		{
 			ImGui::Spacing();
 			ImGui::Text("Light Range");
-			ImGui::PushItemWidth(50.0f);
-			if (ImGui::InputFloat("##Range", &m_fRange)) Update_Light_Properties();
-			ImGui::PopItemWidth();
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##Range", &m_fRange, 0.f, 500.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##Range_Input", &m_fRange)) Update_Light_Properties();
 		}
+		else if (m_pSelectedLight->Get_LightDesc()->eType == LIGHT_TYPE::SPOT)
+		{
+			ImGui::Spacing();
+			ImGui::Text("Light Direction");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionX", &m_fDirectionX, -5000.f, 5000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionX_Input", &m_fDirectionX)) Update_Light_Properties();
+
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionY", &m_fDirectionY, -5000.f, 5000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionY_Input", &m_fDirectionY)) Update_Light_Properties();
+
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##DirectionZ", &m_fDirectionZ, -5000.f, 5000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##DirectionZ_Input", &m_fDirectionZ)) Update_Light_Properties();
+
+			ImGui::Spacing();
+			ImGui::Text("Light Range");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##Range", &m_fRange, 0.f, 1000.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##Range_Input", &m_fRange)) Update_Light_Properties();
+
+			ImGui::Spacing();
+			ImGui::Text("Light Falloff");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##Falloff", &m_fFalloff, 0.f, 50.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##Falloff_Input", &m_fFalloff)) Update_Light_Properties();
+
+			ImGui::Spacing();
+			ImGui::Text("Light Theta");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##Theta", &m_fTheta, 0.f, 360.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##Theta_Input", &m_fTheta)) Update_Light_Properties();
+
+			ImGui::Spacing();
+			ImGui::Text("Light Phi");
+			ImGui::SetNextItemWidth(100.0f);
+			if (ImGui::SliderFloat("##Phi", &m_fPhi, 0.f, 360.f)) Update_Light_Properties();
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			if (ImGui::InputFloat("##Phi_Input", &m_fPhi)) Update_Light_Properties();
+		}
+
 	}
 	else
 	{
@@ -444,10 +589,17 @@ void CLightTool::Update_Light_Properties()
 	{
 		newDesc.vDirection = _float4(m_fDirectionX, m_fDirectionY, m_fDirectionZ, 0.f);
 	}
-
-	if (newDesc.eType == LIGHT_TYPE::POINT)
+	else if (newDesc.eType == LIGHT_TYPE::POINT)
 	{
 		newDesc.fRange = m_fRange;
+	}
+	else if (newDesc.eType == LIGHT_TYPE::SPOT)
+	{
+		newDesc.vDirection = _float4(m_fDirectionX, m_fDirectionY, m_fDirectionZ, 0.f);
+		newDesc.fRange = m_fRange;
+		newDesc.fFalloff = m_fFalloff;
+		newDesc.fTheta = XMConvertToRadians(m_fTheta);
+		newDesc.fPhi = XMConvertToRadians(m_fPhi);
 	}
 
 	m_pSelectedLight->SetLightInfo(newDesc);
@@ -464,6 +616,9 @@ void CLightTool::Load_Selected_Light_Desc()
 	m_fSpecularX = desc.vSpecular.x; m_fSpecularY = desc.vSpecular.y; m_fSpecularZ = desc.vSpecular.z;
 	m_fDirectionX = desc.vDirection.x; m_fDirectionY = desc.vDirection.y; m_fDirectionZ = desc.vDirection.z;
 	m_fRange = desc.fRange;
+	m_fFalloff = desc.fFalloff;
+	m_fTheta = XMConvertToDegrees(desc.fTheta);
+	m_fPhi = XMConvertToDegrees(desc.fPhi);
 }
 
 
