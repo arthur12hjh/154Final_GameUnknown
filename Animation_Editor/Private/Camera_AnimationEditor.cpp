@@ -31,6 +31,8 @@ HRESULT CCamera_AnimationEditor::Initialize(void* pArg)
 
 	Initialize_Position();
 
+	m_pTransformCom->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
 	return S_OK;
 }
 

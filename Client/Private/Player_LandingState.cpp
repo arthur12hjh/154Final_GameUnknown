@@ -8,6 +8,7 @@
 
 #include "Player_IdleState.h"
 #include "Player_WalkState.h"
+
 #pragma endregion
 
 CPlayer_LandingState::CPlayer_LandingState()
@@ -23,8 +24,17 @@ void CPlayer_LandingState::Start(void* pArg)
 CPlayerState* CPlayer_LandingState::Update(_float fTimeDelta)
 {
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
+	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-	if (true == isAnimFinished)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D) &&
+		fAnimationRatio >= 0.1f)
+	{
+		m_pNextState = CPlayer_WalkState::Create(nullptr);
+	}
+	else if (true == isAnimFinished)
 	{
 		switch (m_eType)
 		{

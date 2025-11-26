@@ -138,9 +138,11 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 	return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate)
 {
 	_uint iAnimIndex = 0;
+	m_fAnimationPlayRate = fAnimationPlayRate;
+
 	for (auto& pAnimation : m_Animations)
 	{
 		if (TRUE == pAnimation->CompareAnimationTag(szAnimationTag))
@@ -370,22 +372,19 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 	m_eType = eType;
 	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
 
-	Ready_Bones(&m_pModel->vNodes[m_pModel->iRootNodeIndex], -1);
 
 	// Face, Hair 등 Part Model들의 BlendWeight와 BlendIndex를 Body Model에 매핑해주는 함수.
 	if (nullptr != pSkeletonModel)
 	{
-		if(FAILED(Mapping_Skeleton(pSkeletonModel)))
-			return E_FAIL;
-
-		if (FAILED(Ready_Meshes(pSkeletonModel)))
-			return E_FAIL;
+		Ready_SkeletonBones(pSkeletonModel);
 	}
 	else
 	{
-		if (FAILED(Ready_Meshes()))
-			return E_FAIL;
+		Ready_Bones(&m_pModel->vNodes[m_pModel->iRootNodeIndex], -1);
 	}
+
+	if (FAILED(Ready_Meshes()))
+		return E_FAIL;
 
 	if (FAILED(Ready_Materials(pModelFilePath)))
 		return E_FAIL;
@@ -471,6 +470,7 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 
 _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float fRootMotionMagnification)
 {
+ 	_float fScaledDeltaTime = fTimeDelta * m_fAnimationPlayRate;
 	// 이 프레임이 첫 프레임이 아닐 경우
 	if (nullptr != m_pOutSource)
 	{
@@ -491,11 +491,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
 	/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
 	//m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
-	m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fTimeDelta);
+	m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime);
 
 	m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
 	
-	Bind_ComputeShader(fTimeDelta);
+	Bind_ComputeShader(fScaledDeltaTime);
 
 	m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
 
@@ -568,22 +568,6 @@ HRESULT CModel::Render(_uint iMeshIndex)
 }
 
 HRESULT CModel::Ready_Meshes()
-{
-	m_iNumMeshes = m_pModel->iNumMeshes;
-
-	for (size_t i = 0; i < m_iNumMeshes; i++)
-	{
-		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, this, &m_pModel->vMeshes[i], XMLoadFloat4x4(&m_PreTransformMatrix));
-		if (nullptr == pMesh)
-			return E_FAIL;
-
-		m_Meshes.push_back(pMesh);
-	}
-
-	return S_OK;
-}
-
-HRESULT CModel::Ready_Meshes(CModel* pSkeleton)
 {
 	m_iNumMeshes = m_pModel->iNumMeshes;
 
@@ -926,41 +910,15 @@ HRESULT CModel::Ready_ComputeShader()
 	return S_OK;
 }
 
-// 뼈대 모델이 존재하고, 이 모델이 그 뼈대의 파츠 모델일 때.
-HRESULT CModel::Mapping_Skeleton(CModel* pSkeletonModel)
+HRESULT CModel::Ready_SkeletonBones(CModel* pSkeleton)
 {
-	if (nullptr == pSkeletonModel)
-		return S_OK;
+	m_Bones.clear();
+	m_Bones.reserve(pSkeleton->Get_Bones()->size());
 
-	// 먼저 뼈대 모델의 vBlendWeight와 vBlendIndex를 받아올 것이기에 구조체를 받아온다.
-	binModel* pSkeletonModelDesc = pSkeletonModel->Get_RawModelDesc();
-
-	// 이후, BoneIndex 별로 매핑 테이블을 만들어준다.
-	unordered_map<string, _int> SkeletonBoneIndexMap;
-
-	SkeletonBoneIndexMap.reserve(pSkeletonModel->Get_Bones()->size());
-
-	for (_uint i = 0; i < (_uint)pSkeletonModel->Get_Bones()->size(); ++i)
+	for (auto& pSkeletonBone : *pSkeleton->Get_Bones())
 	{
-		SkeletonBoneIndexMap[pSkeletonModel->Get_Bones()->at(i)->Get_Name()] = i;
+		m_Bones.push_back(pSkeletonBone->Clone());
 	}
-
-	// SkeletonBoneIndex별로 매핑된 맵에 내 본의 이름으로 find해서 찾아준다.
-	vector<_int> BoneIndexList((_uint)m_Bones.size(), -1);
-
-	for (_uint i = 0; i < (_uint)m_Bones.size(); ++i)
-	{
-		auto iter = SkeletonBoneIndexMap.find(m_Bones[i]->Get_Name());
-
-		if (iter == SkeletonBoneIndexMap.end())
-		{
-			continue;
-		}
-
-		BoneIndexList[i] = iter->second;
-	}
-
-
 
 	return S_OK;
 }
