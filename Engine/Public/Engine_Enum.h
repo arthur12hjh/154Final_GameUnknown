@@ -3,6 +3,11 @@
 
 namespace Engine
 {
+
+#define ROOTFLAG_RESET		0
+#define ROOTFLAG_INIT		(1 << 0)
+#define ROOTFLAG_ACTIVE		(1 << 1)
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG

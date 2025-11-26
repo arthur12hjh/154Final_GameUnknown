@@ -35,8 +35,7 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	map<_char*, CBone*>			m_mapBodyBones;
-
+	CModel* m_pBodyModelCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();

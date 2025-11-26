@@ -35,12 +35,16 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iLevelIndex, const _wstring& str
 	return S_OK;
 }
 
-HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix)
+/*
+ - 뼈대 모델에 애니메이션과, 파츠 모델을 붙이는 프로토타입 함수
+*/
+HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix)
 {
 	// _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
 	_finddatai64_t  fd;
 
 	// _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
+	// 이것도 경로, 확장자명 유연하게 바꿔야하는데 일단 이 함수 쓸 객체가 플레이어 밖에 없으니까 냅둔다.
 	intptr_t handle = _findfirst64("../Bin/Resources/Models/Character/PC/Eve/Animation/*.binx*", &fd);
 
 	if (handle == -1)
@@ -48,12 +52,15 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	int iResult = 0;
 
+	// 먼저 뼈대 모델. 즉 기반이 되는 모델을 만든다.
 	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag,
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;
 
+	// 뼈대 모델을 받아온다.
 	CModel* pModel = static_cast<CModel*>(Find_Prototype(iLevelIndex, strPrototypeTag));
 
+	// 뼈대 모델에 애니메이션을 매핑해준다.
 	while (iResult != -1)
 	{
 		CBase* pAnimModel = nullptr;
@@ -87,6 +94,16 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 		iResult = _findnext64(handle, &fd);
 		Safe_Delete_Array(pFileName);
+	}
+
+	// 파츠 모델들을 생성하고, 블렌드인덱스와 본 인덱스를 뼈대 모델에 맞춰 매핑해준다.
+	for (size_t i = 0; i < szPartPrototypeTagList.size(); ++i)
+	{
+		// 모델에 스켈레톤 모델을 전달해줘 매핑할 수 있게 해준다.
+		if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, szPartPrototypeTagList[i],
+			CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, szPartModelFilePathList[i].c_str(), PreTransformMatrix, pModel))))
+			return E_FAIL;
+
 	}
 
 	_findclose(handle);

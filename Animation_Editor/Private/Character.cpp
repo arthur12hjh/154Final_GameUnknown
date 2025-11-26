@@ -196,21 +196,21 @@ HRESULT CCharacter::Ready_PartObjects()
 	HairDesc.pParentState = &m_iState;
 	HairDesc.pParentTransform = m_pTransformCom;
 	HairDesc.pBodyPtr = m_pPart_Body;
-
+	
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Hair_Character"),
 		TEXT("Part_Hair"), &HairDesc)))
 		return E_FAIL;
 	
-	CPonyTail_Character::PONYTAIL_CHARACTER_DESC PonyTailDesc{};
-	PonyTailDesc.pParentState = &m_iState;
-	PonyTailDesc.pParentTransform = m_pTransformCom;
-	PonyTailDesc.pBodyPtr = m_pPart_Body;
-
-	/* Part_PonyTail */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_PonyTail_Character"),
-		TEXT("Part_PonyTail"), &PonyTailDesc)))
-		return E_FAIL;
+	//CPonyTail_Character::PONYTAIL_CHARACTER_DESC PonyTailDesc{};
+	//PonyTailDesc.pParentState = &m_iState;
+	//PonyTailDesc.pParentTransform = m_pTransformCom;
+	//PonyTailDesc.pBodyPtr = m_pPart_Body;
+	//
+	///* Part_PonyTail */
+	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_PonyTail_Character"),
+	//	TEXT("Part_PonyTail"), &PonyTailDesc)))
+	//	return E_FAIL;
 
 	//CBody_Character* pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
 
