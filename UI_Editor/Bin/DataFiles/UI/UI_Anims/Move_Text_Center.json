@@ -32,6 +32,7 @@
         }
     ],
     "fDuration": 0.5,
+    "isBeapBeap": false,
     "isInfluenceChildren": true,
     "isLoop": false,
     "szAnimTag": "Move_Text_Center"

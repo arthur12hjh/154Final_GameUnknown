@@ -35,8 +35,8 @@ void CCollisionManager::Compute_Collision()
 			if (pSrc->Intersect(pDest->GetCollierType(), pDest) &&
 				pDest->Intersect(pSrc->GetCollierType(), pSrc))
 			{
-				pSrc->ADD_HitObejct(pDest->GetOwner());
-				pDest->ADD_HitObejct(pSrc->GetOwner());
+				pSrc->ADD_HitObject(pDest->GetOwner());
+				pDest->ADD_HitObject(pSrc->GetOwner());
 				m_ColHash.insert(make_pair(pSrc, pDest));
 			}
 		}

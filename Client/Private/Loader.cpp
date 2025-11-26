@@ -173,26 +173,26 @@ HRESULT CLoader::Loading()
 	case LEVEL::GAMEPLAY:
 	{
 		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
 		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
 
 		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
@@ -451,7 +451,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -680,7 +680,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -754,7 +754,7 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -933,7 +933,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 		return E_FAIL;
 
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1073,7 +1073,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 #pragma endregion 
 
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1415,7 +1415,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 #pragma endregion
 
@@ -1613,7 +1613,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1737,7 +1737,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1775,7 +1775,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1836,6 +1836,16 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level()
 		return E_FAIL;
 
 	if (FAILED(Loading_UI_For_Combat_HUD_Skills()))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Center_Pivot */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Number */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Number/Number_%d.png"), 10))))
 		return E_FAIL;
 
 	// 객체 원형
@@ -1904,9 +1914,19 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_UI_Texture_SkillFrame_Glow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Glow.png"), 1))))
+	/* For.Prototype_Component_UI_Texture_SkillFrame_Shadow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Skill_Focus_Glow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Skill_On_Fx */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_On_Fx"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_%d.png"), 2))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_UI_Texture_Skills */
@@ -1922,6 +1942,16 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills()
 	/* For.Prototype_Component_UI_Texture_Rush_Glow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Rush_Frame_Glow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_On_Ring */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1))))
 		return E_FAIL;
 
 	return S_OK;

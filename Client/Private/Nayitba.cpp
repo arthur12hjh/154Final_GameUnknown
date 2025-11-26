@@ -285,7 +285,7 @@ HRESULT CNayitba::ADD_Components()
 	}
 
 	m_pAIController = static_cast<CAIController*>(pInstnace);
-	m_pAISenceCom->ADD_SenceIgnoreTraceObejct(HIT_TYPE::STATIC);
+	m_pAISenceCom->ADD_SenceIgnoreTraceObject(HIT_TYPE::STATIC);
 
 	return S_OK;
 }

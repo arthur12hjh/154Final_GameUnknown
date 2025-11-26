@@ -27,7 +27,6 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 
 		THREAD_DESC Desc;
 		m_pDevice->CreateDeferredContext(0, &Desc.pContext);
-		Desc.OnCompleted = [&](thread::id ThreadID) { FinishedWorkThread(ThreadID); };
 		m_DefferdContexts.emplace(WorkerID, Desc);
 	}
 
@@ -77,24 +76,23 @@ void CThreadPool::Update_WorkThread()
 		}
 
 		// 맨 앞의 job 을 뺀다.
-		THREAD_JOB job = m_ThreadJobs.front();
+		THREAD_JOB job = move(m_ThreadJobs.front());
 		m_ThreadJobs.pop();
 
 		thread::id iThreadID = this_thread::get_id();
 		auto& pData = m_DefferdContexts[iThreadID];
 		lock.unlock();
 
+		_bool bIsFinished = false;
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
 			if (job.JobFunction)
 				job.JobFunction(&pData);
-			else
-				pData.OnCompleted(iThreadID);
 		}
-		else
-			pData.OnCompleted(iThreadID);
+		
+		FinishedWorkThread(iThreadID);
 	}
 }
 
@@ -108,7 +106,7 @@ ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 	Handle.JobFunction = move(function);
 	Handle.bIsCanceled = false;
 
-	m_ThreadJobs.push(move(Handle));
+	m_ThreadJobs.emplace(move(Handle));
 	m_cv_Jobs.notify_one();
 	return &m_ThreadJobs.back();
 }
@@ -153,12 +151,14 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 
 	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
-
+	if (0 < m_iWorkdThread)
+		m_iWorkdThread = 0;
+	 
 	unique_lock<mutex> lock(m_QueueLock);
 	m_CommandList.push(pCommandList);
 
 	for (auto& iter : Desc.pAddObejct)
-		m_AddObjectList.push(iter);
+		m_AddObjectList.emplace(move(iter));
 
 	Desc.pAddObejct.clear();
 	lock.unlock();

@@ -161,7 +161,6 @@ HRESULT CEffectResourceManager::LoadVIBuffer(void* pArg)
 	}
 
 	_findclose(handle);
-	Desc->OnCompleted(this_thread::get_id());
 	//m_pVIBuffers.emplace(TEXT("VI_Rect"), CVIBuffer_Rect::Create(m_pDevice, m_pContext));
 	return S_OK;
 }

@@ -70,9 +70,9 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 	m_fTimeStack += fTimeDelta;
 	
-	_vector vStartParam{ XMLoadFloat4(&TrackDesc.vStartParam) };
+	_vector vStartParam{ XMLoadFloat4((m_isReverse ? &TrackDesc.vEndParam : &TrackDesc.vStartParam)) };
 
-	_vector vEndParam{ XMLoadFloat4(&TrackDesc.vEndParam) };
+	_vector vEndParam{ XMLoadFloat4((m_isReverse ? &TrackDesc.vStartParam : &TrackDesc.vEndParam)) };
 
 	// 부드러운 lerp 감쇠
 	//_float fSpeed = TrackDesc.fSpeed;
@@ -84,7 +84,7 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 	if (t <= 1.f)
 	{
-		_vector vLerped = XMVectorLerp(vStartParam, vEndParam, t);
+		_vector vLerped = XMVectorLerp(vStartParam, vEndParam, t);			
 
 		if (TrackDesc.szTrackTag == TEXT("Position"))
 			m_pTargetUI->Set_Position(XMVectorGetX(vLerped), XMVectorGetY(vLerped));
@@ -115,10 +115,22 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 			m_pTargetUI->Set_TintColor(vColor);
 		}
+		if (TrackDesc.szTrackTag == TEXT("SpriteAction"))
+			m_pTargetUI->Set_Texture_Index(static_cast<_uint>(XMVectorGetX(vLerped)));
+		if (TrackDesc.szTrackTag == TEXT("GlowIntensity"))
+			m_pTargetUI->Set_GlowIntensity(XMVectorGetX(vLerped));
 	}
 	else
 	{
 		t = 1.f;
+
+		if (AnimDesc.isBeapBeap)
+		{
+			m_isReverse = !m_isReverse;
+			m_fTimeStack = 0.f;
+			return false;
+		}
+
 		if (AnimDesc.isLoop)
 		{
 			if (TrackDesc.szTrackTag == TEXT("Position"))
@@ -144,6 +156,10 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 				m_pTargetUI->Set_FillAmount(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fFillAmount);
 			if (TrackDesc.szTrackTag == TEXT("TintColor"))
 				m_pTargetUI->Set_TintColor(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.vTintColor);
+			if (TrackDesc.szTrackTag == TEXT("SpriteAction"))
+				m_pTargetUI->Set_Texture_Index(static_cast<_uint>(m_pTargetUI->Get_UIBase_OriginDesc().m_tUITextureDesc.iTextureIndex));
+			if (TrackDesc.szTrackTag == TEXT("GlowIntensity"))
+				m_pTargetUI->Set_GlowIntensity(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fGlowIntensity);
 
 			m_fTimeStack = 0.f;
 		}
@@ -178,6 +194,10 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 				m_pTargetUI->Set_TintColor(vColor);
 			}
+			if (TrackDesc.szTrackTag == TEXT("GlowIntensity"))
+				m_pTargetUI->Set_GlowIntensity(XMVectorGetX(vEndParam));
+			if (TrackDesc.szTrackTag == TEXT("SpriteAction"))
+				m_pTargetUI->Set_Texture_Index(static_cast<_uint>(XMVectorGetX(vEndParam)));
 
 			return true;
 		}

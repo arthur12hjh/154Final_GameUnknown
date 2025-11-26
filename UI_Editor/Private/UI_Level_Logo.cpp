@@ -16,7 +16,7 @@ CUI_Level_Logo::CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CUI_Level_Logo::Initialize()
 {
-	m_pGuiManager = CGUIManager::GetInstance();
+	//m_pGuiManager = CGUIManager::GetInstance();
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -35,8 +35,6 @@ void CUI_Level_Logo::Update(_float fTimeDelta)
 
 	if (GetKeyState(VK_F3) & 0x8000)
 	{
-		
-
 		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
@@ -64,7 +62,7 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
 	
-	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }

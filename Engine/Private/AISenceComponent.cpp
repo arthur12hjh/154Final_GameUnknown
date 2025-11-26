@@ -141,19 +141,19 @@ void CAISenceComponent::Bind_TargetDetected(function<void(CGameObject*)> Func)
 	m_TargetDetectedFunc = Func;
 }
 
-void CAISenceComponent::SetColliderHitType(HIT_TYPE eHitType)
+void CAISenceComponent::SetTraceHitType(HIT_TYPE eHitType)
 {
 	m_pTargetSearchCol->SetColliderHitType(eHitType);
 }
 
-void CAISenceComponent::ADD_SenceIgnoreTraceObejct(HIT_TYPE typeID)
+void CAISenceComponent::ADD_SenceIgnoreTraceObject(HIT_TYPE eHitType)
 {
-	m_pTargetSearchCol->ADD_IgnoreObejct(typeID);
+	m_pTargetSearchCol->ADD_IgnoreObject(eHitType);
 }
 
-void CAISenceComponent::ADD_SenceOnlyTraceObject(HIT_TYPE typeID)
+void CAISenceComponent::ADD_SenceOnlyTraceObject(HIT_TYPE eHitType)
 {
-	m_pTargetSearchCol->ADD_IgnoreObejct(typeID);
+	m_pTargetSearchCol->ADD_IgnoreObject(eHitType);
 }
 
 HRESULT CAISenceComponent::ADD_Components()

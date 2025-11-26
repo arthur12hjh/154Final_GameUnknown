@@ -204,11 +204,10 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 			{
 				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-				if (E_FAIL == m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc))
-				{
-					MoveAction(true);
-				}
+				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}
+			else
+				MoveAction(true);
 		}
 		else
 		{

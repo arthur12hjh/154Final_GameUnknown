@@ -29,6 +29,18 @@ namespace Client
 
 		bool bUseTintColor{ false };
 		XMFLOAT4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
+
+		bool bDiscardBlack{ false };
+
+		bool bUseGlow{ false };
+		bool bUsePulseEffect{ false };
+		bool bUseScroll{ false };
+		float fScrollSpeed{ 0.f };
+		float fPulseTime{ 0.f };
+		float fPulseSpeed{ 0.f };
+		float fGlowIntensity{ 0.f };
+		float fGlowSpread{ 0.f };
+
 	}UI_SHADER_DESC;
 
 	// UI Event
@@ -57,8 +69,9 @@ namespace Client
 		float fDuration{ 1.f };
 		bool isLoop = false;
 		bool isInfluenceChildren = true;
+		bool isBeapBeap{ false };
 
-		_bool m_isHasTracks{ false };
+		bool m_isHasTracks{ false };
 		map<wstring, UI_ANIM_TRACK_DESC> m_Tracks{};
 
 	public:
@@ -109,6 +122,7 @@ namespace Client
 		unsigned int iLevel{ 0 };
 		unsigned int iDepth{ 0 };
 		unsigned int iRenderGroup{ ENUM_CLASS(RENDER::UI) };
+		unsigned int iDrawType{ ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN) };
 
 		unsigned int iVisiblity{ ENUM_CLASS(VISIBILITY::VISIBLE) };
 
@@ -116,12 +130,13 @@ namespace Client
 		wstring szUITag{};
 		wstring szLayerTag{};
 		wstring szProtoTag{};
+		wstring szPoolTag{};
 
-		_bool m_isHasTextDesc{ false };
+		bool m_isHasTextDesc{ false };
 		UI_TEXT_DESC m_tUITextDesc{ };
-		_bool m_isHasTextureDesc{ false };
+		bool m_isHasTextureDesc{ false };
 		UI_TEXTURE_DESC m_tUITextureDesc{ };
-		_bool m_isHasShaderDesc{ false };
+		bool m_isHasShaderDesc{ false };
 		UI_SHADER_DESC m_tUIShaderDesc{};
 
 		map<wstring, wstring> m_AnimTags{}; // 애니메이션 태그, 프리팹 이름

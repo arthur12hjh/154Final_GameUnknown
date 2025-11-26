@@ -22,7 +22,6 @@ namespace Engine
 	{
 		ID3D11DeviceContext*			pContext = nullptr;
 		list<PROTOTYPE_DESC>			pAddObejct;
-		function<void(thread::id)>									OnCompleted;
 	}THREAD_DESC;
 
 	typedef struct ThreadJob

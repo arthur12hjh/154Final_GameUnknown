@@ -54,6 +54,7 @@ HRESULT CUIAnimManager::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
 	jAnim["szAnimTag"] = szText;
 	jAnim["fDuration"] = AnimDesc.fDuration;
 	jAnim["isLoop"] = AnimDesc.isLoop;
+	jAnim["isBeapBeap"] = AnimDesc.isBeapBeap;
 	jAnim["isInfluenceChildren"] = AnimDesc.isInfluenceChildren;
 
 	for (auto& TrackDesc : AnimDesc.m_Tracks)
@@ -142,6 +143,7 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 	AnimDesc.szAnimTag = szText;
 	AnimDesc.isLoop = jAnim["isLoop"].get<_bool>();
 	AnimDesc.fDuration = jAnim["fDuration"].get<_float>();
+	AnimDesc.isBeapBeap = jAnim["isBeapBeap"].get<_bool>();
 	AnimDesc.isInfluenceChildren = jAnim["isInfluenceChildren"].get<_bool>();
 
 	for (auto& Track : jAnim["Tracks"])

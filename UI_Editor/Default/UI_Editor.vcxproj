@@ -165,6 +165,18 @@
     <ClInclude Include="UI_Editor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Client\Private\Actor.cpp" />
+    <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp" />
+    <ClCompile Include="..\..\Client\Private\Camera_Free.cpp" />
+    <ClCompile Include="..\..\Client\Private\CanBox.cpp" />
+    <ClCompile Include="..\..\Client\Private\DataManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp" />
+    <ClCompile Include="..\..\Client\Private\Quest.cpp" />
+    <ClCompile Include="..\..\Client\Private\QuestManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\RewordEvent.cpp" />
+    <ClCompile Include="..\..\Client\Private\Sky.cpp" />
+    <ClCompile Include="..\..\Client\Private\TestQuest.cpp" />
     <ClCompile Include="..\..\Client\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\..\Client\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\..\Client\Private\UIAnimManager.cpp" />

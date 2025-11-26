@@ -50,6 +50,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 		m_szAnimationName = m_pSkillData->szAnimationName;
 	}
 
+	m_bIsEnableChange = false;
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false);
 }
 
@@ -60,7 +61,10 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
 
 	if (m_bIsFinished)
+	{
 		m_AttackCompletedFunc(0.f);
+		m_bIsEnableChange = true;
+	}
 }
 
 void CMonsterAttackState::End()

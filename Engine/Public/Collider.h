@@ -48,9 +48,9 @@ public:
 	void					BindOverlappingEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> OverlappingEvent);
 	void					BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> EndEvent);
 
-	void					ADD_HitObejct(CGameObject* pObject);
-	void					ADD_IgnoreObejct(HIT_TYPE typeID);
-	void					ADD_OnlyHitObject(HIT_TYPE typeID);
+	void					ADD_HitObject(CGameObject* pObject);
+	void					ADD_IgnoreObject(HIT_TYPE eHitType);
+	void					ADD_OnlyHitObject(HIT_TYPE eHitType);
 
 	void					CallFunction();
 	void					ResetCollision();
