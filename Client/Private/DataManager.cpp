@@ -17,7 +17,7 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
-    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { this->LoadBossData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadBossData(pArg); });
 
     return S_OK;
 }

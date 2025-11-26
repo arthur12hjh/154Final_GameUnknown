@@ -15,9 +15,10 @@ CEffectResourceManager::CEffectResourceManager(ID3D11Device* pDevice, ID3D11Devi
 
 HRESULT CEffectResourceManager::Initalize()
 {
-	m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->LoadVIBuffer(pArg); });
+	m_pGameInstance->Add_ThreadjobList([&](void* pArg) { LoadVIBuffer(pArg); });
 	if (FAILED(LoadTexture()))
 		return E_FAIL;
+
 	while (m_pGameInstance->IsWorkThread());
 	return S_OK;
 }

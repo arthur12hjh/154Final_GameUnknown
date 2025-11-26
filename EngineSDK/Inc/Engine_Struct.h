@@ -14,7 +14,7 @@ namespace Engine
 	typedef struct PrototypeDesc
 	{
 		unsigned int			iLevelID;
-		const WCHAR*			szPrototypeName;
+		wstring					szPrototypeName;
 		class CBase*			pPrototype;
 	}PROTOTYPE_DESC;
 

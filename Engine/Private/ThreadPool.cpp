@@ -60,7 +60,7 @@ void CThreadPool::Update_WorkThread()
 	while (true)
 	{
 		unique_lock<mutex> lock(m_Worker);
-		m_cv_Jobs.wait(lock, [this]()
+		m_cv_Jobs.wait(lock, [&]()
 		{
 			if (!m_ThreadJobs.empty() || m_bIsThreadStopAll)
 			{
@@ -75,24 +75,26 @@ void CThreadPool::Update_WorkThread()
 			return;
 		}
 
-		// 맨 앞의 job 을 뺀다.
-		THREAD_JOB job = move(m_ThreadJobs.front());
-		m_ThreadJobs.pop();
-
-		thread::id iThreadID = this_thread::get_id();
-		auto& pData = m_DefferdContexts[iThreadID];
-		lock.unlock();
-
-		_bool bIsFinished = false;
-		// 등록된 함수를 수행
-		if (false == job.bIsCanceled)
+		if (!m_ThreadJobs.empty())
 		{
-			m_iWorkdThread++;
-			if (job.JobFunction)
+			// 맨 앞의 job 을 뺀다.
+			THREAD_JOB job = move(m_ThreadJobs.front());
+			m_ThreadJobs.pop();
+
+			thread::id iThreadID = this_thread::get_id();
+			auto& pData = m_DefferdContexts[iThreadID];
+			lock.unlock();
+
+			_bool bIsFinished = false;
+			// 등록된 함수를 수행
+			if (false == job.bIsCanceled && job.JobFunction)
+			{
+				m_iWorkdThread++;
 				job.JobFunction(&pData);
+			}
+
+			FinishedWorkThread(iThreadID);
 		}
-		
-		FinishedWorkThread(iThreadID);
 	}
 }
 
@@ -101,14 +103,16 @@ ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 	if (nullptr == function)
 		return nullptr;
 
+	unique_lock<mutex> lock(m_Worker);
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
 	Handle.JobFunction = move(function);
 	Handle.bIsCanceled = false;
 
-	m_ThreadJobs.emplace(move(Handle));
+	m_ThreadJobs.emplace(Handle);
+	lock.unlock();
 	m_cv_Jobs.notify_one();
-	return &m_ThreadJobs.back();
+	return nullptr;
 }
 
 void CThreadPool::StopAllThread()
@@ -136,6 +140,7 @@ _bool CThreadPool::IsWorkThread()
 
 void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 {
+	unique_lock<mutex> lock(m_QueueLock);
 	auto& Desc = m_DefferdContexts[ThreadID];
 
 	ID3D11CommandList* pCommandList = nullptr;
@@ -153,8 +158,7 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 	m_iWorkdThread--;
 	if (0 < m_iWorkdThread)
 		m_iWorkdThread = 0;
-	 
-	unique_lock<mutex> lock(m_QueueLock);
+
 	m_CommandList.push(pCommandList);
 
 	for (auto& iter : Desc.pAddObejct)

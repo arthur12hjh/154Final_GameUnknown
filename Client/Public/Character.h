@@ -28,6 +28,8 @@ public:
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);
 	void							DetachedMatrix();
 
+	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
+
 protected :
 	_bool							m_bIsActionEnabled = { true };
 	const _float4x4*				m_pSocketMatrix = { nullptr };

@@ -761,7 +761,6 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-
 	char pattern[MAX_PATH] = {};
 
 	memset(pattern, 0, sizeof(pattern));
@@ -778,10 +777,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar fileName[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fd.cFileName, strlen(fd.cFileName), fileName, 256);
 				_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), fileName,
-					CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix))))
-					return E_FAIL;
-
+				
+				PROTOTYPE_DESC PrototypeDesc = {};
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = fileName;
+				PrototypeDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -794,6 +795,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/");
@@ -806,10 +808,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
-
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -822,6 +824,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/");
@@ -834,10 +837,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
-
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -850,6 +853,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/");
@@ -862,9 +866,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -877,6 +882,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/");
@@ -889,49 +895,52 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
 	}
 
-	/* For.Prototype_GameObject_Snow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
-		CTrail::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	PROTOTYPE_DESC PrototypeDesc = {};
+	PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMeshEffect"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
-		return E_FAIL;
+	/* For.Prototype_Component_Trail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Trail");
+	PrototypeDesc.pPrototype = CTrail::Create(m_pDevice, m_pContext);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteUVEffect"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-		return E_FAIL;
+	/* For.Prototype_Component_Shader_VtxMeshEffect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshEffect");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteParticle"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
-		return E_FAIL;
+	/* For.Prototype_Component_Shader_VtxSpriteUVEffect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteUVEffect");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxTrail"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-		return E_FAIL;
+	/* For.Prototype_Component_Shader_VtxSpriteParticle */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteParticle");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	
+	/* For.Prototype_Component_Shader_VtxTrail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx"))))
-		return E_FAIL;
+	/* For.Prototype_Component_Effect_Test */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Test");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),
-		CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/SaveEffect.binx"))))
-		return E_FAIL;
-
+	/* For.Prototype_Component_TrailEffect_Test */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Test");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/SaveEffect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	//Desc->OnCompleted(this_thread::get_id());
 
