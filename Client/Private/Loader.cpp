@@ -256,8 +256,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_hair_Test/CH_P_EVE_Hair_Test.bin");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_hair_PonyTailTest_2/CH_P_EVE_Hair_PonyTail_2_Test.bin");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.fbx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.fbx");
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",

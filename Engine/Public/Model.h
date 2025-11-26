@@ -102,7 +102,7 @@ public:
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 	}
 
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
@@ -167,11 +167,13 @@ private:
 	_float4x4					m_PreRootMatrix{};
 	_float4x4					m_CurRootMatrix{};
 
+	_float						m_fAnimationPlayRate = 1.f;
+
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};
+	_int						m_iFlagPreRootModified = ROOTFLAG_RESET;
 	_bool						m_isLoop = { false };
 	_bool						m_isFinish = { false };
-	_int						m_iFlagPreRootModified = ROOTFLAG_RESET;
 	vector<class CAnimation*>	m_Animations;
 
 	_char						m_szBindTags[ENUM_CLASS(TEXTURE_TYPE::END)][MAX_PATH];
@@ -182,13 +184,12 @@ private:
 
 private:
 	HRESULT Ready_Meshes();
-	HRESULT Ready_Meshes(CModel* pSkeleton);
 	HRESULT Ready_Materials(const _char* pModelFilePath);
 	HRESULT Ready_Bones(binNode* pNode, _int iParentIndex);
 	HRESULT Ready_Animations();
 	HRESULT Ready_ComputeShader();
 
-	HRESULT Mapping_Skeleton(CModel* pSkeletonModel);
+	HRESULT Ready_SkeletonBones(CModel* pSkeleton);
 
 	HRESULT Mapping_Animation(class CAnimation* pAnimation);
 	HRESULT Bind_ComputeShader(_float fTimeDelta);

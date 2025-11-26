@@ -31,7 +31,7 @@ public:
 	_bool	IsAnmiationFinished();
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 
 protected:
 	class CModel* m_pBodyModelCom = { nullptr };
