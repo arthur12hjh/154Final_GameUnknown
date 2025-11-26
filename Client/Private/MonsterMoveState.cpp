@@ -125,19 +125,32 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     }
 
     AnimationName += "_Caution";
+    _vector vMoveDir = {};
     switch (m_vMoveDirection)
     {
     case DIRECTION::FRONT:
+    {
         AnimationName += "_Fw";
+        vMoveDir = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+    }
         break;
     case DIRECTION::LEFT:
+    {
         AnimationName += "_Lw";
+        vMoveDir = m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * -1.f;
+    }
         break;
     case DIRECTION::RIGHT:
+    {
+        vMoveDir = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
         AnimationName += "_Rw";
+    }
         break;
     case DIRECTION::BACK:
+    {
         AnimationName += "_Bw";
+        vMoveDir = m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -1.f;
+    }
         break;
     }
 
@@ -153,7 +166,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 
     pOwnerTransform->LookAt(vTargetPos);
-    pOwnerTransform->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fMoveSpeed);
+    pOwnerTransform->Move_Direction(fTimeDelta, vMoveDir, m_fMoveSpeed);
 }
 
 void CMonsterMoveState::Update_Move(_float fTimeDelta)
@@ -290,18 +303,18 @@ void CMonsterMoveState::Compute_MoveDirection()
         if (50 <= fRandom)
         {
             m_vMoveDirection = DIRECTION::RIGHT;
-            XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+          //  XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
         }
         else
         {
             m_vMoveDirection = DIRECTION::LEFT;
-            XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+          //  XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
         }
     }
     else
     {
         m_vMoveDirection = DIRECTION::BACK;
-        XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK));
+      //  XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK));
     }
 }
 

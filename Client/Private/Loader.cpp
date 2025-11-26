@@ -173,26 +173,26 @@ HRESULT CLoader::Loading()
 	case LEVEL::GAMEPLAY:
 	{
 		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
 		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
 
 		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
@@ -451,7 +451,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -680,7 +680,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -754,7 +754,7 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -933,7 +933,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 		return E_FAIL;
 
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1073,7 +1073,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 #pragma endregion 
 
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1415,7 +1415,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 #pragma endregion
 
@@ -1613,7 +1613,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1737,7 +1737,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1775,7 +1775,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
