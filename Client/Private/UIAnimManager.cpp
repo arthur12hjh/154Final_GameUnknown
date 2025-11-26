@@ -54,6 +54,7 @@ HRESULT CUIAnimManager::Export_Anim_Prefab(_wstring szAnimTag, void* pDesc)
 	jAnim["szAnimTag"] = szText;
 	jAnim["fDuration"] = AnimDesc.fDuration;
 	jAnim["isLoop"] = AnimDesc.isLoop;
+	jAnim["isBeapBeap"] = AnimDesc.isBeapBeap;
 	jAnim["isInfluenceChildren"] = AnimDesc.isInfluenceChildren;
 
 	for (auto& TrackDesc : AnimDesc.m_Tracks)
@@ -142,6 +143,7 @@ HRESULT CUIAnimManager::Import_Anim_Prefab(_wstring szAnimTag, void* pAnimOut)
 	AnimDesc.szAnimTag = szText;
 	AnimDesc.isLoop = jAnim["isLoop"].get<_bool>();
 	AnimDesc.fDuration = jAnim["fDuration"].get<_float>();
+	AnimDesc.isBeapBeap = jAnim["isBeapBeap"].get<_bool>();
 	AnimDesc.isInfluenceChildren = jAnim["isInfluenceChildren"].get<_bool>();
 
 	for (auto& Track : jAnim["Tracks"])
@@ -216,8 +218,24 @@ void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag)
 		return;
 
 	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second);
-
 	m_AnimInstances.push_back(pAnimInstance);
+}
+
+void CUIAnimManager::Anim_Stop(CUIBase* pUI)
+{
+	for (auto iter = m_AnimInstances.begin(); iter != m_AnimInstances.end();)
+	{
+		CUIAnimInstance* pAnimInstance = *iter;
+
+		if (pAnimInstance->Get_TargetUI() == pUI)
+		{
+			pAnimInstance->Stop_Anim();
+			Safe_Release(pAnimInstance);
+			iter = m_AnimInstances.erase(iter);
+		}
+		else
+			++iter;
+	}
 }
 
 void CUIAnimManager::Clear_AnimInstances()

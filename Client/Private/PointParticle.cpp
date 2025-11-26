@@ -15,8 +15,6 @@ CPointParticle::CPointParticle(const CPointParticle& Prototype)
 
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Instance*>(Prototype.m_pVIBufferCom->Clone(nullptr));
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
-	//Safe_AddRef(Prototype.m_pVIBufferCom);
-	//Safe_AddRef(Prototype.m_pComputeShader);
 }
 
 HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointParticleData)
@@ -99,7 +97,7 @@ void CPointParticle::Update(_float fTimeDelta)
 		}
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+		XMMatrixTranspose(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat)));
 	Spread(fTimeDelta);
 }
 
@@ -109,7 +107,7 @@ void CPointParticle::Late_Update(_float fTimeDelta)
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CPointParticle::Render()
@@ -128,30 +126,26 @@ HRESULT CPointParticle::Render()
 
 HRESULT CPointParticle::Ready_Components()
 {
-
 	_tchar sztPrototype[256] = { 0, };
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDissolveTexture.c_str(), strlen(m_tData.szDissolveTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DissolveTexture"), reinterpret_cast<CComponent**>(&m_pTexture[2]))))
 		return E_FAIL;
-
-	/* Com_VIBuffer */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_PointParticle_Explosion"),
-	//	TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-	//	return E_FAIL;
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxPointParticle"),
@@ -162,7 +156,11 @@ HRESULT CPointParticle::Ready_Components()
 
 HRESULT CPointParticle::Bind_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	_float4x4 world = m_CombinedWorldMatrix;
+	world._41 = 0;
+	world._42 = 0;
+	world._43 = 0;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
@@ -232,8 +230,13 @@ HRESULT CPointParticle::Ready_ComputeShader()
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
+	m_CBData.fTurnPower = m_tData.fTurnPower;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
+	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
+	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
+	m_CBData.fTimeDelta.w = m_tData.fEndTime;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
@@ -293,9 +296,14 @@ HRESULT CPointParticle::Ready_ComputeShader()
 
 void CPointParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
+	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;
+	m_CBData.fTurnPower = m_tData.fTurnPower;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
+	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지

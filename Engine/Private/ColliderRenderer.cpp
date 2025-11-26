@@ -130,19 +130,20 @@ void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
     }
     m_DebugComponents.clear();
 
-    if (FAILED(pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW))))
-        return;
-
-    if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ))))
-        return;
-
     m_pGameInstance->FrustomRender();
 }
 
 void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 {
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+
     for (auto& Pair : m_PxShapes)
     {
+        const _char* pActorName = Pair.first->getName();
+
+        if (nullptr != pActorName && strcmp(Pair.first->getName(), "TERRAIN") == 0)
+            continue; 
+
         PxGeometryHolder Geometry = Pair.second->getGeometry();
         PxTransform PhysxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);
 

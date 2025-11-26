@@ -99,8 +99,39 @@ HRESULT CMesh::Bind_BoneMatrices(const vector<CBone*>& Bones, CShader* pShader, 
 	if (0 == m_iNumBones)
 		return S_OK;
 
-	return pShader->Bind_Matrices(pConstantName, m_pBoneMatrices, m_iNumBones);
+	if (FAILED(pShader->Bind_Matrices(pConstantName, m_pBoneMatrices, m_iNumBones)))
+	{
+		MSG_BOX("Bind OffsetMatrices Failed");
+		return E_FAIL;
+	}
+	else
+		return S_OK;
 	
+	
+}
+
+HRESULT CMesh::Bind_OffsetMatrices(const vector<class CBone*>& Bones, CShader* pShader, const _char* pConstantName)
+{
+	if (m_iNumBones >= 512)
+		return E_FAIL;
+
+	for (size_t i = 0; i < m_iNumBones; i++)
+	{
+		/* 최종적으로 렌더링하기위한 뼈의 행렬(CombinedTransformationMatrix). */
+		XMStoreFloat4x4(&m_pBoneMatrices[i], XMLoadFloat4x4(&m_OffsetMatrices[i]));
+	}
+
+	if (m_iNumBones > 0)
+		pShader->Bind_Matrices(pConstantName, m_pBoneMatrices, m_iNumBones);
+
+	_uint BoneGlobalIndex[512] = {};
+	for (size_t i = 0; i < m_iNumBones; i++)
+		BoneGlobalIndex[i] = m_BoneIndices[i];   // 메시 로컬 i → 전역 본 인덱스
+
+	// 상수 배열로 바인딩 (shader variable: uint g_BoneGlobalIndex[512];)
+	pShader->Bind_RawValue("g_BoneGlobalIndex", BoneGlobalIndex, sizeof(_uint) * m_iNumBones);
+
+	return S_OK;
 }
 
 HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
@@ -196,8 +227,12 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const binMesh* 
 
 		_int		iBoneIndex = pModel->Get_BoneIndex(binBoneTmp.szName);
 
+		// 본 매트릭스 부착을 위해서라면 여기를 바꿔줘야함.
 		if (-1 == iBoneIndex)
-			return E_FAIL;
+		{
+			// 
+			iBoneIndex = 0;
+		}
 
 		m_OffsetMatrices.push_back(OffsetMatrix);
 		m_BoneIndices.push_back(iBoneIndex);
@@ -209,30 +244,30 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const binMesh* 
 
 			if(0.f == pVertices[binWeight.iVertexId].vBlendWeight.x)
 			{
-				pVertices[binWeight.iVertexId].vBlendIndex.x = i;
+				pVertices[binWeight.iVertexId].vBlendIndex.x = iBoneIndex;
 				pVertices[binWeight.iVertexId].vBlendWeight.x = binWeight.fWeight;
 			}
 
 			else if (0.f == pVertices[binWeight.iVertexId].vBlendWeight.y)
 			{
-				pVertices[binWeight.iVertexId].vBlendIndex.y = i;
+				pVertices[binWeight.iVertexId].vBlendIndex.y = iBoneIndex;
 				pVertices[binWeight.iVertexId].vBlendWeight.y = binWeight.fWeight;
 			}
 
 			else if (0.f == pVertices[binWeight.iVertexId].vBlendWeight.z)
 			{
-				pVertices[binWeight.iVertexId].vBlendIndex.z = i;
+				pVertices[binWeight.iVertexId].vBlendIndex.z = iBoneIndex;
 				pVertices[binWeight.iVertexId].vBlendWeight.z = binWeight.fWeight;
 			}
 
 			else if(0.f == pVertices[binWeight.iVertexId].vBlendWeight.w)
 			{
-				pVertices[binWeight.iVertexId].vBlendIndex.w = i;
+				pVertices[binWeight.iVertexId].vBlendIndex.w = iBoneIndex;
 				pVertices[binWeight.iVertexId].vBlendWeight.w = binWeight.fWeight;
 			}
 			else if (0.f != pVertices[binWeight.iVertexId].vBlendWeight.w)
 			{
-				pVertices[binWeight.iVertexId].vBlendIndex.w = i;
+				pVertices[binWeight.iVertexId].vBlendIndex.w = iBoneIndex;
 				pVertices[binWeight.iVertexId].vBlendWeight.w = binWeight.fWeight;
 			}
 		}
@@ -263,7 +298,7 @@ CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModel, pBinMesh, PreTransformMatrix)))
-	{
+	{ 
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);
 	}

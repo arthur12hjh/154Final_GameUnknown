@@ -29,6 +29,34 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
+
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return E_FAIL;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return E_FAIL;
+
+	Safe_Release(pBuffer);
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
@@ -43,13 +71,19 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
+	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime)) {
+		m_isDead = true;
+		return;
+	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime))
+		return;
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CMeshEffect::Render()
@@ -77,18 +111,21 @@ HRESULT CMeshEffect::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))	
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
 
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDissolveTexture.c_str(), strlen(m_tData.szDissolveTexture.c_str()), sztPrototype, 256);
 	/* Com_Texture */
@@ -149,7 +186,11 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
 		return E_FAIL;
-	return S_OK;
+	int iSizeCount = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
+		return E_FAIL;
+
+	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
 
@@ -184,6 +225,7 @@ void CMeshEffect::Free()
 	__super::Free();
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pSizeDiagramSRV);
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
 }

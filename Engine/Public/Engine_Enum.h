@@ -3,6 +3,11 @@
 
 namespace Engine
 {
+
+#define ROOTFLAG_RESET		0
+#define ROOTFLAG_INIT		(1 << 0)
+#define ROOTFLAG_ACTIVE		(1 << 1)
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG
@@ -11,7 +16,15 @@ namespace Engine
 	enum class COLLIDER			{ AABB, OBB, SPHERE, END };
 
 	// 추가 예정
-	enum class HIT_TYPE			{ ALL, OBJECT, END };
+	enum class HIT_TYPE			{ ALL,
+								  OBJECT,
+								  STATIC,
+								  PLAYER,
+								  MONSTER,
+								  SENCE,
+								  INTERACTION,
+								  END };
+
 	enum class LIGHT_TYPE		{ POINT = 1, SPOT, DIRECTIONAL, END };
 
 	enum class MOUSEKEYSTATE	{ LBUTTON, RBUTTON, WBUTTON, XBUTTON };
@@ -21,7 +34,7 @@ namespace Engine
 	enum class KEY_INPUT		{ KEYBOARD, MOUSE, END };
 								// 이전 프레임 뷰 투영도 추가
 	enum class D3DTS			{ VIEW, PROJ, END };
-	enum class MODEL_TYPE		{ ANIM, NONANIM, END };
+	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, END };
 								
 	enum class VISIBILITY		{ VISIBLE, HIDDEN, END };
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };
@@ -45,15 +58,15 @@ namespace Engine
 		EMISSIVE = 4,
 		ORM = 5,
 		NORMAL = 6,
-		MASK = 7,
-		EXTRA1 = 8,
-		EXTRA2 = 9,
-		EXTRA3 = 10,
-		EXTRA4 = 11,
-		EXTRA5 = 12,
-		EXTRA6 = 13,
-		EXTRA7 = 14,
-		EXTRA8 = 15,
+		ORSS = 7,
+		MASK = 8,
+		EXTRA1 = 9,
+		EXTRA2 = 10,
+		EXTRA3 = 11,
+		EXTRA4 = 12,
+		EXTRA5 = 13,
+		EXTRA6 = 14,
+		EXTRA7 = 15,
 		END
 	};
 
@@ -82,7 +95,9 @@ namespace Engine
 	};
 
 	enum class SHADER_DEFERRED_IDX {
-		DEBUG, DIRECTIONAL, POINT, COMBINED,
+		DEBUG, DIRECTIONAL, POINT,
+		VOLUMETRIC_DIRECTIONAL, VOLUMETRIC_POINT,
+		COMBINED,
 		//후처리 합성용
 		DEFERRED,
 		//톤 매핑

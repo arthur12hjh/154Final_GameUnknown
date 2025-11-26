@@ -15,7 +15,7 @@ private:
 
 public :
 	const CHARACTER_SKILL_DESC*				Find_SkillData(_uint iSkillID);
-	const BOSS_NETWORK_DESC*				Find_BossData(_uint iBossID);
+	const NAYTIBA_NETWORK_DESC*				Find_NaytibaData(_uint iID);
 
 	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
@@ -27,7 +27,7 @@ private:
 	map<_uint, CHARACTER_SKILL_DESC>		m_pSkillDatas = {};
 
 	//보스 데이터
-	map<_uint, BOSS_NETWORK_DESC>			m_pBossDatas = {};
+	map<_uint, NAYTIBA_NETWORK_DESC>		m_pNaytibaDatas = {};
 
 	// 애니메이션 노티파이(이벤트) 데이터
 	unordered_map<_wstring, vector<ANIM_NOTIFY>>		m_AnimationNotifyDatas = {};

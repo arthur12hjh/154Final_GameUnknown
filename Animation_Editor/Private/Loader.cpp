@@ -107,24 +107,6 @@ HRESULT CLoader::Loading_For_Editor()
 
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
 
-	/* For.Prototype_Component_Model_Face_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Face_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_Hair_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Hair_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_Test/CH_P_EVE_Hair_Test.bin", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_PonyTail_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_PonyTail_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_PonyTailTest_2/CH_P_EVE_Hair_PonyTail_2_Test.bin", PreTransformMatrix))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Model_Dororong */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Dororong"),
@@ -134,7 +116,7 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_Component_Model_Gigas */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Gigas"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Gigas/CH_M_Gigas_PreTest.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Gigas/CH_M_Gigas_PreTest.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Map_Village_Mou */
@@ -281,7 +263,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
-	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest");
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	_matrix PreMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	//                        		szPlayerTag, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin",
@@ -289,9 +271,20 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Nikke06.bin",
 	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_63.bin",
 
+	vector<_wstring> szPartPrototypeTagList;
+	vector<string> szPartModelFilePathList;
+
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
+
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.fbx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.fbx");
+
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Default.bin",
-		szFrontPath, PreMatrix)))
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),

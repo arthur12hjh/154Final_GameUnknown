@@ -25,10 +25,10 @@ CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CUIHUD::Initialize()
 {
 	m_pUIAnimMgr = CUIAnimManager::Create();
-
+	
 	if (!m_pUIAnimMgr)
 		return E_FAIL;
-
+	
 	m_pUIAnimMgr->Load_Anim_Files();
 
 	return S_OK;
@@ -104,6 +104,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	jObj["iLevel"] = pDesc.iLevel;
 	jObj["iDepth"] = pDesc.iDepth;
 	jObj["iRenderGroup"] = pDesc.iRenderGroup;
+	jObj["iDrawType"] = pDesc.iDrawType;
 	jObj["iVisibility"] = pUI->GetVisibility();
 	CStringHelper::ConvertWideToUTF(pDesc.szUIID.c_str(), szText);
 	jObj["szUIID"] = szText;
@@ -113,6 +114,57 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	jObj["szLayerTag"] = szText;
 	CStringHelper::ConvertWideToUTF(pDesc.szProtoTag.c_str(), szText);
 	jObj["szProtoTag"] = szText;
+
+	if (pDesc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::WORLD))
+		jObj["szPoolTag"] = pDesc.szPoolTag;
+
+	if (pDesc.Get_ShaderDesc())
+	{
+		Json jShader;
+		if (pDesc.m_tUIShaderDesc.bUseUV)
+		{
+			jShader["bUseUV"] = pDesc.m_tUIShaderDesc.bUseUV;
+			jShader["fUVScaleX"] = pDesc.m_tUIShaderDesc.fUVScaleX;
+			jShader["fUVScaleY"] = pDesc.m_tUIShaderDesc.fUVScaleY;
+			jShader["fUVOffsetX"] = pDesc.m_tUIShaderDesc.fUVOffsetX;
+			jShader["fUVOffsetY"] = pDesc.m_tUIShaderDesc.fUVOffsetY;
+		}
+		if (pDesc.m_tUIShaderDesc.bUseFillClip)
+		{
+			jShader["bUseFillClip"] = pDesc.m_tUIShaderDesc.bUseFillClip;
+			jShader["fFillAmount"] = pDesc.m_tUIShaderDesc.fFillAmount;
+		}
+		if (pDesc.m_tUIShaderDesc.bUseTintColor)
+		{
+ 			jShader["bUseTintColor"] = pDesc.m_tUIShaderDesc.bUseTintColor;
+			jShader["vTintColor"] = {
+				pDesc.m_tUIShaderDesc.vTintColor.x,
+				pDesc.m_tUIShaderDesc.vTintColor.y,
+				pDesc.m_tUIShaderDesc.vTintColor.z,
+				pDesc.m_tUIShaderDesc.vTintColor.w
+			};
+		}
+		if (pDesc.m_tUIShaderDesc.bDiscardBlack)
+		{
+			jShader["bDiscardBlack"] = pDesc.m_tUIShaderDesc.bDiscardBlack;
+		}
+		if (pDesc.m_tUIShaderDesc.bUseGlow)
+		{
+			jShader["bUseGlow"] = pDesc.m_tUIShaderDesc.bUseGlow;
+			jShader["fGlowIntensity"] = pDesc.m_tUIShaderDesc.fGlowIntensity;
+			jShader["fGlowSpread"] = pDesc.m_tUIShaderDesc.fGlowSpread;
+		}
+		if (pDesc.m_tUIShaderDesc.bUsePulseEffect)
+		{
+			jShader["bUsePulseEffect"] = pDesc.m_tUIShaderDesc.bUsePulseEffect;
+			jShader["bUseScroll"] = pDesc.m_tUIShaderDesc.bUseScroll;
+			jShader["fScrollSpeed"] = pDesc.m_tUIShaderDesc.fScrollSpeed;
+			jShader["fPulseTime"] = pDesc.m_tUIShaderDesc.fPulseTime;
+			jShader["fPulseSpeed"] = pDesc.m_tUIShaderDesc.fPulseSpeed;
+		}
+
+		jObj["Shader"] = jShader;
+	}
 
 	for (auto& AnimTag : pDesc.m_AnimTags)
 	{
@@ -126,6 +178,46 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		jObj["szAnimTags"].push_back(jAnim);
 	}
 
+	if (pDesc.m_Events.size() > 0)
+	{
+		Json jEvents;
+		Json jEvent;
+
+		for (auto it = pDesc.m_Events.begin(); it != pDesc.m_Events.end(); ++it)
+		{
+			const vector<UI_EVENT_DESC>& Events = it->second;
+
+			_char szEventTag[MAX_PATH]{};
+			CStringHelper::ConvertWideToUTF(it->first.c_str(), szEventTag);
+
+			for (size_t i = 0; i < Events.size(); ++i)
+			{
+				Json jEventInfo{};
+				const auto& Event = Events[i];
+
+				for (auto& SubscribeEvent : Event.szSubscribeEventTags)
+				{
+					_char szSubscribeEventTag[MAX_PATH]{};
+					CStringHelper::ConvertWideToUTF(SubscribeEvent.c_str(), szSubscribeEventTag);
+
+					jEventInfo["szSubscribeEventTags"].push_back(szSubscribeEventTag);
+				}
+
+				CStringHelper::ConvertWideToUTF(Event.szActionTag.c_str(), szText);
+				jEventInfo["szActionTag"] = szText;
+				CStringHelper::ConvertWideToUTF(Event.szTypeTag.c_str(), szText);
+				jEventInfo["szTypeTag"] = szText;
+				CStringHelper::ConvertWideToUTF(Event.szArg.c_str(), szText);
+				jEventInfo["szArg"] = szText;
+
+				jEvent.push_back(jEventInfo);
+			}
+			jEvents[szEventTag] = jEvent;
+		}
+
+		jObj["szEvents"] = jEvents;
+	}
+
 	if (pDesc.Get_UI_Texture_Desc())
 	{
 		Json TextureDesc;
@@ -136,7 +228,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		TextureDesc["szProtoTag"] = szText;
 		TextureDesc["iTextureIndex"] = pDesc.Get_UI_Texture_Desc()->iTextureIndex;
 		TextureDesc["iPass"] = pDesc.Get_UI_Texture_Desc()->iPass;
-		//jObj["isHasTextureDesc"] = pDesc.m_isHasTextureDesc;
+		
 		jObj["TextureDesc"] = TextureDesc;
 	}
 
@@ -196,6 +288,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		Desc.fOffsetY = pUIObject["fOffsetY"].get<_float>();
 		Desc.iDepth = pUIObject["iDepth"].get<_uint>();
 		Desc.iLevel = pUIObject["iLevel"].get<_uint>();
+		Desc.iDrawType = pUIObject["iDrawType"].get<_uint>();
 		Desc.iVisiblity = pUIObject["iVisibility"].get<_uint>();
 		CStringHelper::ConvertUTFToWide(pUIObject["szUIID"].get<string>().c_str(), szText);
 		Desc.szUIID = szText;
@@ -205,6 +298,72 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		Desc.szLayerTag = szText;
 		CStringHelper::ConvertUTFToWide(pUIObject["szProtoTag"].get<string>().c_str(), szText);
 		Desc.szProtoTag = szText;
+
+		if (pUIObject.contains("szPoolTag"))
+		{
+			CStringHelper::ConvertUTFToWide(pUIObject["szPoolTag"].get<string>().c_str(), szText);
+			Desc.szPoolTag = szText;
+		}
+
+		if (pUIObject.contains("Shader"))
+		{
+			Desc.m_isHasShaderDesc = true;
+			UI_SHADER_DESC ShaderDesc{};
+
+			Json jShader = pUIObject["Shader"];
+
+			if (jShader.contains("bUseUV"))
+			{
+				ShaderDesc.bUseUV = jShader["bUseUV"].get<_bool>();
+				ShaderDesc.fUVScaleX = jShader["fUVScaleX"].get<_float>();
+				ShaderDesc.fUVScaleY = jShader["fUVScaleY"].get<_float>();
+				ShaderDesc.fUVOffsetX = jShader["fUVOffsetX"].get<_float>();
+				ShaderDesc.fUVOffsetY = jShader["fUVOffsetY"].get<_float>();
+			}
+
+			if (jShader.contains("bUseFillClip"))
+			{
+				ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
+				ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+			}
+
+			if (jShader.contains("bUseTintColor"))
+			{
+				ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+				ShaderDesc.vTintColor = { 
+					jShader["vTintColor"][0].get<_float>(),
+					jShader["vTintColor"][1].get<_float>(),
+					jShader["vTintColor"][2].get<_float>(),
+					jShader["vTintColor"][3].get<_float>()
+				};
+			}
+
+			if (jShader.contains("bDiscardBlack"))
+			{
+				ShaderDesc.bDiscardBlack = jShader["bDiscardBlack"].get<_bool>();
+			}
+
+			if (jShader.contains("bUseGlow"))
+			{
+				ShaderDesc.bUseGlow = jShader["bUseGlow"].get<_bool>();
+				ShaderDesc.fGlowIntensity = jShader["fGlowIntensity"].get<_float>();
+				ShaderDesc.fGlowSpread = jShader["fGlowSpread"].get<_float>();
+			}
+
+			if (jShader.contains("bUsePulseEffect"))
+			{
+				ShaderDesc.bUsePulseEffect = jShader["bUsePulseEffect"].get<_bool>();
+				if (jShader.contains("bUseScroll"))
+				{
+					ShaderDesc.bUseScroll = jShader["bUseScroll"].get<_bool>();
+					ShaderDesc.fScrollSpeed = jShader["fScrollSpeed"].get<_bool>();
+				}
+				ShaderDesc.fPulseTime = jShader["fPulseTime"].get<_float>();
+				ShaderDesc.fPulseSpeed = jShader["fPulseSpeed"].get<_float>();
+			}
+
+			Desc.m_tUIShaderDesc = ShaderDesc;
+		}
 
 		if (pUIObject.contains("szAnimTags"))
 		{
@@ -216,6 +375,55 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 				CStringHelper::ConvertUTFToWide(AnimTag["szPrefabTag"].get<string>().c_str(), szPrefabTag);
 
 				Desc.m_AnimTags.emplace(szAnimTag, szPrefabTag);
+			}
+		}
+
+		if (pUIObject.contains("szEvents"))
+		{
+			Json jEvents = pUIObject["szEvents"];
+
+			// eventObj는 {"Hover": [...]} 또는 {"Click": [...]} 형태
+			for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
+			{
+				WCHAR wTrigger[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
+
+				const auto& Events = it.value(); // Action 배열
+
+				vector<UI_EVENT_DESC> parsedEvents{};
+
+				for (const auto& Event : Events)
+				{
+					UI_EVENT_DESC EventDesc{};
+
+					if (Event.contains("szSubscribeEventTags"))
+					{
+						for (const auto& SubscribeEvent : Event["szSubscribeEventTags"])
+						{
+							WCHAR szSubEventTag[MAX_PATH]{};
+							CStringHelper::ConvertUTFToWide(SubscribeEvent.get<string>().c_str(), szSubEventTag);
+
+							EventDesc.szSubscribeEventTags.push_back(szSubEventTag);
+						}
+					}
+
+					WCHAR szActionTag[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szActionTag"].get<string>().c_str(), szActionTag);
+					EventDesc.szActionTag = szActionTag;
+
+					WCHAR szTypeTag[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szTypeTag"].get<string>().c_str(), szTypeTag);
+					EventDesc.szTypeTag = szTypeTag;
+
+					WCHAR szArg[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(Event["szArg"].get<string>().c_str(), szArg);
+					EventDesc.szArg = szArg;
+
+					parsedEvents.push_back(EventDesc);
+				}
+
+				// 최종 저장
+				Desc.m_Events.emplace(wTrigger, parsedEvents);
 			}
 		}
 
@@ -293,6 +501,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	Desc.fOffsetY = jData["fOffsetY"].get<_float>();
 	Desc.iDepth = jData["iDepth"].get<_uint>();
 	Desc.iLevel = jData["iLevel"].get<_uint>();
+	Desc.iDrawType = jData["iDrawType"].get<_uint>();
 	Desc.iVisiblity = jData["iVisibility"].get<_uint>();
 	CStringHelper::ConvertUTFToWide(jData["szUIID"].get<string>().c_str(), szText);
 	Desc.szUIID = szText;
@@ -302,6 +511,73 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	Desc.szLayerTag = szText;
 	CStringHelper::ConvertUTFToWide(jData["szProtoTag"].get<string>().c_str(), szText);
 	Desc.szProtoTag = szText;
+
+	if (jData.contains("szPoolTag"))
+	{
+		CStringHelper::ConvertUTFToWide(jData["szPoolTag"].get<string>().c_str(), szText);
+		Desc.szPoolTag = szText;
+	}
+
+	if (jData.contains("Shader"))
+	{
+		Desc.m_isHasShaderDesc = true;
+
+		UI_SHADER_DESC ShaderDesc{};
+
+		Json jShader = jData["Shader"];
+
+		if (jShader.contains("bUseUV"))
+		{
+			ShaderDesc.bUseUV = jShader["bUseUV"].get<_bool>();
+			ShaderDesc.fUVScaleX = jShader["fUVScaleX"].get<_float>();
+			ShaderDesc.fUVScaleY = jShader["fUVScaleY"].get<_float>();
+			ShaderDesc.fUVOffsetX = jShader["fUVOffsetX"].get<_float>();
+			ShaderDesc.fUVOffsetY = jShader["fUVOffsetY"].get<_float>();
+		}
+
+		if (jShader.contains("bUseFillClip"))
+		{
+			ShaderDesc.bUseFillClip = jShader["bUseFillClip"].get<_bool>();
+			ShaderDesc.fFillAmount = jShader["fFillAmount"].get<_float>();
+		}
+
+		if (jShader.contains("bUseTintColor"))
+		{
+			ShaderDesc.bUseTintColor = jShader["bUseTintColor"].get<_bool>();
+			ShaderDesc.vTintColor = {
+				jShader["vTintColor"][0].get<_float>(),
+				jShader["vTintColor"][1].get<_float>(),
+				jShader["vTintColor"][2].get<_float>(),
+				jShader["vTintColor"][3].get<_float>()
+			};
+		}
+
+		if (jShader.contains("bDiscardBlack"))
+		{
+			ShaderDesc.bDiscardBlack = jShader["bDiscardBlack"].get<_bool>();
+		}
+
+		if (jShader.contains("bUseGlow"))
+		{
+			ShaderDesc.bUseGlow = jShader["bUseGlow"].get<_bool>();
+			ShaderDesc.fGlowIntensity = jShader["fGlowIntensity"].get<_float>();
+			ShaderDesc.fGlowSpread = jShader["fGlowSpread"].get<_float>();
+		}
+
+		if (jShader.contains("bUsePulseEffect"))
+		{
+			ShaderDesc.bUsePulseEffect = jShader["bUsePulseEffect"].get<_bool>();
+			if (jShader.contains("bUseScroll"))
+			{
+				ShaderDesc.bUseScroll = jShader["bUseScroll"].get<_bool>();
+				ShaderDesc.fScrollSpeed = jShader["fScrollSpeed"].get<_bool>();
+			}
+			ShaderDesc.fPulseTime = jShader["fPulseTime"].get<_float>();
+			ShaderDesc.fPulseSpeed = jShader["fPulseSpeed"].get<_float>();
+		}
+
+		Desc.m_tUIShaderDesc = ShaderDesc;
+	}
 
 	if (jData.contains("szAnimTags"))
 	{
@@ -313,6 +589,54 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 			CStringHelper::ConvertUTFToWide(AnimTag["szPrefabTag"].get<string>().c_str(), szPrefabTag);
 
 			Desc.m_AnimTags.emplace(szAnimTag, szPrefabTag);
+		}
+	}
+
+	if (jData.contains("szEvents"))
+	{	
+		Json jEvents = jData["szEvents"];
+
+		for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
+		{
+			WCHAR wTrigger[MAX_PATH]{};
+			CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
+
+			const auto& Events = it.value(); // Action 배열
+
+			vector<UI_EVENT_DESC> parsedEvents{};
+
+			for (const auto& Event : Events)
+			{
+				UI_EVENT_DESC EventDesc{};
+
+				if (Event.contains("szSubscribeEventTags"))
+				{
+					for (const auto& SubscribeEvent : Event["szSubscribeEventTags"])
+					{
+						WCHAR szSubEventTag[MAX_PATH]{};
+						CStringHelper::ConvertUTFToWide(SubscribeEvent.get<string>().c_str(), szSubEventTag);
+
+						EventDesc.szSubscribeEventTags.push_back(szSubEventTag);
+					}
+				}
+
+				WCHAR szActionTag[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szActionTag"].get<string>().c_str(), szActionTag);
+				EventDesc.szActionTag = szActionTag;
+
+				WCHAR szTypeTag[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szTypeTag"].get<string>().c_str(), szTypeTag);
+				EventDesc.szTypeTag = szTypeTag;
+
+				WCHAR szArg[MAX_PATH]{};
+				CStringHelper::ConvertUTFToWide(Event["szArg"].get<string>().c_str(), szArg);
+				EventDesc.szArg = szArg;
+
+				parsedEvents.push_back(EventDesc);
+			}
+
+			// 최종 저장
+			Desc.m_Events.emplace(wTrigger, parsedEvents);
 		}
 	}
 
@@ -334,8 +658,6 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
-		//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
-		//TextDesc.szText = szText;
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.vColor = {
 			jDesc["vColor"][0].get<_float>(),
@@ -357,9 +679,11 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	if (!pCreatedObj)
 		return;
 
-	pCreatedObj->Set_Parent(pUIParent);
-
-	pUIParent->Add_Child(pCreatedObj);
+	if (Desc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN))
+	{
+		pCreatedObj->Set_Parent(pUIParent);
+		pUIParent->Add_Child(pCreatedObj);
+	}
 
 	if (jData.contains("Children"))
 	{
@@ -368,6 +692,18 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 			Load_Hierarchy(pCreatedObj, pChild);
 		}
 	}
+}
+
+void CUIHUD::Reset_WorldUI_State(CUIBase* pUI)
+{
+	if (!pUI) return;
+	// 알파/애니/이벤트 등의 런타임 상태 초기화
+	UIBASE_DESC d = pUI->Get_UIBase_OriginDesc();
+	d.fAlpha = 1.f;
+	// 필요 시 더 초기화…
+	pUI->Set_UIBase_Desc(d);
+
+	m_pUIAnimMgr->Anim_Stop(pUI);
 }
 
 void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
@@ -390,6 +726,109 @@ void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag
 		return;
 
 	m_pUIAnimMgr->Anim_Play(pUI, AnimTag->second);
+}
+
+void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
+{
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	if (pUI == nullptr)
+		return;
+
+	m_pUIAnimMgr->Anim_Stop(pUI);
+}
+
+HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag, _uint count, _uint level, const _wstring& layerTag)
+{
+	auto itLayer = m_pLayers.find(layerTag);
+	if (itLayer == m_pLayers.end()) return E_FAIL;
+
+	auto pObj = itLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	if (pObj->second == nullptr)
+		return E_FAIL;
+
+	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
+
+	if (!pUIBase)
+		return E_FAIL;
+
+	auto& pool = m_WorldUIs[szPoolTag];
+	pool.reserve(pool.size() + count);
+
+	for (_uint i = 0; i < count; ++i) {
+		UIBASE_DESC desc{ pUIBase->Get_UIBase_Desc() };
+
+		desc.szUITag = szUITag + TEXT("_Pooled_") + to_wstring(i);
+
+		CGameObject* pObj = nullptr;
+		if (FAILED(Add_UserInterface(level, desc.szProtoTag.c_str(),
+			desc.szLayerTag.c_str(), desc.szUITag.c_str(),
+			&pObj, &desc)))
+			return E_FAIL;
+
+		auto* pUI = dynamic_cast<CUIBase*>(pObj);
+		if (!pUI) return E_FAIL;
+
+		// 풀에 잠시 대기: 비활성/가시성 숨김/애니 정지
+		Reset_WorldUI_State(pUI);
+		pUI->SetVisibility(VISIBILITY::HIDDEN);
+		//pUI->Set_Active(false);
+		// Parent 없음 (빌릴 때 붙임)
+
+		pool.push_back(pUI);
+		// World_Layer의 객체 컨테이너에는 이미 Add_UserInterface로 등록됨
+	}
+	return S_OK;
+}
+
+CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3& vOffset, _bool bBillboard)
+{
+	auto it = m_WorldUIs.find(poolKey);
+	if (it == m_WorldUIs.end() || it->second.empty()) return nullptr;
+
+	// 맨 뒤에서 꺼내기
+	CUIBase* pUI = it->second.back();
+	//it->second.pop_back();
+
+	// 상태 초기화 후 사용할 준비
+	Reset_WorldUI_State(pUI);
+	pUI->Set_DrawType(CUIObject::DRAW_TYPE::WORLD);
+	pUI->SetVisibility(VISIBILITY::VISIBLE);
+
+	if (pParent) {
+		pUI->Set_Parent(pParent);     // ← 엔진에서 WORLD Parent 따라가도록 구현되어 있음
+		//pUI->Set_Offset(vOffset.x, vOffset.y, vOffset.z);
+	}
+	//pUI->Set_Billboard(bBillboard);   // 엔진에 맞는 API로 교체
+
+	return pUI;
+}
+
+void CUIHUD::Return_WorldUI(CUIBase*& pUI)
+{
+	if (!pUI) return;
+
+	// Parent/계층/애니/가시성 원복
+	m_pUIAnimMgr->Anim_Stop(pUI);
+	pUI->SetVisibility(VISIBILITY::HIDDEN);
+	//pUI->Set_Active(false);
+	pUI->Set_Parent(nullptr);
+	//pUI->Set_Offset(0, 0, 0);
+
+	// 어떤 풀로 돌아갈지 키가 필요하다면:
+	//  - pUI->Get_UIBase_Desc().szProtoTag 또는 커스텀 PoolKey를 Desc에 저장
+	_wstring szPoolTag = pUI->Get_UIBase_Desc().szProtoTag; // 간단 방식
+
+	m_WorldUIs[szPoolTag].push_back(pUI);
+	pUI = nullptr;
 }
 
 string CUIHUD::WStringToUTF8(const _wstring& wstr)
@@ -430,5 +869,11 @@ void CUIHUD::Free()
 	__super::Free();
 
 	Safe_Release(m_pUIAnimMgr);
+	
+	for (auto& pPools : m_WorldUIs)
+	{
+		for(auto& pPool : pPools.second)
+			Safe_Release(pPool);
+	}
 }
 

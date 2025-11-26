@@ -10,7 +10,7 @@ CCollider::CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 
 CCollider::CCollider(const CCollider& rhs) :
     CComponent(rhs),
-    m_CollisionType(rhs.m_CollisionType)
+    m_eType(rhs.m_eType)
 #ifdef _DEBUG
     , m_pBatch{ rhs.m_pBatch }
     , m_pEffect{ rhs.m_pEffect }
@@ -71,6 +71,9 @@ ContainmentType CCollider::Contains(_vector Point)
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {
+    // 바꾸지마세요 
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+
     m_pEffect->SetWorld(XMMatrixIdentity());
     m_pEffect->SetView(XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)));
     m_pEffect->SetProjection(XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ)));
@@ -86,6 +89,11 @@ HRESULT CCollider::Render(_float4 vColor)
 }
 #endif // _DEBUG
 
+void CCollider::SetColliderHitType(HIT_TYPE eHitType)
+{
+    m_eHitType = eHitType;
+}
+
 void CCollider::BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent)
 {
     m_BeginHitFunc = BeginEvent;
@@ -98,12 +106,13 @@ void CCollider::BindOverlappingEvent(function<void(_float3 vHitPoint, _float3 vH
 
 void CCollider::BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> EndEvent)
 {
-    m_EndHitFunc = m_EndHitFunc;
+    m_EndHitFunc = EndEvent;
 }
 
-void CCollider::ADD_HitObejct(CGameObject* pObject)
+void CCollider::ADD_HitObject(CGameObject* pObject)
 {
     auto iter = find(m_HitList.begin(), m_HitList.end(), pObject);
+
     if (iter == m_HitList.end())
     {
         m_HitList.push_back(pObject);
@@ -111,14 +120,14 @@ void CCollider::ADD_HitObejct(CGameObject* pObject)
     }
 }
 
-void CCollider::ADD_IgnoreObejct(HIT_TYPE typeID)
+void CCollider::ADD_IgnoreObject(HIT_TYPE eHitType)
 {
-    m_IgnoreObject.insert(typeID);
+    m_IgnoreObject.insert(eHitType);
 }
 
-void CCollider::ADD_OnlyHitObject(HIT_TYPE typeID)
+void CCollider::ADD_OnlyHitObject(HIT_TYPE eHitType)
 {
-    m_eOnlyHitType = typeID;
+    m_eOnlyHitType = eHitType;
 }
 
 void CCollider::CallFunction()

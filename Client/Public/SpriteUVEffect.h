@@ -25,9 +25,10 @@ public:
 		_float2				fSize;
 		_int2				iUV;
 		_float				fFPS;
+		_float				fAngle;
 
 		_int				iBegin;
-		_int				iSelectRender;
+		RENDER				eSelectRender = {};
 		_bool				bisLoop;
 	}SPRITE_DATA;
 private:

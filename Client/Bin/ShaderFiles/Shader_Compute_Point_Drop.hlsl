@@ -4,10 +4,13 @@ struct ParticleVertices
     float4 vUp;
     float4 vLook;
     float4 vTranslation;
-
+    
     float2 vLifeTime;
+    float4x4 WorldMat;
     float4 vfRoot;
+    float4 vfStart;
     float2 vfSpeed;
+    float vfSize;
 };
 
 cbuffer ParticleBuffer : register(b0)

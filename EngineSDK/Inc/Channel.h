@@ -20,6 +20,12 @@ public:
 	_char* Get_Name() { return m_szName; }
 	void Set_BoneIndex(_uint iIndex) { m_iBoneIndex = iIndex; }
 
+	_uint Get_NumKeyFrames() { return m_iNumKeyFrames; }
+	const KEYFRAME& Get_KeyFrame(_uint iIndex = 0) const { return m_KeyFrames[iIndex]; }
+	_int Get_BoneIndex() { return m_iBoneIndex; }
+
+	const vector<KEYFRAME>& Get_KeyFrames() { return m_KeyFrames; }
+
 private:
 	_char					m_szName[MAX_PATH] = {};
 	_int					m_iBoneIndex = { -1 };

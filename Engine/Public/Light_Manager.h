@@ -22,6 +22,7 @@ public:
 #ifdef _DEBUG
 	HRESULT					Initialize();
 	void					Debug_LightRender();
+	void					Select_LightRender(CLight* pSelectLight);
 #endif
 
 public:
@@ -30,6 +31,7 @@ public:
 	void					Clear_DeadLight();
 
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
+	HRESULT					Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	const	list<CLight*>*	GetAllLight() { return &m_Lights; }
 
 private:

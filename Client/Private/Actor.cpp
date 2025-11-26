@@ -23,6 +23,7 @@ HRESULT CActor::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    m_pCullingCollider->SetColliderHitType(HIT_TYPE::STATIC);
     return S_OK;
 }
 

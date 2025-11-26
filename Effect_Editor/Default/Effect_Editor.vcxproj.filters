@@ -153,9 +153,6 @@
     <ClInclude Include="..\public\Camera_Free.h">
       <Filter>02.Object\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MeshEffect.h">
-      <Filter>02.Object\Effect\MeshEffect</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Particle.h">
       <Filter>02.Object\Effect\Particle</Filter>
     </ClInclude>
@@ -167,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="..\public\SpriteParticle.h">
       <Filter>02.Object\Effect\Particle\SpriteParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MeshEffect.h">
+      <Filter>02.Object\Effect\MeshEffect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

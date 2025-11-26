@@ -13,6 +13,9 @@ private:
 	virtual ~CBloom() = default;
 
 public:
+	virtual void* Get_Desc() override;
+
+public:
 	virtual HRESULT Initialize() override;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override { return S_OK; }
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override { return S_OK;  };
@@ -25,8 +28,9 @@ public:
 
 private:
 	vector<ID3D11DepthStencilView*> m_pDSVs = {};
-	_uint m_iBloomLevel = { 2 }; 
-	_uint m_iSampleLevel = { 5 };
+	BLOOM_DESC m_Desc = {};
+	_uint m_iBloomLevel = { 4 }; 
+	_uint m_iSampleLevel = { 1 };
 
 	_uint2 m_vOriginScreenSize = {};
 

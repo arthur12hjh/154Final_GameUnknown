@@ -20,7 +20,10 @@ public:
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
-		_float2			fTimeDelta;
+		_float4			fTimeDelta;
+		_float2			fCircle;
+		_float2			fTurnPower;
+		_float2			fisSphere;
 		_int2			iLoopAndCount;
 	};
 	typedef struct PointParticleData
@@ -43,6 +46,7 @@ public:
 		_float2				fSize;
 		_float2				fLifeTime;
 		_float2				fSpeed;
+		_float2				fTurnPower;
 
 
 		_float2				fMaskUV;
@@ -54,15 +58,20 @@ public:
 		_float2				fDissolveUV;
 		_float2				fDissolveUVSpeed;
 		_float2				fDissolveUVSize;
+		_float2				fCircle;
 
 		_float				fDelayTime;
 		_float				fEndTime;
+		_float				fSphereSize;
+		_float				fCircleSpeed;
 
 		_int				iBegin;
 		_int				iNumInstance;
-		_int				iSelectRender;
+		RENDER				eSelectRender = {};
 		_bool				bisBillboard;
 		_bool				bisLoop;
+		_bool				bisSphere;
+		_bool				bisCircle;
 	}POINT_PARTICLE_DATA;
 
 private:

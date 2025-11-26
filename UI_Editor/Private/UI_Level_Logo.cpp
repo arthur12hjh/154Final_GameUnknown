@@ -16,7 +16,7 @@ CUI_Level_Logo::CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CUI_Level_Logo::Initialize()
 {
-	m_pGuiManager = CGUIManager::GetInstance();
+	//m_pGuiManager = CGUIManager::GetInstance();
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -62,7 +62,7 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
 	
-	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }

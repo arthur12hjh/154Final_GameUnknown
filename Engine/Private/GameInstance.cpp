@@ -371,19 +371,24 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _wstring& strProto
 	return m_pPrototype_Manager->Add_Prototype(iLevelIndex, strPrototypeTag, pPrototype);
 }
 
-HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix)
+HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix)
 {
-	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, PreTransformMatrix);
+	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, szPartPrototypeTagList, szPartModelFilePathList, PreTransformMatrix);
 }
 
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
-	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);;
+	return m_pPrototype_Manager->Clone_Prototype(ePrototype, iLevelIndex, strPrototypeTag, pArg);
 }
 
 const map<const _wstring, class CBase*>* CGameInstance::Get_Prototypes_InLevel(_uint iLevelIndex)
 {
 	return m_pPrototype_Manager->Get_Prototypes_InLevel(iLevelIndex);
+}
+
+CBase* CGameInstance::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
+{
+	return m_pPrototype_Manager->Get_Prototype(iLevelIndex, strPrototypeTag);
 }
 
 #pragma endregion
@@ -445,6 +450,26 @@ void CGameInstance::Set_DebugVisible(_bool isVisible)
 	m_pRenderer->Set_DebugVisible(isVisible);
 }
 
+void* CGameInstance::Get_DoF_Desc()
+{
+	return m_pRenderer->Get_DoF_Desc();
+}
+
+void* CGameInstance::Get_Bloom_Desc()
+{
+	return m_pRenderer->Get_Bloom_Desc();
+}
+
+void* CGameInstance::Get_Fog_Desc()
+{
+	return m_pRenderer->Get_Fog_Desc();
+}
+
+void* CGameInstance::Get_SSAO_Desc()
+{
+	return m_pRenderer->Get_SSAO_Desc();
+}
+
 #endif
 
 #pragma endregion
@@ -486,6 +511,21 @@ _matrix CGameInstance::Get_Transform_Matrix_Inverse(D3DTS eState)
 	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState);
 }
 
+const _float4* CGameInstance::Get_CamRight()
+{
+	return m_pPipeLine->Get_CamRight();
+}
+
+const _float4* CGameInstance::Get_CamUp()
+{
+	return m_pPipeLine->Get_CamUp();
+}
+
+const _float4* CGameInstance::Get_CamLook()
+{
+	return m_pPipeLine->Get_CamLook();
+}
+
 const _float4* CGameInstance::Get_CamPosition()
 {
 	return m_pPipeLine->Get_CamPosition();
@@ -520,9 +560,19 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
+}
+
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
+}
+
+HRESULT CGameInstance::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIBuffer)
+{
+	return m_pLight_Manager->Render_VolumetricLights(pShader, pVIBuffer);
 }
 
 #ifdef _DEBUG
@@ -850,6 +900,11 @@ HRESULT CGameInstance::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBod
 	return m_pPhysx_Manager->Add_RigidBody_ToPhysx(pGameObject, pRigidBody);
 }
 
+HRESULT CGameInstance::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
+{
+	return m_pPhysx_Manager->Add_Terrain_ToPhysx(pTerrainVIBuffer);
+}
+
 #pragma endregion
 
 #pragma region BINPARSER
@@ -948,13 +1003,13 @@ HRESULT CGameInstance::Remove_Event(const WCHAR* szEventTag)
 {
 	return m_pEventManager->Remove_Event(szEventTag);
 }
-HRESULT CGameInstance::Bind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::Bind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->Bind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->Bind_Observer(szEventTag, pEvent);
 }
-HRESULT CGameInstance::UnBind_Ovserver(const WCHAR* szEventTag, CEventHandle* pEvent)
+HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
-	return m_pEventManager->UnBind_Ovserver(szEventTag, pEvent);
+	return m_pEventManager->UnBind_Observer(szEventTag, pEvent);
 }
 #pragma endregion
 
@@ -1032,12 +1087,13 @@ void CGameInstance::Release_Engine()
 {
 	DestroyInstance();
 
+	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
-	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pPipeLine);
@@ -1048,9 +1104,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionManager);
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
-	Safe_Release(m_pEventManager);
 	Safe_Release(m_pInteract_Manager);
-	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);

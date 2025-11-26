@@ -18,6 +18,8 @@ protected:
 	virtual ~CPartObject() = default;
 
 public:
+	void Update_PreCombinedMatrix();
+public:
 	virtual HRESULT			Initialize_Prototype();
 	virtual HRESULT			Initialize(void* pArg);
 
@@ -35,6 +37,7 @@ protected:
 
 	class CTransform*		m_pParentTransformCom = { nullptr };
 	_float4x4				m_CombinedWorldMatrix = {};
+	_float4x4				m_PreCombinedWorldMatrix = {};
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

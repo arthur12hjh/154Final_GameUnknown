@@ -17,7 +17,7 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
-    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { this->LoadBossData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadBossData(pArg); });
 
     return S_OK;
 }
@@ -31,10 +31,10 @@ const CHARACTER_SKILL_DESC* CDataManager::Find_SkillData(_uint iSkillID)
     return &iter->second;
 }
 
-const BOSS_NETWORK_DESC* CDataManager::Find_BossData(_uint iBossID)
+const NAYTIBA_NETWORK_DESC* CDataManager::Find_NaytibaData(_uint iID)
 {
-    auto iter = m_pBossDatas.find(iBossID);
-    if (iter == m_pBossDatas.end())
+    auto iter = m_pNaytibaDatas.find(iID);
+    if (iter == m_pNaytibaDatas.end())
         return nullptr;
 
     return &iter->second;
@@ -58,26 +58,37 @@ HRESULT CDataManager::LoadBossData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/BossData/Boss.csv", BossDataList);
 
-    BOSS_NETWORK_DESC BossDesc = {};
+
     size_t iMaxSize = BossDataList.size();
 
-    for (auto i = 7; i < iMaxSize; i += 7)
+    for (auto i = 15; i < iMaxSize;)
     {
-        _uint iBossID = atoi(BossDataList[i].c_str());
-        BossDesc.iNumPhase = atoi(BossDataList[i + 1].c_str());
+        NAYTIBA_NETWORK_DESC BossDesc = {};
+        _uint iBossID = atoi(BossDataList[i++].c_str());
+        BossDesc.iNumPhase = atoi(BossDataList[i++].c_str());
+       
+        strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szMonsterName, BossDataList[i++].c_str());
+        
+        BossDesc.eNaytiba_Type = NAYTIBA_TYPE(atoi(BossDataList[i++].c_str()));
+        BossDesc.eAI_Type = AI_TYPE(atoi(BossDataList[i++].c_str()));
 
-        strcpy_s(BossDesc.szBossName, BossDataList[i + 2].c_str());
-        BossDesc.iMaxHealth = atoi(BossDataList[i + 3].c_str());
-        BossDesc.iMaxShield = atoi(BossDataList[i + 4].c_str());
+        strcpy_s(BossDesc.szModelPrototype, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szAIControllerPrototype, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szAIBehaviorPrototype, BossDataList[i++].c_str());
 
-        _uint iNumSkill = atoi(BossDataList[i + 5].c_str());
+        BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
+
+        BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
+        BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
+
+        _uint iNumSkill = atoi(BossDataList[i++].c_str());
         for (_uint j = 0; j < iNumSkill; ++j)
-            BossDesc.iAttackList.push_back(atoi(BossDataList[i + 5 + j].c_str()));
+            BossDesc.iAttackList.push_back(atoi(BossDataList[i++].c_str()));
 
-        m_pBossDatas.emplace(iBossID, BossDesc);
+        m_pNaytibaDatas.emplace(iBossID, BossDesc);
     }
-
-    Desc->OnCompleted(this_thread::get_id());
     return S_OK;
 }
 

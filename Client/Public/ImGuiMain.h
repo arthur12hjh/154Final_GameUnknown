@@ -40,7 +40,7 @@ private :
 	_float					m_fTimeAcc = {};
 	_bool					m_bIsGamePause = false;
 	_bool					m_bIsToggleShowUI = true;
-	_bool					m_bIsToggleShowUIDebug = true;
+	_bool					m_bIsToggleShowUIDebug = false;
 
 private:
 	HRESULT					Ready_Default_Setting();

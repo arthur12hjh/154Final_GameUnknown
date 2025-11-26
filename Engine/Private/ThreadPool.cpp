@@ -27,7 +27,6 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 
 		THREAD_DESC Desc;
 		m_pDevice->CreateDeferredContext(0, &Desc.pContext);
-		Desc.OnCompleted = [&](thread::id ThreadID) { FinishedWorkThread(ThreadID); };
 		m_DefferdContexts.emplace(WorkerID, Desc);
 	}
 
@@ -61,7 +60,7 @@ void CThreadPool::Update_WorkThread()
 	while (true)
 	{
 		unique_lock<mutex> lock(m_Worker);
-		m_cv_Jobs.wait(lock, [this]()
+		m_cv_Jobs.wait(lock, [&]()
 		{
 			if (!m_ThreadJobs.empty() || m_bIsThreadStopAll)
 			{
@@ -72,35 +71,48 @@ void CThreadPool::Update_WorkThread()
 
 		if (m_bIsThreadStopAll && m_ThreadJobs.empty())
 		{
-		
+			lock.unlock();
 			return;
 		}
 
-		// 맨 앞의 job 을 뺀다.
-		THREAD_JOB job = m_ThreadJobs.front();
-		m_ThreadJobs.pop();
-		lock.unlock();
-
-		// 등록된 함수를 수행
-		if (false == job.bIsCanceled)
+		if (!m_ThreadJobs.empty())
 		{
-			m_iWorkdThread++;
-			job.JobFunction(&m_DefferdContexts[this_thread::get_id()]);
+			// 맨 앞의 job 을 뺀다.
+			THREAD_JOB job = move(m_ThreadJobs.front());
+			m_ThreadJobs.pop();
+
+			thread::id iThreadID = this_thread::get_id();
+			auto& pData = m_DefferdContexts[iThreadID];
+			lock.unlock();
+
+			_bool bIsFinished = false;
+			// 등록된 함수를 수행
+			if (false == job.bIsCanceled && job.JobFunction)
+			{
+				m_iWorkdThread++;
+				job.JobFunction(&pData);
+			}
+
+			FinishedWorkThread(iThreadID);
 		}
-	
 	}
 }
 
 ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 {
+	if (nullptr == function)
+		return nullptr;
+
+	unique_lock<mutex> lock(m_Worker);
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
-	Handle.JobFunction = function;
+	Handle.JobFunction = move(function);
 	Handle.bIsCanceled = false;
 
-	m_ThreadJobs.push(Handle);
+	m_ThreadJobs.emplace(Handle);
+	lock.unlock();
 	m_cv_Jobs.notify_one();
-	return &m_ThreadJobs.back();
+	return nullptr;
 }
 
 void CThreadPool::StopAllThread()
@@ -128,17 +140,29 @@ _bool CThreadPool::IsWorkThread()
 
 void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 {
+	unique_lock<mutex> lock(m_QueueLock);
 	auto& Desc = m_DefferdContexts[ThreadID];
 
 	ID3D11CommandList* pCommandList = nullptr;
+	if (nullptr == Desc.pContext)
+	{
+		for (auto& iter : Desc.pAddObejct)
+			Safe_Release(iter.pPrototype);
+
+		Desc.pAddObejct.clear();
+		m_iWorkdThread--;
+		return;
+	}
+
 	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
+	if (0 < m_iWorkdThread)
+		m_iWorkdThread = 0;
 
-	unique_lock<mutex> lock(m_QueueLock);
 	m_CommandList.push(pCommandList);
 
 	for (auto& iter : Desc.pAddObejct)
-		m_AddObjectList.push(iter);
+		m_AddObjectList.emplace(move(iter));
 
 	Desc.pAddObejct.clear();
 	lock.unlock();

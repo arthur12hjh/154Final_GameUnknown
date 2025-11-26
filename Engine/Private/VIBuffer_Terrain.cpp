@@ -26,6 +26,11 @@ _float* CVIBuffer_Terrain::Get_HeightData()
 	return pHeightData;
 }
 
+_float CVIBuffer_Terrain::Get_Height(_uint iIdx)
+{
+	return m_pVertexPositions[iIdx].y;
+}
+
 HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath)
 {
 	_ulong			dwByte = {};

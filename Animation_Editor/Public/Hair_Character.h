@@ -37,12 +37,11 @@ public:
 
 private:
 	CModel* m_pModelCom = { nullptr };
+	CModel* m_pBodyModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
 private:
 	const				_uint* m_pParentState = { nullptr };
-
-	map<_char*, CBone*>			m_mapBodyBones;
 
 
 private:

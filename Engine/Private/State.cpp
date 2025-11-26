@@ -15,7 +15,7 @@ HRESULT CState::Initialize(void* pArg)
     return S_OK;
 }
 
-void CState::Start(void* pArg)
+void CState::Start(void* pArg, CState* pPreState)
 {
 }
 
@@ -27,6 +27,11 @@ void CState::Update(_float fTimeDelta)
 void CState::End()
 {
 
+}
+
+const char* CState::GetAnimationName()
+{
+    return m_szAnimationName.c_str();
 }
 
 void CState::Free()

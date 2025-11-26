@@ -48,6 +48,9 @@
     <Filter Include="02. UIResourceStore">
       <UniqueIdentifier>{422b7335-8534-4e60-925b-d6bd8202b511}</UniqueIdentifier>
     </Filter>
+    <Filter Include="999. CPP From Client\01. CanBox">
+      <UniqueIdentifier>{f4d83d59-194b-4164-b249-0e1af5c1f25e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -189,6 +192,48 @@
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIAnimManager.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIActionEvent.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\CanBox.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\GameManager.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\DataManager.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\QuestManager.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Quest.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\RewordEvent.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TestQuest.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Actor.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Camera_Free.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Sky.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

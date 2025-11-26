@@ -5,6 +5,53 @@
 
 namespace Client
 {
+	typedef struct tagUIEventArg {
+		enum ARG_TYPE {
+			NONE,
+			BTN_STATE,
+			INT,
+			FLOAT,
+			WSTRING,
+			BOOL,
+		} Type;
+
+		_wstring szActionTag{};
+		void* pData = nullptr;
+	}UI_EVENT_ARG_DESC;
+
+	typedef struct tagUIShader {
+		bool bUseUV{ false };
+		float fUVScaleX = { 1.f }, fUVScaleY = { 1.f };
+		float fUVOffsetX = { 0.f }, fUVOffsetY = { 0.f };
+
+		bool bUseFillClip{ false };
+		float fFillAmount{ 1.f };
+
+		bool bUseTintColor{ false };
+		XMFLOAT4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
+
+		bool bDiscardBlack{ false };
+
+		bool bUseGlow{ false };
+		bool bUsePulseEffect{ false };
+		bool bUseScroll{ false };
+		float fScrollSpeed{ 0.f };
+		float fPulseTime{ 0.f };
+		float fPulseSpeed{ 0.f };
+		float fGlowIntensity{ 0.f };
+		float fGlowSpread{ 0.f };
+
+	}UI_SHADER_DESC;
+
+	// UI Event
+	typedef struct tagUIEventDesc
+	{
+		wstring szActionTag{};
+		vector<wstring> szSubscribeEventTags{}; // 구독 할 이벤트들
+		wstring szTypeTag{};
+		wstring szArg{}; // 애니메이션 이름, 액션 이름, 사운드 이름, 이펙트 이름 ...
+	}UI_EVENT_DESC;
+
 	// UI Animation 구조체
 	typedef struct tagUIAnimTrackDesc
 	{
@@ -22,8 +69,9 @@ namespace Client
 		float fDuration{ 1.f };
 		bool isLoop = false;
 		bool isInfluenceChildren = true;
+		bool isBeapBeap{ false };
 
-		_bool m_isHasTracks{ false };
+		bool m_isHasTracks{ false };
 		map<wstring, UI_ANIM_TRACK_DESC> m_Tracks{};
 
 	public:
@@ -65,7 +113,6 @@ namespace Client
 		wstring szProtoTag{};
 		unsigned int iTextureIndex{ 0 };
 		unsigned int iPass{ 0 };
-
 	}UI_TEXTURE_DESC;
 
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
@@ -75,6 +122,7 @@ namespace Client
 		unsigned int iLevel{ 0 };
 		unsigned int iDepth{ 0 };
 		unsigned int iRenderGroup{ ENUM_CLASS(RENDER::UI) };
+		unsigned int iDrawType{ ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN) };
 
 		unsigned int iVisiblity{ ENUM_CLASS(VISIBILITY::VISIBLE) };
 
@@ -82,14 +130,17 @@ namespace Client
 		wstring szUITag{};
 		wstring szLayerTag{};
 		wstring szProtoTag{};
+		wstring szPoolTag{};
 
-		_bool m_isHasTextDesc{ false };
+		bool m_isHasTextDesc{ false };
 		UI_TEXT_DESC m_tUITextDesc{ };
-		_bool m_isHasTextureDesc{ false };
+		bool m_isHasTextureDesc{ false };
 		UI_TEXTURE_DESC m_tUITextureDesc{ };
+		bool m_isHasShaderDesc{ false };
+		UI_SHADER_DESC m_tUIShaderDesc{};
 
-		vector<wstring> m_EventTags{};
 		map<wstring, wstring> m_AnimTags{}; // 애니메이션 태그, 프리팹 이름
+		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // 이벤트 태그, 이벤트 구조체
 
 	public:
 		// 텍스트
@@ -112,6 +163,22 @@ namespace Client
 			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
 		}
 
+		// 이벤트
+		map<wstring, vector<UI_EVENT_DESC>>* Get_Events() {
+			return &m_Events;
+		}
+
+		void Add_UI_Event(const _wstring& szEventTag, const UI_EVENT_DESC& Desc)
+		{
+			m_Events[szEventTag].push_back(Desc);
+		}
+
+		void Delete_UI_Event(const _wstring& szEventTag)
+		{
+			m_Events.erase(szEventTag);
+		}
+
+		// 툴에서 쓰는거
 		void Add_UI_Anim(wstring szAnimTag, wstring szAnimFileName) {
 			auto Anim = m_AnimTags.find(szAnimTag);
 
@@ -136,6 +203,11 @@ namespace Client
 		}
 
 		map<wstring, wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
+
+		// 쉐이더
+		UI_SHADER_DESC* Get_ShaderDesc() {
+			return m_isHasShaderDesc ? &m_tUIShaderDesc : nullptr;
+		}
 
 	}UIBASE_DESC;
 }

@@ -118,6 +118,33 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MOON(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.r < 0.001f && vMtrlDiffuse.g < 0.001f && vMtrlDiffuse.b < 0.001f)
+        discard;
+    
+    float3 vNormal = normalize(In.vNormal);
+    float3 vLightDir = normalize(float3(0.f, 0.f, 1.f));
+    
+    float fDiffuse = max(0.f, dot(vNormal, -vLightDir));
+    
+    float3 vAmbientColor = float3(0.1f, 0.1f, 0.12f);
+    float3 vLightColor = float3(0.8f, 0.8f, 0.9f);
+    float3 vEmissiveColor = float3(0.3f, 0.45f, 0.7f);
+    
+    float3 finalDiffuseColor = vMtrlDiffuse.rgb * (vAmbientColor + fDiffuse * vLightColor);
+    
+    Out.vDiffuse.rgb = finalDiffuseColor + vEmissiveColor;
+    Out.vDiffuse.a = vMtrlDiffuse.a;
+    Out.vNormal = float4(0.5f, 0.5f, 0.5f, 0.5f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+
+    return Out;
+}
+
 PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
 {
     PS_OUT Out;
@@ -211,6 +238,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
+    }
+    
+    pass MOON
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_DepthTest_ON_Write_OFF, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOON();
     }
 
 }

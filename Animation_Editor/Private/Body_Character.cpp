@@ -48,6 +48,11 @@ HRESULT CBody_Character::Initialize(void* pArg)
 	m_iAnimationIndex = 0;
 	m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
 
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+
 	return S_OK;
 }
 
@@ -93,7 +98,7 @@ HRESULT CBody_Character::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
@@ -128,14 +133,14 @@ HRESULT CBody_Character::Render_Shadow()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_BoneMatrices")))
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(1)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;	
+			return E_FAIL;
 	}
 	return S_OK;
 }
@@ -143,7 +148,7 @@ HRESULT CBody_Character::Render_Shadow()
 HRESULT CBody_Character::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_Body_24_TypeB"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

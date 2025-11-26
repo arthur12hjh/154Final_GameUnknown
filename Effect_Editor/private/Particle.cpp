@@ -43,7 +43,7 @@ void CParticle::Update(_float fTimeDelta)
 			return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+		XMMatrixTranspose(XMMatrixMultiply(XMLoadFloat4x4(m_pParentMat), XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()))));
 	Spread(fTimeDelta);
 }
 
@@ -53,7 +53,7 @@ void CParticle::Late_Update(_float fTimeDelta)
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CParticle::Render()
@@ -94,6 +94,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	//m_pShaderCom = pShaderCom;
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
+	m_CBData.fTimeDelta.y = 0;
 	m_bisLoop = tData.bisLoop;
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
@@ -166,7 +167,11 @@ HRESULT CParticle::Ready_Components()
 
 HRESULT CParticle::Bind_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	_float4x4 world = m_CombinedWorldMatrix;
+	world._41 = 0;
+	world._42 = 0;
+	world._43 = 0;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
@@ -237,10 +242,12 @@ HRESULT CParticle::Ready_ComputeShader()
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
 	m_CBData.fTurnPower = m_tData.fTurnPower;
-	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
+	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
+	m_CBData.fTimeDelta.w = m_tData.fEndTime;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
@@ -302,10 +309,12 @@ void CParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
+	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;
 	m_CBData.fTurnPower = m_tData.fTurnPower;
-	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : 0;
+	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지

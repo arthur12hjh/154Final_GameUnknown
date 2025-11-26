@@ -2,6 +2,7 @@
 #include "Camera_Free.h"
 
 #include "GameInstance.h"
+//#include "Interaction_Component.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera { pDevice, pContext }
@@ -28,6 +29,16 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	/* Com_Collider_AABB */
+	//CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	//
+	//AABBDesc.vSize = _float3(0.5f, 0.5f, 0.5f);
+	//AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	//
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+	//	TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 
@@ -50,6 +61,13 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 				m_pTransformCom->Go_Right(fTimeDelta);
+
+			//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+			//{
+			//	auto pInterraction = m_pGameInstance->GetNearInteraction();
+			//	if (pInterraction)
+			//		pInterraction->Action_InteractionEvent(this);
+			//}
 		}
 
 		if (false == m_bIsLock[1])
@@ -94,13 +112,18 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 void CCamera_Free::Update(_float fTimeDelta)
 {
-	
+	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	//m_pColliderCom->UpdateColiision(WorldMat);
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)
 {
-
-	
+//	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+//
+//#ifdef _DEBUG
+//	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+//	m_pGameInstance->ADD_Collider(m_pColliderCom);
+//#endif
 }
 
 HRESULT CCamera_Free::Render()
@@ -161,5 +184,5 @@ void CCamera_Free::Free()
 {
 	__super::Free();
 
-
+	//Safe_Release(m_pColliderCom);
 }

@@ -32,6 +32,8 @@ public:
 	/* CCT는 생성한 순간 씬에 들어가므로, 피직스에서 충돌쌍만 들고 있게 한다. (쓸지도 모름) */
 	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
+	// 객체 생성하고 터레인 버퍼 집어넣기만 하면 됩니다.
+	HRESULT		Add_Terrain_ToPhysx(class CVIBuffer_Terrain* pTerrainVIBuffer);
 
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	PxTransform Convert_Matrix_ToPxTransform(_matrix WorldMatrix);
@@ -60,9 +62,8 @@ private:
 	PxMaterial* m_pTestMaterial = { nullptr };
 
 
-	/* 구워놓은 충돌용 메시들 보관용. 추후 순회해서 객체들과의 충돌 감지를 수행해야 한다. 이건 나루토할때 필요해서 뽑아놨던거니까 초기화에는 필요없어. */
-	vector<PxTriangleMeshGeometry*> m_Geometries = {};
-	vector<PxTriangleMesh*>			m_TriangleMeshes = {};
+	/* 구워놓은 터레인 보관용. */
+	vector<PxRigidStatic*> m_pTerrains = {};
 
 	/* 캐릭터 컨트롤러 매니저 */
 	PxControllerManager* m_pPxCCTManager = { nullptr };

@@ -41,7 +41,7 @@ public:
 		_float				fEndTime;
 
 		_int	iBegin = {};
-		_int	iSelectRender = {};
+		RENDER	eSelectRender = {};
 	}MESH_EFFECT_DATA;
 
 private:
@@ -65,6 +65,7 @@ private:
 	_float		m_fTime = {};
 	MESH_EFFECT_DATA	m_tData;
 	_float4x4		m_CombinedWorldMatrix = {};
+	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 
 private:
 	HRESULT							Ready_Components();

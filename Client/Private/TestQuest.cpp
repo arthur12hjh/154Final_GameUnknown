@@ -18,7 +18,7 @@ HRESULT CTestQuest::Initialize()
 
 void CTestQuest::Accept_Quest()
 {
-    m_pGameInstance->Bind_Ovserver(TEXT("Box_Open"), m_pRewardEvent);
+    m_pGameInstance->Bind_Observer(TEXT("Box_Open"), m_pRewardEvent);
 }
 
 void CTestQuest::Clear()
@@ -40,7 +40,7 @@ void CTestQuest::CallBackEvent(void* pArg)
 {
     m_bIsClear = true;
 
-    m_pGameInstance->UnBind_Ovserver(TEXT("Box_Open"), m_pRewardEvent);
+    m_pGameInstance->UnBind_Observer(TEXT("Box_Open"), m_pRewardEvent);
 }
 
 CTestQuest* CTestQuest::Create()

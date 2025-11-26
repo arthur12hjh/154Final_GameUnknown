@@ -12,6 +12,7 @@ public:
 		_float3			vPivot;
 		_float2			vLifeTime;
 		_float2			vSpeed;
+		_bool			bisMove;
 	}POINT_INSTANCE_DESC;
 
 private:

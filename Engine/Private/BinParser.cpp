@@ -157,7 +157,13 @@ HRESULT CBinParser::ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 			binAnimation AnimTmp;
 
 			szTemp = ReadString(fileBinaryStream);
-			strcpy_s(AnimTmp.szName, szTemp);
+
+			const char* szAnimName = strchr(szTemp, '|');
+			if (nullptr != szAnimName && strcmp(szAnimName, ""))
+				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(szTemp, '|') + 1);
+			else
+				strcpy_s(AnimTmp.szName, szTemp);
+
 			Safe_Delete(szTemp);
 			fileBinaryStream.read((_char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
 			fileBinaryStream.read((_char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));
@@ -505,7 +511,12 @@ HRESULT CBinParser::ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, binM
 			binAnimation AnimTmp;
 
 			szTemp = ReadString(fileBinaryStream);
-			strcpy_s(AnimTmp.szName, szTemp);
+			const char* szAnimName = strchr(szTemp, '|');
+			if (nullptr != szAnimName && strcmp(szAnimName, ""))
+				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(szTemp, '|') + 1);
+			else
+				strcpy_s(AnimTmp.szName, szTemp);
+
 			Safe_Delete(szTemp);
 			fileBinaryStream.read((_char*)(&AnimTmp.fDuration), sizeof(AnimTmp.fDuration));
 			fileBinaryStream.read((_char*)(&AnimTmp.fTicksPerSecond), sizeof(AnimTmp.fTicksPerSecond));

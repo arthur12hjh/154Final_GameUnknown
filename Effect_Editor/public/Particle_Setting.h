@@ -30,6 +30,7 @@ public:
     virtual HRESULT    Render() override;
     virtual void    Free() override;
     void    WriteString(ofstream& fileBinaryStream, _char* pStr);
+    void    WriteRENDER(ofstream& fileBinaryStream, RENDER vTmp);
     void    WriteInt(ofstream& fileBinaryStream, _int vTmp);
     void    WriteFloat4(ofstream& fileBinaryStream, _float4 vTmp);
     void    WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp);
@@ -38,6 +39,7 @@ public:
     void    WriteInt2(ofstream& fileBinaryStream, _int2 vTmp);
     void    WriteBool(ofstream& fileBinaryStream, _bool vTmp);
     _char*  ReadString(ifstream& fileBinaryStream);
+    RENDER    ReadRENDER(ifstream& fileBinaryStream);
     _int    ReadInt(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);
@@ -46,12 +48,13 @@ public:
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
-    _uint   m_iSelectMeshParticle = { 0 };
+    _uint   m_iSelectMeshParticle = { 4 };
     _uint   m_iLevel = { 0 };
     _float4  m_fPosition;
     _float3  m_fScale;
     _float3  m_fRotation;
     _float  m_fTime;
+    _float  m_fSpeed = { 1.f };
     CParticle::PARTICLE_DATA m_tParticleData;
     CSpriteParticle::SPRITE_PARTICLE_DATA m_tSpriteParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
@@ -62,6 +65,8 @@ private:
     vector<string> m_ShaderFiles;
     vector<string> m_ModelFiles;
     vector<string> m_ModelFilePaths;
+    vector<string> m_Effects;
+    vector<string> m_TrailEffects;
     vector<ID3D11ShaderResourceView*>	m_SRVs[4];
     vector<CParticle*> m_pParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
@@ -69,6 +74,7 @@ private:
     vector<CSpriteEffect*> m_pSprites;
     CTrailEffect*    m_pTrailEffect = nullptr;
     CTrailEffect* m_pDistortionTrailEffect = nullptr;
+    _char m_SaveFile[128] = "SaveEffect";
     _int       m_iSelectParticle;
     _int       m_iSelectSpriteParticle;
     _int       m_iSelectMesh = { 0 };
@@ -76,9 +82,12 @@ private:
     _uint       m_iImageType = { 0 };
     _uint       m_iSpriteImageType = { 1 };
     _uint       m_iSelectSize = { 0 };
+    _uint       m_iSelectEffect = { 0 };
+    _uint       m_iSelectTrailEffect = { 0 };
     _int       m_iShaderBegine = { 0 };
     _int       m_iSelectSprite = { 0 };
     _bool       m_bisPause = true;
+    _bool       m_bisReplay = false;
     string      m_szCS;
 private:
     void    Add_Particle();
@@ -92,6 +101,8 @@ private:
 public:
     HRESULT Save_Binary(const _char* szFile);
     HRESULT Load_Binary(const _char* szFile);
+    HRESULT Save_TrailBinary(const _char* szFile);
+    HRESULT Load_TrailBinary(const _char* szFile);
 };
 
 NS_END

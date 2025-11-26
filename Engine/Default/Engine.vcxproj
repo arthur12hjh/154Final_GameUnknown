@@ -167,6 +167,8 @@ popd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\AIController.h" />
+    <ClInclude Include="..\public\AISenceComponent.h" />
     <ClInclude Include="..\public\BehaviorNode.h" />
     <ClInclude Include="..\public\BehaviorTree.h" />
     <ClInclude Include="..\Public\BinParser.h" />
@@ -260,6 +262,7 @@ popd</Command>
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\SphereCollider.h" />
     <ClInclude Include="..\public\SquenceNode.h" />
+    <ClInclude Include="..\Public\SSAO.h" />
     <ClInclude Include="..\public\State.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\Public\StringHelper.h" />
@@ -284,6 +287,8 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\AIController.cpp" />
+    <ClCompile Include="..\private\AISenceComponent.cpp" />
     <ClCompile Include="..\private\BehaviorNode.cpp" />
     <ClCompile Include="..\private\BehaviorTree.cpp" />
     <ClCompile Include="..\Private\BinParser.cpp" />
@@ -368,6 +373,7 @@ popd</Command>
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\SphereCollider.cpp" />
     <ClCompile Include="..\private\SquenceNode.cpp" />
+    <ClCompile Include="..\Private\SSAO.cpp" />
     <ClCompile Include="..\private\State.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StringHelper.cpp" />
@@ -395,6 +401,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
@@ -403,6 +410,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_SSAO.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>
   <ItemGroup>

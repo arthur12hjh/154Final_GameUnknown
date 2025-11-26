@@ -4,7 +4,7 @@
 #include "Camera.h"
 
 NS_BEGIN(Engine)
-
+//class CBoxCollider;
 NS_END
 
 NS_BEGIN(Client)
@@ -44,6 +44,9 @@ private:
 	_float4x4					m_fEndLerpMatrix = {};
 
 	_float						m_fMouseSensor = {};
+
+	// UITool에서 쓰는 중 나중에 지우겠습니다
+	//CBoxCollider*					m_pColliderCom{ nullptr };
 
 public:
 	static CCamera_Free*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

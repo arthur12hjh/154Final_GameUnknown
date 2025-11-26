@@ -2,7 +2,6 @@
 #include "Loader.h"
 
 #include "SpriteEffect.h"
-#include "Camera_Free.h"
 #include "BackGround.h"
 #include "Explosion.h"
 #include "ForkLift.h"
@@ -12,12 +11,16 @@
 #include "Player.h"
 #include "Snow.h"
 #include "Sky.h"
+#include "AttackHitBox.h"
 
 #include "Effect.h"
+#include "Trail.h"
+#include "TrailEffect.h"
 
 #include "GameInstance.h"
 
 #pragma region PLAYER
+#include "PlayerFSM.h"
 #include "Body_Player.h"
 #include "Face_Player.h"
 #include "Hair_Player.h"
@@ -26,16 +29,24 @@
 
 #pragma region Monster
 
+#include "MonsterFSM.h"
+#include "Nayitba.h"
+#include "NayitbaPartBody.h"
+
+#include "MonsterController.h"
+#include "MonsterMimesisController.h"
 
 #pragma region BOSS
 #include "Gorilla.h"
-#include "Gorilla_Body.h";
+#include "Gorilla_Body.h"
 #pragma endregion
 
 #pragma endregion
 
 #pragma region Client Component
 #include "Interaction_Component.h"
+#include "TargetComponent.h"
+#include "AISenceComponent.h"
 #pragma endregion
 
 #pragma region Prob
@@ -86,6 +97,7 @@
 #include "DryGrass1.h"
 #include "DryGrass2.h"
 #include "DryGrass3.h"
+#include "Moon.h"
 #pragma endregion
 
 #pragma region Map Common
@@ -103,14 +115,11 @@
 #include "CM_Rock12.h"
 #include "CM_Rock13.h"
 #include "CM_Rock14.h"
+#include "InstanceModel.h"
 #pragma endregion
 
 #include "Instance_Model.h"
 #include "PxTestProp.h"
-
-#ifdef _DEBUG
-#include "ShaderTestModel.h"
-#endif
 
 #include "UIWrapper.h"
 #include "UIPanel.h"
@@ -167,26 +176,26 @@ HRESULT CLoader::Loading()
 	case LEVEL::GAMEPLAY:
 	{
 		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
 		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
 
 		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
@@ -220,7 +229,8 @@ HRESULT CLoader::Loading_For_Logo()
 		CBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;*/
 
-	Loading_UI_For_Logo_Level();
+	if (FAILED(Loading_UI_For_Logo_Level()))
+		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
 	m_strMessage = TEXT("완료..");
@@ -234,17 +244,49 @@ HRESULT CLoader::Loading_For_Logo()
 HRESULT CLoader::Loading_For_GamePlay()
 {
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
-	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest");
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	_matrix PreMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
 
 	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
 	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
 
+	vector<_wstring> szPartPrototypeTagList;
+	vector<string> szPartModelFilePathList;
+
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
+	
+
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.fbx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.fbx");
+
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/CH_P_EVE_09_nosimplify.bin",
-		szFrontPath, PreMatrix)))
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
+	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
+	/// 
+	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
+	/// -> _uint iMeshIndex = 텍스쳐를 집어넣을 메쉬(머티리얼)의 순서
+	/// -> TEXTURE_TYPE eType = 머티리얼의 어느 텍스쳐 타입인지(디퓨즈, 노말, ORM ...)
+	/// -> const _char * pTextureFilePath = 텍스쳐 경로
+	/// -> const _char * pBindTag = Render에서 머티리얼 셰이더에 바인딩 해줄 때 글로벌 값 어디에 심어줄 지
+	/// -> _bool bIsSaved = 갱신된 정보를 binx 파일에 저장해줄지 or 그냥 이 빌드버전에서만 사용할지
+	/// 
+	/// < /End >
+
+	// ** 예시 테스트 텍스쳐맵 **
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(0, TEXTURE_TYPE::DIFFUSE,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_P_EVE_24_Upper_A.png",
+	//	"g_DiffuseTexture", FALSE);
+	// 
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.png",
+	//	"g_ORSSTexture", TRUE);
+	// 
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
 	//	return E_FAIL;
@@ -263,24 +305,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sky"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_Face_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_Hair_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Hair_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_Test/CH_P_EVE_Hair_Test.bin", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_PonyTail_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_PonyTail_Eve"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_hair_PonyTailTest_2/CH_P_EVE_Hair_PonyTail_2_Test.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	
@@ -315,6 +339,29 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CHair_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+#pragma region Nayitba
+	/* For.Prototype_GameObject_Nayitba */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		CNayitba::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Nayitba_Body */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"),
+		CNayitbaPartBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Monster_Controller */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterController"),
+		CMonsterController::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_MonsterMimesisController */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterMimesisController"),
+		CMonsterMimesisController::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion
+
 	/* For.Prototype_GameObject_PonyTail_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		CPonyTail_Player::Create(m_pDevice, m_pContext))))
@@ -328,6 +375,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
 		CGorilla::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_Component_PlayerFSM */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
+		CPlayerFSM::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(Loading_UI_For_GamePlay_Level()))
 		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
@@ -400,7 +454,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -482,6 +536,14 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	/* For.Prototype_Component_Model_Beholder */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Beholder");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Beholder/CH_M_NA_51.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_CM_Rock1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock1");
@@ -490,10 +552,28 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+	/* For.Prototype_Component_Model_BanacleA */
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_CM_Rock2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock2");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock2.binx", PreTransformMatrix);
+
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_StatueA */
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/A/CH_M_NA_40.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -506,6 +586,14 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_StatueB */
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
 	/* For.Prototype_Component_Model_CM_Rock4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock4");
@@ -590,6 +678,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock14");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock14.binx", PreTransformMatrix);
+
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -601,7 +690,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -675,23 +764,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-#ifdef _DEBUG
-	/* For.Prototype_GameObject_ShaderTestModel */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ShaderTestModel");
-	pProtoDesc.pPrototype = CShaderTestModel::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-#endif
-
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-
 	char pattern[MAX_PATH] = {};
 
 	memset(pattern, 0, sizeof(pattern));
@@ -708,10 +787,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar fileName[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, fd.cFileName, strlen(fd.cFileName), fileName, 256);
 				_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), fileName,
-					CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix))))
-					return E_FAIL;
-
+				
+				PROTOTYPE_DESC PrototypeDesc = {};
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = fileName;
+				PrototypeDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, szFilePath, PreTransformMatrix);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -724,6 +805,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/MaskTexture/");
@@ -736,10 +818,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
-
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -752,6 +834,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DiffuseTexture/");
@@ -764,10 +847,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
-
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -780,6 +863,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/DissolveTexture/");
@@ -792,9 +876,10 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
@@ -807,6 +892,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				PROTOTYPE_DESC PrototypeDesc = {};
 				char szFilePath[MAX_PATH] = {};
 				char szProtoName[MAX_PATH] = {};
 				strcpy_s(szFilePath, MAX_PATH, "../Bin/Resources/Textures/NormalTexture/");
@@ -819,28 +905,54 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 				_tchar szPath[256] = { 0, };
 				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, szFilePath, strlen(szFilePath), szPath, 256);
 
-				if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), sztProtoName,
-					CTexture::Create(m_pDevice, m_pContext, szPath, 1))))
-					return E_FAIL;
+				PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+				PrototypeDesc.szPrototypeName = sztProtoName;
+				PrototypeDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, szPath, 1);
+				Desc->pAddObejct.push_back(PrototypeDesc);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
 	}
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMeshEffect"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
-		return E_FAIL;
+	PROTOTYPE_DESC PrototypeDesc = {};
+	PrototypeDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
-	/* For.Prototype_Component_Shader_VtxMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxSpriteUVEffect"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-		return E_FAIL;
+	/* For.Prototype_Component_Trail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Trail");
+	PrototypeDesc.pPrototype = CTrail::Create(m_pDevice, m_pContext);
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/bin.binx"))))
-		return E_FAIL;
-	Desc->OnCompleted(this_thread::get_id());
+	/* For.Prototype_Component_Shader_VtxMeshEffect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshEffect");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Shader_VtxSpriteUVEffect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteUVEffect");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Shader_VtxSpriteParticle */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteParticle");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Shader_VtxTrail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Test */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Test");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_TrailEffect_Test */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Test");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/SaveEffect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -875,6 +987,13 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 	/*CanBox*/
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_CanBox");
 	pProtoDesc.pPrototype = CCanBox::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/*InstanceModel*/
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_InstanceModel");
+	pProtoDesc.pPrototype = CInstanceModel::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -980,7 +1099,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 #pragma endregion 
 
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1038,14 +1157,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Model_Bamboo */
-	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bamboo");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/Tree1.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
 	/* For.Prototype_Component_Model_Rock1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock1");
@@ -1074,14 +1185,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock4");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock4.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_Component_Model_Rock5 */
-	PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock5");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock5.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1178,6 +1281,14 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_DryGrass3");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Grass/DryGrass3.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Moon */
+	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1322,7 +1433,14 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	/* For.Prototype_GameObject_Moon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
+	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	//Desc->OnCompleted(this_thread::get_id());
 
 #pragma endregion
 
@@ -1443,6 +1561,13 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Attack_Hit_Box */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_AttackHitBox");
+	pProtoDesc.pPrototype = CAttackHitBox::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_Inscription_L */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Inscription_L");
 	pProtoDesc.pPrototype = CInscription_L::Create(m_pDevice, m_pContext);
@@ -1520,7 +1645,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1535,7 +1660,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height.bmp"));
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1639,6 +1764,35 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Bamboo */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC BambooDesc{};
+	BambooDesc.iNumInstance = 1;
+	BambooDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	BambooDesc.vRange = _float3(0.f, 0.f, 0.f);
+	BambooDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
+	BambooDesc.PreModelMatrix = PreTransformMatrix;
+
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bamboo");
+	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &BambooDesc);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Rock5 */
+	PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC Rock5Desc{};
+	Rock5Desc.iNumInstance = 1;
+	Rock5Desc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	Rock5Desc.vRange = _float3(0.f, 0.f, 0.f);
+	Rock5Desc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Rock/Rock5.binx";
+	Rock5Desc.PreModelMatrix = PreTransformMatrix;
+
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock5");
+	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Rock5Desc);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
@@ -1647,7 +1801,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1664,7 +1818,28 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	Desc->OnCompleted(this_thread::get_id());
+	/* For.Prototype_Component_MonsterFSM */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Monster_FSM");
+	pProtoDesc.pPrototype = CMonsterFSM::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_AISence */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_AISence");
+	pProtoDesc.pPrototype = CAISenceComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_TargetComponent */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_TargetComponent");
+	pProtoDesc.pPrototype = CTargetComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }
@@ -1712,6 +1887,135 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Image"),
 		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_UI_For_GamePlay_Level()
+{
+	m_strMessage = TEXT("UI 로딩중 입니다..");
+
+	if (FAILED(Loading_UI_For_Combat_HUD_Vitals()))
+		return E_FAIL;
+
+	if (FAILED(Loading_UI_For_Combat_HUD_Skills()))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Center_Pivot */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Number */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Number/Number_%d.png"), 10))))
+		return E_FAIL;
+
+	// 객체 원형
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Panel"),
+		CUIPanel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Wrapper"),
+		CUIWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Button"),
+		CUIButton::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Text"),
+		CUIText::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Image"),
+		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals()
+{
+	/* For.Prototype_Component_UI_Texture_Vital */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Vital"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.png"), 3))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Player_Hp */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Player_Hp_FX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp_FX"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Player_Beta */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Beta"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 6))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Potion */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Btn_Empty */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.png"), 1))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills()
+{
+	/* For.Prototype_Component_UI_Texture_SkillFrame */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_SkillFrame_Shadow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Skill_Focus_Glow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Skill_On_Fx */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_On_Fx"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Skills */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skills"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.png"), 2))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Rush */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Rush_Glow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Rush_Frame_Glow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_On_Ring */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1))))
 		return E_FAIL;
 
 	return S_OK;

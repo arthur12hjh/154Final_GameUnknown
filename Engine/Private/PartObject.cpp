@@ -14,6 +14,11 @@ CPartObject::CPartObject(const CPartObject& Prototype)
 {
 }
 
+void CPartObject::Update_PreCombinedMatrix()
+{
+    m_PreCombinedWorldMatrix = m_CombinedWorldMatrix;
+}
+
 HRESULT CPartObject::Initialize_Prototype()
 {
     return S_OK;

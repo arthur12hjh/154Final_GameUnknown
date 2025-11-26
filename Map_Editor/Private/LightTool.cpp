@@ -142,6 +142,8 @@ HRESULT CLightTool::Render()
 	ImGui::SetNextWindowSize(ImVec2(300.f, 600.f), ImGuiCond_Once);
 
 	ImGui::Begin("Light Editor");
+	if(m_pSelectedLight)
+		m_pGameInstance->Select_LightRender(m_pSelectedLight);
 
 	ImGui::Text("LightTool");
 	if (ImGui::Checkbox("Light Tool Mode", &m_bIsLightMode))

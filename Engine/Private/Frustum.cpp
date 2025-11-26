@@ -142,7 +142,7 @@ _bool CFrustum::isIn_WorldFrustum(CCollider* pCollider)
 	if (nullptr == pCollider)
 		return false;
 
-	switch (pCollider->GetCollisionType())
+	switch (pCollider->GetCollierType())
 	{
 	case COLLIDER::AABB :
 		return static_cast<CBoxCollider*>(pCollider)->FrustomIntersect(m_BoundingFrustom);

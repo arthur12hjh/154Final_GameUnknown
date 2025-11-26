@@ -42,7 +42,7 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime))
 		return;
 	if(0 <= m_fTime)
-		m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+		m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CMeshEffect::Render()
@@ -66,6 +66,7 @@ HRESULT CMeshEffect::Render()
 void CMeshEffect::Set_Components(MESH_DATA tData)
 {
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pSizeDiagramSRV);
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
 	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
@@ -80,6 +81,32 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
 
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
+	Safe_Release(pBuffer);
 }
 
 void CMeshEffect::Update(MESH_DATA tData)
@@ -153,6 +180,9 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fEndTime", &m_tData.fEndTime, sizeof(_float))))
+		return E_FAIL;
+	
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -184,6 +214,12 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
 		return E_FAIL;
+
+	int iSizeCount = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
+		return E_FAIL;
+
+	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
 
@@ -218,6 +254,7 @@ void CMeshEffect::Free()
 	__super::Free();
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pSizeDiagramSRV);
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
 }

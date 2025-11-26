@@ -1,6 +1,16 @@
 #pragma once
 #include "Engine_Defines.h"
 #include <vector>
+#include "Transform.h"
+#include "CharacterController.h"
+
+using namespace std; 
+
+namespace Engine
+{
+	class CGameObject;
+}
+
 
 namespace Client
 {
@@ -34,47 +44,72 @@ namespace Client
 		float			fCurrentCTPercent;
 		float			fCurrentCTDamage;
 		float			fCurrentLinkApplyDamage;
+		class CTransform* pPlayerTransform = { nullptr };
+		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
+	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
 	enum class SKILL_TYPE { PARRYABLE, END };
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int	iSkillID;
+		unsigned int		iSkillID;
 
-		char			szAnimationName[256];
-		long long		iSkillDamage;
+		char				szAnimationName[256];
+		char				szHitAnimationName[256];
 
-		DIRECTION		eDirection;
-		SKILL_TYPE		eSkillType;
+		long long			iSkillDamage;
+		ATTACK_DIRECTION	eATK_Direction;
+		DIRECTION			eDirection;
+		SKILL_TYPE			eSkillType;
 	}CHARACTER_SKILL_DESC;
 
 
-	// 보스몬스터 구조체
+	// 몬스터 구조체
 	// 인게임용
-	typedef struct Boss_NetWork_Desc
+	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
+	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFEMSOVE, END };
+	typedef struct Naytiba_NetWork_Desc
 	{
-		unsigned int	iNumPhase;
+		unsigned int		iNumPhase;
 
-		char			szBossName[256];
-		long long		iMaxHealth;
-		long long		iMaxShield;
+		char				szAnimationName[256];
+		char				szMonsterName[256];
+		NAYTIBA_TYPE		eNaytiba_Type;
+		AI_TYPE				eAI_Type;
+
+		char				szModelPrototype[256];
+		char				szAIControllerPrototype[256];
+		char				szAIBehaviorPrototype[256];
+
+		long long			iMaxHealth;
+		long long			iMaxShield;
+
+		float				fAttackCoolTime;
+		float				fAttackRange;
 
 		//여기서 사용하는 스킬 정보
-		std::vector<_uint>		iAttackList;
-	}BOSS_NETWORK_DESC;
+		vector<_uint>		iAttackList;
+	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
-	typedef struct Boss_Desc
+	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
+	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
+	typedef struct Naytiba_Desc
 	{
-		unsigned int	iCurrentPhase;
+		unsigned int		iCurrentPhase;
 
-		long long		iCurrentHealth;
-		long long		iCurrentShield;
+		long long			iCurrentHealth;
+		long long			iCurrentShield;
 
-		std::vector<CHARACTER_SKILL_DESC>	iAttackList;
+		_float2				fAttackCoolTime;
+		_float				fAttackRange;
+		_float				fMoveSpeed;
 
-	}BOSS_DESC;
+		NAYTIBA_STATE		eNaytibaState;
+		COMBAT_ATTRIBUTE	eCombatAttribute;
+		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
+	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
 
@@ -87,4 +122,13 @@ namespace Client
 
 		vector<_uint>		RewardLists;
 	}QUEST_STRUCT;
+
+	typedef struct Default_Damage_Desc
+	{
+		CGameObject*		pAttacker;
+		_float3				vHitPoint;
+		_float3				vHitDir;
+
+		void*				pSkillData;
+	}DEFAULT_DAMAGE_DESC;
 }

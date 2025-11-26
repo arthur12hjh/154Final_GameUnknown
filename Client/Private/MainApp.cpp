@@ -5,6 +5,7 @@
 
 #include "Level_Loading.h"
 #include "Camera_Free.h"
+#include "Camera_Player.h"
 
 #include "GameManager.h"
 #include "JsonParser.h"
@@ -17,7 +18,7 @@
 #include "Model.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
-
+#include "TestEveHead.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -37,9 +38,6 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iNumLevels = ENUM_CLASS(LEVEL::END);
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Gara()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Default_Setting()))
@@ -117,102 +115,6 @@ HRESULT CMainApp::Start_Level(LEVEL eLevelID)
 	return S_OK;
 }
 
-HRESULT CMainApp::Ready_Gara()
-{
-	ID3D11Texture2D* pTexture2D = { nullptr };
-
-	D3D11_TEXTURE2D_DESC		TextureDesc{};
-	TextureDesc.Width = 256;
-	TextureDesc.Height = 256;
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
-	TextureDesc.Usage = D3D11_USAGE_STAGING;
-	TextureDesc.BindFlags = 0;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	TextureDesc.MiscFlags = 0;
-
-	_uint* pPixel = new _uint[256 * 256];
-
-	for (size_t i = 0; i < 256; i++)
-	{
-		for (size_t j = 0; j < 256; j++)
-		{
-			_uint iIndex = i * 256 + j;
-			pPixel[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);
-		}
-	}
-
-	D3D11_SUBRESOURCE_DATA		InitialDesc{};
-	InitialDesc.pSysMem = pPixel;
-	InitialDesc.SysMemPitch = 256 * 4;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &InitialDesc, &pTexture2D)))
-		return E_FAIL;
-
-	D3D11_MAPPED_SUBRESOURCE		SubResource{};
-
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-
-	_uint* pPixels = static_cast<_uint*>(SubResource.pData);
-
-	for (size_t i = 0; i < 256; i++)
-	{
-		for (size_t j = 0; j < 256; j++)
-		{
-			_uint iIndex = i * 256 + j;
-
-			if (j < 128)
-				pPixels[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);/*0xff000000*//*0b00000000000000000000000011111111*/
-			else
-				pPixels[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);/*0xff000000*//*0b00000000000000000000000011111111*/;
-		}
-	}
-
-	m_pContext->Unmap(pTexture2D, 0);
-
-	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"))))
-		return E_FAIL;
-
-	Safe_Delete_Array(pPixel);
-	Safe_Release(pTexture2D);
-
-	_ulong			dwByte = {};
-
-	HANDLE			hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
-		return E_FAIL;
-
-	_float3			vPoints[3] = {};
-
-	vPoints[0] = _float3(0.0f, 0.f, 10.f);
-	vPoints[1] = _float3(10.f, 0.f, 0.f);
-	vPoints[2] = _float3(0.f, 3.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	vPoints[0] = _float3(0.0f, 0.f, 10.f);
-	vPoints[1] = _float3(10.f, 0.f, 10.f);
-	vPoints[2] = _float3(10.f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	vPoints[0] = _float3(0.0f, 0.f, 20.f);
-	vPoints[1] = _float3(10.f, 0.f, 10.f);
-	vPoints[2] = _float3(0.f, 0.f, 10.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	vPoints[0] = _float3(10.f, 0.f, 10.f);
-	vPoints[1] = _float3(20.f, 0.f, 0.f);
-	vPoints[2] = _float3(10.f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	CloseHandle(hFile);
-
-	return S_OK;
-}
-
 HRESULT CMainApp::Ready_Prototypes()
 {
 	///* For.Prototype_Component_Transform*/
@@ -258,6 +160,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Camera_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"),
+		CCamera_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
@@ -269,19 +176,17 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	//_fmatrix PreWorlMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(270.f)); 
-	///* For.Prototype_Component_Model_ShaderTestModel */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/ShaderTestModel.fbx", PreWorlMatrix))))
-	//	return E_FAIL;
-
-	 /* For.Prototype_Component_Model_Dororong */
-	_fmatrix PreWorlMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_ShaderTestModel"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/ShaderTestModel/ORM_Eve.binx", PreWorlMatrix))))
-		return E_FAIL;
 
 #endif
+	_fmatrix HeadPreWorlMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_TestEveHead"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MS_EVE_HEAD/Eve_Face.fbx", HeadPreWorlMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TestEveHead */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TestEveHead"), 
+		CTestEveHead::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }

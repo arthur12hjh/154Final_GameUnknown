@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Reed.h"
-#include "Terrain.h"
+
 #include "GameInstance.h"
+#include "Terrain.h"
 
 CReed::CReed(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CGameObject(pDevice, pContext)
@@ -38,8 +39,8 @@ HRESULT CReed::Initialize(void* pArg)
 
 	for (_uint i = 0; i < 10000; ++i)
 	{
-		_float fReedX = m_pGameInstance->Random(-90.f, 90.f) + 256.f;
-		_float fReedZ = m_pGameInstance->Random(-150.f, 50.f) + 256.f;
+		_float fReedX = m_pGameInstance->Random(-100.f, 100.f) + 256.f;
+		_float fReedZ = m_pGameInstance->Random(-180.f, 50.f) + 256.f;
 
 		_float fReedY = m_pTerrain->Get_Height_In_World_Space(fReedX, fReedZ);
 
@@ -124,7 +125,15 @@ HRESULT CReed::Ready_Components()
 
 HRESULT CReed::Bind_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;*/
+
+	_matrix matIdentity = XMMatrixIdentity();
+
+	_float4x4 matIdentityFloat4x4;
+	XMStoreFloat4x4(&matIdentityFloat4x4, matIdentity);
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &matIdentityFloat4x4)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
@@ -149,7 +158,7 @@ HRESULT CReed::Bind_ShaderResources()
 	struct MinMaxScale
 	{
 		_float fMinScale = 0.7f;
-		_float fMaxScale = 1.2f;
+		_float fMaxScale = 1.0f;
 		_float fReserved = 0.0f;
 	};
 

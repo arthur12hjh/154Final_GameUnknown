@@ -7,10 +7,11 @@ NS_BEGIN(Engine)
 class CVIBuffer_Rect;
 class CTexture;
 class CShader;
+class CTrail;
 NS_END
 
 NS_BEGIN(Tool_Effect)
-//texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
+
 class CTrailEffect final : public CGameObject
 {
 public:
@@ -21,18 +22,18 @@ public:
 		string	szDissolveTexture = {};
 		_float4 fColor = {};
 
-		_float2				fMaskUV;
-		_float2				fMaskUVSpeed;
-		_float2				fMaskUVSize;
-		_float2				fDiffuseUV;
-		_float2				fDiffuseUVSpeed;
-		_float2				fDiffuseUVSize;
-		_float2				fDissolveUV;
-		_float2				fDissolveUVSpeed;
-		_float2				fDissolveUVSize;
+		_float2	fMaskUV;
+		_float2	fMaskUVSpeed;
+		_float2	fMaskUVSize;
+		_float2	fDiffuseUV;
+		_float2	fDiffuseUVSpeed;
+		_float2	fDiffuseUVSize;
+		_float2	fDissolveUV;
+		_float2	fDissolveUVSpeed;
+		_float2	fDissolveUVSize;
 
 		_int	iBegin = {};
-		_int	iSelectRender = {};
+		RENDER	eSelectRender;
 	}TRAIL_DATA;
 
 private:
@@ -53,14 +54,18 @@ public:
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
 	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
 	void	Pause() { m_bisPause = !m_bisPause; }
+	_float	Get_Speed() { return m_fSpeed; }
+	void	Set_Speed(_float fSpeed) { m_fSpeed = fSpeed; }
 private:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
 	string    m_szFile[3];
+	CTrail*		m_pTrail = { nullptr };
 	_float		m_fTime = {};
 	_bool		m_bisPause = {};
 	TRAIL_DATA	m_tData;
+	_float		m_fSpeed = { 1.f };
 	_uint	m_iCount = {};
 
 private:

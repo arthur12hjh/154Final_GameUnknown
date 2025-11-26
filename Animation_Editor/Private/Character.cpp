@@ -1,3 +1,8 @@
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
+#include "Character.h"
 #include "pch.h"
 #include "Character.h"
 
@@ -137,6 +142,8 @@ HRESULT CCharacter::Render()
 	return S_OK;
 }
 
+
+
 void CCharacter::Set_Animation(const _char* szAnimationTag)
 {
 	static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")))->Set_Animation(szAnimationTag);
@@ -189,7 +196,7 @@ HRESULT CCharacter::Ready_PartObjects()
 	HairDesc.pParentState = &m_iState;
 	HairDesc.pParentTransform = m_pTransformCom;
 	HairDesc.pBodyPtr = m_pPart_Body;
-
+	
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Hair_Character"),
 		TEXT("Part_Hair"), &HairDesc)))
@@ -199,7 +206,7 @@ HRESULT CCharacter::Ready_PartObjects()
 	PonyTailDesc.pParentState = &m_iState;
 	PonyTailDesc.pParentTransform = m_pTransformCom;
 	PonyTailDesc.pBodyPtr = m_pPart_Body;
-
+	
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_PonyTail_Character"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))

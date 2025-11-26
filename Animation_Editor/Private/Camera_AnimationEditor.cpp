@@ -31,6 +31,8 @@ HRESULT CCamera_AnimationEditor::Initialize(void* pArg)
 
 	Initialize_Position();
 
+	m_pTransformCom->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
 	return S_OK;
 }
 
@@ -53,21 +55,26 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 	{
 		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * -5.f, 0.f, 0.f));
 	}
-	//
-	//_long MouseMove = {};
-	//if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
-	//{
-	//	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
-	//}
-	//
-	//if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
-	//{
-	//	m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
-	//}
+	
+	
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE))
+	{
+		_long MouseMove = {};
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+
+		if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+		}
+	}
 	
 
 
-	m_pTransformCom->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	//m_pTransformCom->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 
 

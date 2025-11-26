@@ -1,4 +1,3 @@
-#include "Shader_Deferred_Defines.hlsli"
 #include "Shader_Deferred_Functions.hlsli"
 
 int g_iWinSizeX;
@@ -12,6 +11,8 @@ matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_LightViewMatrix, g_LightProjMatrix;
 texture2D g_Texture;
 vector g_vCamPosition;
+float g_fDensity;
+float g_fStepSize;
 
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
@@ -20,6 +21,7 @@ texture2D g_DepthTexture;
 texture2D g_SpecularTexture;
 texture2D g_ORMTexture;
 texture2D g_ShadowTexture;
+texture2D g_SSAOTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
@@ -29,6 +31,7 @@ texture2D g_GlowWeightTexture;
 texture2D g_DistortionTexture;
 texture2D g_FogTexture;
 texture2D g_BloomTexture;
+texture2D g_VolumetricTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
@@ -93,33 +96,43 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(g_vLightDir), vNormal);
+    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    vector N = normalize(vNormal);
-    vector L = normalize(g_vLightDir) * -1.f;
-    vector V = normalize(vLook) * -1.f;
-    vector H = normalize(L + V);
-
-    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fMetallic, fRoughness, fOcclusion, fAttenuation;
+    float3 vF0;
     
-    //ORM 마스크 없으면 그냥 Phong Shading 처리 해.
+    float fSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    //ORM 마스크 없으면 그냥 Phong Shading 처리.
     if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
     {
-        Out.vShade = vDiffuse * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
+        Out.vShade = vAlbedo * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
         Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f);
+        
+        return Out;
     }
-    //Shade 처리해서 
+    //Specular Map은 따로 Shade 처리해서 
     else if(vORMDesc.a == 2.f)
-    {
-        float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, 0.f, vORMDesc.a, true);
-        Out.vShade = float4(vColor, 1.f);
-        Out.vSpecular = 0.f;
+    {        
+        fMetallic = 0.f;
+        fRoughness = vORMDesc.g;
+        fOcclusion = vORMDesc.b;
+        vF0 = vORMDesc.b;
     }
+    //ORM 처리.
     else
     {
-        float3 vColor = LightSurface(V.xyz, N.xyz, g_vLightDiffuse.xyz, normalize(g_vLightDir.xyz), vDiffuse.rgb, vORMDesc.g, vORMDesc.b, vORMDesc.a);
-        Out.vShade = float4(vColor, 1.f);
-        Out.vSpecular = 0.f;
+        fOcclusion = vORMDesc.r;
+        fRoughness = vORMDesc.g;
+        fMetallic = vORMDesc.b;
+        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
     }
+    
+    fAttenuation = 1.f;
+    
+    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
+    
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    Out.vShade *= fDiffuseAOStrength;
     
     return Out;
 }
@@ -128,10 +141,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT_LIGHT Out;
     
+    vector vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
-    
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
     
@@ -153,14 +165,53 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vector vLightDir = vPosition - g_vLightPos;
-    float fDistance = length(vLightDir);
     
-    float  fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    float fDistance = length(vLightDir);
+    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    
+    if (fAtt <= 0.f)
+        discard;
+    
     vector vLook = vPosition - g_vCamPosition;
     vector vReflect = reflect(normalize(vLightDir), vNormal);
+    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-    Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
+    float fMetallic, fRoughness, fOcclusion, fAttenuation;
+    float3 vF0;
+    
+    float fSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    //ORM 마스크 없으면 그냥 Phong Shading 처리.
+    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    {
+        Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
+        
+        return Out;
+    }
+    else if (vORMDesc.a == 2.f)
+    {
+        fMetallic = 0.f;
+        fRoughness = vORMDesc.g;
+        fOcclusion = vORMDesc.b;
+        vF0 = vORMDesc.b;
+    }
+    else
+    {
+        fOcclusion = vORMDesc.r;
+        fRoughness = vORMDesc.g;
+        fMetallic = vORMDesc.b;
+        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
+    }
+    
+    fAttenuation = 1.f;
+    
+    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
+    
+    Out = PBR_Light(normalize(vNormal.xyz), normalize(vLook.xyz) * -1.f, normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, fSSAO);
+    
+    Out.vShade *= fDiffuseAOStrength * fAtt;
+    Out.vSpecular *= fAtt;
     
     return Out;
 }
@@ -239,9 +290,31 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
+
+PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
+    PS_OUT_LIGHT Out;
+    
+    Out.vShade = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vSpecular = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
+
+PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_POINT(PS_IN In)
+{
+    PS_OUT_LIGHT Out;
+    
+    Out.vShade = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vSpecular = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
+PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
+{
+    PS_OUT_COMBINED Out;
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (0.0f == vDiffuse.a)
@@ -250,37 +323,39 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    Out.vBackBuffer = vShade + vSpecular; //vDiffuse * vShade + vSpecular;
-
+    vector vVolumetric = g_VolumetricTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vBackBuffer = vShade + vVolumetric * 0.5f + vSpecular; //vDiffuse * vShade + vSpecular;
+    Out.vBloomScene = vShade;
+    
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 500.f;
     
     vector vPosition;
     
-    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    // 로컬위치 * 월드 * 뷰 * 투영 / w 
     vPosition.x = In.vTexcoord.x * 2.f - 1.f;
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
     
-    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    // 로컬위치 * 월드 * 뷰 * 투영 
+    // w 나누기 상쇄.
     vPosition = vPosition * fViewZ;
     
-    /* 로컬위치 * 월드 * 뷰  */
+    // 로컬위치 * 월드 * 뷰  
     vPosition = mul(vPosition, g_ProjMatrixInv);
     
-    /* 로컬위치 * 월드   */
+    // 로컬위치 * 월드   
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
     vPosition = mul(vPosition, g_LightViewMatrix);
     vPosition = mul(vPosition, g_LightProjMatrix);
     
-    /* -1, 1 -> 0, 0  */
-    /* 1, -1 -> 1, 1  */
-    
     //그림자 연산
     Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-   
+    Out.vBloomScene = Calc_Shadow(Out.vBloomScene, g_ShadowTexture, vPosition);
+    
     return Out;
 }
 
@@ -382,6 +457,27 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
     // idx 3
+    pass VolumetricDirectional
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_VOLUMETRIC_DIRECTIONAL();
+    }
+    // idx 4
+    pass VolumetricPoint
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_VOLUMETRIC_POINT();
+    }
+
+    // idx 5
     pass Combined
     {
         SetRasterizerState(RS_Default);
@@ -391,7 +487,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
-    // idx 4
+    // idx 6
     pass Deferred
     {
         SetRasterizerState(RS_Default);
@@ -402,7 +498,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DEFERRED();
     }
 
-    // idx 5
+    // idx 7
     pass ToneMapping
     {
         SetRasterizerState(RS_Default);
@@ -413,7 +509,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_TONE_MAPPING();
     }
 
-    // idx 6
+    // idx 8
     pass Final
     {
         SetRasterizerState(RS_Default);
@@ -424,7 +520,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
 
-    // idx 7
+    // idx 9
     pass Spot
     {
         SetRasterizerState(RS_Default);

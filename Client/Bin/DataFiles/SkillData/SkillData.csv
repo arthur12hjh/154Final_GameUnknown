@@ -1,2 +1,19 @@
-ìŠ¤í‚¬ ID,ì• ë‹ˆë©”ì´ì…˜ ì´ë¦„,ìŠ¤í‚¬ ë°ë¯¸ì§€,ë°©í–¥,ìŠ¤í‚¬ íƒ€ì…
-1,CH_M_NA_05|M_Gorilla_S22_RightAttack,10,3,0
+½ºÅ³ ID,¾Ö´Ï¸ŞÀÌ¼Ç ÀÌ¸§,½ºÅ³ µ¥¹ÌÁö,¹æÇâ,½ºÅ³ Å¸ÀÔ
+1,M_Gorilla_S22_RightAttack,10,3,0
+511,M_Beholder_SwingDouble,11,3,0
+512,M_Beholder_Swing,12,3,0
+513,M_Beholder_SpinSwing,13,3,0
+521,M_StatueA_Grab,14,3,0
+522,M_StatueA_Slash,15,3,0
+523,M_StatueA_RushSlash,15,3,0
+524,M_StatueA_SlashDouble,15,3,0
+531,M_StatueB_GroundExplosion,14,3,0
+532,M_StatueB_RushSlash2,15,3,0
+533,M_StatueB_Slash,15,3,0
+534,M_StatueB_RushSlash,15,3,0
+535,M_StatueB_SlashDouble,16,3,0
+536,M_StatueB_SlashTriple,17,3,0
+541,M_BarnacleA_PunchAttack,15,3,0
+542,M_BarnacleA_GrabAttack,15,3,0
+543,M_BarnacleA_ComboAttack,16,3,0
+544,M_BarnacleA_Shield,17,3,0

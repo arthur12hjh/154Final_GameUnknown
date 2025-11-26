@@ -13,6 +13,45 @@ vector g_UIDebugLineColor;
 
 float g_Alpha = 1.f;
 
+float2 g_UVScale = { 1.f, 1.f }; // 반복, 확대/축소
+float2 g_UVOffset = { 0.f, 0.f }; // 스크롤, 이동
+
+bool g_bUseFillClip = { false }; // 텍스쳐 클리핑
+float g_fFillAmount = { 1.f }; // 클리핑 얼마나 할지
+
+bool g_bUseTintColor = { false };
+vector g_vTintColor = 1.f;
+
+bool g_bDiscardBlack = { false };
+
+bool g_bUseGlow = { false };
+bool g_bUsePulse = { false };
+float g_PulseTime = 0.f; // 시간 (sin(g_Time)같은거 하기위해
+float g_PulseSpeed = 3.0f; // 반짝이는 시간
+float g_GlowIntensity = 0.5f; // 확산 색상 강도 조절
+float g_GlowSpread = 1.0f; // 빛이 퍼지는 정도 1 ~ 4 정도 추천
+
+
+bool g_bScroll = false; // uv사용 여부
+float g_ScrollSpeed = 0.5f; // uv에 따라 및이 이동하는 속도
+
+BlendState BS_Additive
+{
+    BlendEnable[0] = true;
+
+    // RGB Additive
+    SrcBlend = ONE;
+    DestBlend = ONE;
+    BlendOp = Add;
+
+    // Alpha: Src 유지 (보통 UI Glow는 DestAlpha 필요 없음)
+    SrcBlendAlpha = ONE;
+    DestBlendAlpha = ZERO;
+    BlendOpAlpha = Add;
+
+    RenderTargetWriteMask[0] = 0x0F; // RGBA 쓰기 가능
+};
+
 /*------------------[S_DEBUG]---------------*/
 
 struct VS_IN
@@ -67,13 +106,52 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    float2 uv = In.vTexcoord;
+
+    // ----------------------------
+    //  UV 조작
+    // ----------------------------
+    if (g_UVScale.x != 1.f || g_UVScale.y != 1.f ||
+        g_UVOffset.x != 0.f || g_UVOffset.y != 0.f)
+    {
+        uv = uv * g_UVScale + g_UVOffset;
+
+        // 반복
+        uv = frac(uv);
+    }
+
+    // ----------------------------
+    //  텍스처 샘플링
+    // ----------------------------
     
-    Out.vColor *= g_Alpha;
+    Out.vColor = g_Texture.Sample(DefaultSampler, uv);
+
+    // ----------------------------
+    //  Fill Clip (오른쪽부터 잘림)
+    // ----------------------------
+    if (g_bUseFillClip)
+    {
+        if (In.vTexcoord.x > g_fFillAmount)
+            discard;
+    }
     
+    // ----------------------------
+    //  TintColor
+    // ----------------------------
+    if (g_bUseTintColor)
+    {
+        Out.vColor.rgb *= g_vTintColor.rgb;
+        Out.vColor.a *= g_vTintColor.a;
+    }
+    
+    // ----------------------------
+    //  Alpha 적용
+    // ----------------------------
+    Out.vColor.a *= g_Alpha;
+
     if (Out.vColor.a <= 0.05f)
         discard;
-    
+
     return Out;
 }
 
@@ -146,16 +224,6 @@ void GS_MAIN_DEBUG(point GS_IN_DEBUG In[1], inout TriangleStream<GS_OUT_DEBUG> O
     OutStream.RestartStrip();
 }
 
-//struct PS_IN_DEBUG
-//{
-//    float2 vPosition : POSITION;
-//};
-//
-//struct PS_OUT_DEBUG
-//{
-//    float4 vColor : SV_TARGET0;
-//};
-
 float4 PS_MAIN_DEBUG() : SV_TARGET
 {
     return g_UIDebugLineColor;
@@ -163,13 +231,115 @@ float4 PS_MAIN_DEBUG() : SV_TARGET
 
 /*------------------[E_DEBUG]---------------*/
 
+/*------------------[S_GLOW]---------------*/
+PS_OUT PS_UI_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+    
+    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (Out.vColor.r <= 0.05f || Out.vColor.g <= 0.05f
+        || Out.vColor.b <= 0.05f || Out.vColor.a <= 0.05f)
+        discard;
+
+    return Out;
+}
+
+/*------------------[E_GLOW]---------------*/
+
+/*------------------[S_FX_GLOW]----------------*/
+
+PS_OUT PS_UI_GLOW_FX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+
+    // ----------------------------
+    // 1) UV Scroll (선택)
+    // ----------------------------
+    //if (g_bScroll)
+    //{
+    //    uv.x += g_PulseTime * g_ScrollSpeed;
+    //    uv = frac(uv);
+    //}
+
+    // ----------------------------
+    //  UV 조작
+    // ----------------------------
+    //if (g_UVScale.x != 1.f || g_UVScale.y != 1.f ||
+    //    g_UVOffset.x != 0.f || g_UVOffset.y != 0.f)
+    //{
+    //    uv = uv * g_UVScale + g_UVOffset;
+    //
+    //    // 반복
+    //    uv = frac(uv);
+    //}
+
+    float4 baseColor = g_Texture.Sample(DefaultSampler, uv);
+
+    // ----------------------------
+    // 2) Pulse Alpha (반짝임)
+    // ----------------------------
+    //if(g_bUsePulse)
+    //{
+    //    float pulse = (sin(g_PulseTime * g_PulseSpeed) * 0.5f + 0.5f); // 0~1
+    //    baseColor.rgb *= pulse;
+    //    baseColor.a *= pulse;
+    //}
+
+    // ----------------------------
+    // 3) Glow 확산 샘플링
+    //    좌우로만 퍼져보이는 "레이저 라인" 효과
+    // ----------------------------
+    
+    if(g_bUseGlow)
+    {
+        float2 texel = float2(g_GlowSpread / 1024.0f, 0); // 텍스처 크기 기반
+    
+        float4 glow =
+            g_Texture.Sample(DefaultSampler, uv + texel) +
+            g_Texture.Sample(DefaultSampler, uv - texel) +
+            g_Texture.Sample(DefaultSampler, uv + texel * 2) +
+            g_Texture.Sample(DefaultSampler, uv - texel * 2);
+        
+        baseColor.rgb *= glow.rgb * g_GlowIntensity;
+        baseColor.a *= g_Alpha;
+    }
+    
+    // ----------------------------
+    //  TintColor
+    // ----------------------------
+    if (g_bUseTintColor)
+    {
+        baseColor.rgb *= g_vTintColor.rgb;
+        baseColor.a *= g_vTintColor.a * g_Alpha;
+    }
+    
+    // 알파 너무 낮으면 버리기
+    if (baseColor.a <= 0.05f)
+        discard;
+    
+    Out.vColor = baseColor;
+    
+    //Out.vColor.a *= g_Alpha;
+    //
+    //if(Out.vColor.a <= 0.05f)
+    //    discard;
+
+    return Out;
+}
+
+/*------------------[E_FX_GLOW]----------------*/
+
+
 technique11 DefaultTechnique
 {
     pass UI
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
@@ -185,13 +355,25 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DEBUG();
     }
 
-    pass UI_Blend
+    pass Glow
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_UI_GLOW();
+    }
+    
+    pass GlowFX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+    
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_UI_GLOW_FX();
     }
 }

@@ -90,6 +90,45 @@ void CLight_Manager::Debug_LightRender()
         }
     }
 }
+void CLight_Manager::Select_LightRender(CLight* pSelectLight)
+{
+    if (nullptr == pSelectLight)
+        return;
+
+    m_pTexture->Bind_ShaderResource(m_pShader[0], "g_Texture", 0);
+
+    m_pShader[0]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+    m_pShader[0]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+    m_pShader[0]->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
+
+    m_pShader[0]->Bind_Matrix("g_WorldMatrix", pSelectLight->GetWorldMatrix());
+    m_pShader[0]->Begin(0);
+
+    CVIBuffer_Point* pVIPointBuffer = static_cast<CVIBuffer_Point*>(m_pVIBuffer[0]);
+    pVIPointBuffer->Bind_Resources();
+    pVIPointBuffer->Render();
+
+    if (LIGHT_TYPE::DIRECTIONAL == pSelectLight->Get_LightDesc()->eType || LIGHT_TYPE::SPOT == pSelectLight->Get_LightDesc()->eType)
+    {
+        m_pShader[1]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+        m_pShader[1]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+        m_pShader[1]->Bind_Matrix("g_WorldMatrix", pSelectLight->GetWorldMatrix());
+
+        CModel* pModel = static_cast<CModel*>(m_pVIBuffer[1]);
+        _uint iNumMeshes = pModel->Get_NumMeshes();
+        m_pShader[1]->Begin(0);
+
+        for (_uint i = 0; i < iNumMeshes; ++i)
+        {
+            pModel->Render(i);
+        }
+    }
+
+    if (LIGHT_TYPE::SPOT == pSelectLight->Get_LightDesc()->eType || LIGHT_TYPE::POINT == pSelectLight->Get_LightDesc()->eType)
+    {
+        pSelectLight->Debug_Render();
+    }
+}
 #else
 CLight_Manager::CLight_Manager()
 {
@@ -147,6 +186,16 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
     for (auto& pLight : m_Lights)
     {
         pLight->Render(pShader, pVIBuffer);
+    }
+
+    return S_OK;
+}
+
+HRESULT CLight_Manager::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIBuffer)
+{
+    for (auto& pLight : m_Lights)
+    {
+        pLight->Render_Volumetric(pShader, pVIBuffer);
     }
 
     return S_OK;

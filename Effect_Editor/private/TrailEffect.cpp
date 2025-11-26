@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TrailEffect.h"
+#include "Trail.h"
 
 #include "GameInstance.h"
 
@@ -20,8 +21,18 @@ HRESULT CTrailEffect::Initialize_Prototype()
 
 HRESULT CTrailEffect::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	GAMEOBJECT_DESC desc = {};
+	desc.fRotationPerSec = 1.f;
+	desc.fSpeedPerSec = 15.f;
+	if (FAILED(__super::Initialize(&desc)))
 		return E_FAIL;
+
+	CTrail::TRAILHIGHLOW TrailDesc{};
+	TrailDesc.vHigh = { 0.f, 1.f, 0.f,0.f };
+	TrailDesc.vLow = { 0.f, -1.f, 0.f,0.f };
+
+	m_pTrail = CTrail::Create(m_pDevice, m_pContext)->Clone(&TrailDesc);
+	_float4x4 a;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
@@ -37,11 +48,15 @@ void CTrailEffect::Priority_Update(_float fTimeDelta)
 void CTrailEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
+	m_pTransformCom->Go_Straight(fTimeDelta * m_fSpeed);
+	m_pTransformCom->Turn(XMVectorSet(0, 1, 0, 0), fTimeDelta * m_fSpeed);
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
 void CTrailEffect::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER(m_tData.iSelectRender), this);
+	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
 }
 
 HRESULT CTrailEffect::Render()
@@ -53,11 +68,7 @@ HRESULT CTrailEffect::Render()
 	if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Bind_Resources()))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
+	m_pTrail->Render();
 	return S_OK;
 }
 
@@ -66,6 +77,7 @@ void CTrailEffect::Set_Components(TRAIL_DATA tData)
 	Safe_Release(m_pShaderCom);
 	m_tData = tData;
 	m_fTime = 0;
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0, 0, 0, 1));
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
@@ -108,8 +120,6 @@ HRESULT CTrailEffect::Ready_Components()
 
 HRESULT CTrailEffect::Bind_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -118,8 +128,6 @@ HRESULT CTrailEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
 		return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
-	//	return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
 		return E_FAIL;
 

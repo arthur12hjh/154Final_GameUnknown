@@ -84,7 +84,7 @@ private:
 	void								TargetLost(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
-	static		CPerception*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static		CPerception*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual		CComponent*				Clone(void* pArg) override;
 	virtual		void					Free() override;
 

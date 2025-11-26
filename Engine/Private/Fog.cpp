@@ -7,6 +7,17 @@ CFog::CFog(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
+void* CFog::Get_Desc()
+{
+	m_Desc.vFogColor = &m_vFogColor;
+	m_Desc.fFogPowerMin = &m_fFogPowerMin;
+	m_Desc.fFogPowerMax = &m_fFogPowerMax;
+	m_Desc.fFogStart = &m_fFogStart;
+	m_Desc.fFogEnd = &m_fFogEnd;
+
+	return &m_Desc;
+}
+
 HRESULT CFog::Initialize()
 {
 	/* 셰이더 파일 로딩 */
@@ -43,6 +54,10 @@ HRESULT CFog::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogStart", &m_fFogStart, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogEnd", &m_fFogEnd, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fFogPowerMin", &m_fFogPowerMin, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fFogPowerMax", &m_fFogPowerMax, sizeof(_float))))
 		return E_FAIL;
 
 	m_pShader->Begin(0);

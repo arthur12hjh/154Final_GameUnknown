@@ -8,12 +8,12 @@
 #include "UIHUD.h"
 #include "HUDLayer.h"
 #include "GameObject.h"
+#include "ChangeLevelEvent.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
 	
 {
-
 }
 
 HRESULT CLevel_Logo::Initialize()
@@ -29,10 +29,13 @@ HRESULT CLevel_Logo::Initialize()
 	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI")))) 
 		return E_FAIL;
 
 	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 0.5f);
+
+	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
+	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
 
 	return S_OK;
 }
@@ -41,11 +44,9 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	if (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pHUD);
-
-		for (auto& pLayers : pUIHUD->Get_Layers())
+		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
 		{
 			auto pLayer = pLayers.second;
 
@@ -55,8 +56,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
-		pUIHUD->Set_Show_Debug_Rect(true);
-		
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
@@ -107,11 +106,10 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
+
+	pUIHUD->Set_Show_Debug_Rect(false);
 	
-	//pUIHUD->Load_Anim_Files();
-	//
-	
-	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
 
 	return S_OK;
 }
@@ -132,4 +130,8 @@ CLevel_Logo* CLevel_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 void CLevel_Logo::Free()
 {
 	__super::Free();
+
+	m_pGameInstance->UnBind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
+
+	Safe_Release(m_pLevelChangeEvent);
 }

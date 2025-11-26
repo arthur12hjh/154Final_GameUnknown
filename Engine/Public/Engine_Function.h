@@ -45,7 +45,7 @@ namespace Engine
 
 		if (nullptr != pInstance)
 		{
-			dwRefCnt = pInstance->Release();
+ 			dwRefCnt = pInstance->Release();
 
 			if (0 == dwRefCnt)
 				pInstance = nullptr;
