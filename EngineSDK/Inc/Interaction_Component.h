@@ -34,6 +34,10 @@ public:
 	void										Update_Com();
 	void										Action_InteractionEvent(CGameObject* pGameObject);
 
+	void										SetInteractionHitType(HIT_TYPE eHitType);
+	void										ADD_InteractionIgnoreObject(HIT_TYPE eHitType);
+	void										ADD_InteractionOnlyHitObject(HIT_TYPE eHitType);
+
 #ifdef _DEBUG
 	virtual HRESULT								Render() override;
 #endif

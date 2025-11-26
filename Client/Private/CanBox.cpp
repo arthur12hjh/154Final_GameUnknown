@@ -68,6 +68,7 @@ void CCanBox::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+
 		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
@@ -127,6 +128,8 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
+    m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+    m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -188,7 +191,6 @@ HRESULT CCanBox::Bind_ShaderResources()
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
     CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-    
     m_pInteractionUI = pUIHUD->Rent_WorldUI(TEXT("Pool_Test"), this);
     
     Safe_Release(pUIHUD);

@@ -74,6 +74,7 @@ void CPlayer::Update(_float fTimeDelta)
 {
 	m_pPlayerFSM->Update(fTimeDelta);
 
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
 }
 
@@ -108,6 +109,7 @@ HRESULT CPlayer::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	/* Player FSM */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
