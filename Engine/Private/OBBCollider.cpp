@@ -61,30 +61,30 @@ _bool COBBCollider::Intersect(COLLIDER eType, CCollider* pTarget)
             return false;
     }
 
-    _vector OwnerPosition = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-    _vector TargetPosition = pTarget->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
-    _vector vDireaction = XMVector3Normalize(TargetPosition - OwnerPosition);
-
-    _vector vCenter = XMLoadFloat3(&m_Bounding->Center);
-    _float fDistance = XMVectorGetX(XMVector3Length(TargetPosition - OwnerPosition));
-
     switch (eType)
     {
     case COLLIDER::AABB:
-        bIsHit = m_Bounding->Intersects(static_cast<CBoxCollider*>(pTarget)->GetBounding());
+    {
+        auto pBoundingBox = static_cast<CBoxCollider*>(pTarget)->GetBounding();
+        bIsHit = m_Bounding->Intersects(pBoundingBox);
+        RayIntersect(COLLIDER::AABB, pTarget, m_HitDesc);
+    }
         break;
     case COLLIDER::SPHERE:
-        bIsHit = m_Bounding->Intersects(static_cast<CSphereCollider*>(pTarget)->GetBounding());
-        break;
-    case COLLIDER::OBB:
-        bIsHit = m_Bounding->Intersects(static_cast<COBBCollider*>(pTarget)->GetBounding());
-        break;
+    {
+        auto pBoundingBox = static_cast<CSphereCollider*>(pTarget)->GetBounding();
+        bIsHit = m_Bounding->Intersects(pBoundingBox);
+        RayIntersect(COLLIDER::SPHERE, pTarget, m_HitDesc);
     }
-
-    XMStoreFloat3(&m_HitDesc.vHitPoint, vCenter + vDireaction * fDistance);
-    m_HitDesc.vfDistance = fDistance;
-    XMStoreFloat3(&m_HitDesc.vDireaction, vDireaction);
-    XMStoreFloat3(&m_HitDesc.vNormal, XMVector3Normalize(XMLoadFloat3(&m_HitDesc.vHitPoint) - TargetPosition));
+    break;
+    case COLLIDER::OBB:
+    {
+        auto pBoundingBox = static_cast<COBBCollider*>(pTarget)->GetBounding();
+        bIsHit = m_Bounding->Intersects(pBoundingBox);
+        RayIntersect(COLLIDER::OBB, pTarget, m_HitDesc);
+    }
+    break;
+    }
 
     return bIsHit;
 }
@@ -93,23 +93,45 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
 {
     _bool bIsHit = false;
 
-    _vector OwnerPosition = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-    _vector TargetPosition = pTarget->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
-    _vector vDireaction = XMVector3Normalize(TargetPosition - OwnerPosition);
-
+    _vector TargetPosition{}, vDireaction{};
     _vector vCenter = XMLoadFloat3(&m_Bounding->Center);
+
     _float fDistance = { -1 };
-    switch (eType) 
+    switch (eType)
     {
     case COLLIDER::AABB:
-        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
-        break;
+    {
+        auto pTargetBoundBox = static_cast<CBoxCollider*>(pTarget)->GetBounding();
+        TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
+        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        if (XMVector3Equal(vDireaction, XMVectorZero()))
+            bIsHit = true;
+        else
+            bIsHit = m_Bounding->Intersects(TargetPosition, vDireaction, fDistance);
+    }
+    break;
     case COLLIDER::SPHERE:
-        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
-        break;
+    {
+        auto pTargetBoundBox = static_cast<CSphereCollider*>(pTarget)->GetBounding();
+        TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
+        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        if (XMVector3Equal(vDireaction, XMVectorZero()))
+            bIsHit = true;
+        else
+            bIsHit = m_Bounding->Intersects(TargetPosition, vDireaction, fDistance);
+    }
+    break;
     case COLLIDER::OBB:
-        bIsHit = m_Bounding->Intersects(vCenter, vDireaction, fDistance);
-        break;
+    {
+        auto pTargetBoundBox = static_cast<COBBCollider*>(pTarget)->GetBounding();
+        TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
+        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        if (XMVector3Equal(vDireaction, XMVectorZero()))
+            bIsHit = true;
+        else
+            bIsHit = m_Bounding->Intersects(TargetPosition, vDireaction, fDistance);
+    }
+    break;
     }
 
     XMStoreFloat3(&OutDesc.vHitPoint, vCenter + vDireaction * fDistance);

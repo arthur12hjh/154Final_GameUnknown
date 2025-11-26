@@ -173,26 +173,26 @@ HRESULT CLoader::Loading()
 	case LEVEL::GAMEPLAY:
 	{
 		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Mesh(pArg); });
 
 		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Shader(pArg); });
 
 		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Effect(pArg); });
 
 
 		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
 
 		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_InstanceMesh(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Components(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([this](void* pArg) { this->Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
 	}
@@ -526,7 +526,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	/* For.Prototype_Component_Model_Beholder */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Beholder");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Beholder/CH_M_NA_51.binx", PreTransformMatrix);
@@ -544,7 +544,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 
 	/* For.Prototype_Component_Model_BanacleA */
-	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -561,7 +561,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_StatueA */
-	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/A/CH_M_NA_40.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -577,7 +577,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_StatueB */
-	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

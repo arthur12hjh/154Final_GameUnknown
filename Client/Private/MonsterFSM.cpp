@@ -38,25 +38,28 @@ void CMonsterFSM::Update(_float fTimeDelta)
 	}
 }
 
-HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg)
+HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg, _bool bIsForce)
 {
 	// 여기서 바로바꾸는게 아니라 현재 스테이트에서 가능한 동작을 받아다가
 	// 변경한다.
-	if ( m_pCurrentState)
-	{
-		if (false == m_pCurrentState->Is_EnableChange())
-			return E_FAIL;
-	}
-
 	auto iter = m_pStates.find(LayerTag);
 	if (iter == m_pStates.end())
 		return E_FAIL;
 
 	if (iter->second == m_pCurrentState)
-		return E_FAIL;
+	{
+		return S_OK;
+	}
+	else
+	{
+		if (m_pCurrentState)
+		{
+			if (false == bIsForce && false == m_pCurrentState->Is_EnableChange())
+				return E_FAIL;
+		}
+	}
 
 	iter->second->Start(pArg, m_pCurrentState);
-
 	if (m_pCurrentState)
 		m_pCurrentState->End();
 
