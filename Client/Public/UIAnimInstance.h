@@ -41,6 +41,7 @@ private:
 	_float m_fTimeStack = 0.f;
 
 	_bool m_isAnimFinish = false;
+	_bool m_isReverse = false;
 
 	UI_ANIM_DESC m_tUIAnimDesc{};
 

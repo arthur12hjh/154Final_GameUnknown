@@ -63,10 +63,10 @@ void CUIObject::ComputeTransform(_vector vPosition)
     
     switch (m_eDrawType)
     {
-    case CUIObject::DRAW_TPYE::WORLD:
+    case CUIObject::DRAW_TYPE::WORLD:
         m_pTransformCom->Set_State(STATE::POSITION, vPosition);
         break;
-    case CUIObject::DRAW_TPYE::SCREEN:
+    case CUIObject::DRAW_TYPE::SCREEN:
     {
         _uint2 vHalfScreen = m_pGameInstance->GetHalfScreenSize();
         vPosition.m128_f32[0] = vPosition.m128_f32[0] - vHalfScreen.x;

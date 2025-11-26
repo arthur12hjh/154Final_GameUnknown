@@ -17,6 +17,7 @@
         }
     ],
     "fDuration": 1.0,
+    "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": false,
     "szAnimTag": "Move_Test"

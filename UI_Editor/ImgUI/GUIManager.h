@@ -141,6 +141,8 @@ private:
 	_char m_szCurrentEventType[MAX_PATH]{};
 	_char m_szInputEventTag[MAX_PATH]{};
 
+	_bool m_bDrawInWorld{ false };
+
 private:
 	void ViewMode();
 

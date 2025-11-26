@@ -308,11 +308,16 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	SetHUD(pUIHUD);
+	pUIHUD->Set_Show_Debug_Rect(false);
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
 	
-	pUIHUD->Set_Show_Debug_Rect(false);
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
+		return E_FAIL;
+
+	pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 
 	return S_OK;
 }

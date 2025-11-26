@@ -6,6 +6,7 @@
 #include "BoxOpenEvent.h"
 #include "Interaction_Component.h"
 #include "UIBase.h"
+#include "UIHUD.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -33,6 +34,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 
     m_eState = BOX_STATE::UNLCOK;
     m_pModelCom->Set_AnimationIndex(1, false);
+
     return S_OK;
 }
 
@@ -185,6 +187,12 @@ HRESULT CCanBox::Bind_ShaderResources()
 
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
+    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+    
+    m_pInteractionUI = pUIHUD->Rent_WorldUI(TEXT("Pool_Test"), this);
+    
+    Safe_Release(pUIHUD);
+
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
 
@@ -209,9 +217,16 @@ void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 HRESULT CCanBox::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::END);
+        m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
 
     m_bIsInteractionAble = false;
+
+    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+    
+    pUIHUD->Return_WorldUI(m_pInteractionUI);
+    
+    Safe_Release(pUIHUD);
+
     return S_OK;
 }
 
