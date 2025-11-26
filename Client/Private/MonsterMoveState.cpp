@@ -57,7 +57,19 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 
     case NAYTIBA_STATE::BATTLE:
     {
-        Compute_MoveDirection();
+        _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+        _float  fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
+
+        if (m_pOwnerInfo->fAttackRange < fDistance)
+        {
+            m_bIsCaution = false;
+        }
+        else
+        {
+            Compute_MoveDirection();
+            m_bIsCaution = true;
+        }
+        
     }
     break;
     }

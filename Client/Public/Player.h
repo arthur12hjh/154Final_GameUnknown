@@ -41,6 +41,7 @@ private:
 
 	CCharacterController*	m_pCCT = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();

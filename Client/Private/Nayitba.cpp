@@ -13,6 +13,8 @@
 
 #include "GameManager.h"
 #include "Player.h"
+#include "PlayerCCTHitReporter.h"
+#include "PlayerBehaviorCallback.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
@@ -283,6 +285,26 @@ HRESULT CNayitba::ADD_Components()
 		if (nullptr == pInstnace)
 			return E_FAIL;
 	}
+
+	/* Com_CCT */
+	CCharacterController::CCT_DESC Desc;
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("Player_CCT");
+
+	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
+	Desc.tUserData = tUserData;
+	//캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
+	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
+	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
+	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
+	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
+		return E_FAIL;
+
+	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 
 	m_pAIController = static_cast<CAIController*>(pInstnace);
 	m_pAISenceCom->ADD_SenceIgnoreTraceObject(HIT_TYPE::STATIC);
