@@ -1067,12 +1067,13 @@ void CGameInstance::Release_Engine()
 {
 	DestroyInstance();
 
+	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
-	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pPipeLine);
@@ -1084,7 +1085,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pInteract_Manager);
-	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);

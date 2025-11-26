@@ -52,7 +52,11 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;
 
-	CModel* pModel = static_cast<CModel*>(Find_Prototype(iLevelIndex, strPrototypeTag));
+	auto pPrototype = Find_Prototype(iLevelIndex, strPrototypeTag);
+	if (nullptr == pPrototype)
+		return E_FAIL;
+
+	CModel* pModel = static_cast<CModel*>(pPrototype);
 
 	while (iResult != -1)
 	{

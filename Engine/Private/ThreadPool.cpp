@@ -80,15 +80,21 @@ void CThreadPool::Update_WorkThread()
 		THREAD_JOB job = m_ThreadJobs.front();
 		m_ThreadJobs.pop();
 
-		auto& pData = m_DefferdContexts[this_thread::get_id()];
+		thread::id iThreadID = this_thread::get_id();
+		auto& pData = m_DefferdContexts[iThreadID];
 		lock.unlock();
 
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
-			job.JobFunction(&pData);
+			if (job.JobFunction)
+				job.JobFunction(&pData);
+			else
+				pData.OnCompleted(iThreadID);
 		}
+		else
+			pData.OnCompleted(iThreadID);
 	}
 }
 
@@ -135,6 +141,16 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 	auto& Desc = m_DefferdContexts[ThreadID];
 
 	ID3D11CommandList* pCommandList = nullptr;
+	if (nullptr == Desc.pContext)
+	{
+		for (auto& iter : Desc.pAddObejct)
+			Safe_Release(iter.pPrototype);
+
+		Desc.pAddObejct.clear();
+		m_iWorkdThread--;
+		return;
+	}
+
 	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
 
