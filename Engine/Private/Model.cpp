@@ -153,6 +153,10 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop)
 
 			m_Animations[m_iCurrentAnimIndex]->Reset();
 
+			m_iFlagPreRootModified = ROOTFLAG_RESET;
+			XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
 			if (AnimationChanged)
 				AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
 			return;
@@ -285,7 +289,7 @@ HRESULT CModel::Mapping_OffsetMatrix()
 	return S_OK;
 }
 
-HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, CModel* pSkeletonModel)
 {
 	memset(m_szBindTags, 0, sizeof(m_szBindTags));
 
@@ -368,8 +372,20 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
 	Ready_Bones(&m_pModel->vNodes[m_pModel->iRootNodeIndex], -1);
 
-	if (FAILED(Ready_Meshes()))
-		return E_FAIL;
+	// Face, Hair 등 Part Model들의 BlendWeight와 BlendIndex를 Body Model에 매핑해주는 함수.
+	if (nullptr != pSkeletonModel)
+	{
+		if(FAILED(Mapping_Skeleton(pSkeletonModel)))
+			return E_FAIL;
+
+		if (FAILED(Ready_Meshes(pSkeletonModel)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(Ready_Meshes()))
+			return E_FAIL;
+	}
 
 	if (FAILED(Ready_Materials(pModelFilePath)))
 		return E_FAIL;
@@ -453,80 +469,37 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 	return S_OK;
 }
 
-_bool CModel::Play_Animation(_float fTimeDelta, _bool isSimd)
+_bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float fRootMotionMagnification)
 {
-	// ReadBack 버퍼를 Map 해서 읽는다. 병목현상을 최소화하기 위해 CopyResource를 Play_Animation 뒤로 옮겼다.
-	if (nullptr != m_pOutReadBack)
-	{
-		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedResource)))
-		{
-			COMPUTE_BONEMATRIX_OUT* pOut =
-				reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedResource.pData);
-
-			for (_uint i = 0; i < m_Bones.size(); i++)
-			{
-				m_Bones[i]->Set_TransformationMatrix(
-					XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix)
-				);
-				m_Bones[i]->Set_CombinedTransformationMatrix(
-					XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix)
-				);
-			}
-
-			m_pContext->Unmap(m_pOutReadBack, 0);
-		}
-	}
-	
-
-	//이전 본 프레임 저장.
+	// 이 프레임이 첫 프레임이 아닐 경우
 	if (nullptr != m_pOutSource)
 	{
+		// PreBoneMatrices에 값을 복사해 모션 블러 준비를 한다.
 		m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
 	}
+
+	// 루트 모션을 통해 Transform 위치 보정을 해준다.
+	Apply_RootMotion(pTransform, fRootMotionMagnification);
 
 
 	//if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
 	//	return E_FAIL;
 
+	if (-1 == m_iCurrentAnimIndex ||
+		m_iCurrentAnimIndex >= m_iNumAnimations)
+		return false;
 
-	if (isSimd)
-	{
-		if (-1 == m_iCurrentAnimIndex ||
-			m_iCurrentAnimIndex >= m_iNumAnimations)
-			return false;
+	/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
+	//m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
+	m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fTimeDelta);
 
-		/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
-		m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
-
-
-		/* 모든 뼈를 순회하면서 CombinedTransformationMatrix를 갱신한다. */
-		for (auto& pBone : m_Bones)
-		{
-			pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
-		}
-
-		return m_isFinish;
-	}
-	else
-	{
-		if (-1 == m_iCurrentAnimIndex ||
-			m_iCurrentAnimIndex >= m_iNumAnimations)
-			return false;
-
-		/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
-		//m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
-		m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fTimeDelta);
-
-		m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
-
-		Bind_ComputeShader(fTimeDelta);
-
-		m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-		return m_isFinish;
-	}
+	m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
 	
+	Bind_ComputeShader(fTimeDelta);
+
+	m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
+
+	return m_isFinish;
 }
 
 HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
@@ -595,6 +568,22 @@ HRESULT CModel::Render(_uint iMeshIndex)
 }
 
 HRESULT CModel::Ready_Meshes()
+{
+	m_iNumMeshes = m_pModel->iNumMeshes;
+
+	for (size_t i = 0; i < m_iNumMeshes; i++)
+	{
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, this, &m_pModel->vMeshes[i], XMLoadFloat4x4(&m_PreTransformMatrix));
+		if (nullptr == pMesh)
+			return E_FAIL;
+
+		m_Meshes.push_back(pMesh);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Meshes(CModel* pSkeleton)
 {
 	m_iNumMeshes = m_pModel->iNumMeshes;
 
@@ -717,7 +706,7 @@ HRESULT CModel::Ready_ComputeShader()
 	m_GlobalBuffer.g_fTimeDelta = 0.f;
 	m_GlobalBuffer.g_iNumBones = m_Bones.size();
 	m_GlobalBuffer.g_iNumChannels = 0;
-	m_GlobalBuffer.g_BatchOffset = 0;
+	m_GlobalBuffer.g_iRootIndex = 0;
 	XMStoreFloat4x4(&m_GlobalBuffer.g_PreTransformMatrix, XMMatrixIdentity());
 
 	D3D11_BUFFER_DESC BufferDesc = {};
@@ -904,6 +893,23 @@ HRESULT CModel::Ready_ComputeShader()
 
 		//Safe_AddRef(m_pOutSource);
 	}
+
+	// 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고라고라 에휴
+	{
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+		TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, nullptr, &m_pRootSource)))
+			return E_FAIL;
+
+		if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
+			return E_FAIL;
+
+		//Safe_AddRef(m_pOutSource);
+	}
 	
 	D3D11_BUFFER_DESC readbackDesc = {};
 	readbackDesc.Usage = D3D11_USAGE_STAGING;
@@ -920,13 +926,51 @@ HRESULT CModel::Ready_ComputeShader()
 	return S_OK;
 }
 
+// 뼈대 모델이 존재하고, 이 모델이 그 뼈대의 파츠 모델일 때.
+HRESULT CModel::Mapping_Skeleton(CModel* pSkeletonModel)
+{
+	if (nullptr == pSkeletonModel)
+		return S_OK;
+
+	// 먼저 뼈대 모델의 vBlendWeight와 vBlendIndex를 받아올 것이기에 구조체를 받아온다.
+	binModel* pSkeletonModelDesc = pSkeletonModel->Get_RawModelDesc();
+
+	// 이후, BoneIndex 별로 매핑 테이블을 만들어준다.
+	unordered_map<string, _int> SkeletonBoneIndexMap;
+
+	SkeletonBoneIndexMap.reserve(pSkeletonModel->Get_Bones()->size());
+
+	for (_uint i = 0; i < (_uint)pSkeletonModel->Get_Bones()->size(); ++i)
+	{
+		SkeletonBoneIndexMap[pSkeletonModel->Get_Bones()->at(i)->Get_Name()] = i;
+	}
+
+	// SkeletonBoneIndex별로 매핑된 맵에 내 본의 이름으로 find해서 찾아준다.
+	vector<_int> BoneIndexList((_uint)m_Bones.size(), -1);
+
+	for (_uint i = 0; i < (_uint)m_Bones.size(); ++i)
+	{
+		auto iter = SkeletonBoneIndexMap.find(m_Bones[i]->Get_Name());
+
+		if (iter == SkeletonBoneIndexMap.end())
+		{
+			continue;
+		}
+
+		BoneIndexList[i] = iter->second;
+	}
+
+
+
+	return S_OK;
+}
+
 /// <애니메이션 매핑>
 /// 
 /// 1. m_Bones의 순서대로 unordered_map에 이름들과 인덱스를 매핑해준다.
 /// 2. 이렇게 나온 맵에 따라 기존 채널들을 순서에 맞춰 재배열 해준다.
 /// 3. 채널이 없는 m_Bones를 위해 빈 껍데기 채널을 만들어줌
 /// 4. 애니메이션에 매핑된 배열을 갖고있게 한다.
-/// 
 ///		
 /// </애니메이션 매핑>
 
@@ -997,7 +1041,28 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 	m_GlobalBuffer.g_fTickPerSecond = m_Animations[m_iCurrentAnimIndex]->Get_TickPerSecond();
 	m_GlobalBuffer.g_fCurrentTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
 	m_GlobalBuffer.g_fDuration = m_Animations[m_iCurrentAnimIndex]->Get_Duration();
-	m_GlobalBuffer.g_BatchOffset = 0;
+
+	_int iRootIndex = 0;
+
+	for (auto& pBone : m_Bones)
+	{
+		if (pBone->Compare_Name("Root"))
+		{
+			break;
+		}
+		if (pBone->Compare_Name("ROOT"))
+		{
+			break;
+		}
+		if (pBone->Compare_Name("root"))
+		{
+			break;
+		}
+
+		iRootIndex++;
+	}
+
+	m_GlobalBuffer.g_iRootIndex = iRootIndex;
 
 
 	m_GlobalBuffer.g_bIsLoop = m_isLoop;
@@ -1152,8 +1217,8 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 	}
 
 	{
-		_uint iInputIndices[1] = { 0 };
-		m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);	
+		_uint iInputIndices[2] = { 0, 1 };
+		m_pComputeShaderCom->Bind_OutputBuffer(2, iInputIndices);
 	}
 
 	_uint iGroupCount = (m_Bones.size() + 127) / 128;
@@ -1168,18 +1233,98 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 	// 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
 	// 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
 	m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+	m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
 
 	{
-		ID3D11UnorderedAccessView* pNullUAV[1] = { nullptr };
-		UINT initialCounts[1] = { 0 };
+		ID3D11UnorderedAccessView* pNullUAV[2] = { nullptr, nullptr };
+		UINT initialCounts[2] = { 0, 1 };
 
 		// CComputeShader에서 UAV를 어떤 슬롯에 물렸는지에 따라 숫자 조정
 		// 대부분 0번 슬롯일 가능성이 매우 높음
-		m_pContext->CSSetUnorderedAccessViews(0, 1, pNullUAV, initialCounts);
+		m_pContext->CSSetUnorderedAccessViews(0, 2, pNullUAV, initialCounts);
 	}
 
 	
 	
+	return S_OK;
+}
+
+HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification)
+{
+	if (ROOTFLAG_RESET == m_iFlagPreRootModified)
+	{
+		m_iFlagPreRootModified = ROOTFLAG_INIT;
+		return S_OK;
+	}
+
+	if (nullptr == m_pOutReadBack)
+		return S_OK;
+
+	// 먼저, CBone에 Set도 해줘야하기 때문에 받아와준다.
+	D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
+	if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+	{
+		COMPUTE_BONEMATRIX_OUT* pOut = reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
+
+		// g_RootOut[0] = 지난 프레임 루트본
+		_int iRootIndex = 999;
+
+		// 본들 위치를 갱신해주면서, 루트본을 찾는다.
+		for (_int i = 0; i < (_int)m_Bones.size(); ++i)
+		{
+			if (m_Bones[i]->Compare_Name("Root") || m_Bones[i]->Compare_Name("root"))
+			{
+				iRootIndex = i;
+				break;
+			}
+		}
+
+		// 찾았을 때
+		if (iRootIndex >= 0 && iRootIndex < (_int)m_Bones.size())
+		{
+			m_Bones[iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
+			m_Bones[iRootIndex]->Set_CombinedTransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix));
+
+			// 첫 프레임이라는 뜻
+			if (ROOTFLAG_INIT == m_iFlagPreRootModified)
+			{
+				m_PreRootMatrix = pOut[0].BoneCombinedTransformMatrix;
+				m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
+				m_iFlagPreRootModified = ROOTFLAG_ACTIVE;
+			}
+			else
+			{
+				// 루트 이동량이 있을 때, 로컬 본 기준으로 CombinedMatrix를 변화를 준다. 가 지금까지인데, 
+				m_PreRootMatrix = m_CurRootMatrix;
+				m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
+
+				if ((pTransform != nullptr)
+					&& (fRootMotionMagnification != 0.f))
+				{
+					_vector vRootAmount = XMVectorSet(
+						m_CurRootMatrix._41 - m_PreRootMatrix._41,
+						m_CurRootMatrix._42 - m_PreRootMatrix._42,
+						m_CurRootMatrix._43 - m_PreRootMatrix._43
+					, 0.f);
+
+					_matrix matTransform = XMLoadFloat4x4(pTransform->Get_WorldMatrixPtr());
+					matTransform.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+
+					vRootAmount = XMVector3TransformNormal(vRootAmount, matTransform);
+
+					vRootAmount = XMVectorScale(vRootAmount, fRootMotionMagnification);
+
+					_vector vRootMotion = pTransform->Get_State(STATE::POSITION) + vRootAmount;
+
+					pTransform->Set_State(STATE::POSITION, vRootMotion);
+				}
+			}
+
+		}
+
+		m_pContext->Unmap(m_pOutReadBack, 0);
+	}
+
 	return S_OK;
 }
 
@@ -1238,11 +1383,11 @@ HRESULT CModel::Bind_GlobalOffsetMatrices(CShader* pShader)
 	return S_OK;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, CModel* pSkeletonModel)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix, pSkeletonModel)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
