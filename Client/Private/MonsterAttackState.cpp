@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MonsterAttackState.h"
 
+#include "MonsterStateMimesis.h"
 #include "GameInstance.h"
 #include "Nayitba.h"
 
@@ -17,21 +18,46 @@ HRESULT CMonsterAttackState::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CMonsterAttackState::Start(void* pArg)
+void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 {
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pStaticOwnerInfo = pEntity->GetStaticMonsterData();
+	auto pOwnerInfo = &pEntity->GetMonsterData();
+
 	MONSTER_ATTACK_DESC* pDesc = static_cast<MONSTER_ATTACK_DESC*>(pArg);
 	m_AttackCompletedFunc = pDesc->AttackCompletedFunc;
 
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
-	auto SkillList = pEntity->GetMonsterData().iAttackList;
+	_bool bIsRandomAttack = true;
+	if (AI_TYPE::PASSIVE == pStaticOwnerInfo->eAI_Type)
+	{
+		auto pMimesisState = dynamic_cast<CMonsterStateMimesis*>(pPreState);
+		if (nullptr != pMimesisState)
+		{
+			m_szAnimationName = pStaticOwnerInfo->szAnimationName;
+			switch (pMimesisState->GetMimesisIndex())
+			{
+			case 1:
+				m_szAnimationName += "_StanbyToAttack_01";
+				bIsRandomAttack = false;
+				break;
+			}
+		}
+	}
 
-	// 랜덤 기본 로직
-	// 이러면 무조건 랜덤으로 돌아감
-	_uint iNumSkill = (_uint)SkillList.size();
-	_uint iSKillIndex = (_uint)m_pGameInstance->Random(0.f, iNumSkill);
+	if (bIsRandomAttack)
+	{
+		auto SkillList = pEntity->GetMonsterData().iAttackList;
 
-	m_pSkillData = SkillList[iSKillIndex];
-	pEntity->Set_Animation(m_pSkillData->szAnimationName, false);
+		// 랜덤 기본 로직
+		// 이러면 무조건 랜덤으로 돌아감
+		_uint iNumSkill = (_uint)SkillList.size();
+		_uint iSKillIndex = (_uint)m_pGameInstance->Random(0.f, iNumSkill);
+
+		m_pSkillData = SkillList[iSKillIndex];
+		m_szAnimationName = m_pSkillData->szAnimationName;
+	}
+
+	pEntity->Set_Animation(m_szAnimationName.c_str(), false);
 }
 
 void CMonsterAttackState::Update(_float fTimeDelta)

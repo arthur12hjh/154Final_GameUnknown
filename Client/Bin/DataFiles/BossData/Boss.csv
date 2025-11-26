@@ -2,5 +2,5 @@
 1,2,M_Gigas,Gigas,2,1,Prototype_Component_Model_Gorilla,None,None,1000,500,15,5,1,1
 2,1,M_Beholder,Beholder,1,1,Prototype_Component_Model_Beholder,Prototype_GameObject_MonsterController,None,200,100,15,7,3,"511, 512, 513"
 3,1,M_BarnacleA,Barnacle,1,2,Prototype_Component_Model_BanacleA,Prototype_GameObject_MonsterController,None,200,100,15,3,4,"541, 542, 543, 544"
-4,1,M_StatueA,Statue,1,0,Prototype_Component_Model_StatueA,Prototype_Component_MimessisMonster_Controller,None,200,100,15,7,4,"521, 522, 523, 524"
-5,1,M_StatueB,Statue,1,0,Prototype_Component_Model_StatueB,Prototype_Component_MimessisMonster_Controller,None,200,100,15,7,6,"531, 532, 533, 534, 535, 536"
+4,1,M_StatueA,Statue,1,0,Prototype_Component_Model_StatueA,Prototype_GameObject_MonsterMimesisController,None,200,100,15,3,4,"521, 522, 523, 524"
+5,1,M_StatueB,Statue,1,0,Prototype_Component_Model_StatueB,Prototype_GameObject_MonsterMimesisController,None,200,100,15,3,6,"531, 532, 533, 534, 535, 536"

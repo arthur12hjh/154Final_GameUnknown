@@ -6,7 +6,7 @@
 #include "QuestManager.h"
 #include "Interaction_Manager.h"
 
-#include "GameObject.h"
+#include "Player.h"
 
 IMPLEMENT_SINGLETON(CGameManager);
 
@@ -26,7 +26,7 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     return S_OK;
 }
 
-void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
+void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
 {
     if (m_pPlayer == pCharacter)
         return;
@@ -38,10 +38,15 @@ void CGameManager::Bind_GameCharacter(CGameObject* pCharacter)
     ///Safe_AddRef(m_pPlayer);
 }
 
-CGameObject* CGameManager::GetGameCharacter()
+CPlayer* CGameManager::GetGameCharacter()
 {
     Safe_AddRef(m_pPlayer);
     return m_pPlayer;
+}
+
+const PLAYER_DESC* CGameManager::Get_PlayerDesc()
+{
+    return m_pPlayer->Get_Desc();
 }
 
 _bool CGameManager::Is_NearCharacter(_vector vPos, _float vRange)
@@ -111,7 +116,7 @@ void CGameManager::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pPlayer);
+    //Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
 

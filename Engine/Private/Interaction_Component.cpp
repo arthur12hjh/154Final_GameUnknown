@@ -65,7 +65,7 @@ HRESULT CInteraction_Component::Render()
 
 _bool CInteraction_Component::Is_Overlap(CCollider* pCollider)
 {
-    return m_pOBBColiider->Intersect(pCollider->GetCollisionType(), pCollider);
+    return m_pOBBColiider->Intersect(pCollider->GetCollierType(), pCollider);
 }
 
 _bool CInteraction_Component::Is_RayHit(_vector vTargetPos, _vector vDir, void* OutDesc)

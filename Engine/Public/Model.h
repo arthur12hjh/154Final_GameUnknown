@@ -82,6 +82,7 @@ public:
 	_uint				Get_MeshIndices(_uint iMeshNum);
 	_uint				Get_MeshVertexStride(_uint iMeshNum);
 	DXGI_FORMAT			Get_MeshIndexFormat(_uint iMeshNum);
+	_float				Get_AnimationRatio() { return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition(); }
 
 public:
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {

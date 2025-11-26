@@ -2,6 +2,8 @@
 #include "MonsterIdleState.h"
 
 #include "GameInstance.h"
+
+#include "MonsterStateMimesis.h"
 #include "GameStruct.h"
 #include "Nayitba.h"
 
@@ -17,25 +19,60 @@ HRESULT CMonsterIdleState::Initialize(void* pArg)
     return S_OK;
 }
 
-void CMonsterIdleState::Start(void* pArg)
+void CMonsterIdleState::Start(void* pArg, CState* pPreState)
 {
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    m_pStaticOwnerInfo = pEntity->GetStaticMonsterData();
     m_pOwnerInfo = &pEntity->GetMonsterData();
 
+    m_szAnimationName = m_pStaticOwnerInfo->szAnimationName;
+    if (AI_TYPE::PASSIVE == m_pStaticOwnerInfo->eAI_Type)
+    {
+        auto pMimesisState = dynamic_cast<CMonsterStateMimesis*>(pPreState);
+        if (nullptr != pMimesisState)
+        {
+            switch (pMimesisState->GetMimesisIndex())
+            {
+            case 1 :
+                m_szAnimationName += "StanbyToNormal_01";
+                break;
+            case 2:
+                m_szAnimationName += "StanbyToNormal_02";
+                break;
+            case 3:
+                m_szAnimationName += "StanbyToNormal_03";
+                break;
+            }
+        }
+
+        m_bIsEnableChange = false;
+        m_bIsPlayStartAnim = true;
+    }
 }
 
 void CMonsterIdleState::Update(_float fTimeDelta)
 {
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
     
-    string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
-    
-    if (m_pOwnerInfo->bIsBattle)
-        AnimationName += "Battle_Idle01";
+    if (false == m_bIsPlayStartAnim)
+    {
+        m_szAnimationName = m_pStaticOwnerInfo->szAnimationName;
+        if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytiba)
+            m_szAnimationName += "Battle_Idle01";
+        else
+            m_szAnimationName += "_Idle01";
+    }
     else
-        AnimationName += "_Idle01";
+    {
+        if (pEntity->IsAnmiationFinished())
+        {
+            m_bIsPlayStartAnim = false;
+            m_bIsEnableChange = true;
+        }
+            
+    }
 
-    pEntity->Set_Animation(AnimationName.c_str());
+    pEntity->Set_Animation(m_szAnimationName.c_str());
     pEntity->Play_Animation(fTimeDelta);
 }
 

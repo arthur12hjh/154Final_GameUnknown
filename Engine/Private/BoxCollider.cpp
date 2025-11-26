@@ -19,7 +19,7 @@ CBoxCollider::CBoxCollider(const CBoxCollider& rhs) :
 HRESULT CBoxCollider::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_CollisionType = COLLIDER::AABB;
+    m_eType = COLLIDER::AABB;
     return S_OK;
 }
 
@@ -57,12 +57,12 @@ _bool CBoxCollider::Intersect(COLLIDER eType, CCollider* pTarget)
 
     if (HIT_TYPE::END == m_eOnlyHitType)
     {
-        if (!IntersectAble(pTarget->GetCollisionHitType()))
+        if (!IntersectAble(pTarget->GetCollierHitType()))
             return false;
     }
     else
     {
-        if (m_eOnlyHitType != pTarget->GetCollisionHitType())
+        if (m_eOnlyHitType != pTarget->GetCollierHitType())
             return false;
     }
 

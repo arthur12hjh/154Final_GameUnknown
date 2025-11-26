@@ -18,14 +18,14 @@ public:
 	virtual		void							Update(_float fTimeDelta) override;
 
 	virtual		HRESULT							Change_State(const WCHAR* LayerTag, void* pArg = nullptr) override;
-	const	FSM_STATE&							GetFSMState() { return m_eState; }
+	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) override;
+
+	const		FSM_STATE&						GetFSMState() { return m_eState; }
 
 private :
 	FSM_STATE									m_eState = { FSM_STATE::M_IDLE };
 
 private :
-	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) override;
-
 	HRESULT										Ready_State();
 
 public:

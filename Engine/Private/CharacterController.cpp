@@ -40,6 +40,14 @@ PxRigidActor* CCharacterController::Get_PxActor()
 	return pPxActor;
 }
 
+void CCharacterController::Set_Gravity(_bool bFlag, _float fVelocity)
+{
+	//둘다 true거나 둘다 false면 넘어가
+	m_isGravity = bFlag;
+	m_fGravityTimeAcc = 0.f;
+	m_fJumpVelocity = fVelocity;  // 이제 "현재 속도"로 사용
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;
@@ -77,38 +85,50 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
-	m_fGravityVelocity -= m_fGravity * fTimeDelta;
-
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
 
 	///* 현재 프레임의 위치*/
 	m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
 
+	_vector vGravity = Calc_Gravity(fTimeDelta);
+
 	//무브 자체는 시뮬레이션에서 안 돌아간다고함..
-	PxVec3 MoveSum = m_vPosition - m_vPrePosition;
-	MoveSum.y += m_fGravityVelocity;
+	PxVec3 MoveSum = m_vPosition - m_vPrePosition + PxVec3(XMVectorGetX(vGravity), XMVectorGetY(vGravity), XMVectorGetZ(vGravity));
+	MoveSum.y -= 0.05f;
+
 	PxU32 ResultFlag = m_pController->move(MoveSum, 0.f, fTimeDelta, PxControllerFilters());
 
 	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
 	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
 
-
 	if (ResultFlag & PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
-		if (m_fGravityVelocity < 0)
-			m_fGravityVelocity = 0;
+		m_fJumpVelocity = 0.f;
+		m_fGravityTimeAcc = 0.f;
+		m_isGravity = false;
 	}
-
-	if (ResultFlag & PxControllerCollisionFlag::eCOLLISION_UP)
+	else
 	{
-		if (m_fGravityVelocity > 0)
-			m_fGravityVelocity = 0;
+		m_isGravity = true;
 	}
 }
 
 void CCharacterController::Update_ControllerTransform()
 {
+}
+
+_vector CCharacterController::Calc_Gravity(_float fTimeDelta)
+{
+	if (false == m_isGravity)
+		return XMVectorSet(0.f, 0.f, 0.f, 0.f);
+
+
+	m_fJumpVelocity -= m_fGravity * fTimeDelta;
+
+	_float fDeltaY = m_fJumpVelocity * fTimeDelta;
+
+	return XMVectorSet(0.f, fDeltaY, 0.f, 0.f);
 }
 
 HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)

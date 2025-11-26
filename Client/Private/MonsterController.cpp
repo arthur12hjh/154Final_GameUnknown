@@ -8,10 +8,16 @@
 #include "GameManager.h"
 #include "TargetComponent.h"
 
+#pragma region State
+#include "MonsterIdleState.h"
 #include "MonsterAttackState.h"
 #include "MonsterMoveState.h"
+#include "MonsterHitState.h"
+#include "MonsterDeadState.h"
+#pragma endregion
 
 #include "MonsterFSM.h"
+#include "Player.h"
 
 CMonsterController::CMonsterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CAIController(pDevice, pContext)
@@ -56,13 +62,17 @@ void CMonsterController::Priority_Update(_float fTimeDelta)
 
 void CMonsterController::Update(_float fTimeDelta)
 {
-	m_vDelayTime.x += fTimeDelta;
-	if (m_vDelayTime.x >= m_vDelayTime.y)
+	if (false == m_bIsDead)
 	{
-		if (m_pOwnerData->bIsBattle)
-			Battle_Action(fTimeDelta);
-		else
-			Default_Action(fTimeDelta);
+		m_vDelayTime.x += fTimeDelta;
+		if (m_vDelayTime.x >= m_vDelayTime.y)
+		{
+			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytiba)
+				Battle_Action(fTimeDelta);
+			else
+				Default_Action(fTimeDelta);
+		}
+
 	}
 
 	m_pFSM->Update(fTimeDelta);
@@ -77,19 +87,20 @@ HRESULT CMonsterController::Render()
 	return S_OK;
 }
 
-void CMonsterController::Damage(void* pSkillData)
+void CMonsterController::Damage(void* pDesc)
 {
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
 		// 이거 죽는모션 나옴 죽으면 
 		// 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
-		m_pFSM->Change_State(TEXT("Dead"), pSkillData);
+		m_pFSM->Change_State(TEXT("Dead"), pDesc);
+		m_bIsDead = true;
 	}
 	else
 	{
 		// 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
 		// 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
-		m_pFSM->Change_State(TEXT("Hit"), pSkillData);
+		m_pFSM->Change_State(TEXT("Hit"), pDesc);
 	}
 }
 
@@ -107,7 +118,7 @@ HRESULT CMonsterController::Ready_Components()
 		TEXT("Com_TargetCom"), reinterpret_cast<CComponent**>(&m_pTargetCom), &TargetComDesc)))
 		return E_FAIL;
 
-
+	 
 	return S_OK;
 }
 
@@ -124,10 +135,22 @@ HRESULT CMonsterController::Ready_FSM()
 
 	// 여기서 상태를 넣자
 	// 특정몬스터가 상태를 가져야한다면 여기서 상태를 추가해줄수잇음
+	if (FAILED(m_pFSM->Add_State(TEXT("Idle"), CMonsterIdleState::Create(&Desc))))
+		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Attack"), CMonsterAttackState::Create(&Desc))))
+		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Move"), CMonsterMoveState::Create(&Desc))))
+		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Dead"), CMonsterDeadState::Create(&Desc))))
+		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Hit"), CMonsterHitState::Create(&Desc))))
+		return E_FAIL;
+
+	m_pFSM->Change_State(TEXT("Idle"));
 	return S_OK;
 }
 
@@ -137,11 +160,8 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 	auto pNayitba = static_cast<CNayitba*>(m_pOwner);
 	m_vAttackTime.x += fTimeDelta;
 
-	list<CGameObject*> pObjectList;
-	auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
-	pObjectList.push_back(pPlayer);
-
-	m_pTargetCom->Target_Search(&pObjectList);
+	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
+	m_pTargetCom->Target_Search(pNayitba->GetTraceObejectList());
 	auto pTarget = m_pTargetCom->GetTarget();
 
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
@@ -165,8 +185,6 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 	{
 		MoveAction(true);
 	}
-	
-	Safe_Release(pPlayer);
 }
 
 void CMonsterController::Default_Action(_float fTimeDelta)

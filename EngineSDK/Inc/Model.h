@@ -82,6 +82,7 @@ public:
 	_uint				Get_MeshIndices(_uint iMeshNum);
 	_uint				Get_MeshVertexStride(_uint iMeshNum);
 	DXGI_FORMAT			Get_MeshIndexFormat(_uint iMeshNum);
+	_float				Get_AnimationRatio() { return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition(); }
 
 public:
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {
@@ -103,9 +104,7 @@ public:
 
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
 
-	//HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, class CTexture* pTexture, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
 	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
-	//HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, ID3D11ShaderResourceView* pSRV, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
 
 	HRESULT Mapping_OffsetMatrix();
 public:

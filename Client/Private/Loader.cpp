@@ -2,7 +2,6 @@
 #include "Loader.h"
 
 #include "SpriteEffect.h"
-#include "Camera_Free.h"
 #include "BackGround.h"
 #include "Explosion.h"
 #include "ForkLift.h"
@@ -20,6 +19,7 @@
 #include "GameInstance.h"
 
 #pragma region PLAYER
+#include "PlayerFSM.h"
 #include "Body_Player.h"
 #include "Face_Player.h"
 #include "Hair_Player.h"
@@ -31,11 +31,13 @@
 #include "MonsterFSM.h"
 #include "Nayitba.h"
 #include "NayitbaPartBody.h"
+
 #include "MonsterController.h"
+#include "MonsterMimesisController.h"
 
 #pragma region BOSS
 #include "Gorilla.h"
-#include "Gorilla_Body.h";
+#include "Gorilla_Body.h"
 #pragma endregion
 
 #pragma endregion
@@ -115,10 +117,6 @@
 
 #include "Instance_Model.h"
 #include "PxTestProp.h"
-
-#ifdef _DEBUG
-#include "ShaderTestModel.h"
-#endif
 
 #include "UIWrapper.h"
 #include "UIPanel.h"
@@ -364,6 +362,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterController"),
 		CMonsterController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_MonsterMimesisController */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterMimesisController"),
+		CMonsterMimesisController::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 #pragma endregion
 
 	/* For.Prototype_GameObject_PonyTail_Player */
@@ -379,6 +382,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
 		CGorilla::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_Component_PlayerFSM */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
+		CPlayerFSM::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(Loading_UI_For_GamePlay_Level()))
@@ -547,6 +554,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 
 	/* For.Prototype_Component_Model_BanacleA */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -563,6 +571,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_StatueA */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/A/CH_M_NA_40.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -578,6 +587,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_StatueB */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -753,15 +763,6 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-#ifdef _DEBUG
-	/* For.Prototype_GameObject_ShaderTestModel */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ShaderTestModel");
-	pProtoDesc.pPrototype = CShaderTestModel::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-#endif
 
 	Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
