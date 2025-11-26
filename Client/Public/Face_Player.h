@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "PartObject.h"
+#include "Player_Parts.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -12,15 +12,14 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CFace_Player final : public CPartObject
+class CFace_Player final : public CPlayer_Parts
 {
-
 public:
 	typedef struct tagFace_Player_Desc : public CPartObject::PARTOBJECT_DESC
 	{
-		const _uint*	pParentState = { nullptr };
 		void*			pBodyPtr = { nullptr };
-	}FACE_PLAYER_DESC;
+	} FACE_PLAYER_DESC;
+
 private:
 	CFace_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFace_Player(const CFace_Player& Prototype);
@@ -36,10 +35,7 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	const				_uint*		m_pParentState = { nullptr };
-
-	map<_char*, CBone*>			m_mapBodyBones;
-
+	CModel* m_pBodyModelCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();

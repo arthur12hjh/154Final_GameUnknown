@@ -45,6 +45,8 @@ public:
 	PxController* Get_PxController() { return m_pController; }
 	PxShape*	  Get_PxShape();
 	PxRigidActor* Get_PxActor();
+	void		  Set_Gravity(_bool bFlag, _float fVelocity);
+ 	_bool		  Get_Gravity() { return m_isGravity; }
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -54,7 +56,7 @@ public:
 	void Update_PrePxPosition(class CTransform* pOwnerTransform);
 	void Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform);
 	void Update_ControllerTransform();
-
+	_vector Calc_Gravity(_float fTimeDelta);
 
 private:
 	/* RigidActor -> RigidBody & RigidStatic */
@@ -73,9 +75,11 @@ private:
 	PxVec3				 m_vPosition = { 0.f, 0.f, 0.f };
 	PxUserData			 m_tUserData = {};
 
-	_float				 m_fGravityVelocity = {};
-	_float				 m_fGravity = { 9.8f };
-	_float				 m_fGravityTimeAcc = { 0.f };
+
+	_bool				 m_isGravity = { false };
+	_float				 m_fGravityTimeAcc = { 0.f }; 
+	_float				 m_fJumpVelocity = 0.f; // 현재 Y 속도 (점프 시 +, 낙하 시 -)
+	_float				 m_fGravity = 30.f; // 중력 가속도 (아래로)
 
 private:
 	HRESULT Ready_CapsuleController(CCT_DESC* pDesc);

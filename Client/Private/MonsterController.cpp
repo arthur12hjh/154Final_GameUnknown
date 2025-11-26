@@ -18,6 +18,7 @@
 #pragma endregion
 
 #include "MonsterFSM.h"
+#include "Player.h"
 
 CMonsterController::CMonsterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CAIController(pDevice, pContext)

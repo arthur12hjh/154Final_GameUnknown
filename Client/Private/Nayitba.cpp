@@ -11,6 +11,9 @@
 #include "BossController.h"
 #include "MonsterHitState.h"
 
+#include "GameManager.h"
+#include "Player.h"
+
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
 {
@@ -120,7 +123,6 @@ void CNayitba::Update(_float fTimeDelta)
 		}
 	}
 
-	// ÀÌÀüÇÁ·¹ÀÓÀÇ »óÅÂ¸¦ ÀúÀåÇØµÐ´Ù.
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
@@ -129,7 +131,6 @@ void CNayitba::Update(_float fTimeDelta)
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
-	// ¿©±â¿¡¼­ ÄÃ¸µ ÇÒ°ÅÀÓ
 	__super::Late_Update(fTimeDelta);
 
 #ifdef _DEBUG
@@ -219,18 +220,18 @@ HRESULT CNayitba::Ready_CharacterData()
 		else
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
-		// Ã¼·Â ¼³Á¤
+		// Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
 
-		// °ø°Ý ¼³Á¤
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
 
-		// Phase ¼³Á¤ÇÏ´Â°Å
+		// Phase ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
-		// ÆÀ ¼³Á¤
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_eTeam = OBJECT_TEAM::ENEMY;
 	}
 
@@ -239,8 +240,8 @@ HRESULT CNayitba::Ready_CharacterData()
 
 HRESULT CNayitba::ADD_Components()
 {
-	// ¿©±â¼­ Ãæµ¹Ã³¸®¿ë ÄÝ¶óÀÌ´õ ´Þ°í
-	// AI ¼¾¼­ ´Þ¾Æ¼­ Ãæµ¹ Ã³¸®ÇÑ¹ø º¸ÀÚ
+	// ï¿½ï¿½ï¿½â¼­ ï¿½æµ¹Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½Þ°ï¿½
+	// AI ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½æµ¹ Ã³ï¿½ï¿½ï¿½Ñ¹ï¿½ ï¿½ï¿½ï¿½ï¿½
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT(""), TEXT("AI_Sence"), (CComponent**)&m_pAISenceCom)))
 		return E_FAIL;*/
 
@@ -256,7 +257,7 @@ HRESULT CNayitba::ADD_Components()
 
 	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 
-	// ±×´ÙÀ½ ¿©±â¼­ FSM ÀÎÁö Çàµ¿Æ®¸®¾Æ
+	// ï¿½×´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ FSM ï¿½ï¿½ï¿½ï¿½ ï¿½àµ¿Æ®ï¿½ï¿½ï¿½ï¿½
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -309,9 +310,9 @@ HRESULT CNayitba::ADD_PartObjects()
 void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
-	// ÀÌ°Å ´Ù¸¥ ÇÃ·¡±× ³Ñ°Ü¼­
-	// Å¸°ÙÀ» Ã£À¸¸é ¹Ù·Î È®ÀÎÇØ¼­ ´Þ·Á¿Í¾ßÇÒ°Å°°À½
-	// Battle Start & Battle End »óÅÂ ¾Ö´Ï¸ÞÀÌ¼Ç ³Ö¾î ÁÖÀÚ
+	// ï¿½Ì°ï¿½ ï¿½Ù¸ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½Ñ°Ü¼ï¿½
+	// Å¸ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ È®ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Þ·ï¿½ï¿½Í¾ï¿½ï¿½Ò°Å°ï¿½ï¿½ï¿½
+	// Battle Start & Battle End ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)

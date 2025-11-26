@@ -406,7 +406,8 @@ namespace Engine
 #pragma endregion
 
 
-	//여기에 안넣으면 헤더 다떄려박아야돼서 여따 넣어놨어요
+	// 여기에 안넣으면 헤더 다떄려박아야돼서 여따 넣어놨어요
+	// ㄴ 네 신이시여
 #pragma region SHADER_STRUCT
 	typedef struct tagFogInfo {
 		XMFLOAT4* vFogColor;
