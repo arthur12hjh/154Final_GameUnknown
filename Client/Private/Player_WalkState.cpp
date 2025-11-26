@@ -96,7 +96,7 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
      
     if ((true == m_isRunStart && true == isAnimFinished) || (true == m_isChangingDir && fDot <= 5.f))
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run");
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true);
         m_isRunStart = false;
         m_isChangingDir = false;
     }

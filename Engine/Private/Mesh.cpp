@@ -227,8 +227,12 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const binMesh* 
 
 		_int		iBoneIndex = pModel->Get_BoneIndex(binBoneTmp.szName);
 
+		// 본 매트릭스 부착을 위해서라면 여기를 바꿔줘야함.
 		if (-1 == iBoneIndex)
-			return E_FAIL;
+		{
+			// 
+			iBoneIndex = 0;
+		}
 
 		m_OffsetMatrices.push_back(OffsetMatrix);
 		m_BoneIndices.push_back(iBoneIndex);
