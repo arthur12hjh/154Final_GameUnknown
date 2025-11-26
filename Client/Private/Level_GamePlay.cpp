@@ -64,7 +64,14 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 HRESULT CLevel_GamePlay::Render()
 {
+
+#ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
+#else
+	SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
+#endif // _DEBUG
+
+
 	return S_OK;
 }
 
@@ -320,7 +327,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Load_Map_Data()
 {
-
 	std::ifstream ifs("../Bin/DataFiles/MapData.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{

@@ -48,7 +48,7 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 
 void CPonyTail_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+
 }
 
 void CPonyTail_Player::Update(_float fTimeDelta)

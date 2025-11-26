@@ -105,10 +105,10 @@ ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
-	Handle.JobFunction = function;
+	Handle.JobFunction = move(function);
 	Handle.bIsCanceled = false;
 
-	m_ThreadJobs.push(Handle);
+	m_ThreadJobs.push(move(Handle));
 	m_cv_Jobs.notify_one();
 	return &m_ThreadJobs.back();
 }
