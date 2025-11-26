@@ -46,7 +46,7 @@ HRESULT CHair_Player::Initialize(void* pArg)
 
 void CHair_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+
 }
 
 void CHair_Player::Update(_float fTimeDelta)

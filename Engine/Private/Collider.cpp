@@ -103,10 +103,10 @@ void CCollider::BindOverlappingEvent(function<void(_float3 vHitPoint, _float3 vH
 
 void CCollider::BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> EndEvent)
 {
-    m_EndHitFunc = m_EndHitFunc;
+    m_EndHitFunc = EndEvent;
 }
 
-void CCollider::ADD_HitObejct(CGameObject* pObject)
+void CCollider::ADD_HitObject(CGameObject* pObject)
 {
     auto iter = find(m_HitList.begin(), m_HitList.end(), pObject);
     if (iter == m_HitList.end())
@@ -116,14 +116,14 @@ void CCollider::ADD_HitObejct(CGameObject* pObject)
     }
 }
 
-void CCollider::ADD_IgnoreObejct(HIT_TYPE typeID)
+void CCollider::ADD_IgnoreObject(HIT_TYPE eHitType)
 {
-    m_IgnoreObject.insert(typeID);
+    m_IgnoreObject.insert(eHitType);
 }
 
-void CCollider::ADD_OnlyHitObject(HIT_TYPE typeID)
+void CCollider::ADD_OnlyHitObject(HIT_TYPE eHitType)
 {
-    m_eOnlyHitType = typeID;
+    m_eOnlyHitType = eHitType;
 }
 
 void CCollider::CallFunction()

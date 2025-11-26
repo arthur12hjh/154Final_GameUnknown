@@ -1,6 +1,7 @@
 #include "Interaction_Component.h"
 
 #include "GameInstance.h"
+#include "GameObject.h"
 
 CInteraction_Component::CInteraction_Component(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CComponent(pDevice, pContext)
@@ -39,6 +40,7 @@ void CInteraction_Component::SetOwner(CGameObject* pGameObject)
 
 void CInteraction_Component::Update_Com()
 {
+    m_pOBBColiider->UpdateColiision(XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr()));
     m_pGameInstance->ADD_Collider(m_pOBBColiider);
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pOBBColiider);
@@ -51,6 +53,21 @@ void CInteraction_Component::Action_InteractionEvent(CGameObject* pGameObject)
     // 호출하면 여기서 호출한 녀석과 함께 넘겨준다.
     if(m_InteractionFunc)
         m_InteractionFunc(pGameObject);
+}
+
+void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)
+{
+    m_pOBBColiider->SetColliderHitType(eHitType);
+}
+
+void CInteraction_Component::ADD_InteractionIgnoreObject(HIT_TYPE eHitType)
+{
+    m_pOBBColiider->ADD_IgnoreObject(eHitType);
+}
+
+void CInteraction_Component::ADD_InteractionOnlyHitObject(HIT_TYPE typeID)
+{
+    m_pOBBColiider->ADD_OnlyHitObject(typeID);
 }
 
 #ifdef _DEBUG

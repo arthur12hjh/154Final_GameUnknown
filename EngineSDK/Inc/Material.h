@@ -28,7 +28,7 @@ private:
 	_char									m_szName[MAX_PATH] = {};
 
 	_uint									m_iNumSRVs = {};
-	vector<ID3D11ShaderResourceView*>		m_SRVs[AI_TEXTURE_TYPE_MAX];
+	vector<ID3D11ShaderResourceView*>		m_SRVs[ENUM_CLASS(BINMATERIAL::TEXTURETYPE::END)];
 
 private:
 	HRESULT BindDefaultTexture(CShader* pShader, _uint eType);

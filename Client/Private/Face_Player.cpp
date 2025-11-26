@@ -52,7 +52,7 @@ HRESULT CFace_Player::Initialize(void* pArg)
 
 void CFace_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+
 }
 
 void CFace_Player::Update(_float fTimeDelta)

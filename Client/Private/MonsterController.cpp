@@ -14,6 +14,7 @@
 #include "MonsterMoveState.h"
 #include "MonsterHitState.h"
 #include "MonsterDeadState.h"
+#include "MonsterTranslationState.h"
 #pragma endregion
 
 #include "MonsterFSM.h"
@@ -39,18 +40,18 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_FSM()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
 	auto pNayitba = static_cast<CNayitba*>(m_pOwner);
 	auto pDefaultData = pNayitba->GetStaticMonsterData();
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
-	m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
+	AttackCompleted(0.f);
+
+	if (FAILED(Ready_FSM()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -65,14 +66,33 @@ void CMonsterController::Update(_float fTimeDelta)
 	if (false == m_bIsDead)
 	{
 		m_vDelayTime.x += fTimeDelta;
+
+		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
+		{
+			auto pNayitba = static_cast<CNayitba*>(m_pOwner);
+			if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
+			{
+				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
+				M_TranslationState.szTranslationAnimName = "_BattleStart";
+				M_TranslationState.szNextStateName = TEXT("Idle");
+				M_TranslationState.pTarget = m_pTargetCom->GetTarget();
+				M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
+					{
+						m_pFSM->Change_State(szNextStateName, pArg);
+						m_vDelayTime = { 0.f, 0.5f };
+					};
+				M_TranslationState.pArg = nullptr;
+				m_pFSM->Change_State(TEXT("Translation"), &M_TranslationState);
+			}
+		}
+
 		if (m_vDelayTime.x >= m_vDelayTime.y)
 		{
-			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytiba)
+			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 				Battle_Action(fTimeDelta);
 			else
 				Default_Action(fTimeDelta);
 		}
-
 	}
 
 	m_pFSM->Update(fTimeDelta);
@@ -93,13 +113,14 @@ void CMonsterController::Damage(void* pDesc)
 	{
 		// 이거 죽는모션 나옴 죽으면 
 		// 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
-		m_pFSM->Change_State(TEXT("Dead"), pDesc);
+		m_pFSM->Change_State(TEXT("Dead"), pDesc, true);
 		m_bIsDead = true;
 	}
 	else
 	{
 		// 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
 		// 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
+
 		m_pFSM->Change_State(TEXT("Hit"), pDesc);
 	}
 }
@@ -110,8 +131,8 @@ HRESULT CMonsterController::Ready_Components()
 
 	/* 시야 센서가 Controller에 달려있어야하나?*/
 	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
-	TargetComDesc.fRadius = 3.f;
-	TargetComDesc.iNumPoints = 10.f;
+	TargetComDesc.fRadius = m_pOwnerData->fAttackRange - 3.f;
+	TargetComDesc.iNumPoints = 6.f;
 
 	 /* Prototype_Component_TargetComponent */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TargetComponent"),
@@ -150,6 +171,9 @@ HRESULT CMonsterController::Ready_FSM()
 	if (FAILED(m_pFSM->Add_State(TEXT("Hit"), CMonsterHitState::Create(&Desc))))
 		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Translation"), CMonsterTranslationState::Create(&Desc))))
+		return E_FAIL;
+
 	m_pFSM->Change_State(TEXT("Idle"));
 	return S_OK;
 }
@@ -172,18 +196,23 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 	// 공격을 하면 공격 입력
 	// 공격이 가능해서 공격을 소비하면 이거 리셋하자
 	// 상태가 바뀐다면 Bool Flag 리턴하자
-	if (m_vAttackTime.y <= m_vAttackTime.x)
+	if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
 	{
-		if (fDistance <= m_pOwnerData->fAttackRange)
+		if (m_vAttackTime.y <= m_vAttackTime.x)
 		{
-			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+			if (fDistance <= m_pOwnerData->fAttackRange)
+			{
+				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+			}
+			else
+				MoveAction(true);
 		}
-	}
-	else
-	{
-		MoveAction(true);
+		else
+		{
+			MoveAction(true);
+		}
 	}
 }
 
@@ -199,8 +228,8 @@ void CMonsterController::Default_Action(_float fTimeDelta)
 void CMonsterController::AttackCompleted(_float fDelayTime)
 {
 	m_vAttackTime.x = 0.f;
-	//m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
-	m_vAttackTime.y = m_pGameInstance->Random(15.f, 20.f);
+	m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+	//m_vAttackTime.y = m_pGameInstance->Random(15.f, 20.f);
 }
 
 void CMonsterController::DelayAction(_float fDelayTime)
@@ -211,7 +240,7 @@ void CMonsterController::DelayAction(_float fDelayTime)
 void CMonsterController::MoveAction(_bool bIsTarget)
 {
 	CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
-	MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
+	//MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
 	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };
 
 	if (bIsTarget)

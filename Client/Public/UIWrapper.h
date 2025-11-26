@@ -13,6 +13,9 @@ NS_BEGIN(Client)
 
 class CUIWrapper final : public CUIBase
 {
+public:
+	enum class BTN_STATE { DEFAULT, HOVER, CLICK, SELECT };
+
 private:
 	CUIWrapper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUIWrapper(const CUIWrapper& Prototype);
@@ -29,9 +32,15 @@ public:
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
+
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
-	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) override;
 	virtual void CallbackEvent(void* pArg) override;
+
+private:
+	_bool MouseEnter();
+
+	BTN_STATE m_eBtnState{ BTN_STATE::DEFAULT };
+	BTN_STATE m_ePrevBtnState{ m_eBtnState };
 
 public:
 	static CUIWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

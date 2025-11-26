@@ -16,6 +16,7 @@
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 1,
+                "iDrawType": 1,
                 "iLevel": 2,
                 "iRenderGroup": 9,
                 "iVisibility": 0,
@@ -41,6 +42,7 @@
                         "fX": 153.0,
                         "fY": 450.0,
                         "iDepth": 2,
+                        "iDrawType": 1,
                         "iLevel": 2,
                         "iRenderGroup": 9,
                         "iVisibility": 0,
@@ -66,6 +68,14 @@
                                 }
                             ],
                             "Start_Button_Hover_Reaction": [
+                                {
+                                    "szActionTag": "Default",
+                                    "szArg": "Default",
+                                    "szSubscribeEventTags": [
+                                        "Start_Button_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                },
                                 {
                                     "szActionTag": "Default",
                                     "szArg": "Default",
@@ -107,6 +117,7 @@
                         "fX": 153.0,
                         "fY": 450.0,
                         "iDepth": 2,
+                        "iDrawType": 1,
                         "iLevel": 2,
                         "iRenderGroup": 9,
                         "iVisibility": 0,
@@ -141,6 +152,14 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 },
                                 {
+                                    "szActionTag": "Default",
+                                    "szArg": "Default",
+                                    "szSubscribeEventTags": [
+                                        "Start_Button_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                },
+                                {
                                     "szActionTag": "Hover",
                                     "szArg": "Hover",
                                     "szSubscribeEventTags": [
@@ -164,6 +183,7 @@
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 1,
+                "iDrawType": 1,
                 "iLevel": 2,
                 "iRenderGroup": 9,
                 "iVisibility": 0,
@@ -182,12 +202,32 @@
                             "szTypeTag": "ActionEvent"
                         },
                         {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
                             "szActionTag": "Default",
                             "szArg": "Default",
                             "szTypeTag": "PlayAnimEvent"
                         }
                     ],
                     "Start_Button_Hover": [
+                        {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
+                            "szActionTag": "Default",
+                            "szArg": "Default",
+                            "szTypeTag": "PlayAnimEvent"
+                        },
                         {
                             "szActionTag": "Click",
                             "szArg": "Change_Level",
@@ -225,6 +265,7 @@
         "fX": 800.0,
         "fY": 450.0,
         "iDepth": 0,
+        "iDrawType": 1,
         "iLevel": 2,
         "iRenderGroup": 9,
         "iVisibility": 0,

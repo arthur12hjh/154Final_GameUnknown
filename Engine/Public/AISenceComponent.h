@@ -35,9 +35,9 @@ public:
 	void								Bind_TargetLost(function<void(CGameObject*)> Func);
 	void								Bind_TargetDetected(function<void(CGameObject*)> Func);
 
-	void								SetColliderHitType(HIT_TYPE eHitType);
-	void								ADD_SenceIgnoreTraceObejct(HIT_TYPE typeID);
-	void								ADD_SenceOnlyTraceObject(HIT_TYPE typeID);
+	void								SetTraceHitType(HIT_TYPE eHitType);
+	void								ADD_SenceIgnoreTraceObject(HIT_TYPE eHitType);
+	void								ADD_SenceOnlyTraceObject(HIT_TYPE eHitType);
 
 #ifdef _DEBUG
 	void								Update_Debuge();

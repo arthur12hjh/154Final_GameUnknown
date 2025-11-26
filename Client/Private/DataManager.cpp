@@ -89,8 +89,6 @@ HRESULT CDataManager::LoadBossData(void* pArg)
 
         m_pNaytibaDatas.emplace(iBossID, BossDesc);
     }
-
-    Desc->OnCompleted(this_thread::get_id());
     return S_OK;
 }
 

@@ -37,13 +37,25 @@ public:
 	CUIAnimManager* Get_AnimMgr() { return m_pUIAnimMgr; }
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
-	////void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
 	void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
-	////void Anim_All_Stop();
+
+	// World UI
+	HRESULT Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag,
+								_uint count, _uint level = 0,
+								const _wstring& layerTag = TEXT("World_Layer"));
+
+	CUIBase* Rent_WorldUI(const _wstring& szPoolTag,
+							CGameObject* pParent,
+							const _float3& vOffset = { 0,0,0 },
+							_bool bBillboard = true);
+
+	void Return_WorldUI(CUIBase*& pUI);
 
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);
+
+	void Reset_WorldUI_State(CUIBase* pUI);
 
 private:
 	// 한글 때문에 만듦
@@ -53,6 +65,8 @@ private:
 	_bool m_bShowDebugRect{ true };
 
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
+
+	unordered_map<_wstring, vector<CUIBase*>> m_WorldUIs;
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

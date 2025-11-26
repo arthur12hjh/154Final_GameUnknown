@@ -71,6 +71,7 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_AnimTrackTags.push_back(TEXT("Texture_UV"));
     m_AnimTrackTags.push_back(TEXT("FillClip"));
     m_AnimTrackTags.push_back(TEXT("TintColor"));
+    m_AnimTrackTags.push_back(TEXT("GlowIntensity"));
     m_AnimTrackTags.push_back(TEXT("SpriteAction"));
 
     return S_OK;
@@ -90,13 +91,20 @@ void CGUIManager::Update(_float fTimeDelta)
 
     if (m_iPrevLevel != m_iCurrentLevel)
     {
-        m_pLayers.clear();
+        for (auto& iter : m_pLayers)
+            Safe_Release(iter.second);
+
         Safe_Release(m_pUIHUD);
+
+        m_pLayers.clear();
 
         m_pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
         if (m_pUIHUD == nullptr)
+        {
+            Safe_Release(m_pUIHUD);
             return;
+        }
 
         m_iPrevLevel = m_iCurrentLevel;
     }
@@ -626,8 +634,13 @@ void CGUIManager::View_Options()
     GUI::Text(szUIID);
     
     GUI::Checkbox("Visible", &m_bVisible);
-
     m_pTargetUI->SetVisibility(m_bVisible ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN);
+
+    m_bDrawInWorld = m_pTargetUI->Get_UIBase_Desc().iDrawType == 0 ? true : false;
+
+    GUI::Checkbox("Draw In World", &m_bDrawInWorld);
+    m_pTargetUI->Set_DrawType(m_bDrawInWorld ? CUIObject::DRAW_TYPE::WORLD : CUIObject::DRAW_TYPE::SCREEN);
+
     GUI::DragFloat("Alpha", &m_pTargetUI->Get_UIBase_Desc().fAlpha, 0.01f, 0.f, 1.f);
 
     if (GUI::BeginTabBar("Edit Tab"))
@@ -1090,6 +1103,7 @@ void CGUIManager::Edit_Animation(_wstring szAnimTag, _wstring szPrefabTag)
 
     GUI::DragFloat("Duration", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szPrefabTag)->fDuration, 0.01f, 0.f, 0.f, "%.2f");
     GUI::Checkbox("Loop", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szPrefabTag)->isLoop);
+    GUI::Checkbox("BeapBeap", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szPrefabTag)->isBeapBeap);
     GUI::Checkbox("Influence", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szPrefabTag)->isInfluenceChildren);
 
     if (GUI::Button("Add Track"))
@@ -1131,7 +1145,6 @@ void CGUIManager::Edit_Animation(_wstring szAnimTag, _wstring szPrefabTag)
             m_pTargetUI->Get_UIBase_Desc().szLayerTag,
             m_pTargetUI->Get_UIBase_Desc().szUITag,
             szAnimTag);
-            //m_pUIHUD->Get_AnimMgr()->Get_AnimData(szPrefabTag)->szAnimTag);
     }
     GUI::SameLine();
     if (GUI::Button("Stop"))
@@ -1385,6 +1398,39 @@ void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
             GUI::TreePop();
         }
     }
+
+    //if (szTrackTag == TEXT("SpriteAction"))
+    //{
+    //    if (GUI::TreeNode("StartPram"))
+    //    {
+    //        _int iTextureIndex = static_cast<_int>(m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x);
+	//		GUI::InputInt("Texture Index", &iTextureIndex);
+	//		m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x = static_cast<_float>(iTextureIndex);
+    //        GUI::TreePop();
+    //    }
+    //    if (GUI::TreeNode("EndPram"))
+    //    {
+    //        GUI::TreePop();
+    //    }
+    //}
+
+    if (szTrackTag == TEXT("GlowIntensity"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::DragFloat("Start GlowIntensity", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 0.01f, 0.f, 10.f, "%.2f");
+			m_pTargetUI->Set_GlowIntensity(m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x);
+
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::DragFloat("End GlowIntensity", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 0.01f, 0.f, 10.f, "%.2f");
+            m_pTargetUI->Set_GlowIntensity(m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x);
+
+            GUI::TreePop();
+        }
+    }
 }
 
 void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
@@ -1445,6 +1491,16 @@ void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
         {
             TrackDesc.vStartParam = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.vTintColor;
             TrackDesc.vEndParam = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.vTintColor;
+        }
+        if (TrackDesc.szTrackTag == TEXT("SpriteAction"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex;
+        }
+        if (TrackDesc.szTrackTag == TEXT("GlowIntensity"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fGlowIntensity;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fGlowIntensity;
         }
 
         m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Add_UI_Track_Desc(szTrackTag, TrackDesc);
@@ -1528,7 +1584,8 @@ void CGUIManager::Add_Event()
         CStringHelper::ConvertUTFToWide(m_szInputEventTag, szEventTag);
 
         UI_EVENT_DESC NewEvent{};
-        NewEvent.szTypeTag = TEXT("PlayAnimation");
+        NewEvent.szActionTag = TEXT("");
+        NewEvent.szTypeTag = TEXT("");
         NewEvent.szArg = TEXT("");
 
         m_pTargetUI->Get_UIBase_Desc().Add_UI_Event(szEventTag, NewEvent);
@@ -1548,6 +1605,14 @@ void CGUIManager::Edit_Event(const _wstring& szEventTag, UI_EVENT_DESC& EventDes
     WCHAR szWTypeTag[MAX_PATH]{};
     CStringHelper::ConvertUTFToWide(szTypeTag, szWTypeTag);
     EventDesc.szTypeTag = szWTypeTag;
+
+    _char szAction[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(EventDesc.szActionTag.c_str(), szAction);
+    GUI::InputText("Action", szAction, IM_ARRAYSIZE(szAction));
+
+    WCHAR szWActionTag[MAX_PATH]{};
+    CStringHelper::ConvertUTFToWide(szAction, szWActionTag);
+    EventDesc.szActionTag = szWActionTag;
 
     _char szArg[MAX_PATH]{};
     CStringHelper::ConvertWideToUTF(EventDesc.szArg.c_str(), szArg);
@@ -1669,7 +1734,45 @@ void CGUIManager::Set_Shader_Params()
         GUI::TreePop();
     }
 
-    if (Desc.m_tUIShaderDesc.bUseFillClip || Desc.m_tUIShaderDesc.bUseUV || Desc.m_tUIShaderDesc.bUseTintColor)
+    if (GUI::TreeNode("DiscardBlack"))
+    {
+        GUI::Checkbox("Use DiscardBlack", &Desc.m_tUIShaderDesc.bDiscardBlack);
+
+        GUI::TreePop();
+    }
+
+    if (GUI::TreeNode("Glow"))
+    {
+        GUI::Checkbox("Use Glow", &Desc.m_tUIShaderDesc.bUseGlow);
+
+        if (Desc.m_tUIShaderDesc.bUseGlow)
+        {
+            GUI::DragFloat("GlowIntensity", &Desc.m_tUIShaderDesc.fGlowIntensity, 0.01f, 0.f, 10.f, "%.2f");
+            GUI::DragFloat("GlowSpread", &Desc.m_tUIShaderDesc.fGlowSpread, 0.01f, 0.f, 100.f, "%.2f");
+        }
+
+        GUI::TreePop();
+    }
+
+    //if (GUI::TreeNode("Pulse Effect"))
+    //{
+    //    GUI::Checkbox("Use Pulse Effect", &Desc.m_tUIShaderDesc.bUsePulseEffect);
+    //
+    //    if (Desc.m_tUIShaderDesc.bUsePulseEffect)
+    //    {
+    //        GUI::Checkbox("Use Scroll", &Desc.m_tUIShaderDesc.bUseScroll);
+    //        if(Desc.m_tUIShaderDesc.bUseScroll)
+    //            GUI::DragFloat("Scroll Speed", &Desc.m_tUIShaderDesc.fScrollSpeed, 0.01f, 0.f, 100.f, "%.2f");
+    //
+    //        GUI::DragFloat("Pulse Time", &Desc.m_tUIShaderDesc.fPulseTime, 0.01f, 0.f, 100.f, "%.2f");
+    //        GUI::DragFloat("Pulse Speed", &Desc.m_tUIShaderDesc.fPulseSpeed, 0.01f, 0.f, 100.f, "%.2f");
+    //    }
+    //
+    //    GUI::TreePop();
+    //}
+
+    if (Desc.m_tUIShaderDesc.bUseFillClip || Desc.m_tUIShaderDesc.bUseUV || Desc.m_tUIShaderDesc.bUseTintColor
+        || Desc.m_tUIShaderDesc.bDiscardBlack || Desc.m_tUIShaderDesc.bUseGlow || Desc.m_tUIShaderDesc.bUsePulseEffect)
         Desc.m_isHasShaderDesc = true;
     else
         Desc.m_isHasShaderDesc = false;
@@ -1696,12 +1799,15 @@ void CGUIManager::Free()
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
 
-    Safe_Release(m_pUIHUD);
     Safe_Release(m_pUIResourceStore);
     Safe_Release(m_pTargetUI);
     
     for (auto& iter : m_pLayers)
         Safe_Release(iter.second);
 
+    Safe_Release(m_pUIHUD);
+    Safe_Release(m_pUIHUD);
+
     Safe_Release(m_pGameInstance);
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

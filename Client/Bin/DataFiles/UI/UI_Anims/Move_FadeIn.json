@@ -32,6 +32,7 @@
         }
     ],
     "fDuration": 1.0,
+    "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": true,
     "szAnimTag": "Move_FadeIn"

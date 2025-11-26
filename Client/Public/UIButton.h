@@ -41,7 +41,6 @@ protected:
 	virtual HRESULT Bind_ShaderResources() override;
 
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
-	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) override;
 	virtual void CallbackEvent(void* pArg) override;
 
 private:

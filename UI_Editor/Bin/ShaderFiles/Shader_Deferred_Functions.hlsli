@@ -157,7 +157,7 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
         clamp(NdotV, 0.f, 1.f);
     }
     
-    float fAlpha = max(fRoughness * fRoughness, 0.04f);
+    float fAlpha = max(fRoughness * fRoughness, 0.1f);
     float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;
     
     float D = NDF_ggxtr(vNormal, vHalfVector, fAlpha);
@@ -169,21 +169,19 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     float3 specularBRDF = vNumerator / fDenom;
     
     float3 kS = F;
-    // 금속이여도 일부 디퓨즈 가질 수 있게 세팅
-    float3 kD = (1.f - kS) * max((1.f - fMetallic), 0.2f);
+    float3 kD = (1.f - kS) * (1.f - fMetallic);
     
     // 직접광 연산
     Out.vShade = float4((kD * vAlbedo) * (NdotL * fAttenuation) * vLightColor, 1.f);
     // 환경광 연산
-    float3 vDiffuseAmbient = vAlbedo * lerp(0.04f, 0.25f, 1 - fRoughness);
+    float3 vDiffuseAmbient = vAlbedo * lerp(0.08f, 0.35f, 1 - fRoughness);
     vDiffuseAmbient *= (1 - fMetallic) * fSSAO;
     Out.vShade.xyz += vDiffuseAmbient;
     
     Out.vSpecular = float4(specularBRDF * vLightColor * fAttenuation * NdotL, 1.f);
     F = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vFO);
-    float3 vAmbientSpec = F * 0.02f * (1 - fRoughness * 0.7f);
+    float3 vAmbientSpec = F * 0.02f * (1 - fRoughness * fRoughness);
     Out.vSpecular.xyz += vAmbientSpec;
-    
     
     return Out;
 }

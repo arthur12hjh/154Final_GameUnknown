@@ -678,7 +678,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\AIController.cpp">
       <Filter>01.Utility\20.AI\AI_Controller</Filter>
-   </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MotionBlur.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
     </ClCompile>
@@ -1085,9 +1085,6 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\SSAO\ShaderFile">
       <UniqueIdentifier>{24a875b6-3daa-4024-9cab-5c55dd970916}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\05.Renderer\00. STRUCT">
-      <UniqueIdentifier>{4b15b1be-61f5-4bfb-8d5c-c1141135879c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

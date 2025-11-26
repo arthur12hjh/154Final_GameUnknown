@@ -46,17 +46,11 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 
 	if (bIsRandomAttack)
 	{
-		auto SkillList = pEntity->GetMonsterData().iAttackList;
-
-		// 랜덤 기본 로직
-		// 이러면 무조건 랜덤으로 돌아감
-		_uint iNumSkill = (_uint)SkillList.size();
-		_uint iSKillIndex = (_uint)m_pGameInstance->Random(0.f, iNumSkill);
-
-		m_pSkillData = SkillList[iSKillIndex];
+		m_pSkillData = pEntity->GetSkillData(false);
 		m_szAnimationName = m_pSkillData->szAnimationName;
 	}
 
+	m_bIsEnableChange = false;
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false);
 }
 
@@ -67,7 +61,10 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
 
 	if (m_bIsFinished)
+	{
 		m_AttackCompletedFunc(0.f);
+		m_bIsEnableChange = true;
+	}
 }
 
 void CMonsterAttackState::End()

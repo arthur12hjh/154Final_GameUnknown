@@ -7,6 +7,8 @@ class CAIController;
 NS_END
 
 NS_BEGIN(Client)
+struct Character_Skill_Desc;
+
 class CNayitba final : public CCharacter
 {
 public :
@@ -35,7 +37,14 @@ public:
 	const list<CGameObject*>*		GetTargetList();
 
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
+	
+
+	//몬스터의 현재 데이터를 반환
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
+	const CHARACTER_SKILL_DESC*		GetSkillData(_bool bIsRandom = true);
+
+	// 몬스터의 이전상태를 반환한다.
+	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
 
 	//레퍼런스 카운트 증가
 	CAIController*					GetController();
@@ -47,9 +56,14 @@ private:
 
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
+
 	NAYTIBA_DESC					m_MonsterInfo = {};
+	NAYTIBA_STATE					m_MonsterPreState = {};
 
 	string							m_szEntryAnim = {};
+	
+	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
+	size_t							m_iSkillIndex = {};
 
 private :
 	HRESULT							Ready_CharacterData();
