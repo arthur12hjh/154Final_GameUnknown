@@ -179,7 +179,9 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
-    <ClInclude Include="..\Public\Player_AttackState.h" />
+    <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
+    <ClInclude Include="..\Public\Player_EvadeState.h" />
+    <ClInclude Include="..\Public\Player_LightAttackState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
     <ClInclude Include="..\Public\Player_JumpState.h" />
     <ClInclude Include="..\Public\Player_LandingState.h" />
@@ -352,7 +354,9 @@
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
-    <ClCompile Include="..\Private\Player_AttackState.cpp" />
+    <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
+    <ClCompile Include="..\Private\Player_EvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_LightAttackState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
     <ClCompile Include="..\Private\Player_JumpState.cpp" />
     <ClCompile Include="..\Private\Player_LandingState.cpp" />

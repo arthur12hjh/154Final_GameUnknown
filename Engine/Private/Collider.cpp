@@ -71,6 +71,9 @@ ContainmentType CCollider::Contains(_vector Point)
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {
+    // 바꾸지마세요 
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+
     m_pEffect->SetWorld(XMMatrixIdentity());
     m_pEffect->SetView(XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)));
     m_pEffect->SetProjection(XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ)));
@@ -109,6 +112,7 @@ void CCollider::BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHi
 void CCollider::ADD_HitObject(CGameObject* pObject)
 {
     auto iter = find(m_HitList.begin(), m_HitList.end(), pObject);
+
     if (iter == m_HitList.end())
     {
         m_HitList.push_back(pObject);
