@@ -28,7 +28,6 @@ typedef struct ColCompare
 
 }COL_COMPARE;
 
-
 class CCollisionManager final : public CBase
 {
 private:
@@ -41,7 +40,7 @@ public:
 
 private:
 	unordered_set<pair<CCollider*, CCollider*>, PAIR_HASH, COL_COMPARE>	m_ColHash;
-	list<CCollider*>														m_ColList = {};
+	list<CCollider*>													m_ColList = {};
 
 public :
 	static		CCollisionManager*	Create();

@@ -135,6 +135,8 @@ void CColliderRenderer::Render_DebugCollider(class CShader* pShader)
 
 void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 {
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+
     for (auto& Pair : m_PxShapes)
     {
         const _char* pActorName = Pair.first->getName();
