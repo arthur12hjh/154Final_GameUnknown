@@ -72,33 +72,43 @@ void CThreadPool::Update_WorkThread()
 
 		if (m_bIsThreadStopAll && m_ThreadJobs.empty())
 		{
-		
+			lock.unlock();
 			return;
 		}
 
 		// 맨 앞의 job 을 뺀다.
 		THREAD_JOB job = m_ThreadJobs.front();
 		m_ThreadJobs.pop();
+
+		thread::id iThreadID = this_thread::get_id();
+		auto& pData = m_DefferdContexts[iThreadID];
 		lock.unlock();
 
 		// 등록된 함수를 수행
 		if (false == job.bIsCanceled)
 		{
 			m_iWorkdThread++;
-			job.JobFunction(&m_DefferdContexts[this_thread::get_id()]);
+			if (job.JobFunction)
+				job.JobFunction(&pData);
+			else
+				pData.OnCompleted(iThreadID);
 		}
-	
+		else
+			pData.OnCompleted(iThreadID);
 	}
 }
 
 ThreadJobHandle* CThreadPool::Add_jobList(function<void(void*)> function)
 {
+	if (nullptr == function)
+		return nullptr;
+
 	ThreadJobHandle Handle = {};
 	Handle.iJobID = _uint(m_ThreadJobs.size() + 1);
-	Handle.JobFunction = function;
+	Handle.JobFunction = move(function);
 	Handle.bIsCanceled = false;
 
-	m_ThreadJobs.push(Handle);
+	m_ThreadJobs.push(move(Handle));
 	m_cv_Jobs.notify_one();
 	return &m_ThreadJobs.back();
 }
@@ -131,6 +141,16 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 	auto& Desc = m_DefferdContexts[ThreadID];
 
 	ID3D11CommandList* pCommandList = nullptr;
+	if (nullptr == Desc.pContext)
+	{
+		for (auto& iter : Desc.pAddObejct)
+			Safe_Release(iter.pPrototype);
+
+		Desc.pAddObejct.clear();
+		m_iWorkdThread--;
+		return;
+	}
+
 	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
 

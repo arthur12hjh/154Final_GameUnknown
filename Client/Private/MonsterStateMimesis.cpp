@@ -24,24 +24,10 @@ void CMonsterStateMimesis::Start(void* pArg, CState* pPreState)
 	auto pOwnerStaticInfo = pEntity->GetStaticMonsterData();
 
 	string szAnimationName = pOwnerStaticInfo->szAnimationName;
-	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 
-	if (100 >= fRandomIndex)
-	{
-		szAnimationName += "_Stanby_01";
-		m_iMimesisIndex = 1;
-	}
-	/*else if(60 >= fRandomIndex)
-	{
-		szAnimationName += "_Stanby_02";
-		m_iMimesisIndex = 2;
-	}
-	else
-	{
-		szAnimationName += "_Stanby_03"; 
-		m_iMimesisIndex = 3;
-	}*/
-
+	szAnimationName += "_Stanby_01";
+	m_iMimesisIndex = 1;
+	
 	pEntity->Set_Animation(szAnimationName.c_str());
 }
 

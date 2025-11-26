@@ -57,6 +57,7 @@ CGameObject* CProb_Interaction::Clone(void* pArg)
 void CProb_Interaction::Free()
 {
     __super::Free();
+
     Safe_Release(m_pGameManager);
     Safe_Release(m_pInteractionCom);
     Safe_Release(m_pInteractionUI);

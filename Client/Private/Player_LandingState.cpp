@@ -59,4 +59,5 @@ CPlayer_LandingState* CPlayer_LandingState::Create(void* pArg)
 
 void CPlayer_LandingState::Free()
 {
+	__super::Free();
 }

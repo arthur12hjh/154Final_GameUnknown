@@ -43,7 +43,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 void CBody_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
 }
 
 void CBody_Player::Update(_float fTimeDelta)

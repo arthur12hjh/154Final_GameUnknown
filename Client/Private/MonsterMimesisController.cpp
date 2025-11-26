@@ -15,6 +15,7 @@
 #include "MonsterHitState.h"
 #include "MonsterDeadState.h"
 #include "MonsterStateMimesis.h"
+#include "MonsterTranslationState.h"
 #pragma endregion
 
 #include "MonsterFSM.h"
@@ -64,9 +65,29 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 	if (false == m_bIsDead)
 	{
 		m_vDelayTime.x += fTimeDelta;
+
+		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
+		{
+			auto pNayitba = static_cast<CNayitba*>(m_pOwner);
+			if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
+			{
+				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
+				M_TranslationState.szTranslationAnimName = "_BattleStart";
+				M_TranslationState.szNextStateName = TEXT("Idle");
+				M_TranslationState.pTarget = m_pTargetCom->GetTarget();
+				M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
+					{
+						m_pFSM->Change_State(szNextStateName, pArg);
+						m_vDelayTime = { 0.f, 0.5f };
+					};
+				M_TranslationState.pArg = nullptr;
+				m_pFSM->Change_State(TEXT("Translation"), &M_TranslationState);
+			}
+		}
+
 		if (m_vDelayTime.x >= m_vDelayTime.y)
 		{
-			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytiba)
+			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 				Battle_Action(fTimeDelta);
 			else
 				Default_Action(fTimeDelta);
@@ -152,6 +173,9 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 	if (FAILED(m_pFSM->Add_State(TEXT("Mimesis"), CMonsterStateMimesis::Create(&Desc))))
 		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Translation"), CMonsterTranslationState::Create(&Desc))))
+		return E_FAIL;
+
 	m_pFSM->Change_State(TEXT("Mimesis"));
 	return S_OK;
 }
@@ -182,26 +206,40 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	}
 	else
 	{
-		if (m_vAttackTime.y <= m_vAttackTime.x)
+		if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
 		{
-			if (fDistance <= m_pOwnerData->fAttackRange)
+			if (m_vAttackTime.y <= m_vAttackTime.x)
 			{
-				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+				if (fDistance <= m_pOwnerData->fAttackRange)
+				{
+					CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+					AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+				}
+			}
+			else
+			{
+				MoveAction(true);
 			}
 		}
-		else
+		/*else if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
 		{
-			MoveAction(true);
-		}
+			CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
+			M_TranslationState.szTranslationAnimName = "_BattleStart";
+			M_TranslationState.szNextStateName = TEXT("Idle");
+			M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
+				{
+					m_pFSM->Change_State(szNextStateName, pArg);
+				};
+			M_TranslationState.pArg = nullptr;
+			m_pFSM->Change_State(TEXT("Translation"), &M_TranslationState);
+		}*/
 	}
-	
 }
 
 void CMonsterMimesisController::Default_Action(_float fTimeDelta)
 {
-	if (NAYTIBA_STATE::MIMESSIS == m_pOwnerData->eNaytiba)
+	if (NAYTIBA_STATE::MIMESSIS == m_pOwnerData->eNaytibaState)
 	{
 		m_pFSM->Change_State(TEXT("Mimesis"));
 	}
@@ -228,7 +266,7 @@ void CMonsterMimesisController::DelayAction(_float fDelayTime)
 void CMonsterMimesisController::MoveAction(_bool bIsTarget)
 {
 	CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
-	MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
+	//MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
 	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };
 
 	if (bIsTarget)

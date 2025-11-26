@@ -43,10 +43,9 @@ void CMonsterIdleState::Start(void* pArg, CState* pPreState)
                 m_szAnimationName += "StanbyToNormal_03";
                 break;
             }
+            m_bIsEnableChange = false;
+            m_bIsPlayStartAnim = true;
         }
-
-        m_bIsEnableChange = false;
-        m_bIsPlayStartAnim = true;
     }
 }
 
@@ -57,8 +56,8 @@ void CMonsterIdleState::Update(_float fTimeDelta)
     if (false == m_bIsPlayStartAnim)
     {
         m_szAnimationName = m_pStaticOwnerInfo->szAnimationName;
-        if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytiba)
-            m_szAnimationName += "Battle_Idle01";
+        if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytibaState)
+            m_szAnimationName += "_BattleIdle01";
         else
             m_szAnimationName += "_Idle01";
     }

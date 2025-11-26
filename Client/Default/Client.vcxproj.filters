@@ -493,6 +493,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
       <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation">
+      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1005,6 +1008,9 @@
     <ClInclude Include="..\Public\MonsterController.h">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MonsterTranslationState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1423,9 +1429,6 @@
     <ClCompile Include="..\Private\MonsterIdleState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MonsterFSM.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Nayitba.cpp">
       <Filter>02.GameObjects\Character\Naytiba</Filter>
     </ClCompile>
@@ -1497,6 +1500,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\MonsterController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MonsterFSM.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterTranslationState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

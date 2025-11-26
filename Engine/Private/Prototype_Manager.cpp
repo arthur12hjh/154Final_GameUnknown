@@ -36,15 +36,15 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iLevelIndex, const _wstring& str
 }
 
 /*
- - »À´ë ¸ðµ¨¿¡ ¾Ö´Ï¸ÞÀÌ¼Ç°ú, ÆÄÃ÷ ¸ðµ¨À» ºÙÀÌ´Â ÇÁ·ÎÅäÅ¸ÀÔ ÇÔ¼ö
+ - ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨¿ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼Ç°ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Ô¼ï¿½
 */
 HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix)
 {
-	// _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+	// _finddata_t : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 	_finddatai64_t  fd;
 
-	// _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
-	// ÀÌ°Íµµ °æ·Î, È®ÀåÀÚ¸í À¯¿¬ÇÏ°Ô ¹Ù²ã¾ßÇÏ´Âµ¥ ÀÏ´Ü ÀÌ ÇÔ¼ö ¾µ °´Ã¼°¡ ÇÃ·¹ÀÌ¾î ¹Û¿¡ ¾øÀ¸´Ï±î ³ÀµÐ´Ù.
+	// _findfirst : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½
+	// ï¿½Ì°Íµï¿½ ï¿½ï¿½ï¿½, È®ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½Ï´Âµï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ð´ï¿½.
 	intptr_t handle = _findfirst64("../Bin/Resources/Models/Character/PC/Eve/Animation/*.binx*", &fd);
 
 	if (handle == -1)
@@ -52,15 +52,18 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	int iResult = 0;
 
-	// ¸ÕÀú »À´ë ¸ðµ¨. Áï ±â¹ÝÀÌ µÇ´Â ¸ðµ¨À» ¸¸µç´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag,
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;
 
-	// »À´ë ¸ðµ¨À» ¹Þ¾Æ¿Â´Ù.
-	CModel* pModel = static_cast<CModel*>(Find_Prototype(iLevelIndex, strPrototypeTag));
+	auto pPrototype = Find_Prototype(iLevelIndex, strPrototypeTag);
+	if (nullptr == pPrototype)
+		return E_FAIL;
 
-	// »À´ë ¸ðµ¨¿¡ ¾Ö´Ï¸ÞÀÌ¼ÇÀ» ¸ÅÇÎÇØÁØ´Ù.
+	CModel* pModel = static_cast<CModel*>(pPrototype);
+
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨¿ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
 	while (iResult != -1)
 	{
 		CBase* pAnimModel = nullptr;
@@ -68,7 +71,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		int iLength = strlen(fd.name) + 1;
 		WCHAR* pFileName = new WCHAR[iLength];
 		ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
-		// ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+		// ï¿½Æ½ï¿½Å° ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
 		MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
 		string szFullPath = strSkeletalPath + fd.name;
@@ -96,10 +99,10 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		Safe_Delete_Array(pFileName);
 	}
 
-	// ÆÄÃ÷ ¸ðµ¨µéÀ» »ý¼ºÇÏ°í, ºí·»µåÀÎµ¦½º¿Í º» ÀÎµ¦½º¸¦ »À´ë ¸ðµ¨¿¡ ¸ÂÃç ¸ÅÇÎÇØÁØ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
 	for (size_t i = 0; i < szPartPrototypeTagList.size(); ++i)
 	{
-		// ¸ðµ¨¿¡ ½ºÄÌ·¹Åæ ¸ðµ¨À» Àü´ÞÇØÁà ¸ÅÇÎÇÒ ¼ö ÀÖ°Ô ÇØÁØ´Ù.
+		// ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½Ø´ï¿½.
 		if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, szPartPrototypeTagList[i],
 			CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, szPartModelFilePathList[i].c_str(), PreTransformMatrix, pModel))))
 			return E_FAIL;

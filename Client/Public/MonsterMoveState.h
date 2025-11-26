@@ -15,7 +15,6 @@ public:
 	typedef struct MoveStateDesc
 	{
 		CGameObject* pTarget;
-		const vector<_float3>*			PathFindingPoints;
 		function<void(_float)>			OnMoveCompleted;
 	}MOVE_STATE_DESC;
 
@@ -38,20 +37,26 @@ private:
 	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
 	CGameObject*								m_pTarget = { nullptr };
 
-	DIRECTION									m_vMoveDirection = { DIRECTION::END };
-	_float2										m_vMoveTime = {};
+	_bool										m_bIsLerp = { false };
+	_float2										m_vLerpTime = {};
 	_float3										m_vMoveDir = {};
+	_float3										m_vLerpStartPos = {};
 
+	DIRECTION									m_vMoveDirection = { DIRECTION::END };
 	_bool										m_bIsCaution = { false };
 	_float3										m_vMovePoint = {};
-	
+
+	_float										m_fMoveSpeed = { 2.f };
+
 	// 목표 지점에 들어갔을떄
 	function<void(_float)>						m_OnMoveCompleted;
 private :
-	void										Compute_MovePointDirection();
-
 	void										Update_Caution(_float fTimeDelta);
 	void										Update_Move(_float fTimeDelta);
+
+	void										LerpLookAt(_float fTimeDelta);
+	void										Compute_MoveDirection();
+	//void										Compute_CautionAngle();
 
 public:
 	static	CMonsterMoveState*					Create(void* pArg);
