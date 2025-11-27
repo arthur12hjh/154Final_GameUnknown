@@ -16,6 +16,7 @@ HRESULT CShaderDebugger::Initialize_Prototype()
 HRESULT CShaderDebugger::Initialize()
 {
 #ifdef _DEBUG
+    m_pMotioBlurDesc = static_cast<MOTIONBLUR_DESC*>(m_pGameInstance->Get_MotionBlur_Desc());
     m_pFogDesc = static_cast<FOG_DESC*>(m_pGameInstance->Get_Fog_Desc());
     m_pBloomDesc = static_cast<BLOOM_DESC*>(m_pGameInstance->Get_Bloom_Desc());
     m_pDoFDesc = static_cast<DOF_DESC*>(m_pGameInstance->Get_DoF_Desc());
@@ -59,9 +60,19 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::Separator();
 
+    ImGui::Text("MotionBlur INFO");
+
+    _uint iMax = 16, iMin = 1;
+
+    ImGui::DragFloat("MB CamBlur Scale", m_pMotioBlurDesc->fCamBlurScale, 0.001f, -2.f, 2.0f);
+    ImGui::DragFloat("MB Bias", m_pMotioBlurDesc->fBias, 0.001f, -2.f, 2.f);
+    ImGui::DragScalar("MB Sample Count", ImGuiDataType_U32, m_pMotioBlurDesc->iSampleCount, 1.0f, &iMin, &iMax, "%u", 1);
+
+    ImGui::Separator();
+
     ImGui::Text("Bloom INFO (CANNOT EDIT. JUST SHOW)");
     
-    _uint iMax = 10, iMin = 0;
+    iMax = 10, iMin = 0;
     
     ImGui::BeginDisabled();
     ImGui::DragScalar("Bloom SampleNum", ImGuiDataType_U32, m_pBloomDesc->iBloomLevel, 1.0f, &iMin, &iMax, "%u", 1);

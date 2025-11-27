@@ -97,6 +97,8 @@ public:
 	void*  Get_Bloom_Desc();
 	void*  Get_Fog_Desc();
 	void*  Get_SSAO_Desc();
+	void*  Get_MotionBlur_Desc();
+
 #endif
 
 #pragma endregion
@@ -113,6 +115,10 @@ public:
 	const _float4*						Get_CamUp();
 	const _float4*						Get_CamLook();
 	const _float4*						Get_CamPosition();
+	const _float4*						Get_PreCamRight();
+	const _float4*						Get_PreCamUp();
+	const _float4*						Get_PreCamLook();
+	const _float4*						Get_PreCamPosition();
 	// 항등행렬 꺼내오기
 	_matrix								GetIdentityMatrix();
 
