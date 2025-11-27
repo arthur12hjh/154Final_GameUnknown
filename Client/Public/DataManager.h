@@ -17,7 +17,7 @@ public :
 	const CHARACTER_SKILL_DESC*				Find_SkillData(_uint iSkillID);
 	const NAYTIBA_NETWORK_DESC*				Find_NaytibaData(_uint iID);
 
-	const vector<ANIM_NOTIFY>* Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
 private:
 	// 캐릭터 구조체는 이거 하나만있으도 될거같아서 픽스
@@ -34,7 +34,7 @@ private:
 
 
 private:
-	HRESULT									LoadBossData(void* pArg);
+	HRESULT									LoadNaytibaData(void* pArg);
 	HRESULT									LoadSkillData();
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 

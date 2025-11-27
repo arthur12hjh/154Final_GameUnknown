@@ -72,6 +72,53 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
         }
     }
 
+    if (1 == m_pSelectList.size())
+    {
+        ImGui::Begin("Collision Editor");
+        CGameObject* pObject = m_pSelectList.front();
+
+        _uint iIndex = {};
+        _char szComponentName[MAX_PATH] = {};
+        for (auto& Pair : *pObject->GetAllComponents())
+        {
+            //노드 표현했으면 부모 래퍼런스 감소 그다음 다그리면 클리어
+            m_TreeNodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+            if (Pair.second == m_pSelectComponent)
+                m_TreeNodeFlag |= ImGuiTreeNodeFlags_Selected;
+
+            CStringHelper::ConvertWideToUTF(Pair.first.c_str(), szComponentName);
+            sprintf_s(m_szObjectTag, "%s%d##Component%d", szComponentName, iIndex, iIndex);
+            bool opened = ImGui::TreeNodeEx(m_szObjectTag, m_TreeNodeFlag);
+
+            // 선택 감지 (펼치기와 별개로) 
+            if (ImGui::IsItemClicked())
+            {
+                if (m_TreeNodeFlag & ImGuiTreeNodeFlags_Selected)
+                {
+                    if (Pair.second == m_pSelectComponent)
+                        m_pSelectComponent = nullptr;
+                }
+                else
+                    m_pSelectComponent = Pair.second;
+            }
+
+            iIndex++;
+
+            if (opened)
+            {
+                auto pCollider = dynamic_cast<CCollider*>(Pair.second);
+                if (pCollider)
+                {
+                    DrawEditorCollider(pCollider);
+                }
+
+                ImGui::TreePop();
+            }
+        }
+
+        ImGui::End();
+    }
+
 	ImGui::End();
 	if (!bIsOpen)
 		m_eVisibility = VISIBILITY::HIDDEN;
@@ -127,6 +174,94 @@ void CDebugHierarchy::DrawObjectInfo(CGameObject* pDrawObject)
     ImGui::Text("Position - X : %.2f Y : %.2f Z :%.2f", vPosition.x, vPosition.y, vPosition.z);
     ImGui::Text("Rotation - 보류");
     ImGui::Text("Scale -    X : %.2f Y : %.2f Z :%.2f", vScale.x, vScale.y, vScale.z);
+}
+
+void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
+{
+    // 1 : Collider Size & Collider Radius
+    // 2 : Collider Tag Change
+    // 3 : Collider Ignore Change
+    // 4 : Collider Only Hit Change
+    _bool bIsShowFlag[4] = { false, true, true, true};
+    _bool bIsApplySize = { false };
+    switch (pCollider->GetCollierType())
+    {
+    case COLLIDER::OBB :
+    {
+        auto pObbCol = static_cast<COBBCollider*>(pCollider);
+        memcpy(m_vColliderSize, &pObbCol->GetOrizinBounding().Extents, sizeof(_float3));
+        memcpy(m_vColliderRotation, &pObbCol->GetOrizinBounding().Orientation, sizeof(_float4));
+
+        if (ImGui::InputFloat3("Collider Size", m_vColliderSize, "%.2f"))
+            bIsApplySize = true;
+
+        if (ImGui::InputFloat4("Collider Rotation", m_vColliderRotation, "%.2f"))
+            bIsApplySize = true;
+
+        if (bIsApplySize = true)
+        {
+            _float3 vSize = { m_vColliderSize[0], m_vColliderSize[1], m_vColliderSize[2]};
+            _float4 vRotation = { m_vColliderRotation[0], m_vColliderRotation[1], m_vColliderRotation[2], m_vColliderRotation[3]};
+            pObbCol->SetCollision({}, vRotation, vSize);
+        }
+    }
+        break;
+
+    case COLLIDER::AABB:
+    {
+        auto pAABBCol = static_cast<CBoxCollider*>(pCollider);
+        memcpy(m_vColliderSize, &pAABBCol->GetOrizinBounding().Extents, sizeof(_float3));
+        if(ImGui::InputFloat3("Collider Size", m_vColliderSize, "%.2f"))
+            bIsApplySize = true;
+
+        if (bIsApplySize = true)
+        {
+            _float3 vSize = { m_vColliderSize[0], m_vColliderSize[1], m_vColliderSize[2] };
+            pAABBCol->SetCollision({}, vSize);
+        }
+    }
+        break;
+
+    case COLLIDER::SPHERE :
+    {
+        auto pSphereCol = static_cast<CSphereCollider*>(pCollider);
+        m_vColliderSize[0] = pSphereCol->GetOrizinBounding().Radius;
+        if (ImGui::InputFloat("Collider Radius", &m_vColliderSize[0]))
+            bIsApplySize = true;
+
+        if (bIsApplySize = true)
+        {
+            static_cast<CSphereCollider*>(pCollider)->SetCollision({}, m_vColliderSize[0]);
+        }
+    }
+        break;
+    }
+
+    switch (pCollider->GetCollierHitType())
+    {
+    case HIT_TYPE::ALL :
+        ImGui::Text("Hit Type : ALL");
+        break;
+    case HIT_TYPE::INTERACTION:
+        ImGui::Text("Hit Type : InterRaction");
+        break;
+    case HIT_TYPE::MONSTER:
+        ImGui::Text("Hit Type : Monster");
+        break;
+    case HIT_TYPE::OBJECT:
+        ImGui::Text("Hit Type : Object");
+        break;
+    case HIT_TYPE::PLAYER:
+        ImGui::Text("Hit Type : Player");
+        break;
+    case HIT_TYPE::SENCE:
+        ImGui::Text("Hit Type : Sence");
+        break;
+    case HIT_TYPE::STATIC:
+        ImGui::Text("Hit Type : Static");
+        break;
+    }
+
 }
 
 CDebugHierarchy* CDebugHierarchy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

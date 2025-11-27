@@ -10,6 +10,10 @@
 #include "Player.h"
 #include "UIHUD.h"
 
+#ifdef _DEBUG
+#include "ImGuiManager.h"
+#endif // _DEBUG
+
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}	
 {
@@ -54,6 +58,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
 
+	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 	return S_OK;
 }
 

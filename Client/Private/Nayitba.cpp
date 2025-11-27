@@ -141,7 +141,7 @@ void CNayitba::Update(_float fTimeDelta)
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
-
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
 
@@ -262,7 +262,7 @@ HRESULT CNayitba::ADD_Components()
 {
 	/* Com_Collider_AABB */
 	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
+	AABBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
 	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
@@ -317,7 +317,7 @@ HRESULT CNayitba::ADD_Components()
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
 	//캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
-	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	Desc.vSize = { m_pInitMonsterInfo->fColliderExtents.x, m_pInitMonsterInfo->fColliderExtents.y, 0.f };
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();

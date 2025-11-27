@@ -200,8 +200,6 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             if (0 == m_iSectionIndex)
             {
                 _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
-                LerpLookAt(fTimeDelta);
-
                 AnimationName += "_Run_S";
                 bIsAnimLoop = false;
                 m_bIsEnableChange = false;
@@ -295,7 +293,7 @@ void CMonsterMoveState::LerpLookAt(_float fTimeDelta)
         vLerpEndDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vTempOwnerPos);
     }
 
-    vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+    vLerpEndDir.m128_f32[1] = m_vLerpStartPos.y = 0.f;
     _float fRatio = m_vLerpTime.x / m_vLerpTime.y;
 
     fRatio = Clamp<_float>(fRatio, 0.f, 1.f);
