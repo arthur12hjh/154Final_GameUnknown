@@ -33,7 +33,7 @@ public:
 		_float2	fDissolveUVSize;
 
 		_int	iBegin = {};
-		RENDER	eSelectRender;
+		_int	iSelectRender;
 	}TRAIL_DATA;
 
 private:
@@ -67,6 +67,7 @@ private:
 	TRAIL_DATA	m_tData;
 	_float		m_fSpeed = { 1.f };
 	_uint	m_iCount = {};
+	RENDER	m_eRender = {};
 
 private:
 	HRESULT							Ready_Components();

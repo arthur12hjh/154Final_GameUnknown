@@ -468,9 +468,6 @@
     <ClInclude Include="framework.h">
       <Filter>98.Default</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MainApp.h">
-      <Filter>00.MainApp</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_Logo.h">
       <Filter>01.Levels\Logo</Filter>
     </ClInclude>
@@ -938,6 +935,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\SpriteParticle.h">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>01.Levels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1441,6 +1441,9 @@
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

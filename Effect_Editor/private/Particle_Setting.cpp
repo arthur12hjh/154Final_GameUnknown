@@ -31,7 +31,7 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fSpeed = _float2(1.f, 0.5f);
     m_tParticleData.bisLoop = true;
     m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    m_tParticleData.eSelectRender = RENDER::NONLIGHT;
+    m_tParticleData.iSelectRender = 3;
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
     m_tParticleData.fSizeDiagrams.clear();
@@ -243,7 +243,7 @@ HRESULT CParticle_Setting::Initialize()
     tTrailData.fDissolveUVSpeed = _float2(0, 0);
     tTrailData.fDissolveUVSize = _float2(1, 1);
     tTrailData.iBegin = 0;
-    tTrailData.eSelectRender = RENDER::NONLIGHT;
+    tTrailData.iSelectRender = 3;
 
     m_pTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
     m_pTrailEffect->Initialize(nullptr);
@@ -253,7 +253,7 @@ HRESULT CParticle_Setting::Initialize()
 
     tTrailData.fColor = _float4(1, 1, 1, 1);
     tTrailData.iBegin = 1;
-    tTrailData.eSelectRender = RENDER::DISTORTION;
+    tTrailData.iSelectRender = 6;
 
     m_pDistortionTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
     m_pDistortionTrailEffect->Initialize(nullptr);
@@ -301,7 +301,7 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fCircleSpeed = 1.f;
     tParticleData.iBegin = 0;
     tParticleData.iNumInstance = 100;
-    tParticleData.eSelectRender = RENDER::NONLIGHT;
+    tParticleData.iSelectRender = 3;
     tParticleData.bisBillboard = true;
     tParticleData.bisLoop = true;
     tParticleData.bisSphere = false;
@@ -380,7 +380,7 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.fCircleSpeed = 1.f;
     tSpriteParticleData.iBegin = 0;
     tSpriteParticleData.iNumInstance = 100;
-    tSpriteParticleData.eSelectRender = RENDER::NONLIGHT;
+    tSpriteParticleData.iSelectRender = 3;
     tSpriteParticleData.bisBillboard = true;
     tSpriteParticleData.bisLoop = true;
     tSpriteParticleData.bisSphere = false;
@@ -447,7 +447,7 @@ void CParticle_Setting::Add_MeshEffect()
     MeshDesc.fDissolveUVSize = _float2(1, 1);
     MeshDesc.fDelayTime = 0.f;
     MeshDesc.fEndTime = 0.f;
-    MeshDesc.eSelectRender = RENDER::NONLIGHT;
+    MeshDesc.iSelectRender = 3;
     MeshDesc.iBegin = 0;
 
     CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
@@ -496,7 +496,7 @@ void CParticle_Setting::Add_SpriteEffect()
     SpriteDesc.fFPS = 0.1f;
     SpriteDesc.fAngle = 0.f;
     SpriteDesc.iBegin = 0;
-    SpriteDesc.eSelectRender = RENDER::NONLIGHT;
+    SpriteDesc.iSelectRender = 3;
     SpriteDesc.bisLoop = true;
 
     CSpriteEffect* pSpriteEffect = CSpriteEffect::Create(m_pDevice, m_pContext);
@@ -582,7 +582,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
 
 
         WriteInt(fileBinaryStream, pMesh->Get_Data().iBegin);
-        WriteRENDER(fileBinaryStream, pMesh->Get_Data().eSelectRender);
+        WriteInt(fileBinaryStream, pMesh->Get_Data().iSelectRender);
     }
     WriteInt(fileBinaryStream, m_pParticles.size());
     for (auto pParticle : m_pParticles) {
@@ -636,7 +636,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
-        WriteRENDER(fileBinaryStream, pParticle->Get_Data().eSelectRender);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
@@ -697,7 +697,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteFloat(fileBinaryStream, pSpriteParticle->Get_Data().fCircleSpeed);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
-        WriteRENDER(fileBinaryStream, pSpriteParticle->Get_Data().eSelectRender);
+        WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
@@ -724,7 +724,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
         WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
         WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
-        WriteRENDER(fileBinaryStream, pSprite->Get_Data().eSelectRender);
+        WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
     }
     return S_OK;
@@ -806,7 +806,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
 
         MeshDesc.iBegin = ReadInt(fileBinaryStream);
-        MeshDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        MeshDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
         pMeshEffect->Initialize(nullptr);
@@ -865,7 +865,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -932,7 +932,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
 
        SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
        SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-       SpriteParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+       SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
        SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -966,7 +966,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         SpriteDesc.iUV = ReadInt2(fileBinaryStream);
         SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
         SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
         SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
 
 
@@ -1015,7 +1015,7 @@ HRESULT CParticle_Setting::Save_TrailBinary(const _char* szFile)
     WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUVSize);
 
     WriteInt(fileBinaryStream, m_pTrailEffect->Get_Data().iBegin);
-    WriteRENDER(fileBinaryStream, m_pTrailEffect->Get_Data().eSelectRender);
+    WriteInt(fileBinaryStream, m_pTrailEffect->Get_Data().iSelectRender);
 
     return S_OK;
 }
@@ -1047,7 +1047,7 @@ HRESULT CParticle_Setting::Load_TrailBinary(const _char* szFile)
     m_tTrailData.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
     m_tTrailData.fDissolveUVSize = ReadFloat2(fileBinaryStream);
     m_tTrailData.iBegin = ReadInt(fileBinaryStream);
-    m_tTrailData.eSelectRender = ReadRENDER(fileBinaryStream);
+    m_tTrailData.iSelectRender = ReadInt(fileBinaryStream);
     return S_OK;
 }
 
@@ -1479,64 +1479,66 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
                 string szRender;
-                switch (m_tParticleData.eSelectRender) {
-                case RENDER::NONBLEND:
+                switch (m_tParticleData.iSelectRender) {
+                case 0:
                     szRender = "NONBLEND";
                     break;
-                case RENDER::NONLIGHT:
+                case 1:
                     szRender = "NONLIGHT";
                     break;
-                case RENDER::BLUR:
+                case 2:
                     szRender = "BLUR";
                     break;
-                case RENDER::GLOW:
+                case 3:
+                    szRender = "EFFECT BLEND";
+                    break;
+                case 4:
+                    szRender = "CLEAN GLOW";
+                    break;
+                case 5:
                     szRender = "GLOW";
                     break;
-                case RENDER::DISTORTION:
+                case 6:
                     szRender = "DISTORTION";
                     break;
-                case RENDER::BLEND:
+                case 7:
                     szRender = "BLEND";
                     break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
-                        _bool bisRender = false;
-                        _bool sel = i == ENUM_CLASS(m_tParticleData.eSelectRender);
-                        switch (i)
-                        {
-                        case ENUM_CLASS(RENDER::NONBLEND):
+                    for (_uint i = 0; i <= 7; ++i) {
+                        _bool sel = i == m_tParticleData.iSelectRender;
+                        switch (i) {
+                        case 0:
                             szRender = "NONBLEND";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::NONLIGHT):
+                        case 1:
                             szRender = "NONLIGHT";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::BLUR):
+                        case 2:
                             szRender = "BLUR";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::GLOW):
+                        case 3:
+                            szRender = "EFFECT BLEND";
+                            break;
+                        case 4:
+                            szRender = "CLEAN GLOW";
+                            break;
+                        case 5:
                             szRender = "GLOW";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::DISTORTION):
+                        case 6:
                             szRender = "DISTORTION";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::BLEND):
+                        case 7:
                             szRender = "BLEND";
-                            bisRender = true;
                             break;
                         }
-                        if (bisRender) {
-                            if (ImGui::Selectable(szRender.c_str(), sel))
-                                m_tParticleData.eSelectRender = RENDER(i);
-                            if (sel)
-                                ImGui::SetItemDefaultFocus();
-                        }
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tParticleData.iSelectRender = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
                     }
                     ImGui::EndCombo();
                 }
@@ -1931,65 +1933,67 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
                 string szRender;
-                switch (m_tSpriteParticleData.eSelectRender)
-                {
-                case RENDER::NONBLEND:
+                switch (m_tSpriteParticleData.iSelectRender) {
+                case 0:
                     szRender = "NONBLEND";
                     break;
-                case RENDER::NONLIGHT:
+                case 1:
                     szRender = "NONLIGHT";
                     break;
-                case RENDER::BLUR:
+                case 2:
                     szRender = "BLUR";
                     break;
-                case RENDER::GLOW:
+                case 3:
+                    szRender = "EFFECT BLEND";
+                    break;
+                case 4:
+                    szRender = "CLEAN GLOW";
+                    break;
+                case 5:
                     szRender = "GLOW";
                     break;
-                case RENDER::DISTORTION:
+                case 6:
                     szRender = "DISTORTION";
                     break;
-                case RENDER::BLEND:
+                case 7:
                     szRender = "BLEND";
                     break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
-                        _bool bisRender = false;
-                        _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.eSelectRender);
+                    for (_uint i = 0; i <= 7; ++i) {
+                        _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.iSelectRender);
                         switch (i)
                         {
-                        case ENUM_CLASS(RENDER::NONBLEND):
+                        case 0:
                             szRender = "NONBLEND";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::NONLIGHT):
+                        case 1:
                             szRender = "NONLIGHT";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::BLUR):
+                        case 2:
                             szRender = "BLUR";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::GLOW):
+                        case 3:
+                            szRender = "EFFECT BLEND";
+                            break;
+                        case 4:
+                            szRender = "CLEAN GLOW";
+                            break;
+                        case 5:
                             szRender = "GLOW";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::DISTORTION):
+                        case 6:
                             szRender = "DISTORTION";
-                            bisRender = true;
                             break;
-                        case ENUM_CLASS(RENDER::BLEND):
+                        case 7:
                             szRender = "BLEND";
-                            bisRender = true;
                             break;
                         }
-                        if (bisRender) {
-                            if (ImGui::Selectable(szRender.c_str(), sel))
-                                m_tSpriteParticleData.eSelectRender = RENDER(i);
-                            if (sel)
-                                ImGui::SetItemDefaultFocus();
-                        }
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tSpriteParticleData.iSelectRender = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
                     }
                     ImGui::EndCombo();
                 }
@@ -2188,65 +2192,68 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
 
             string szRender;
-            switch (m_tMeshData.eSelectRender)
+            switch (m_tMeshData.iSelectRender)
             {
-            case RENDER::NONBLEND:
+            case 0:
                 szRender = "NONBLEND";
                 break;
-            case RENDER::NONLIGHT:
+            case 1:
                 szRender = "NONLIGHT";
                 break;
-            case RENDER::BLUR:
+            case 2:
                 szRender = "BLUR";
                 break;
-            case RENDER::GLOW:
+            case 3:
+                szRender = "EFFECT BLEND";
+                break;
+            case 4:
+                szRender = "CLEAN GLOW";
+                break;
+            case 5:
                 szRender = "GLOW";
                 break;
-            case RENDER::DISTORTION:
+            case 6:
                 szRender = "DISTORTION";
                 break;
-            case RENDER::BLEND:
+            case 7:
                 szRender = "BLEND";
                 break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
-                    _bool   bisRender = false;
-                    _bool sel = i == ENUM_CLASS(m_tMeshData.eSelectRender);
+                for (_uint i = 0; i <= 7; ++i) {
+                    _bool sel = i == m_tMeshData.iSelectRender;
                     switch (i)
                     {
-                    case ENUM_CLASS(RENDER::NONBLEND):
+                    case 0:
                         szRender = "NONBLEND";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::NONLIGHT):
+                    case 1:
                         szRender = "NONLIGHT";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::BLUR):
+                    case 2:
                         szRender = "BLUR";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::GLOW):
+                    case 3:
+                        szRender = "EFFECT BLEND";
+                        break;
+                    case 4:
+                        szRender = "CLEAN GLOW";
+                        break;
+                    case 5:
                         szRender = "GLOW";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::DISTORTION):
+                    case 6:
                         szRender = "DISTORTION";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::BLEND):
+                    case 7:
                         szRender = "BLEND";
-                        bisRender = true;
                         break;
                     }
-                    if (bisRender) {
                         if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tMeshData.eSelectRender = RENDER(i);
+                            m_tMeshData.iSelectRender = i;
                         if (sel)
                             ImGui::SetItemDefaultFocus();
-                    }
                 }
                 ImGui::EndCombo();
             }
@@ -2443,65 +2450,68 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
 
             string szRender;
-            switch (m_tSpriteData.eSelectRender)
+            switch (m_tSpriteData.iSelectRender)
             {
-            case RENDER::NONBLEND:
+            case 0:
                 szRender = "NONBLEND";
                 break;
-            case RENDER::NONLIGHT:
+            case 1:
                 szRender = "NONLIGHT";
                 break;
-            case RENDER::BLUR:
+            case 2:
                 szRender = "BLUR";
                 break;
-            case RENDER::GLOW:
+            case 3:
+                szRender = "EFFECT BLEND";
+                break;
+            case 4:
+                szRender = "CLEAN GLOW";
+                break;
+            case 5:
                 szRender = "GLOW";
                 break;
-            case RENDER::DISTORTION:
+            case 6:
                 szRender = "DISTORTION";
                 break;
-            case RENDER::BLEND:
+            case 7:
                 szRender = "BLEND";
                 break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = ENUM_CLASS(RENDER::NONBLEND); i <= ENUM_CLASS(RENDER::BLEND); ++i) {
-                    _bool   bisRender = false;
-                    _bool sel = i == ENUM_CLASS(m_tSpriteData.eSelectRender);
+                for (_uint i = 0; i <= 7; ++i) {
+                    _bool sel = i == ENUM_CLASS(m_tSpriteData.iSelectRender);
                     switch (i)
                     {
-                    case ENUM_CLASS(RENDER::NONBLEND):
+                    case 0:
                         szRender = "NONBLEND";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::NONLIGHT):
+                    case 1:
                         szRender = "NONLIGHT";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::BLUR):
+                    case 2:
                         szRender = "BLUR";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::GLOW):
+                    case 3:
+                        szRender = "EFFECT BLEND";
+                        break;
+                    case 4:
+                        szRender = "CLEAN GLOW";
+                        break;
+                    case 5:
                         szRender = "GLOW";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::DISTORTION):
+                    case 6:
                         szRender = "DISTORTION";
-                        bisRender = true;
                         break;
-                    case ENUM_CLASS(RENDER::BLEND):
+                    case 7:
                         szRender = "BLEND";
-                        bisRender = true;
                         break;
                     }
-                    if (bisRender) {
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tSpriteData.eSelectRender = RENDER(i);
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
-                    }
+                    if (ImGui::Selectable(szRender.c_str(), sel))
+                        m_tSpriteData.iSelectRender = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
@@ -2582,66 +2592,69 @@ void CParticle_Setting::Update(_float fTimeDelta)
         ImGui::DragFloat("Trail Speed", reinterpret_cast<_float*>(&speed), 0.01f, -100.f, 100.f);
         m_pTrailEffect->Set_Speed(speed);
         string szRender;
-        switch (m_tTrailData.eSelectRender)
+        switch (m_tTrailData.iSelectRender)
         {
-        case RENDER::NONBLEND:
+        case 0:
             szRender = "NONBLEND";
             break;
-        case RENDER::NONLIGHT:
+        case 1:
             szRender = "NONLIGHT";
             break;
-        case RENDER::BLUR:
+        case 2:
             szRender = "BLUR";
             break;
-        case RENDER::GLOW:
+        case 3:
+            szRender = "EFFECT BLEND";
+            break;
+        case 4:
+            szRender = "CLEAN GLOW";
+            break;
+        case 5:
             szRender = "GLOW";
             break;
-        case RENDER::DISTORTION:
+        case 6:
             szRender = "DISTORTION";
             break;
-        case RENDER::BLEND:
+        case 7:
             szRender = "BLEND";
             break;
         }
         if (ImGui::BeginCombo("RenderType", szRender.c_str()))
         {
-            for (_uint i = 2; i <= 7; ++i) {
+            for (_uint i = 0; i <= 7; ++i) {
 
-                _bool bisRender = false;
-                _bool sel = i == ENUM_CLASS(m_tTrailData.eSelectRender);
+                _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
                 switch (i)
                 {
-                case ENUM_CLASS(RENDER::NONBLEND):
+                case 0:
                     szRender = "NONBLEND";
-                    bisRender = true;
                     break;
-                case ENUM_CLASS(RENDER::NONLIGHT):
+                case 1:
                     szRender = "NONLIGHT";
-                    bisRender = true;
                     break;
-                case ENUM_CLASS(RENDER::BLUR):
+                case 2:
                     szRender = "BLUR";
-                    bisRender = true;
                     break;
-                case ENUM_CLASS(RENDER::GLOW):
+                case 3:
+                    szRender = "EFFECT BLEND";
+                    break;
+                case 4:
+                    szRender = "CLEAN GLOW";
+                    break;
+                case 5:
                     szRender = "GLOW";
-                    bisRender = true;
                     break;
-                case ENUM_CLASS(RENDER::DISTORTION):
+                case 6:
                     szRender = "DISTORTION";
-                    bisRender = true;
                     break;
-                case ENUM_CLASS(RENDER::BLEND):
+                case 7:
                     szRender = "BLEND";
-                    bisRender = true;
                     break;
                 }
-                if (bisRender) {
-                    if (ImGui::Selectable(szRender.c_str(), sel))
-                        m_tTrailData.eSelectRender = RENDER(i);
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
+                if (ImGui::Selectable(szRender.c_str(), sel))
+                    m_tTrailData.iSelectRender = i;
+                if (sel)
+                    ImGui::SetItemDefaultFocus();
             }
             ImGui::EndCombo();
         }

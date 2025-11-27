@@ -27,7 +27,6 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 
 void CMeshEffect::Priority_Update(_float fTimeDelta)
 {
-
 }
 
 void CMeshEffect::Update(_float fTimeDelta)
@@ -42,7 +41,7 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime))
 		return;
 	if(0 <= m_fTime)
-		m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+		m_pGameInstance->Add_RenderGroup(m_eRender, this);
 }
 
 HRESULT CMeshEffect::Render()
@@ -80,6 +79,42 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
 
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
+
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
 
 	ID3D11Buffer* pBuffer = nullptr;
@@ -115,6 +150,42 @@ void CMeshEffect::Update(MESH_DATA tData)
 	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
 }
 
 HRESULT CMeshEffect::Set_Texture(_int iIndex, const char* szPrototype)
@@ -172,9 +243,6 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))

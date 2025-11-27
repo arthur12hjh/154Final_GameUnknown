@@ -931,7 +931,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
-		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx"))))
+		CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx"))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),

@@ -32,7 +32,7 @@ public:
 #endif
 
 private:
-	list<class CGameObject*> m_GlowObjects = {};
+	list<class CGameObject*> m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::END)] = {};
 	_bool					m_bisWeight;
 public:
 	static CGlow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -31,7 +31,7 @@ public:
         _float2	fDissolveUVSize;
 
         _int	iBegin = {};
-        RENDER	eSelectRender;
+        _int	iSelectRender;
     }TRAIL_DATA;
 
 private:
@@ -58,6 +58,7 @@ private:
     CTrail* m_pTrail = { nullptr };
     TRAIL_DATA  m_tData;
     _float    m_fTime;
+    RENDER			m_eRender;
 private:
     HRESULT							Ready_Components();
     HRESULT							Bind_ShaderResources();

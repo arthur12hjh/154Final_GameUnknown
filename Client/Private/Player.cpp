@@ -174,17 +174,18 @@ void CPlayer::Update(_float fTimeDelta)
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
 	m_fTime += fTimeDelta;
-	if (1 < m_fTime) {
+	if (1 <= m_fTime) {
 		CEffect::EFFECT_TRANSFORM_DESC desc;
 		desc.fRotationPerSec = 1.f;
 		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
+		//desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+		desc.vPos = XMVectorSet(5, 3, 0, 1);
 		desc.fRot = _float3(0, 0, 0);
+		desc.fSize = 1.f;
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Test"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Effect"), &desc)))
 			return;
-		m_fTime = 0;
+		m_fTime = 0.f;
 	}
 	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 

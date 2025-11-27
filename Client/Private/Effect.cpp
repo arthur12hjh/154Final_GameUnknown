@@ -48,6 +48,7 @@ HRESULT CEffect::Initialize(void* pArg)
         }
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
+        m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
     }
     if (nullptr != m_pParentMat) {
         XMStoreFloat4x4(&m_CombinedWorldMatrix,
@@ -140,7 +141,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 
         MeshDesc.iBegin = ReadInt(fileBinaryStream);
-        MeshDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        MeshDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext, &MeshDesc);
         m_pMeshEffects.push_back(pMeshEffect);
@@ -193,7 +194,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
         ParticleDesc.iBegin = ReadInt(fileBinaryStream);
         ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -254,7 +255,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
         SpriteParticleDesc.iBegin = ReadInt(fileBinaryStream);
         SpriteParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        SpriteParticleDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
@@ -282,7 +283,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         SpriteDesc.iUV = ReadInt2(fileBinaryStream);
         SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
         SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.eSelectRender = ReadRENDER(fileBinaryStream);
+        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
         SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
         CSpriteUVEffect* pSprite = CSpriteUVEffect::Create(m_pDevice, m_pContext, &SpriteDesc);
         m_pSpriteEffects.push_back(pSprite);
