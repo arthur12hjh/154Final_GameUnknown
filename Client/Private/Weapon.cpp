@@ -24,7 +24,6 @@ HRESULT CWeapon::Initialize(void* pArg)
 {	
 	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
 	m_pSocketMatrix = pDesc->pSocketMatrix;
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -33,33 +32,43 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scale(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->Rotation(0.f, XMConvertToRadians(90.f), 0.f);
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));
+	m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
+	m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(180.f), XMConvertToRadians(90.f));
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
+
+
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+
 
 	return S_OK;
 }
 
 void CWeapon::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+	
 }
 
 void CWeapon::Update(_float fTimeDelta)
 {	
-	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
-	for (size_t i = 0; i < 3; i++)	
-		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
-	
-		
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
 {
+	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+	for (size_t i = 0; i < 3; i++)
+		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+
+
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -79,7 +88,7 @@ HRESULT CWeapon::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
@@ -89,7 +98,6 @@ HRESULT CWeapon::Render()
 			return E_FAIL;
 	}
 
-	
 
 	return S_OK;
 }
@@ -121,7 +129,7 @@ HRESULT CWeapon::Render_Shadow()
 HRESULT CWeapon::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Weapon"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 	
@@ -164,7 +172,7 @@ CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : pGraphic_Device");
+		MSG_BOX("Failed to Created : CWeapon");
 		Safe_Release(pInstance);
 	}
 

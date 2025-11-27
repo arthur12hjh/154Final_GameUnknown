@@ -14,6 +14,7 @@
 #include "Interaction_Component.h"
 #include "Effect.h"
 #include "Trail.h"
+#include "Notify.h"
 #include "TrailEffect.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
@@ -97,7 +98,7 @@ void CPlayer::Update(_float fTimeDelta)
 
 	Update_FSM(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
 	{
 		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
 			Change_PlayerMode(PLAYER_MODE::LOCKON);
@@ -108,32 +109,32 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 
-	m_fTime += fTimeDelta;
-	if (1 <= m_fTime) {
-		CEffect::EFFECT_TRANSFORM_DESC desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 1.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-
-
-		desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = nullptr;
-		desc.vPos = XMVectorSet(5, 3, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 2.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-		m_fTime = 0.f;
-	}
+	//m_fTime += fTimeDelta;
+	//if (1 <= m_fTime) {
+	//	CEffect::EFFECT_TRANSFORM_DESC desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 1.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//
+	//	desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = nullptr;
+	//	desc.vPos = XMVectorSet(5, 3, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 2.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//	m_fTime = 0.f;
+	//}
 	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
@@ -213,15 +214,14 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
-	//CWeapon::WEAPON_DESC	WeaponDesc{};
-	//WeaponDesc.pParentState = &m_iState;
-	//WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SWORD");
-	//WeaponDesc.pParentTransform = m_pTransformCom;
-	//
-	///* Part_Weapon */
-	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-	//	TEXT("Part_Weapon"), &WeaponDesc)))
-	//	return E_FAIL;
+	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	WeaponDesc.pParentTransform = m_pTransformCom;
+	
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
+		return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -257,6 +257,9 @@ HRESULT CPlayer::Ready_PartObjects()
 		TEXT("Part_Trail"), &Traildesc)))
 		return E_FAIL;
 	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
+
+	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	return S_OK;
 }

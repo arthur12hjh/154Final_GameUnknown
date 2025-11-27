@@ -108,7 +108,6 @@ void CCharacter::Update(_float fTimeDelta)
 
 	//	m_pNavigationCom->Compute_Height(m_pTransformCom);
 
-Progress:
 	__super::Update(fTimeDelta);
 }
 
