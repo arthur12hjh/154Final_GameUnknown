@@ -35,7 +35,7 @@ public:
 	_float				Get_AnimationRatio();
 
 protected:
-	class CModel* m_pBodyModelCom = { nullptr };
+	class CModel*		m_pBodyModelCom = { nullptr };
 
 protected:
 	HRESULT Import_ModelPtr();

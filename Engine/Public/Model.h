@@ -196,6 +196,8 @@ private:
 
 	HRESULT Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification);
 
+	HRESULT Bind_ChannelAndKeyFrameBuffer();
+
 	
 
 
