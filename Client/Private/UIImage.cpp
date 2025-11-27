@@ -166,7 +166,7 @@ HRESULT CUIImage::Execute(const UI_EVENT_DESC& EventDesc)
 	const _wstring& Arg = EventDesc.szArg;
 
 	// 애니메이션
-	if (Type == TEXT("PlayAnimation"))
+	if (Type == TEXT("PlayAnimEvent"))
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 		auto AnimTag = m_tUIDesc.m_AnimTags.find(Arg);
@@ -189,48 +189,56 @@ void CUIImage::CallbackEvent(void* pArg)
 {
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
+	
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	
+	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+	if (AnimTag != m_tUIDesc.m_AnimTags.end())
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+	
+	Safe_Release(pHUD);
 
-	switch (arg->Type)
-	{
-	case UI_EVENT_ARG_DESC::BTN_STATE:
-	{
-		auto* state = static_cast<CUIButton::BTN_STATE*>(arg->pData);
-		if (!state) break;
+	//switch (arg->Type)
+	//{
+	//case UI_EVENT_ARG_DESC::BTN_STATE:
+	//{
+	//	auto* state = static_cast<CUIButton::BTN_STATE*>(arg->pData);
+	//	if (!state) break;
 
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-		if (*state == CUIButton::BTN_STATE::HOVER)
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
-		else // DEFAULT/CLICK/SELECT → 필요에 맞게 매핑
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
+	//	if (*state == CUIButton::BTN_STATE::HOVER)
+	//	{
+	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+	//		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+	//			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+	//	}
+	//	else // DEFAULT/CLICK/SELECT → 필요에 맞게 매핑
+	//	{
+	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+	//		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+	//			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+	//	}
 
-		Safe_Release(pHUD);
-		break;
-	}
+	//	Safe_Release(pHUD);
+	//	break;
+	//}
 
-	case UI_EVENT_ARG_DESC::INT:
-		// int value = *static_cast<int*>(arg->pData);
-		break;
+	//case UI_EVENT_ARG_DESC::INT:
+	//	// int value = *static_cast<int*>(arg->pData);
+	//	break;
 
-	case UI_EVENT_ARG_DESC::FLOAT:
-		// float v = *static_cast<float*>(arg->pData);
-		break;
+	//case UI_EVENT_ARG_DESC::FLOAT:
+	//	// float v = *static_cast<float*>(arg->pData);
+	//	break;
 
-	case UI_EVENT_ARG_DESC::WSTRING:
-		// auto* ws = static_cast<_wstring*>(arg->pData);
-		break;
+	//case UI_EVENT_ARG_DESC::WSTRING:
+	//	 //auto* ws = static_cast<_wstring*>(arg->pData);
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
 	/*UI_EVENT_ARG_DESC* pEventArg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 

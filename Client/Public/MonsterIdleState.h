@@ -3,6 +3,7 @@
 #include "State.h"
 
 NS_BEGIN(Client)
+struct Naytiba_NetWork_Desc;
 struct Naytiba_Desc;
 
 class CMonsterIdleState final : public CState
@@ -17,13 +18,16 @@ public:
 
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
 	// void* 디폴트 매개변수 잡아서 넘겨받습니다.
-	virtual		void							Start(void* pArg = nullptr);
+	virtual		void							Start(void* pArg = nullptr, CState* pPreState = nullptr);
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
 
 private :
+	const Naytiba_NetWork_Desc*					m_pStaticOwnerInfo = { nullptr };
 	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
+
+	_bool										m_bIsPlayStartAnim = {false};
 
 public:
 	static	CMonsterIdleState*					Create(void* pArg);

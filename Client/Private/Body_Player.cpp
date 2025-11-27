@@ -6,12 +6,12 @@
 #include "Player.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
 CBody_Player::CBody_Player(const CBody_Player& Prototype) 
-	: CPartObject{ Prototype }
+	: CPlayer_Parts{ Prototype }
 {
 }
 
@@ -29,8 +29,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 {	
 	BODY_PLAYER_DESC* pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -45,28 +43,21 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 void CBody_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
 }
 
 void CBody_Player::Update(_float fTimeDelta)
 { 
-	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
+	// FSM쪽에서 애니 재생.
+	// m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	
-#endif
 }
 
 HRESULT CBody_Player::Render()
@@ -142,16 +133,6 @@ HRESULT CBody_Player::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
-
-	SphereDesc.fRadius = 0.5f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -199,5 +180,4 @@ CGameObject* CBody_Player::Clone(void* pArg)
 void CBody_Player::Free()
 {
 	__super::Free();
-	Safe_Release(m_pColliderCom);
 }

@@ -678,7 +678,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\AIController.cpp">
       <Filter>01.Utility\20.AI\AI_Controller</Filter>
-   </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MotionBlur.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\MotionBlur</Filter>
     </ClCompile>
@@ -999,24 +999,6 @@
     <Filter Include="01.Utility\03.Components\Collider\Manager">
       <UniqueIdentifier>{ec64baad-3e2d-4981-a8d6-b65bd11ba6dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent">
-      <UniqueIdentifier>{8da1091f-79d9-4902-911a-d0f2ddd3441b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController">
-      <UniqueIdentifier>{0630c47d-ed31-4731-a976-ec8fdfc6b276}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter">
-      <UniqueIdentifier>{e2676f0c-92da-4fd5-b645-9b1c62215ea4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
-      <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\PxUserData">
-      <UniqueIdentifier>{21be063d-19c8-4368-9fcb-820e3f35dfb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\PhysxComponent\RigidBody">
-      <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\Percetion">
       <UniqueIdentifier>{36840924-272c-42dd-b912-0008b128a140}</UniqueIdentifier>
     </Filter>
@@ -1086,8 +1068,23 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\SSAO\ShaderFile">
       <UniqueIdentifier>{24a875b6-3daa-4024-9cab-5c55dd970916}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\00. STRUCT">
-      <UniqueIdentifier>{4b15b1be-61f5-4bfb-8d5c-c1141135879c}</UniqueIdentifier>
+    <Filter Include="01.Utility\03.Components\PhysxComponent">
+      <UniqueIdentifier>{8da1091f-79d9-4902-911a-d0f2ddd3441b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController">
+      <UniqueIdentifier>{0630c47d-ed31-4731-a976-ec8fdfc6b276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CControllerHitReporter">
+      <UniqueIdentifier>{e2676f0c-92da-4fd5-b645-9b1c62215ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTBehaviorCallback">
+      <UniqueIdentifier>{f41350bc-5568-49a4-a559-5c64eb75d1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\PxUserData">
+      <UniqueIdentifier>{21be063d-19c8-4368-9fcb-820e3f35dfb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\RigidBody">
+      <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

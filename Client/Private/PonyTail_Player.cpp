@@ -10,12 +10,12 @@
 #include "Player.h"
 
 CPonyTail_Player::CPonyTail_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
 CPonyTail_Player::CPonyTail_Player(const CPonyTail_Player& Prototype)
-	: CPartObject{ Prototype }
+	: CPlayer_Parts{ Prototype }
 {
 }
 
@@ -29,7 +29,6 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 {
 	PONYTAIL_PLAYER_DESC* pDesc = static_cast<PONYTAIL_PLAYER_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
 	//m_pSocketMatrix = pDesc->pSocketMatrix;
 	//strcpy_s(m_szBoneTag, pDesc->szBoneTag);
 
@@ -44,13 +43,12 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 
-
 	return S_OK;
 }
 
 void CPonyTail_Player::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+
 }
 
 void CPonyTail_Player::Update(_float fTimeDelta)
@@ -63,25 +61,6 @@ void CPonyTail_Player::Update(_float fTimeDelta)
 	//
 	//if (*m_pParentState & CCharacter::STATE_WALK)
 	//	m_pModelCom->Set_AnimationIndex(4);	
-
-
-	vector<CBone*>* pFaceBone = m_pModelCom->Get_Bones();
-
-	for (auto& pBone : *pFaceBone)
-	{
-		for (auto& pBodyBone : m_mapBodyBones)
-		{
-			if (TRUE == pBone->Compare_Name(pBodyBone.first))
-			{
-				_matrix matBuffer = pBodyBone.second->Get_TransformationMatrix();
-				pBone->Set_TransformationMatrix(matBuffer);
-				break;
-			}
-		}
-
-	}
-
-	m_pModelCom->Attach_CombinedTransformationMatrix();
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
@@ -107,7 +86,13 @@ HRESULT CPonyTail_Player::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
+
+		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
+			return E_FAIL;
+
+		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
@@ -194,14 +179,8 @@ HRESULT CPonyTail_Player::Bind_BoneToPartBody(void* pArg)
 {
 	CBody_Player* pBody = static_cast<CBody_Player*>(pArg);
 
-	// map<_char*, _float4x4*>의 형태로 각 본의 위치 포인터를 전달 받음
+	m_pBodyModelCom = static_cast<CModel*>(pBody->Find_Component(TEXT("Com_Model")));
 
-	vector<CBone*>* pBodyBones = static_cast<CModel*>(pBody->Find_Component(TEXT("Com_Model")))->Get_Bones();
-
-	for (auto& pBone : *pBodyBones)
-	{
-		m_mapBodyBones.emplace(pBone->Get_Name(), pBone);
-	}
 
 	return S_OK;
 }

@@ -69,7 +69,7 @@ public:
 
 #pragma region PROTOTYPE_MANAGER
 	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
-	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix);
+	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
 	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
 	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
@@ -109,6 +109,9 @@ public:
 	_matrix								Get_Transform_Matrix(D3DTS eState);
 	const _float4x4*					Get_Transform_Float4x4_Inverse(D3DTS eState);
 	_matrix								Get_Transform_Matrix_Inverse(D3DTS eState);
+	const _float4*						Get_CamRight();
+	const _float4*						Get_CamUp();
+	const _float4*						Get_CamLook();
 	const _float4*						Get_CamPosition();
 	// 항등행렬 꺼내오기
 	_matrix								GetIdentityMatrix();

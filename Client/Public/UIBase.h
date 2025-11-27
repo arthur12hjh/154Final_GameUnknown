@@ -48,11 +48,16 @@ public:
 		m_iZOrder = iDepth;
 	}
 
-	void Set_Parent(CUIBase* pParent) {
+	void Set_Parent(CGameObject* pParent) {
 		m_pParent = pParent;
 	}
 	CUIBase* Get_Parent() {
 		return dynamic_cast<CUIBase*>(m_pParent);
+	}
+
+	void Set_DrawType(DRAW_TYPE eDrawType) {
+		m_tUIDesc.iDrawType = ENUM_CLASS(eDrawType);
+		m_eDrawType = eDrawType;
 	}
 
 	HRESULT Add_Child(CGameObject* pObj);
@@ -70,6 +75,7 @@ public:
 	void Set_FillAmount(_float fFillAmount);
 	void Set_TintColor(_float4 vColor);
 	void Set_Texture_Index(_uint iTextureIndex);
+	void Set_GlowIntensity(_float fIntensity);
 	HRESULT Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex);
 
 	void Trigger_Event(const _wstring& TriggerTag, void* pArg); // ActionTag에 의해 이벤트 동작 수행(Execute) 및 이벤트 전달(Notify)

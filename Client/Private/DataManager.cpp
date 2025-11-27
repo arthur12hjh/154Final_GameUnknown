@@ -17,7 +17,7 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
-    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { this->LoadBossData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
 
     return S_OK;
 }
@@ -50,18 +50,18 @@ const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring
 }
 
 
-HRESULT CDataManager::LoadBossData(void* pArg)
+HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {
     THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
     vector<string> BossDataList; 
     BossDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/BossData/Boss.csv", BossDataList);
+    CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
 
 
     size_t iMaxSize = BossDataList.size();
 
-    for (auto i = 15; i < iMaxSize;)
+    for (auto i = 16; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         _uint iBossID = atoi(BossDataList[i++].c_str());
@@ -83,14 +83,16 @@ HRESULT CDataManager::LoadBossData(void* pArg)
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
         BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
 
+        BossDesc.fColliderExtents.x = (_float)atof(BossDataList[i++].c_str());
+        BossDesc.fColliderExtents.y = (_float)atof(BossDataList[i++].c_str());
+        BossDesc.fColliderExtents.z = (_float)atof(BossDataList[i++].c_str());
+
         _uint iNumSkill = atoi(BossDataList[i++].c_str());
         for (_uint j = 0; j < iNumSkill; ++j)
             BossDesc.iAttackList.push_back(atoi(BossDataList[i++].c_str()));
 
         m_pNaytibaDatas.emplace(iBossID, BossDesc);
     }
-
-    Desc->OnCompleted(this_thread::get_id());
     return S_OK;
 }
 

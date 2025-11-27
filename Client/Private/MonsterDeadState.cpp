@@ -18,12 +18,12 @@ HRESULT CMonsterDeadState::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CMonsterDeadState::Start(void* pArg)
+void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 
 	string   szAnimationName = "Result_State_KnockDown_S";
-	auto pDesc = static_cast<MONSTER_DEAD_STATE_DESC*>(pArg);
+	auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
 	auto pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	// 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 

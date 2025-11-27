@@ -1,7 +1,8 @@
 #include "pch.h"
-
 #include "Character.h"
 #include "GameManager.h"
+
+#include "GameInstance.h"
 
 CCharacter::CCharacter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CEntity(pDevice, pContext),
@@ -80,4 +81,6 @@ void CCharacter::Free()
 	__super::Free();
 
 	Safe_Release(m_pGameManager);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pCCT);
 }

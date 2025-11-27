@@ -33,6 +33,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 	m_iZOrder = m_tUIDesc.iDepth;
 
 	m_eVisibility = (VISIBILITY)m_tUIDesc.iVisiblity;
+	m_eDrawType = (DRAW_TYPE)m_tUIDesc.iDrawType;
 
 #ifdef _DEBUG
 	if (FAILED(Ready_Components_For_Debug()))
@@ -55,14 +56,14 @@ void CUIBase::Priority_Update(_float fTimeDelta)
 void CUIBase::Update(_float fTimeDelta)
 {
 	////부모 따라가기
-	if (m_pParent)
+	if (dynamic_cast<CUIBase*>(m_pParent))
 	{
 		m_eVisibility = m_pParent->GetVisibility();
 		
 		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
-		//m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
+		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
@@ -70,11 +71,13 @@ void CUIBase::Update(_float fTimeDelta)
 
 void CUIBase::Late_Update(_float fTimeDelta)
 {
-	/*if (m_eVisibility == VISIBILITY::VISIBLE)
-		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);*/
-
+#ifdef _DEBUG
+	if (m_eVisibility == VISIBILITY::VISIBLE)
+		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#elif
 	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
+#endif
 }
 
 HRESULT CUIBase::Render()
@@ -153,6 +156,12 @@ void CUIBase::Set_Texture_Index(_uint iTextureIndex)
 		m_tUIDesc.m_tUITextureDesc.iTextureIndex = iTextureIndex;
 }
 
+void CUIBase::Set_GlowIntensity(_float fIntensity)
+{
+	if (m_tUIDesc.Get_ShaderDesc())
+		m_tUIDesc.m_tUIShaderDesc.fGlowIntensity = fIntensity;
+}
+
 // 툴에서 텍스쳐 변경할 때 사용
 HRESULT CUIBase::Set_TextureCom(_wstring szTextureTag, _wstring szProtoTag, _uint iTextureIndex)
 {
@@ -228,7 +237,6 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 
 void CUIBase::Render_Debug_Rect()
 {
-#ifdef _DEBUG
 	CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 	if (pUIHUD && pUIHUD->Get_Show_Debug_Rect())
@@ -261,7 +269,6 @@ void CUIBase::Render_Debug_Rect()
 		return;
 	}
 	Safe_Release(pUIHUD);
-#endif
 }
 
 HRESULT CUIBase::Bind_Debug_ShaderResources()
@@ -340,6 +347,11 @@ HRESULT CUIBase::Ready_Events()
 
 HRESULT CUIBase::Initialize_ShaderResources()
 {
+	_float fAlpha{ 1.f };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
+		return E_FAIL;
+
 	_float2 vUV{};
 	vUV.x = 1.f;
 	vUV.y = 1.f;
@@ -366,6 +378,43 @@ HRESULT CUIBase::Initialize_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &vTintColor, sizeof(_float4))))
+		return E_FAIL;
+
+	_bool bDiscardBlack{ false };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bDiscardBlack", &bDiscardBlack, sizeof(_bool))))
+		return E_FAIL;
+
+	_bool bUseGlow{ false };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &bUseGlow, sizeof(_bool))))
+		return E_FAIL;
+
+	_bool bUsePulse{ false };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUsePulse", &bUsePulse, sizeof(_bool))))
+		return E_FAIL;
+
+	_bool bUseScroll{ false };
+	_float fScrollSpeed{ 0.f };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bScroll", &bUseScroll, sizeof(_bool))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_ScrollSpeed", &fScrollSpeed, sizeof(_float))))
+		return E_FAIL;
+
+	_float fTime{ 0.f };
+	_float g_PulseSpeed{ 0.f };
+	_float g_GlowIntensity{ 0.f };
+	_float g_GlowSpread{ 0.f };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseTime", &fTime, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseSpeed", &g_PulseSpeed, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &g_GlowIntensity, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &g_GlowSpread, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -395,7 +444,7 @@ HRESULT CUIBase::Bind_ShaderResources()
 
 		_float fAlpha{ m_tUIDesc.fAlpha };
 
-		/*if(dynamic_cast<CUIBase*>(m_pParent))
+		/*if(m_pParent && dynamic_cast<CUIBase*>(m_pParent))
 			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;*/
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
@@ -431,6 +480,42 @@ HRESULT CUIBase::Bind_ShaderResources()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &m_tUIDesc.m_tUIShaderDesc.bUseTintColor, sizeof(_bool))))
 				return E_FAIL;
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &m_tUIDesc.m_tUIShaderDesc.vTintColor, sizeof(_float4))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bDiscardBlack)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bDiscardBlack", &m_tUIDesc.m_tUIShaderDesc.bDiscardBlack, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseGlow)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &m_tUIDesc.m_tUIShaderDesc.fGlowSpread, sizeof(_float))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUsePulseEffect)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bUsePulse", &m_tUIDesc.m_tUIShaderDesc.bUsePulseEffect, sizeof(_bool))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_bScroll", &m_tUIDesc.m_tUIShaderDesc.bUseScroll, sizeof(_bool))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_ScrollSpeed", &m_tUIDesc.m_tUIShaderDesc.fScrollSpeed, sizeof(_float))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseTime", &m_tUIDesc.m_tUIShaderDesc.fPulseTime, sizeof(_float))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseSpeed", &m_tUIDesc.m_tUIShaderDesc.fPulseSpeed, sizeof(_float))))
 				return E_FAIL;
 		}
 	}

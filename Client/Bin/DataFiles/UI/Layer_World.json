@@ -1,0 +1,27 @@
+[
+    {
+        "TextureDesc": {
+            "iPass": 0,
+            "iTextureIndex": 0,
+            "szProtoTag": "Prototype_Component_UI_Texture_Btn_Empty",
+            "szTextureComTag": "Com_Texture_UI_Btn_Empty"
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fSizeX": 100.0,
+        "fSizeY": 100.0,
+        "fX": 0.0,
+        "fY": 0.0,
+        "iDepth": 1,
+        "iDrawType": 0,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 1,
+        "szLayerTag": "Layer_World",
+        "szPoolTag": "Pool_Test",
+        "szProtoTag": "Prototype_GameObject_UI_Image",
+        "szUIID": "World_Panel_Image_1-1",
+        "szUITag": "World_Test"
+    }
+]

@@ -7,9 +7,14 @@
 #include "NayitbaPartBody.h"
 
 #include "TargetComponent.h"
+#include "GameManager.h"
 #include "BossController.h"
 #include "MonsterHitState.h"
+
 #include "GameManager.h"
+#include "Player.h"
+#include "PlayerCCTHitReporter.h"
+#include "PlayerBehaviorCallback.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
@@ -33,97 +38,145 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 	NAYITBA_DESC* pDesc = static_cast<NAYITBA_DESC*>(pArg);
 	m_iMonsterID = pDesc->iMonsterID;
-	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
-	if (nullptr != pNayitbaInfo)
-	{
-		m_pInitMonsterInfo = pNayitbaInfo;
-		size_t iNumSkill = m_pInitMonsterInfo->iAttackList.size();
 
-		m_MonsterInfo.iAttackList.resize(iNumSkill);
-		for (size_t i = 0; i < iNumSkill; ++i)
-		{
-			m_MonsterInfo.iAttackList[i] = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[i]);
-		}
-	}
-	
-	if (FAILED(ADD_Components()))
+	if (FAILED(Ready_CharacterData()))
 		return E_FAIL;
 
 	if (FAILED(ADD_PartObjects()))
 		return E_FAIL;
 
-	m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-	m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
-
-	m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
-	m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
-
-	m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
+	if (FAILED(ADD_Components()))
+		return E_FAIL;
 
 	return S_OK;
 }
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
-	__super::Priority_Update(fTimeDelta);
 	m_pAIController->Priority_Update(fTimeDelta);
+	m_pCCT->Update_PrePxPosition(m_pTransformCom);
+
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
 	{
-		// ÀÌ°Å ³ªÁß¿¡ ÀçÈÆÀÌÇüÀÌ¶û ¿¬µ¿ÇÒ°ÅÀÓ
-		CHARACTER_SKILL_DESC SkillDesc = {};
-		SkillDesc.eATK_Direction = ATTACK_DIRECTION::ATK_LEFT;
-
-		CMonsterHitState::MONSTER_HIT_STATE_DESC pHitDesc = {};
-		pHitDesc.pSkillData = &SkillDesc;
-		pHitDesc.pAttacker = m_pGameManager->GetGameCharacter();
-		m_MonsterInfo.iCurrentHealth -= 50.f;
-		m_pAIController->Damage(&pHitDesc);
-
-		Safe_Release(pHitDesc.pAttacker);
+		m_fMotionRatio -= 1.0f;
+		if (0 >= m_fMotionRatio)
+			m_fMotionRatio = 0.f;
+	}
+	
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
+	{
+		m_fMotionRatio += 1.0f;
+		if (1 <= m_fMotionRatio)
+			m_fMotionRatio = 10.f;
 	}
 
-	if (m_MonsterInfo.bIsBattle)
+#pragma region Hit
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 0.f, -1.f, 0.f };
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 0.f, 1.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 10.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { 1.f, 0.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	//{
+	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
+	//	CHARACTER_SKILL_DESC SkillDesc = {};
+	//	//SkillDesc.iSkillDamage = 50.f;
+	//	strcpy_s(SkillDesc.szAnimationName, "");
+
+	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
+	//	DamageDesc.vHitDir = { -1.f, 0.f, 0.f };
+	//	DamageDesc.pSkillData = &SkillDesc;
+	//	Damaged(&DamageDesc);
+	//	Safe_Release(DamageDesc.pAttacker);
+	//}
+#pragma endregion
+	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
 		{
-			BattleEvent(nullptr, false);
+			BattleEvent(nullptr, NAYTIBA_STATE::DEFAULT);
 		}
 	}
 
-
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	//{
-	//	// ÀÌ°Å ³ªÁß¿¡ ÀçÈÆÀÌÇüÀÌ¶û ¿¬µ¿ÇÒ°ÅÀÓ
-	//	m_MonsterInfo.bIsBattle = !m_MonsterInfo.bIsBattle;
-	//	
-
-
-	//}
-
+	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
+
+	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
-	// ¿©±â¿¡¼­ ÄÃ¸µ ÇÒ°ÅÀÓ
 	__super::Late_Update(fTimeDelta);
+
+	//ëª¨ë“  íŠ¸ëžœìŠ¤í¼ì˜ ì´ë™ì´ ëë‚œ í›„ ì‹¤í–‰ë˜ì–´ì•¼ í•¨.
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 #ifdef _DEBUG
 	m_pAISenceCom->Update_Debuge();
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif // _DEBUG
-
 
 }
 
 HRESULT CNayitba::Render()
 {
+	return S_OK;
+}
+
+HRESULT CNayitba::Damaged(void* pArg)
+{
+	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+
+	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
+	m_pAIController->Damage(pArg);
+
 	return S_OK;
 }
 
@@ -137,35 +190,99 @@ const list<CGameObject*>* CNayitba::GetTargetList()
 	return m_pAISenceCom->GetSearchAllObject();
 }
 
+const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom)
+{
+	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
+	size_t iSkillIndex = m_MonsterInfo.iAttackList.size();
+	if (0 == iSkillIndex)
+		return nullptr;
+
+	if (bIsRandom)
+	{
+		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)iSkillIndex);
+		pSkill = m_MonsterInfo.iAttackList[iRandomIndex];
+	}
+	else
+	{
+		if (iSkillIndex <= m_iSkillIndex)
+			m_iSkillIndex = 0;
+
+		pSkill = m_MonsterInfo.iAttackList[m_iSkillIndex];
+		m_iSkillIndex++;
+	}
+
+	return pSkill;
+}
+
 CAIController* CNayitba::GetController()
 {
 	Safe_AddRef(m_pAIController);
 	return m_pAIController;
 }
 
+const list<CGameObject*>* CNayitba::GetTraceObejectList()
+{
+	return m_pAISenceCom->GetSearchAllObject();
+}
+
+HRESULT CNayitba::Ready_CharacterData()
+{
+	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
+	if (nullptr != pNayitbaInfo)
+	{
+		m_pInitMonsterInfo = pNayitbaInfo;
+		size_t iNumSkill = m_pInitMonsterInfo->iAttackList.size();
+
+		m_MonsterInfo.iAttackList.resize(iNumSkill);
+		for (size_t i = 0; i < iNumSkill; ++i)
+		{
+			m_MonsterInfo.iAttackList[i] = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[i]);
+		}
+	
+		if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::MIMESSIS;
+		else
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
+
+		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
+		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+
+		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
+		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
+
+		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
+
+		m_eTeam = OBJECT_TEAM::ENEMY;
+	}
+
+	return S_OK;
+}
+
 HRESULT CNayitba::ADD_Components()
 {
-	// ¿©±â¼­ Ãæµ¹Ã³¸®¿ë ÄÝ¶óÀÌ´õ ´Þ°í
-	// AI ¼¾¼­ ´Þ¾Æ¼­ Ãæµ¹ Ã³¸®ÇÑ¹ø º¸ÀÚ
-	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT(""), TEXT("AI_Sence"), (CComponent**)&m_pAISenceCom)))
-		return E_FAIL;*/
+	/* Com_Collider_AABB */
+	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	AABBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		return E_FAIL;
+
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
 	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-	SenceComDesc.fAiSearchRadius = 30.f;
+	SenceComDesc.fAiSearchRadius = 60.f;
 	SenceComDesc.fAiTargetSearchDistance = 10.f;
-	SenceComDesc.m_fAiTargetLostTime = 5.f;
+	SenceComDesc.m_fAiTargetLostTime = 20.f;
 
 	/* Prototype_Component_TargetComponent */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
-	if (AI_TYPE::AGGRESSIVE == m_pInitMonsterInfo->eAI_Type)
-	{
-		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, true); });
-	}
-		
-	// ±×´ÙÀ½ ¿©±â¼­ FSM ÀÎÁö Çàµ¿Æ®¸®¾Æ
+	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
+	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -192,7 +309,29 @@ HRESULT CNayitba::ADD_Components()
 			return E_FAIL;
 	}
 
+	/* Com_CCT */
+	CCharacterController::CCT_DESC Desc;
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("Player_CCT");
+
+	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
+	Desc.tUserData = tUserData;
+	//ìº¡ìŠ ì»¨íŠ¸ë¡¤ëŸ¬ì—ì„œ xëŠ” êµ¬ ì„±ë¶„ yëŠ” ê¸°ë‘¥ ì„±ë¶„
+	Desc.vSize = { m_pInitMonsterInfo->fColliderExtents.x, m_pInitMonsterInfo->fColliderExtents.y, 0.f };
+	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
+	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
+	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
+	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
+		return E_FAIL;
+
+	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
+
 	m_pAIController = static_cast<CAIController*>(pInstnace);
+
+
 	return S_OK;
 }
 
@@ -213,17 +352,14 @@ HRESULT CNayitba::ADD_PartObjects()
 	return S_OK;
 }
 
-void CNayitba::BattleEvent(CGameObject* pTarget, _bool bIsBattle)
+void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
-	m_MonsterInfo.bIsBattle = bIsBattle;
-	// ÀÌ°Å ´Ù¸¥ ÇÃ·¡±× ³Ñ°Ü¼­
-	// Battle Start & Battle End »óÅÂ ¾Ö´Ï¸ÞÀÌ¼Ç ³Ö¾î ÁÖÀÚ
-
+	m_MonsterInfo.eNaytibaState = eState;
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
-	if (m_MonsterInfo.bIsBattle)
-		m_szEntryAnim += "_Start_Battle01";
-	else 
-		m_szEntryAnim += "_End_Battle01";
+	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
+		m_szEntryAnim += "_BattleStart";
+	else
+		m_szEntryAnim += "_BattleEnd";
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -251,6 +387,8 @@ CGameObject* CNayitba::Clone(void* pArg)
 void CNayitba::Free()
 {
 	__super::Free();
+
+
 
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);

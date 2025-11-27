@@ -42,23 +42,25 @@ public:
 	virtual HRESULT			Render(_float4 vColor);
 #endif // _DEBUG
 
+	void					SetColliderHitType(HIT_TYPE eHitType);
+
 	void					BindBeginOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> BeginEvent);
 	void					BindOverlappingEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> OverlappingEvent);
 	void					BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> EndEvent);
 
-	void					ADD_HitObejct(CGameObject* pObject);
-	void					ADD_IgnoreObejct(HIT_TYPE typeID);
-	void					ADD_OnlyHitObject(HIT_TYPE typeID);
+	void					ADD_HitObject(CGameObject* pObject);
+	void					ADD_IgnoreObject(HIT_TYPE eHitType);
+	void					ADD_OnlyHitObject(HIT_TYPE eHitType);
 
 	void					CallFunction();
 	void					ResetCollision();
 
-	const COLLIDER&			GetCollisionType() const { return m_CollisionType; }
-	const HIT_TYPE&			GetCollisionHitType() const { return m_CollisionHitType; }
+	const COLLIDER&			GetCollierType() const { return m_eType; }
+	const HIT_TYPE&			GetCollierHitType() const { return m_eHitType; }
 
 protected:
-	COLLIDER					m_CollisionType = {};
-	HIT_TYPE					m_CollisionHitType = {};
+	COLLIDER					m_eType = {};
+	HIT_TYPE					m_eHitType = {};
 	
 	list<CGameObject*>			m_OldHitList = {};
 	list<CGameObject*>			m_HitList = {};

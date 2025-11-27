@@ -21,14 +21,16 @@ public:
 	virtual		HRESULT							Initialize(void* pArg = nullptr);
 	virtual		void							Update(_float fTimeDelta);
 
-	virtual		HRESULT							Change_State(const WCHAR* LayerTag, void* pArg = nullptr) = 0;
+	virtual		HRESULT							Change_State(const WCHAR* LayerTag, void* pArg = nullptr, _bool bIsForce = false) = 0;
+	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) = 0;
+
+	CState*										GetCurrentState() { return m_pCurrentState; }
 
 protected:
 	CState*										m_pCurrentState = nullptr;
 	unordered_map<_wstring, CState*>			m_pStates;
 	
 protected:
-	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) = 0;
 	CState*										Find_State(const WCHAR* StateTag);
 
 public:

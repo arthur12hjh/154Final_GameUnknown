@@ -157,12 +157,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Bamboo.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\BossBlackBoard.h" />
     <ClInclude Include="..\Public\BossController.h" />
     <ClInclude Include="..\public\BoxOpenEvent.h" />
+    <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
@@ -170,9 +172,23 @@
     <ClInclude Include="..\Public\MonsterFSM.h" />
     <ClInclude Include="..\Public\MonsterHitState.h" />
     <ClInclude Include="..\Public\MonsterIdleState.h" />
+    <ClInclude Include="..\Public\MonsterMimesisController.h" />
     <ClInclude Include="..\Public\MonsterMoveState.h" />
+    <ClInclude Include="..\Public\MonsterStateMimesis.h" />
+    <ClInclude Include="..\public\MonsterTranslationState.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
+    <ClInclude Include="..\Public\PlayerState.h" />
+    <ClInclude Include="..\Public\Player_AerialAttack.h" />
+    <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
+    <ClInclude Include="..\Public\Player_EvadeState.h" />
+    <ClInclude Include="..\Public\Player_LightAttackState.h" />
+    <ClInclude Include="..\Public\Player_IdleState.h" />
+    <ClInclude Include="..\Public\Player_JumpState.h" />
+    <ClInclude Include="..\Public\Player_LandingState.h" />
+    <ClInclude Include="..\Public\Player_Parts.h" />
+    <ClInclude Include="..\Public\Player_WalkEndState.h" />
+    <ClInclude Include="..\Public\Player_WalkState.h" />
     <ClInclude Include="..\Public\Prob_Building.h" />
     <ClInclude Include="..\Public\Prob_Vehicle.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
@@ -268,7 +284,6 @@
     <ClInclude Include="..\public\QuestManager.h" />
     <ClInclude Include="..\public\RewordEvent.h" />
     <ClInclude Include="..\Public\ShaderDebugger.h" />
-    <ClInclude Include="..\Public\ShaderTestModel.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
     <ClInclude Include="..\Public\SpriteEffect.h" />
@@ -318,12 +333,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Bamboo.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\BossBlackBoard.cpp" />
     <ClCompile Include="..\Private\BossController.cpp" />
     <ClCompile Include="..\private\BoxOpenEvent.cpp" />
+    <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
@@ -331,9 +348,23 @@
     <ClCompile Include="..\Private\MonsterFSM.cpp" />
     <ClCompile Include="..\Private\MonsterHitState.cpp" />
     <ClCompile Include="..\Private\MonsterIdleState.cpp" />
+    <ClCompile Include="..\Private\MonsterMimesisController.cpp" />
     <ClCompile Include="..\Private\MonsterMoveState.cpp" />
+    <ClCompile Include="..\Private\MonsterStateMimesis.cpp" />
+    <ClCompile Include="..\private\MonsterTranslationState.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
+    <ClCompile Include="..\Private\PlayerState.cpp" />
+    <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
+    <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
+    <ClCompile Include="..\Private\Player_EvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_LightAttackState.cpp" />
+    <ClCompile Include="..\Private\Player_IdleState.cpp" />
+    <ClCompile Include="..\Private\Player_JumpState.cpp" />
+    <ClCompile Include="..\Private\Player_LandingState.cpp" />
+    <ClCompile Include="..\Private\Player_Parts.cpp" />
+    <ClCompile Include="..\Private\Player_WalkEndState.cpp" />
+    <ClCompile Include="..\Private\Player_WalkState.cpp" />
     <ClCompile Include="..\Private\Prob_Building.cpp" />
     <ClCompile Include="..\Private\Prob_Vehicle.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
@@ -445,7 +476,6 @@
     <ClCompile Include="..\private\QuestManager.cpp" />
     <ClCompile Include="..\private\RewordEvent.cpp" />
     <ClCompile Include="..\Private\ShaderDebugger.cpp" />
-    <ClCompile Include="..\Private\ShaderTestModel.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />
     <ClCompile Include="..\Private\SpriteEffect.cpp" />

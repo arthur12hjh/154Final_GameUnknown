@@ -42,6 +42,7 @@ private :
 	_float2							m_vAttackTime = {};
 
 	_float2							m_vDelayTime = { 0.f, 1.f };
+	_bool							m_bIsDead = { false };
 
 private :
 	HRESULT							Ready_Components();

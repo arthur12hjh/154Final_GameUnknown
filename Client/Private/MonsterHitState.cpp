@@ -18,7 +18,7 @@ HRESULT CMonsterHitState::Initialize(void* pArg)
     return S_OK;
 }
 
-void CMonsterHitState::Start(void* pArg)
+void CMonsterHitState::Start(void* pArg, CState* pPreState)
 {
     // 대충 여기서 맞은 스킬따라서 분기
     // 뭐 기본스킬이면 맞았을때 공격아니면 피격모션 나오고 하는 등
@@ -26,7 +26,7 @@ void CMonsterHitState::Start(void* pArg)
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
 
     string   szAnimationName = "Result_Hit_Stand_Light";
-    auto pDesc = static_cast<MONSTER_HIT_STATE_DESC*>(pArg);
+    auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
     auto pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
     // 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 
@@ -41,30 +41,44 @@ void CMonsterHitState::Start(void* pArg)
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
-    _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
-    _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
-    if (0 <= fScalar)
+    m_bIsEnableChange = false;
+    if (0 == strcmp("", pSkillData->szHitAnimationName))
     {
-        szAnimationName += "_Fw";
-        switch (pSkillData->eATK_Direction)
+        _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
+        _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
+        if (0 <= fScalar)
         {
-        case ATTACK_DIRECTION::ATK_RIGHT:
-            szAnimationName += "_Rw";
-            break;
-        case ATTACK_DIRECTION::ATK_LEFT:
-            szAnimationName += "_Lw";
-            break;
-        case ATTACK_DIRECTION::ATK_DOWN:
-            szAnimationName += "_Dw";
-            break;
-        case ATTACK_DIRECTION::ATK_UP:
-            szAnimationName += "_Uw";
-            break;
+            //szAnimationName += "_Fw";
+
+            // Right 백터랑 맞은 방향이랑 내적하면 스칼라가 나오고
+            // 그걸 acos해서 라디안으로 바꾸자
+            _float fRadian = atan2f(pDesc->vHitDir.y, pDesc->vHitDir.x);
+            
+            fRadian = XMConvertToDegrees(fRadian);
+            if (45.f <= fRadian && 135.f > fRadian)
+            {
+                szAnimationName += "_Fw_Uw";
+            }
+            else if (135.f <= fRadian && 225.f > fRadian)
+            {
+                szAnimationName += "_Lw";
+            }
+            else if (225.f <= fRadian && 315.f > fRadian)
+            {
+                szAnimationName += "_Fw_Dw";
+            }
+            else
+            {
+                szAnimationName += "_Rw";
+            }
         }
+        else
+            szAnimationName += "_Bw";
     }
     else
-        szAnimationName += "_Bw";
-
+    {
+        szAnimationName = pSkillData->szHitAnimationName;
+    }
     pEntity->Set_Animation(szAnimationName.c_str(), false);
 }
 
@@ -72,7 +86,13 @@ void CMonsterHitState::Update(_float fTimeDelta)
 {
     //맞으면 여기서 들어온 스킬 따라서 분기해서 하기
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
-    m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
+ 
+    if (pEntity->Play_Animation(fTimeDelta))
+    {
+        m_bIsFinished = true;
+        m_bIsEnableChange = true;
+    }
+       
 }
 
 void CMonsterHitState::End()

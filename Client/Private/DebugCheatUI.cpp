@@ -21,9 +21,7 @@ HRESULT CDebugCheatUI::Initialize()
     m_pGameManager = CGameManager::GetInstance();
     Safe_AddRef(m_pGameManager);
 
-
     m_pImGuiManager = CImGuiManager::GetInstance();
-
     strcpy_s(m_szSelectCamera, "FreeCamera");
 
 #endif
@@ -66,6 +64,31 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
 HRESULT CDebugCheatUI::Render()
 {
     return S_OK;
+}
+
+void CDebugCheatUI::SetLevelMainCamera()
+{
+    Safe_Release(m_pSelectCamera);
+    m_pSelectCamera = m_pGameInstance->GetMainCamera();
+
+    if (m_pSelectCamera)
+    {
+        auto pCameras = m_pGameInstance->GetAllCamera();
+        for (auto& iter : *pCameras)
+        {
+            CStringHelper::ConvertWideToUTF(iter.first.c_str(), m_szCameraComboTag);
+            if (iter.second == m_pSelectCamera)
+                strcpy_s(m_szSelectCamera, m_szCameraComboTag);
+
+            auto pFree_Camera = static_cast<CCamera_Free*>(m_pSelectCamera);
+            pFree_Camera->GetCameraLock(m_bIsCameraLock);
+        }
+    }
+    else
+    {
+        strcpy_s(m_szSelectCamera, "Not Find Main Camera");
+    }
+
 }
 
 void CDebugCheatUI::DrawObjectDebug()

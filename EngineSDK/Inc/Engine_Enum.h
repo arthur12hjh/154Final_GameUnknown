@@ -3,6 +3,11 @@
 
 namespace Engine
 {
+
+#define ROOTFLAG_RESET		0
+#define ROOTFLAG_INIT		(1 << 0)
+#define ROOTFLAG_ACTIVE		(1 << 1)
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG
@@ -11,7 +16,15 @@ namespace Engine
 	enum class COLLIDER			{ AABB, OBB, SPHERE, END };
 
 	// 추가 예정
-	enum class HIT_TYPE			{ ALL, OBJECT, END };
+	enum class HIT_TYPE			{ ALL,
+								  OBJECT,
+								  STATIC,
+								  PLAYER,
+								  MONSTER,
+								  SENCE,
+								  INTERACTION,
+								  END };
+
 	enum class LIGHT_TYPE		{ POINT = 1, SPOT, DIRECTIONAL, END };
 
 	enum class MOUSEKEYSTATE	{ LBUTTON, RBUTTON, WBUTTON, XBUTTON };
@@ -21,7 +34,7 @@ namespace Engine
 	enum class KEY_INPUT		{ KEYBOARD, MOUSE, END };
 								// 이전 프레임 뷰 투영도 추가
 	enum class D3DTS			{ VIEW, PROJ, END };
-	enum class MODEL_TYPE		{ ANIM, NONANIM, END };
+	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, END };
 								
 	enum class VISIBILITY		{ VISIBLE, HIDDEN, END };
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };

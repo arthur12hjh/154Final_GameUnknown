@@ -1,8 +1,17 @@
 #pragma once
 #include "Engine_Defines.h"
-#include <vector>
+#include "Transform.h"
+#include "CharacterController.h"
 
 using namespace std; 
+
+namespace Engine
+{
+	class CGameObject;
+	class CTransform;
+	class CCharacterController;
+}
+
 
 namespace Client
 {
@@ -20,22 +29,26 @@ namespace Client
 		float			fCriticalPercent;
 		float			fCriticalDamage;
 		float			fLinkAttackApplyDamage;
+
 	}CHARACTER_NETWORK_DESC;
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	// 인게임에서 바뀔거 요거
 	typedef struct Player_Desc
 	{
-		long long		iCurrentHealth;
-		long long		iCurrentShield;
-		long long		iCurrentBetaEnergy;
+		long long				iCurrentHealth;
+		long long				iCurrentShield;
+		long long				iCurrentBetaEnergy;
 
-		long long		iCurrentAttackPoint;
-		long long		iCurrentShieldATK;
+		long long				iCurrentAttackPoint;
+		long long				iCurrentShieldATK;
 
-		float			fCurrentCTPercent;
-		float			fCurrentCTDamage;
-		float			fCurrentLinkApplyDamage;
+		float					fCurrentCTPercent;
+		float					fCurrentCTDamage;
+		float					fCurrentLinkApplyDamage;
+
+		CTransform*				pPlayerTransform = { nullptr };
+		CCharacterController*	pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -43,10 +56,13 @@ namespace Client
 	enum class SKILL_TYPE { PARRYABLE, END };
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int	iSkillID;
+		unsigned int		iSkillID;
 
-		char			szAnimationName[256];
-		long long		iSkillDamage;
+		char				szAnimationName[256];
+		char				szHitAnimationName[256];
+
+		long long			iSkillDamage;
+		float				fRootMotionRatio;
 
 		ATTACK_DIRECTION	eATK_Direction;
 		DIRECTION			eDirection;
@@ -77,11 +93,14 @@ namespace Client
 		float				fAttackCoolTime;
 		float				fAttackRange;
 
+		_float3				fColliderExtents;
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
+	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
+	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
 	typedef struct Naytiba_Desc
 	{
 		unsigned int		iCurrentPhase;
@@ -93,10 +112,9 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		_bool				bIsBattle;
-
+		NAYTIBA_STATE		eNaytibaState;
+		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
-
 	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
@@ -110,4 +128,13 @@ namespace Client
 
 		vector<_uint>		RewardLists;
 	}QUEST_STRUCT;
+
+	typedef struct Default_Damage_Desc
+	{
+		CGameObject*		pAttacker;
+		_float3				vHitPoint;
+		_float3				vHitDir;
+
+		void*				pSkillData;
+	}DEFAULT_DAMAGE_DESC;
 }

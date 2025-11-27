@@ -6,6 +6,7 @@
 #include "BoxOpenEvent.h"
 #include "Interaction_Component.h"
 #include "UIBase.h"
+#include "UIHUD.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -33,6 +34,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 
     m_eState = BOX_STATE::UNLCOK;
     m_pModelCom->Set_AnimationIndex(1, false);
+
     return S_OK;
 }
 
@@ -66,6 +68,7 @@ void CCanBox::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+
 		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
@@ -125,6 +128,8 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
+    m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+    m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -185,6 +190,11 @@ HRESULT CCanBox::Bind_ShaderResources()
 
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
+    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+    m_pInteractionUI = pUIHUD->Rent_WorldUI(TEXT("Pool_Test"), this);
+    
+    Safe_Release(pUIHUD);
+
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
 
@@ -209,9 +219,16 @@ void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 HRESULT CCanBox::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::END);
+        m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
 
     m_bIsInteractionAble = false;
+
+    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+    
+    pUIHUD->Return_WorldUI(m_pInteractionUI);
+    
+    Safe_Release(pUIHUD);
+
     return S_OK;
 }
 

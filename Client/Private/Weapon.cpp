@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Weapon.h"
 
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "Weapon.h"
 
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }

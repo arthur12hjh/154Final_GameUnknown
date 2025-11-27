@@ -10,6 +10,10 @@
 #include "GameObject.h"
 #include "ChangeLevelEvent.h"
 
+#ifdef _DEBUG
+#include "ImGuiManager.h"
+#endif // _DEBUG
+
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
 	
@@ -29,13 +33,14 @@ HRESULT CLevel_Logo::Initialize()
 	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI")))) 
 		return E_FAIL;
 
 	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 0.5f);
 
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
 	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
+	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 
 	return S_OK;
 }

@@ -1,0 +1,39 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "GlowIntensity",
+            "vEndParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                1.0099999904632568,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "Size",
+            "vEndParam": [
+                150.0,
+                150.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.30000001192092896,
+    "isBeapBeap": false,
+    "isInfluenceChildren": true,
+    "isLoop": false,
+    "szAnimTag": "Glow_Wave_0"
+}

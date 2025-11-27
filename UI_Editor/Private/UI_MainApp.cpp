@@ -4,9 +4,13 @@
 
 #include "GameInstance.h"
 
+#include "Camera_Free.h"
+
 #include "UI_Level_Loading.h"
 #include "GUIManager.h"
 #include "UIResourceStore.h"
+
+#include "RigidBody.h"
 
 /********************************
 * 대재훈의 은총 이 얼마나 관대한가 *
@@ -127,6 +131,16 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 	/* For.Prototype_Component_Shader_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_UI.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_RigidBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
+		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CUIObject abstract : public CGameObject
 {
 public:
-	enum class DRAW_TPYE { WORLD, SCREEN, END };
+	enum class DRAW_TYPE { WORLD, SCREEN, END };
 
 	typedef struct tagUIObjectDesc : public CGameObject::GAMEOBJECT_DESC
 	{
@@ -37,7 +37,7 @@ public:
 
 protected:
 	CGameObject*			m_pParent = { nullptr };
-	DRAW_TPYE				m_eDrawType = { DRAW_TPYE::SCREEN };
+	DRAW_TYPE				m_eDrawType = { DRAW_TYPE::SCREEN };
 	RECT					m_ScreenSize = {};
 
 	_uint					m_iZOrder = {};

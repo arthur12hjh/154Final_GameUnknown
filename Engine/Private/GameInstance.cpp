@@ -371,9 +371,9 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _wstring& strProto
 	return m_pPrototype_Manager->Add_Prototype(iLevelIndex, strPrototypeTag, pPrototype);
 }
 
-HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, _fmatrix PreTransformMatrix)
+HRESULT CGameInstance::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix)
 {
-	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, PreTransformMatrix);
+	return m_pPrototype_Manager->Add_SkeletalPrototype(iLevelIndex, pDevice, pContext,  strPrototypeTag, pModelFilePath, strSkeletalPath, szPartPrototypeTagList, szPartModelFilePathList, PreTransformMatrix);
 }
 
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg)
@@ -509,6 +509,21 @@ const _float4x4* CGameInstance::Get_Transform_Float4x4_Inverse(D3DTS eState)
 _matrix CGameInstance::Get_Transform_Matrix_Inverse(D3DTS eState)
 {
 	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState);
+}
+
+const _float4* CGameInstance::Get_CamRight()
+{
+	return m_pPipeLine->Get_CamRight();
+}
+
+const _float4* CGameInstance::Get_CamUp()
+{
+	return m_pPipeLine->Get_CamUp();
+}
+
+const _float4* CGameInstance::Get_CamLook()
+{
+	return m_pPipeLine->Get_CamLook();
 }
 
 const _float4* CGameInstance::Get_CamPosition()
@@ -1067,12 +1082,13 @@ void CGameInstance::Release_Engine()
 {
 	DestroyInstance();
 
+	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
-	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pPipeLine);
@@ -1084,7 +1100,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pInteract_Manager);
-	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);

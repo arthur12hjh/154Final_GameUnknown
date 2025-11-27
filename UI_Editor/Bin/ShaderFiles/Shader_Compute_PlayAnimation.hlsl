@@ -110,7 +110,7 @@ cbuffer AnimationGlobalBuffer : register(b0)
     uint g_bIsLoop;
     uint g_iNumBones;
     uint g_iNumChannels;
-    uint g_BatchOffset;
+    uint g_iRootIndex;
 }
 
 StructuredBuffer<BoneInfo> InputBone : register(t0);
@@ -118,6 +118,7 @@ StructuredBuffer<ChannelInfo> InputChannel : register(t1);
 StructuredBuffer<KeyFrameInfo> InputKeyFrame : register(t2);
 StructuredBuffer<BoneTransformMatrixOut> InputLocalMatrix : register(t3);
 RWStructuredBuffer<BoneTransformMatrixOut> g_CombinedOut : register(u0);
+RWStructuredBuffer<BoneTransformMatrixOut> g_RootOut : register(u1);
 
 float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
 {
@@ -174,10 +175,9 @@ float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
         float4x4 matRotation = MakeRotationMatrix(vRotation);
         float4x4 matTranslation = MakeTranslationMatrix(float4(vTranslation, 1.f));
 
-        return mul(mul(matScale, matRotation), matTranslation); // S * R * T
+        return mul(mul(matScale, matRotation), matTranslation);
     }
 }
-
 [numthreads(128, 1, 1)]
 void CombinedMatrices(uint3 Gid : SV_GroupID,
                       uint3 DTid : SV_DispatchThreadID,
@@ -188,7 +188,7 @@ void CombinedMatrices(uint3 Gid : SV_GroupID,
     if (iBoneIndex >= g_iNumBones)
         return;
 
-    // 트랙 위치 한 번만 정리
+    // 트랙 위치 정리
     float t = g_fCurrentTrackPosition;
     if (g_bIsLoop != 0 && g_fDuration > 0.0f)
     {
@@ -197,27 +197,52 @@ void CombinedMatrices(uint3 Gid : SV_GroupID,
             t += g_fDuration;
     }
 
-    // 1) 자기 Local Matrix 계산
-    float4x4 BoneLocal = ComputeLocalMatrixForBone(iBoneIndex, t);
+    // 1) 원본 LocalMatrix 계산
+    float4x4 BoneLocalOriginal = ComputeLocalMatrixForBone(iBoneIndex, t);
 
-    // 2) Combined = Local(Self)
-    float4x4 Combined = BoneLocal;
+    // 스키닝용 로컬은 Root일 경우 Translation 초기화
+    float4x4 BoneLocalForSkin = BoneLocalOriginal;
+    if (iBoneIndex == g_iRootIndex)
+    {
+        BoneLocalForSkin._41 = 0;
+        BoneLocalForSkin._42 = 0;
+        BoneLocalForSkin._43 = 0;
+    }
 
-    // 3) 부모 체인을 타고 올라가면서 Local을 계속 곱해준다.
+    // 2) Combined 계산 시작
+    float4x4 CombinedOriginal = BoneLocalOriginal;
+    float4x4 CombinedSkin = BoneLocalForSkin;
+    
+    // 부모 체인을 타고 Combined 생성
     int parentIndex = InputBone[iBoneIndex].iParentIndex;
-
     while (parentIndex >= 0)
     {
-        float4x4 ParentLocal = ComputeLocalMatrixForBone(parentIndex, t);
-        
-        Combined = mul(Combined, ParentLocal);
+        float4x4 PLocal = ComputeLocalMatrixForBone(parentIndex, t);
+        CombinedOriginal = mul(CombinedOriginal, PLocal);
+
+        float4x4 PLocalSkin = PLocal;
+        if (parentIndex == g_iRootIndex)
+        {
+            PLocalSkin._41 = 0;
+            PLocalSkin._42 = 0;
+            PLocalSkin._43 = 0;
+        }
+        CombinedSkin = mul(CombinedSkin, PLocalSkin);
 
         parentIndex = InputBone[parentIndex].iParentIndex;
     }
 
-    // 4) 최종적으로 PreTransform까지 적용
-    Combined = mul(Combined, g_PreTransformMatrix);
+    CombinedOriginal = mul(CombinedOriginal, g_PreTransformMatrix);
+    CombinedSkin = mul(CombinedSkin, g_PreTransformMatrix);
 
-    g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocal;
-    g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = Combined;
+    // 3) GPU 스키닝용 버퍼(u1)에 기록
+    g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = BoneLocalForSkin;
+    g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = CombinedSkin;
+
+    // 4) CPU RootMotion 용은 RootBone만 저장
+    if (iBoneIndex == g_iRootIndex)
+    {
+        g_RootOut[0].BoneLocalTransformMatrix = BoneLocalOriginal;
+        g_RootOut[0].BoneCombinedTransformMatrix = CombinedOriginal;
+    }
 }

@@ -1,6 +1,7 @@
 #include "Interaction_Component.h"
 
 #include "GameInstance.h"
+#include "GameObject.h"
 
 CInteraction_Component::CInteraction_Component(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CComponent(pDevice, pContext)
@@ -39,6 +40,7 @@ void CInteraction_Component::SetOwner(CGameObject* pGameObject)
 
 void CInteraction_Component::Update_Com()
 {
+    m_pOBBColiider->UpdateColiision(XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr()));
     m_pGameInstance->ADD_Collider(m_pOBBColiider);
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pOBBColiider);
@@ -53,6 +55,21 @@ void CInteraction_Component::Action_InteractionEvent(CGameObject* pGameObject)
         m_InteractionFunc(pGameObject);
 }
 
+void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)
+{
+    m_pOBBColiider->SetColliderHitType(eHitType);
+}
+
+void CInteraction_Component::ADD_InteractionIgnoreObject(HIT_TYPE eHitType)
+{
+    m_pOBBColiider->ADD_IgnoreObject(eHitType);
+}
+
+void CInteraction_Component::ADD_InteractionOnlyHitObject(HIT_TYPE typeID)
+{
+    m_pOBBColiider->ADD_OnlyHitObject(typeID);
+}
+
 #ifdef _DEBUG
 HRESULT CInteraction_Component::Render()
 {
@@ -65,7 +82,7 @@ HRESULT CInteraction_Component::Render()
 
 _bool CInteraction_Component::Is_Overlap(CCollider* pCollider)
 {
-    return m_pOBBColiider->Intersect(pCollider->GetCollisionType(), pCollider);
+    return m_pOBBColiider->Intersect(pCollider->GetCollierType(), pCollider);
 }
 
 _bool CInteraction_Component::Is_RayHit(_vector vTargetPos, _vector vDir, void* OutDesc)

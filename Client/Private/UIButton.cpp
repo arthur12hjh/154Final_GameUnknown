@@ -150,7 +150,7 @@ HRESULT CUIButton::Execute(const UI_EVENT_DESC& EventDesc)
 	const _wstring& ActionTag = EventDesc.szActionTag;
 
 	// 애니메이션
-	if (Type == TEXT("PlayAnimation"))
+	if (Type == TEXT("PlayAnimEvent"))
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 		auto AnimTag = m_tUIDesc.m_AnimTags.find(ActionTag);
@@ -162,11 +162,7 @@ HRESULT CUIButton::Execute(const UI_EVENT_DESC& EventDesc)
 	}
 	if (Type == TEXT("ActionEvent"))
 	{
-		if (Arg == TEXT("Change_Level"))
-		{
-			/*if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
-				return E_FAIL;*/
-		}
+		
 	}
 	// 액션
 	//if (Type == TEXT("ActionEvent"))
@@ -184,17 +180,6 @@ HRESULT CUIButton::Execute(const UI_EVENT_DESC& EventDesc)
 	
 	return S_OK;
 }
-
-//HRESULT CUIButton::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
-//{
-//	for (auto& pEventHandle : m_pEventHandles[szEventTag])
-//	{
-//		if (pEventHandle)
-//			pEventHandle->Notify(&m_eBtnState);
-//	}
-//
-//	return S_OK;
-//}
 
 void CUIButton::CallbackEvent(void* pArg)
 {

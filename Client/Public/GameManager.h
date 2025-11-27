@@ -31,13 +31,13 @@ public :
 	// 어떤 캐릭터를 플레이어가 지금 조종중인지를 바인딩
 	// 이전에 플레이어 바인딩되어있던건 참조 카운트 감소하고
 	// 새로운 플레이어 바인딩되면 참조카운트 증가함
-	void						Bind_GameCharacter(CGameObject* pCharacter);
+	void						Bind_GameCharacter(class CPlayer* pCharacter);
 
 	// 플레이어블 캐릭터 꺼내오기
 	// 캐릭터 꺼내오면 레퍼런스 증가함 
 	// 다 쓰면 감소시켜주세요
-	CGameObject*				GetGameCharacter();
-
+	class CPlayer*				GetGameCharacter();
+	const PLAYER_DESC*			Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion
@@ -69,7 +69,7 @@ private :
 	CGameInstance*				m_pGameInstance = nullptr;
 	CQuestManager*				m_pQuestManager = nullptr;
 
-	CGameObject*				m_pPlayer = nullptr;
+	CPlayer*					m_pPlayer = nullptr;
 	CDataManager*				m_pDataManager = nullptr;
 
 private :

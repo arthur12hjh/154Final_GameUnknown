@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 class CGameObject;
+class CComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -32,9 +33,19 @@ private:
 	list<CGameObject*>*			m_pSelectLayerObject = {};
 	list<CGameObject*>			m_pSelectList = {};
 
+	CComponent*					m_pSelectComponent = { nullptr };
+
+#pragma region ColDebug
+	_float						m_vColliderRotation[4] = {};
+	_float						m_vColliderSize[3] = {};
+#pragma endregion
+
+
 private :
 	void						DarwLayerSelect();
 	void						DrawObjectInfo(CGameObject* pDrawObject);
+
+	void						DrawEditorCollider(CCollider* pCollider);
 
 public:
 	static	CDebugHierarchy*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
