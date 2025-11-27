@@ -49,12 +49,12 @@ void CMonsterTranslationState::Update(_float fTimeDelta)
     {
         _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
         _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
-        vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
         _vector vLerpEndDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+        vLerpEndDir.m128_f32[1] = m_vLerpStartLook.y = 0.f;
+
         _float fRatio = m_vLerpTime.x / m_vLerpTime.y;
         fRatio = Clamp<_float>(fRatio, 0.f, 1.f);
-
         _vector LerpLook = XMVectorLerp(XMLoadFloat3(&m_vLerpStartLook), vLerpEndDir, fRatio);
         m_pOwner->GetTransform()->LookAt(vOwnerPos + LerpLook);
 

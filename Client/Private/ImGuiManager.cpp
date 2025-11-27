@@ -61,6 +61,15 @@ void CImGuiManager::SetImGuiObjectVisiblilty(const WCHAR* ImGuiTag, VISIBILITY e
 	pImGui->SetVisibility(eVisiblility);
 }
 
+void CImGuiManager::SetLevelFreeCamera()
+{
+	auto pImGui = Find_ImGuiObject(TEXT("ImGui_CheatUI"));
+	if (nullptr == pImGui)
+		return;
+
+	static_cast<CDebugCheatUI *>(pImGui)->SetLevelMainCamera();
+}
+
 HRESULT CImGuiManager::ADD_ImGuiObject()
 {
 #pragma region Profiler

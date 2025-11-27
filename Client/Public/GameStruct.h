@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine_Defines.h"
-#include <vector>
 #include "Transform.h"
 #include "CharacterController.h"
 
@@ -9,6 +8,8 @@ using namespace std;
 namespace Engine
 {
 	class CGameObject;
+	class CTransform;
+	class CCharacterController;
 }
 
 
@@ -28,24 +29,26 @@ namespace Client
 		float			fCriticalPercent;
 		float			fCriticalDamage;
 		float			fLinkAttackApplyDamage;
+
 	}CHARACTER_NETWORK_DESC;
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	// 인게임에서 바뀔거 요거
 	typedef struct Player_Desc
 	{
-		long long		iCurrentHealth;
-		long long		iCurrentShield;
-		long long		iCurrentBetaEnergy;
+		long long				iCurrentHealth;
+		long long				iCurrentShield;
+		long long				iCurrentBetaEnergy;
 
-		long long		iCurrentAttackPoint;
-		long long		iCurrentShieldATK;
+		long long				iCurrentAttackPoint;
+		long long				iCurrentShieldATK;
 
-		float			fCurrentCTPercent;
-		float			fCurrentCTDamage;
-		float			fCurrentLinkApplyDamage;
-		class CTransform* pPlayerTransform = { nullptr };
-		class CCharacterController* pPlayerController = { nullptr }; 
+		float					fCurrentCTPercent;
+		float					fCurrentCTDamage;
+		float					fCurrentLinkApplyDamage;
+
+		CTransform*				pPlayerTransform = { nullptr };
+		CCharacterController*	pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -90,6 +93,7 @@ namespace Client
 		float				fAttackCoolTime;
 		float				fAttackRange;
 
+		_float3				fColliderExtents;
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
