@@ -41,7 +41,7 @@ private:
 
 	class CTrailEffect*		m_pTrail = { nullptr };
 	class CPlayerFSM*		m_pPlayerFSM = { nullptr };
-
+	_float					m_fTime = {};
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();

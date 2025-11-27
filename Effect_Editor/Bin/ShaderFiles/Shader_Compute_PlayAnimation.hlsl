@@ -120,6 +120,34 @@ StructuredBuffer<BoneTransformMatrixOut> InputLocalMatrix : register(t3);
 RWStructuredBuffer<BoneTransformMatrixOut> g_CombinedOut : register(u0);
 RWStructuredBuffer<BoneTransformMatrixOut> g_RootOut : register(u1);
 
+uint ComputeKeyFrameIndex(uint boneIndex, float t)
+{
+    ChannelInfo ch = InputChannel[boneIndex];
+
+    if (ch.iNumKeyFrames <= 1)
+        return 0;
+
+    uint start = ch.iKeyFrameOffset;
+    uint end = start + ch.iNumKeyFrames - 1;
+
+    // 마지막 프레임 체크
+    if (t >= InputKeyFrame[end].fTrackPosition)
+        return ch.iNumKeyFrames - 1;
+
+    // 선형 탐색
+    for (uint k = 0; k < ch.iNumKeyFrames - 1; k++)
+    {
+        float t0 = InputKeyFrame[start + k].fTrackPosition;
+        float t1 = InputKeyFrame[start + k + 1].fTrackPosition;
+
+        if (t >= t0 && t < t1)
+            return k;
+    }
+
+    return ch.iNumKeyFrames - 1;
+}
+
+
 float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
 {
     ChannelInfo channel = InputChannel[iBoneIndex];
@@ -131,7 +159,7 @@ float4x4 ComputeLocalMatrixForBone(uint iBoneIndex, float t)
     }
 
     uint baseIndex = channel.iKeyFrameOffset;
-    uint localIndex = channel.iCurrentKeyFrameIndex;
+    uint localIndex = ComputeKeyFrameIndex(iBoneIndex, t);
     uint lastIndex = baseIndex + (channel.iNumKeyFrames - 1);
 
     // CPU에서 이미 인덱스는 관리하므로, 안전용으로 클램프만
