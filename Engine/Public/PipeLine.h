@@ -29,7 +29,10 @@ public:
 	const _float4*		Get_CamUp();
 	const _float4*		Get_CamLook();
 	const _float4*		Get_CamPosition();
-
+	const _float4*		Get_PreCamRight();
+	const _float4*		Get_PreCamUp();
+	const _float4*		Get_PreCamLook();
+	const _float4*		Get_PreCamPosition();
 	// 항등행렬 꺼내오기
 	_matrix				GetIdentityMatrix() { return XMLoadFloat4x4(&m_IdentityMatrix); }
 
@@ -53,6 +56,10 @@ private:
 	_float4					m_vCamLook = {};
 	_float4					m_vCamPosition = {};
 
+	_float4					m_vPreCamRight = {};
+	_float4					m_vPreCamUp = {};
+	_float4					m_vPreCamLook = {};
+	_float4					m_vPreCamPosition = {};
 public:
 	static CPipeLine* Create();
 	virtual void Free() override;

@@ -12,9 +12,11 @@ NS_BEGIN(Client)
 class CNotify final : public CComponent
 {
 public:
+    enum NOTIFY_TYPE { PLAY_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, UNDEFINED, END };
+
     typedef struct tagNotifyDesc
     {
-        class CModel* pModel;
+        class CCharacter* pCharacter = { nullptr };
     }NOTIFY_DESC;
 private:
 	CNotify(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -28,13 +30,32 @@ public:
 
 	void Update(_float fTimeDelta);
 
-    void AnimationChanged(const _wstring& szAnimationTag);
+    void AnimationChanged(const _char* szAnimationTag);
+    void Set_ModelCom(class CModel* pModel);
 
 private:
 	class CGameManager* m_pGameManager = nullptr;
 
-    class CModel* m_pModelCom = nullptr;
+    class CCharacter* m_pCharacter = { nullptr };
+    CTransform* m_pCharacterTransformCom = { nullptr };
+    class CModel* m_pModelCom = ( nullptr );
     priority_queue<ANIM_NOTIFY> m_NotifyQueue;
+
+private:
+    HRESULT CallNotify(ANIM_NOTIFY AnimNotify);
+    CNotify::NOTIFY_TYPE ClassificationNotify(const string& szNotifyTag);
+
+    HRESULT Notify_Play_SFX(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Play_Sound(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Active_Collision(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Set_Transform(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Set_DynamicTransform(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Set_DeltaTimeSpeed(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Adjust_Light(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Undefined(ANIM_NOTIFY AnimNotify);               // 이름이 지정되어있지 않은 경우, 노티파이 매니저로 패스
+
+
 
 
 public:
@@ -46,47 +67,83 @@ public:
 NS_END
 
 /*
-ContainerObject
- ├─ HeadPartObject
-     ├─ TransformComponent
-     ├─ ModelComponent
-     ├─ NotifyComponent
- ├─ BodyPartObject
-     ├─ TransformComponent
-     ├─ ModelComponent
-     ├─ NotifyComponent
- ├─ WeaponPartObject
-     ├─ TransformComponent
-     ├─ ModelComponent
-     ├─ NotifyComponent
- ├─ TransformComponent
- ├─ BehaviorTreeComponent
+    - Bip001-R-Hand에 테스트해보기
 
-  NotifyComponent에서 애니메이션 노티파이들을 점검하고 실행해줄 것이다.
-  -> NotifyComponent에서 필요한 것 : 애니메이션 컴포넌트, 모델 컴포넌트, 현재 실행되는 애니메이션, 애니메이션 노티파이 리스트
-  -> NotifyComponent에서 할 일 : 지금 모델에서 실행중인 애니메이션, 키프레임 정보, 대상 GameObject를 받아와서,
-            애니메이션 노티파이 리스트를 돌면서 현재 키프레임에 해당하는 노티파이가 있으면 실행시켜준다.
-                -> 어떻게 한 번씩만 호출해줄 것인가?
-					| - > 애니메이션 노티파이를 priority_queue형태로 복사생성하여 관리한다.
-  -> 문제들
-    1. NotifyComponent가 현재 애니메이션을 어떻게 알고, 어떻게 받아와야하는가?
-		-> 모델 컴포넌트에 std::function으로 애니메이션 갱신 때마다 NotifyComponent에 알려주는 콜백함수를 등록해준다.
-            
-    2. 지금 애니메이션들은 행동트리에서 제어해주고 있다. 이 제어들이 NotifyComponent에 영향을 미칠까?
-    3. NotifyQueue가 진행되다가, 피격이상 혹은 캔슬로 씹혀야하는 Notify들은 어떻게 처리할 것인가?
-		-> NotifyQueue를 애니메이션 바꿔줄 때마다 비워준다
+*/
 
-    애니메이션 노티파이 맵
-	-> DataManager가 들고있기 ㅇㅇ
-	-> 나는 NotifyQueue만 들고 있고, 애니메이션이 바뀔 때마다 DataManager에서 애니메이션 노티파이 리스트를 받아와서 NotifyQueue를 채워준다.
+/*
+    애니메이션 노티파이 Args
+    **Play_SFX (이펙트)**
+    - szNotifyArg01   : 프로토타입 태그 (ex : "Prototype_Component_Effect_Slash")
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 이펙트 부착 시, 부착시킬 소켓매트릭스 태그 (현재 CEffect 로직 문제 때문에 제대로 안나옴)
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치 ( y += 0.1 해줘야함 )
+    - vNotifyRotation : 보정된 추가 회전값
 
-    해야할 것
-	-> Data_Manager에서 애니메이션 노티파이 데이터 로드하고 저장하는 기능 만들기
-	-> Model에서 애니메이션 변경 콜백 함수 만들기
+    **Play_Sound**
+    - szNotifyArg01   : 사운드 태그
+    - szNotifyArg02   : 볼륨
+    - szSocketTag     : 방향성 사운드 구현 시 재생할 위치
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
 
+    **Active_Collision ( 전투 로직용 )**
+    - szNotifyArg01   : 충돌체 태그
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
 
+    **Set_Transform**
+    - szNotifyArg01   : 없음
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : 없음
+    - vNotifyPosition : 객체 Look 기준으로 이동 할 위치
+    - vNotifyRotation : 객체 Look 기준으로 회전 할 위치
 
+    **Set_DynamicTransform**
+    - szNotifyArg01   : 지속 시간
+    - szNotifyArg02   : 보간 여부
+    - szSocketTag     : 부착 시 해당 부착 매트릭스. _get일 시 CCharacter에서 받아올 것
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 시간(szNotifyArg01)까지 이동 할 위치
+    - vNotifyRotation : 시간(szNotifyArg01)까지 회전 할 위치
 
+    **Set_DeltaTimeSpeed - 한 애니메이션 내에서도 델타타임 배율 조정 가능. 다음 애니메이션 출력 시 초기화 **
+    - szNotifyArg01   : 보정 시간
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : 없음
+    - vNotifyPosition : 없음
+    - vNotifyRotation : 없음
+
+    **Adjust_Light - 기능 미구현. **
+    - szNotifyArg01   : 없음
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
+
+    **Play_ScreenSFX - 기능 미구현**
+    - szNotifyArg01   : 없음
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
+
+    **Undefined - 기능 미구현. 정의되지 않은 노티파이들을 의사에 따라 실행**
+    - szNotifyArg01   : 없음
+    - szNotifyArg02   : 없음
+    - szSocketTag     : 없음
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
 
 
 */

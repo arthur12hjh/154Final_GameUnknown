@@ -470,6 +470,11 @@ void* CGameInstance::Get_SSAO_Desc()
 	return m_pRenderer->Get_SSAO_Desc();
 }
 
+void* CGameInstance::Get_MotionBlur_Desc()
+{
+	return m_pRenderer->Get_MotionBlur_Desc();
+}
+
 #endif
 
 #pragma endregion
@@ -529,6 +534,26 @@ const _float4* CGameInstance::Get_CamLook()
 const _float4* CGameInstance::Get_CamPosition()
 {
 	return m_pPipeLine->Get_CamPosition();
+}
+
+const _float4* CGameInstance::Get_PreCamRight()
+{
+	return m_pPipeLine->Get_PreCamRight();
+}
+
+const _float4* CGameInstance::Get_PreCamUp()
+{
+	return m_pPipeLine->Get_PreCamUp(); 
+}
+
+const _float4* CGameInstance::Get_PreCamLook()
+{
+	return m_pPipeLine->Get_PreCamLook(); 
+}
+
+const _float4* CGameInstance::Get_PreCamPosition()
+{
+	return m_pPipeLine->Get_PreCamPosition();
 }
 
 _matrix CGameInstance::GetIdentityMatrix()

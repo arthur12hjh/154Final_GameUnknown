@@ -24,6 +24,7 @@ public:
 	HRESULT		Render();
 
 private:
+	MOTIONBLUR_DESC* m_pMotioBlurDesc = {};
 	FOG_DESC*    m_pFogDesc = {};
 	BLOOM_DESC*  m_pBloomDesc = {};
 	DOF_DESC*    m_pDoFDesc = {};

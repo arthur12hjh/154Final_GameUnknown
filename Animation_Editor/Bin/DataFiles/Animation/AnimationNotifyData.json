@@ -1,54 +1,16 @@
 [
     {
-        "AnimationNotifies": [
-            {
-                "bIsLocalPos": true,
-                "iNotifyKeyFrame": 5,
-                "szNotifyArg01": "dae",
-                "szNotifyArg02": "Min",
-                "szNotifyTag": "Save Test",
-                "szSocketTag": "Seok",
-                "vNotifyPosition": [
-                    123.0,
-                    123.0,
-                    123.0
-                ],
-                "vNotifyRotation": [
-                    46.0,
-                    -73.0,
-                    17.0
-                ]
-            },
-            {
-                "bIsLocalPos": true,
-                "iNotifyKeyFrame": 44,
-                "szNotifyArg01": "King",
-                "szNotifyArg02": "Chan",
-                "szNotifyTag": "Load Test",
-                "szSocketTag": "Bin",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    -50.0,
-                    -56.0,
-                    40.0
-                ]
-            }
-        ],
-        "szAnimationTag": "CH_P_EVE_09|EVE_BarSwing_Idle"
+        "szAnimationTag": "Eve_ItemUse_Buff_B"
     },
     {
         "AnimationNotifies": [
             {
                 "bIsLocalPos": true,
-                "iNotifyKeyFrame": 1,
-                "szNotifyArg01": "sdf",
-                "szNotifyArg02": "sdfvzsdv",
-                "szNotifyTag": "Palertaser",
-                "szSocketTag": "sdfv",
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Slash",
+                "szNotifyArg02": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -62,10 +24,28 @@
             },
             {
                 "bIsLocalPos": true,
-                "iNotifyKeyFrame": 17,
-                "szNotifyArg01": "zdfbv",
-                "szNotifyArg02": "aevrvaer",
-                "szNotifyTag": "aergaesrg",
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "Player",
+                "szNotifyArg02": "20",
+                "szNotifyTag": "Set_Transform",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    5.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "szNotifyArg01": "5",
+                "szNotifyArg02": "Lerp",
+                "szNotifyTag": "Set_DeltaSpeed",
                 "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,
@@ -80,11 +60,11 @@
             },
             {
                 "bIsLocalPos": true,
-                "iNotifyKeyFrame": 10,
-                "szNotifyArg01": "fvzdfv",
-                "szNotifyArg02": "zdfv",
-                "szNotifyTag": "vzdfvzd",
-                "szSocketTag": "zdfv",
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -97,6 +77,183 @@
                 ]
             }
         ],
-        "szAnimationTag": "Proto_Jump_Walk"
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Run_Start"
+    },
+    {
+        "szAnimationTag": "Eve_ItemUse_Buff_B_Jog"
+    },
+    {
+        "szAnimationTag": "Eve_ItemUse_Buff_B_Run"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01"
+    },
+    {
+        "szAnimationTag": "proto_run_L"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Root1"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01R"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_02_Root"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_03_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Battle_Jump_Walk"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Sprint_Backward_End"
+    },
+    {
+        "szAnimationTag": "proto_run_R"
+    },
+    {
+        "szAnimationTag": "Proto_Run_StartAfterEvade"
+    },
+    {
+        "szAnimationTag": "Proto_Run_Blade_End"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_04_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Battle_Idle"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Run.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Battle_Jog"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Walk.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Battle_Jump_Forward_Start"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "szNotifyArg01": "TestSound_Walk.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Battle_Jump_Forward_Start2"
     }
 ]

@@ -16,7 +16,7 @@ private:
 public:
 	HRESULT Initialize(class CModel* pModel, binAnimation* pAnimation);
 	_bool Update_TransformationMatrices(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta);
-	_bool Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta);
+	_int Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta);
 	_bool Update_CurrentKeyFrameIndices();
 
 	_uint Get_AnimationKeyFrameIndex(_uint iIndex = 0) { return m_CurrentKeyFrameIndices[iIndex]; }
