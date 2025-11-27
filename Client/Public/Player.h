@@ -40,7 +40,7 @@ private:
 
 	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};
 	class CPlayerFSM*		m_pCurrentFSM = { nullptr };
-
+	_float					m_fTime = 0.f;
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
