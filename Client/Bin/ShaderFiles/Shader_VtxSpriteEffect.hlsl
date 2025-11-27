@@ -1,15 +1,13 @@
 #include "Engine_Shader_Defines.hlsli"
 
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_NormalTexture;
 float2 g_fSize;
 int2 g_iUV;
 float g_fFPS, g_fTime, g_fAngle;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
-
-vector g_vCamPosition;
 
 struct VS_IN
 {
@@ -55,10 +53,9 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
 {
     GS_OUT Out[4];
     
-
-    float3 vLook = (g_vCamPosition - In[0].vPosition).xyz;
-    float3 vRight = normalize(cross(float3(0.f, 1.f, 0.f), vLook));
-    float3 vUp = normalize(cross(vLook, vRight));
+    
+    float3 vRight = normalize(g_CamMatrix._11_12_13);
+    float3 vUp = normalize(g_CamMatrix._21_22_23);
     matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
     float angle = radians(g_fAngle);
     
@@ -175,11 +172,12 @@ PS_OUT PS_MASK(PS_IN In)
     Out.vDiffuse = g_vColor;
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
     
-    float depth = In.vProjPos.w / 500;
-    float weight = saturate(pow(1 - depth, 3));
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
-    Out.vWeight.r = Out.vDiffuse.a;
-    Out.vWeight.g = weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;

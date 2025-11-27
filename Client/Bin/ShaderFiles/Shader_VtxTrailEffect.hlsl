@@ -2,10 +2,10 @@
 #include "Engine_Shader_Defines.hlsli"
 
 matrix g_ViewMatrix, g_ProjMatrix;
-float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
+float g_fEndTime = 0;
 float2 g_fMaskUV = float2(0, 0);
 float2 g_fMaskUVSpeed = float2(0, 0);
 float2 g_fMaskUVSize = float2(1, 1);
@@ -15,6 +15,7 @@ float2 g_fDiffuseUVSize = float2(1, 1);
 float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
+bool g_bisEnd = false;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 struct VS_IN
@@ -33,7 +34,6 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
-    matrix matWV, matWVP;
     float4 pos = mul(vector(In.vPosition, 1.f), g_ViewMatrix);
     Out.vPosition = mul(pos, g_ProjMatrix);
     
@@ -41,6 +41,24 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     return Out;
 }
+
+struct GS_IN
+{
+    float4 vPosition : POSITION;
+    float2 vLifeTime : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+};
+
+struct GS_OUT
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+};
+
+/* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
+/* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
+/* 정점의 모든 정보를 보간하여 픽셀을 만든다. -> 래스터라이즈 */ 
 
 struct PS_IN
 {
@@ -78,9 +96,12 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y)).r;
     if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x))
         discard;
+    if (0 >= Out.vDiffuse.a)
+        discard;
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
-    Out.vWeight.r = Out.vDiffuse.a;
-    Out.vWeight.g = weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     

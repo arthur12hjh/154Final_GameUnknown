@@ -82,9 +82,13 @@ HRESULT CLevel_Tool::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	CameraDesc.fMouseSensor = 0.1f;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
-		ENUM_CLASS(LEVEL::STATIC), strLayerTag, &CameraDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
+	//	ENUM_CLASS(LEVEL::STATIC), strLayerTag, &CameraDesc)))
+	//	return E_FAIL;
+
+	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
+	m_pGameInstance->SetMainCamera(TEXT("FreeCamera"));
 
 	return S_OK;
 

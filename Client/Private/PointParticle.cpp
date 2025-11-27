@@ -10,9 +10,10 @@ CPointParticle::CPointParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CPointParticle::CPointParticle(const CPointParticle& Prototype)
 	: CGameObject{ Prototype },
-	m_tData{Prototype.m_tData}
+	m_tData{Prototype.m_tData},
+	m_eRender{Prototype.m_eRender}
 {
-
+	m_eTeam = Prototype.m_eTeam;
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Instance*>(Prototype.m_pVIBufferCom->Clone(nullptr));
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
@@ -20,6 +21,41 @@ CPointParticle::CPointParticle(const CPointParticle& Prototype)
 HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointParticleData)
 {
 	m_tData = *pPointParticleData;
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pPointParticleData->iNumInstance;
 	Desc.vCenter = pPointParticleData->fCenter;
@@ -42,6 +78,7 @@ HRESULT CPointParticle::Initialize(void* pArg)
 	m_fTime = -m_tData.fDelayTime;
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
 	//m_pVIBufferCom->Initialize(nullptr);
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
@@ -107,7 +144,7 @@ void CPointParticle::Late_Update(_float fTimeDelta)
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+	m_pGameInstance->Add_RenderGroup(m_eRender, this);
 }
 
 HRESULT CPointParticle::Render()
@@ -167,8 +204,9 @@ HRESULT CPointParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
 		return E_FAIL;
+
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;

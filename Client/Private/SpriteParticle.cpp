@@ -10,9 +10,10 @@ CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
 	: CGameObject{ Prototype },
-	m_tData{ Prototype.m_tData }
+	m_tData{ Prototype.m_tData },
+	m_eRender{ Prototype.m_eRender }
 {
-
+	m_eTeam = Prototype.m_eTeam;
 	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Instance*>(Prototype.m_pVIBufferCom->Clone(nullptr));
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
@@ -20,6 +21,41 @@ CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
 HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPointParticleData)
 {
 	m_tData = *pPointParticleData;
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pPointParticleData->iNumInstance;
 	Desc.vCenter = pPointParticleData->fCenter;
@@ -29,7 +65,6 @@ HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPoint
 	Desc.vLifeTime = pPointParticleData->fLifeTime;
 	Desc.vSpeed = pPointParticleData->fSpeed;
 	Desc.isLoop = pPointParticleData->bisLoop;
-	Desc.vSpeed = _float2(5, 10);
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
@@ -92,7 +127,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_bisLoop = false;
-		if (m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime) {
+		if (m_tData.fEndTime + m_tData.fLifeTime.y * 2 <= m_fTime){
 			m_isDead = true;
 			return;
 		}
@@ -104,11 +139,11 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
-	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
+	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y * 2 < m_fTime))
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+	m_pGameInstance->Add_RenderGroup(m_eRender, this);
 }
 
 HRESULT CSpriteParticle::Render()
@@ -166,8 +201,9 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
 		return E_FAIL;
+
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
 		return E_FAIL;
@@ -240,7 +276,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
 	m_CBData.fTimeDelta.w = m_tData.fEndTime;
@@ -303,7 +339,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 
 void CSpriteParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

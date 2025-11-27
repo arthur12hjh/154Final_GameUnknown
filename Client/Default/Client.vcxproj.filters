@@ -397,9 +397,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
       <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\FSM">
-      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Effects\TrailEffect">
       <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
     </Filter>
@@ -427,9 +424,6 @@
     <Filter Include="02.GameObjects\Character\Player\Parts\PonyTail">
       <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\FSM\State">
-      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Player">
       <UniqueIdentifier>{18c61d1c-ba06-4844-9ecb-1247c6381c0a}</UniqueIdentifier>
     </Filter>
@@ -450,6 +444,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Attk">
       <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
       <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
@@ -493,14 +490,53 @@
     <Filter Include="01.Levels\Loading\Loader">
       <UniqueIdentifier>{1c661d94-d467-4c27-a3f8-4da71a1c898a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\FSM\State\Evade">
+    <Filter Include="02.GameObjects\Character\Player\00. State">
+      <UniqueIdentifier>{fea85870-6048-4bb4-9f16-3a49def8d9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\01. FSM">
+      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle">
+      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Walk">
+      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial">
+      <UniqueIdentifier>{5440f9a3-45c6-439e-8a44-2f0068e9c5cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump">
+      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk">
+      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Attack">
+      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Landing">
+      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Evade">
       <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Hit">
+      <UniqueIdentifier>{58c823c4-5a32-437e-b510-580cd5b9f22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Interaction">
+      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\01. FSM\Base">
+      <UniqueIdentifier>{4642f57f-bd5b-40b0-8187-b409ac58061f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\AttackHitBox">
       <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
       <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\lockon">
+      <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -963,9 +999,6 @@
     <ClInclude Include="..\Public\Character.h">
       <Filter>02.GameObjects\Character</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerFSM.h">
-      <Filter>02.GameObjects\Character\Player\FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\TrailEffect.h">
       <Filter>03.Effects\TrailEffect</Filter>
     </ClInclude>
@@ -973,34 +1006,34 @@
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_IdleState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Parts.h">
       <Filter>02.GameObjects\Character\Player\Parts</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Player.h">
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_WalkState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_WalkEndState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LightAttackState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LandingState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Landing</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Landing</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_JumpState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Jump</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_AerialAttack.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Attk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterStateMimesis.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
@@ -1018,13 +1051,37 @@
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_EvadeState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Evade</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Evade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_HitState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_VendingInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerBattleFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
       <Filter>02.GameObjects\AttackHitBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonIdleState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerLockonFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1465,9 +1522,6 @@
     <ClCompile Include="..\Private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\TrailEffect.cpp">
       <Filter>03.Effects\TrailEffect</Filter>
     </ClCompile>
@@ -1475,13 +1529,13 @@
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_IdleState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Parts.cpp">
       <Filter>02.GameObjects\Character\Player\Parts</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Character\Player</Filter>
@@ -1490,22 +1544,22 @@
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_WalkState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_WalkEndState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Walk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LightAttackState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LandingState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Landing</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Landing</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_JumpState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Jump</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_AerialAttack.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Aerial\Attk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
@@ -1523,13 +1577,37 @@
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_EvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Evade</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Evade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp">
-      <Filter>02.GameObjects\Character\Player\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_HitState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerBattleFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
       <Filter>02.GameObjects\AttackHitBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerLockonFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

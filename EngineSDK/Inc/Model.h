@@ -89,19 +89,9 @@ public:
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
 public:
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {
-		if (m_iCurrentAnimIndex == iAnimIndex)
-			return;
+	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 
-		m_iCurrentAnimIndex = iAnimIndex;
-		m_isLoop = isLoop;
-		
-		if(AnimationChanged)
-			AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
-
-		m_Animations[m_iCurrentAnimIndex]->Reset();
-	}
-
+	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
@@ -168,6 +158,7 @@ private:
 	_float4x4					m_CurRootMatrix{};
 
 	_float						m_fAnimationPlayRate = 1.f;
+	_int						m_iRootIndex = 0;
 
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};
@@ -197,6 +188,8 @@ private:
 	HRESULT Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification);
 
 	HRESULT Bind_ChannelAndKeyFrameBuffer();
+
+	HRESULT Update_BoneMatrices();
 
 	
 

@@ -291,7 +291,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
 	//	return E_FAIL;
 
-	Desc->OnCompleted(this_thread::get_id());
+	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }

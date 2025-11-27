@@ -8,6 +8,7 @@
 #include "Channel.h"
 #include "ComputeShader.h"
 #include "GameInstance.h"
+#include "StringHelper.h"
 
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent { pDevice, pContext }
@@ -138,6 +139,64 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 	return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
+void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
+{
+	if (m_iCurrentAnimIndex == iAnimIndex)
+		return;
+
+	m_iCurrentAnimIndex = iAnimIndex;
+	m_isLoop = isLoop;
+
+	if (AnimationChanged)
+		AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+
+	m_Animations[m_iCurrentAnimIndex]->Reset();
+
+	m_iFlagPreRootModified = ROOTFLAG_RESET;
+	XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
+	Bind_ChannelAndKeyFrameBuffer();
+
+	return;
+}
+
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate)
+{
+	_char pName[MAX_PATH] = {};
+
+	CStringHelper::ConvertWideToUTF(strAnimationTag.c_str(), pName);
+
+	_uint iAnimIndex = 0;
+	m_fAnimationPlayRate = fAnimationPlayRate;
+
+	for (auto& pAnimation : m_Animations)
+	{
+		if (TRUE == pAnimation->CompareAnimationTag(pName))
+		{
+			if (m_iCurrentAnimIndex == iAnimIndex)
+				return;
+
+			m_iCurrentAnimIndex = iAnimIndex;
+			m_isLoop = isLoop;
+
+			m_Animations[m_iCurrentAnimIndex]->Reset();
+
+			m_iFlagPreRootModified = ROOTFLAG_RESET;
+			XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
+			Bind_ChannelAndKeyFrameBuffer();
+
+			if (AnimationChanged)
+				AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+			return;
+		}
+
+		++iAnimIndex;
+	}
+}
+
 void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate)
 {
 	_uint iAnimIndex = 0;
@@ -159,7 +218,7 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
 			XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
 			XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
 
-			Bind_ChannelAndKeyFrameBuffer();
+			Bind_ChannelAndKeyFrameBuffer(); 
 
 			if (AnimationChanged)
 				AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
@@ -472,40 +531,74 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 
 	return S_OK;
 }
-
 _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float fRootMotionMagnification)
 {
- 	_float fScaledDeltaTime = fTimeDelta * m_fAnimationPlayRate;
-	// 이 프레임이 첫 프레임이 아닐 경우
+	_float fScaledDeltaTime = fTimeDelta * m_fAnimationPlayRate;
+
+	// 1) PreBoneMatrices에 이전 프레임 결과 백업 (모션블러용)
 	if (nullptr != m_pOutSource)
-	{
-		// PreBoneMatrices에 값을 복사해 모션 블러 준비를 한다.
 		m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
-	}
-
-	// 루트 모션을 통해 Transform 위치 보정을 해준다.
-	Apply_RootMotion(pTransform, fRootMotionMagnification);
-
-
-	//if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
-	//	return E_FAIL;
 
 	if (-1 == m_iCurrentAnimIndex ||
 		m_iCurrentAnimIndex >= m_iNumAnimations)
 		return false;
 
-	/* 내가 재생하고자하는 애니메이션(공격모션)이 이용하고 있는 뼈들의 상태 변환정보(TransformationMatrix)를 갱신해준다.*/
-	//m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(m_Bones, m_isLoop, fTimeDelta);
-	m_isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime);
+	// 2) 애니메이션 트랙 업데이트
+	_int iAnimationState =
+		m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime);
+
+	if (iAnimationState == ANIMATIONFLAG_FINISH)
+		m_isFinish = TRUE;
+	else if (iAnimationState == ANIMATIONFLAG_PLAY)
+		m_isFinish = FALSE;
+	else if (iAnimationState == ANIMATIONFLAG_RESET)
+	{
+		if (AnimationChanged)
+			AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+		m_isFinish = FALSE;
+	}
 
 	m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
-	
+
+	// 3) ComputeShader 실행 (g_CombinedOut / g_RootOut 갱신)
 	Bind_ComputeShader(fScaledDeltaTime);
 
-	m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
+	const _uint iNumBones = (_uint)m_Bones.size();
+
+	// 4) CPU CBone 전체 동기화 (악세사리, 디버그 뷰용)
+	if (m_pOutReadBack)
+	{
+		m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+		D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
+		if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+		{
+			COMPUTE_BONEMATRIX_OUT* pOut =
+				reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
+
+			for (_uint i = 0; i < iNumBones; ++i)
+			{
+				m_Bones[i]->Set_TransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
+
+				m_Bones[i]->Set_CombinedTransformationMatrix(
+					XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
+			}
+
+			m_pContext->Unmap(m_pOutReadBack, 0);
+		}
+	}
+
+	// 5) 루트모션 적용 (RootOnly 버퍼 사용)
+	if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
+	{
+		m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
+		Apply_RootMotion(pTransform, fRootMotionMagnification);
+	}
 
 	return m_isFinish;
 }
+
 
 HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
 {
@@ -919,6 +1012,18 @@ HRESULT CModel::Ready_ComputeShader()
 	m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
 
 
+
+	// 본들 위치를 갱신해주면서, 루트본을 찾는다.
+	for (_int i = 0; i < (_int)m_Bones.size(); ++i)
+	{
+		if (m_Bones[i]->Compare_Name("Root") || m_Bones[i]->Compare_Name("root"))
+		{
+			m_iRootIndex = i;
+			break;
+		}
+	}
+
+
 #pragma endregion
 
 	return S_OK;
@@ -1107,24 +1212,11 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 	{
 		COMPUTE_BONEMATRIX_OUT* pOut = reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
-		// g_RootOut[0] = 지난 프레임 루트본
-		_int iRootIndex = 999;
-
-		// 본들 위치를 갱신해주면서, 루트본을 찾는다.
-		for (_int i = 0; i < (_int)m_Bones.size(); ++i)
-		{
-			if (m_Bones[i]->Compare_Name("Root") || m_Bones[i]->Compare_Name("root"))
-			{
-				iRootIndex = i;
-				break;
-			}
-		}
-
 		// 찾았을 때
-		if (iRootIndex >= 0 && iRootIndex < (_int)m_Bones.size())
+		if (m_iRootIndex >= 0 && m_iRootIndex < (_int)m_Bones.size())
 		{
-			m_Bones[iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
-			m_Bones[iRootIndex]->Set_CombinedTransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix));
+			m_Bones[m_iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
+			m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix));
 
 			// 첫 프레임이라는 뜻
 			if (ROOTFLAG_INIT == m_iFlagPreRootModified)
@@ -1281,6 +1373,15 @@ HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
 			m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameSource);
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Update_BoneMatrices()
+{
+	m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+
 
 	return S_OK;
 }

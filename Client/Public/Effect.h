@@ -24,6 +24,7 @@ public:
         const   _float4x4* pRootMatrix = { nullptr };
         _vector vPos;
         _float3 fRot;
+        _float fSize;
     }EFFECT_TRANSFORM_DESC;
     
 private:
@@ -38,6 +39,7 @@ public:
     virtual void Update(_float fTimeDelta) override;
     virtual void Late_Update(_float fTimeDelta) override;
     virtual HRESULT Render() override;
+    void    Stop();
 
 private:
     HRESULT Load_Binary(const _char* szFile);
