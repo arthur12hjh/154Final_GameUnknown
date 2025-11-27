@@ -38,11 +38,11 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 		if (nullptr != pMimesisState)
 		{
 			m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::MIMESIS_SKILL), false);
-			/*if (nullptr == m_pSkillData)
+			if (nullptr == m_pSkillData)
 			{
 				m_bIsFinished = true;
 				return;
-			}*/
+			}
 			m_szAnimationName = m_pSkillData->szAnimationName;
 			bIsRandomAttack = false;
 		}
@@ -59,7 +59,8 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	GaraHitBox();
 
 	m_bIsEnableChange = false;
-	pEntity->Set_Animation(m_szAnimationName.c_str(), false);
+	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);
+	pEntity->Set_Animation(m_szAnimationName.c_str(), false, fAttackSpeed);
 }
 
 void CMonsterAttackState::Update(_float fTimeDelta)
@@ -77,9 +78,9 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 		case 4:
 			StatueAGara(fTimeDelta);
 			break;
-		/*case 5:
+		case 5:
 			StatueBGara(fTimeDelta);
-			break;*/
+			break;
 		}
 
 		if (m_bIsRootGara)
@@ -113,6 +114,7 @@ void CMonsterAttackState::GaraSetting()
 	{
 	case 2:
 	case 4:
+	case 5:
 	{
 		_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 		_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -123,10 +125,12 @@ void CMonsterAttackState::GaraSetting()
 
 		_float fLength = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 		_float fRangeRatio = fLength / pOwnerInfo->fAttackRange;
-		if (0.3f <= fRangeRatio)
+		if (0.4f >= fRangeRatio)
 			m_fMoveSpeed *= 0.3f;
-		else if (0.6f <= fRangeRatio)
-			m_fMoveSpeed *= 0.6f;
+		else if (0.6f >= fRangeRatio)
+			m_fMoveSpeed *= 0.5f;
+		else
+			m_fMoveSpeed *= 0.8f;
 
 		m_bIsGara = true;
 	}

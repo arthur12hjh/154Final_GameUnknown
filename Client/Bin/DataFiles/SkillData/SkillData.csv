@@ -1,4 +1,4 @@
-스킬 ID,애니메이션 이름,스킬 데미지,방향,스킬 타입,스킬 속성 수,스킬 속성 수
+스킬 ID,애니메이션 이름,스킬 데미지,방향,스킬 타입,스킬 속성 수,스킬 속성
 1,M_Gorilla_S22_RightAttack,10,3,0,1,0
 511,M_Beholder_SwingDouble,11,3,0,1,0
 512,M_Beholder_Swing,12,3,0,1,0
@@ -14,6 +14,7 @@
 534,M_StatueB_RushSlash,15,3,0,1,0
 535,M_StatueB_SlashDouble,16,3,0,1,0
 536,M_StatueB_SlashTriple,17,3,0,1,0
+537,M_StatueB_StanbyToAttack_01,18,4,1,1,0
 541,M_BarnacleA_PunchAttack,15,3,0,1,0
 542,M_BarnacleA_GrabAttack,15,3,0,1,0
 543,M_BarnacleA_ComboAttack,16,3,0,1,0

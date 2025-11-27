@@ -69,12 +69,13 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
             
             m_bIsLerp = true;
             XMStoreFloat3(&m_vLerpStartPos, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-            m_vLerpTime = { 0.f, 0.5f };
+            m_vLerpTime = { 0.f, 0.7f };
 
+            m_iSectionIndex = 0;
             AnimationName += "_Run_S";
             m_bIsEnableChange = false;
             m_bIsCaution = false;
-            pOwner->Set_Animation(AnimationName.c_str(), false, 1.3f);
+            pOwner->Set_Animation(AnimationName.c_str(), false, 1.5f);
         }
         else
         {
@@ -121,7 +122,6 @@ void CMonsterMoveState::Update(_float fTimeDelta)
 
 void CMonsterMoveState::End()
 {
-    m_iSectionIndex = 0;
     m_pTarget = nullptr;
     m_bIsFinished = false;
     m_bIsEnableChange = true;
