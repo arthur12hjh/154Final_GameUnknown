@@ -435,6 +435,11 @@ namespace Engine
 		float* fIntensity;
 	} SSAO_DESC;
 
+	typedef struct tagMotionBlurInfo {
+		float*			fCamBlurScale;
+		float*			fBias;
+		unsigned int*   iSampleCount;
+	} MOTIONBLUR_DESC;
 #pragma endregion
 }
 

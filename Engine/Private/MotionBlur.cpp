@@ -12,6 +12,15 @@ CMotionBlur::CMotionBlur(const CMotionBlur& rhs)
 {
 }
 
+void* CMotionBlur::Get_Desc()
+{
+    m_Desc.fBias = &m_fBias;
+    m_Desc.fCamBlurScale = &m_fCamBlurScale;
+    m_Desc.iSampleCount = &m_iSampleCount;
+
+    return &m_Desc;
+}
+
 HRESULT CMotionBlur::Initialize()
 {
     /* 셰이더 파일 로딩 */
@@ -38,6 +47,28 @@ HRESULT CMotionBlur::Initialize()
 	return S_OK;
 }
 
+HRESULT CMotionBlur::Render_CamMotionBlur(CVIBuffer_Rect* pVIBuffer)
+{
+    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Velocity"))))
+        return E_FAIL;
+
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+    _float2 vCamVelocity = Calc_CamVelocity();
+    m_pShader->Bind_RawValue("g_vCamVelocity", &vCamVelocity, sizeof(_float2));
+
+    m_pShader->Begin(0);
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->End_MRT()))
+        return E_FAIL;
+
+    return S_OK;
+}
+
 HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRTTag, const _wstring& strReturnRTTag)
 {
     /* 블러 X 처리 */
@@ -48,13 +79,17 @@ HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneR
     m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
     m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
+    m_pShader->Bind_RawValue("g_fCamBlurScale", &m_fCamBlurScale, sizeof(_float));
+    m_pShader->Bind_RawValue("g_iSampleCount", &m_iSampleCount, sizeof(_uint));
+    m_pShader->Bind_RawValue("g_fBias", &m_fBias, sizeof(_float));
+
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strSceneRTTag, m_pShader, "g_SceneTexture")))
         return E_FAIL;
 
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Velocity"), m_pShader, "g_VelocityTexture")))
         return E_FAIL;
 
-    m_pShader->Begin(0);
+    m_pShader->Begin(1);
     pVIBuffer->Bind_Resources();
     pVIBuffer->Render();
 
@@ -72,13 +107,12 @@ HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneR
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_MotionBlur"), m_pShader, "g_SceneTexture")))
         return E_FAIL;
 
-    m_pShader->Begin(1);
+    m_pShader->Begin(2);
     pVIBuffer->Bind_Resources();
     pVIBuffer->Render();
 
     if (FAILED(m_pGameInstance->End_MRT()))
         return E_FAIL;
-
 
     return S_OK;
 }
@@ -91,11 +125,42 @@ HRESULT CMotionBlur::Bind_RenderTarget(CShader* pShader, const _char* pConstantN
 	return S_OK;
 }
 
+_float2 CMotionBlur::Calc_CamVelocity()
+{
+    _matrix CurView = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+    _matrix CurProj = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+    _matrix PreView = XMLoadFloat4x4(m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW));
+    _matrix PreProj = XMLoadFloat4x4(m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::PROJ));
+
+    _vector vCamPos, vCamLook, vPreCamPos, vPreCamLook;
+
+    //이동값 날리려고 Position 사용안함.
+    vCamLook = XMLoadFloat4(m_pGameInstance->Get_CamLook());
+    // 현재/이전 프레임에서의 클립 좌표
+    
+    _vector vCurrClip = XMVector4Transform(XMVector4Transform(vCamLook, CurView), CurProj);
+    _vector vPrevClip = XMVector4Transform(XMVector4Transform(vCamLook, PreView), PreProj);
+
+    _float fCurrW = XMVectorGetW(vCurrClip);
+    _float fPrevW = XMVectorGetW(vPrevClip);
+
+    // NDC 기준 velocity
+    _float fCurrX = XMVectorGetX(vCurrClip) / fCurrW;
+    _float fCurrY = XMVectorGetY(vCurrClip) / fCurrW;
+    _float fPrevX = XMVectorGetX(vPrevClip) / fPrevW;
+    _float fPrevY = XMVectorGetY(vPrevClip) / fPrevW;
+
+    _float fStrength = 1.0f;
+    _float2 fVelocity = _float2((fCurrX - fPrevX) * fStrength, -1.f * (fCurrY - fPrevY) * fStrength);
+
+    return fVelocity;
+}
+
 #ifdef _DEBUG
 
 HRESULT CMotionBlur::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
-    if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_MotionBlur"), fX, fY, fSizeX, fSizeY)))
+    if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), fX, fY, fSizeX, fSizeY)))
         return E_FAIL;
 
 	return S_OK;
@@ -103,7 +168,7 @@ HRESULT CMotionBlur::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSi
 
 HRESULT CMotionBlur::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader)
 {
-    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_MotionBlur"), pShader, pVIBuffer)))
+    if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), pShader, pVIBuffer)))
         return E_FAIL;
 
 	return S_OK;
