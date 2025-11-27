@@ -21,10 +21,12 @@ class CEffect : public CGameObject
 public:
     typedef struct tagEffectTransform : public CTransform::TRANSFORM_DESC
     {
+        const   _float4x4* pWorldMatrix = { nullptr };
         const   _float4x4* pRootMatrix = { nullptr };
         _vector vPos;
         _float3 fRot;
         _float fSize;
+        _bool bisSpectrum;
     }EFFECT_TRANSFORM_DESC;
     
 private:
@@ -53,6 +55,7 @@ private:
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
+    const   _float4x4* m_pParentWorldMat = { nullptr };
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
     vector<CMeshEffect*> m_pMeshEffects;

@@ -1574,7 +1574,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 if (m_tParticleData.bisCircle) {
                     ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
                     ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
-                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircle), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tParticleData.fCircle), 0.1f, 0.f, 100.f);
                 }
                 if (ImGui::TreeNode("TurnPower"))
                 {
@@ -1779,7 +1779,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
                 if (ImGui::TreeNode("Size Diagram")) {
-                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tSpriteParticleData.fSizeDiagrams.size() - 1);
                     if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
                         _float time = 1.f / 100;
                         _float fMax = 5;

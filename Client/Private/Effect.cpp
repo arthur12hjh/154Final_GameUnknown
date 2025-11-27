@@ -45,14 +45,23 @@ HRESULT CEffect::Initialize(void* pArg)
         EFFECT_TRANSFORM_DESC* pDesc = static_cast<EFFECT_TRANSFORM_DESC*>(pArg);
         if (nullptr != pDesc->pRootMatrix) {
             m_pParentMat = pDesc->pRootMatrix;
+            if (nullptr != pDesc->pWorldMatrix) {
+                m_pParentWorldMat = pDesc->pWorldMatrix;
+            }
         }
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
         m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
     }
     if (nullptr != m_pParentMat) {
-        XMStoreFloat4x4(&m_CombinedWorldMatrix,
-            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+        if (nullptr != m_pParentWorldMat) {
+            XMStoreFloat4x4(&m_CombinedWorldMatrix,
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat) * XMLoadFloat4x4(m_pParentWorldMat));
+        }
+        else {
+            XMStoreFloat4x4(&m_CombinedWorldMatrix,
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+        }
     }
     else {
         m_CombinedWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
@@ -293,10 +302,6 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 void CEffect::Update(_float fTimeDelta)
 {
-    if (nullptr != m_pParentMat) {
-        XMStoreFloat4x4(&m_CombinedWorldMatrix,
-            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-    }
     for (auto pMeshEffect : m_pMeshEffects) {
         pMeshEffect->Update(fTimeDelta);
     }
@@ -314,6 +319,16 @@ void CEffect::Update(_float fTimeDelta)
 void CEffect::Late_Update(_float fTimeDelta)
 {
 
+    if (nullptr != m_pParentMat) {
+        if (nullptr != m_pParentWorldMat) {
+            XMStoreFloat4x4(&m_CombinedWorldMatrix,
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat) * XMLoadFloat4x4(m_pParentWorldMat));
+        }
+        else {
+            XMStoreFloat4x4(&m_CombinedWorldMatrix,
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+        }
+    }
     if (1 < m_pMeshEffects.size()) {
         for (auto i = m_pMeshEffects.begin(); i != m_pMeshEffects.end();) {
             if ((*i)->isDead()) {
