@@ -451,9 +451,6 @@
     <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Attk">
       <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
       <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
     </Filter>
@@ -501,6 +498,9 @@
     </Filter>
     <Filter Include="02.GameObjects\AttackHitBox">
       <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
