@@ -1,6 +1,6 @@
  ID,        Phase Count   ,Animation Name,Monster Name,Naytiba Type,AI_Type,Model ProtoTypeName ,FSM ProtoType Name,Behavior ProtoType Name, Max Health,Max Shield,Attack CoolTime,Attack Range,Skill Count,Skills
 1,2,M_Gigas,Gigas,2,1,Prototype_Component_Model_Gorilla,None,None,1000,500,5,5,1,1
 2,1,M_Beholder,Beholder,1,1,Prototype_Component_Model_Beholder,Prototype_GameObject_MonsterController,None,200,100,4,15,3,"511, 512, 513"
-3,1,M_BarnacleA,Barnacle,1,2,Prototype_Component_Model_BanacleA,Prototype_GameObject_MonsterController,None,200,100,4,15,4,"541, 542, 543, 544"
-4,1,M_StatueA,Statue,1,0,Prototype_Component_Model_StatueA,Prototype_GameObject_MonsterMimesisController,None,200,100,4,15,4,"521, 522, 523, 524"
-5,1,M_StatueB,Statue,1,0,Prototype_Component_Model_StatueB,Prototype_GameObject_MonsterMimesisController,None,200,100,4,15,6,"531, 532, 533, 534, 535, 536"
+3,1,M_BarnacleA,Barnacle,1,2,Prototype_Component_Model_BanacleA,Prototype_GameObject_MonsterController,None,200,100,4,8,4,"541, 542, 543, 544"
+4,1,M_StatueA,Statue,1,0,Prototype_Component_Model_StatueA,Prototype_GameObject_MonsterMimesisController,None,200,100,4,13,4,"521, 522, 523, 524"
+5,1,M_StatueB,Statue,1,0,Prototype_Component_Model_StatueB,Prototype_GameObject_MonsterMimesisController,None,200,100,4,13,6,"531, 532, 533, 534, 535, 536"

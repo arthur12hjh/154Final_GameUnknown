@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Player.h"
 
+#include "Nayitba.h"
+
 #include "Body_Player.h"
 #include "Face_Player.h"
 #include "Hair_Player.h"
@@ -25,11 +27,6 @@ CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CPlayer::CPlayer(const CPlayer& Prototype)
 	: CCharacter{ Prototype }
 {
-}
-
-_float CPlayer::Get_AnimationRatio()
-{
-	return m_pBodyModelCom->Get_AnimationRatio();
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -75,6 +72,7 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pPlayerFSM->Update(fTimeDelta);
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
 	__super::Update(fTimeDelta);
 }
 
@@ -99,17 +97,35 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+HRESULT CPlayer::Damaged(void* pArg)
+{
+	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+
+
+
+
+
+
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Ready_Components()
 {
 	/* Com_Collider_AABB */
 	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = _float3(0.8f, 1.3f, 0.8f);
+	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
 	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+
+	m_pColliderCom->BindBeginOverlapEvent([](_float3 vHitPoint, _float3 vHitDir, CGameObject* pActor) {
+		int a = 10;
+		});
 
 	/* Player FSM */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),

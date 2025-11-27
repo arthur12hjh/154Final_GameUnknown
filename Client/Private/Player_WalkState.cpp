@@ -8,7 +8,9 @@
 
 #include "Player_WalkEndState.h"
 #include "Player_JumpState.h"
-
+#include "Player_LightAttackState.h"
+#include "Player_BetaChargingSlahsState.h"
+#include "Player_EvadeState.h"
 #pragma endregion
 
 CPlayer_WalkState::CPlayer_WalkState(_bool isLanding)
@@ -31,8 +33,6 @@ void CPlayer_WalkState::Start(void* pArg)
 CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
 {
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
-
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
 
     _vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
     _bool isWalking = { false };
@@ -62,17 +62,20 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
             m_fDegree -= 90.f;
     }
 
-    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
     {
-        m_fDegree -= 90.f;
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+        {
+            m_fDegree -= 90.f;
 
-        isWalking = true;
-    }
+            isWalking = true;
+        }
 
-    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-    {
-        m_fDegree += 90.f;
-        isWalking = true;
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        {
+            m_fDegree += 90.f;
+            isWalking = true;
+        }
     }
 
     _matrix matRot = XMMatrixRotationY(XMConvertToRadians(m_fDegree));
@@ -84,6 +87,7 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
     _vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
     _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.3f);
     m_Desc->pPlayerTransform->Change_Look(vResult);
+
 
     //내적 연산결과
     _float fDot = XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(vPlayerLook, vCameraLook))));
@@ -104,10 +108,19 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
         m_pNextState = CPlayer_JumpState::Create(nullptr);
 
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+        m_pNextState = CPlayer_EvadeState::Create(nullptr);
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+        m_pNextState = CPlayer_LightAttackState::Create(nullptr);
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
+        m_pNextState = CPlayer_BetaChargingSlahsState::Create(nullptr);
+
     else if (false == isWalking)
         m_pNextState = CPlayer_WalkEndState::Create(nullptr);
-
-
+    // 이동은 제일 마지막에.
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
 
     return m_pNextState;
 }

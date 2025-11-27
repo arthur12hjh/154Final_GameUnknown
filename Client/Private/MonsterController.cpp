@@ -203,6 +203,7 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 			if (fDistance <= m_pOwnerData->fAttackRange)
 			{
 				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+				AttackStateDesc.pTarget = pTarget;
 				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}

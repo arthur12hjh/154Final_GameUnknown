@@ -57,7 +57,19 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 
     case NAYTIBA_STATE::BATTLE:
     {
-        Compute_MoveDirection();
+        _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+        _float  fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
+
+        if (m_pOwnerInfo->fAttackRange < fDistance)
+        {
+            m_bIsCaution = false;
+        }
+        else
+        {
+            Compute_MoveDirection();
+            m_bIsCaution = true;
+        }
+        
     }
     break;
     }
@@ -211,10 +223,11 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             else if (2 == m_iSectionIndex)
             {
                 AnimationName += "_Run_E";
+                m_bIsEnableChange = true;
                 bIsAnimLoop = false;
             }
         }
-        else
+        else if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
         {
             m_iSectionIndex = 0;
             m_bIsCaution = true;
@@ -245,7 +258,11 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     }
 
     pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop);
-    pEntity->Play_Animation(fTimeDelta);
+
+    if(0 == m_iSectionIndex && !m_bIsEnableChange)
+        pEntity->Play_Animation(fTimeDelta, m_pOwner->GetTransform(), 1.f);
+    else
+        pEntity->Play_Animation(fTimeDelta);
 
     if (pEntity->IsAnmiationFinished())
     {
@@ -256,7 +273,6 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             else if (2 == m_iSectionIndex)
             {
                 m_iSectionIndex = 0;
-                m_bIsEnableChange = true;
                 m_bIsCaution = true;
             }
         }
@@ -317,32 +333,6 @@ void CMonsterMoveState::Compute_MoveDirection()
       //  XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK));
     }
 }
-
-//void CMonsterMoveState::Compute_CautionAngle()
-//{
-//    // 오너의 포지션을 받아온다.
-//    _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-//
-//    // 타겟의 룩과 포지션을 받아온다.
-//    _vector vTargetLook = m_pTarget->GetTransform()->Get_State(STATE::LOOK);
-//    _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
-//
-//    _vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
-//    _float fCautionAngle = acosf(XMVectorGetX(XMVector3Dot(vTargetLook, vDir)));
-//
-//    _float fHalfRange = m_pOwnerInfo->fAttackRange * 0.5f;
-//    _float fCautionRadius = m_pGameInstance->Random(fHalfRange, m_pOwnerInfo->fAttackRange - 1.f);
-//
-//    _float fTargetAngle = 45.f;
-//    if (50 <= m_pGameInstance->Random(0, 100.f))
-//        fTargetAngle = fCautionAngle - XMConvertToRadians(fTargetAngle);
-//    else                                   
-//        fTargetAngle = fCautionAngle + XMConvertToRadians(fTargetAngle);
-//
-//    XMStoreFloat3(&m_vMovePoint, vTargetPos);
-//    m_vMovePoint.x += cosf(fTargetAngle) * fCautionRadius;
-//    m_vMovePoint.z += sinf(fTargetAngle) * fCautionRadius;
-//}
 
 CMonsterMoveState* CMonsterMoveState::Create(void* pArg)
 {

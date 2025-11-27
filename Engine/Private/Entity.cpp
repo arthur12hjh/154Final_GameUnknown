@@ -49,18 +49,18 @@ HRESULT CEntity::Render()
     return S_OK;
 }
 
-_bool CEntity::Play_Animation(_float fTimeDelta)
+_bool CEntity::Play_Animation(_float fTimeDelta, CTransform* pTargetTransform, _float fRootMotionRatio)
 {
     /// "          "가 비어있을 경우, 아래에 나열된 작업을 수행합니다.
     /// Find_PartObject(TEXT("Part_Body")) 를 통해 PartObject를 받습니다.
     /// PartObject의 Find_Component(TEXT("Com_Model"))을 통해 CModel*을 받습니다.
     /// 
     /// 이후, CModel의 Play_Animation함수를 return 해줍니다.
-
+    /// 
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    return m_pBodyModelCom->Play_Animation(fTimeDelta);
+    return m_pBodyModelCom->Play_Animation(fTimeDelta, pTargetTransform, fRootMotionRatio);
 }
 
 _bool CEntity::IsAnmiationFinished()
@@ -84,6 +84,10 @@ void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fA
     m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate);
 }
 
+_float CEntity::Get_AnimationRatio()
+{
+    return m_pBodyModelCom->Get_AnimationRatio();
+}
 
 HRESULT CEntity::Import_ModelPtr()
 {

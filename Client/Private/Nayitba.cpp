@@ -13,6 +13,8 @@
 
 #include "GameManager.h"
 #include "Player.h"
+#include "PlayerCCTHitReporter.h"
+#include "PlayerBehaviorCallback.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
@@ -51,14 +53,29 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
-	__super::Priority_Update(fTimeDelta);
 	m_pAIController->Priority_Update(fTimeDelta);
+	m_pCCT->Update_PrePxPosition(m_pTransformCom);
+
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
+	{
+		m_fMotionRatio -= 1.0f;
+		if (0 >= m_fMotionRatio)
+			m_fMotionRatio = 0.f;
+	}
+	
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
+	{
+		m_fMotionRatio += 1.0f;
+		if (1 <= m_fMotionRatio)
+			m_fMotionRatio = 10.f;
+	}
 
+#pragma region Hit
 	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
 	//{
 	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
@@ -114,7 +131,7 @@ void CNayitba::Update(_float fTimeDelta)
 	//	Damaged(&DamageDesc);
 	//	Safe_Release(DamageDesc.pAttacker);
 	//}
-
+#pragma endregion
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
@@ -127,14 +144,21 @@ void CNayitba::Update(_float fTimeDelta)
 
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
+
+	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
+	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+
 #ifdef _DEBUG
 	m_pAISenceCom->Update_Debuge();
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif // _DEBUG
 
 }
@@ -220,18 +244,14 @@ HRESULT CNayitba::Ready_CharacterData()
 		else
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
-		// ü�� ����
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
 
-		// ���� ����
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
 
-		// Phase �����ϴ°�
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
-		// �� ����
 		m_eTeam = OBJECT_TEAM::ENEMY;
 	}
 
@@ -240,10 +260,15 @@ HRESULT CNayitba::Ready_CharacterData()
 
 HRESULT CNayitba::ADD_Components()
 {
-	// ���⼭ �浹ó���� �ݶ��̴� �ް�
-	// AI ���� �޾Ƽ� �浹 ó���ѹ� ����
-	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT(""), TEXT("AI_Sence"), (CComponent**)&m_pAISenceCom)))
-		return E_FAIL;*/
+	/* Com_Collider_AABB */
+	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		return E_FAIL;
+
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
 	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
 	SenceComDesc.fAiSearchRadius = 60.f;
@@ -255,9 +280,9 @@ HRESULT CNayitba::ADD_Components()
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
+	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 
-	// �״��� ���⼭ FSM ���� �ൿƮ����
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -284,8 +309,28 @@ HRESULT CNayitba::ADD_Components()
 			return E_FAIL;
 	}
 
+	/* Com_CCT */
+	CCharacterController::CCT_DESC Desc;
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("Player_CCT");
+
+	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
+	Desc.tUserData = tUserData;
+	//캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
+	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
+	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
+	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
+	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
+		return E_FAIL;
+
+	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
+
 	m_pAIController = static_cast<CAIController*>(pInstnace);
-	m_pAISenceCom->ADD_SenceIgnoreTraceObject(HIT_TYPE::STATIC);
+
 
 	return S_OK;
 }
@@ -310,10 +355,6 @@ HRESULT CNayitba::ADD_PartObjects()
 void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
-	// �̰� �ٸ� �÷��� �Ѱܼ�
-	// Ÿ���� ã���� �ٷ� Ȯ���ؼ� �޷��;��ҰŰ���
-	// Battle Start & Battle End ���� �ִϸ��̼� �־� ����
-
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 		m_szEntryAnim += "_BattleStart";
@@ -346,6 +387,8 @@ CGameObject* CNayitba::Clone(void* pArg)
 void CNayitba::Free()
 {
 	__super::Free();
+
+
 
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);

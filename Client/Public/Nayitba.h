@@ -34,6 +34,7 @@ public:
 	virtual HRESULT					Damaged(void* pArg);
 
 	_uint							GetMonsterID();
+	_float							GetRootMotionRatio() { return m_fMotionRatio; }
 	const list<CGameObject*>*		GetTargetList();
 
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
@@ -57,11 +58,11 @@ private:
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 
+	_float							m_fMotionRatio = { 1.f };
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
 	string							m_szEntryAnim = {};
-	
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
 	size_t							m_iSkillIndex = {};
 

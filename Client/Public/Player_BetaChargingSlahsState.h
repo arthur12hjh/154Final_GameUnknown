@@ -4,11 +4,11 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_JumpState final : public CPlayerState
+class CPlayer_BetaChargingSlahsState final : public CPlayerState
 {
 private:
-	CPlayer_JumpState();
-	virtual ~CPlayer_JumpState() = default;
+	CPlayer_BetaChargingSlahsState();
+	virtual ~CPlayer_BetaChargingSlahsState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -18,10 +18,11 @@ public:
 	virtual void			   End() override;
 
 private:
-	_float	m_fDegree = { 0.f };
-
+	_bool m_isStartCharge = { false };
+	_bool m_isLoopCharge = { false };
+	_bool m_isAttack = { false };
 public:
-	static	CPlayer_JumpState* Create(void* pArg);
+	static	CPlayer_BetaChargingSlahsState* Create(void* pArg);
 	virtual	void			   Free() override;
 
 };

@@ -28,11 +28,15 @@ public:
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);
 	void							DetachedMatrix();
 
+	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
+
 protected :
 	_bool							m_bIsActionEnabled = { true };
 	const _float4x4*				m_pSocketMatrix = { nullptr };
 
 	class CGameManager*				m_pGameManager = { nullptr };
+	class CCollider*				m_pColliderCom = { nullptr };
+	CCharacterController*			m_pCCT = { nullptr };
 
 public:
 	virtual CGameObject*			Clone(void* pArg) override;

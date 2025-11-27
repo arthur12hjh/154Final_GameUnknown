@@ -37,7 +37,6 @@ private:
 	HRESULT					Ready_Default_Setting();
 	HRESULT					Ready_Manager_Setting();
 	HRESULT					Start_Level(LEVEL eLevelID);
-	HRESULT					Ready_Gara();
 	HRESULT					Ready_Prototypes();
 	HRESULT					Ready_Mouse();
 

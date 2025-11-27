@@ -59,6 +59,8 @@ namespace Client
 		char				szHitAnimationName[256];
 
 		long long			iSkillDamage;
+		float				fRootMotionRatio;
+
 		ATTACK_DIRECTION	eATK_Direction;
 		DIRECTION			eDirection;
 		SKILL_TYPE			eSkillType;
@@ -131,6 +133,4 @@ namespace Client
 
 		void*				pSkillData;
 	}DEFAULT_DAMAGE_DESC;
-
-
 }

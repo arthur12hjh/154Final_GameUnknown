@@ -10,6 +10,7 @@ class CMonsterAttackState final : public CState
 public :
 	typedef struct MonsterAttackDesc
 	{
+		CGameObject*					pTarget;
 		function<void(_float)>			AttackCompletedFunc;
 	}MONSTER_ATTACK_DESC;
 
@@ -30,7 +31,18 @@ public:
 
 private :
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };
+
+	CGameObject*								m_pTarget = { nullptr };
+	_bool										m_bIsGara = {};
+	_bool										m_bIsRootGara = { false };
+	_float										m_fRootMotionRatio = {};
+
+	_float3										m_vMoveDir = {};
+	_float										m_fMoveSpeed = {};
 	function<void(_float)>						m_AttackCompletedFunc;
+
+private :
+	void										BeholderGara(_float fTimeDelta);
 
 public:
 	static	CMonsterAttackState*				Create(void* pArg);
