@@ -38,8 +38,6 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
 
 private:
 	const _uint* m_pParentState = { nullptr };

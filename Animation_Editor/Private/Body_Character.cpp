@@ -206,7 +206,4 @@ CGameObject* CBody_Character::Clone(void* pArg)
 void CBody_Character::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }
