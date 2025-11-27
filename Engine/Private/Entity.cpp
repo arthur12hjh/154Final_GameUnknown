@@ -76,7 +76,7 @@ void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
     m_pBodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
 }
 
-void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate)
+void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
@@ -84,7 +84,7 @@ void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fA
     m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate);
 }
 
-void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate)
+void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
