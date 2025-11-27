@@ -34,6 +34,7 @@ public:
 	virtual HRESULT		Render();
 	virtual HRESULT		Render_Shadow() { return S_OK; }
 	virtual HRESULT		Render_MotionBlur() { return S_OK; }
+
 public:
 	_bool isDead() const {
 		return m_isDead;
@@ -54,9 +55,10 @@ public:
 	// 오브젝트의 속성을 받아올수 있음
 	OBJECT_TEAM									GetTeam() { return m_eTeam; }
 
-	_bool										IsFrustomCulling();
-	_float										Get_Depth();
-	CCollider*									GetCullingCollider() { return m_pCullingCollider; }
+	_bool											IsFrustomCulling();
+	_float											Get_Depth();
+	CCollider*										GetCullingCollider() { return m_pCullingCollider; }
+	const map<const _wstring, class CComponent*>*	GetAllComponents() { return &m_Components; }
 
 protected:
 	int											m_iObjectID;

@@ -25,6 +25,7 @@ public:
 	void						Update(_float fTimeDeleta);
 	HRESULT						Render();
 
+	void						SetLevelMainCamera();
 private:
 #ifdef _DEBUG
 	CGameManager*				m_pGameManager = nullptr;
