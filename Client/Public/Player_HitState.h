@@ -4,13 +4,11 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_LightAttackState final : public CPlayerState
+class CPlayer_HitState final : public CPlayerState
 {
-public:
-	enum class COMBO { LIGHT_ATTACK1, LIGHT_ATTACK2, LIGHT_ATTACK3, LIGHT_ATTACK4, LIGHT_ATTACK5, END };
 private:
-	CPlayer_LightAttackState();
-	virtual ~CPlayer_LightAttackState() = default;
+	CPlayer_HitState();
+	virtual ~CPlayer_HitState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -19,11 +17,8 @@ public:
 	virtual PLAYER_TRANSITION_DESC	   Update(_float fTimeDelta) override;
 	virtual void			   End() override;
 
-private:
-	COMBO m_eCombo = {};
-	_float m_fLimitProgress = { 0.f };
 public:
-	static	CPlayer_LightAttackState* Create(void* pArg);
+	static	CPlayer_HitState* Create(void* pArg);
 	virtual	void			   Free() override;
 
 };

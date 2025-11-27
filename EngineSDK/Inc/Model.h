@@ -102,6 +102,7 @@ public:
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 	}
 
+	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }

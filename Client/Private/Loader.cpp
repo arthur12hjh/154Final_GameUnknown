@@ -374,10 +374,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
 		CGorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_Component_PlayerFSM */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
-		CPlayerFSM::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	if (FAILED(Loading_UI_For_GamePlay_Level()))
 		return E_FAIL;

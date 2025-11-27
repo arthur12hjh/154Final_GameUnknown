@@ -1,21 +1,22 @@
 #include "pch.h"
-#include "Player_IdleState.h"
+#include "Player_LockonIdleState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_IdleState::CPlayer_IdleState() 
+CPlayer_LockonIdleState::CPlayer_LockonIdleState()
     : CPlayerState {}
 {
 }
 
-void CPlayer_IdleState::Start(void* pArg)
+void CPlayer_LockonIdleState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::IDLE;
-    m_pPlayer->Set_Animation("Proto_Battle_Idle", true);
+
+    m_pPlayer->Set_Animation("Proto_Lockon_Battle_Idle", true);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_LockonIdleState::Update(_float fTimeDelta)
 {
     m_pPlayer->Play_Animation(fTimeDelta);
 
@@ -37,19 +38,20 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
         m_tNextState.eNextState = PLAYER_STATE::JUMP;
 
+
     return m_tNextState;
 }
 
-void CPlayer_IdleState::End()
+void CPlayer_LockonIdleState::End()
 {
 }
 
-CPlayer_IdleState* CPlayer_IdleState::Create(void* pArg)
+CPlayer_LockonIdleState* CPlayer_LockonIdleState::Create(void* pArg)
 {
-    return new CPlayer_IdleState();
+    return new CPlayer_LockonIdleState();
 }
 
-void CPlayer_IdleState::Free()
+void CPlayer_LockonIdleState::Free()
 {
     __super::Free();
 }

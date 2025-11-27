@@ -4,58 +4,35 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-#pragma region TRANSFER_STATE
-
-#include "Player_IdleState.h"
-#include "Player_WalkState.h"
-
-#pragma endregion
-
 CPlayer_LandingState::CPlayer_LandingState()
 {
 }
 
 void CPlayer_LandingState::Start(void* pArg)
 {
-	m_pPlayer->Set_Animation("Proto_Jump_End", false);
+	m_eState = PLAYER_STATE::LANDING;
+
+	m_pPlayer->Set_Animation("Proto_Jump_End", false, 1.2f);
 	m_eType = JUMP_TYPE::IDLE;
 }
 
-CPlayerState* CPlayer_LandingState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_LandingState::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
-		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
-		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
-		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D) &&
+	if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
 		fAnimationRatio >= 0.1f)
-	{
-		m_pNextState = CPlayer_WalkState::Create(nullptr);
-	}
+		m_tNextState.eNextState = PLAYER_STATE::WALK;
 	else if (true == isAnimFinished)
-	{
-		switch (m_eType)
-		{
-		case JUMP_TYPE::RUN:
-			m_pNextState = CPlayer_WalkState::Create(nullptr);
-			break;
+		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-		case JUMP_TYPE::IDLE:
-			m_pNextState = CPlayer_IdleState::Create(nullptr);
-			break;
-		default:
-			break;
-		}
-	}
-
-	if (JUMP_TYPE::RUN == m_eType)
-	{
-
-	}
-
-	return m_pNextState;
+	return m_tNextState;
 }
 
 void CPlayer_LandingState::End()

@@ -21,31 +21,34 @@ public:
 	// Desc ¹ÝÈ¯.
 	const struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
 	const class CBody_Player* Get_BodyPtr() { return m_pBody; }
-
-
+	_float Get_AnimationRatio();
+	void Change_PlayerMode(PLAYER_MODE eMode); 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-
-	virtual void			Priority_Update(_float fTimeDelta) override;
-	virtual void			Update(_float fTimeDelta) override;
-	virtual void			Late_Update(_float fTimeDelta) override;
-
-	virtual HRESULT			Render() override;
-	virtual HRESULT			Damaged(void* pArg) override;
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Priority_Update(_float fTimeDelta) override;
+	virtual void Update(_float fTimeDelta) override;
+	virtual void Late_Update(_float fTimeDelta) override;
+	virtual HRESULT Render() override;
+	virtual HRESULT Damaged(void* pArg) override;
 
 private:
 	struct Player_Desc		m_PlayerDesc = {};
-
 	class CBody_Player*		m_pBody = { nullptr };
-
 	class CTrailEffect*		m_pTrail = { nullptr };
-	class CPlayerFSM*		m_pPlayerFSM = { nullptr };
+	CCollider*				m_pColliderCom = { nullptr };
+
+	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};
+	class CPlayerFSM*		m_pCurrentFSM = { nullptr };
 
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 	HRESULT Ready_PlayerDesc();
+	HRESULT Ready_FSM();
+
+private:
+	void Update_FSM(_float fTimeDelta);
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
