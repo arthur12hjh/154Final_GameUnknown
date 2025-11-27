@@ -33,7 +33,14 @@ namespace Client
 	}CHARACTER_NETWORK_DESC;
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
-	// 인게임에서 바뀔거 요거
+	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
+	enum class PLAYER_STATE { 
+		IDLE, WALK, WALK_END, JUMP, LIGHT_ATTACK, 
+		EVADE, LANDING, VENDING_INTERACTION,
+		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
+
+		STATE_END
+	};
 	typedef struct Player_Desc
 	{
 		long long				iCurrentHealth;
@@ -47,8 +54,10 @@ namespace Client
 		float					fCurrentCTDamage;
 		float					fCurrentLinkApplyDamage;
 
-		CTransform*				pPlayerTransform = { nullptr };
-		CCharacterController*	pPlayerController = { nullptr }; 
+		//플레이어의 전투 상태. battle, idle, lockon
+		PLAYER_MODE     ePlayerMode;
+		class CTransform* pPlayerTransform = { nullptr };
+		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체

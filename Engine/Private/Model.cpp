@@ -8,6 +8,7 @@
 #include "Channel.h"
 #include "ComputeShader.h"
 #include "GameInstance.h"
+#include "StringHelper.h"
 
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent { pDevice, pContext }
@@ -136,6 +137,42 @@ _uint CModel::Get_MeshVertexStride(_uint iMeshNum)
 DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 {
 	return m_Meshes[iMeshNum]->GetIndexFormat();
+}
+
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate)
+{
+	_char pName[MAX_PATH] = {};
+
+	CStringHelper::ConvertWideToUTF(strAnimationTag.c_str(), pName);
+
+	_uint iAnimIndex = 0;
+	m_fAnimationPlayRate = fAnimationPlayRate;
+
+	for (auto& pAnimation : m_Animations)
+	{
+		if (TRUE == pAnimation->CompareAnimationTag(pName))
+		{
+			if (m_iCurrentAnimIndex == iAnimIndex)
+				return;
+
+			m_iCurrentAnimIndex = iAnimIndex;
+			m_isLoop = isLoop;
+
+			m_Animations[m_iCurrentAnimIndex]->Reset();
+
+			m_iFlagPreRootModified = ROOTFLAG_RESET;
+			XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+			XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
+			Bind_ChannelAndKeyFrameBuffer();
+
+			if (AnimationChanged)
+				AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+			return;
+		}
+
+		++iAnimIndex;
+	}
 }
 
 void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate)

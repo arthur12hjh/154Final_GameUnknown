@@ -17,15 +17,18 @@ CPlayerState::CPlayerState()
 	m_pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
 	m_Desc = m_pPlayer->Get_Desc();
 	Safe_Release(m_pPlayer);
+
+	m_tNextState.eNextState = PLAYER_STATE::STATE_END;
+	m_tNextState.pArg = nullptr;
 }
 
 void CPlayerState::Start(void* pArg)
 {
 }
 
-CPlayerState* CPlayerState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayerState::Update(_float fTimeDelta)
 {
-	return nullptr;
+	return m_tNextState;
 }
 
 void CPlayerState::End()

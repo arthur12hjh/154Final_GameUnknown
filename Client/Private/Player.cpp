@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Player.h"
 
+#include "Player.h"
 #include "Nayitba.h"
 
 #include "Body_Player.h"
@@ -15,9 +15,13 @@
 #include "Effect.h"
 #include "Trail.h"
 #include "TrailEffect.h"
-#include "PlayerFSM.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+
+#include "PlayerBattleFSM.h"
+#include "PlayerIdleFSM.h"
+#include "PlayerLockOnFSM.h"
+#include "PlayerState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -27,6 +31,23 @@ CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CPlayer::CPlayer(const CPlayer& Prototype)
 	: CCharacter{ Prototype }
 {
+}
+
+_float CPlayer::Get_AnimationRatio()
+{
+	return m_pBodyModelCom->Get_AnimationRatio();
+}
+
+void CPlayer::Change_PlayerMode(PLAYER_MODE eMode)
+{
+	m_PlayerDesc.ePlayerMode = eMode;
+
+	//fsm ±³Ã¼
+	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
+	pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	m_pCurrentFSM->Clear_FSM();
+
+	m_pCurrentFSM = pNextFSM;
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -54,6 +75,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_PlayerDesc()))
 		return E_FAIL;
 
+	if (FAILED(Ready_FSM()))
+		return E_FAIL;
+
 	m_pColliderCom->SetOwner(this);
 
 	return S_OK;
@@ -69,11 +93,19 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	m_pPlayerFSM->Update(fTimeDelta);
+	__super::Update(fTimeDelta);
+
+	Update_FSM(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+	{
+		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
+			Change_PlayerMode(PLAYER_MODE::LOCKON);
+		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
+			Change_PlayerMode(PLAYER_MODE::BATTLE);
+	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
-	__super::Update(fTimeDelta);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
@@ -101,12 +133,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
-
-
-
-
-
-
 	return S_OK;
 }
 
@@ -122,15 +148,6 @@ HRESULT CPlayer::Ready_Components()
 		return E_FAIL;
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
-
-	m_pColliderCom->BindBeginOverlapEvent([](_float3 vHitPoint, _float3 vHitDir, CGameObject* pActor) {
-		int a = 10;
-		});
-
-	/* Player FSM */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
-		TEXT("Com_PlayerFSM"), reinterpret_cast<CComponent**>(&m_pPlayerFSM))))
-		return E_FAIL;
 
 	/* Com_CCT */
 	CCharacterController::CCT_DESC Desc;
@@ -229,8 +246,24 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.iCurrentBetaEnergy = 100;
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
 
 	return S_OK;
+}
+
+HRESULT CPlayer::Ready_FSM()
+{
+	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
+	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
+
+	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::BATTLE)->second;
+
+	return S_OK;
+}
+
+void CPlayer::Update_FSM(_float fTimeDelta)
+{
+	m_pCurrentFSM->Update(fTimeDelta);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -263,7 +296,12 @@ void CPlayer::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pCCT);
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pPlayerFSM);
+
+	for (auto& iter : m_FSMs)
+		Safe_Release(iter.second);
+
+	m_FSMs.clear();
+
+	Safe_Release(m_pCurrentFSM);
 }

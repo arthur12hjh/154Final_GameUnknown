@@ -4,11 +4,11 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_BetaChargingSlahsState final : public CPlayerState
+class CPlayer_LockonIdleState final : public CPlayerState
 {
 private:
-	CPlayer_BetaChargingSlahsState();
-	virtual ~CPlayer_BetaChargingSlahsState() = default;
+	CPlayer_LockonIdleState();
+	virtual ~CPlayer_LockonIdleState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -17,14 +17,9 @@ public:
 	virtual PLAYER_TRANSITION_DESC       Update(_float fTimeDelta) override;
 	virtual void			   End() override;
 
-private:
-	_bool m_isStartCharge = { false };
-	_bool m_isLoopCharge = { false };
-	_bool m_isAttack = { false };
 public:
-	static	CPlayer_BetaChargingSlahsState* Create(void* pArg);
+	static	CPlayer_LockonIdleState* Create(void* pArg);
 	virtual	void			   Free() override;
-
 };
 
 NS_END

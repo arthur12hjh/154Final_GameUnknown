@@ -4,15 +4,6 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-#pragma region TRANSFER_STATE
-
-#include "Player_WalkEndState.h"
-#include "Player_JumpState.h"
-#include "Player_LightAttackState.h"
-#include "Player_BetaChargingSlahsState.h"
-#include "Player_EvadeState.h"
-#pragma endregion
-
 CPlayer_WalkState::CPlayer_WalkState(_bool isLanding)
     : CPlayerState{}
     , m_isLanding { isLanding }
@@ -21,16 +12,18 @@ CPlayer_WalkState::CPlayer_WalkState(_bool isLanding)
 
 void CPlayer_WalkState::Start(void* pArg)
 {
+    m_eState = PLAYER_STATE::WALK;
+
     //그냥 뛰어
     if(true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Jump_Run", false);
+        m_pPlayer->Set_Animation("Proto_Jump_Run", false , 1.2f);
     else
-        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false);
+        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
 
     m_isRunStart = true;
 }
 
-CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
 {
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
@@ -82,8 +75,6 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
     vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
 
     // A나 D를 누르면 카메라 벡터를 기준으로 좌우로 움직이게끔 세팅.
-
-
     _vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
     _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.3f);
     m_Desc->pPlayerTransform->Change_Look(vResult);
@@ -95,34 +86,34 @@ CPlayerState* CPlayer_WalkState::Update(_float fTimeDelta)
     if (fDot >= 100.f && false == m_isChangingDir && false == m_isRunStart)
     {
         m_isChangingDir = true;
-        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false);
+        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
     }
      
     if ((true == m_isRunStart && true == isAnimFinished) || (true == m_isChangingDir && fDot <= 5.f))
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f);
         m_isRunStart = false;
         m_isChangingDir = false;
     }
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
-        m_pNextState = CPlayer_JumpState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::JUMP;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-        m_pNextState = CPlayer_EvadeState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
-        m_pNextState = CPlayer_LightAttackState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
-        m_pNextState = CPlayer_BetaChargingSlahsState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     else if (false == isWalking)
-        m_pNextState = CPlayer_WalkEndState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::WALK_END;
     // 이동은 제일 마지막에.
     m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
 
-    return m_pNextState;
+    return m_tNextState;
 }
 
 void CPlayer_WalkState::End()
