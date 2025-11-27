@@ -315,6 +315,7 @@ HRESULT CParticle::Ready_ComputeShader()
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fDelayTime;

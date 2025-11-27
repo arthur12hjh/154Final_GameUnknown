@@ -124,7 +124,7 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
     GS_NORMAL_OUT Out[4];
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
+        float3 vRight = -normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
         float3 vUp = normalize(g_CamMatrix._21_22_23) * In[0].fSize * 0.5f;
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -239,7 +239,7 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
     GS_NONLIGHT_OUT Out[4];
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
+        float3 vRight = -normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
         float3 vUp = normalize(g_CamMatrix._21_22_23) * In[0].fSize * 0.5f;
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -309,7 +309,7 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
     GS_WEIGHT_OUT Out[4];
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
+        float3 vRight = -normalize(g_CamMatrix._11_12_13) * In[0].fSize * 0.5f;
         float3 vUp = normalize(g_CamMatrix._21_22_23) * In[0].fSize * 0.5f;
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -558,30 +558,54 @@ PS_WEIGHT_OUT PS_POWER(PS_WEIGHT_IN In)
     PS_WEIGHT_OUT Out;
     
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
-    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x / 180) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
     float2 tex = In.vTexcoord;
-    float s = sin(radians(In.vLifeTime.x * 720));
-    float c = cos(radians(In.vLifeTime.x * 720));
+    float s = sin(radians(In.vLifeTime.x * -g_fDiffuseUVSpeed.x));
+    float c = cos(radians(In.vLifeTime.x * -g_fDiffuseUVSpeed.x));
     tex -= float2(0.5, 0.5);
     float2x2 rot = float2x2(c, -s, s, c);
     tex = mul(tex, rot) + float2(0.5, 0.5);
     
-    float diffuse = (g_DissolveTexture.Sample(NoneSampler, tex).r) * g_DiffuseTexture.Sample(NoneSampler, DiffuseTexcoord).r;
-    vector a = g_DiffuseTexture.Sample(NoneSampler, tex);
-    float fMax = max(a.r, max(a.g, a.b));
+    float2 uv = In.vTexcoord;
+    
+    float dist = distance(uv, float2(0.5, 0.5));
+    
+    float ring = smoothstep(saturate((In.vLifeTime.x + 2) / In.vLifeTime.y), saturate((In.vLifeTime.x + 2) / In.vLifeTime.y) - 0.1, dist);
+    
+    float3 noise = g_DiffuseTexture.Sample(DefaultSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0) * 0.2;
+    
+    float2 uvDistorted = uv + distort * ring;
+    
+    float4 col = g_DissolveTexture.Sample(DefaultSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    col.rgb *= ring * mask;
+    //col.a *= g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
     Out.vDiffuse = g_vColor;
-    float2 texcoord = float2((MaskTexcoord.x * 1.2 - (1.2 - 1) * 0.5) + a.r * (0.5 < MaskTexcoord.x ? 0.2 : -0.2), (MaskTexcoord.y * 1.2 - (1.2 - 1) * 0.5) + a.r * (0.5 < MaskTexcoord.y ? 0.2 : -0.2));
-    Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, texcoord).r;
-    //Out.vDiffuse = g_DiffuseTexture.Sample(NoneSampler, tex);
-    //Out.vDiffuse.a *= 0.3;
+    
+    float diffuse = (g_DiffuseTexture.Sample(MirrorSampler, tex).r - 0.5) * 2 * saturate((In.vLifeTime.y - In.vLifeTime.x));
+    Out.vDiffuse = lerp(g_vColor, float4(0.1, 0.2, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
+    
+    //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x + diffuse * 0.05, MaskTexcoord.y + diffuse * 0.05)).r * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    float2 texcoord = float2(MaskTexcoord.x * 1.2 + diffuse * 0.05 - 0.2 * 0.5, MaskTexcoord.y * 1.2 + diffuse * 0.05 - 0.2 * 0.5);
+    
+    
+    Out.vDiffuse.a *= length(float2(0.5, 0.5) - texcoord) * 2;
+    Out.vDiffuse.a = pow(Out.vDiffuse.a, 10);
     Out.vDiffuse.a *= saturate((In.vLifeTime.y - In.vLifeTime.x) * 1.5);
-    //if (0 >= Out.vDiffuse.a || 0.5 < length(float2(0.5, 0.5) - texcoord))
-    //    discard;
-    //Out.vDiffuse.a = g_DissolveTexture.Sample(NoneSampler, tex).r;
+    if (0 >= Out.vDiffuse.a || 0.5 < length(float2(0.5, 0.5) - texcoord))
+        discard;
+    Out.vDiffuse.a *= col.r;
+    //Out.vDiffuse.a *= col.r - (smoothstep(min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5), min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5) - 0.1, dist));
     float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
     float weight = saturate(pow(1 - linearDepth / 500, 3));
+    if (0 >= Out.vDiffuse.a)
+        discard;
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -636,7 +660,7 @@ technique11 DefaultTechnique
     pass SPHERE
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
@@ -646,7 +670,7 @@ technique11 DefaultTechnique
     pass Power
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();

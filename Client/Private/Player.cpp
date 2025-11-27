@@ -121,12 +121,22 @@ void CPlayer::Update(_float fTimeDelta)
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
 			return;
 
+		//desc.fRotationPerSec = 1.f;
+		//desc.fSpeedPerSec = 1.f;
+		//desc.pRootMatrix = nullptr;
+		//desc.vPos = XMVectorSet(5, 3, 0, 1);
+		//desc.fRot = _float3(0, 0, 0);
+		//desc.fSize = 2.f;
+		//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+		//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+		//	return;
 
-		desc;
+
 		desc.fRotationPerSec = 1.f;
 		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = nullptr;
-		desc.vPos = XMVectorSet(5, 3, 0, 1);
+		desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+		desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+		desc.vPos = XMVectorSet(0, 0, 0, 1);
 		desc.fRot = _float3(0, 0, 0);
 		desc.fSize = 2.f;
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
