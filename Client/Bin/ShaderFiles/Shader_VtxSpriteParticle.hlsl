@@ -130,7 +130,7 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
     
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13);
+        float3 vRight = -normalize(g_CamMatrix._11_12_13);
         float3 vUp = normalize(g_CamMatrix._21_22_23);
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -278,7 +278,7 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
     
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13);
+        float3 vRight = -normalize(g_CamMatrix._11_12_13);
         float3 vUp = normalize(g_CamMatrix._21_22_23);
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -372,7 +372,7 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
     GS_WEIGHT_OUT Out[4];
     if (g_bisBillboard)
     {
-        float3 vRight = normalize(g_CamMatrix._11_12_13);
+        float3 vRight = -normalize(g_CamMatrix._11_12_13);
         float3 vUp = normalize(g_CamMatrix._21_22_23);
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -694,7 +694,6 @@ PS_WEIGHT_OUT PS_BOXPARTICLE(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
 PS_WEIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
 {
     PS_WEIGHT_OUT Out;
@@ -705,7 +704,6 @@ PS_WEIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
-    //MaskTexcoord = In.vTexcoord;
     
     Out.vDiffuse = g_vColor;
     if (In.vTexcoord.y <= 0.3)
@@ -726,11 +724,6 @@ PS_WEIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     MaskTexcoord.x = MaskTexcoord.x * (In.vLifeTime.x * 40 + 1);
     MaskTexcoord.x -= ((In.vLifeTime.x * 40 + 1) - 1) * 0.5;
     
-    //float a = 3 / (In.vLifeTime.x);
-    //float size = g_fMaskUVSize.y * a;
-    //MaskTexcoord.y = In.vTexcoord.y * a;
-    //MaskTexcoord.y -= (a - 1) * 0.5;
-    //MaskTexcoord.y = In.vTexcoord.y / (In.vLifeTime.x * 10) + ((In.vLifeTime.x * 10));
     if (0 <= MaskTexcoord.y)
         MaskTexcoord.y = fmod(MaskTexcoord.y, 1.f);
     else
@@ -739,6 +732,88 @@ PS_WEIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     }
     
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r, g_MaskTexture.Sample(NoneSampler, MaskTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = weight;
+    Out.vDiffuse.a = 1;
+    Out.vWeight.a = 1;
+    return Out;
+}
+
+PS_WEIGHT_OUT PS_BLUESIGNAL(PS_WEIGHT_IN In)
+{
+    PS_WEIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    
+    Out.vDiffuse = lerp(g_vColor, float4(0.1, 0.2, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
+    if (In.vTexcoord.y <= 0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))
+    {
+        float a = (((1 - (In.vTexcoord.y * (1 / (0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))))) * 4) + 1);
+        MaskTexcoord.x = In.vTexcoord.x * a;
+        MaskTexcoord.x -= (a - 1) * 0.5;
+        Out.vDiffuse.a /= pow(a, 2);
+    }
+    if (In.vTexcoord.y >= 0.7 - ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))
+    {
+        float a = (((1 - ((1 - In.vTexcoord.y) * (1 / (0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))))) * 4) + 1);
+        MaskTexcoord.x = In.vTexcoord.x * a;
+        MaskTexcoord.x -= (a - 1) * 0.5;
+        Out.vDiffuse.a /= pow(a, 2);
+
+    }
+    MaskTexcoord.x = MaskTexcoord.x * (In.vLifeTime.x * 15 + 1);
+    MaskTexcoord.x -= ((In.vLifeTime.x * 15 + 1) - 1) * 0.5;
+    
+    if (0 <= MaskTexcoord.y)
+        MaskTexcoord.y = fmod(MaskTexcoord.y, 1.f);
+    else
+    {
+        MaskTexcoord.y = 1 - fmod(abs(MaskTexcoord.y), 1.f);
+    }
+    
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r, g_MaskTexture.Sample(NoneSampler, MaskTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = weight;
+    Out.vDiffuse.a = 1;
+    Out.vWeight.a = 1;
+    return Out;
+}
+
+PS_WEIGHT_OUT PS_BLUEMASK(PS_WEIGHT_IN In)
+{
+    PS_WEIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    
+
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = lerp(g_vColor, float4(0.08, 0.12, 1, g_vColor.a * 2), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 2)), 3));
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x * 1.2);
     if (0 >= Out.vDiffuse.a)
         discard;
     float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
@@ -819,10 +894,30 @@ technique11 DefaultTechnique
     pass Plasma
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_PLASMA();
+    }
+
+    pass BlueSignal
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_BLUESIGNAL();
+    }
+
+    pass BlueMask
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_BLUEMASK();
     }
 }

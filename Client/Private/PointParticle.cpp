@@ -65,7 +65,6 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 	Desc.vLifeTime = pPointParticleData->fLifeTime;
 	Desc.vSpeed = pPointParticleData->fSpeed;
 	Desc.isLoop = pPointParticleData->bisLoop;
-	Desc.vSpeed = _float2(5, 10);
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;

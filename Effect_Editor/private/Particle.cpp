@@ -42,7 +42,7 @@ void CParticle::Update(_float fTimeDelta)
 			return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMMatrixTranspose(XMMatrixMultiply(XMLoadFloat4x4(m_pParentMat), XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()))));
+		XMMatrixTranspose(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat)));
 	Spread(fTimeDelta);
 }
 

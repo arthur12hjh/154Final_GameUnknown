@@ -43,7 +43,7 @@ VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
    
     vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
     
-    Out.vPosition = mul(vPosition, g_WorldMatrix);
+    Out.vPosition = vPosition;
     
     
     float time = In.vLifeTime.x / In.vLifeTime.y;
