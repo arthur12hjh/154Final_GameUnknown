@@ -355,10 +355,6 @@ HRESULT CNayitba::ADD_PartObjects()
 void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
-	// �̰� �ٸ� �÷��� �Ѱܼ�
-	// Ÿ���� ã���� �ٷ� Ȯ���ؼ� �޷��;��ҰŰ���
-	// Battle Start & Battle End ���� �ִϸ��̼� �־� ����
-
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 		m_szEntryAnim += "_BattleStart";

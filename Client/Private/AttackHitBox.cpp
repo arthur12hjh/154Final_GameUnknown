@@ -25,14 +25,20 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-
 	HIT_BOX_DESC* pHit_BoxDesc = static_cast<HIT_BOX_DESC*>(pArg);
 	m_pAttacker = pHit_BoxDesc->pAttacker;
 	m_pData = pHit_BoxDesc->pData;
 
-	if (FAILED(Ready_Components(*pHit_BoxDesc)))
-		return E_FAIL;
-
+	if (m_pData)
+	{
+		if (FAILED(Ready_Components(*pHit_BoxDesc)))
+			return E_FAIL;
+	}
+	else
+	{
+		m_bIsDelayDead = true;
+		Set_Dead(true);
+	}
 	return S_OK;
 }
 
