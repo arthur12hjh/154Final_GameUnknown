@@ -390,8 +390,17 @@ namespace Engine
 		std::string						szNotifyTag;
 		std::string						szNotifyArg01;
 		std::string						szNotifyArg02;
+		string							szNotifyArg03;
+
+		int								iNumData1;
+		int								iNumData2;
+		int								iNumData3;
+		int								iNumData4;
+
 		std::string						szSocketTag;
 		bool							bIsLocalPos;
+
+		XMFLOAT3						vNotifyScale;
 		XMFLOAT3						vNotifyPosition;
 		XMFLOAT3						vNotifyRotation;
 		unsigned int					iNotifyKeyFrame;

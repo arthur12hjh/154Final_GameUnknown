@@ -37,7 +37,6 @@ private:
 	class CGameManager* m_pGameManager = nullptr;
 
     class CCharacter* m_pCharacter = { nullptr };
-    CTransform* m_pCharacterTransformCom = { nullptr };
     class CModel* m_pModelCom = ( nullptr );
     priority_queue<ANIM_NOTIFY> m_NotifyQueue;
 
@@ -54,9 +53,6 @@ private:
     HRESULT Notify_Adjust_Light(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Undefined(ANIM_NOTIFY AnimNotify);               // 이름이 지정되어있지 않은 경우, 노티파이 매니저로 패스
-
-
-
 
 public:
 	static CNotify* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

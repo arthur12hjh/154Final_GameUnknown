@@ -138,8 +138,8 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 
 void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	auto pPlayer = dynamic_cast<CPlayer*>(pHitActor);
-	if (nullptr == pPlayer)
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if (nullptr == pCharacter)
 		return;
 
 	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
@@ -150,7 +150,7 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	pDamageDesc.vHitPoint = vHitPoint;
 	pDamageDesc.pSkillData = &TempDesc;
 
-	pPlayer->Damaged(&pDamageDesc);
+	pCharacter->Damaged(&pDamageDesc);
 	m_vDelayDead = {0.f, 10.f};
 	m_bIsDelayDead = true;
 }

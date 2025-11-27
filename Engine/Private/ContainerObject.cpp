@@ -81,6 +81,7 @@ HRESULT CContainerObject::Add_PartObject(_uint iPrototypeLevelIndex, const _wstr
     if (nullptr != Find_PartObject(strPartTag))
         return E_FAIL;
 
+    static_cast<CGameObject::GAMEOBJECT_DESC*>(pArg)->pParent = this;
     CPartObject*        pPartObject = static_cast<CPartObject*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, iPrototypeLevelIndex, strPrototypeTag, pArg));
 
     if (nullptr == pPartObject)

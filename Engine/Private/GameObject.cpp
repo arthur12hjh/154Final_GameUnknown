@@ -49,6 +49,7 @@ HRESULT CGameObject::Initialize(void* pArg)
 	if (nullptr != pArg)
 	{
 		GAMEOBJECT_DESC* pDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+		m_pParent = pDesc->pParent;
 
 		if (pDesc->bIsApplyTransform)
 		{
@@ -95,6 +96,16 @@ CComponent* CGameObject::Find_Component(const _wstring& strComponentTag)
 void CGameObject::Set_Team(OBJECT_TEAM eTeam)
 {
 	m_eTeam = eTeam;
+}
+
+void CGameObject::SetParent(CGameObject* pParent)
+{
+	m_pParent = pParent;
+}
+
+CGameObject* CGameObject::GetParent()
+{
+	return m_pParent;
 }
 
 _bool CGameObject::IsFrustomCulling()

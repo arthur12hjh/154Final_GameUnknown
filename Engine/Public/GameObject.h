@@ -11,6 +11,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
+		CGameObject*		pParent = nullptr;
 		_bool				bIsApplyTransform;
 
 		_float3				vScale;
@@ -49,11 +50,14 @@ public:
 		m_eVisibility = eVisiblility;
 	}
 
-	const VISIBILITY&							GetVisibility() { return m_eVisibility;	}
-	CTransform*									GetTransform() { return m_pTransformCom; }
+	const VISIBILITY&								GetVisibility() { return m_eVisibility;	}
+	CTransform*										GetTransform() { return m_pTransformCom; }
+
+	void											SetParent(CGameObject* pParent);
+	CGameObject*									GetParent();
 
 	// 오브젝트의 속성을 받아올수 있음
-	OBJECT_TEAM									GetTeam() { return m_eTeam; }
+	OBJECT_TEAM										GetTeam() { return m_eTeam; }
 
 	_bool											IsFrustomCulling();
 	_float											Get_Depth();
@@ -67,7 +71,10 @@ protected:
 
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
+
 	class CGameInstance*						m_pGameInstance = { nullptr };
+	CGameObject*								m_pParent = { nullptr };
+
 	VISIBILITY									m_eVisibility = { VISIBILITY::VISIBLE };
 
 	CTransform*									m_pTransformCom = { nullptr };

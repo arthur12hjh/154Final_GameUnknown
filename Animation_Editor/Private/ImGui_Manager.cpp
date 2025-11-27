@@ -579,8 +579,16 @@ void CImGui_Manager::Update_TimeLine()
 			AnimNotify.szNotifyTag.clear();
 			AnimNotify.szNotifyArg01.clear();
 			AnimNotify.szNotifyArg02.clear();
+			AnimNotify.szNotifyArg03.clear();
 			AnimNotify.szSocketTag.clear();
+
+			AnimNotify.iNumData1 = 0;
+			AnimNotify.iNumData2 = 0;
+			AnimNotify.iNumData3 = 0;
+			AnimNotify.iNumData4 = 0;
+
 			AnimNotify.bIsLocalPos = TRUE;
+			AnimNotify.vNotifyScale = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyPosition = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
@@ -603,13 +611,22 @@ void CImGui_Manager::Update_EventMaker()
 	if (m_iSelectedEventIndex < 0)
 		return;
 
+
+
 	static _char szNotifyEditTag[MAX_PATH];
 	static _char szNotifyArg01[MAX_PATH];
 	static _char szNotifyArg02[MAX_PATH];
+	static _char szNotifyArg03[MAX_PATH];
 	static _char szSocketTag[MAX_PATH];
+
+	static	_int	iNumData1 = {};
+	static	_int	iNumData2 = {};
+	static	_int	iNumData3 = {};
+	static	_int	iNumData4 = {};
 
 	static _bool bIsLocalPos = TRUE;
 
+	static _float3 vNotifyScale = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyPosition = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
@@ -623,10 +640,17 @@ void CImGui_Manager::Update_EventMaker()
 			strcpy_s(szNotifyEditTag, SelectedAnimNotify.szNotifyTag.c_str());
 			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg01.c_str());
 			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg02.c_str());
+			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg03.c_str());
 			strcpy_s(szSocketTag, SelectedAnimNotify.szSocketTag.c_str());
+
+			iNumData1 = SelectedAnimNotify.iNumData1;
+			iNumData2 = SelectedAnimNotify.iNumData2;
+			iNumData3 = SelectedAnimNotify.iNumData3;
+			iNumData4 = SelectedAnimNotify.iNumData4;
 
 			bIsLocalPos = SelectedAnimNotify.bIsLocalPos;
 
+			vNotifyScale = SelectedAnimNotify.vNotifyScale;
 			vNotifyPosition = SelectedAnimNotify.vNotifyPosition;
 			vNotifyRotation = SelectedAnimNotify.vNotifyRotation;
 
@@ -638,10 +662,18 @@ void CImGui_Manager::Update_EventMaker()
 			szNotifyEditTag[0] = '\0';
 			szNotifyArg01[0] = '\0';
 			szNotifyArg02[0] = '\0';
+			szNotifyArg03[0] = '\0';
+
 			szSocketTag[0] = '\0';
+
+			iNumData1 = 0;
+			iNumData2 = 0;
+			iNumData3 = 0;
+			iNumData4 = 0;
 
 			bIsLocalPos = TRUE;
 
+			vNotifyScale = _float3(0.f, 0.f, 0.f);
 			vNotifyPosition = _float3(0.f, 0.f, 0.f);
 			vNotifyRotation = _float3(0.f, 0.f, 0.f);
 		}
@@ -657,8 +689,14 @@ void CImGui_Manager::Update_EventMaker()
 		ImGui::InputText("Event Tag", szNotifyEditTag, sizeof(szNotifyEditTag));
 		ImGui::InputText("Event Arg01", szNotifyArg01, sizeof(szNotifyArg01));
 		ImGui::InputText("Event Arg02", szNotifyArg02, sizeof(szNotifyArg02));
-		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
+		ImGui::InputText("Event Arg03", szNotifyArg03, sizeof(szNotifyArg03));
 
+		ImGui::InputInt("NumData1",  reinterpret_cast<int*>(&iNumData1));
+		ImGui::InputInt("NumData2",  reinterpret_cast<int*>(&iNumData2));
+		ImGui::InputInt("NumData3",  reinterpret_cast<int*>(&iNumData3));
+		ImGui::InputInt("NumData4",  reinterpret_cast<int*>(&iNumData4));
+
+		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
 		ImGui::Checkbox("Is Local Position", &bIsLocalPos);
 
 		ImGui::InputFloat3("Position", reinterpret_cast<float*>(&vNotifyPosition), "%.3f");
