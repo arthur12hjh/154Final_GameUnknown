@@ -84,6 +84,13 @@ void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fA
     m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate);
 }
 
+void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate)
+{
+    if (nullptr == m_pBodyModelCom)
+        Import_ModelPtr();
+
+    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate);
+}
 _float CEntity::Get_AnimationRatio()
 {
     return m_pBodyModelCom->Get_AnimationRatio();

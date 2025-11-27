@@ -24,23 +24,23 @@ HRESULT CBlur::Initialize()
 		return E_FAIL;
 
 	/* Target_Blur. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_X. X에 대해서 우선 블러처리. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
 	/* Target_Blur. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_X. X에 대해서 우선 블러처리. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
 	/* MRT_Blur */

@@ -80,7 +80,7 @@ void CCharacter::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pCCT);
 	Safe_Release(m_pGameManager);
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pCCT);
 }

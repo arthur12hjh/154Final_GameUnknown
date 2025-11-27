@@ -26,9 +26,10 @@ public:
 		_int2				iUV;
 		_float				fFPS;
 		_float				fAngle;
+		_float				fDelayTime;
 
 		_int				iBegin;
-		RENDER				eSelectRender = {};
+		_int				iSelectRender;
 		_bool				bisLoop;
 	}SPRITE_DATA;
 private:
@@ -51,7 +52,7 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	const _float4x4* m_pParentMat = { nullptr };
 	_float4x4		m_CombinedWorldMatrix = {};
-
+	RENDER			m_eRender;
 private:
 	_float				m_fTime = {  };
 	SPRITE_DATA			m_tData;

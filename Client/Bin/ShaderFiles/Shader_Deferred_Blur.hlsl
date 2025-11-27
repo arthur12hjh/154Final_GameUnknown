@@ -33,6 +33,7 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float4 vWeight = 0.f;
+    float vSize;
     
     for (int i = -6; i < 7; ++i)
     {
@@ -41,11 +42,12 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
 
     }
     
-    Out.vBlurX = vColor / 10.0f;
-    Out.vWeight = vWeight / 10.0f;
+    Out.vBlurX = vColor / vSize;
+    Out.vWeight = vWeight / vSize;
     
     return Out;    
 }
@@ -57,7 +59,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     float2 vTexcoord;
     float4 vColor;
     float4 vWeight = 0.f;
-    
+    float vSize;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
@@ -65,10 +67,12 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+
     }
     
-    Out.vBlurY = vColor / 6.5f;
-    Out.vWeight = vWeight / 6.5f;
+    Out.vBlurY = vColor / vSize;
+    Out.vWeight = (vWeight / vSize);
     
     return Out;
 }
@@ -80,7 +84,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_X();
@@ -90,7 +94,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();

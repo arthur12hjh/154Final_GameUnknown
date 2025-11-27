@@ -4,14 +4,6 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-#pragma region TRANSFER_STATE
-
-#include "Player_WalkState.h"
-#include "Player_LandingState.h"
-#include "Player_IdleState.h"
-
-#pragma endregion
-
 CPlayer_JumpState::CPlayer_JumpState()
 	: CPlayerState {}
 {
@@ -19,13 +11,16 @@ CPlayer_JumpState::CPlayer_JumpState()
 
 void CPlayer_JumpState::Start(void* pArg)
 {
+	m_eState = PLAYER_STATE::JUMP;
+
 	m_pPlayer->Set_Animation("Proto_Jump_Start", false);
 	m_Desc->pPlayerController->Set_Gravity(true, 17.f);
-
 }
 
-CPlayerState* CPlayer_JumpState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
@@ -88,17 +83,18 @@ CPlayerState* CPlayer_JumpState::Update(_float fTimeDelta)
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 		{
-			_bool isLand = true;
-			m_pNextState = CPlayer_WalkState::Create(&isLand);
+			m_isLanding = true;
+			m_tNextState.pArg = &m_isLanding;
+			m_tNextState.eNextState = PLAYER_STATE::WALK;
 		}
 		else
 		{
-			m_pNextState = CPlayer_LandingState::Create(nullptr);
+			m_tNextState.eNextState = PLAYER_STATE::LANDING;
 		}
 
 	}
 
-	return m_pNextState;
+	return m_tNextState;
 }
 
 void CPlayer_JumpState::End()

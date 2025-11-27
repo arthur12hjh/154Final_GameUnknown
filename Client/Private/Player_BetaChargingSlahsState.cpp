@@ -5,12 +5,6 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-#pragma region TRANSFER_STATE
-
-#include "Player_WalkState.h"
-#include "Player_IdleState.h"
-
-#pragma endregion
 
 CPlayer_BetaChargingSlahsState::CPlayer_BetaChargingSlahsState()
     : CPlayerState {}
@@ -19,12 +13,16 @@ CPlayer_BetaChargingSlahsState::CPlayer_BetaChargingSlahsState()
 
 void CPlayer_BetaChargingSlahsState::Start(void* pArg)
 {
+    m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
+
     m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false);
     m_isStartCharge = true;
 }
 
-CPlayerState* CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 {
+    __super::Update(fTimeDelta);
+
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
     //Â÷Â¡ÀÌ ³¡³µ´Ù¸é,
@@ -37,7 +35,7 @@ CPlayerState* CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 
     if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) && true == m_isStartCharge)
     {
-        m_pNextState = CPlayer_IdleState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
     else if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&  true == m_isLoopCharge)
     {
@@ -52,15 +50,15 @@ CPlayerState* CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.65f)
-        m_pNextState = CPlayer_WalkState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::WALK;
 
 
     if (true == m_isAttack && true == isAnimFinished)
     {
-        m_pNextState = CPlayer_IdleState::Create(nullptr);
+        m_tNextState.eNextState = PLAYER_STATE::WALK;
     }
 
-    return m_pNextState;
+    return m_tNextState;
 }
 
 void CPlayer_BetaChargingSlahsState::End()

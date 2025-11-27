@@ -374,10 +374,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
 		CGorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	/* For.Prototype_Component_PlayerFSM */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
-		CPlayerFSM::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	if (FAILED(Loading_UI_For_GamePlay_Level()))
 		return E_FAIL;
@@ -934,8 +930,13 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Test */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Test");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SaveEffect.binx");
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Test */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_TrailEffect_Test */

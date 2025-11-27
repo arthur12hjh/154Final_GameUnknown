@@ -10,13 +10,50 @@ CSpriteUVEffect::CSpriteUVEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CSpriteUVEffect::CSpriteUVEffect(const CSpriteUVEffect& Prototype)
 	: CBlendObject{ Prototype },
-	m_tData{ Prototype.m_tData }
+	m_tData{ Prototype.m_tData },
+	m_eRender{ Prototype.m_eRender }
 {
+	m_eTeam = Prototype.m_eTeam;
 }
 
 HRESULT CSpriteUVEffect::Initialize_Prototype(const SPRITE_DATA* pSpriteData)
 {
 	m_tData = *pSpriteData;
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
 	return S_OK;
 }
 
@@ -50,7 +87,7 @@ void CSpriteUVEffect::Late_Update(_float fTimeDelta)
 {
 	if (m_fTime <= m_tData.fFPS * m_tData.iUV.x * m_tData.iUV.y) {
 		Compute_Depth();
-		m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+		m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	}
 }
 
@@ -118,8 +155,9 @@ HRESULT CSpriteUVEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
 		return E_FAIL;
+
 
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 		return E_FAIL;
