@@ -22,9 +22,8 @@ HRESULT CLevel_Manager::Clear_LevelResource()
 HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
 {
 	if (nullptr != m_pCurrentLevel)
-	{
 		Safe_Release(m_pCurrentLevel);
-	}
+	
 	m_pCurrentLevel = pNewLevel;
 	return S_OK;
 }

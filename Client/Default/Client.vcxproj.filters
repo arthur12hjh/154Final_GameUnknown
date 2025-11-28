@@ -522,6 +522,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
       <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
+   </Filter>
+    <Filter Include="02.GameObjects\Actor\Sky\Moon">
+      <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1056,6 +1059,12 @@
     <ClInclude Include="..\public\AttackHitBox.h">
       <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Moon.h">
+      <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InstanceModel.h">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_LockonEvadeState.h">
       <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
     </ClInclude>
@@ -1584,6 +1593,12 @@
     </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
       <Filter>02.GameObjects\AttackHitBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Moon.cpp">
+      <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceModel.cpp">
+      <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>

@@ -152,7 +152,6 @@ void CCameraManager::Clear_Cameras()
     m_pCameras.clear();
 }
 
-
 CCamera* CCameraManager::Find_Camera(const WCHAR* szCameraTag)
 {
     auto iter = m_pCameras.find(szCameraTag);

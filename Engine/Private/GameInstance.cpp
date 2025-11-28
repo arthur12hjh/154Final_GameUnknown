@@ -594,6 +594,11 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
+}
+
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
@@ -858,6 +863,10 @@ HRESULT CGameInstance::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
+}
+void CGameInstance::Clear_LevelCameras()
+{
+	m_pCameraManager->Clear_LevelCameras();
 }
 HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {

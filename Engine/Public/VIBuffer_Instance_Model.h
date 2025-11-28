@@ -12,9 +12,10 @@ public:
 	{
 		const char*						pModelFilePath;
 		_matrix							PreModelMatrix;
-
 		//나중에 리타겟팅 해야하면 리타겟팅하는거 추가
 	}MODEL_INSTANCE_DESC;
+
+public:
 
 private:
 	CVIBuffer_Instance_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -28,6 +29,8 @@ public:
 
 	HRESULT								Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, TEXTURE_TYPE eTextureType, _uint TextureIndex);
 	_uint								GetModelNumMeshes();
+	_uint								Get_NumInstance() const { return m_iNumInstance; }
+	VTX_INSTANCE_MODEL*					Get_InstanceVertices() const { return m_pInstanceVertices; }
 
 private:
 	VTX_INSTANCE_MODEL*					m_pInstanceVertices = { nullptr };

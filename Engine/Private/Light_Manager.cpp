@@ -27,7 +27,7 @@ HRESULT CLight_Manager::Initialize()
     if (nullptr == m_pVIBuffer[0])
         return E_FAIL;
 
-    _matrix PreMatrix = XMMatrixScaling(0.01f, 0.005f, 0.01f) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+    _matrix PreMatrix = XMMatrixScaling(0.05f, 0.025f, 0.05f) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
     m_pVIBuffer[1] = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/EngineResource/Model/Light/arrow.fbx", PreMatrix);
     if (nullptr == m_pVIBuffer[1])
         return E_FAIL;
@@ -69,7 +69,7 @@ void CLight_Manager::Debug_LightRender()
         pVIPointBuffer->Bind_Resources();
         pVIPointBuffer->Render();
 
-        if (LIGHT_TYPE::DIRECTIONAL == pLight->Get_LightDesc()->eType)
+        if (LIGHT_TYPE::DIRECTIONAL == pLight->Get_LightDesc()->eType || LIGHT_TYPE::SPOT == pLight->Get_LightDesc()->eType)
         {
             m_pShader[1]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
             m_pShader[1]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
@@ -84,10 +84,49 @@ void CLight_Manager::Debug_LightRender()
                 pModel->Render(i);
             }
         }
-        else if (LIGHT_TYPE::POINT == pLight->Get_LightDesc()->eType)
+        if (LIGHT_TYPE::SPOT == pLight->Get_LightDesc()->eType || LIGHT_TYPE::POINT == pLight->Get_LightDesc()->eType)
         {
             pLight->Debug_Render();
         }
+    }
+}
+void CLight_Manager::Select_LightRender(CLight* pSelectLight)
+{
+    if (nullptr == pSelectLight)
+        return;
+
+    m_pTexture->Bind_ShaderResource(m_pShader[0], "g_Texture", 0);
+
+    m_pShader[0]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+    m_pShader[0]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+    m_pShader[0]->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
+
+    m_pShader[0]->Bind_Matrix("g_WorldMatrix", pSelectLight->GetWorldMatrix());
+    m_pShader[0]->Begin(0);
+
+    CVIBuffer_Point* pVIPointBuffer = static_cast<CVIBuffer_Point*>(m_pVIBuffer[0]);
+    pVIPointBuffer->Bind_Resources();
+    pVIPointBuffer->Render();
+
+    if (LIGHT_TYPE::DIRECTIONAL == pSelectLight->Get_LightDesc()->eType || LIGHT_TYPE::SPOT == pSelectLight->Get_LightDesc()->eType)
+    {
+        m_pShader[1]->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+        m_pShader[1]->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+        m_pShader[1]->Bind_Matrix("g_WorldMatrix", pSelectLight->GetWorldMatrix());
+
+        CModel* pModel = static_cast<CModel*>(m_pVIBuffer[1]);
+        _uint iNumMeshes = pModel->Get_NumMeshes();
+        m_pShader[1]->Begin(0);
+
+        for (_uint i = 0; i < iNumMeshes; ++i)
+        {
+            pModel->Render(i);
+        }
+    }
+
+    if (LIGHT_TYPE::SPOT == pSelectLight->Get_LightDesc()->eType || LIGHT_TYPE::POINT == pSelectLight->Get_LightDesc()->eType)
+    {
+        pSelectLight->Debug_Render();
     }
 }
 #else

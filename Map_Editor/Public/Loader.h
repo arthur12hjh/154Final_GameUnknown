@@ -46,6 +46,10 @@ private:
 	HRESULT Loading_For_Village();
 
 
+	HRESULT Loading_For_Desert();
+	HRESULT Loading_For_Desert_Building_Ruin(void *pArg);
+
+
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

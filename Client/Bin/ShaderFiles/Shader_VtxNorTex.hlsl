@@ -20,23 +20,23 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float4 vNormal : NORMAL;
-    float2 vTexcoord : TEXCOORD0;   
+    float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
-    VS_OUT Out;       
+    VS_OUT Out;
   
     matrix matWV, matWVP;
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);   
+    matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;        
-    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix));    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix));
     Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
     return Out;
@@ -73,12 +73,18 @@ PS_OUT PS_MAIN(PS_IN In)
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    float2 vMaskUV;
+    const float fTexelSize = 512.f;
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
     
-    //vector vMtrlDiffuse = vDestDiffuse * vMask + vSourDiffuse * (1.f - vMask);
+    if (fMaskValue > 0.01f)
+        Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
+    else
+        Out.vDiffuse = vSourDiffuse;
     
-
-    Out.vDiffuse = vSourDiffuse;
-    
+    //Out.vDiffuse = vSourDiffuse;
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
@@ -86,7 +92,7 @@ PS_OUT PS_MAIN(PS_IN In)
 }
 
 technique11 DefaultTechnique
-{ 
+{
     pass Terrain
     {
         SetRasterizerState(RS_Default);

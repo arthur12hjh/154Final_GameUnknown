@@ -444,6 +444,227 @@ void CVIBuffer_Terrain::Change_Height_Flat(_vector vPickingPos, _float fHeight, 
 	Safe_Delete_Array(pVertices);
 }
 
+void CVIBuffer_Terrain::Change_Height_Sculpt(_vector vPickingPos, _float fAmount, _float fRadius, _float fMaxHeight)
+{
+	_float fRadiusSq = fRadius * fRadius;
+
+	// fAmount: 한 번의 클릭/드래그 시 적용될 최대 높이 변화량 (스컬핑 강도)
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		_vector vVertexPos = XMLoadFloat3(&m_pVertexPositions[i]);
+		_vector vDist = vVertexPos - vPickingPos;
+
+		// XZ 평면에서의 거리만 고려
+		vDist = XMVectorSet(XMVectorGetX(vDist), 0.f, XMVectorGetZ(vDist), 0.f);
+
+		_float fDistSq = XMVectorGetX(XMVector3Dot(vDist, vDist));
+
+		if (fDistSq < fRadiusSq)
+		{
+			_float fDistance = sqrt(fDistSq);
+
+			// 1. 거리 비율 (0.0 ~ 1.0) 계산
+			_float fRatio = fDistance / fRadius;
+			_float fCosWeight = cos(fRatio * XM_PIDIV2);
+			//_float fWeight = cos(fRatio * XM_PIDIV2); // PI/2 * 비율
+			//_float fWeight = pow(fCosWeight, 5);
+
+			_float fSmoothRatio = fRatio * fRatio * fRatio * (fRatio * (fRatio * 6.f - 15.f) + 10.f);
+			_float fWeight = 1.f - fSmoothRatio;
+
+			_float fDeltaHeight = fAmount * fWeight;
+
+			m_pVertexPositions[i].y += fDeltaHeight;
+
+			if (m_pVertexPositions[i].y > fMaxHeight)
+			{
+				m_pVertexPositions[i].y = fMaxHeight;
+			}
+		}
+	}
+
+	VTXNORTEX* pVertices = new VTXNORTEX[m_iNumVertices];
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		pVertices[i].vPosition = m_pVertexPositions[i];
+		pVertices[i].vNormal = _float3(0.f, 0.f, 0.f);
+		pVertices[i].vTexcoord = _float2(m_pVertexPositions[i].x / (m_iNumVerticesX - 1.f), m_pVertexPositions[i].z / (m_iNumVerticesZ - 1.f));
+	}
+
+	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
+	{
+		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
+		{
+			_uint iIndex = i * m_iNumVerticesX + j;
+			_uint iIndices[4] = { iIndex + m_iNumVerticesX, iIndex + m_iNumVerticesX + 1, iIndex + 1, iIndex };
+
+			// 삼각형 1
+			_vector vSourDir1 = XMLoadFloat3(&pVertices[iIndices[1]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir1 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[1]].vPosition);
+			_vector vNormal1 = XMVector3Normalize(XMVector3Cross(vSourDir1, vDestDir1));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[1]].vNormal, XMLoadFloat3(&pVertices[iIndices[1]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal1);
+
+			// 삼각형 2
+			_vector vSourDir2 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir2 = XMLoadFloat3(&pVertices[iIndices[3]].vPosition) - XMLoadFloat3(&pVertices[iIndices[2]].vPosition);
+			_vector vNormal2 = XMVector3Normalize(XMVector3Cross(vSourDir2, vDestDir2));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[3]].vNormal, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal2);
+		}
+	}
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		XMStoreFloat3(&pVertices[i].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));
+	}
+	// ... (노멀 재계산 및 정규화 로직 끝)
+
+	// 7. Vertex Buffer 업데이트
+	m_pContext->UpdateSubresource(
+		m_pVB,
+		0,
+		nullptr,
+		pVertices,
+		m_iVertexStride,
+		0
+	);
+
+	Safe_Delete_Array(pVertices);
+}
+
+void CVIBuffer_Terrain::Change_Height_Smooth(_vector vPickingPos, _float fFactor, _float fRadius)
+{
+	_float fRadiusSq = fRadius * fRadius;
+
+	vector<_float> tempHeights(m_iNumVertices);
+
+	for (size_t i = 0; i < m_iNumVertices; ++i)
+	{
+		tempHeights[i] = m_pVertexPositions[i].y;
+	}
+
+
+	vector<_float> newHeights(m_iNumVertices);
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		_vector vVertexPos = XMLoadFloat3(&m_pVertexPositions[i]);
+
+		_vector vDist = vVertexPos - vPickingPos;
+
+		vDist = XMVectorSet(XMVectorGetX(vDist), 0.f, XMVectorGetZ(vDist), 0.f);
+
+		_float fDistSq = XMVectorGetX(XMVector3Dot(vDist, vDist));
+
+
+
+		if (fDistSq < fRadiusSq)
+		{
+			_float fCurrentY = tempHeights[i];
+			_float fSumY = fCurrentY;
+			_uint iCount = 1;
+
+			_uint row = i / m_iNumVerticesX;
+			_uint col = i % m_iNumVerticesX;
+
+			for (int r_offset = -1; r_offset <= 1; ++r_offset)
+			{
+				for (int c_offset = -1; c_offset <= 1; ++c_offset)
+				{
+					if (r_offset == 0 && c_offset == 0) continue;
+
+					_uint neighbor_row = row + r_offset;
+
+					_uint neighbor_col = col + c_offset;
+
+
+					if (neighbor_row >= 0 && neighbor_row < m_iNumVerticesZ &&
+						neighbor_col >= 0 && neighbor_col < m_iNumVerticesX)
+
+					{
+						_uint neighbor_idx = neighbor_row * m_iNumVerticesX + neighbor_col;
+						fSumY += tempHeights[neighbor_idx];
+						iCount++;
+					}
+				}
+			}
+
+			_float fAvgY = fSumY / (_float)iCount;
+			newHeights[i] = fCurrentY * (1.0f - fFactor) + fAvgY * fFactor;
+		}
+		else
+		{
+			newHeights[i] = tempHeights[i];
+		}
+
+	}
+
+	for (size_t i = 0; i < m_iNumVertices; ++i)
+	{
+		m_pVertexPositions[i].y = newHeights[i];
+	}
+
+	VTXNORTEX* pVertices = new VTXNORTEX[m_iNumVertices];
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		pVertices[i].vPosition = m_pVertexPositions[i];
+		pVertices[i].vNormal = _float3(0.f, 0.f, 0.f);
+		pVertices[i].vTexcoord = _float2(m_pVertexPositions[i].x / (m_iNumVerticesX - 1.f), m_pVertexPositions[i].z / (m_iNumVerticesZ - 1.f));
+	}
+
+	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
+	{
+		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
+		{
+			_uint iIndex = i * m_iNumVerticesX + j;
+			_uint iIndices[4] = { iIndex + m_iNumVerticesX, iIndex + m_iNumVerticesX + 1, iIndex + 1, iIndex };
+
+			// 삼각형 1
+			_vector vSourDir1 = XMLoadFloat3(&pVertices[iIndices[1]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir1 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[1]].vPosition);
+			_vector vNormal1 = XMVector3Normalize(XMVector3Cross(vSourDir1, vDestDir1));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[1]].vNormal, XMLoadFloat3(&pVertices[iIndices[1]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal1);
+
+			// 삼각형 2
+			_vector vSourDir2 = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) - XMLoadFloat3(&pVertices[iIndices[0]].vPosition);
+			_vector vDestDir2 = XMLoadFloat3(&pVertices[iIndices[3]].vPosition) - XMLoadFloat3(&pVertices[iIndices[2]].vPosition);
+			_vector vNormal2 = XMVector3Normalize(XMVector3Cross(vSourDir2, vDestDir2));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[3]].vNormal, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal2);
+		}
+	}
+
+	for (size_t i = 0; i < m_iNumVertices; i++)
+	{
+		XMStoreFloat3(&pVertices[i].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));
+	}
+
+	// 7. Vertex Buffer 업데이트
+	m_pContext->UpdateSubresource(
+		m_pVB,
+		0,
+		nullptr,
+		pVertices,
+		m_iVertexStride,
+		0
+	);
+
+	Safe_Delete_Array(pVertices);
+}
+
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)
 {
 	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
