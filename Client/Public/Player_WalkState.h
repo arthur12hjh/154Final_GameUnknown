@@ -9,7 +9,7 @@ class CPlayer_WalkState final : public CPlayerState
 public:
 	enum class RUN_DIR { STRAIGHT, LEFT, RIGHT, BACKWARD };
 private:
-	CPlayer_WalkState(_bool isLanding = false);
+	CPlayer_WalkState(_bool isLanding = false, _bool isEvading = false);
 	virtual ~CPlayer_WalkState() = default;
 
 public:
@@ -22,6 +22,7 @@ public:
 private:
 	_bool	m_isRunStart = { false };
 	_bool   m_isLanding = { false }; 
+	_bool   m_isEvading = {  false };
 	_bool   m_isChangingDir = { false }; 
 	_float	m_fDegree = { 0.f }; 
 

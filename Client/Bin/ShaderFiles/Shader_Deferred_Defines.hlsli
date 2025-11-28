@@ -1,6 +1,14 @@
 #ifndef SHADER_DEFERRED_DEFINES
 #define SHADER_DEFERRED_DEFINES
 
+uint Bayer4x4[4][4] =
+{
+    { 0, 8, 2, 10 },
+    { 12, 4, 14, 6 },
+    { 3, 11, 1, 9 },
+    { 15, 7, 13, 5 }
+};
+
 float g_fWeights[13] =
 {
     0.0561, 0.1353, 0.278, 0.4868, 0.7261, 0.9231, 1.f, 0.9231, 0.7261, 0.4868, 0.278, 0.1353, 0.0561

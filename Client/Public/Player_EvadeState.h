@@ -19,6 +19,8 @@ public:
 
 private:
 	_bool m_isBackStep = { false };
+	_bool m_isImmediateRun = { false };
+	PLAYER_WALK_DESC m_NextStateDesc = {};
 public:
 	static	CPlayer_EvadeState* Create(void* pArg);
 	virtual	void			   Free() override;

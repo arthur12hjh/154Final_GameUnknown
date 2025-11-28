@@ -22,6 +22,7 @@ public:
 public:
 	JUMP_TYPE m_eType = {};
 	_bool     m_isLanding = false;
+
 public:
 	static	CPlayer_LandingState* Create(void* pArg);
 	virtual	void				Free() override;

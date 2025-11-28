@@ -22,7 +22,7 @@ public:
 
 private:
 	list<class CGameObject*> m_BlurObjects = {};
-	_bool					m_bisWeight;
+	_bool					 m_bisWeight;
 
 public:
 	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

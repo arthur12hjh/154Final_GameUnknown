@@ -31,9 +31,10 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
         fAnimationRatio >= m_fLimitProgress * 1.75f)
-    {
         m_tNextState.eNextState = PLAYER_STATE::WALK;
-    }
+
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
     if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))  &&
         fAnimationRatio >= m_fLimitProgress))

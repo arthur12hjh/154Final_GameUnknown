@@ -132,7 +132,7 @@ _float2 CMotionBlur::Calc_CamVelocity()
     _matrix PreView = XMLoadFloat4x4(m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW));
     _matrix PreProj = XMLoadFloat4x4(m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::PROJ));
 
-    _vector vCamPos, vCamLook, vPreCamPos, vPreCamLook;
+    _vector vCamPos, vCamLook;
 
     //이동값 날리려고 Position 사용안함.
     vCamLook = XMLoadFloat4(m_pGameInstance->Get_CamLook());
