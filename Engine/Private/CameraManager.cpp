@@ -9,26 +9,40 @@ HRESULT CCameraManager::Initialize()
 
 void CCameraManager::Priority_Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+    for (auto& iter : m_pCameras)
+        iter.second->Priority_Update(fTimeDelta);
+#else
     if (nullptr == m_pMainCamera)
         return;
-
     m_pMainCamera->Priority_Update(fTimeDelta);
+#endif // _DEBUG
+
+  
 }
 
 void CCameraManager::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+    for (auto& iter : m_pCameras)
+        iter.second->Update(fTimeDelta);
+#else
     if (nullptr == m_pMainCamera)
         return;
-
     m_pMainCamera->Update(fTimeDelta);
+#endif // _DEBUG
 }
 
 void CCameraManager::Late_Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+    for (auto& iter : m_pCameras)
+        iter.second->Late_Update(fTimeDelta);
+#else
     if (nullptr == m_pMainCamera)
         return;
-
     m_pMainCamera->Late_Update(fTimeDelta);
+#endif // _DEBUG
 }
 
 HRESULT CCameraManager::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
@@ -90,6 +104,11 @@ CCamera* CCameraManager::GetMainCamera()
     return m_pMainCamera;
 }
 
+_bool CCameraManager::IsMainCamera(CCamera* pCamera)
+{
+    return m_pMainCamera == pCamera ? true : false;
+}
+
 _matrix CCameraManager::GetMainCameraWorldMatrix()
 {
     if (nullptr == m_pMainCamera)
@@ -122,6 +141,15 @@ const _float4x4* CCameraManager::GetCameraWorldMatrixPtr(const WCHAR* szCameraTa
         return nullptr;
 
     return pCamera->GetTransform()->Get_WorldMatrixPtr();
+}
+
+void CCameraManager::Clear_Cameras()
+{
+    Safe_Release(m_pMainCamera);
+
+    for (auto& iter : m_pCameras)
+        Safe_Release(iter.second);
+    m_pCameras.clear();
 }
 
 

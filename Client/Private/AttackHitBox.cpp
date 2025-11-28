@@ -28,6 +28,7 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	HIT_BOX_DESC* pHit_BoxDesc = static_cast<HIT_BOX_DESC*>(pArg);
 	m_pAttacker = pHit_BoxDesc->pAttacker;
 	m_pData = pHit_BoxDesc->pData;
+	m_fImpactForce = pHit_BoxDesc->fImpactForce;
 
 	if (m_pData)
 	{
@@ -154,11 +155,13 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	DEFAULT_DAMAGE_DESC pDamageDesc = {};
 	pDamageDesc.pAttacker = m_pAttacker;
 	pDamageDesc.vHitDir = vHitDir;
+	pDamageDesc.fImpactForce = m_fImpactForce;
+
 	pDamageDesc.vHitPoint = vHitPoint;
 	pDamageDesc.pSkillData = &TempDesc;
 
 	pCharacter->Damaged(&pDamageDesc);
-	m_vDelayDead = {0.f, 10.f};
+	m_vDelayDead = {0.f, 3.f};
 	m_bIsDelayDead = true;
 }
 

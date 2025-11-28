@@ -225,6 +225,7 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	pHitBoxDesc.pAttacker = m_pCharacter;
 
 	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+	pHitBoxDesc.fImpactForce = m_pCharacter->Get_ImpactForce();
 	pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
 
 	_vector vCharacterPosition = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);

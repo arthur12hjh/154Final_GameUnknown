@@ -86,6 +86,16 @@ void CCharacter::Set_Position(_vector vPosition)
 	m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 }
 
+_float CCharacter::Get_ImpactForce()
+{
+	return m_fImpactForce;
+}
+
+void CCharacter::Set_ImpactForce(_float fImpactForce)
+{
+	m_fImpactForce = fImpactForce;
+}
+
 _vector CCharacter::Get_Position()
 {
 	return m_pTransformCom->Get_State(STATE::POSITION);

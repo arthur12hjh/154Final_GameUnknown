@@ -109,6 +109,7 @@ void CAISenceComponent::Add_SenceTargetObject(CGameObject* pSenceObject)
 	if (iter == m_pPreSearchList.end())
 	{
 		m_pPreSearchList.emplace(pSenceObject, 0.f);
+		m_pSearchList.push_back(pSenceObject);
 	}
 	else
 		return;

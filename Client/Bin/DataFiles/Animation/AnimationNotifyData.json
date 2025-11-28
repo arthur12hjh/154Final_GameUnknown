@@ -1,8 +1,5 @@
 [
     {
-        "szAnimationTag": "Proto_Sword_Lightattack_01_Break_Root"
-    },
-    {
         "AnimationNotifies": [
             {
                 "bIsLocalPos": true,
@@ -63,7 +60,7 @@
             {
                 "bIsLocalPos": true,
                 "iNotifyKeyFrame": 1,
-                "iNumData1": 1002,
+                "iNumData1": 1000,
                 "iNumData2": 1,
                 "iNumData3": 1,
                 "iNumData4": 1,
@@ -92,7 +89,16 @@
         "szAnimationTag": "Proto_Sword_Lightattack_01_Root"
     },
     {
-        "szAnimationTag": "Proto_Sword_Lightattack_01R"
+        "szAnimationTag": "DED01_AntLionLastWave_Master_NA40_01"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_BackStab1"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Break_Root"
+    },
+    {
+        "szAnimationTag": "Result_State_Groggy_S"
     },
     {
         "AnimationNotifies": [
@@ -127,7 +133,7 @@
             {
                 "bIsLocalPos": true,
                 "iNotifyKeyFrame": 1,
-                "iNumData1": 1002,
+                "iNumData1": 1001,
                 "iNumData2": 1,
                 "iNumData3": 1,
                 "iNumData4": 1,
@@ -154,6 +160,12 @@
             }
         ],
         "szAnimationTag": "Proto_Sword_Lightattack_02_Root"
+    },
+    {
+        "szAnimationTag": "M_StatueB_SmashParry"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01R"
     },
     {
         "szAnimationTag": "Proto_Sword_Chargeattack_01_start"
@@ -191,7 +203,7 @@
             {
                 "bIsLocalPos": true,
                 "iNotifyKeyFrame": 0,
-                "iNumData1": 1000,
+                "iNumData1": 1002,
                 "iNumData2": 1,
                 "iNumData3": 1,
                 "iNumData4": 1,
@@ -221,6 +233,42 @@
     },
     {
         "szAnimationTag": "Proto_Sword_Lightattack_01R_Root"
+    },
+    {
+        "szAnimationTag": "Result_State_Groggy_E"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 67,
+                "iNumData1": 0,
+                "iNumData2": 0,
+                "iNumData3": 0,
+                "iNumData4": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueA_RushSlash"
     },
     {
         "AnimationNotifies": [
@@ -255,7 +303,7 @@
             {
                 "bIsLocalPos": true,
                 "iNotifyKeyFrame": 1,
-                "iNumData1": 1000,
+                "iNumData1": 1003,
                 "iNumData2": 1,
                 "iNumData3": 1,
                 "iNumData4": 1,
@@ -296,19 +344,64 @@
         "szAnimationTag": "Proto_Sword_Chargeattack_01_cast"
     },
     {
-        "szAnimationTag": "Proto_Lockon_Sprint_Left"
+        "szAnimationTag": "M_StatueB_BattleIdle01"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Fw_Uw"
     },
     {
         "szAnimationTag": "Proto_Lockon_Walk_Right"
     },
     {
+        "szAnimationTag": "Proto_Lockon_Sprint_Left"
+    },
+    {
         "szAnimationTag": "Proto_Lockon_Run_Left_End"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_LinkAttack1_HumanoidHeavy1"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Jump_Left_Start"
     },
     {
         "AnimationNotifies": [
             {
                 "bIsLocalPos": true,
                 "iNotifyKeyFrame": 1,
+                "iNumData1": 1004,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 71,
                 "iNumData1": 0,
                 "iNumData2": 0,
                 "iNumData3": 0,
@@ -335,16 +428,52 @@
                 ]
             }
         ],
-        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex"
+        "szAnimationTag": "M_StatueB_GroundExplosion"
     },
     {
-        "szAnimationTag": "Proto_Lockon_Jump_Left_Start"
+        "szAnimationTag": "Result_Hit_Stand_Light_Lw"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Fw_Rw"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Walk"
     },
     {
         "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging"
     },
     {
-        "szAnimationTag": "Proto_Jump_Walk"
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 67,
+                "iNumData1": 0,
+                "iNumData2": 0,
+                "iNumData3": 0,
+                "iNumData4": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_RushSlash"
     },
     {
         "szAnimationTag": "Proto_Jump_Start"
@@ -360,5 +489,495 @@
     },
     {
         "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 97,
+                "iNumData1": 0,
+                "iNumData2": 0,
+                "iNumData3": 0,
+                "iNumData4": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_RushSlash2"
+    },
+    {
+        "szAnimationTag": "M_StatueA_StanbyToGrab_01"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 65,
+                "iNumData1": 525,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueA_StanbyToAttack_01"
+    },
+    {
+        "szAnimationTag": "Result_Hit_JustParry"
+    },
+    {
+        "szAnimationTag": "M_StatueB_Caution_Bw"
+    },
+    {
+        "szAnimationTag": "Result_Hit_BreakShield"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 55,
+                "iNumData1": 533,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_Slash"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 130,
+                "iNumData1": 521,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueA_Grab"
+    },
+    {
+        "szAnimationTag": "M_StatueB_Caution_Fw"
+    },
+    {
+        "szAnimationTag": "Result_State_KnockDown_S_Bw"
+    },
+    {
+        "szAnimationTag": "M_StatueA_GrabSuccess"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 54,
+                "iNumData1": 522,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueA_Slash"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Fw_Dw"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_LinkAttack1_HumanoidHeavy2"
+    },
+    {
+        "szAnimationTag": "Result_State_Groggy_L"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 75,
+                "iNumData1": 524,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 138,
+                "iNumData1": 524,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueA_SlashDouble"
+    },
+    {
+        "szAnimationTag": "Result_State_KnockDown_E"
+    },
+    {
+        "szAnimationTag": "M_StatueA_Run_E"
+    },
+    {
+        "szAnimationTag": "Result_State_KnockDown_L"
+    },
+    {
+        "szAnimationTag": "Result_Weak_S"
+    },
+    {
+        "szAnimationTag": "Result_State_Airborne_L"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Rw"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Fw_Lw"
+    },
+    {
+        "szAnimationTag": "Result_Hit_Stand_Light_Bw"
+    },
+    {
+        "szAnimationTag": "DED01_AntLionLastWave_Master_NA40_00"
+    },
+    {
+        "szAnimationTag": "M_StatueA_Idle01"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_LinkAttack1"
+    },
+    {
+        "szAnimationTag": "M_StatueB_Caution_Rw"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 80,
+                "iNumData1": 524,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 140,
+                "iNumData1": 524,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_SlashDouble"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 66,
+                "iNumData1": 536,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 126,
+                "iNumData1": 536,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 159,
+                "iNumData1": 536,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_SlashTriple"
+    },
+    {
+        "szAnimationTag": "M_StatueB_StanbyToNormal_01"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 48,
+                "iNumData1": 537,
+                "iNumData2": 4,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_StatueB_StanbyToAttack_01"
+    },
+    {
+        "szAnimationTag": "M_StatueB_Stanby_01"
+    },
+    {
+        "szAnimationTag": "M_StatueB_SwingCombo"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_LinkAttack1_HumanoidHeavy3"
+    },
+    {
+        "szAnimationTag": "M_StatueB_BattleEnd"
     }
 ]

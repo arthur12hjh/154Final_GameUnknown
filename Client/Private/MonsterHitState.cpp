@@ -48,11 +48,11 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
         if (0 <= fScalar)
         {
-            //szAnimationName += "_Fw";
+            szAnimationName += "_Fw";
 
             // Right 백터랑 맞은 방향이랑 내적하면 스칼라가 나오고
             // 그걸 acos해서 라디안으로 바꾸자
-            _float fRadian = atan2f(pDesc->vHitDir.y, pDesc->vHitDir.x);
+           /* _float fRadian = atan2f(pDesc->vHitDir.y, pDesc->vHitDir.x);
             
             fRadian = XMConvertToDegrees(fRadian);
             if (45.f <= fRadian && 135.f > fRadian)
@@ -70,6 +70,16 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
             else
             {
                 szAnimationName += "_Rw";
+            }*/
+
+            switch (pSkillData->eATK_Direction)
+            {
+            case ATTACK_DIRECTION::ATK_LEFT :
+                szAnimationName += "_Lw";
+                break;
+            case ATTACK_DIRECTION::ATK_RIGHT:
+                szAnimationName += "_Rw";
+                break;
             }
         }
         else
@@ -79,7 +89,8 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     {
         szAnimationName = pSkillData->szHitAnimationName;
     }
-    pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f);
+
+    pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f, 0.12f, true);
 }
 
 void CMonsterHitState::Update(_float fTimeDelta)

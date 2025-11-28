@@ -176,6 +176,9 @@ HRESULT CNayitba::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
+	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
+
 	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);

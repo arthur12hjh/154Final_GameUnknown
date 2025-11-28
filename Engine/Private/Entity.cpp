@@ -76,20 +76,20 @@ void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
     m_pBodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
 }
 
-void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate);
+    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
 }
 
-void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate);
+    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
 }
 _float CEntity::Get_AnimationRatio()
 {

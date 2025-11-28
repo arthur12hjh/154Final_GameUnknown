@@ -41,6 +41,9 @@ public :
 	_matrix				GetCameraWorldMatrix(const WCHAR* szCameraTag);
 	const _float4x4*	GetCameraWorldMatrixPtr(const WCHAR* szCameraTag);
 
+	_bool				IsMainCamera(CCamera* pCamera);
+	void				Clear_Cameras();
+
 private:
 	CCamera*								m_pMainCamera = { nullptr };
 	unordered_map<_wstring, CCamera*>		m_pCameras;

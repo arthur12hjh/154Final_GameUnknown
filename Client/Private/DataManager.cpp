@@ -116,7 +116,7 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
         SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
 
-        SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i++].c_str()));
+        SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
 

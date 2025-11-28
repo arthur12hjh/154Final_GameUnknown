@@ -29,6 +29,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     if (true == isAnimFinished && true == m_isStartCharge)
     {
         m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop", true);
+        // 일단 예시로 넣어둔겁니다.
         m_isLoopCharge = true;
         m_isStartCharge = false;
     }
@@ -40,6 +41,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     else if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&  true == m_isLoopCharge)
     {
         //애니메이션 재생하고 공격 나가게 처리.
+        m_pPlayer->Set_ImpactForce(2.f);
         m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false);
         m_isLoopCharge = false;
         m_isAttack = true;
@@ -55,6 +57,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 
     if (true == m_isAttack && true == isAnimFinished)
     {
+        m_pPlayer->Set_ImpactForce(0.f);
         m_tNextState.eNextState = PLAYER_STATE::WALK;
     }
 

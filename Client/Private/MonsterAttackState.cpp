@@ -56,7 +56,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	}
 
 	GaraSetting();
-	GaraHitBox();
+	//GaraHitBox();
 
 	m_bIsEnableChange = false;
 	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);

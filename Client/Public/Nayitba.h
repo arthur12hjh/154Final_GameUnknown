@@ -46,8 +46,6 @@ public:
 	const CHARACTER_SKILL_DESC*		FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*		GetSkillData(_uint iTypeIndex, _bool bIsRandom = true);
 
-
-
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
 

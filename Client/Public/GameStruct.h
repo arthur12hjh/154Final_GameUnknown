@@ -194,6 +194,7 @@ namespace Client
 		CGameObject*		pAttacker;
 		_float3				vHitPoint;
 		_float3				vHitDir;
+		_float				fImpactForce;
 
 		void*				pSkillData;
 	}DEFAULT_DAMAGE_DESC;

@@ -60,6 +60,7 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
+	HRESULT				Clear_LevelResource(_bool bIsClearPrototypeData = true);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
 	_uint				GetCurrentLevelID();
 
@@ -246,6 +247,8 @@ public:
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요
 	CCamera*						GetMainCamera();
+
+	_bool							IsMainCamera(CCamera* pCamera);
 
 	//메인카메라 월드 행렬 가져오기
 	_matrix							GetMainCameraWorldMatrix();

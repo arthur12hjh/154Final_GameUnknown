@@ -9,17 +9,23 @@ CLevel_Manager::CLevel_Manager()
 	Safe_AddRef(m_pGameInstance);	
 }
 
-HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
+HRESULT CLevel_Manager::Clear_LevelResource()
 {
 	if (nullptr != m_pCurrentLevel)
 	{
 		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID());
+	}
 
+	return S_OK;
+}
+
+HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
+{
+	if (nullptr != m_pCurrentLevel)
+	{
 		Safe_Release(m_pCurrentLevel);
-	}	
-
+	}
 	m_pCurrentLevel = pNewLevel;
-
 	return S_OK;
 }
 

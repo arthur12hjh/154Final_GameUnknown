@@ -347,6 +347,15 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 
 #pragma region LEVEL_MANAGER
 
+HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
+{
+	m_pCameraManager->Clear_Cameras();
+	if (bIsClearPrototypeData)
+		return m_pLevel_Manager->Clear_LevelResource();
+	else
+		return S_OK;
+}
+
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
 {
 	return m_pLevel_Manager->Change_Level(pNewLevel);
@@ -861,6 +870,10 @@ CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 CCamera* CGameInstance::GetMainCamera()
 {
 	return m_pCameraManager->GetMainCamera();
+}
+_bool CGameInstance::IsMainCamera(CCamera* pCamera)
+{
+	return m_pCameraManager->IsMainCamera(pCamera);
 }
 _matrix CGameInstance::GetMainCameraWorldMatrix()
 {

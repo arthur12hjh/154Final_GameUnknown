@@ -17,6 +17,7 @@ public:
 		CGameObject*	pAttacker;
 		const void*		pData;
 
+		_float			fImpactForce = {};
 		COLLIDER		eColType;
 
 		// Collider Collision Type
@@ -46,6 +47,7 @@ private :
 
 	CGameObject*				m_pAttacker = { nullptr };
 	const void*					m_pData = { nullptr };
+	_float						m_fImpactForce = {};
 
 #ifdef _DEBUG
 	_bool						m_bIsDelayDead = { false };
