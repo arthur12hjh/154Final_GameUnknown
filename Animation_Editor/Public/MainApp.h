@@ -31,6 +31,10 @@ private:
 
 	_bool						m_isDebuggingActive;
 
+
+	_float						m_fTimeRate = 1.f;
+
+
 private:
 	HRESULT Ready_Default_Setting();
 	HRESULT Start_Level(LEVEL eLevelID);

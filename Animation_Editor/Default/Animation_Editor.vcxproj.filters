@@ -101,6 +101,12 @@
     <Filter Include="03.Manager\Data_Manager">
       <UniqueIdentifier>{00f62eba-dd45-4845-8af0-b57e15d81e25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Entity\Extra">
+      <UniqueIdentifier>{d81d9ed5-f82f-49a6-8628-a23f5b4d0014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Extra\Body_Extra">
+      <UniqueIdentifier>{8ba18357-72e3-4174-8aee-71aaca5dfbc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -211,6 +217,12 @@
     <ClInclude Include="..\Public\Data_Manager.h">
       <Filter>03.Manager\Data_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Extra.h">
+      <Filter>02.GameObjects\Entity\Extra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Extra.h">
+      <Filter>02.GameObjects\Entity\Extra\Body_Extra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -305,6 +317,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Data_Manager.cpp">
       <Filter>03.Manager\Data_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Extra.cpp">
+      <Filter>02.GameObjects\Entity\Extra</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Extra.cpp">
+      <Filter>02.GameObjects\Entity\Extra\Body_Extra</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
