@@ -26,7 +26,6 @@ public:
         _vector vPos;
         _float3 fRot;
         _float fSize;
-        _bool bisSpectrum;
     }EFFECT_TRANSFORM_DESC;
     
 private:

@@ -77,6 +77,7 @@ public:
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
+		_bool				bisSpectrum;
 	}SPRITE_PARTICLE_DATA;
 
 private:

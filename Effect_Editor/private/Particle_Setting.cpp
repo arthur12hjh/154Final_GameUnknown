@@ -306,6 +306,7 @@ void CParticle_Setting::Add_Particle()
     tParticleData.bisLoop = true;
     tParticleData.bisSphere = false;
     tParticleData.bisCircle = false;
+    tParticleData.bisSpectrum = true;
 
     CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
     pParticle->Initialize(nullptr);
@@ -385,6 +386,7 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.bisLoop = true;
     tSpriteParticleData.bisSphere = false;
     tSpriteParticleData.bisCircle = false;
+    tSpriteParticleData.bisSpectrum = true;
 
     CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
     pParticle->Initialize(nullptr);
@@ -641,6 +643,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
     }
     WriteInt(fileBinaryStream, m_pSpriteParticles.size());
     for (auto pSpriteParticle : m_pSpriteParticles) {
@@ -702,6 +705,7 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisCircle);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSpectrum);
     }
     WriteInt(fileBinaryStream, m_pSprites.size());
     for (auto pSprite : m_pSprites) {
@@ -871,7 +875,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
         ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
-
+        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
         CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
         pParticle->Initialize(nullptr);
 
@@ -938,6 +942,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
 
         CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
         pParticle->Initialize(nullptr);
@@ -1564,6 +1569,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::EndCombo();
                 }
                 ImGui::Checkbox("Billboard", &m_tParticleData.bisBillboard);
+                ImGui::Checkbox("Spectrum", &m_tParticleData.bisSpectrum);
                 if(!m_tParticleData.bisCircle)
                     ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
                 if (!m_tParticleData.bisSphere)
@@ -2025,6 +2031,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 }
                 ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fParticleSize), 0.1f, 0.f, 100.f);
                 ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
+                ImGui::Checkbox("Spectrum", &m_tSpriteParticleData.bisSpectrum);
                 if(!m_tSpriteParticleData.bisCircle)
                     ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
                 if (!m_tSpriteParticleData.bisSphere)

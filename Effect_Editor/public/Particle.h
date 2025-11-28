@@ -72,6 +72,7 @@ public:
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
+		_bool				bisSpectrum;
 	}PARTICLE_DATA;
 
 private:

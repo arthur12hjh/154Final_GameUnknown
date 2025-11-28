@@ -15,7 +15,7 @@ float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
 int g_iSizeCount;
-bool g_bisBillboard;
+bool g_bisBillboard, g_bisSpectrum;
 StructuredBuffer<float3> g_fSizeDiagram : register(t0);
 
 struct VS_IN
@@ -43,7 +43,10 @@ VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
    
     vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
     
-    Out.vPosition = vPosition;
+    if (g_bisSpectrum)
+        Out.vPosition = vPosition;
+    else
+        Out.vPosition = mul(vPosition, g_WorldMatrix);
     
     
     float time = In.vLifeTime.x / In.vLifeTime.y;
@@ -182,6 +185,13 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
         float3 vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f;
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
         
+        
+        if (!g_bisSpectrum)
+        {
+            vRight = normalize(mul(float4(vRight, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+            vUp = normalize(mul(float4(vUp, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+        }
+        
         Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp + vLook, 1.f), matVP);
         Out[0].vTexcoord = float2(0.f, 0.f);
         Out[0].vLifeTime = In[0].vLifeTime;
@@ -276,6 +286,12 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
         float3 vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f;
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
         
+        
+        if (!g_bisSpectrum)
+        {
+            vRight = normalize(mul(float4(vRight, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+            vUp = normalize(mul(float4(vUp, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+        }
         Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp + vLook, 1.f), matVP);
         Out[0].vTexcoord = float2(0.f, 0.f);
         Out[0].vLifeTime = In[0].vLifeTime;
@@ -354,6 +370,13 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         float3 vRight = normalize(In[0].TransformMatrix._11_12_13) * In[0].fSize * 0.5f;
         float3 vUp = normalize(cross(vLook, vRight)) * In[0].fSize * 0.5f;
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+        
+        
+        if (!g_bisSpectrum)
+        {
+            vRight = normalize(mul(float4(vRight, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+            vUp = normalize(mul(float4(vUp, 0), g_WorldMatrix)).xyz * In[0].fSize * 0.5f;
+        }
         
         Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vRight + vUp + vLook, 1.f), matVP);
         Out[0].vTexcoord = float2(0.f, 0.f);

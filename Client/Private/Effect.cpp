@@ -209,6 +209,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
         ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
 
         CPointParticle* pParticle = CPointParticle::Create(m_pDevice, m_pContext, &ParticleDesc);
         m_pPointParticles.push_back(pParticle);
@@ -270,6 +271,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+        SpriteParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
 
         CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext, &SpriteParticleDesc);
         m_pSpriteParticles.push_back(pParticle);

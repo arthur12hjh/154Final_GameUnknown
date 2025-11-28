@@ -150,14 +150,8 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
     int iU = (g_fTime / g_fFPS);
     int iV = g_fTime / g_fFPS / g_iUV.x;
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
-    Out.vDiffuse = g_MaskTexture.Sample(DefaultSampler, fTexcoord) * g_vColor;
-    if (1 > Out.vDiffuse.a)
-    {
-        if (Out.vDiffuse.a <= 0.5f)
-        {
-            discard;
-        }
-    }else if (Out.vDiffuse.r <= 0.3f)
+    Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord) * g_vColor;
+    if (0.5 > Out.vDiffuse.a)
         discard;
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
     float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
@@ -176,6 +170,34 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
 }
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NORMAL_OUT PS_NORMAL_MASK_MAIN(PS_IN In)
+{
+    PS_NORMAL_OUT Out;
+    int iU = (g_fTime / g_fFPS);
+    int iV = g_fTime / g_fFPS / g_iUV.x;
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    Out.vDiffuse = g_MaskTexture.Sample(DefaultSampler, fTexcoord);
+    if (Out.vDiffuse.r <= 0.25f)
+        discard;
+    Out.vDiffuse *= g_vColor;
+    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
+    float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
+    
+    float3 N = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2 - 1;
+    float3 T = -normalize(In.vTangent.xyz);
+    float3 B = -normalize(In.vBitangent.xyz);
+    float3 G = -normalize(In.vNormal.xyz);
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    return Out;
+}
+
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_OUT PS_MASK(PS_IN In)
 {
     PS_OUT Out;
@@ -184,7 +206,6 @@ PS_OUT PS_MASK(PS_IN In)
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     Out.vDiffuse = g_vColor;
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
-    
     float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
     float weight = saturate(pow(1 - linearDepth / 500, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
@@ -218,6 +239,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass SpriteNormalMaskEffect
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_NORMAL_MASK_MAIN();
     }
     pass SpriteMaskEffect
     {
