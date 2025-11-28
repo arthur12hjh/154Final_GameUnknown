@@ -4,6 +4,7 @@
 
 #include "Player.h"
 #include "Weapon.h"
+#include "Nayitba.h"
 
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -62,19 +63,20 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	if (m_bIsHitCollider)
+	{
+		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	}
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-
 #endif
 }
 
@@ -126,6 +128,11 @@ HRESULT CWeapon::Render_Shadow()
 	return S_OK;
 }
 
+void CWeapon::Enable_HitCollider(_bool bIsFlag)
+{
+	m_bIsHitCollider = bIsFlag;
+}
+
 HRESULT CWeapon::Ready_Components()
 {
 	/* Com_Model */
@@ -141,13 +148,18 @@ HRESULT CWeapon::Ready_Components()
 	/* Com_Collider_OBB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 
-	OBBDesc.vSize = _float3(2.0f, 2.5f, 3.5f);
-	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y * 0.5f, 0.f);
+	OBBDesc.vSize = _float3(0.5f, 2.f, 0.5f);
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	OBBDesc.vAngles = _float3(0.f,  0.f/*XMConvertToRadians(45.0f)*/, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
+	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
 	return S_OK;
 }
 
@@ -164,6 +176,23 @@ HRESULT CWeapon::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	if (pNaytiba)
+	{
+		DEFAULT_DAMAGE_DESC pDamageDesc = {};
+		pDamageDesc.pAttacker = m_pParent;
+		pDamageDesc.vHitPoint = vHitPoint;
+		pDamageDesc.vHitDir = vHitDir;
+
+		CHARACTER_SKILL_DESC SkillDesc = {};
+		SkillDesc.iSkillDamage = 50.f;
+		pDamageDesc.pSkillData = &SkillDesc;
+		pNaytiba->Damaged(&pDamageDesc);
+	}
 }
 
 CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -59,12 +59,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
-
-	CGameObject::GAMEOBJECT_DESC	Desc{};
-	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 10.f;
-
-	if(FAILED(__super::Initialize(&Desc)))
+	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))

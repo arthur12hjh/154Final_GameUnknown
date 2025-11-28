@@ -3,6 +3,7 @@
 #include "GameManager.h"
 
 #include "Notify.h"
+#include "StringHelper.h"
 
 #include "GameInstance.h"
 

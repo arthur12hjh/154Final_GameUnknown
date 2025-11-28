@@ -715,6 +715,8 @@ void CRenderer::Render_UI()
 
 void CRenderer::Render_Debug()
 {
+	m_pColliderRenderer->Render(m_pShader);
+
 	if (false == m_isDebugVisible)
 		return;
 
@@ -744,8 +746,6 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
 	//	return;
-
-	m_pColliderRenderer->Render(m_pShader);
 
 }
 

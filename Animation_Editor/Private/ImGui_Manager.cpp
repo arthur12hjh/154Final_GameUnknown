@@ -8,6 +8,8 @@
 #include "ContainerObject.h"
 #include "Animation.h"
 
+#include "Extra.h"
+
 
 #include "StringHelper.h"
 
@@ -142,6 +144,36 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 	}
 }
 
+void CImGui_Manager::Create_Extra(const _wstring& szModelTag)
+{
+	if (nullptr != m_pSelectedObject)
+	{
+		m_pSelectedObject->Set_Dead(TRUE);
+		m_iSelectedAnimationIndex = 0;
+		m_iSelectedEventIndex = 0;
+		m_iBeforeEventIndex = 0;
+		m_pAnimationList = nullptr;
+		m_pSelectedObject = nullptr;
+
+	}
+
+	CExtra::EXTRA_DESC ExtraDesc = {};
+	ExtraDesc.szModelTag = szModelTag;
+
+	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Extra"), ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"), &ExtraDesc);
+
+	list<CGameObject*>* pObjLists = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
+
+	m_pSelectedObject = pObjLists->back();
+
+	m_pAnimationList = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_AnimationList();
+
+	if (nullptr == m_pAnimationEventMap)
+	{
+		m_pAnimationEventMap = m_pTool_Manager->Get_AnimationEventMapPtr();
+	}
+}
+
 void CImGui_Manager::Kill_Character()
 {
 	if (nullptr == m_pSelectedObject)
@@ -198,7 +230,25 @@ void CImGui_Manager::Update_ToolBar()
 
 	ImGui::End();
 }
+/*
 
+
+  _____ _   _ _____  _    _ _______   _    _ ______ _____  ______
+ |_   _| \ | |  __ \| |  | |__   __| | |  | |  ____|  __ \|  ____|
+   | | |  \| | |__) | |  | |  | |    | |__| | |__  | |__) | |__
+   | | | . ` |  ___/| |  | |  | |    |  __  |  __| |  _  /|  __|
+  _| |_| |\  | |    | |__| |  | |    | |  | | |____| | \ \| |____
+ |_____|_| \_|_|     \____/   |_|    |_|  |_|______|_|  \_\______|
+
+	// 임구이에서 보고싶은 모델들이 있으면, Loader에 그 모델을 불러온 후 아래에 리스트를 추가해주시길 바랍니다.
+	// Update_ToolBar_LoadCharacter()에서
+			if (ImGui::Selectable("///////")) { iCurrentIndex = ///////; }
+
+
+		case //////:
+			Create_Extra(TEXT("Prototype_Component_Model_///////"));
+			break;
+*/
 void CImGui_Manager::Update_ToolBar_LoadCharacter()
 {
 	static int iCurrentIndex = 0;
@@ -210,6 +260,8 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
 		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
 		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
+		if (ImGui::Selectable("StatueA")) { iCurrentIndex = 4; }
+		if (ImGui::Selectable("StatueB")) { iCurrentIndex = 5; }
 
 		ImGui::EndPopup();
 	}
@@ -232,6 +284,12 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 3:
 			Create_Character(TEXT("Prototype_GameObject_Gigas"));
+			break;
+		case 4:
+			Create_Extra(TEXT("Prototype_Component_Model_StatueA"));
+			break;
+		case 5:
+			Create_Extra(TEXT("Prototype_Component_Model_StatueB"));
 			break;
 		}
 
@@ -272,7 +330,7 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 void CImGui_Manager::Update_AnimationList()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
-	ImGui::SetNextWindowSize(ImVec2(450, ImGui::GetIO().DisplaySize.y)); // 왼쪽에 갖다붙일거임
+	ImGui::SetNextWindowSize(ImVec2(450, ImGui::GetIO().DisplaySize.y - 50)); // 왼쪽에 갖다붙일거임
 
 
 	ImGui::Begin(u8"Animation List", NULL);
@@ -459,6 +517,21 @@ void CImGui_Manager::Update_TimeLine()
 	pDrawList->AddLine(ImVec2(fCurrentFramePosition, vCanvasLeftTop.y), ImVec2(fCurrentFramePosition, vCanvasRightBottom.y), vCursorFrameColor);
 	pDrawList->AddCircle(ImVec2(fCurrentFramePosition, vCanvasLeftTop.y), 5.f, vCursorFrameColor);
 
+	// 현재 프레임 숫자 표시
+	_uint iCurrentFrame =
+		static_cast<_uint>(pAnimation->Get_SaturatedTrackPosition() * pAnimation->Get_Duration());
+
+	char szCurFrameText[32];
+	sprintf_s(szCurFrameText, "Frame : %d", iCurrentFrame);
+
+	// 텍스트 위치 (커서 바로 위)
+	ImVec2 vTextPos = ImVec2(
+		fCurrentFramePosition - 20.f,   // 중앙 정렬용 보정
+		vCanvasLeftTop.y + 18.f         // 라인 위쪽
+	);
+
+	pDrawList->AddText(vTextPos, IM_COL32(255, 255, 100, 255), szCurFrameText);
+
 	///
 	/// 클릭 관련 처리 넣기 V
 	/// 클릭하면 해당 키프레임으로 이동 V
@@ -579,8 +652,16 @@ void CImGui_Manager::Update_TimeLine()
 			AnimNotify.szNotifyTag.clear();
 			AnimNotify.szNotifyArg01.clear();
 			AnimNotify.szNotifyArg02.clear();
+			AnimNotify.szNotifyArg03.clear();
 			AnimNotify.szSocketTag.clear();
+
+			AnimNotify.iNumData1 = 0;
+			AnimNotify.iNumData2 = 0;
+			AnimNotify.iNumData3 = 0;
+			AnimNotify.iNumData4 = 0;
+
 			AnimNotify.bIsLocalPos = TRUE;
+			AnimNotify.vNotifyScale = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyPosition = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
@@ -603,13 +684,22 @@ void CImGui_Manager::Update_EventMaker()
 	if (m_iSelectedEventIndex < 0)
 		return;
 
+
+
 	static _char szNotifyEditTag[MAX_PATH];
 	static _char szNotifyArg01[MAX_PATH];
 	static _char szNotifyArg02[MAX_PATH];
+	static _char szNotifyArg03[MAX_PATH];
 	static _char szSocketTag[MAX_PATH];
+
+	static	_int	iNumData1 = {};
+	static	_int	iNumData2 = {};
+	static	_int	iNumData3 = {};
+	static	_int	iNumData4 = {};
 
 	static _bool bIsLocalPos = TRUE;
 
+	static _float3 vNotifyScale = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyPosition = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyRotation = _float3(0.f, 0.f, 0.f);
 
@@ -623,10 +713,17 @@ void CImGui_Manager::Update_EventMaker()
 			strcpy_s(szNotifyEditTag, SelectedAnimNotify.szNotifyTag.c_str());
 			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg01.c_str());
 			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg02.c_str());
+			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg03.c_str());
 			strcpy_s(szSocketTag, SelectedAnimNotify.szSocketTag.c_str());
+
+			iNumData1 = SelectedAnimNotify.iNumData1;
+			iNumData2 = SelectedAnimNotify.iNumData2;
+			iNumData3 = SelectedAnimNotify.iNumData3;
+			iNumData4 = SelectedAnimNotify.iNumData4;
 
 			bIsLocalPos = SelectedAnimNotify.bIsLocalPos;
 
+			vNotifyScale = SelectedAnimNotify.vNotifyScale;
 			vNotifyPosition = SelectedAnimNotify.vNotifyPosition;
 			vNotifyRotation = SelectedAnimNotify.vNotifyRotation;
 
@@ -638,10 +735,18 @@ void CImGui_Manager::Update_EventMaker()
 			szNotifyEditTag[0] = '\0';
 			szNotifyArg01[0] = '\0';
 			szNotifyArg02[0] = '\0';
+			szNotifyArg03[0] = '\0';
+
 			szSocketTag[0] = '\0';
+
+			iNumData1 = 0;
+			iNumData2 = 0;
+			iNumData3 = 0;
+			iNumData4 = 0;
 
 			bIsLocalPos = TRUE;
 
+			vNotifyScale = _float3(0.f, 0.f, 0.f);
 			vNotifyPosition = _float3(0.f, 0.f, 0.f);
 			vNotifyRotation = _float3(0.f, 0.f, 0.f);
 		}
@@ -657,8 +762,14 @@ void CImGui_Manager::Update_EventMaker()
 		ImGui::InputText("Event Tag", szNotifyEditTag, sizeof(szNotifyEditTag));
 		ImGui::InputText("Event Arg01", szNotifyArg01, sizeof(szNotifyArg01));
 		ImGui::InputText("Event Arg02", szNotifyArg02, sizeof(szNotifyArg02));
-		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
+		ImGui::InputText("Event Arg03", szNotifyArg03, sizeof(szNotifyArg03));
 
+		ImGui::InputInt("NumData1",  reinterpret_cast<int*>(&iNumData1));
+		ImGui::InputInt("NumData2",  reinterpret_cast<int*>(&iNumData2));
+		ImGui::InputInt("NumData3",  reinterpret_cast<int*>(&iNumData3));
+		ImGui::InputInt("NumData4",  reinterpret_cast<int*>(&iNumData4));
+
+		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
 		ImGui::Checkbox("Is Local Position", &bIsLocalPos);
 
 		ImGui::InputFloat3("Position", reinterpret_cast<float*>(&vNotifyPosition), "%.3f");

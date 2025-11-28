@@ -154,13 +154,16 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-
-#ifdef _DEBUG
-	m_pAISenceCom->Update_Debuge();
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
-	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
-#endif // _DEBUG
 
+	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+#ifdef _DEBUG
+		m_pAISenceCom->Update_Debuge();
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+		m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
+#endif // _DEBUG
+	}
 }
 
 HRESULT CNayitba::Render()
@@ -190,24 +193,32 @@ const list<CGameObject*>* CNayitba::GetTargetList()
 	return m_pAISenceCom->GetSearchAllObject();
 }
 
-const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom)
+const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)
+{
+	if (0 > iSkillIndex || (_uint)m_MonsterInfo.iAttackList[iTypeIndex].size() <= iSkillIndex)
+		return nullptr;
+
+	return  m_MonsterInfo.iAttackList[iTypeIndex][iSkillIndex];
+}
+
+const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_uint iTypeIndex, _bool bIsRandom)
 {
 	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
-	size_t iSkillIndex = m_MonsterInfo.iAttackList.size();
+	size_t iSkillIndex = m_MonsterInfo.iAttackList[iTypeIndex].size();
 	if (0 == iSkillIndex)
 		return nullptr;
 
 	if (bIsRandom)
 	{
 		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)iSkillIndex);
-		pSkill = m_MonsterInfo.iAttackList[iRandomIndex];
+		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][iRandomIndex];
 	}
 	else
 	{
 		if (iSkillIndex <= m_iSkillIndex)
 			m_iSkillIndex = 0;
 
-		pSkill = m_MonsterInfo.iAttackList[m_iSkillIndex];
+		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][m_iSkillIndex];
 		m_iSkillIndex++;
 	}
 
@@ -232,11 +243,15 @@ HRESULT CNayitba::Ready_CharacterData()
 	{
 		m_pInitMonsterInfo = pNayitbaInfo;
 		size_t iNumSkill = m_pInitMonsterInfo->iAttackList.size();
+	
+		for(_uint i = 0; i < ENUM_CLASS(SKILL_TYPE::END); ++i)
+			m_MonsterInfo.iAttackList[i].reserve(iNumSkill);
 
-		m_MonsterInfo.iAttackList.resize(iNumSkill);
-		for (size_t i = 0; i < iNumSkill; ++i)
+		for (size_t j = 0; j < iNumSkill; ++j)
 		{
-			m_MonsterInfo.iAttackList[i] = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[i]);
+			auto pSkillData = m_pGameManager->Find_SkillData(m_pInitMonsterInfo->iAttackList[j]);
+			_uint iIndex = ENUM_CLASS(pSkillData->eSkillType);
+			m_MonsterInfo.iAttackList[iIndex].push_back(pSkillData);
 		}
 	
 		if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
@@ -263,7 +278,7 @@ HRESULT CNayitba::ADD_Components()
 	/* Com_Collider_AABB */
 	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
 	AABBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;

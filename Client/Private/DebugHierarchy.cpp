@@ -109,7 +109,7 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
                 auto pCollider = dynamic_cast<CCollider*>(Pair.second);
                 if (pCollider)
                 {
-                    DrawEditorCollider(pCollider);
+                    //DrawEditorCollider(pCollider);
                 }
 
                 ImGui::TreePop();
@@ -201,8 +201,9 @@ void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
         if (bIsApplySize = true)
         {
             _float3 vSize = { m_vColliderSize[0], m_vColliderSize[1], m_vColliderSize[2]};
+            _float3 vCenter = { 0.f, vSize.y * 0.5f, 0.f };
             _float4 vRotation = { m_vColliderRotation[0], m_vColliderRotation[1], m_vColliderRotation[2], m_vColliderRotation[3]};
-            pObbCol->SetCollision({}, vRotation, vSize);
+            pObbCol->SetCollision(vCenter, vRotation, vSize);
         }
     }
         break;
@@ -217,7 +218,8 @@ void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
         if (bIsApplySize = true)
         {
             _float3 vSize = { m_vColliderSize[0], m_vColliderSize[1], m_vColliderSize[2] };
-            pAABBCol->SetCollision({}, vSize);
+            _float3 vCenter = { 0.f, vSize.y, 0.f };
+            pAABBCol->SetCollision(vCenter, vSize);
         }
     }
         break;
@@ -231,7 +233,8 @@ void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
 
         if (bIsApplySize = true)
         {
-            static_cast<CSphereCollider*>(pCollider)->SetCollision({}, m_vColliderSize[0]);
+            _float3 vCenter = { 0.f, m_vColliderSize[0] * 0.5f, 0.f};
+            static_cast<CSphereCollider*>(pCollider)->SetCollision(vCenter, m_vColliderSize[0]);
         }
     }
         break;

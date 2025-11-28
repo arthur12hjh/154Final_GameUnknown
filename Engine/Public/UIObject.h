@@ -36,7 +36,6 @@ public:
 	const RECT&				GetScreenSize() { return m_ScreenSize; }
 
 protected:
-	CGameObject*			m_pParent = { nullptr };
 	DRAW_TYPE				m_eDrawType = { DRAW_TYPE::SCREEN };
 	RECT					m_ScreenSize = {};
 

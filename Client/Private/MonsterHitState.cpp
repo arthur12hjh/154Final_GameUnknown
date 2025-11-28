@@ -42,7 +42,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
     m_bIsEnableChange = false;
-    if (0 == strcmp("", pSkillData->szHitAnimationName))
+    if (0 == strcmp("None", pSkillData->szHitAnimationName))
     {
         _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
         _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
@@ -79,7 +79,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     {
         szAnimationName = pSkillData->szHitAnimationName;
     }
-    pEntity->Set_Animation(szAnimationName.c_str(), false);
+    pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f);
 }
 
 void CMonsterHitState::Update(_float fTimeDelta)

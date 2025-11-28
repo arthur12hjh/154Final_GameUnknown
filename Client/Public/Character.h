@@ -35,7 +35,6 @@ public:
 	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
 
 	void							Set_Position(_vector vPosition);
-
 	CModel*							Get_BodyModelCom() { return m_pBodyModelCom; }
 
 	_vector							Get_Position();

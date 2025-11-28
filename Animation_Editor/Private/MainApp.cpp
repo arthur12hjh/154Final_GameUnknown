@@ -52,11 +52,15 @@ HRESULT Animation_Editor::CMainApp::Initialize()
 
 void Animation_Editor::CMainApp::Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	{
+		m_fTimeRate = m_fTimeRate == 0.f ? 1.f : 0.f;
+	}
 	//fTimeDelta = fTimeDelta * 0.5f;
-	m_pTool_Manager->Priority_Update(fTimeDelta);
-	m_pGameInstance->Update_Engine(fTimeDelta);
-	m_pTool_Manager->Update(fTimeDelta);
-	m_pTool_Manager->Late_Update(fTimeDelta);
+	m_pTool_Manager->Priority_Update(fTimeDelta * m_fTimeRate);
+	m_pGameInstance->Update_Engine(fTimeDelta * m_fTimeRate);
+	m_pTool_Manager->Update(fTimeDelta * m_fTimeRate);
+	m_pTool_Manager->Late_Update(fTimeDelta * m_fTimeRate);
 }
 
 HRESULT Animation_Editor::CMainApp::Render()

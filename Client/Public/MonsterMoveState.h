@@ -43,6 +43,8 @@ private:
 	_float3										m_vLerpStartPos = {};
 
 	DIRECTION									m_vMoveDirection = { DIRECTION::END };
+	_bool										m_bIsRootMotion = { false };
+
 	_bool										m_bIsCaution = { false };
 	_float3										m_vMovePoint = {};
 
