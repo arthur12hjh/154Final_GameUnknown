@@ -42,7 +42,7 @@ void CParticle::Update(_float fTimeDelta)
 			return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMMatrixTranspose(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat)));
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
 	Spread(fTimeDelta);
 }
 
@@ -238,12 +238,18 @@ HRESULT CParticle::Ready_Components()
 
 HRESULT CParticle::Bind_ShaderResources()
 {
-	_float4x4 world = m_CombinedWorldMatrix;
-	world._41 = 0;
-	world._42 = 0;
-	world._43 = 0;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
-		return E_FAIL;
+	if (m_tData.bisSpectrum) {
+		_float4x4 world = m_CombinedWorldMatrix;
+		world._41 = 0;
+		world._42 = 0;
+		world._43 = 0;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
+			return E_FAIL;
+	}
+	else {
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+			return E_FAIL;
+	}
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -285,6 +291,9 @@ HRESULT CParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
+		return E_FAIL;
+	
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
@@ -311,7 +320,7 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
-	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f};
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;

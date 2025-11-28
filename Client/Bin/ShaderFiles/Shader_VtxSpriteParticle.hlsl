@@ -17,7 +17,7 @@ float2 g_fDissolveUVSize = float2(1, 1);
 int2 g_iUV;
 float g_fAngle;
 int g_iSizeCount;
-bool g_bisBillboard;
+bool g_bisBillboard, g_bisSpectrum;
 StructuredBuffer<float3> g_fSizeDiagram : register(t0);
 
 struct VS_IN
@@ -46,7 +46,10 @@ VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
    
     vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
     
-    Out.vPosition = vPosition;
+    if (g_bisSpectrum)
+        Out.vPosition = vPosition;
+    else
+        Out.vPosition = mul(vPosition, g_WorldMatrix);
     
     
     float time = In.vLifeTime.x / In.vLifeTime.y;
@@ -105,7 +108,9 @@ struct GS_NORMAL_OUT
     float2 vLifeTime : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
     float4 vNormal : TEXCOORD3;
-};
+    float4 vTangent : TEXCOORD4;
+    float4 vBitangent : TEXCOORD5;
+};                             
 
 struct GS_NONLIGHT_OUT
 {
@@ -172,21 +177,15 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
         Out[3].vNormal = float4(0, 0, 0, 0);
     
         vector vSourDir, vDestDir, vNormal;
-        vSourDir = float4(In[0].vPosition.xyz - vR * 3 + vU, 1.f) - float4(In[0].vPosition.xyz + vR * 3 + vU, 1.f);
-        vDestDir = float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz - vR * 3 + vU, 1.f);
+        vSourDir = float4(In[0].vPosition.xyz - vR + vU, 1.f) - float4(In[0].vPosition.xyz + vR + vU, 1.f);
+        vDestDir = float4(In[0].vPosition.xyz - vR - vU, 1.f) - float4(In[0].vPosition.xyz - vR + vU, 1.f);
         vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
-    
-        Out[0].vNormal += vNormal;
-        Out[1].vNormal += vNormal;
-        Out[2].vNormal += vNormal;
-    
-        vSourDir = float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz + vR * 3 + vU, 1.f);
-        vDestDir = float4(In[0].vPosition.xyz + vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f);
-        vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
-    
-        Out[0].vNormal += vNormal;
-        Out[2].vNormal += vNormal;
-        Out[3].vNormal += vNormal;
+        for (int i = 0; i < 4; ++i)
+        {
+            Out[i].vNormal = float4(normalize(vNormal.xyz), 0);
+            Out[i].vTangent = float4(normalize(vRightRot), 0);
+            Out[i].vBitangent = float4(normalize(vUpRot), 0);
+        }
     
         OutStream.Append(Out[0]);
         OutStream.Append(Out[1]);
@@ -212,6 +211,11 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
     
         float3 vRightRot = vRight * c + vLook * s;
         float3 vUpRot = vLook * c - vRight * s;
+        if (!g_bisSpectrum)
+        {
+            vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+            vUpRot = normalize(mul(float4(vUpRot, 0), g_WorldMatrix)).xyz;
+        }
     
         float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
         float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
@@ -236,28 +240,16 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = Out[3].vPosition;
     
-        Out[0].vNormal = float4(0, 0, 0, 0);
-        Out[1].vNormal = float4(0, 0, 0, 0);
-        Out[2].vNormal = float4(0, 0, 0, 0);
-        Out[3].vNormal = float4(0, 0, 0, 0);
-    
         vector vSourDir, vDestDir, vNormal;
-        vSourDir = float4(In[0].vPosition.xyz - vR * 3 + vU, 1.f) - float4(In[0].vPosition.xyz + vR * 3 + vU, 1.f);
-        vDestDir = float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz - vR * 3 + vU, 1.f);
+        vSourDir = float4(In[0].vPosition.xyz - vR + vU, 1.f) - float4(In[0].vPosition.xyz + vR + vU, 1.f);
+        vDestDir = float4(In[0].vPosition.xyz - vR - vU, 1.f) - float4(In[0].vPosition.xyz - vR + vU, 1.f);
         vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
-    
-        Out[0].vNormal += vNormal;
-        Out[1].vNormal += vNormal;
-        Out[2].vNormal += vNormal;
-    
-        vSourDir = float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz + vR * 3 + vU, 1.f);
-        vDestDir = float4(In[0].vPosition.xyz + vR * 3 - vU, 1.f) - float4(In[0].vPosition.xyz - vR * 3 - vU, 1.f);
-        vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
-    
-        Out[0].vNormal += vNormal;
-        Out[2].vNormal += vNormal;
-        Out[3].vNormal += vNormal;
-    
+        for (int i = 0; i < 4; ++i)
+        {
+            Out[i].vNormal = float4(normalize(vNormal.xyz), 0);
+            Out[i].vTangent = float4(normalize(vRightRot), 0);
+            Out[i].vBitangent = float4(normalize(vUpRot), 0);
+        }
         OutStream.Append(Out[0]);
         OutStream.Append(Out[1]);
         OutStream.Append(Out[2]);
@@ -334,6 +326,11 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
     
         float3 vRightRot = vRight * c + vLook * s;
         float3 vUpRot = vLook * c - vRight * s;
+        if (!g_bisSpectrum)
+        {
+            vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+            vUpRot = normalize(mul(float4(vUpRot, 0), g_WorldMatrix)).xyz;
+        }
     
         float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
         float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
@@ -377,15 +374,13 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
         
-        
-        
         float angle = radians(g_fAngle);
     
         float s = sin(angle);
         float c = cos(angle);
     
-        float3 vRightRot = vRight * c + vUp * s;
-        float3 vUpRot = vUp * c - vRight * s;
+        float3 vRightRot = normalize(vRight * c + vUp * s);
+        float3 vUpRot = normalize(vUp * c - vRight * s);
     
         float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
         float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
@@ -431,6 +426,7 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         float3 vUp = normalize(cross(vLook, vRight));
         matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
         
+        
         float angle = radians(g_fAngle);
     
         float s = sin(angle);
@@ -438,7 +434,11 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
     
         float3 vRightRot = vRight * c + vLook * s;
         float3 vUpRot = vLook * c - vRight * s;
-    
+        if (!g_bisSpectrum)
+        {
+            vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+            vUpRot = normalize(mul(float4(vUpRot, 0), g_WorldMatrix)).xyz;
+        }
         float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
         float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
         vLook *= g_fSize.x * In[0].fSize;
@@ -489,6 +489,8 @@ struct PS_NORMAL_IN
     float2 vLifeTime : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
     float4 vNormal : TEXCOORD3;
+    float4 vTangent : TEXCOORD4;
+    float4 vBitangent : TEXCOORD5;
 };
 
 
@@ -537,13 +539,24 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In)
     int iV = In.vLifeTime.x / fFPS / g_iUV.x;
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     
-    Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord);
-    if (Out.vDiffuse.a <= 0.5f)
+    Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord) * g_vColor;
+    if (0.5 > Out.vDiffuse.a)
         discard;
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
     float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
-    Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+    
+    float3 N = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2 - 1;
+    float3 T = -normalize(In.vTangent.xyz);
+    float3 B = -normalize(In.vBitangent.xyz);
+    float3 G = -normalize(In.vNormal.xyz);
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    
+    
     return Out;
 }
 
