@@ -109,7 +109,7 @@ void CDebugHierarchy::Update(_float fTimeDeleta)
                 auto pCollider = dynamic_cast<CCollider*>(Pair.second);
                 if (pCollider)
                 {
-                    DrawEditorCollider(pCollider);
+                    //DrawEditorCollider(pCollider);
                 }
 
                 ImGui::TreePop();

@@ -47,8 +47,22 @@ HRESULT CData_Manager::Save_Data()
             jMember["szNotifyTag"] = pMember.szNotifyTag.c_str();
             jMember["szNotifyArg01"] = pMember.szNotifyArg01.c_str();
             jMember["szNotifyArg02"] = pMember.szNotifyArg02.c_str();
+            jMember["szNotifyArg03"] = pMember.szNotifyArg03.c_str();
+            
+            jMember["iNumData1"] = pMember.iNumData1;
+            jMember["iNumData2"] = pMember.iNumData2;
+            jMember["iNumData3"] = pMember.iNumData3;
+            jMember["iNumData4"] = pMember.iNumData4;
+
             jMember["szSocketTag"] = pMember.szSocketTag.c_str();
 			jMember["bIsLocalPos"] = pMember.bIsLocalPos;
+
+            jMember["vNotifyScale"] = {
+               pMember.vNotifyScale.x,
+               pMember.vNotifyScale.y,
+               pMember.vNotifyScale.z
+            };
+
             jMember["vNotifyPosition"] = {
                 pMember.vNotifyPosition.x,
                 pMember.vNotifyPosition.y,
@@ -118,8 +132,21 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
             AnimNotify.szNotifyTag = pAnimNotify["szNotifyTag"].get<string>();
             AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
             AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
+            AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
+
+            AnimNotify.iNumData1 = pAnimNotify["iNumData1"].get<_int>();
+            AnimNotify.iNumData2 = pAnimNotify["iNumData2"].get<_int>();
+            AnimNotify.iNumData3 = pAnimNotify["iNumData3"].get<_int>();
+            AnimNotify.iNumData4 = pAnimNotify["iNumData4"].get<_int>();
+
             AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
 			AnimNotify.bIsLocalPos = pAnimNotify["bIsLocalPos"].get<bool>();
+
+            AnimNotify.vNotifyScale = {
+               pAnimNotify["vNotifyScale"][0].get<_float>(),
+               pAnimNotify["vNotifyScale"][1].get<_float>(),
+               pAnimNotify["vNotifyScale"][2].get<_float>()
+            };
 
             AnimNotify.vNotifyPosition = {
                 pAnimNotify["vNotifyPosition"][0].get<_float>(),

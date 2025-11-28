@@ -49,7 +49,11 @@ void CAttackHitBox::Priority_Update(_float fTimeDelta)
 void CAttackHitBox::Update(_float fTimeDelta)
 {
 	if (!m_bIsDelayDead)
-		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	{
+		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+		m_pCullingCollider->UpdateColiision(worldMatrix);
+		m_pColliderCom->UpdateColiision(worldMatrix);
+	}
 	else
 	{
 		m_vDelayDead.x += fTimeDelta;
@@ -66,9 +70,10 @@ void CAttackHitBox::Late_Update(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+		
 	}
 #endif // _DEBUG
 
@@ -99,24 +104,24 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 	case COLLIDER::OBB:
 	{
 		/* Com_Collider_AABB */
-		CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
-		SphereDesc.fRadius = pDesc.vScale.x;
-		SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
-
-		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-			return E_FAIL;
-	}
-		break;
-	case COLLIDER::SPHERE:
-	{
-		/* Com_Collider_AABB */
 		COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 		OBBDesc.vSize = pDesc.vScale;
 		OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y * 0.5f, 0.f);
 
 		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
-			TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+			TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+			return E_FAIL;
+	}
+		break;
+	case COLLIDER::SPHERE:
+	{
+		/* Com_Collider_Sphere */
+		CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+		SphereDesc.fRadius = pDesc.vScale.x;
+		SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
+
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
 			return E_FAIL;
 	}
 		break;
@@ -131,7 +136,9 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 
 	// 일단은 플레이어만 충돌처리 피직스 오브젝트 들어가면 그녀석들 충돌처리
 	// 공통으로 할수있는 Tag 만들어서 하기
-	m_pColliderCom->ADD_OnlyHitObject(pDesc.eHitObjectType);
+	m_pColliderCom->ADD_IgnoreObject(pDesc.eHitBoxType);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision(_float3(0.f, pDesc.vScale.y * 0.5f, 0.f), {}, pDesc.vScale);
 	return S_OK;
 }

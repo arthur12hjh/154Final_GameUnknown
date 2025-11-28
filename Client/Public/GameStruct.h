@@ -62,7 +62,7 @@ namespace Client
 
 	// 스킬 구조체
 	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
-	enum class SKILL_PRIORITY { PARRYABLE, END};
+	enum class SKILL_PROPERTY { PARRYABLE, END};
 	enum class SKILL_TYPE { DEFAULT_SKILL, MIMESIS_SKILL, END };
 	typedef struct Character_Skill_Desc
 	{
@@ -73,10 +73,13 @@ namespace Client
 
 		long long					iSkillDamage;
 
+		_float						fRange;
+		_float3						vHitBoxExtents;
+
 		ATTACK_DIRECTION			eATK_Direction;
 		DIRECTION					eDirection;
 		SKILL_TYPE					eSkillType;
-		vector<SKILL_PRIORITY>		ePriority;
+		set<SKILL_PROPERTY>			ProPertyList;
 	}CHARACTER_SKILL_DESC;
 
 

@@ -103,18 +103,24 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 5; i < iMaxSize;)
+    for (auto i = 10; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
         strcpy_s(SkillDesc.szAnimationName, SkillDataList[i++].c_str());
+        strcpy_s(SkillDesc.szHitAnimationName, SkillDataList[i++].c_str());
 
         SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
+        SkillDesc.fRange = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.x = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
+
         SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
         _uint iNumProperity = atoi(SkillDataList[i++].c_str());
         for (_uint j = 0; j < iNumProperity; ++j)
-            SkillDesc.ePriority.push_back(SKILL_PRIORITY(atoi(SkillDataList[i++].c_str())));
+            SkillDesc.ProPertyList.insert(SKILL_PROPERTY(atoi(SkillDataList[i++].c_str())));
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
     }
@@ -153,9 +159,21 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
             AnimNotify.szNotifyTag = pAnimNotify["szNotifyTag"].get<string>();
             AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
             AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
+            AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
+
+            AnimNotify.iNumData1 = pAnimNotify["iNumData1"].get<int>();
+            AnimNotify.iNumData2 = pAnimNotify["iNumData2"].get<int>();
+            AnimNotify.iNumData3 = pAnimNotify["iNumData3"].get<int>();
+            AnimNotify.iNumData4 = pAnimNotify["iNumData4"].get<int>();
+            
             AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
             AnimNotify.bIsLocalPos = pAnimNotify["bIsLocalPos"].get<bool>();
 
+            AnimNotify.vNotifyScale = {
+            pAnimNotify["vNotifyScale"][0].get<_float>(),
+            pAnimNotify["vNotifyScale"][1].get<_float>(),
+            pAnimNotify["vNotifyScale"][2].get<_float>()
+            };
             AnimNotify.vNotifyPosition = {
                 pAnimNotify["vNotifyPosition"][0].get<_float>(),
                 pAnimNotify["vNotifyPosition"][1].get<_float>(),

@@ -120,6 +120,16 @@ void CMonsterController::Damage(void* pDesc)
 	{
 		// 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
 		// 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
+		DEFAULT_DAMAGE_DESC*  pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
+		CHARACTER_SKILL_DESC* pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+		
+		auto PropertyList =  pSkillData->ProPertyList;
+		auto iter = PropertyList.find(SKILL_PROPERTY::PARRYABLE);
+		if (iter == PropertyList.end())
+		{
+
+		}
+
 
 		m_pFSM->Change_State(TEXT("Hit"), pDesc);
 	}
