@@ -1,19 +1,21 @@
 #include "pch.h"
 #include "Bamboo.h"
+
 #include "GameInstance.h"
 
-CBamboo::CBamboo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CStaticMap{ pDevice, pContext }
+CBamboo::CBamboo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+	CGameObject(pDevice, pContext)
 {
 }
 
-CBamboo::CBamboo(const CBamboo& Prototype)
-	: CStaticMap{ Prototype }
+CBamboo::CBamboo(const CBamboo& Prototype) :
+	CGameObject(Prototype)
 {
 }
 
 HRESULT CBamboo::Initialize_Prototype()
 {
+
 	return S_OK;
 }
 
@@ -34,16 +36,11 @@ void CBamboo::Priority_Update(_float fTimeDelta)
 
 void CBamboo::Update(_float fTimeDelta)
 {
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CBamboo::Late_Update(_float fTimeDelta)
 {
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
-	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
-
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CBamboo::Render()
@@ -51,21 +48,17 @@ HRESULT CBamboo::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
+	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", TEXTURE_TYPE::DIFFUSE, 0)))
 			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", TEXTURE_TYPE::NORMAL, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -82,17 +75,8 @@ HRESULT CBamboo::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
-	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-
-	OBBDesc.vSize = _float3(1.f, 5.f, 1.f);
-	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
-	OBBDesc.vAngles = _float3(0.f, 0.f/*XMConvertToRadians(45.0f)*/, 0.f);
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
-		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -100,7 +84,6 @@ HRESULT CBamboo::Ready_Components()
 
 HRESULT CBamboo::Bind_ShaderResources()
 {
-	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
@@ -114,31 +97,30 @@ HRESULT CBamboo::Bind_ShaderResources()
 
 CBamboo* CBamboo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBamboo* pInstance = new CBamboo(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
+	CBamboo* pInstanceModel = new CBamboo(pDevice, pContext);
+	if (FAILED(pInstanceModel->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : pGraphic_Device");
-		Safe_Release(pInstance);
+		Safe_Release(pInstanceModel);
+		MSG_BOX("Create Fail : Instance Model");
 	}
-
-	return pInstance;
+	return pInstanceModel;
 }
 
-CStaticMap* CBamboo::Clone(void* pArg)
+CGameObject* CBamboo::Clone(void* pArg)
 {
-	CBamboo* pInstance = new CBamboo(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
+	CBamboo* pInstanceModel = new CBamboo(*this);
+	if (FAILED(pInstanceModel->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBamboo");
-		Safe_Release(pInstance);
+		Safe_Release(pInstanceModel);
+		MSG_BOX("Clone Fail : Instance Model");
 	}
-
-	return pInstance;
+	return pInstanceModel;
 }
 
 void CBamboo::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
 }

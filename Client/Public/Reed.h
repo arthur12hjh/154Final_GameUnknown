@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CVIBuffer_Instance_Model;
 class CShader;
+class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -28,6 +29,8 @@ public:
 private:
 	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CTexture* m_pMaskCom = { nullptr };
+	class CTerrain* m_pTerrain = { nullptr };
 
 private:
 	HRESULT						Ready_Components();

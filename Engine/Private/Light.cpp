@@ -31,15 +31,11 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
 
 #ifdef _DEBUG
 	_matrix WorldMat = XMMatrixIdentity();
-	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
+	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType || LIGHT_TYPE::SPOT == m_LightDesc.eType)
 	{
 		WorldMat.r[0] = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMLoadFloat4(&m_LightDesc.vDirection)));
 		WorldMat.r[1] = XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&m_LightDesc.vDirection), WorldMat.r[0]));
 		WorldMat.r[2] = XMLoadFloat4(&m_LightDesc.vDirection);
-	}
-	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
-	{
-
 	}
 
 	m_LightDesc.vPosition.w = 1.f;
@@ -61,6 +57,26 @@ void CLight::SetLightInfo(const LIGHT_DESC& Desc)
 	m_LightDesc = Desc;
 
 #ifdef _DEBUG
+
+	_matrix WorldMat = XMMatrixIdentity();
+
+	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType || LIGHT_TYPE::SPOT == m_LightDesc.eType)
+	{
+		// 방향 벡터를 로드하고 정규화합니다.
+		_vector vDir = XMVector3Normalize(XMLoadFloat4(&m_LightDesc.vDirection));
+
+		// 방향 벡터(Z축)에 맞게 회전 행렬을 계산합니다.
+		// (Initialize 함수에 있는 로직을 그대로 사용)
+		WorldMat.r[0] = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vDir));
+		WorldMat.r[1] = XMVector3Normalize(XMVector3Cross(vDir, WorldMat.r[0]));
+		WorldMat.r[2] = vDir;
+	}
+
+	// 위치 설정 (모든 광원에 적용)
+	m_LightDesc.vPosition.w = 1.f;
+	WorldMat.r[3] = XMLoadFloat4(&m_LightDesc.vPosition);
+	XMStoreFloat4x4(&m_WorldMat, WorldMat);
+
 	switch (m_LightDesc.eType)
 	{
 	case LIGHT_TYPE::POINT:
@@ -69,6 +85,7 @@ void CLight::SetLightInfo(const LIGHT_DESC& Desc)
 	case LIGHT_TYPE::DIRECTIONAL:
 		break;
 	case LIGHT_TYPE::SPOT:
+		static_cast<CSphereCollider*>(m_pCollider)->SetCollision({ 0, 0, 0 }, m_LightDesc.fRange);
 		break;
 	}
 #endif // _DEBUG
@@ -90,16 +107,38 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer* pVIBuffer)
 	{
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
 			return E_FAIL;
-		iPassIndex = ENUM_CLASS(SHADER_DEFERRED_IDX::DIRECTIONAL);
+		iPassIndex = 1;
 	}
-	else
+	else if (LIGHT_TYPE::POINT == m_LightDesc.eType)
 	{
 		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPosition, sizeof(_float4))))
 			return E_FAIL;
 
 		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
 			return E_FAIL;
-		iPassIndex = ENUM_CLASS(SHADER_DEFERRED_IDX::POINT);
+		iPassIndex = 2;
+	}
+	else if (LIGHT_TYPE::SPOT == m_LightDesc.eType)
+	{
+		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fFalloff", &m_LightDesc.fFalloff, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fTheta", &m_LightDesc.fTheta, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fPhi", &m_LightDesc.fPhi, sizeof(_float))))
+			return E_FAIL;
+
+		iPassIndex = 9;
 	}
 
 	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &m_LightDesc.vDiffuse, sizeof(_float4))))
@@ -170,15 +209,23 @@ HRESULT CLight::CreateDebugCollider()
 	_float3 vPosition = {};
 	memcpy(&vPosition, &m_LightDesc.vPosition, sizeof(_float3));
 
-	m_pCollider = CSphereCollider::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pCollider)
-		return E_FAIL;
+	if (LIGHT_TYPE::DIRECTIONAL == m_LightDesc.eType)
+	{
 
-	CSphereCollider::SPHERE_COLLIDER_DESC SphereDesc = {};
-	SphereDesc.fRadius = m_LightDesc.fRange;
-	static_cast<CSphereCollider*>(m_pCollider)->Initialize(&SphereDesc);
+	}
+	else
+	{
+		m_pCollider = CSphereCollider::Create(m_pDevice, m_pContext);
+		if (nullptr == m_pCollider)
+			return E_FAIL;
 
-	if(m_pCollider)
+		CSphereCollider::SPHERE_COLLIDER_DESC SphereDesc = {};
+		SphereDesc.fRadius = m_LightDesc.fRange;
+		static_cast<CSphereCollider*>(m_pCollider)->Initialize(&SphereDesc);
+
+	}
+
+	if (m_pCollider)
 		m_pCollider->UpdateColiision(XMLoadFloat4x4(&m_WorldMat));
 	return S_OK;
 }

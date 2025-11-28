@@ -22,6 +22,7 @@ public:
 #ifdef _DEBUG
 	HRESULT					Initialize();
 	void					Debug_LightRender();
+	void					Select_LightRender(CLight* pSelectLight);
 #endif
 
 public:

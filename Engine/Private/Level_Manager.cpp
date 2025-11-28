@@ -14,7 +14,7 @@ HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
 	if (nullptr != m_pCurrentLevel)
 	{
 		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID());
-
+		//m_pGameInstance->Clear_LevelCameras();
 		Safe_Release(m_pCurrentLevel);
 	}	
 

@@ -10,9 +10,6 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_LightViewMatrix, g_LightProjMatrix;
 texture2D g_Texture;
-vector g_vLightDir;
-vector g_vLightPos;
-float g_fLightRange;
 vector g_vCamPosition;
 float g_fDensity;
 float g_fStepSize;
@@ -39,9 +36,15 @@ texture2D g_VolumetricTexture;
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
 
+vector g_vLightDir;
+vector g_vLightPos;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
+float g_fLightRange;
+float g_fFalloff;
+float g_fTheta;
+float g_fPhi;
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -164,9 +167,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vLightDir = vPosition - g_vLightPos;
     
     float fDistance = length(vLightDir);
-    float  fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
     
-    if(fAtt <= 0.f)
+    if (fAtt <= 0.f)
         discard;
     
     vector vLook = vPosition - g_vCamPosition;
@@ -182,7 +185,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
     {
         Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));    
+        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
         
         return Out;
     }
@@ -209,6 +212,80 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     Out.vShade *= fDiffuseAOStrength * fAtt;
     Out.vSpecular *= fAtt;
+    
+    return Out;
+}
+
+PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
+{
+    PS_OUT_LIGHT Out;
+    
+    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
+    
+    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fViewZ = vDepthDesc.y * 500.f;
+    
+    vector vPosition;
+    
+    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vPosition.x = In.vTexcoord.x * 2.f - 1.f;
+    vPosition.y = In.vTexcoord.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    
+    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    vPosition = vPosition * fViewZ;
+    
+    /* 로컬위치 * 월드 * 뷰  */
+    vPosition = mul(vPosition, g_ProjMatrixInv);
+    
+    /* 로컬위치 * 월드   */
+    vPosition = mul(vPosition, g_ViewMatrixInv);
+    
+    vector vLightToPixel = vPosition - g_vLightPos;
+    float fDistance = length(vLightToPixel);
+    
+    //
+    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    
+    // 각도 감쇠
+    vector vLightDir = normalize(vLightToPixel) * -1.f;
+    vector vSpotLightDir = normalize(g_vLightDir);
+    
+    // 픽셀이 중심축에서 얼마나 벗어났는지
+    float fCosAngle = dot(vLightDir, vSpotLightDir);
+    
+    float fSpotAtt = 0.f;
+    
+    // 픽셀이 외부 원뿔(Phi)내에 있는 경우에만 빛 계산
+    if(fCosAngle > cos(g_fPhi))
+    {
+        // 픽셀이 내부 원뿔(Theta)내에 있는 경우 -> 최대 밝기
+        if (fCosAngle > cos(g_fTheta))
+        {
+            fSpotAtt = 1.f;
+        }
+        // 픽셀이 내부와 외부 원뿔 사이에 있는 경우 -> fFalloff 적용
+        else
+        {
+            // 각도에 따른 선형보간 (FallOff)
+            fSpotAtt = pow(saturate((fCosAngle - cos(g_fPhi)) / (cos(g_fTheta) - cos(g_fPhi))), g_fFalloff);
+
+        }
+    }
+    
+    float fFinalAtt = fAtt * fSpotAtt;
+    
+    vector vSurfaceNormal = normalize(vNormal);
+    vector vViewDir = normalize(vPosition - g_vCamPosition) * -1.f;
+    vector vReflect = reflect(vLightDir, vSurfaceNormal);
+    
+    //vector vLook = vPosition - g_vCamPosition;
+    //vector vReflect = reflect(normalize(vLightDir), vNormal);
+    
+    Out.vShade = fFinalAtt * (g_vLightDiffuse * saturate(max(dot(vSurfaceNormal, vLightDir), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+    Out.vSpecular = fFinalAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(vViewDir, vReflect), 0.f), 50.f));
     
     return Out;
 }
@@ -442,6 +519,17 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
+    }
+
+    // idx 9
+    pass Spot
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SPOT();
     }
 }
 
