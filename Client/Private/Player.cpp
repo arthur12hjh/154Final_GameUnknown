@@ -109,55 +109,55 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 
-	m_fTime += fTimeDelta;
-	if (5 <= m_fTime) {
-		CEffect::EFFECT_TRANSFORM_DESC desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 1.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-	
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 30.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 15.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pWorldMatrix = nullptr;
-		desc.pRootMatrix = nullptr;
-		desc.vPos = XMVectorSet(5, 3, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 2.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-
-		m_fTime = 0.f;
-	}
-	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
+	//m_fTime += fTimeDelta;
+	//if (5 <= m_fTime) {
+	//	CEffect::EFFECT_TRANSFORM_DESC desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 1.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 30.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 15.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = nullptr;
+	//	desc.pRootMatrix = nullptr;
+	//	desc.vPos = XMVectorSet(5, 3, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 2.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	m_fTime = 0.f;
+	//}
+	//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
