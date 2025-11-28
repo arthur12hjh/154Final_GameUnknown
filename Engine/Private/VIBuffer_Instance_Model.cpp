@@ -72,6 +72,9 @@ HRESULT CVIBuffer_Instance_Model::Initialize(void* pArg)
 
 		if (pLoadDesc->pInstancingData != nullptr)
 		{
+			
+			m_pInstanceVertices = nullptr;
+
 			// 인스턴스 개수를 로드된 개수로 재설정
 			m_iNumInstance = pLoadDesc->iNumInstance;
 
@@ -82,7 +85,7 @@ HRESULT CVIBuffer_Instance_Model::Initialize(void* pArg)
 			m_InstanceInitialDesc.pSysMem = pLoadDesc->pInstancingData->data();
 		}
 	}
-
+	Safe_Release(m_pVBInstance);
 	// 2. 인스턴스 버퍼 생성
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;

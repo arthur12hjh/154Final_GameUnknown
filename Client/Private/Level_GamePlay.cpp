@@ -386,9 +386,9 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom2"), TEXT("Layer_CherryBlossom2")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom3"), TEXT("Layer_CherryBlossom3")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CherryBlossom4"), TEXT("Layer_CherryBlossom4")))) return S_OK;
-
+	
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Giwajip2"), TEXT("Layer_Giwajip2")))) return S_OK;
-
+	
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock1"), TEXT("Layer_CM_Rock1")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock2"), TEXT("Layer_CM_Rock2")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock3"), TEXT("Layer_CM_Rock3")))) return S_OK;
@@ -402,7 +402,6 @@ HRESULT CLevel_GamePlay::Load_Map_Data()
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
-	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock14"), TEXT("Layer_CM_Rock14")))) return S_OK;
 
 	ifs.close();
 
@@ -463,46 +462,60 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 	if (iNumObjs == 0)
 		return S_OK;
 
-	MODEL_INSTANCE_LOAD_DESC LoadDesc;
-	LoadDesc.iNumInstance = iNumObjs;
-	LoadDesc.InstancingData.reserve(iNumObjs);
+	vector<VTX_INSTANCE_MODEL>* pDataVector = nullptr;
+	HRESULT hr = S_OK;
 
-	for (_uint i = 0; i < iNumObjs; ++i)
+	try
 	{
-		SAVEDOBJECTINFO info;
-		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
+		pDataVector = new vector<VTX_INSTANCE_MODEL>();
+		pDataVector->reserve(iNumObjs);
 
-		_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-		_vector vScale = {};
-		_vector vRotation = {};
-		_vector vPosition = {};
-		XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+		for (_uint i = 0; i < iNumObjs; ++i)
+		{
+			SAVEDOBJECTINFO info;
+			ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-		// 순서: Scale * Rotation * Translation (SRT 순서)
-		_matrix matFinalWorld = matScale * matRotation * matTranslation;
+			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+			_vector vScale = {};
+			_vector vRotation = {};
+			_vector vPosition = {};
+			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-		VTX_INSTANCE_MODEL InstanceData{};
-		XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
-		XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
-		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
-		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+			_matrix matFinalWorld = matScale * matRotation * matTranslation;
 
-		LoadDesc.InstancingData.push_back(InstanceData);
+			VTX_INSTANCE_MODEL InstanceData{};
+			XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
+			XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
+			XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
+			XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+
+			pDataVector->push_back(InstanceData);
+		}
+
+		Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
+		FinalLoadDesc.iNumInstance = iNumObjs;
+		FinalLoadDesc.pPrototypeTag = protoTag;
+		FinalLoadDesc.pInstancingData = pDataVector;
+
+		hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_InstanceModel"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &FinalLoadDesc);
+
+		if (FAILED(hr))
+		{
+			Safe_Delete(pDataVector); 
+			return E_FAIL;
+		}
 	}
-
-	Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
-	FinalLoadDesc.iNumInstance = LoadDesc.iNumInstance;
-	FinalLoadDesc.pInstancingData = &LoadDesc.InstancingData;
-	FinalLoadDesc.pPrototypeTag = protoTag;
-
-	HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_InstanceModel"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &FinalLoadDesc);
-
-	return S_OK;
+	catch (const std::bad_alloc& e)
+	{
+		Safe_Delete(pDataVector); 
+		return E_FAIL;
+	}
 }
+
 
 HRESULT CLevel_GamePlay::Load_Light_Data()
 {

@@ -463,7 +463,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/005_A_TD.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/005_A_TD.dds"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -602,14 +602,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock4");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock4.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_Component_Model_CM_Rock5 */
-	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock5");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock5.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1769,7 +1761,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 
 
 	/* For.Prototype_Component_Model_Reed */
-	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.025f, 0.025f, 0.025f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ReedDesc{};
 	ReedDesc.iNumInstance = 10000;
 	ReedDesc.vCenter = _float3(0.0f, 0.f, 0.0f);

@@ -32,7 +32,7 @@ public:
 private:
 	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
-
+	vector<VTX_INSTANCE_MODEL>* m_pInstancingData = nullptr;
 private:
 	HRESULT						Ready_Components(const _tchar* PrototypeTag);
 	HRESULT						Bind_ShaderResources();

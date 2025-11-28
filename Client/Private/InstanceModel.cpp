@@ -44,6 +44,8 @@ HRESULT CInstanceModel::Initialize(void* pArg)
 	if (FAILED(Update_Instancing_Buffer(pLoadDesc)))
 		return E_FAIL;
 
+	m_pInstancingData = pLoadDesc->pInstancingData;
+
 	return S_OK;
 }
 
@@ -135,6 +137,7 @@ CInstanceModel* CInstanceModel::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	{
 		Safe_Release(pInstanceModel);
 		MSG_BOX("Create Fail : Instance Model");
+		return nullptr;
 	}
 	return pInstanceModel;
 }
@@ -146,6 +149,7 @@ CGameObject* CInstanceModel::Clone(void* pArg)
 	{
 		Safe_Release(pInstanceModel);
 		MSG_BOX("Clone Fail : Instance Model");
+		return nullptr;
 	}
 	return pInstanceModel;
 }
@@ -156,4 +160,10 @@ void CInstanceModel::Free()
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+
+	if (m_pInstancingData != nullptr)
+	{
+		Safe_Delete(m_pInstancingData);
+		m_pInstancingData = nullptr;
+	}
 }
