@@ -61,46 +61,70 @@ namespace Client
 	}PLAYER_DESC;
 
 	// 스킬 구조체
-	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
+	// 이건 경우에 따라 사용 할수도 있음
+	enum class ATTACK_DIRECTION
+	{
+		ATK_RIGHT,
+		ATK_LEFT,
+		ATK_DOWN,
+		ATK_UP,
+		END
+	};
 
-	// 스킬 타입에 대한 종류
+	// Skill Type
 	enum class SKILL_TYPE { 
-		DEFAULT_SKILL,  // 기본 공격
-		BETA_SKILL,		// 베타 스킬
-		ALPHA_SKILL,	// 알파 스킬
-		MIMESIS_SKILL,	// 기습 
-		END };
+		DEFAULT_SKILL,  // Default Attack
+		BETA_SKILL,		// Beta Skill
+		ALPHA_SKILL,	// Alpha Skill
+		MIMESIS_SKILL,	// Mimesis Skill
+		END
+	};
 	
 	// enum class 비트 연산 지원안해서 바꿈
 	enum SKILL_PROPERTY : UINT8
 	{
-		//ex 
+		// Bit Mask ex 
 		// All Property : 31
 		// Parry & Eavde : 3
-		PARRYABLE		= 0b00000001, // 1
-		EVADEABLE		= 0b00000010, // 2
-		BLINKALBE		= 0b00000100, // 4
-		SUPERARMOR		= 0b00001000, // 8
-		EXCUTION		= 0b00010000, // 16
+		PARRYABLE		= 0b00000001, // 1  <- 패링가능
+		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
+		BLINKALBE		= 0b00000100, // 4  <- 블링크 가능
+		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
+		EXCUTION		= 0b00010000, // 16 <- 처형
 		END
 	};
 
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int				iSkillID;
+		unsigned int				iSkillID;					// SKILL ID
+		char						szAnimationName[256];		// Play Anim Name
 
-		char						szAnimationName[256];
-		char						szHitAnimationName[256];
+		// Default : None
+		// Anim Able : Anim Name
+		char						szHitAnimationName[256];	// Hit Anim Name
 
-		long long					iSkillDamage;
+		// SKill Damage
+		long long					iSkillDamage;				// 스킬 데미지
 
-		_float						fRange;
-		_float3						vHitBoxExtents;
+		// Skill Range
+		_float						fRange;						// 스킬 사거리	
 
-		ATTACK_DIRECTION			eATK_Direction;
-		DIRECTION					eDirection;
-		SKILL_TYPE					eSkillType;
-		SKILL_PROPERTY				eProPerty;
+		// Skill Hit Box Size
+		_float3						vHitBoxExtents;				// 스킬 히트박스 크기
+
+		// Attack Dir
+		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
+
+		// Dir
+		DIRECTION					eDirection;					// 방향 RIGHT LEFT FRONT BACK
+
+		// SKILL TYPE
+		// BeatSKill, AlphaSKill... 
+		SKILL_TYPE					eSkillType;					// 스킬 타입
+
+		// Property
+		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
+		SKILL_PROPERTY				eProPerty;					// 스킬 속성
 	}CHARACTER_SKILL_DESC;
 
 
