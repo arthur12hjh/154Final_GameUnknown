@@ -179,6 +179,9 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	// 
+
+
 
 	return S_OK;
 }

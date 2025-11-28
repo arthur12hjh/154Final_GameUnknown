@@ -28,6 +28,10 @@ private :
 	Character_Skill_Desc*						m_pLastHitSkill = { nullptr };
 	
 	DIRECTION									m_eDeadDir = {};
+
+	_float3										m_vImpactDir = {};
+	_float										m_fImpactForce = {};
+
 	_float2										m_fDeadEndTime = {};
 
 public:

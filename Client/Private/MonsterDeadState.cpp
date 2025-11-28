@@ -35,6 +35,8 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
+	vOwnerPos.m128_f32[1] = vAttackerPos.m128_f32[1] = 0.f;
+	
 	if (SKILL_TYPE::BETA_SKILL == m_pLastHitSkill->eSkillType)
 	{
 		m_szAnimationName = "Result_State_KnockDown_S";
@@ -44,6 +46,19 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 			m_szAnimationName += "_Bw";
 		else
 			m_szAnimationName += "_Fw";
+
+		if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
+		{
+			XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+			m_vImpactDir.y += 0.1f;
+		}
+		else
+		{
+			m_vImpactDir = pDesc->vImpactDir;
+		}
+	
+		m_fImpactForce = pDesc->fImpactForce;
+
 		pEntity->Set_Animation(m_szAnimationName.c_str(), false);
 	}
 	else
@@ -68,6 +83,10 @@ void CMonsterDeadState::Update(_float fTimeDelta)
 			m_szAnimationName = "Result_State_KnockDown_L";
 			pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, 0.4f);
 			m_iSectionIndex++;
+		}
+		else
+		{
+			m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
 		}
 	}
 	else

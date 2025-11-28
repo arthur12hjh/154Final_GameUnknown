@@ -55,8 +55,8 @@ namespace Client
 		float					fCurrentLinkApplyDamage;
 
 		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE     ePlayerMode;
-		class CTransform* pPlayerTransform = { nullptr };
+		PLAYER_MODE				ePlayerMode;
+		class CTransform*		pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
@@ -152,8 +152,8 @@ namespace Client
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
-
 		_float3				fColliderExtents;
+
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
@@ -194,6 +194,10 @@ namespace Client
 		CGameObject*		pAttacker;
 		_float3				vHitPoint;
 		_float3				vHitDir;
+
+		_float4x4			vHitWorldMatrix;
+		
+		_float3				vImpactDir;
 		_float				fImpactForce;
 
 		void*				pSkillData;
