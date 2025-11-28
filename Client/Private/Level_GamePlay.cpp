@@ -53,7 +53,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Map_Data();
+	//Load_Map_Data();
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
@@ -514,6 +514,8 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		Safe_Delete(pDataVector); 
 		return E_FAIL;
 	}
+
+	return S_OK;
 }
 
 

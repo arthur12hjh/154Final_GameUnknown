@@ -285,7 +285,7 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 			bMoveAction = true;
 		}
 		// 100 ~ 130 프레임 이동
-		else if(0.15f >= fAnimPlayRatio)
+		else if(0.25f >= fAnimPlayRatio)
 		{
 			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));
@@ -379,7 +379,7 @@ void CMonsterAttackState::StatueBGara(_float fTimeDelta)
 	{
 		// 기습 공격
 		// 65 ~ 120
-		if (0.13f >= fAnimPlayRatio)
+		if (0.25f >= fAnimPlayRatio)
 		{
 			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));

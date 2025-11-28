@@ -296,7 +296,6 @@ HRESULT CNayitba::ADD_Components()
 	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 	m_pAIController = static_cast<CAIController*>(pInstnace);
 
-	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 	return S_OK;
 }
