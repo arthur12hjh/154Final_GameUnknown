@@ -27,7 +27,6 @@ HRESULT CParticle::Initialize(void* pArg)
 
 void CParticle::Priority_Update(_float fTimeDelta)
 {
-
 }
 
 void CParticle::Update(_float fTimeDelta)
@@ -43,7 +42,7 @@ void CParticle::Update(_float fTimeDelta)
 			return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMMatrixTranspose(XMMatrixMultiply(XMLoadFloat4x4(m_pParentMat), XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()))));
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
 	Spread(fTimeDelta);
 }
 
@@ -53,7 +52,7 @@ void CParticle::Late_Update(_float fTimeDelta)
 	{
 		return;
 	}
-	m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+	m_pGameInstance->Add_RenderGroup(m_eRender, this);
 }
 
 HRESULT CParticle::Render()
@@ -100,6 +99,42 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
 
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
+
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
@@ -137,6 +172,42 @@ void CParticle::Update(PARTICLE_DATA tData)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 2:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 3:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
+	case 5:
+		m_eRender = RENDER::GLOW;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 7:
+		m_eRender = RENDER::BLEND;
+		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	}
+
 }
 HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
 {
@@ -167,18 +238,24 @@ HRESULT CParticle::Ready_Components()
 
 HRESULT CParticle::Bind_ShaderResources()
 {
-	_float4x4 world = m_CombinedWorldMatrix;
-	world._41 = 0;
-	world._42 = 0;
-	world._43 = 0;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
-		return E_FAIL;
+	if (m_tData.bisSpectrum) {
+		_float4x4 world = m_CombinedWorldMatrix;
+		world._41 = 0;
+		world._42 = 0;
+		world._43 = 0;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &world)))
+			return E_FAIL;
+	}
+	else {
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+			return E_FAIL;
+	}
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
@@ -214,6 +291,9 @@ HRESULT CParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
+		return E_FAIL;
+	
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
@@ -240,10 +320,11 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
-	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, 1.f };
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f};
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
+	m_CBData.fCircle = m_tData.fCircle;
 	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fDelayTime;

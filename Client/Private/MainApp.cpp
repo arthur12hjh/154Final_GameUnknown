@@ -20,6 +20,8 @@
 #include "CharacterController.h"
 #include "TestEveHead.h"
 
+#include "Notify.h"
+
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 {
@@ -121,6 +123,11 @@ HRESULT CMainApp::Ready_Prototypes()
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Transform"),
 	//	CTransform::Create(m_pGraphic_Device))))
 	//	return E_FAIL;
+
+	/* For.Prototype_Component_Notify */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Notify"),
+		CNotify::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),

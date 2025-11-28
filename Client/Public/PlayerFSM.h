@@ -1,46 +1,36 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "StateMachine.h"
+#include "PlayerState.h"
 
 NS_BEGIN(Client)
 
-class CPlayerFSM final : public CComponent 
+class CPlayerFSM abstract : public CBase
 {
-public:
-	enum class FSM_STATE
-	{ 
-		M_PROTO_BATTLE_IDLE,
-		M_PROTO_BATTLE_WALK,
-		M_PROTO_BATTLE_SPRINT,
-		M_PROTO_BATTLE_JUMP_FORWARD,
-		M_PROTO_SWORD_EVADE,
-		M_PROTO_SWORD_LIGHTATTACK,
-		M_PROTO_GUARD,
-		M_END
-	};
-
-private:
-	CPlayerFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPlayerFSM(const CPlayerFSM& rhs);
+protected:
+	CPlayerFSM();
 	virtual ~CPlayerFSM() = default;
 
 public:
-	HRESULT						Initialize_Prototype() override;
-	HRESULT						Initialize(void* pArg = nullptr) override;
-	void						Update(_float fTimeDelta);
-
-
-private:
-	FSM_STATE					m_eStateTag = { FSM_STATE::M_PROTO_BATTLE_IDLE };
-	class CPlayerState*			m_pCurrentState = { nullptr };
-
-private:
-	HRESULT						Ready_State();
+	//enum 값 반환.
+	PLAYER_STATE					Get_StateEnum();
+	class CPlayerState*				Get_CurrentState() { return m_pCurrentState;  }
+	void							Clear_FSM();
 
 public:
-	static	CPlayerFSM*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual  CComponent*	Clone(void* pArg) override;
+	virtual void					Change_FSM(PLAYER_STATE eNextState) = 0;
+	virtual HRESULT					Initialize(void* pArg = nullptr) = 0;
+	virtual void					Update(_float fTimeDelta) = 0;
+	//팩토리 클래스. 각 FSM이 상속받아서 구현해야 한다. 
+	virtual class CPlayerState*		Create_State(PLAYER_TRANSITION_DESC tTransitionDesc) = 0;
+
+protected:
+	class CPlayerState*				m_pCurrentState = { nullptr };
+
+protected:
+	virtual HRESULT					Ready_State() = 0;
+
+public:
 	virtual	void			Free() override;
 
 };

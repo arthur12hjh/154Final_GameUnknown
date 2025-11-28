@@ -11,6 +11,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
 	{
+		CGameObject*		pParent = nullptr;
 		_bool				bIsApplyTransform;
 
 		_float3				vScale;
@@ -34,6 +35,7 @@ public:
 	virtual HRESULT		Render();
 	virtual HRESULT		Render_Shadow() { return S_OK; }
 	virtual HRESULT		Render_MotionBlur() { return S_OK; }
+
 public:
 	_bool isDead() const {
 		return m_isDead;
@@ -48,15 +50,19 @@ public:
 		m_eVisibility = eVisiblility;
 	}
 
-	const VISIBILITY&							GetVisibility() { return m_eVisibility;	}
-	CTransform*									GetTransform() { return m_pTransformCom; }
+	const VISIBILITY&								GetVisibility() { return m_eVisibility;	}
+	CTransform*										GetTransform() { return m_pTransformCom; }
+
+	void											SetParent(CGameObject* pParent);
+	CGameObject*									GetParent();
 
 	// 오브젝트의 속성을 받아올수 있음
-	OBJECT_TEAM									GetTeam() { return m_eTeam; }
+	OBJECT_TEAM										GetTeam() { return m_eTeam; }
 
-	_bool										IsFrustomCulling();
-	_float										Get_Depth();
-	CCollider*									GetCullingCollider() { return m_pCullingCollider; }
+	_bool											IsFrustomCulling();
+	_float											Get_Depth();
+	CCollider*										GetCullingCollider() { return m_pCullingCollider; }
+	const map<const _wstring, class CComponent*>*	GetAllComponents() { return &m_Components; }
 
 protected:
 	int											m_iObjectID;
@@ -65,7 +71,10 @@ protected:
 
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
+
 	class CGameInstance*						m_pGameInstance = { nullptr };
+	CGameObject*								m_pParent = { nullptr };
+
 	VISIBILITY									m_eVisibility = { VISIBILITY::VISIBLE };
 
 	CTransform*									m_pTransformCom = { nullptr };

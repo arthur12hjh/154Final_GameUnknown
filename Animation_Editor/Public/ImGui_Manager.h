@@ -33,6 +33,7 @@ private:
 	void LoadFont();
 
 	void Create_Character(const _wstring& szCharacterTag);
+	void Create_Extra(const _wstring& szModelTag);
 	void Kill_Character();
 
 private:

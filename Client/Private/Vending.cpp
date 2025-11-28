@@ -115,9 +115,10 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
 
     // 충돌처리를 할지말지 
+    // STATIC : 충돌하는데 가만히 있는 녀석
     // DYNAMIC : 충돌 
     // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;

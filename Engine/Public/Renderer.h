@@ -22,6 +22,8 @@ public:
 	void*   Get_Bloom_Desc();
 	void*   Get_Fog_Desc();
 	void*   Get_SSAO_Desc();
+	void*	Get_MotionBlur_Desc();
+
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);

@@ -34,14 +34,19 @@ public:
 	virtual HRESULT					Damaged(void* pArg);
 
 	_uint							GetMonsterID();
+	_float							GetRootMotionRatio() { return m_fMotionRatio; }
 	const list<CGameObject*>*		GetTargetList();
 
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	
-
 	//몬스터의 현재 데이터를 반환
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
-	const CHARACTER_SKILL_DESC*		GetSkillData(_bool bIsRandom = true);
+	
+	
+	const CHARACTER_SKILL_DESC*		FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
+	const CHARACTER_SKILL_DESC*		GetSkillData(_uint iTypeIndex, _bool bIsRandom = true);
+
+
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
@@ -52,12 +57,12 @@ public:
 
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
-	CCollider*						m_pColliderCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
 
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 
+	_float							m_fMotionRatio = { 1.f };
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
@@ -69,10 +74,6 @@ private :
 	HRESULT							Ready_CharacterData();
 	HRESULT							ADD_Components();
 	HRESULT							ADD_PartObjects();
-
-	void							Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
-	void							OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
-	void							End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 	void							BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 

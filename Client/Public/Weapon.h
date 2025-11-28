@@ -16,7 +16,6 @@ class CWeapon final : public CPartObject
 public:
 	typedef struct tagWeapon_Desc : public CPartObject::PARTOBJECT_DESC
 	{
-		const _uint* pParentState = { nullptr };
 		const _float4x4* pSocketMatrix = { nullptr };
 	}WEAPON_DESC;
 private:
@@ -25,32 +24,35 @@ private:
 	virtual ~CWeapon() = default;
 
 public:
-	_bool isFinish_Att();
+	virtual HRESULT				Initialize_Prototype() override;
+	virtual HRESULT				Initialize(void* pArg) override;
 
-public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Update(_float fTimeDelta) override;
-	virtual void Update(_float fTimeDelta) override;
-	virtual void Late_Update(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT Render_Shadow() override;
+	virtual void				Priority_Update(_float fTimeDelta) override;
+	virtual void				Update(_float fTimeDelta) override;
+	virtual void				Late_Update(_float fTimeDelta) override;
 
-private:
-	CCollider*			m_pColliderCom = { nullptr };
+	virtual HRESULT				Render() override;
+	virtual HRESULT				Render_Shadow() override;
+
+	void						Enable_HitCollider(_bool bIsFlag);
 
 private:
-	const _uint*		m_pParentState = { nullptr };
-	const _float4x4*	m_pSocketMatrix = { nullptr };
+	CCollider*					m_pColliderCom = { nullptr };
+	_bool						m_bIsHitCollider = { false };
+
+private:
+	const _float4x4*			m_pSocketMatrix = { nullptr };
 	
 private:
-	HRESULT Ready_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT						Ready_Components();
+	HRESULT						Bind_ShaderResources();
+
+	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
-	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
-	virtual void Free() override;
+	static CWeapon*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject*		Clone(void* pArg) override;
+	virtual void				Free() override;
 };
 
 NS_END

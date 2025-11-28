@@ -3,6 +3,10 @@
 #include "GameStruct.h"
 #include "Entity.h"
 
+NS_BEGIN(Engine)
+class CModel;
+NS_END
+
 NS_BEGIN(Client)
 class CCharacter abstract : public CEntity
 {
@@ -30,11 +34,19 @@ public:
 
 	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
 
+	void							Set_Position(_vector vPosition);
+	CModel*							Get_BodyModelCom() { return m_pBodyModelCom; }
+
+	_vector							Get_Position();
+	const _float4x4*				Get_WorldMatrixPtr();
+
 protected :
 	_bool							m_bIsActionEnabled = { true };
 	const _float4x4*				m_pSocketMatrix = { nullptr };
 
 	class CGameManager*				m_pGameManager = { nullptr };
+	class CCollider*				m_pColliderCom = { nullptr };
+	class CNotify*					m_pNotifyCom = { nullptr };
 	CCharacterController*			m_pCCT = { nullptr };
 
 public:

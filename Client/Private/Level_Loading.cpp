@@ -26,6 +26,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 	if (FAILED(Ready_Layer_BackGround()))
 		return E_FAIL;
 
+	
 	return S_OK;
 }
 

@@ -40,11 +40,14 @@ public:
 		_float			g_fTimeDelta;
 		_float			g_fTickPerSecond;
 		_float			g_fDuration;
-		
+
 		_uint			g_bIsLoop;
 		_uint			g_iNumBones;
 		_uint			g_iNumChannels;
 		_uint			g_iRootIndex;
+
+		_float			g_fBlendRatio;
+		_float3			_padding;
 	}COMPUTE_GLOBALBUFFER;
 
 	typedef struct BoneTransformMatrixOut
@@ -89,20 +92,10 @@ public:
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
 public:
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true) {
-		if (m_iCurrentAnimIndex == iAnimIndex)
-			return;
+	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
 
-		m_iCurrentAnimIndex = iAnimIndex;
-		m_isLoop = isLoop;
-		
-		if(AnimationChanged)
-			AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
-
-		m_Animations[m_iCurrentAnimIndex]->Reset();
-	}
-
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
+	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
@@ -118,7 +111,7 @@ public:
 	HRESULT Bind_BoneSRV(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_Material(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 	HRESULT Bind_AllMaterials(_uint iMeshIndex, class CShader* pShader, _uint iTextureIndex);
-	_bool Play_Animation(_float fTimeDelta, CTransform* pTransform = nullptr,  _float fRootMotionMagnification = 0.f);
+	_bool Play_Animation(_float fTimeDelta, CTransform* pTransform = nullptr, _float fRootMotionMagnification = 0.f);
 
 	HRESULT Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag);
 	HRESULT Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName);
@@ -140,20 +133,20 @@ private:
 	_float4x4					m_PreTransformMatrix = {};
 
 	binModel* m_pModel;
-	class CComputeShader*		m_pComputeShaderCom = { nullptr };
+	class CComputeShader* m_pComputeShaderCom = { nullptr };
 
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
-	ID3D11Buffer*				m_pBoneSource = { nullptr };
-	ID3D11Buffer*				m_pChannelSource = { nullptr };
-	ID3D11Buffer*				m_pKeyFrameSource = { nullptr };
-	ID3D11Buffer*				m_pOutSource = { nullptr };
-	ID3D11Buffer*				m_pRootSource = { nullptr };
-	ID3D11Buffer*				m_pPreBoneMatrices = { nullptr };
-	ID3D11Buffer*				m_pOutReadBack = { nullptr };
+	ID3D11Buffer* m_pBoneSource = { nullptr };
+	ID3D11Buffer* m_pChannelSource = { nullptr };
+	ID3D11Buffer* m_pKeyFrameSource = { nullptr };
+	ID3D11Buffer* m_pOutSource = { nullptr };
+	ID3D11Buffer* m_pRootSource = { nullptr };
+	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
+	ID3D11Buffer* m_pOutReadBack = { nullptr };
 
-	ID3D11ShaderResourceView*	m_pBoneMatricesSRV = { nullptr };
-	ID3D11ShaderResourceView*	m_pPreBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
@@ -168,6 +161,11 @@ private:
 	_float4x4					m_CurRootMatrix{};
 
 	_float						m_fAnimationPlayRate = 1.f;
+	_int						m_iRootIndex = 0;
+
+	_float						m_fBlendElapsed = 0.f;
+	_float						m_fBlendRatio = 0.f;
+	_float						m_fBlendDuration = 0.12f;
 
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};
@@ -177,6 +175,8 @@ private:
 	vector<class CAnimation*>	m_Animations;
 
 	_char						m_szBindTags[ENUM_CLASS(TEXTURE_TYPE::END)][MAX_PATH];
+
+	_bool						m_isLerp = { FALSE };
 
 #ifdef _DEBUG
 	_char						m_ModelFilePath[MAX_PATH];
@@ -196,13 +196,17 @@ private:
 
 	HRESULT Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification);
 
-	
+	HRESULT Bind_ChannelAndKeyFrameBuffer();
+
+	HRESULT Update_BoneMatrices();
+
+
 
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity(), CModel* pSkeletonModel = nullptr);
 	virtual CComponent* Clone(void* pArg) override;
-	virtual void Free(); public:
+virtual void Free(); public:
 };
 
 NS_END

@@ -4,14 +4,6 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-#pragma region TRANSFER_STATE
-
-#include "Player_IdleState.h"
-#include "Player_WalkState.h"
-
-#pragma endregion
-
-
 CPlayer_EvadeState::CPlayer_EvadeState()
 	: CPlayerState {}
 {
@@ -19,6 +11,8 @@ CPlayer_EvadeState::CPlayer_EvadeState()
 
 void CPlayer_EvadeState::Start(void* pArg)
 {
+	m_eState = PLAYER_STATE::EVADE;
+
 	/* 방향 */
 	/* 1. 아무것도 안눌렀으면 백스텝 */
 	/* 2. 방향키 하나라도 눌렀으면 그 방향으로 스텝. (이동 로직이랑 똑같이 카메라 look 기준으로)*/
@@ -55,8 +49,10 @@ void CPlayer_EvadeState::Start(void* pArg)
 	}
 }
 
-CPlayerState* CPlayer_EvadeState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_EvadeState::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
@@ -70,12 +66,12 @@ CPlayerState* CPlayer_EvadeState::Update(_float fTimeDelta)
 		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
-		m_pNextState = CPlayer_WalkState::Create(nullptr);
+		m_tNextState.eNextState = PLAYER_STATE::WALK;
 
 	else if (true == isAnimFinished)
-		m_pNextState = CPlayer_IdleState::Create(nullptr);
+		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-	return m_pNextState;
+	return m_tNextState;
 }
 
 void CPlayer_EvadeState::End()

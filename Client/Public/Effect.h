@@ -21,9 +21,11 @@ class CEffect : public CGameObject
 public:
     typedef struct tagEffectTransform : public CTransform::TRANSFORM_DESC
     {
+        const   _float4x4* pWorldMatrix = { nullptr };
         const   _float4x4* pRootMatrix = { nullptr };
         _vector vPos;
         _float3 fRot;
+        _float fSize;
     }EFFECT_TRANSFORM_DESC;
     
 private:
@@ -38,6 +40,7 @@ public:
     virtual void Update(_float fTimeDelta) override;
     virtual void Late_Update(_float fTimeDelta) override;
     virtual HRESULT Render() override;
+    void    Stop();
 
 private:
     HRESULT Load_Binary(const _char* szFile);
@@ -51,6 +54,7 @@ private:
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
+    const   _float4x4* m_pParentWorldMat = { nullptr };
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
     vector<CMeshEffect*> m_pMeshEffects;

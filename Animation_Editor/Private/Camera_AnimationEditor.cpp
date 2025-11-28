@@ -47,14 +47,14 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 		m_pTransformCom->Go_Left(fTimeDelta);
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 		m_pTransformCom->Go_Right(fTimeDelta);
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
-	{
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * 5.f, 0.f, 0.f));
-	}
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-	{
-		m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * -5.f, 0.f, 0.f));
-	}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	//{
+	//	m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * 5.f, 0.f, 0.f));
+	//}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+	//{
+	//	m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * -5.f, 0.f, 0.f));
+	//}
 	
 	
 

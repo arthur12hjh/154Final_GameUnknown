@@ -29,7 +29,7 @@ public:
 		_float				fDelayTime;
 
 		_int				iBegin;
-		RENDER				eSelectRender;
+		_int				iSelectRender;
 		_bool				bisLoop;
 	}SPRITE_DATA;
 private:
@@ -61,6 +61,7 @@ private:
 	_float				m_fTime = {  };
 	SPRITE_DATA			m_tData;
 	_uint			m_iCount = {};
+	RENDER	m_eRender = {};
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

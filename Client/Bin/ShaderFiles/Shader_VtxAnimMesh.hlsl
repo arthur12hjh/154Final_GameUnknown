@@ -178,9 +178,10 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
     
     float2 fVelocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
+    
     Out.vDirection.xy = fVelocity * 0.5f;
     Out.vDirection.y *= -1.f;
-
+    
     return Out;
 }
 
@@ -335,7 +336,8 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
     //노말맵은 안..쓰지.
     PS_OUT_MOTIONBLUR Out;
     Out.vDirection.xy = In.vDirection.xy;
-    Out.vDirection.z = 1.f;
+    Out.vDirection.z = 0.f;
+    Out.vDirection.w = 1.f;
     
     return Out;
 }

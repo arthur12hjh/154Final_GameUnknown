@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Player.h"
 
+#include "Player.h"
 #include "Nayitba.h"
 
 #include "Body_Player.h"
@@ -14,10 +14,15 @@
 #include "Interaction_Component.h"
 #include "Effect.h"
 #include "Trail.h"
+#include "Notify.h"
 #include "TrailEffect.h"
-#include "PlayerFSM.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+
+#include "PlayerBattleFSM.h"
+#include "PlayerIdleFSM.h"
+#include "PlayerLockOnFSM.h"
+#include "PlayerState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -34,6 +39,18 @@ _float CPlayer::Get_AnimationRatio()
 	return m_pBodyModelCom->Get_AnimationRatio();
 }
 
+void CPlayer::Change_PlayerMode(PLAYER_MODE eMode)
+{
+	m_PlayerDesc.ePlayerMode = eMode;
+
+	//fsm ±³Ã¼
+	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
+	pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	m_pCurrentFSM->Clear_FSM();
+
+	m_pCurrentFSM = pNextFSM;
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	return S_OK;
@@ -42,12 +59,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
-
-	CGameObject::GAMEOBJECT_DESC	Desc{};
-	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 10.f;
-
-	if(FAILED(__super::Initialize(&Desc)))
+	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))
@@ -57,6 +69,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Ready_PlayerDesc()))
+		return E_FAIL;
+
+	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
@@ -74,11 +89,70 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	m_pPlayerFSM->Update(fTimeDelta);
+	__super::Update(fTimeDelta);
+
+	Update_FSM(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
+	{
+		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
+			Change_PlayerMode(PLAYER_MODE::LOCKON);
+		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
+			Change_PlayerMode(PLAYER_MODE::BATTLE);
+	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	__super::Update(fTimeDelta);
+
+	//m_fTime += fTimeDelta;
+	//if (5 <= m_fTime) {
+	//	CEffect::EFFECT_TRANSFORM_DESC desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 1.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 30.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
+	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 15.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pWorldMatrix = nullptr;
+	//	desc.pRootMatrix = nullptr;
+	//	desc.vPos = XMVectorSet(5, 3, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 2.f;
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+	//		return;
+	//
+	//	m_fTime = 0.f;
+	//}
+	//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
@@ -106,12 +180,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
-
-
-
-
-
-
 	return S_OK;
 }
 
@@ -127,15 +195,6 @@ HRESULT CPlayer::Ready_Components()
 		return E_FAIL;
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
-
-	m_pColliderCom->BindBeginOverlapEvent([](_float3 vHitPoint, _float3 vHitDir, CGameObject* pActor) {
-		int a = 10;
-		});
-
-	/* Player FSM */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_PlayerFSM"),
-		TEXT("Com_PlayerFSM"), reinterpret_cast<CComponent**>(&m_pPlayerFSM))))
-		return E_FAIL;
 
 	/* Com_CCT */
 	CCharacterController::CCT_DESC Desc;
@@ -172,15 +231,14 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
-	//CWeapon::WEAPON_DESC	WeaponDesc{};
-	//WeaponDesc.pParentState = &m_iState;
-	//WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SWORD");
-	//WeaponDesc.pParentTransform = m_pTransformCom;
-	//
-	///* Part_Weapon */
-	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-	//	TEXT("Part_Weapon"), &WeaponDesc)))
-	//	return E_FAIL;
+	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	WeaponDesc.pParentTransform = m_pTransformCom;
+	
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
+		return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -217,6 +275,9 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
 
+	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+
 	return S_OK;
 }
 
@@ -234,8 +295,24 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.iCurrentBetaEnergy = 100;
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
 
 	return S_OK;
+}
+
+HRESULT CPlayer::Ready_FSM()
+{
+	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
+	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
+
+	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::BATTLE)->second;
+
+	return S_OK;
+}
+
+void CPlayer::Update_FSM(_float fTimeDelta)
+{
+	m_pCurrentFSM->Update(fTimeDelta);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -268,7 +345,12 @@ void CPlayer::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pCCT);
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pPlayerFSM);
+
+	for (auto& iter : m_FSMs)
+		Safe_Release(iter.second);
+
+	m_FSMs.clear();
+
+	Safe_Release(m_pCurrentFSM);
 }

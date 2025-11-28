@@ -72,11 +72,12 @@ public:
 
 		_int				iBegin;
 		_int				iNumInstance;
-		RENDER				eSelectRender = {};
+		_int				iSelectRender;
 		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
+		_bool				bisSpectrum;
 	}SPRITE_PARTICLE_DATA;
 
 private:
@@ -108,6 +109,7 @@ private:
 	_float			m_fTime = {};
 	_bool			m_bisLoop = {};
 	_float4x4		m_CombinedWorldMatrix = {};
+	RENDER			m_eRender;
 
 private:
 	HRESULT							Ready_Components();

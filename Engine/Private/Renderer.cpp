@@ -149,6 +149,8 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pSSAO->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
+	if (FAILED(m_pMotionBlur->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
 	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
 	//	return E_FAIL;
 
@@ -378,6 +380,11 @@ void* CRenderer::Get_SSAO_Desc()
 	return m_pSSAO->Get_Desc();
 }
 
+void* CRenderer::Get_MotionBlur_Desc()
+{
+	return m_pMotionBlur->Get_Desc();
+}
+
 void CRenderer::Render_Priority()
 {
 	/* Diffuse + Normal */
@@ -423,8 +430,10 @@ void CRenderer::Render_Shadow()
 
 void CRenderer::Render_MotionBlur()
 {
+	m_pMotionBlur->Render_CamMotionBlur(m_pVIBuffer);
+
 	// 모션블러 pass로는 클라이언트에서 처리
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Velocity"))))
+	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Velocity"))))
 		return;
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::MOTIONBLUR)])
@@ -706,6 +715,8 @@ void CRenderer::Render_UI()
 
 void CRenderer::Render_Debug()
 {
+	m_pColliderRenderer->Render(m_pShader);
+
 	if (false == m_isDebugVisible)
 		return;
 
@@ -728,15 +739,13 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
-	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
-	//	return;
-
-	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
+
+	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
 	//	return;
-
-	m_pColliderRenderer->Render(m_pShader);
 
 }
 

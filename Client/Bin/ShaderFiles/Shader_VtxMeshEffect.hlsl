@@ -2,7 +2,6 @@
 #include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4 g_vCamPosition;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
@@ -168,6 +167,13 @@ struct PS_OUT
     float4 vWeight : SV_TARGET1;
 };
 
+struct PS_NORMAL_OUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+};
+
 
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
@@ -179,8 +185,8 @@ PS_OUT PS_MAIN(PS_IN In)
     //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
     //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
     
-    float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
-    float weight = saturate(pow(1 - depth, 3));
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
     float time = g_fTime;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + min(time * g_fMaskUVSpeed.x, 1)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + time * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + time * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + time * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
@@ -195,7 +201,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vColor.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x * max((abs(1 - saturate(time * 3))) * 4, 0.8), MaskTexcoord.y)).r;
         if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + time * 2)
             discard;
-
+    
     //}
     //else
     //{
@@ -218,9 +224,12 @@ PS_OUT PS_MAIN(PS_IN In)
     //if (Out.vColor.a <= 0.1f || 0 > fmod(g_fTime, 1))
     //    discard;
     
+    if (0 >= Out.vColor.a)
+        discard;
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
-    Out.vWeight.r = Out.vColor.a;
-    Out.vWeight.g = weight;
+    Out.vWeight.r = Out.vColor.a * weight;
+    Out.vWeight.g = Out.vColor.a;
+    Out.vWeight.b = weight;
     Out.vColor.a = 1;
     Out.vWeight.a = 1;
     
@@ -250,8 +259,8 @@ PS_OUT PS_Hit(PS_IN In)
 {
     PS_OUT Out;
     
-    float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
-    float weight = saturate(pow(1 - depth, 3));
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
     float time = g_fTime;
     
     
@@ -269,10 +278,12 @@ PS_OUT PS_Hit(PS_IN In)
     Out.vColor.a = color.a * g_MaskTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y)).r * (In.vTexcoord.y >= 0.8 ? 1 - (In.vTexcoord.y - 0.8) * 5 : 1);
     if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r > abs(MaskTexcoord.y))
         discard;
-    
+    if (0 >= Out.vColor.a)
+        discard;
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
-    Out.vWeight.r = Out.vColor.a;
-    Out.vWeight.g = weight;
+    Out.vWeight.r = Out.vColor.a * weight;
+    Out.vWeight.g = Out.vColor.a;
+    Out.vWeight.b = weight;
     Out.vColor.a = 1;
     Out.vWeight.a = 1;
     
@@ -292,6 +303,24 @@ PS_OUT PS_CIRCLE_DISTORTION(PS_IN In)
         discard;
     Out.vColor = g_vColor;
     Out.vColor *= abs(MaskTexcoord.y) * 2;
+    return Out;
+}
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NORMAL_OUT PS_NORMAL_COLOR(PS_IN In)
+{
+    PS_NORMAL_OUT Out;
+    
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse *= abs(MaskTexcoord.y) * 2;
+    //Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
+    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     return Out;
 }
 
@@ -372,7 +401,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_COLOR();
+        PixelShader = compile ps_5_0 PS_NORMAL_COLOR();
     }
 
 

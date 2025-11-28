@@ -10,13 +10,51 @@ CTrailEffect::CTrailEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CTrailEffect::CTrailEffect(const CTrailEffect& Prototype)
     : CPartObject{ Prototype },
-    m_tData{ Prototype.m_tData }
+    m_tData{ Prototype.m_tData },
+    m_eRender{ Prototype.m_eRender }
 {
+    m_eTeam = Prototype.m_eTeam;
 }
 
 HRESULT CTrailEffect::Initialize_Prototype(const _char* szFile)
 {
     Load_Binary(szFile);
+
+    switch (m_tData.iSelectRender)
+    {
+    case 0:
+        m_eRender = RENDER::NONBLEND;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    case 1:
+        m_eRender = RENDER::NONLIGHT;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    case 2:
+        m_eRender = RENDER::BLUR;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    case 3:
+        m_eRender = RENDER::GLOW;
+        m_eTeam = OBJECT_TEAM::NEUTRAL;
+        break;
+    case 4:
+        m_eRender = RENDER::GLOW;
+        m_eTeam = OBJECT_TEAM::ENEMY;
+        break;
+    case 5:
+        m_eRender = RENDER::GLOW;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    case 6:
+        m_eRender = RENDER::DISTORTION;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    case 7:
+        m_eRender = RENDER::BLEND;
+        m_eTeam = OBJECT_TEAM::FRIENDLY;
+        break;
+    }
     return S_OK;
 }
 
@@ -65,13 +103,13 @@ HRESULT CTrailEffect::Load_Binary(const _char* szFile)
     m_tData.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
     m_tData.fDissolveUVSize = ReadFloat2(fileBinaryStream);
     m_tData.iBegin = ReadInt(fileBinaryStream);
-    m_tData.eSelectRender = ReadRENDER(fileBinaryStream);
+    m_tData.iSelectRender = ReadInt(fileBinaryStream);
     return S_OK;
 }
 void    CTrailEffect::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail) {
     m_fTime += fTimeDelta;
     m_pTrail->Update_Trail(matCurrentWorld, fTimeDelta, bMakeTrail);
-    m_pGameInstance->Add_RenderGroup(m_tData.eSelectRender, this);
+    m_pGameInstance->Add_RenderGroup(m_eRender, this);
 }
 
 HRESULT CTrailEffect::Render()
@@ -122,9 +160,6 @@ HRESULT CTrailEffect::Bind_ShaderResources()
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-        return E_FAIL;
-
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))

@@ -17,7 +17,7 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
-    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadBossData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
 
     return S_OK;
 }
@@ -50,21 +50,19 @@ const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring
 }
 
 
-HRESULT CDataManager::LoadBossData(void* pArg)
+HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {
     THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
     vector<string> BossDataList; 
     BossDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/BossData/Boss.csv", BossDataList);
-
+    CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-
-    for (auto i = 15; i < iMaxSize;)
+    for (auto i = 17; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
-        _uint iBossID = atoi(BossDataList[i++].c_str());
+        BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
         BossDesc.iNumPhase = atoi(BossDataList[i++].c_str());
        
         strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
@@ -79,15 +77,20 @@ HRESULT CDataManager::LoadBossData(void* pArg)
 
         BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
         BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
+        BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
 
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
         BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
+
+        BossDesc.fColliderExtents.x = (_float)atof(BossDataList[i++].c_str());
+        BossDesc.fColliderExtents.y = (_float)atof(BossDataList[i++].c_str());
+        BossDesc.fColliderExtents.z = (_float)atof(BossDataList[i++].c_str());
 
         _uint iNumSkill = atoi(BossDataList[i++].c_str());
         for (_uint j = 0; j < iNumSkill; ++j)
             BossDesc.iAttackList.push_back(atoi(BossDataList[i++].c_str()));
 
-        m_pNaytibaDatas.emplace(iBossID, BossDesc);
+        m_pNaytibaDatas.emplace(BossDesc.iMonsetID, BossDesc);
     }
     return S_OK;
 }
@@ -98,18 +101,26 @@ HRESULT CDataManager::LoadSkillData()
     SkillDataList.reserve(1000);
 
     CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
-
-    CHARACTER_SKILL_DESC SkillDesc = {};
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 5; i < iMaxSize; i += 5)
+    for (auto i = 10; i < iMaxSize;)
     {
-        SkillDesc.iSkillID = atoi(SkillDataList[i].c_str());
-        strcpy_s(SkillDesc.szAnimationName, SkillDataList[i + 1].c_str());
+        CHARACTER_SKILL_DESC SkillDesc = {};
+        SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
+        strcpy_s(SkillDesc.szAnimationName, SkillDataList[i++].c_str());
+        strcpy_s(SkillDesc.szHitAnimationName, SkillDataList[i++].c_str());
 
-        SkillDesc.iSkillDamage = atoi(SkillDataList[i + 2].c_str());
-        SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i + 3].c_str()));
-        SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i + 4].c_str()));
+        SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
+        SkillDesc.fRange = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.x = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
+        SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
+
+        SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i++].c_str()));
+        SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
+        _uint iNumProperity = atoi(SkillDataList[i++].c_str());
+        for (_uint j = 0; j < iNumProperity; ++j)
+            SkillDesc.ProPertyList.insert(SKILL_PROPERTY(atoi(SkillDataList[i++].c_str())));
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
     }
@@ -148,9 +159,21 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
             AnimNotify.szNotifyTag = pAnimNotify["szNotifyTag"].get<string>();
             AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
             AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
+            AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
+
+            AnimNotify.iNumData1 = pAnimNotify["iNumData1"].get<int>();
+            AnimNotify.iNumData2 = pAnimNotify["iNumData2"].get<int>();
+            AnimNotify.iNumData3 = pAnimNotify["iNumData3"].get<int>();
+            AnimNotify.iNumData4 = pAnimNotify["iNumData4"].get<int>();
+            
             AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
             AnimNotify.bIsLocalPos = pAnimNotify["bIsLocalPos"].get<bool>();
 
+            AnimNotify.vNotifyScale = {
+            pAnimNotify["vNotifyScale"][0].get<_float>(),
+            pAnimNotify["vNotifyScale"][1].get<_float>(),
+            pAnimNotify["vNotifyScale"][2].get<_float>()
+            };
             AnimNotify.vNotifyPosition = {
                 pAnimNotify["vNotifyPosition"][0].get<_float>(),
                 pAnimNotify["vNotifyPosition"][1].get<_float>(),

@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine_Defines.h"
-#include <vector>
 #include "Transform.h"
 #include "CharacterController.h"
 
@@ -9,6 +8,8 @@ using namespace std;
 namespace Engine
 {
 	class CGameObject;
+	class CTransform;
+	class CCharacterController;
 }
 
 
@@ -28,49 +29,67 @@ namespace Client
 		float			fCriticalPercent;
 		float			fCriticalDamage;
 		float			fLinkAttackApplyDamage;
+
 	}CHARACTER_NETWORK_DESC;
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
-	// 인게임에서 바뀔거 요거
+	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
+	enum class PLAYER_STATE { 
+		IDLE, WALK, WALK_END, JUMP, LIGHT_ATTACK, 
+		EVADE, LANDING, VENDING_INTERACTION,
+		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
+
+		STATE_END
+	};
 	typedef struct Player_Desc
 	{
-		long long		iCurrentHealth;
-		long long		iCurrentShield;
-		long long		iCurrentBetaEnergy;
+		long long				iCurrentHealth;
+		long long				iCurrentShield;
+		long long				iCurrentBetaEnergy;
 
-		long long		iCurrentAttackPoint;
-		long long		iCurrentShieldATK;
+		long long				iCurrentAttackPoint;
+		long long				iCurrentShieldATK;
 
-		float			fCurrentCTPercent;
-		float			fCurrentCTDamage;
-		float			fCurrentLinkApplyDamage;
+		float					fCurrentCTPercent;
+		float					fCurrentCTDamage;
+		float					fCurrentLinkApplyDamage;
+
+		//플레이어의 전투 상태. battle, idle, lockon
+		PLAYER_MODE     ePlayerMode;
 		class CTransform* pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
 	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
-	enum class SKILL_TYPE { PARRYABLE, END };
+	enum class SKILL_PROPERTY { PARRYABLE, END};
+	enum class SKILL_TYPE { DEFAULT_SKILL, MIMESIS_SKILL, END };
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int		iSkillID;
+		unsigned int				iSkillID;
 
-		char				szAnimationName[256];
-		char				szHitAnimationName[256];
+		char						szAnimationName[256];
+		char						szHitAnimationName[256];
 
-		long long			iSkillDamage;
-		ATTACK_DIRECTION	eATK_Direction;
-		DIRECTION			eDirection;
-		SKILL_TYPE			eSkillType;
+		long long					iSkillDamage;
+
+		_float						fRange;
+		_float3						vHitBoxExtents;
+
+		ATTACK_DIRECTION			eATK_Direction;
+		DIRECTION					eDirection;
+		SKILL_TYPE					eSkillType;
+		set<SKILL_PROPERTY>			ProPertyList;
 	}CHARACTER_SKILL_DESC;
 
 
 	// 몬스터 구조체
 	// 인게임용
 	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
-	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFEMSOVE, END };
+	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc
 	{
+		_uint				iMonsetID;
 		unsigned int		iNumPhase;
 
 		char				szAnimationName[256];
@@ -84,10 +103,12 @@ namespace Client
 
 		long long			iMaxHealth;
 		long long			iMaxShield;
+		float				fMoveSpeed;
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
 
+		_float3				fColliderExtents;
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
@@ -108,7 +129,7 @@ namespace Client
 
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
-		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
+		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
 	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요

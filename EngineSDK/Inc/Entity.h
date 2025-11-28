@@ -27,14 +27,14 @@ public:
 	///				     "Com_Model" 태그인 CModel 컴포넌트가 존재해야합니다.
 	/// * * * * * * * * * * * * * * * * * *
 
-	_bool	Play_Animation(_float fTimeDelta, class CTransform* pTargetTransform = nullptr, _float fRootMotionRatio = 0.f);
-	_bool	IsAnmiationFinished();
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
-
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f);
-
+	_bool				Play_Animation(_float fTimeDelta, class CTransform* pTargetTransform = nullptr, _float fRootMotionRatio = 0.f);
+	_bool				IsAnmiationFinished();
+	void				Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
+	_float				Get_AnimationRatio();
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f);
+	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f);
 protected:
-	class CModel* m_pBodyModelCom = { nullptr };
+	class CModel*		m_pBodyModelCom = { nullptr };
 
 protected:
 	HRESULT Import_ModelPtr();

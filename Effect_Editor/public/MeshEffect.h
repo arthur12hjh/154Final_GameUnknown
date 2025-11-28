@@ -39,9 +39,9 @@ public:
 
 		_float				fDelayTime;
 		_float				fEndTime;
-		RENDER				eSelectRender;
 
 		_int	iBegin = {};
+		_int				iSelectRender;
 	}MESH_DATA;
 
 private:
@@ -75,6 +75,7 @@ private:
 	_uint	m_iModelCount = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
+	RENDER	m_eRender = {};
 
 private:
 	HRESULT							Ready_Components();

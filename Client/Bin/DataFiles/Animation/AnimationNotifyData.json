@@ -1,43 +1,364 @@
 [
     {
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Break_Root"
+    },
+    {
         "AnimationNotifies": [
             {
                 "bIsLocalPos": true,
-                "iNotifyKeyFrame": 5,
-                "szNotifyArg01": "dae",
-                "szNotifyArg02": "Min",
-                "szNotifyTag": "Save Test",
-                "szSocketTag": "Seok",
-                "vNotifyPosition": [
-                    123.0,
-                    123.0,
-                    123.0
-                ],
-                "vNotifyRotation": [
-                    46.0,
-                    -73.0,
-                    17.0
-                ]
-            },
-            {
-                "bIsLocalPos": true,
-                "iNotifyKeyFrame": 44,
-                "szNotifyArg01": "King",
-                "szNotifyArg02": "Chan",
-                "szNotifyTag": "Load Test",
-                "szSocketTag": "Bin",
+                "iNotifyKeyFrame": 0,
+                "iNumData1": 1000,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Slash",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
-                    -50.0,
-                    -56.0,
-                    40.0
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "iNumData1": 1001,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "iNumData1": 1002,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],
-        "szAnimationTag": "CH_P_EVE_09|EVE_BarSwing_Idle"
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01R"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "iNumData1": 1000,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "iNumData1": 1002,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_02_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Chargeattack_01_start"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "iNumData1": 1001,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "iNumData1": 1000,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_03_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01R_Root"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 0,
+                "iNumData1": 1002,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "TestSound_Attack.mp3",
+                "szNotifyArg02": "1",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "None",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "iNumData1": 1000,
+                "iNumData2": 1,
+                "iNumData3": 1,
+                "iNumData4": 1,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_Box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_04_Root"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_01_Root1"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Lightattack_05"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Chargeattack_01_end"
+    },
+    {
+        "szAnimationTag": "Proto_Sword_Chargeattack_01_cast"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Sprint_Left"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Walk_Right"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Run_Left_End"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "bIsLocalPos": true,
+                "iNotifyKeyFrame": 1,
+                "iNumData1": 0,
+                "iNumData2": 0,
+                "iNumData3": 0,
+                "iNumData4": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "GamePlay_Hit_box",
+                "szNotifyArg03": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "Com_Collider_OBB",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex"
+    },
+    {
+        "szAnimationTag": "Proto_Lockon_Jump_Left_Start"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Walk"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Start"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Run"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Evade_End"
+    },
+    {
+        "szAnimationTag": "Proto_Jump_Evade_Battle_End"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop"
     }
 ]

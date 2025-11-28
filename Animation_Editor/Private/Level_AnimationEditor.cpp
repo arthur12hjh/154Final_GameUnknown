@@ -40,6 +40,7 @@ HRESULT CLevel_AnimationEditor::Initialize()
 
 void CLevel_AnimationEditor::Update(_float fTimeDelta)
 {
+
 }
 
 HRESULT CLevel_AnimationEditor::Render()
