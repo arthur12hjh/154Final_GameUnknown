@@ -6,6 +6,7 @@
 
 #include "Level_Logo.h"
 #include "Level_Village.h"
+#include "Level_Desert.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel{ pDevice, pContext, ENUM_CLASS(eLevelID) }
@@ -36,16 +37,22 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	{
 		CLevel* pNewLevel = { nullptr };
 
+		m_pGameInstance->Clear_LevelCameras();
+
 		switch (m_eNextLevelID)
 		{
 		case LEVEL::LOGO:
 			pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext, m_eNextLevelID);
+			break;
+		case LEVEL::DESERT:
+			pNewLevel = CLevel_Desert::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		case LEVEL::VILLAGE:
 			pNewLevel = CLevel_Village::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		}
 
+		
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
 			return;
 	}

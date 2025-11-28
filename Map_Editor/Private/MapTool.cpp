@@ -21,9 +21,9 @@ HRESULT CMapTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
-	CGameObject* pPlayer = (m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Camera")))->back();
+	//CGameObject* pPlayer = (m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Camera")))->back();
 	
-	m_pPlayerTransform = dynamic_cast<CTransform*>(pPlayer->Find_Component(TEXT("Com_Transform")));
+	//m_pPlayerTransform = dynamic_cast<CTransform*>(pPlayer->Find_Component(TEXT("Com_Transform")));
 
 	if (pTerrainList != nullptr && !pTerrainList->empty())
 	{
@@ -1128,7 +1128,7 @@ HRESULT CMapTool::Render()
 
 	if (ImGui::Button("Teleport"))
 	{
-		m_pPlayerTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
+		//m_pPlayerTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
 	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -1284,7 +1284,7 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData4.bin";
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData3.bin";
 	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
 
 	if (ImGui::Button("Load"))

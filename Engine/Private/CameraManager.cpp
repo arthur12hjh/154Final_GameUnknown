@@ -124,6 +124,15 @@ const _float4x4* CCameraManager::GetCameraWorldMatrixPtr(const WCHAR* szCameraTa
     return pCamera->GetTransform()->Get_WorldMatrixPtr();
 }
 
+void CCameraManager::Clear_LevelCameras()
+{
+    for (auto& iter : m_pCameras)
+        Safe_Release(iter.second);
+    m_pCameras.clear();
+
+    Safe_Release(m_pMainCamera);
+}
+
 
 CCamera* CCameraManager::Find_Camera(const WCHAR* szCameraTag)
 {

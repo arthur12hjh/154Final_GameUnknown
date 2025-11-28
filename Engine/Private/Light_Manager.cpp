@@ -27,7 +27,7 @@ HRESULT CLight_Manager::Initialize()
     if (nullptr == m_pVIBuffer[0])
         return E_FAIL;
 
-    _matrix PreMatrix = XMMatrixScaling(0.01f, 0.005f, 0.01f) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+    _matrix PreMatrix = XMMatrixScaling(0.05f, 0.025f, 0.05f) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
     m_pVIBuffer[1] = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/EngineResource/Model/Light/arrow.fbx", PreMatrix);
     if (nullptr == m_pVIBuffer[1])
         return E_FAIL;

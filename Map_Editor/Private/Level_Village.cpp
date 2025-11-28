@@ -3,7 +3,8 @@
 #include "Level_Village.h"
 #include "GameInstance.h"
 #include "Camera_Free.h"
-
+#include "Terrain.h"
+#include "Level_Loading.h"
 #include "Imgui_Manager.h"
 
 CLevel_Village::CLevel_Village(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -15,6 +16,7 @@ CLevel_Village::CLevel_Village(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CLevel_Village::Initialize()
 {
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -24,8 +26,8 @@ HRESULT CLevel_Village::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -33,14 +35,25 @@ HRESULT CLevel_Village::Initialize()
 	/*if (FAILED(Ready_Layer_Reed(TEXT("Layer_Reed"))))
 		return E_FAIL;*/
 
-
-	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
+	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
+	if (pManager->Get_MapTool() == nullptr) // MapTool이 아직 생성되지 않았다면
+	{
+		// Manager에 MapTool 객체를 생성하고 초기화하도록 요청합니다.
+		if (FAILED(pManager->Create_MapTool_For_Level(m_pDevice, m_pContext)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
 
 void CLevel_Village::Update(_float fTimeDelta)
 {
+	if (GetKeyState(VK_F12) & 0x8000)
+	{
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::DESERT))))
+			return;
+	}
+
 	CImgui_Manager::GetInstance()->Update(fTimeDelta);
 }
 
@@ -121,6 +134,15 @@ HRESULT CLevel_Village::Ready_Layer_Terrain(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::VILLAGE), strLayerTag)))
 		return E_FAIL;
 
+	/*list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
+	CTerrain* pTerrain = nullptr;
+	if (pTerrainList != nullptr && !pTerrainList->empty())
+	{
+		pTerrain = dynamic_cast<CTerrain*>(pTerrainList->back());
+	}
+
+	CImgui_Manager::GetInstance()->Set_Terrain_Scarlet(pTerrain);*/
+
 	return S_OK;
 }
 
@@ -162,7 +184,6 @@ HRESULT CLevel_Village::Ready_Layer_Player(const _wstring& strLayerTag)
 }
 
 
-
 CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
 	CLevel_Village* pInstance = new CLevel_Village(pDevice, pContext, eLevelID);
@@ -177,12 +198,8 @@ CLevel_Village* CLevel_Village::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 }
 
 
-
-
-
 void CLevel_Village::Free()
 {
-	CImgui_Manager::GetInstance()->DestroyInstance();
 	__super::Free();
 
 }

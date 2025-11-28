@@ -52,14 +52,8 @@
     <Filter Include="02.GameObjects\Maps">
       <UniqueIdentifier>{d1245ae4-19f9-4a86-8ec3-ec39bcddeab4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Sky">
-      <UniqueIdentifier>{ee195eed-9e6b-4bb8-aed5-7d90f164620a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player">
       <UniqueIdentifier>{095bf36c-00f8-4af6-aa55-52e969f82f67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Terrain">
-      <UniqueIdentifier>{05ef4852-d155-481f-803e-0ca7300804f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="96.IMGUI\Light">
       <UniqueIdentifier>{9dcd74e3-a482-46b3-b5c8-e30be4801d95}</UniqueIdentifier>
@@ -139,8 +133,41 @@
     <Filter Include="02.GameObjects\BackGround\Loading">
       <UniqueIdentifier>{f0a74a04-a37c-4776-b886-209824d91954}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Sky\Moon">
+    <Filter Include="01.Levels\Desert">
+      <UniqueIdentifier>{4f99377b-2904-4f5d-bbc7-9bf8255fecaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert">
+      <UniqueIdentifier>{8a218c93-2d57-43d1-8ebf-cc70f755cbef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Terrain">
+      <UniqueIdentifier>{05ef4852-d155-481f-803e-0ca7300804f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Sky">
+      <UniqueIdentifier>{ee195eed-9e6b-4bb8-aed5-7d90f164620a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Sky\Moon">
       <UniqueIdentifier>{f1ad7657-3892-44aa-8aaa-f442e4e1edd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Environment">
+      <UniqueIdentifier>{69613a79-2c88-4fa4-b2dd-91057598b1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Terrain">
+      <UniqueIdentifier>{268cee08-bae3-4cb9-bf03-8c22b18e468f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Sky">
+      <UniqueIdentifier>{6ff18648-6f3b-4c22-b2fb-2fc27e6d04bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.IMGUI\Map\Desert">
+      <UniqueIdentifier>{8f6367f0-ca68-44b3-b4ab-3e67dfd92003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.IMGUI\Map\Scarlet">
+      <UniqueIdentifier>{f9eeda88-0c69-4b9a-971d-2183b921d060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Building">
+      <UniqueIdentifier>{1447ad0d-e982-4332-ac61-7f812e970a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Building\Building_Ruin">
+      <UniqueIdentifier>{80f03000-baf2-4ad0-8569-e74cab751069}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -205,19 +232,16 @@
       <Filter>96.IMGUI\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
-      <Filter>02.GameObjects\Sky</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Terrain.h">
-      <Filter>02.GameObjects\Terrain</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LightTool.h">
       <Filter>96.IMGUI\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MapTool.h">
-      <Filter>96.IMGUI\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera_Tool.h">
       <Filter>96.IMGUI\Camera</Filter>
@@ -384,10 +408,28 @@
       <Filter>02.GameObjects\BackGround\Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Moon.h">
-      <Filter>02.GameObjects\Sky\Moon</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Sky\Moon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\InstanceModel.h">
       <Filter>02.GameObjects\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rock.h">
+      <Filter>02.GameObjects\Maps\Common\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Desert.h">
+      <Filter>01.Levels\Desert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain_Desert.h">
+      <Filter>02.GameObjects\Maps\Desert\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTool.h">
+      <Filter>96.IMGUI\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTool_Desert.h">
+      <Filter>96.IMGUI\Map\Desert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Building_Ruin.h">
+      <Filter>02.GameObjects\Maps\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -437,19 +479,16 @@
       <Filter>96.IMGUI\Default</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
-      <Filter>02.GameObjects\Sky</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
-      <Filter>02.GameObjects\Terrain</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LightTool.cpp">
       <Filter>96.IMGUI\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MapTool.cpp">
-      <Filter>96.IMGUI\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Tool.cpp">
       <Filter>96.IMGUI\Camera</Filter>
@@ -615,10 +654,28 @@
       <Filter>02.GameObjects\BackGround\Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Moon.cpp">
-      <Filter>02.GameObjects\Sky\Moon</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Sky\Moon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\InstanceModel.cpp">
       <Filter>02.GameObjects\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rock.cpp">
+      <Filter>02.GameObjects\Maps\Common\Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Desert.cpp">
+      <Filter>01.Levels\Desert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain_Desert.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapTool.cpp">
+      <Filter>96.IMGUI\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapTool_Desert.cpp">
+      <Filter>96.IMGUI\Map\Desert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Building_Ruin.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Building\Building_Ruin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

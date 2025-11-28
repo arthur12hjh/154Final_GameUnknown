@@ -830,6 +830,10 @@ HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
 }
+void CGameInstance::Clear_LevelCameras()
+{
+	m_pCameraManager->Clear_LevelCameras();
+}
 HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
 	return m_pCameraManager->SetMainCamera(szCameraTag, pPreCameraMatrix);

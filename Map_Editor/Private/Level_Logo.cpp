@@ -2,6 +2,8 @@
 #include "Level_Logo.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "Imgui_Manager.h"
+#include "Camera_Free.h"
 
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -19,21 +21,28 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
+
 	return S_OK;
 }
 
 void CLevel_Logo::Update(_float fTimeDelta)
 {
-	if (GetKeyState(VK_SPACE) & 0x8000)
+	if (GetKeyState(VK_F12) & 0x8000)
 	{
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::VILLAGE))))
 			return;
 	}
+
+	CImgui_Manager::GetInstance()->Update(fTimeDelta);
+
 }
 
 HRESULT CLevel_Logo::Render()
 {
 	SetWindowText(g_hWnd, TEXT("로고레벨이빈다"));
+
+	CImgui_Manager::GetInstance()->Render();
 
 	return S_OK;
 }
@@ -85,6 +94,4 @@ CLevel_Logo* CLevel_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 void CLevel_Logo::Free()
 {
 	__super::Free();
-
-
 }

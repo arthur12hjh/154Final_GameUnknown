@@ -231,7 +231,7 @@ public:
 #pragma region Camera Manager
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
-
+	void							Clear_LevelCameras();
 	// Defaut 매개변수 있습니다.
 	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
 	HRESULT							SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix = nullptr);

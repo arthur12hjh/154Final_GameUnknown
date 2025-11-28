@@ -32,8 +32,6 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 
-	class CVillage* m_pVillage = { nullptr };
-
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
