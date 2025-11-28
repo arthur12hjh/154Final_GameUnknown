@@ -109,6 +109,9 @@ HRESULT CMonsterController::Render()
 
 void CMonsterController::Damage(void* pDesc)
 {
+	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
+
+	auto pAttackState = dynamic_cast<CMonsterAttackState *>(m_pFSM->GetCurrentState());
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
 		// 이거 죽는모션 나옴 죽으면 
@@ -120,18 +123,22 @@ void CMonsterController::Damage(void* pDesc)
 	{
 		// 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
 		// 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
-		DEFAULT_DAMAGE_DESC*  pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
-		CHARACTER_SKILL_DESC* pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
-		
-		auto PropertyList =  pSkillData->ProPertyList;
-		auto iter = PropertyList.find(SKILL_PROPERTY::PARRYABLE);
-		if (iter == PropertyList.end())
+		_bool bIsHitAble = true;
+		if (pAttackState)
 		{
-
+			// 나중에 여러 속성 추가할 예정
+			CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+			if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
+			{
+				if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+				{
+					bIsHitAble = false;
+				}
+			}
 		}
 
-
-		m_pFSM->Change_State(TEXT("Hit"), pDesc);
+		if(bIsHitAble)
+			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
 	}
 }
 

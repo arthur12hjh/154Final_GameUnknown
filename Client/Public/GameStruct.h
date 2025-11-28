@@ -62,8 +62,29 @@ namespace Client
 
 	// 스킬 구조체
 	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
-	enum class SKILL_PROPERTY { PARRYABLE, END};
-	enum class SKILL_TYPE { DEFAULT_SKILL, MIMESIS_SKILL, END };
+
+	// 스킬 타입에 대한 종류
+	enum class SKILL_TYPE { 
+		DEFAULT_SKILL,  // 기본 공격
+		BETA_SKILL,		// 베타 스킬
+		ALPHA_SKILL,	// 알파 스킬
+		MIMESIS_SKILL,	// 기습 
+		END };
+	
+	// enum class 비트 연산 지원안해서 바꿈
+	enum SKILL_PROPERTY : UINT8
+	{
+		//ex 
+		// All Property : 31
+		// Parry & Eavde : 3
+		PARRYABLE		= 0b00000001, // 1
+		EVADEABLE		= 0b00000010, // 2
+		BLINKALBE		= 0b00000100, // 4
+		SUPERARMOR		= 0b00001000, // 8
+		EXCUTION		= 0b00010000, // 16
+		END
+	};
+
 	typedef struct Character_Skill_Desc
 	{
 		unsigned int				iSkillID;
@@ -79,7 +100,7 @@ namespace Client
 		ATTACK_DIRECTION			eATK_Direction;
 		DIRECTION					eDirection;
 		SKILL_TYPE					eSkillType;
-		set<SKILL_PROPERTY>			ProPertyList;
+		SKILL_PROPERTY				eProPerty;
 	}CHARACTER_SKILL_DESC;
 
 

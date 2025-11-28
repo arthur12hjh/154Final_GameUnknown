@@ -30,6 +30,8 @@ public:
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
 
+	const Character_Skill_Desc*					GetSkillData() { return m_pSkillData; }
+
 private :
 	const Naytiba_NetWork_Desc*					m_StaticMonsterData = { nullptr };
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };

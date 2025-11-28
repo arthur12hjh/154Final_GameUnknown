@@ -103,7 +103,7 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 10; i < iMaxSize;)
+    for (auto i = 9; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
@@ -118,9 +118,7 @@ HRESULT CDataManager::LoadSkillData()
 
         SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
-        _uint iNumProperity = atoi(SkillDataList[i++].c_str());
-        for (_uint j = 0; j < iNumProperity; ++j)
-            SkillDesc.ProPertyList.insert(SKILL_PROPERTY(atoi(SkillDataList[i++].c_str())));
+        SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
     }
