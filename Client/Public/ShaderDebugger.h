@@ -29,6 +29,7 @@ private:
 	BLOOM_DESC*  m_pBloomDesc = {};
 	DOF_DESC*    m_pDoFDesc = {};
 	SSAO_DESC*   m_pSSAODesc = {};
+	VOLUMETRIC_DESC* m_pVolumetricDesc = {};
 public:
 	static CShaderDebugger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

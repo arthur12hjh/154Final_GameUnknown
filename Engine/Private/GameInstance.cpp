@@ -475,6 +475,11 @@ void* CGameInstance::Get_MotionBlur_Desc()
 	return m_pRenderer->Get_MotionBlur_Desc();
 }
 
+void* CGameInstance::Get_Volumetric_Desc()
+{
+	return m_pRenderer->Get_Volumetric_Desc();
+}
+
 #endif
 
 #pragma endregion

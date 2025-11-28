@@ -23,7 +23,7 @@ public:
 	void*   Get_Fog_Desc();
 	void*   Get_SSAO_Desc();
 	void*	Get_MotionBlur_Desc();
-
+	void*   Get_Volumetric_Desc();
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
@@ -53,8 +53,12 @@ private:
 
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
-	_float								m_fDensity = { 1.f }; 
-	_float								m_fStepSize = { 0.2f };
+	VOLUMETRIC_DESC						m_VolumetricDesc = {};
+	_float								m_fDensity = { 0.065f }; 
+	_float								m_fStepSize = { 0.125f };
+	_float								m_fVolumetricG = { 0.001f };
+	_bool								m_isVolumetric = { false };
+
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
@@ -72,6 +76,7 @@ private:
 	class CDepthofField*				m_pDepthofField = { nullptr };
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
+	class CEmissive*					m_pEmissive = { nullptr };
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -87,11 +92,6 @@ private:
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
-	void		Render_Blur();
-	void		Render_Glow();
-	void		Render_Distortion();
-	void		Render_Bloom();
-	void		Render_Fog();
 	void		Render_Deferred();
 	void		Render_ScreenDeferred();
 

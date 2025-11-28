@@ -526,6 +526,9 @@
     <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
       <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\00. Util">
+      <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
     </Filter>
@@ -1662,5 +1665,10 @@
     <ResourceCompile Include="Client.rc">
       <Filter>100.ETC</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli">
+      <Filter>97.ShaderFiles\00. Util</Filter>
+    </None>
   </ItemGroup>
 </Project>

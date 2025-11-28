@@ -98,7 +98,7 @@ public:
 	void*  Get_Fog_Desc();
 	void*  Get_SSAO_Desc();
 	void*  Get_MotionBlur_Desc();
-
+	void*  Get_Volumetric_Desc();
 #endif
 
 #pragma endregion

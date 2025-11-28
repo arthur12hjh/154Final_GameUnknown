@@ -4,15 +4,17 @@
 
 NS_BEGIN(Engine)
 
-class CBlur final : public CDeferred
+class CEmissive final : public CDeferred
 {
 private:
-	CBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CBlur() = default;
+	CEmissive(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CEmissive() = default;
 
 public:
 	virtual HRESULT Initialize() override;
-	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override;
+	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override {
+		return S_OK;
+	}
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override;
 	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
 #ifdef _DEBUG
@@ -20,12 +22,8 @@ public:
 	virtual HRESULT Render_Debug(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader) override;
 #endif
 
-private:
-	list<class CGameObject*> m_BlurObjects = {};
-	_bool					 m_bisWeight;
-
 public:
-	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CEmissive* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
 

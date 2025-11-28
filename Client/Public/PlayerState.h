@@ -11,6 +11,11 @@ typedef struct tagPlayerState {
 	void* pArg = { nullptr }; 
 } PLAYER_TRANSITION_DESC; 
 
+typedef struct tagWalkStateDesc {
+	_bool isLand = { false };
+	_bool isEvade = { false };
+} PLAYER_WALK_DESC;
+
 class CPlayerState abstract : public CBase
 {
 protected:

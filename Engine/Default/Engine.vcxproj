@@ -202,6 +202,7 @@ popd</Command>
     <ClInclude Include="..\Public\Deferred.h" />
     <ClInclude Include="..\Public\DepthofField.h" />
     <ClInclude Include="..\Public\Distortion.h" />
+    <ClInclude Include="..\Public\Emissive.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -322,6 +323,7 @@ popd</Command>
     <ClCompile Include="..\Private\Deferred.cpp" />
     <ClCompile Include="..\Private\DepthofField.cpp" />
     <ClCompile Include="..\Private\Distortion.cpp" />
+    <ClCompile Include="..\Private\Emissive.cpp" />
     <ClCompile Include="..\Private\Entity.cpp" />
     <ClCompile Include="..\private\EventHandle.cpp" />
     <ClCompile Include="..\private\EventManager.cpp" />
