@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Character.h"
 #include "Effect.h"
+#include "AttackHitBox.h"
 
 #include "StringHelper.h"
 
@@ -33,7 +34,6 @@ HRESULT CNotify::Initialize(void* pArg)
 
 	m_pModelCom = nullptr;
 	m_pCharacter = pDesc->pCharacter;
-	m_pCharacterTransformCom = static_cast<CTransform*>(m_pCharacter->Find_Component(TEXT("Com_Transform")));
 
 	return S_OK;
 }
@@ -160,7 +160,7 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 	EffectDesc.fSpeedPerSec = 1.f;
 	if (AnimNotify.szSocketTag.compare("None") == 0)
 	{
-		EffectDesc.pRootMatrix = m_pCharacterTransformCom->Get_WorldMatrixPtr();
+		EffectDesc.pRootMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
 	}
 	else
 	{
@@ -191,6 +191,51 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
+	// 콜리전을 생성 Or 콜리전 On
+	// ANIM_NOTIFY
+	// szNotifyTag		=> Notify Event Type
+	
+	// Create Notify
+	// szNotifyArg01	=> ProtoType Name
+	// szNotifyArg02	=> Layer Name
+
+	// iNumData1		=>	Skill ID
+	// iNumData2		=>	Col Type
+	// iNumData3		=>	Hit Box Type
+	// iNumData4		=>	Hit Object Type
+
+	// bIsLocalPos		=>	UseNotifyTransform
+
+	// vNotifyScale		=> Hit Box Size
+	// vNotifyPosition	=> Hit Box Relative Position
+	// vNotifyRotation	=> Hit Box Rotation
+
+	_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
+
+	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
+	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData1);
+	pHitBoxDesc.pData = pSkillData;
+	
+	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData2);
+	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData3);
+	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData4);
+	pHitBoxDesc.bIsApplyTransform = true;
+	pHitBoxDesc.pAttacker = m_pCharacter;
+
+	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+	pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
+
+	_vector vCharacterPosition = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);
+	_vector vCharacterLook = m_pCharacter->GetTransform()->Get_State(STATE::LOOK);
+	vCharacterLook = vCharacterLook * pSkillData->fRange;
+	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPosition);
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
+		ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -205,7 +250,7 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 
 	_vector vNotifyPosition = vCurrentPosition + vMoveRange;
 
-	m_pCharacter->Set_Position(vNotifyPosition);
+	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
 	/* 미적용

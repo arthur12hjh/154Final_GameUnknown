@@ -201,6 +201,7 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	if (m_bIsMimesis)
 	{
 		CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+		AttackStateDesc.pTarget = pTarget;
 		AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 		m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 	}
@@ -213,6 +214,7 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 				if (fDistance <= m_pOwnerData->fAttackRange)
 				{
 					CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+					AttackStateDesc.pTarget = pTarget;
 					AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 				}
@@ -254,8 +256,7 @@ void CMonsterMimesisController::AttackCompleted(_float fDelayTime)
 	if(m_bIsMimesis)
 		m_bIsMimesis = false;
 	m_vAttackTime.x = 0.f;
-	//m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
-	m_vAttackTime.y = m_pGameInstance->Random(15.f, 20.f);
+	m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
 }
 
 void CMonsterMimesisController::DelayAction(_float fDelayTime)

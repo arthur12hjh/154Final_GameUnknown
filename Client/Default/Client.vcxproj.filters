@@ -427,6 +427,24 @@
     <Filter Include="02.GameObjects\Camera\Camera_Player">
       <UniqueIdentifier>{18c61d1c-ba06-4844-9ecb-1247c6381c0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Walk">
+      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial">
+      <UniqueIdentifier>{5440f9a3-45c6-439e-8a44-2f0068e9c5cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Attack">
+      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Landing">
+      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Jump">
+      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Attk">
+      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
       <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
@@ -513,6 +531,9 @@
     </Filter>
     <Filter Include="02.GameObjects\AttackHitBox">
       <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\Battle\lockon">
       <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>

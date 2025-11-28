@@ -62,29 +62,34 @@ namespace Client
 
 	// 스킬 구조체
 	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
-	enum class SKILL_TYPE { PARRYABLE, END };
+	enum class SKILL_PROPERTY { PARRYABLE, END};
+	enum class SKILL_TYPE { DEFAULT_SKILL, MIMESIS_SKILL, END };
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int		iSkillID;
+		unsigned int				iSkillID;
 
-		char				szAnimationName[256];
-		char				szHitAnimationName[256];
+		char						szAnimationName[256];
+		char						szHitAnimationName[256];
 
-		long long			iSkillDamage;
-		float				fRootMotionRatio;
+		long long					iSkillDamage;
 
-		ATTACK_DIRECTION	eATK_Direction;
-		DIRECTION			eDirection;
-		SKILL_TYPE			eSkillType;
+		_float						fRange;
+		_float3						vHitBoxExtents;
+
+		ATTACK_DIRECTION			eATK_Direction;
+		DIRECTION					eDirection;
+		SKILL_TYPE					eSkillType;
+		set<SKILL_PROPERTY>			ProPertyList;
 	}CHARACTER_SKILL_DESC;
 
 
 	// 몬스터 구조체
 	// 인게임용
 	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
-	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFEMSOVE, END };
+	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc
 	{
+		_uint				iMonsetID;
 		unsigned int		iNumPhase;
 
 		char				szAnimationName[256];
@@ -98,6 +103,7 @@ namespace Client
 
 		long long			iMaxHealth;
 		long long			iMaxShield;
+		float				fMoveSpeed;
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
@@ -123,7 +129,7 @@ namespace Client
 
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
-		vector<const CHARACTER_SKILL_DESC *>	iAttackList;
+		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
 	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요

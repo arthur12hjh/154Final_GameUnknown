@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Transform.h"
+#include "StringHelper.h"
 
 CPartObject::CPartObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CGameObject { pDevice, pContext }
@@ -60,7 +61,6 @@ const _float4x4* CPartObject::Get_BoneMatrixPtr(const _char* pBoneName) const
 {
     return m_pModelCom->Get_BoneMatrixPtr(pBoneName);;
 }
-
 
 void CPartObject::Free()
 {
