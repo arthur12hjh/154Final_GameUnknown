@@ -142,6 +142,14 @@ void CMonsterController::Damage(void* pDesc)
 	}
 }
 
+void CMonsterController::ActionSuccess(void* pArg)
+{
+	// 이거 몬스터가 특정 공격일때 Success 함수 호출하면 불림
+	// 근데 이거 이브 모션보고 이런형태일지 확인해야함
+	// 은신형 몬스터는 잡기가 맞음
+	m_pFSM->Change_State(TEXT("ActionSuccess"), pArg, true);
+}
+
 HRESULT CMonsterController::Ready_Components()
 {
 	// 여기서 타겟 컴포넌트 만들어서 붙이자

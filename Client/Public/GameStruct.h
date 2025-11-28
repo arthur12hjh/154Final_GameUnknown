@@ -73,10 +73,11 @@ namespace Client
 
 	// Skill Type
 	enum class SKILL_TYPE { 
-		DEFAULT_SKILL,  // Default Attack
-		BETA_SKILL,		// Beta Skill
-		ALPHA_SKILL,	// Alpha Skill
-		MIMESIS_SKILL,	// Mimesis Skill
+		DEFAULT_SKILL,			// Default Attack
+		INTERACTION_SKILL,		// Interaction Skill
+		BETA_SKILL,				// Beta Skill
+		ALPHA_SKILL,			// Alpha Skill
+		MIMESIS_SKILL,			// Mimesis Skill
 		END
 	};
 	
@@ -102,6 +103,7 @@ namespace Client
 		// Default : None
 		// Anim Able : Anim Name
 		char						szHitAnimationName[256];	// Hit Anim Name
+		char						szLinkBoneName[256];
 
 		// SKill Damage
 		long long					iSkillDamage;				// 스킬 데미지

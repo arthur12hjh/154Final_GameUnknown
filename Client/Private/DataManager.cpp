@@ -103,12 +103,13 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 9; i < iMaxSize;)
+    for (auto i = 10; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
         strcpy_s(SkillDesc.szAnimationName, SkillDataList[i++].c_str());
         strcpy_s(SkillDesc.szHitAnimationName, SkillDataList[i++].c_str());
+        strcpy_s(SkillDesc.szLinkBoneName, SkillDataList[i++].c_str());
 
         SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
         SkillDesc.fRange = atof(SkillDataList[i++].c_str());

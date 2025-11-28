@@ -84,6 +84,17 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         }
         else
             szAnimationName += "_Bw";
+
+        if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
+        {
+            XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+            m_vImpactDir.y += 0.1f;
+        }
+        else
+        {
+            m_vImpactDir = pDesc->vImpactDir;
+        }
+        m_fImpactForce = pDesc->fImpactForce;
     }
     else
     {
@@ -102,6 +113,10 @@ void CMonsterHitState::Update(_float fTimeDelta)
     {
         m_bIsFinished = true;
         m_bIsEnableChange = true;
+    }
+    else
+    {
+        m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
     }
        
 }

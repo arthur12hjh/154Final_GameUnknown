@@ -179,9 +179,15 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	// 
+	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
+	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
+	{
+		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
+		// 임시입니다 잡기 테스트용 나중에 넘겨받거나 넘겨줄데이터 생기면 말좀해주세요
+		pCharacter->ActionSuccess(nullptr);
+	}
 
 	return S_OK;
 }

@@ -53,9 +53,15 @@ void CAttackHitBox::Update(_float fTimeDelta)
 {
 	if (!m_bIsDelayDead)
 	{
+		_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
+		for (_uint i = 0; i < 3; ++i)
+			ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
+
 		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		m_pCullingCollider->UpdateColiision(worldMatrix);
-		m_pColliderCom->UpdateColiision(worldMatrix);
+		ParentMatrix.r[3] += worldMatrix.r[3];
+
+		m_pCullingCollider->UpdateColiision(ParentMatrix);
+		m_pColliderCom->UpdateColiision(ParentMatrix);
 	}
 	else
 	{

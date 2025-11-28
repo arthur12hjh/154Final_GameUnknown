@@ -49,6 +49,10 @@ void CBossController::Damage(void* pArg)
 {
 }
 
+void CBossController::ActionSuccess(void* pArg)
+{
+}
+
 CBossController* CBossController::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CBossController* pBossController = new CBossController(pDevice, pContext);

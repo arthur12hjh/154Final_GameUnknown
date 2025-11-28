@@ -23,6 +23,9 @@ public:
 private :
 	_bool										m_bIsGroggy = { false };
 
+	_float3										m_vImpactDir = {};
+	_float										m_fImpactForce = {};
+
 public:
 	static	CMonsterHitState*					Create(void* pArg);
 	virtual	void								Free() override;

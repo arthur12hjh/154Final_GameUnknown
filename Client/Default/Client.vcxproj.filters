@@ -358,12 +358,6 @@
     <Filter Include="02.GameObjects\Camera\Camera_Player">
       <UniqueIdentifier>{18c61d1c-ba06-4844-9ecb-1247c6381c0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Jump">
-      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\FSM\State\Aerial\Attk">
-      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Levels\Loading">
       <UniqueIdentifier>{cad4621e-281a-4009-9890-0044e3fce66c}</UniqueIdentifier>
     </Filter>
@@ -525,6 +519,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
       <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
+      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1071,6 +1068,9 @@
     <ClInclude Include="..\Public\PlayerLockonFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MonsterSuccessActionState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1596,6 +1596,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerLockonFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

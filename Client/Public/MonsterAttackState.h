@@ -43,11 +43,12 @@ private :
 
 	_float3										m_vMoveDir = {};
 	_float										m_fMoveSpeed = {};
+
 	function<void(_float)>						m_AttackCompletedFunc;
 
 private :
 	void										GaraSetting();
-	void										GaraHitBox();
+	//void										GaraHitBox();
 
 	void										BeholderGara(_float fTimeDelta);
 	void										StatueAGara(_float fTimeDelta);

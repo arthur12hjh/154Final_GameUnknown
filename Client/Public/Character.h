@@ -32,7 +32,9 @@ public:
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);
 	void							DetachedMatrix();
 
+	// 데미지 함수
 	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
+	virtual HRESULT					ActionSuccess(void* pArg) { return S_OK; }
 
 	void							Set_Position(_vector vPosition);
 	CModel*							Get_BodyModelCom() { return m_pBodyModelCom; }

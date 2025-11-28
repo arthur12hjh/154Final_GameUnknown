@@ -16,6 +16,7 @@
 #include "MonsterDeadState.h"
 #include "MonsterStateMimesis.h"
 #include "MonsterTranslationState.h"
+#include "MonsterSuccessActionState.h"
 #pragma endregion
 
 #include "MonsterFSM.h"
@@ -140,6 +141,11 @@ void CMonsterMimesisController::Damage(void* pArg)
 	}
 }
 
+void CMonsterMimesisController::ActionSuccess(void* pArg)
+{
+	m_pFSM->Change_State(TEXT("ActionSuccess"), pArg, true);
+}
+
 HRESULT CMonsterMimesisController::Ready_Components()
 {
 	// 여기서 타겟 컴포넌트 만들어서 붙이자
@@ -189,6 +195,9 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 		return E_FAIL;
 
 	if (FAILED(m_pFSM->Add_State(TEXT("Translation"), CMonsterTranslationState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(m_pFSM->Add_State(TEXT("ActionSuccess"), CMonsterSuccessActionState::Create(&Desc))))
 		return E_FAIL;
 
 	m_pFSM->Change_State(TEXT("Mimesis"));
