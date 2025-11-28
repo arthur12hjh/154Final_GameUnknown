@@ -139,9 +139,9 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
     return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration)
+void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart)
 {
-    if (m_iCurrentAnimIndex == iAnimIndex)
+    if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
         return;
 
     if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
@@ -177,7 +177,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
     return;
 }
 
-void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     _char pName[MAX_PATH] = {};
 
@@ -190,7 +190,7 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
     {
         if (TRUE == pAnimation->CompareAnimationTag(pName))
         {
-            if (m_iCurrentAnimIndex == iAnimIndex)
+            if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
                 return;
 
             if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
@@ -229,7 +229,7 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
     }
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     _uint iAnimIndex = 0;
     m_fAnimationPlayRate = fAnimationPlayRate;
@@ -238,7 +238,7 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
     {
         if (TRUE == pAnimation->CompareAnimationTag(szAnimationTag))
         {
-            if (m_iCurrentAnimIndex == iAnimIndex)
+            if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
                 return;
 
             if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)

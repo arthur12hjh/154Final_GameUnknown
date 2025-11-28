@@ -14,7 +14,6 @@ namespace Animation_Editor
 	const unsigned int			g_iHalfWinSizeY = 450;
 
 	enum class LEVEL { STATIC, LOADING, EDITOR, END };
-	
 }
 
 using namespace Animation_Editor;
