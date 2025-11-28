@@ -379,10 +379,11 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     
     vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
     vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
-    
+    //fBlurAlpha.r = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
+    //fBlurAlpha.g = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).g + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).g);
     vector fBlur;
-    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r * fBlurAlpha.g);
-    fBlur.a = saturate(fBlurAlpha.r * fBlurAlpha.g);
+    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r);
+    fBlur.a = saturate(fBlurAlpha.r);
     
     Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
     
@@ -395,7 +396,7 @@ PS_OUT_BACKBUFFER PS_MAIN_TONE_MAPPING(PS_IN In)
  
     //Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    //Out.vBackBuffer.rgb = Out.vBackBuffer.rgb / (Out.vBackBuffer.rgb + 1);
+    //Out.vBack Buffer.rgb = Out.vBackBuffer.rgb / (Out.vBackBuffer.rgb + 1);
 
     //Out.vBackBuffer.a = 1.f;
     Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);

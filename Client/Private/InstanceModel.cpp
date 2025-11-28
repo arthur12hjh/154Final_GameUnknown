@@ -66,7 +66,7 @@ HRESULT CInstanceModel::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
-	for (size_t i = 0; i < iNumMeshes; i++)
+	for (_uint i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", TEXTURE_TYPE::DIFFUSE, 0)))
 			return E_FAIL;
