@@ -144,7 +144,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
     if (m_iCurrentAnimIndex == iAnimIndex)
         return;
 
-    if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr)
+    if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
     {
         m_isLerp = TRUE;
         m_fBlendElapsed = 0.f;
@@ -193,7 +193,7 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
             if (m_iCurrentAnimIndex == iAnimIndex)
                 return;
 
-            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr)
+            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
             {
                 m_isLerp = TRUE;
                 m_fBlendElapsed = 0.f;
@@ -241,7 +241,7 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
             if (m_iCurrentAnimIndex == iAnimIndex)
                 return;
 
-            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr)
+            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
             {
                 m_isLerp = TRUE;
                 m_fBlendElapsed = 0.f;
