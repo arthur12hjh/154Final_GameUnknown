@@ -167,6 +167,7 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Bamboo.h" />
     <ClInclude Include="..\public\Brush.h" />
+    <ClInclude Include="..\public\Building_Ruin.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_Tool.h" />
     <ClInclude Include="..\public\CherryBlossom1.h" />
@@ -204,17 +205,23 @@
     <ClInclude Include="..\public\Imgui_Manager.h" />
     <ClInclude Include="..\Public\Inscription_L.h" />
     <ClInclude Include="..\Public\Inscription_R.h" />
+    <ClInclude Include="..\public\InstanceModel.h" />
+    <ClInclude Include="..\public\Level_Desert.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_Village.h" />
     <ClInclude Include="..\public\LightTool.h" />
     <ClInclude Include="..\public\Loader.h" />
+    <ClInclude Include="..\public\LoadingBG.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapTool.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
+    <ClInclude Include="..\public\MapTool_Desert.h" />
+    <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Reed.h" />
+    <ClInclude Include="..\public\Rock.h" />
     <ClInclude Include="..\Public\Rock1.h" />
     <ClInclude Include="..\Public\Rock2.h" />
     <ClInclude Include="..\Public\Rock3.h" />
@@ -237,6 +244,7 @@
     <ClInclude Include="..\Public\StoneWall2.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
+    <ClInclude Include="..\public\Terrain_Desert.h" />
     <ClInclude Include="..\Public\TombStone.h" />
     <ClInclude Include="..\Public\TombStoneBase1.h" />
     <ClInclude Include="..\Public\TombStoneBase2.h" />
@@ -249,6 +257,7 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Bamboo.cpp" />
     <ClCompile Include="..\private\Brush.cpp" />
+    <ClCompile Include="..\private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_Tool.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp" />
@@ -302,19 +311,25 @@
     </ClCompile>
     <ClCompile Include="..\Private\Inscription_L.cpp" />
     <ClCompile Include="..\Private\Inscription_R.cpp" />
+    <ClCompile Include="..\private\InstanceModel.cpp" />
+    <ClCompile Include="..\private\Level_Desert.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_Village.cpp" />
     <ClCompile Include="..\private\LightTool.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingBG.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\MapTool.cpp" />
+    <ClCompile Include="..\private\MapTool_Desert.cpp" />
+    <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Reed.cpp" />
+    <ClCompile Include="..\private\Rock.cpp" />
     <ClCompile Include="..\Private\Rock1.cpp" />
     <ClCompile Include="..\Private\Rock2.cpp" />
     <ClCompile Include="..\Private\Rock3.cpp" />
@@ -337,6 +352,7 @@
     <ClCompile Include="..\Private\StoneWall2.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
+    <ClCompile Include="..\private\Terrain_Desert.cpp" />
     <ClCompile Include="..\Private\TombStone.cpp" />
     <ClCompile Include="..\Private\TombStoneBase1.cpp" />
     <ClCompile Include="..\Private\TombStoneBase2.cpp" />

@@ -1,4 +1,17 @@
+#ifndef SHADER_DEFERRED_FUNCTIONS
+#define SHADER_DEFERRED_FUNCTIONS
+
 #include "Engine_Shader_Defines.hlsli"
+#include "Shader_Deferred_Defines.hlsli"
+
+inline float BayerDither(float2 pixelPos)
+{
+    uint x = (uint) pixelPos.x & 3; // % 4
+    uint y = (uint) pixelPos.y & 3; // % 4
+
+    uint v = Bayer4x4[y][x]; // 0 ~ 15
+    return (v + 0.5f) / 16.0f; // 0 ~ 1 사이 값
+}
 
 inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition)
 { 
@@ -8,7 +21,7 @@ inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vP
 
     float fSum = 0.0f;
     
-    float2 fTexelSize = 1.0f / float2(8192.0f, 4608.0f) * 0.5f; // 그림자맵 해상도에 맞게 조정
+    float2 fTexelSize = 1.0f / float2(8192.0f, 4608.0f) * 0.1f; // 그림자맵 해상도에 맞게 조정
 
     // PCF 3x3 샘플
     for (int x = -1; x <= 1; ++x)
@@ -90,72 +103,90 @@ float GetBloomCurve(float fIntensity)
     return fResult * 0.5f;
 }
 
-float3 Fresnel_Shlick(in float3 f0, in float3 f90, in float x)
+float NDF_ggxtr(float3 vNormal, float3 vHalfWayVector, float fAlpha) // NormalDistributionGGXTR, (H, halfWay vector), (A, Roughness), (N, Normal)
 {
-    return f0 + (f90 - f0) * pow(1.f - x, 5.f);
-}
-
-float Diffuse_Burley(in float NdotL, in float NdotV, in float LdotH, in float roughness)
-{
-    float fd90 = 0.5f + 2.f * roughness * LdotH * LdotH;
-    return Fresnel_Shlick(1, fd90, NdotL).x * Fresnel_Shlick(1, fd90, NdotV).x;
-}
-
-float Specular_D_GGX(in float alpha, in float NdotH)
-{
-    const float alpha2 = alpha * alpha;
-    const float lower = (NdotH * NdotH * (alpha2 - 1)) + 1;
-    return alpha2 / max(1e-6f, 3.14f * lower * lower);
-}
-
-float G_Shlick_Smith_Hable(float alpha, float LdotH)
-{
-    return rcp(lerp(LdotH * LdotH, 1, alpha * alpha * 0.25f));
-}
-
-float3 Specular_BRDF(in float alpha, in float3 specularColor, in float NdotV, in float NdotL, in float LdotH, in float NdotH)
-{
-    float specular_D = Specular_D_GGX(alpha, NdotH);
-
-    float3 specular_F = Fresnel_Shlick(specularColor, 1, LdotH);
-
-    float specular_G = G_Shlick_Smith_Hable(alpha, LdotH);
-
-    return specular_D * specular_F * specular_G;
-}
-
-float3 LightSurface(
-    in float3 V, in float3 N, in float3 lightColor, in float3 lightDirection, in float3 albedo, in float roughness, in float metallic, in float ambientOcclusion, bool isSpecular = false)
-{
-    const float kSpecularCoefficient = 0.04;
-    const float NdotV = saturate(dot(N, V));
-    const float alpha = roughness * roughness;
-
-    const float3 c_diff = lerp(albedo, float3(0, 0, 0), metallic) * ambientOcclusion;
+    float a2 = fAlpha * fAlpha;
+    float NdotH = saturate(dot(vNormal, vHalfWayVector));
+    float NdotH2 = NdotH * NdotH;
     
-    float3 c_spec;
-    if(false == isSpecular)
-        c_spec = lerp(kSpecularCoefficient, albedo, metallic) * ambientOcclusion;
-    else
-        c_spec = float3(metallic, metallic, metallic);
+    float nom = a2;
+    float fDenom = (NdotH2 * (a2 - 1.f) + 1.f);
     
-    
-    float3 acc_color = 0;
-
-    const float3 L = normalize(-lightDirection);
-
-    const float3 H = normalize(L + V);
-
-    const float NdotL = saturate(dot(N, L));
-    const float LdotH = saturate(dot(L, H));
-    const float NdotH = saturate(dot(N, H));
-
-    float diffuse_factor = Diffuse_Burley(NdotL, NdotV, LdotH, roughness);
-    float3 specular = Specular_BRDF(alpha, c_spec, NdotV, NdotL, LdotH, NdotH);
-
-    acc_color += NdotL * lightColor * (((c_diff * diffuse_factor) + specular));
-    acc_color += c_diff * float3(0.5f, 0.5f, 0.5f);
-    acc_color += c_spec * float3(0.5f, 0.5f, 0.5f);
-
-    return acc_color;
+    fDenom = 3.14f * fDenom * fDenom;
+    return (nom / fDenom);
 }
+
+// F->G
+// GschlickGGX(n, v, k) 
+// k는 이하 두개 조명 조건에 따라 가변적임
+// Direct //  Kdir -> ((a + 1) * (a + 1)) / 8 // direct lighting 추천
+// IBL Lighting // Kibl -> a * a / 2 // 이미지 기반 조명기법
+
+float Geometry_SchlickGGX(float NdotV, float fK)
+{
+    return NdotV / (NdotV * (1.0f - fK) + fK);
+}
+
+float Geometry_Smith(float3 vNormal, float3 vFromView, float3 vFromLight, float k)
+{
+    // Geometry Obstruction     
+    // 철이 있는, 주로 튀어나온 장애물
+    float NdotV = saturate(dot(vNormal, vFromView));
+    
+    // Geometry Shadowing       
+    // 요가 있는, 주로 음푹 들어간 장애물 (그래서 셰도잉)
+    float NdotL = saturate(dot(vNormal, vFromLight));
+
+    // 요철이 골고루 있다고 가정하고 적당히 섞음
+    return Geometry_SchlickGGX(NdotV, k) * Geometry_SchlickGGX(NdotL, k);
+}
+
+// F -> F
+float3 Fresnel_Schlick(float cosTheta, float3 F0)
+{
+    // 모서리 부분의 반사
+    return F0 + (1.0f - F0) * pow(1.0f - cosTheta, 5.0f);
+}
+
+PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
+    float3 vAlbedo, float fMetallic, float fRoughness,
+    float3 vLightColor, float fAttenuation, float3 vFO, float fSSAO)
+{
+    PS_OUT_LIGHT Out;
+    Out.vShade = 0;
+    Out.vSpecular = 0;
+    
+    float3 vHalfVector = normalize(vFromView + vFromLight);
+    float NdotL = saturate(dot(vNormal, vFromLight));
+    float NdotV = saturate(dot(vNormal, vFromView));
+    
+    float fAlpha = max(fRoughness * fRoughness, 0.1f);
+    float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;
+    
+    float D = NDF_ggxtr(vNormal, vHalfVector, fAlpha);
+    float G = Geometry_Smith(vNormal, vFromView, vFromLight, k);
+    float3 F = Fresnel_Schlick(saturate(dot(vHalfVector, vFromView)), vFO);
+    
+    float3 vNumerator = D * G * F;
+    float fDenom = max(4.f * NdotL * NdotV, 1e-7);
+    float3 specularBRDF = vNumerator / fDenom;
+    
+    float3 kS = F;
+    float3 kD = (1.f - kS) * (1.f - fMetallic);
+    
+    // 직접광 연산
+    Out.vShade = float4((kD * vAlbedo) * (NdotL * fAttenuation) * vLightColor, 1.f);
+    // 환경광 연산
+    float3 vDiffuseAmbient = vAlbedo * lerp(0.08f, 0.35f, 1 - fRoughness);
+    vDiffuseAmbient *= (1 - fMetallic) * fSSAO;
+    Out.vShade.xyz += vDiffuseAmbient;
+    
+    Out.vSpecular = float4(specularBRDF * vLightColor * fAttenuation * NdotL, 1.f);
+    F = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vFO);
+    float3 vAmbientSpec = F * 0.02f * (1 - fRoughness * fRoughness);
+    Out.vSpecular.xyz += vAmbientSpec;
+    
+    return Out;
+}
+
+#endif

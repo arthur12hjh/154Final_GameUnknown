@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "GameInstance.h"
 
+#include "Player_BattleWalkState.h"
+
 CPlayer_JumpState::CPlayer_JumpState()
 	: CPlayerState {}
 {
@@ -19,8 +21,6 @@ void CPlayer_JumpState::Start(void* pArg)
 
 PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
@@ -83,8 +83,8 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 		{
-			m_isLanding = true;
-			m_tNextState.pArg = &m_isLanding;
+			m_NextStateDesc.isLand = true;
+			m_tNextState.pArg = &m_NextStateDesc;
 			m_tNextState.eNextState = PLAYER_STATE::WALK;
 		}
 		else

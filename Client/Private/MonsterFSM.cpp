@@ -46,16 +46,19 @@ HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg, _bool bIsFo
 	if (iter == m_pStates.end())
 		return E_FAIL;
 
-	if (iter->second == m_pCurrentState)
+	if (false == bIsForce)
 	{
-		return S_OK;
-	}
-	else
-	{
-		if (m_pCurrentState)
+		if (iter->second == m_pCurrentState)
 		{
-			if (false == bIsForce && false == m_pCurrentState->Is_EnableChange())
-				return E_FAIL;
+			return S_OK;
+		}
+		else
+		{
+			if (m_pCurrentState)
+			{
+				if (false == m_pCurrentState->Is_EnableChange())
+					return E_FAIL;
+			}
 		}
 	}
 

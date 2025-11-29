@@ -64,11 +64,15 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 		break;
 	}
 
-	if (fAnimationRatio > 0.275f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+	if (fAnimationRatio > 0.35f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
+	{
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
+		m_tNextStateDesc.isEvade = true;
+		m_tNextState.pArg = &m_tNextStateDesc;
+	}
 
 	if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;

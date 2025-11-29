@@ -34,6 +34,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	{
 		CLevel* pNewLevel = { nullptr };
 
+		m_pGameInstance->Clear_LevelResource(true);
 		switch (m_eNextLevelID)
 		{
 		case LEVEL::EDITOR:

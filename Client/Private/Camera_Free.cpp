@@ -45,69 +45,70 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	m_fMouseSensor = 0.1f;
-	if (false == m_bIsCameraAnimation)
+	if(m_pGameInstance->IsMainCamera(this))
 	{
-
-		if (false == m_bIsLock[0])
+		if (false == m_bIsCameraAnimation)
 		{
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-				m_pTransformCom->Go_Straight(fTimeDelta);
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-				m_pTransformCom->Go_Backward(fTimeDelta);
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-				m_pTransformCom->Go_Left(fTimeDelta);
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-				m_pTransformCom->Go_Right(fTimeDelta);
-
-			//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-			//{
-			//	auto pInterraction = m_pGameInstance->GetNearInteraction();
-			//	if (pInterraction)
-			//		pInterraction->Action_InteractionEvent(this);
-			//}
-		}
-
-		if (false == m_bIsLock[1])
-		{
-			_long		MouseMove = {};
-			if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+			if (false == m_bIsLock[0])
 			{
-				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+					m_pTransformCom->Go_Straight(fTimeDelta);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+					m_pTransformCom->Go_Backward(fTimeDelta);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+					m_pTransformCom->Go_Left(fTimeDelta);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+					m_pTransformCom->Go_Right(fTimeDelta);
+
+				//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+				//{
+				//	auto pInterraction = m_pGameInstance->GetNearInteraction();
+				//	if (pInterraction)
+				//		pInterraction->Action_InteractionEvent(this);
+				//}
 			}
 
-			if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+			if (false == m_bIsLock[1])
 			{
-				m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+				_long		MouseMove = {};
+				if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
+				{
+					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+				}
+
+				if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
+				{
+					m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+				}
 			}
-		}
-	}
-	else
-	{
-		m_fAccTime += fTimeDelta;
-		if (m_fAccTime >= m_fLerpTime)
-		{
-			m_fAccTime = 0.f;
-			m_bIsCameraAnimation = false;
 		}
 		else
 		{
-			// Somooth Lerp
-			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
-			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
+			m_fAccTime += fTimeDelta;
+			if (m_fAccTime >= m_fLerpTime)
+			{
+				m_fAccTime = 0.f;
+				m_bIsCameraAnimation = false;
+			}
+			else
+			{
+				// Somooth Lerp
+				_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
+				_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
 
-			_float fRatio = m_fAccTime / m_fLerpTime;
-			_vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
-			_vector vLookPos = vPosition + XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);
+				_float fRatio = m_fAccTime / m_fLerpTime;
+				_vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
+				_vector vLookPos = vPosition + XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);
 
-			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
-			m_pTransformCom->LookAt(vLookPos);
+				m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+				m_pTransformCom->LookAt(vLookPos);
+			}
 		}
+		__super::Bind_Matrices();
 	}
-
-	__super::Bind_Matrices();
 }
 
 void CCamera_Free::Update(_float fTimeDelta)

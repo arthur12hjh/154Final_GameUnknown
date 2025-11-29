@@ -24,7 +24,7 @@ private:
 	class CLoader* m_pLoader = { nullptr };
 
 private:
-	HRESULT Ready_Layer_BackGround();
+	HRESULT Ready_Layer_BackGround(const _wstring& strLayerTag);
 
 
 

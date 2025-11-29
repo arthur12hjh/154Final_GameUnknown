@@ -259,6 +259,13 @@ namespace Engine
 		float			fFar;
 	}CAMERA_KEYFRAME;
 
+	typedef struct tagModelInstanceLoadDesc
+	{
+		const wchar_t* pPrototypeTag = nullptr;
+		unsigned int iNumInstance = 0;
+		vector<VTX_INSTANCE_MODEL>* pInstancingData;
+	}MODEL_INSTANCE_LOAD_DESC;
+
 #pragma region MODEL_IMPORT
 
 	typedef struct binFace
@@ -449,6 +456,12 @@ namespace Engine
 		float*			fBias;
 		unsigned int*   iSampleCount;
 	} MOTIONBLUR_DESC;
+
+	typedef struct tagVolumeticInfo {
+		float* fDensity;
+		float* fStepSize;
+		float* fVolumetricG;
+	} VOLUMETRIC_DESC;
 #pragma endregion
 }
 

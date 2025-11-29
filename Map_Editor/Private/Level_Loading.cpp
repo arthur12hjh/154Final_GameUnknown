@@ -6,6 +6,7 @@
 
 #include "Level_Logo.h"
 #include "Level_Village.h"
+#include "Level_Desert.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel{ pDevice, pContext, ENUM_CLASS(eLevelID) }
@@ -23,7 +24,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 		return E_FAIL;
 
 	/* 이 레벨을 구성하기위한 객체를 만든다. */
-	if (FAILED(Ready_Layer_BackGround()))
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_LoadingBG"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -36,16 +37,22 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	{
 		CLevel* pNewLevel = { nullptr };
 
+		m_pGameInstance->Clear_LevelCameras();
+
 		switch (m_eNextLevelID)
 		{
 		case LEVEL::LOGO:
 			pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext, m_eNextLevelID);
+			break;
+		case LEVEL::DESERT:
+			pNewLevel = CLevel_Desert::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		case LEVEL::VILLAGE:
 			pNewLevel = CLevel_Village::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		}
 
+		
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
 			return;
 	}
@@ -58,8 +65,13 @@ HRESULT CLevel_Loading::Render()
 	return S_OK;
 }
 
-HRESULT CLevel_Loading::Ready_Layer_BackGround()
+HRESULT CLevel_Loading::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_LoadingBG"),
+		ENUM_CLASS(LEVEL::LOADING), strLayerTag)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

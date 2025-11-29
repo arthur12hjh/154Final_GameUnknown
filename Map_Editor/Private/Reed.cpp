@@ -30,23 +30,23 @@ HRESULT CReed::Initialize(void* pArg)
 
 	m_pTerrain = static_cast<CTerrain*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"))->back());
 
-	/*D3D11_MAPPED_SUBRESOURCE MappedResource{};
+	D3D11_MAPPED_SUBRESOURCE MappedResource{};
 
-	m_pModelCom->Lock(D3D11_MAP_WRITE, &MappedResource);
+	m_pModelCom->Lock(D3D11_MAP_WRITE_DISCARD, &MappedResource);
 
 	VTX_INSTANCE_MODEL* pInstanceData = (VTX_INSTANCE_MODEL*)MappedResource.pData;
 	
 
-	for(_uint i = 0; i < 5000; ++i)
+	for(_uint i = 0; i < 10000; ++i)
 	{
-		_float fReedX = m_pGameInstance->Random(-256.f, 256.f);
-		_float fReedZ = m_pGameInstance->Random(-256.f, 256.f);
+		_float fReedX = m_pGameInstance->Random(-100.f, 100.f) + 256.f;
+		_float fReedZ = m_pGameInstance->Random(-180.f, 50.f) + 256.f;
 
 		_float fReedY = m_pTerrain->Get_Height_In_World_Space(fReedX, fReedZ);
 
 		_vector vTranslation = XMVectorSet(fReedX, fReedY, fReedZ, 1.f);
 
-		_matrix matInstance = XMMatrixIdentity();
+		_matrix matInstance = XMMatrixIdentity(); 
 
 		matInstance.r[3] = vTranslation;
 
@@ -57,7 +57,7 @@ HRESULT CReed::Initialize(void* pArg)
 
 	}
 
-	m_pModelCom->UnLock();*/
+	m_pModelCom->UnLock();
 
 	return S_OK;
 }
@@ -125,7 +125,15 @@ HRESULT CReed::Ready_Components()
 
 HRESULT CReed::Bind_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;*/
+
+	_matrix matIdentity = XMMatrixIdentity();
+
+	_float4x4 matIdentityFloat4x4;
+	XMStoreFloat4x4(&matIdentityFloat4x4, matIdentity);
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &matIdentityFloat4x4)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
@@ -155,7 +163,6 @@ HRESULT CReed::Bind_ShaderResources()
 	};
 
 	MinMaxScale scaleInfo;
-	_float fHeight;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinMaxScale", &scaleInfo, sizeof(scaleInfo))))
 		return E_FAIL;

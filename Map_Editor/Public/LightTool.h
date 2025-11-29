@@ -70,8 +70,20 @@ private:
 	_float m_fDirectionY = { 0.f };
 	_float m_fDirectionZ = { 0.f };
 
+	/* 스포트 광원에서 사용 보통 1.0f 설정하며     */
+	/* 안쪽 원뿔과 바깥쪽 원뿔간의 빛의 세기 차이  */
+	_float m_fFalloff = { 0.f };
+	
+	/* 스포트 광원의 안쪽 원뿔의 각도 */
+	_float m_fTheta = { 0.f };
+
+	/* 스포트 광원의 바깥쪽 원뿔의 각도 */
+	_float m_fPhi = { 0.f };
+
 	// 빛 range
 	_float m_fRange = { 0.f };
+
+	_float m_fMoveSpeed = { 0.1f };
 
 	const list<CLight*>* m_pLights = { nullptr };
 	list<string>		m_LightNames = {};
@@ -92,6 +104,7 @@ private:
 
 	_bool				m_bIsDeplayPointLight = { false };
 	_bool				m_bIsDeplayDirLight = { false };
+	_bool				m_bIsDeplaySpotLight = { false };
 	_bool				m_bIsLightMode = { false };
 
 

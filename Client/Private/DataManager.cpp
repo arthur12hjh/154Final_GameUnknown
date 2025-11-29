@@ -109,6 +109,7 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
         strcpy_s(SkillDesc.szAnimationName, SkillDataList[i++].c_str());
         strcpy_s(SkillDesc.szHitAnimationName, SkillDataList[i++].c_str());
+        strcpy_s(SkillDesc.szLinkBoneName, SkillDataList[i++].c_str());
 
         SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
         SkillDesc.fRange = atof(SkillDataList[i++].c_str());
@@ -116,11 +117,9 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
         SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
 
-        SkillDesc.eDirection = DIRECTION(atoi(SkillDataList[i++].c_str()));
+        SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
-        _uint iNumProperity = atoi(SkillDataList[i++].c_str());
-        for (_uint j = 0; j < iNumProperity; ++j)
-            SkillDesc.ProPertyList.insert(SKILL_PROPERTY(atoi(SkillDataList[i++].c_str())));
+        SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
     }

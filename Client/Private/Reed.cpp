@@ -2,6 +2,7 @@
 #include "Reed.h"
 
 #include "GameInstance.h"
+#include "Terrain.h"
 
 CReed::CReed(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CGameObject(pDevice, pContext)
@@ -26,6 +27,37 @@ HRESULT CReed::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+
+	m_pTerrain = static_cast<CTerrain*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Terrain"))->back());
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource{};
+
+	m_pModelCom->Lock(D3D11_MAP_WRITE_DISCARD, &MappedResource);
+
+	VTX_INSTANCE_MODEL* pInstanceData = (VTX_INSTANCE_MODEL*)MappedResource.pData;
+
+
+	for (_uint i = 0; i < 10000; ++i)
+	{
+		_float fReedX = m_pGameInstance->Random(-100.f, 100.f) + 256.f;
+		_float fReedZ = m_pGameInstance->Random(-180.f, 50.f) + 256.f;
+
+		_float fReedY = m_pTerrain->Get_Height_In_World_Space(fReedX, fReedZ);
+
+		_vector vTranslation = XMVectorSet(fReedX, fReedY, fReedZ, 1.f);
+
+		_matrix matInstance = XMMatrixIdentity();
+
+		matInstance.r[3] = vTranslation;
+
+		XMStoreFloat4(&pInstanceData[i].vRight, matInstance.r[0]);
+		XMStoreFloat4(&pInstanceData[i].vUp, matInstance.r[1]);
+		XMStoreFloat4(&pInstanceData[i].vLook, matInstance.r[2]);
+		XMStoreFloat4(&pInstanceData[i].vTranslation, matInstance.r[3]);
+
+	}
+
+	m_pModelCom->UnLock();
 
 	return S_OK;
 }
@@ -83,17 +115,33 @@ HRESULT CReed::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Texture_Mask */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Reed_Mask"),
+		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CReed::Bind_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;*/
+
+	_matrix matIdentity = XMMatrixIdentity();
+
+	_float4x4 matIdentityFloat4x4;
+	XMStoreFloat4x4(&matIdentityFloat4x4, matIdentity);
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &matIdentityFloat4x4)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 		return E_FAIL;
 
 	_float fSpeed = 1.f;	   // ºü¸£±â
@@ -148,6 +196,7 @@ void CReed::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pMaskCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

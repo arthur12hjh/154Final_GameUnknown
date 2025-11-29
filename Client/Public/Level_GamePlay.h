@@ -2,15 +2,25 @@
 
 #include "Client_Defines.h"
 #include "Level.h"
+#include "VIBuffer_Instance_Model.h"
 
 NS_BEGIN(Client)
 
 class CLevel_GamePlay final : public CLevel
 {
-typedef struct SavedObjectInfo
-{
-	_float4x4	    worldMatrix;
-}SAVEDOBJECTINFO;
+public:
+	typedef struct SavedObjectInfo
+	{
+		_float4x4	    worldMatrix;
+	}SAVEDOBJECTINFO;
+
+	typedef struct tagModelInstanceLoadDesc
+	{
+		_uint iNumInstance = 0;
+		vector<VTX_INSTANCE_MODEL> InstancingData;
+		CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC InstanceDesc;
+
+	}MODEL_INSTANCE_LOAD_DESC;
 
 private:
 	CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
@@ -36,6 +46,8 @@ private:
 
 	HRESULT Load_Map_Data();
 	HRESULT Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+
 
 	HRESULT Load_Light_Data();
 	_float	m_fTime = 10;

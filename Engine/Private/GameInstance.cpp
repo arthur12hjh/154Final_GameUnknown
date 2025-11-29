@@ -347,6 +347,15 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 
 #pragma region LEVEL_MANAGER
 
+HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
+{
+	m_pCameraManager->Clear_Cameras();
+	if (bIsClearPrototypeData)
+		return m_pLevel_Manager->Clear_LevelResource();
+	else
+		return S_OK;
+}
+
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
 {
 	return m_pLevel_Manager->Change_Level(pNewLevel);
@@ -475,6 +484,11 @@ void* CGameInstance::Get_MotionBlur_Desc()
 	return m_pRenderer->Get_MotionBlur_Desc();
 }
 
+void* CGameInstance::Get_Volumetric_Desc()
+{
+	return m_pRenderer->Get_Volumetric_Desc();
+}
+
 #endif
 
 #pragma endregion
@@ -583,6 +597,11 @@ CLight* CGameInstance::Find_Light(_uint iIndex)
 const list<class CLight*>* CGameInstance::GetAllLight()
 {
 	return m_pLight_Manager->GetAllLight();
+}
+
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
 }
 
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
@@ -861,6 +880,10 @@ CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 CCamera* CGameInstance::GetMainCamera()
 {
 	return m_pCameraManager->GetMainCamera();
+}
+_bool CGameInstance::IsMainCamera(CCamera* pCamera)
+{
+	return m_pCameraManager->IsMainCamera(pCamera);
 }
 _matrix CGameInstance::GetMainCameraWorldMatrix()
 {

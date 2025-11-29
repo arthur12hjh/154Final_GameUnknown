@@ -13,7 +13,7 @@ private:
 public:
 	HRESULT				Initialize();
 
-	/* ¿øÇüÀ» Ã£°í º¹Á¦ÇÏ¿© ·¹ÀÌ¾î¿¡ Ãß°¡ÇÑ´Ù. */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½Ì¾î¿¡ ï¿½ß°ï¿½ï¿½Ñ´ï¿½. */
 	void				Priority_Update(_float fTimeDelta);
 	void				Update(_float fTimeDelta);
 	void				Late_Update(_float fTimeDelta);
@@ -24,22 +24,25 @@ public :
 
 	HRESULT				SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix);
 
-	//	Ä«¸Þ¶ó ¸Å´ÏÀú¿¡¼­ Ä«¸Þ¶ó Æ÷ÀÎÅÍ ¹ÞÀ¸¸é ·¡ÆÛ·±½º Ä«¿îÆ® Áõ°¡ÇÔ
-	//  °¡Á®°¬À¸¸é ³»·ÁÁÖ¼¼¿ä
+	//	Ä«ï¿½Þ¶ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½
 	CCamera*			GetCamrea(const WCHAR* szCameraTag);
 	const unordered_map<_wstring, CCamera*>* GetAllCamera() { return &m_pCameras; }
 	
 
-	//	Ä«¸Þ¶ó ¸Å´ÏÀú¿¡¼­ Ä«¸Þ¶ó Æ÷ÀÎÅÍ ¹ÞÀ¸¸é ·¡ÆÛ·±½º Ä«¿îÆ® Áõ°¡ÇÔ
-	//  °¡Á®°¬À¸¸é ³»·ÁÁÖ¼¼¿ä
+	//	Ä«ï¿½Þ¶ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½
 	CCamera*			GetMainCamera();
 
-	//¸ÞÀÎÄ«¸Þ¶ó ¿ùµå Çà·Ä °¡Á®¿À±â
+	//ï¿½ï¿½ï¿½ï¿½Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	_matrix				GetMainCameraWorldMatrix();
 	const _float4x4*	GetMainCameraWorldMatrixPtr();
 	
 	_matrix				GetCameraWorldMatrix(const WCHAR* szCameraTag);
 	const _float4x4*	GetCameraWorldMatrixPtr(const WCHAR* szCameraTag);
+
+	_bool				IsMainCamera(CCamera* pCamera);
+	void				Clear_Cameras();
 
 private:
 	CCamera*								m_pMainCamera = { nullptr };
