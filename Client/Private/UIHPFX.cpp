@@ -2,9 +2,8 @@
 #include "UIHPFX.h"
 
 #include "GameInstance.h"
-#include "UIHUD.h"
-#include "UIButton.h"
-#include "UIPlayAnimEvent.h"
+
+#include "UIHPBar.h"
 
 CUIHPFX::CUIHPFX(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -40,15 +39,29 @@ void CUIHPFX::Priority_Update(_float fTimeDelta)
 void CUIHPFX::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	//float width = m_tUIDesc.fSizeX;
+
+	//// Glow의 기본 위치(start)
+	//float startX = -width * 0.5f;
+
+	//// 이동할 X값
+	//float posX = startX + (width * 0.5f) * dynamic_cast<CUIHPBar*>(m_pParent)->Get_CurrentFill();
+
+	////m_tUIDesc.fOffsetX *= posX;
+
+	//m_pTransformCom->Set_State((STATE::POSITION), XMVectorSet(
+	//	XMVectorGetX(m_pTransformCom->Get_State(STATE::POSITION)) + (posX + (width * -0.5f)),
+	//	XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION)),
+	//	XMVectorGetZ(m_pTransformCom->Get_State(STATE::POSITION)),
+	//	0.f
+	//));
 }
 
 void CUIHPFX::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, TEXT("Hp_Fx_BeapBeap"));
-	Safe_Release(pHUD);
 }
 
 HRESULT CUIHPFX::Render()
@@ -93,6 +106,9 @@ HRESULT CUIHPFX::Ready_Components()
 
 HRESULT CUIHPFX::Bind_ShaderResources()
 {
+	/*if(FAILED(__super::Bind_ShaderResources()))
+		return E_FAIL;*/
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
@@ -102,12 +118,15 @@ HRESULT CUIHPFX::Bind_ShaderResources()
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &m_tUIDesc.m_tUIShaderDesc.fGlowSpread, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &m_tUIDesc.m_tUIShaderDesc.bUseTintColor, sizeof(_bool))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &m_tUIDesc.m_tUIShaderDesc.vTintColor, sizeof(_float4))))
 		return E_FAIL;
 

@@ -37,6 +37,14 @@ protected:
 private:	
 	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = nullptr;
 
+	LONGLONG* m_iMaxShield = nullptr;        // 최대 값
+	LONGLONG* m_iCurrentShield = nullptr;
+
+#ifdef _DEBUG
+	LONGLONG m_Gara = 100;
+	LONGLONG m_MaxGara = 100;
+#endif // DEBUG
+
 	_float m_fCurrentFill = 1.0f;   // 현재 값
 	_float m_fTargetFill = 1.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
