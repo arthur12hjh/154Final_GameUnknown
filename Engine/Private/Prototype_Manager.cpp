@@ -98,13 +98,14 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		iResult = _findnext64(handle, &fd);
 		Safe_Delete_Array(pFileName);
 	}
-	
+
+	_matrix PreMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	// 파츠 모델들을 생성하고, 블렌드인덱스와 본 인덱스를 뼈대 모델에 맞춰 매핑해준다.
 	for (size_t i = 0; i < szPartPrototypeTagList.size(); ++i)
 	{
 		// 모델에 스켈레톤 모델을 전달해줘 매핑할 수 있게 해준다.
 		if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, szPartPrototypeTagList[i],
-			CModel::Create(pDevice, pContext, MODEL_TYPE::PARTANIM, szPartModelFilePathList[i].c_str(), PreTransformMatrix, pModel))))
+			CModel::Create(pDevice, pContext, MODEL_TYPE::PARTANIM, szPartModelFilePathList[i].c_str(), PreMatrix, pModel))))
 			return E_FAIL;
 
 	}

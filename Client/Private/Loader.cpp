@@ -252,7 +252,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 {
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
-	_matrix PreMatrix = XMMatrixScaling(0.0003, 0.0003, 0.0003) * XMMatrixRotationY(XMConvertToRadians(270.f));
+	_matrix PreMatrix = XMMatrixScaling(0.03, 0.03, 0.03) * XMMatrixRotationY(XMConvertToRadians(270.f));
 
 	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
 	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
@@ -265,7 +265,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
 	
 
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 

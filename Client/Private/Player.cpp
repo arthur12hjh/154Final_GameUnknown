@@ -250,7 +250,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
 	/* Part_Weapon */
