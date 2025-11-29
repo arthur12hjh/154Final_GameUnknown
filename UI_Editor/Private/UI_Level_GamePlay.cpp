@@ -75,6 +75,9 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
 
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
+		return E_FAIL;*/
+
 	//if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 	//	return E_FAIL;
 	//
