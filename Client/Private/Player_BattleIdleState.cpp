@@ -1,31 +1,26 @@
 #include "pch.h"
-
-#include "Player_IdleState.h"
+#include "Player_BattleIdleState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_IdleState::CPlayer_IdleState() 
+CPlayer_BattleIdleState::CPlayer_BattleIdleState() 
     : CPlayerState {}
 {
 }
 
-void CPlayer_IdleState::Start(void* pArg)
+void CPlayer_BattleIdleState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::IDLE;
-    m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
+    m_pPlayer->Set_Animation("Proto_Battle_Idle", true);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
 {
     m_pPlayer->Play_Animation(fTimeDelta);
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
-    {
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
-        m_tNextState.isChangeMode = true;
-        m_tNextState.eMode = PLAYER_MODE::BATTLE;
-    }
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
@@ -37,32 +32,24 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
-    {
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
-        m_tNextState.isChangeMode = true;
-        m_tNextState.eMode = PLAYER_MODE::BATTLE;
-    }
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
-    {
         m_tNextState.eNextState = PLAYER_STATE::JUMP;
-        m_tNextState.isChangeMode = true;
-        m_tNextState.eMode = PLAYER_MODE::BATTLE;
-    }
 
     return m_tNextState;
 }
 
-void CPlayer_IdleState::End()
+void CPlayer_BattleIdleState::End()
 {
 }
 
-CPlayer_IdleState* CPlayer_IdleState::Create(void* pArg)
+CPlayer_BattleIdleState* CPlayer_BattleIdleState::Create(void* pArg)
 {
-    return new CPlayer_IdleState();
+    return new CPlayer_BattleIdleState();
 }
 
-void CPlayer_IdleState::Free()
+void CPlayer_BattleIdleState::Free()
 {
     __super::Free();
 }

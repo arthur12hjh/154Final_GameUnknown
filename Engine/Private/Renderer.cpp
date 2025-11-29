@@ -739,8 +739,8 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 	//	return;
-	if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
+	//if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
 	//if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 	//if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
@@ -752,10 +752,10 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-		return;
+	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
+	//	return;
 
 }
 

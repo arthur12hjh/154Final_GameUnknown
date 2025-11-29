@@ -4,13 +4,11 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_LandingState final : public CPlayerState
+class CPlayer_BattleEvadeState final : public CPlayerState
 {
-public:
-	enum class JUMP_TYPE { RUN, WALK, IDLE };
 private:
-	CPlayer_LandingState();
-	virtual ~CPlayer_LandingState() = default;
+	CPlayer_BattleEvadeState();
+	virtual ~CPlayer_BattleEvadeState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -19,13 +17,13 @@ public:
 	virtual PLAYER_TRANSITION_DESC	   Update(_float fTimeDelta) override;
 	virtual void			   End() override;
 
+private:
+	_bool m_isBackStep = { false };
+	_bool m_isImmediateRun = { false };
+	PLAYER_BATTLEWALK_DESC m_NextStateDesc = {};
 public:
-	JUMP_TYPE m_eType = {};
-	_bool     m_isLanding = false;
-
-public:
-	static	CPlayer_LandingState* Create(void* pArg);
-	virtual	void				Free() override;
+	static	CPlayer_BattleEvadeState* Create(void* pArg);
+	virtual	void			   Free() override;
 
 };
 

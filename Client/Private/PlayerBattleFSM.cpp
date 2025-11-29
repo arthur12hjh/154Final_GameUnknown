@@ -1,16 +1,17 @@
 #include "pch.h"
 #include "PlayerBattleFSM.h"
 
-#include "Player_IdleState.h"
-#include "Player_WalkState.h"
-#include "Player_WalkEndState.h"
+#include "Player.h"
+#include "Player_BattleIdleState.h"
+#include "Player_BattleWalkState.h"
+#include "Player_BattleWalkEndState.h"
 #include "Player_JumpState.h"
 #include "Player_LightAttackState.h"
-#include "Player_EvadeState.h"
+#include "Player_BattleEvadeState.h"
 #include "Player_HitState.h"
 #include "Player_VendingInteractionState.h"
 #include "Player_BetaChargingSlahsState.h"
-#include "Player_LandingState.h"
+#include "Player_BattleLandingState.h"
 
 CPlayerBattleFSM::CPlayerBattleFSM()
 	: CPlayerFSM{}
@@ -28,6 +29,12 @@ HRESULT CPlayerBattleFSM::Initialize(void* pArg)
 void CPlayerBattleFSM::Update(_float fTimeDelta)
 {
 	PLAYER_TRANSITION_DESC tState = m_pCurrentState->Update(fTimeDelta);
+
+	if (true == tState.isChangeMode)
+	{
+		m_pPlayer->Change_PlayerMode(tState.eMode, tState.eNextState);
+		return;
+	}
 
 	if (PLAYER_STATE::STATE_END != tState.eNextState)
 	{
@@ -62,19 +69,19 @@ CPlayerState* CPlayerBattleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 { 
 	switch (tTransitionDesc.eNextState)
 	{
-	case PLAYER_STATE::IDLE: return CPlayer_IdleState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::IDLE: return CPlayer_BattleIdleState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::WALK: return CPlayer_WalkState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::WALK: return CPlayer_BattleWalkState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::WALK_END: return CPlayer_WalkEndState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::WALK_END: return CPlayer_BattleWalkEndState::Create(tTransitionDesc.pArg);
 
 	case PLAYER_STATE::JUMP: return CPlayer_JumpState::Create(tTransitionDesc.pArg);
 
 	case PLAYER_STATE::LIGHT_ATTACK: return CPlayer_LightAttackState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::EVADE: return CPlayer_EvadeState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::EVADE: return CPlayer_BattleEvadeState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::LANDING:  return CPlayer_LandingState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::LANDING:  return CPlayer_BattleLandingState::Create(tTransitionDesc.pArg);
 
 	case PLAYER_STATE::VENDING_INTERACTION: return CPlayer_VendingInteractionState::Create(tTransitionDesc.pArg);
 
@@ -93,7 +100,7 @@ CPlayerState* CPlayerBattleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 
 HRESULT CPlayerBattleFSM::Ready_State()
 {
-	CPlayer_IdleState* pState = CPlayer_IdleState::Create(nullptr);
+	CPlayer_BattleIdleState* pState = CPlayer_BattleIdleState::Create(nullptr);
 	pState->Start();
 
 	m_pCurrentState = pState;

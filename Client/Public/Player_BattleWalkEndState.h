@@ -4,11 +4,11 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_WalkEndState final : public CPlayerState
+class CPlayer_BattleWalkEndState final : public CPlayerState
 {
 private:
-	CPlayer_WalkEndState();
-	virtual ~CPlayer_WalkEndState() = default;
+	CPlayer_BattleWalkEndState();
+	virtual ~CPlayer_BattleWalkEndState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -20,7 +20,7 @@ public:
 private:
 
 public:
-	static	CPlayer_WalkEndState*   Create(void* pArg);
+	static	CPlayer_BattleWalkEndState*   Create(void* pArg);
 	virtual	void					Free() override;
 
 };

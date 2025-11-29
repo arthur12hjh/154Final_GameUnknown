@@ -1,25 +1,23 @@
 #include "pch.h"
-#include "Player_WalkEndState.h"
+#include "Player_BattleWalkEndState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_WalkEndState::CPlayer_WalkEndState()
+CPlayer_BattleWalkEndState::CPlayer_BattleWalkEndState()
     : CPlayerState{}
 {
 }
 
-void CPlayer_WalkEndState::Start(void* pArg)
+void CPlayer_BattleWalkEndState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::WALK_END;
 
     m_pPlayer->Set_Animation("Proto_Battle_Run_End", false);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_WalkEndState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
 {
-    __super::Update(fTimeDelta);
-
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
@@ -51,16 +49,16 @@ PLAYER_TRANSITION_DESC CPlayer_WalkEndState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_WalkEndState::End()
+void CPlayer_BattleWalkEndState::End()
 {
 }
 
-CPlayer_WalkEndState* CPlayer_WalkEndState::Create(void* pArg)
+CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)
 {
-    return new CPlayer_WalkEndState();
+    return new CPlayer_BattleWalkEndState();
 }
 
-void CPlayer_WalkEndState::Free()
+void CPlayer_BattleWalkEndState::Free()
 {
     __super::Free();
 }

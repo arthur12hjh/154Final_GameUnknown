@@ -3,6 +3,7 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DiffuseTexture[1];
+texture2D g_ORMTexture;
 texture2D g_MaskTexture;
 
 
@@ -71,7 +72,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vSourDiffuse = g_DiffuseTexture[0].Sample(DefaultSampler, In.vTexcoord * 10.f);
+    vector vSourDiffuse = g_DiffuseTexture[0].Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 10.f);
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -79,7 +80,7 @@ PS_OUT PS_MAIN(PS_IN In)
     const float fTexelSize = 512.f;
     vMaskUV.x = In.vWorldPos.x / fTexelSize;
     vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
-    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
+    float fMaskValue = g_MaskTexture.SampleLevel(AnisoTropy_BLUR_Sampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
     
     if (fMaskValue > 0.01f)
         Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
@@ -90,6 +91,8 @@ PS_OUT PS_MAIN(PS_IN In)
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vORM = g_ORMTexture.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord);
+    
     return Out;
 }
 
