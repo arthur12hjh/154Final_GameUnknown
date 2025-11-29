@@ -240,14 +240,14 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
-	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
-	WeaponDesc.pParentTransform = m_pTransformCom;
-	
-	/* Part_Weapon */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-		TEXT("Part_Weapon"), &WeaponDesc)))
-		return E_FAIL;
+	//CWeapon::WEAPON_DESC	WeaponDesc{};
+	//WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	//WeaponDesc.pParentTransform = m_pTransformCom;
+	//
+	///* Part_Weapon */
+	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+	//	TEXT("Part_Weapon"), &WeaponDesc)))
+	//	return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;

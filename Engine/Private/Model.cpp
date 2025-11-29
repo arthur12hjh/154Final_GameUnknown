@@ -639,6 +639,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
             COMPUTE_BONEMATRIX_OUT* pOut =
                 reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
+            // 무조건 최적화
             for (_uint i = 0; i < iNumBones; ++i)
             {
                 m_Bones[i]->Set_TransformationMatrix(

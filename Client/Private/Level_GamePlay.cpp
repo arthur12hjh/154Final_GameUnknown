@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "Level_Loading.h"
 
 #include "Actor.h"
 #include "Nayitba.h"
@@ -65,6 +66,7 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
 }
 
 HRESULT CLevel_GamePlay::Render()
