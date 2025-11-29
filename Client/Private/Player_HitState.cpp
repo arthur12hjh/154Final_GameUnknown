@@ -18,8 +18,6 @@ void CPlayer_HitState::Start(void* pArg)
 
 PLAYER_TRANSITION_DESC CPlayer_HitState::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 

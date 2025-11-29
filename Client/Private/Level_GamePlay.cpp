@@ -87,16 +87,16 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-//	LIGHT_DESC			LightDesc{};
-//
-//	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-//	LightDesc.vDiffuse = _float4(6.f, 6.f, 6.f, 1.f);
-//	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-//
-//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-//	return E_FAIL;
+	//LIGHT_DESC			LightDesc{};
+
+	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	//	return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
@@ -272,7 +272,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	Desc.iMonsterID = 2;
+	/*Desc.iMonsterID = 2;
 	Desc.vPosition = { 42.f, 1.f, 12.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
@@ -288,13 +288,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.vPosition = { 21.f, 1.f, 25.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	Desc.iMonsterID = 5;
-	Desc.vPosition = { 35.f, 1.f, 31.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 5;
+	//Desc.vPosition = { 35.f, 1.f, 31.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))

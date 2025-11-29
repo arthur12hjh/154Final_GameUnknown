@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "Player_EvadeState.h"
+#include "Player_BattleEvadeState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_EvadeState::CPlayer_EvadeState()
+CPlayer_BattleEvadeState::CPlayer_BattleEvadeState()
 	: CPlayerState {}
 {
 }
 
-void CPlayer_EvadeState::Start(void* pArg)
+void CPlayer_BattleEvadeState::Start(void* pArg)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
@@ -49,10 +49,8 @@ void CPlayer_EvadeState::Start(void* pArg)
 	}
 }
 
-PLAYER_TRANSITION_DESC CPlayer_EvadeState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
@@ -72,22 +70,22 @@ PLAYER_TRANSITION_DESC CPlayer_EvadeState::Update(_float fTimeDelta)
 		m_tNextState.pArg = &m_NextStateDesc;
 	}
 
-	else if (true == isAnimFinished)
+	else if (fAnimationRatio >= 0.5f)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
 	return m_tNextState;
 }
 
-void CPlayer_EvadeState::End()
+void CPlayer_BattleEvadeState::End()
 {
 }
 
-CPlayer_EvadeState* CPlayer_EvadeState::Create(void* pArg)
+CPlayer_BattleEvadeState* CPlayer_BattleEvadeState::Create(void* pArg)
 {
-	return new CPlayer_EvadeState();
+	return new CPlayer_BattleEvadeState();
 }
 
-void CPlayer_EvadeState::Free()
+void CPlayer_BattleEvadeState::Free()
 {
 	__super::Free();
 }

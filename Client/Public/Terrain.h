@@ -34,8 +34,10 @@ private:
 	CNavigation*		m_pNavigationCom = { nullptr };
 	CTexture*			m_pTextureCom = { nullptr };
 	CTexture*			m_pMaskCom = { nullptr };
+	CTexture*			m_pORMTextureCom = { nullptr };
 	CShader*			m_pShaderCom = { nullptr };
 	
+	_bool				m_isORM = { false }; 
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

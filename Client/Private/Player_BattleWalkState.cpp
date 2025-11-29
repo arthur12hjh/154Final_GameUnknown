@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "Player_WalkState.h"
+#include "Player_BattleWalkState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_WalkState::CPlayer_WalkState(_bool isLanding, _bool isEvading)
+CPlayer_BattleWalkState::CPlayer_BattleWalkState(_bool isLanding, _bool isEvading)
     : CPlayerState{}
     , m_isLanding { isLanding }
     , m_isEvading { isEvading }
 {
 }
 
-void CPlayer_WalkState::Start(void* pArg)
+void CPlayer_BattleWalkState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::WALK;
 
@@ -24,14 +24,15 @@ void CPlayer_WalkState::Start(void* pArg)
         m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.3f);
     }
     else if (true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Jump_Run", false, 1.2f, 0.3f);
+        m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.3f);
     else
         m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
 {
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
+    _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
     _vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
     _bool isWalking = { false };
@@ -95,9 +96,9 @@ PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
         m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
     }
      
-    if ((true == m_isRunStart || true == m_isChangingDir) && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
+    if ((true == m_isRunStart || true == m_isChangingDir) && fAnimationRatio >= 0.7f) //|| (true == m_isChangingDir && fDot <= 5.f))
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.2f, false);
         m_isRunStart = false;
         m_isChangingDir = false;
     }
@@ -122,26 +123,26 @@ PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_WalkState::End()
+void CPlayer_BattleWalkState::End()
 {
 }
 
-CPlayer_WalkState* CPlayer_WalkState::Create(void* pArg)
+CPlayer_BattleWalkState* CPlayer_BattleWalkState::Create(void* pArg)
 {
     _bool isLanding = { false };
     _bool isEvade = { false };
 
     if (nullptr != pArg)
     {
-        PLAYER_WALK_DESC* pDesc = static_cast<PLAYER_WALK_DESC*>(pArg);
+        PLAYER_BATTLEWALK_DESC* pDesc = static_cast<PLAYER_BATTLEWALK_DESC*>(pArg);
         isEvade = pDesc->isEvade;
         isLanding = pDesc->isLand;
     }
 
-    return new CPlayer_WalkState(isLanding, isEvade);
+    return new CPlayer_BattleWalkState(isLanding, isEvade);
 }
 
-void CPlayer_WalkState::Free()
+void CPlayer_BattleWalkState::Free()
 {
     __super::Free();
 }

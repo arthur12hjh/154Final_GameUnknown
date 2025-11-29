@@ -21,8 +21,6 @@ void CPlayer_BetaChargingSlahsState::Start(void* pArg)
 
 PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 {
-    __super::Update(fTimeDelta);
-
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 

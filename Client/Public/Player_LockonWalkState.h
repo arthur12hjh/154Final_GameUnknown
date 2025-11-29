@@ -6,6 +6,8 @@ NS_BEGIN(Client)
 
 class CPlayer_LockonWalkState final : public CPlayerState
 {
+public:
+	enum class DIRECTION { STRAIGHT, LEFT, RIGHT, BACKWARD };
 private:
 	CPlayer_LockonWalkState();
 	virtual ~CPlayer_LockonWalkState() = default;
@@ -16,6 +18,9 @@ public:
 	virtual void			   Start(void* pArg = nullptr) override;
 	virtual PLAYER_TRANSITION_DESC  	   Update(_float fTimeDelta) override;
 	virtual void			   End() override;
+
+private:
+	_bool m_isRunStart = { true };
 
 public:
 	static	CPlayer_LockonWalkState* Create(void* pArg);

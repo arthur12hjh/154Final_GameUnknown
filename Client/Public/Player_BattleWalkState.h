@@ -4,13 +4,13 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_WalkState final : public CPlayerState
+class CPlayer_BattleWalkState final : public CPlayerState
 {
 public:
 	enum class RUN_DIR { STRAIGHT, LEFT, RIGHT, BACKWARD };
 private:
-	CPlayer_WalkState(_bool isLanding = false, _bool isEvading = false);
-	virtual ~CPlayer_WalkState() = default;
+	CPlayer_BattleWalkState(_bool isLanding = false, _bool isEvading = false);
+	virtual ~CPlayer_BattleWalkState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -27,7 +27,7 @@ private:
 	_float	m_fDegree = { 0.f }; 
 
 public:
-	static	CPlayer_WalkState*		Create(void* pArg);
+	static	CPlayer_BattleWalkState*		Create(void* pArg);
 	virtual	void					Free() override;
 
 };

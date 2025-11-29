@@ -1,16 +1,17 @@
 #include "pch.h"
-
 #include "PlayerLockonFSM.h"
+
+#include "Player.h"
 #include "Player_LockonIdleState.h"
 #include "Player_LockonWalkState.h"
 #include "Player_LockonEvadeState.h"
-#include "Player_WalkEndState.h"
+#include "Player_BattleWalkEndState.h"
 #include "Player_JumpState.h"
 #include "Player_LightAttackState.h"
 #include "Player_HitState.h"
 #include "Player_VendingInteractionState.h"
 #include "Player_BetaChargingSlahsState.h"
-#include "Player_LandingState.h"
+#include "Player_BattleLandingState.h"
 
 CPlayerLockonFSM::CPlayerLockonFSM()
 	: CPlayerFSM {}
@@ -28,6 +29,12 @@ HRESULT CPlayerLockonFSM::Initialize(void* pArg)
 void CPlayerLockonFSM::Update(_float fTimeDelta)
 {
 	PLAYER_TRANSITION_DESC tState = m_pCurrentState->Update(fTimeDelta);
+
+	if (true == tState.isChangeMode)
+	{
+		m_pPlayer->Change_PlayerMode(tState.eMode, tState.eNextState);
+		return;
+	}
 
 	if (PLAYER_STATE::STATE_END != tState.eNextState)
 	{
@@ -69,7 +76,7 @@ CPlayerState* CPlayerLockonFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 	case PLAYER_STATE::WALK: return CPlayer_LockonWalkState::Create(tTransitionDesc.pArg);
 
 	//락온 walk end
-	case PLAYER_STATE::WALK_END: return CPlayer_WalkEndState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::WALK_END: return CPlayer_BattleWalkEndState::Create(tTransitionDesc.pArg);
 
 	case PLAYER_STATE::JUMP: return CPlayer_JumpState::Create(tTransitionDesc.pArg);
 
@@ -78,7 +85,7 @@ CPlayerState* CPlayerLockonFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 	//락온 evade
 	case PLAYER_STATE::EVADE: return CPlayer_LockonEvadeState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::LANDING:  return CPlayer_LandingState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::LANDING:  return CPlayer_BattleLandingState::Create(tTransitionDesc.pArg);
 
 	case PLAYER_STATE::VENDING_INTERACTION: return CPlayer_VendingInteractionState::Create(tTransitionDesc.pArg);
 

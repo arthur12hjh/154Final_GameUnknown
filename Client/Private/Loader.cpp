@@ -468,6 +468,12 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_ORM");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/005_A_TAoRM.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Texture_Terrain_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Mask");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1);
