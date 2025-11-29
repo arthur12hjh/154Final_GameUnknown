@@ -301,6 +301,10 @@ HRESULT CPlayer::Ready_PartObjects()
 
 HRESULT CPlayer::Ready_PlayerDesc()
 {
+	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxShield = 100;
+	m_PlayerDesc.iMaxBetaEnergy = 20;
+
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
@@ -310,7 +314,11 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
-	m_PlayerDesc.iCurrentBetaEnergy = 100;
+	m_PlayerDesc.iCurrentBetaEnergy = 20;
+
+	m_PlayerDesc.iCurrentPotions = 3;
+	m_PlayerDesc.iMaxPotions = 3;
+
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
 	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;

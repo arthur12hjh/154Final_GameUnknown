@@ -2,7 +2,6 @@
 
 #include "GUIManager.h"
 #include "GameInstance.h"
-#include "GameManager.h"
 #include "UIResourceStore.h"
 #include "StringHelper.h"
 
@@ -223,6 +222,12 @@ void CGUIManager::Editor_Window()
             Show_UIObject_List();
             GUI::EndTabItem();
         }
+
+        if (GUI::BeginTabItem("Data List"))
+        {
+            Show_DataList();
+            GUI::EndTabItem();
+        }
         GUI::EndTabBar();
     }
 
@@ -272,6 +277,18 @@ void CGUIManager::Show_UIObject_List()
         GUI::PopID();
 
         GUI::PopStyleColor();
+    }
+}
+
+void CGUIManager::Show_DataList()
+{
+    if (GUI::TreeNode("Player"))
+    {
+		_float fPlayerHP = 1.f;
+
+        GUI::DragFloat("Player HP", &fPlayerHP, 0.1f, 0.f, 1.f, "%.3f");
+
+		GUI::TreePop();
     }
 }
 

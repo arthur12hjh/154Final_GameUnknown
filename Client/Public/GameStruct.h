@@ -43,6 +43,10 @@ namespace Client
 	};
 	typedef struct Player_Desc
 	{
+		long long				iMaxHealth;
+		long long				iMaxShield;
+		long long				iMaxBetaEnergy;
+
 		long long				iCurrentHealth;
 		long long				iCurrentShield;
 		long long				iCurrentBetaEnergy;
@@ -53,6 +57,9 @@ namespace Client
 		float					fCurrentCTPercent;
 		float					fCurrentCTDamage;
 		float					fCurrentLinkApplyDamage;
+
+		int						iCurrentPotions; // 현재 소지한 포션 개수
+		int						iMaxPotions; // 전체 포션 개수
 
 		//플레이어의 전투 상태. battle, idle, lockon
 		PLAYER_MODE				ePlayerMode;
