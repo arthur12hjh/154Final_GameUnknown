@@ -47,7 +47,7 @@ private:
 
 
 	HRESULT Loading_For_Desert();
-	HRESULT Loading_For_Desert_Building_Ruin(void *pArg);
+	HRESULT Loading_For_Desert_Building_Ruin();
 
 
 

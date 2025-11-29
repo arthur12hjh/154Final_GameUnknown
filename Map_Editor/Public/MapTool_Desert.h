@@ -19,11 +19,14 @@ NS_BEGIN(Tool_Map)
 
 class CMapTool_Desert final : public CBase
 {
+#pragma pack(push, 1)
 	typedef struct SavedObjectInfo
 	{
 		_float4x4	    worldMatrix;
 		_tchar			szComponentTag[256];
 	}SAVEDOBJECTINFO;
+
+#pragma pack(pop)
 
 	typedef struct tagModelInstanceLoadDesc
 	{

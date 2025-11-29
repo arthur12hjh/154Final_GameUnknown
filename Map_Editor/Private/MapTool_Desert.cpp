@@ -908,7 +908,7 @@ HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar*
 				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
 
 				const _tchar* pTag = pBuildingRuin->Get_ComponentTag();
-				lstrcpynW(info.szComponentTag, pTag, 256);
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
 
 				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDOBJECTINFO));
 			}
@@ -926,7 +926,7 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
 		return E_FAIL;
 	}
-	
+
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 
 	ifs.close();

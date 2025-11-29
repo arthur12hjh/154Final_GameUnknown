@@ -34,7 +34,6 @@ HRESULT CLevel_Desert::Initialize()
 	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
 	if (pManager->Get_MapTool_Desert() == nullptr) // MapTool이 아직 생성되지 않았다면
 	{
-		// Manager에 MapTool 객체를 생성하고 초기화하도록 요청합니다.
 		if (FAILED(pManager->Create_MapTool_For_Desert(m_pDevice, m_pContext)))
 			return E_FAIL;
 	}

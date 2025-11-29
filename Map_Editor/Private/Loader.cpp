@@ -123,8 +123,8 @@ HRESULT CLoader::Loading()
 		hr = Loading_For_Logo();
 		break;
 	case LEVEL::DESERT:
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
 		hr = Loading_For_Desert();
+		hr = Loading_For_Desert_Building_Ruin();
 		break;
 	case LEVEL::VILLAGE:
 		hr = Loading_For_Village();
@@ -956,357 +956,258 @@ HRESULT CLoader::Loading_For_Desert()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_For_Desert_Building_Ruin(void* pArg)
+HRESULT CLoader::Loading_For_Desert_Building_Ruin()
 {
-	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
-
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
-	/* For.Prototype_Component_Model_Door_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_C */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_C.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_C.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_D */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_D.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_D"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_D.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_E */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_E.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_E"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_E.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_G */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_G");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_G.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_G"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_G.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_H */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_H");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_H.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_H"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_H.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_I */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_I");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_I.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_I"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_I.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_J */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_J");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_J.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_J"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_J.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_N */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_N");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_N.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_N"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_N.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_P */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_P");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_P.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_P"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_P.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Door_R */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_R");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_R.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Door_R"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Door_R.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_C */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_C.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_C.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_D */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_D.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_D"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_D.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_E */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_E.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_E"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_E.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_F */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_F.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_F"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_F.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_G */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_G");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_G.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_G"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_G.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Floor_H */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor_H");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_H.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Floor_H"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Floor_H.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Frame_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Frame_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Frame_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Frame_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Frame_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Frame_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Frame_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Frame_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Frame_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Frame_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_C */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_C.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_C.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_D */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_D.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_D"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_D.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_Building_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_Building_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_Building_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_Building_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_Building_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_Building_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Ruin_Building_C */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Ruin_Building_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_C.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Ruin_Building_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Ruin_Building_C.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Stone009_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone009_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Stone009_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Stone009_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Stone009_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Stone009_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone009_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Stone009_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Stone009_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Stone009_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
-	///* For.Prototype_Component_Model_Wall_A */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_A");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_A.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall_A */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_A.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall_B */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_B");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_B.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall_B */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_B.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall_C */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_C");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_C.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall_C */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_C.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall_D */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_D");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_D.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall_D */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_D"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_D.binx", PreTransformMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Wall_D_1 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_D_1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_D_1.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_D_1"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_D_1.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall_E */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_E.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_E"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_E.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall_F */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_F.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_F"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_F.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall_G */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_G");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_G.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_G"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_G.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall_H */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_H");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_H.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_H"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_H.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall_I */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall_I");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_I.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall_I"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall_I.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall007_A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_A"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_A.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall007_B */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_B.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_B"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_B.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Wall007_C */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_C.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_C"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_C.binx", PreTransformMatrix))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Model_Wall007_D */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_D");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_D.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_D"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_D.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall007_E */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_E");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_E.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall007_E */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_E"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_E.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall007_F */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_F");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_F.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall007_F */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_F"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_F.binx", PreTransformMatrix))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Model_Wall007_G */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Wall007_G");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_G.binx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_Model_Wall007_G */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Wall007_G"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Building_Ruin/Wall007_G.binx", PreTransformMatrix))))
+		return E_FAIL;
 
 
 	/* For.Prototype_GameObject_Building_Ruin */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Building_Ruin");
-	pProtoDesc.pPrototype = CBuilding_Ruin::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Building_Ruin"),
+		CBuilding_Ruin::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+
+	m_strMessage = TEXT("로딩이 완료되었습니다..");
+
+	m_isFinished = true;
 
 	return S_OK;
 }

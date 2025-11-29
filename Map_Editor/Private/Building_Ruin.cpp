@@ -29,7 +29,10 @@ HRESULT CBuilding_Ruin::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(nullptr)))
 		return E_FAIL;
 
-	m_ComponentTag = pDesc->pComponentTag;
+	if (pDesc && pDesc->pComponentTag)
+	{
+		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
+	}
 	
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;

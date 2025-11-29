@@ -32,7 +32,8 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
-	const _tchar* m_ComponentTag = {};
+	//const _tchar* m_ComponentTag = {};
+	_tchar m_ComponentTag[256] = {};
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
