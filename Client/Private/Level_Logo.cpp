@@ -51,7 +51,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
-		m_pGameInstance->Clear_LevelResource();
 		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
 		{
 			auto pLayer = pLayers.second;
@@ -62,6 +61,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
+		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
