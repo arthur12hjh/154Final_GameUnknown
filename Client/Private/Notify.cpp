@@ -204,11 +204,6 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	// iNumData3		=>	Hit Box Type
 	// iNumData4		=>	Hit Object Type
 
-	// bIsLocalPos		=>	UseNotifyTransform
-
-	// vNotifyScale		=> Hit Box Size
-	// vNotifyPosition	=> Hit Box Relative Position
-	// vNotifyRotation	=> Hit Box Rotation
 	_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);

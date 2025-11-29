@@ -40,11 +40,11 @@ CBehaviorNode::NODE_STATE CSquenceNode::Update(_float fTimeDelta)
 		if (m_Actions.size() <= m_iIndex)
 		{
 			m_iIndex = 0;
-			NODE_STATE::COMPLETE;
+			return NODE_STATE::COMPLETE;
 		}
 	}
 
-	return NODE_STATE::RUNNING;
+	return NODE_STATE::FAIL;
 }
 
 void CSquenceNode::Bind_BehaviorNode(CBehaviorNode* pNode)

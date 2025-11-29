@@ -2,23 +2,20 @@
 #include "BossBlackBoard.h"
 
 #include "GameManager.h"
+#include "Nayitba.h"
 
 CBossBlackBoard::CBossBlackBoard() : CBlackBoard()
 {
 }
 
-HRESULT CBossBlackBoard::Initialize(_uint iBossID)
+HRESULT CBossBlackBoard::Initialize(void* pArg)
 {
-    //여기서 데이터 찾아오자 일단 기가스 데이터만
-    auto pGameManager = CGameManager::GetInstance();
-    m_BossDefualtInfo = pGameManager->Find_BossData(iBossID);
+    BOSS_BLACKBOARD_DESC* pDesc = static_cast<BOSS_BLACKBOARD_DESC*>(pArg);
+    m_pOwner = pDesc->pOwner;
 
-    //for (auto& iter : m_BossDefualtInfo->iAttackList)
-    //    m_BossCurrentInfo.iAttackList.push_back(pGameManager->Find_SkillData(iter));
-   
-    m_BossCurrentInfo.iCurrentHealth = m_BossDefualtInfo->iMaxHealth;
-    m_BossCurrentInfo.iCurrentShield = m_BossDefualtInfo->iMaxShield;
-    m_BossCurrentInfo.iCurrentPhase = 1;
+    auto pOwner = static_cast<CNayitba*>(m_pOwner);
+    m_BossDefualtInfo = pOwner->GetStaticMonsterData();
+    m_BossCurrentInfo = &pOwner->GetMonsterData();
 
     return S_OK;
 }

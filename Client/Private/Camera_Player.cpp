@@ -38,6 +38,9 @@ HRESULT CCamera_Player::Initialize(void* pArg)
 
 void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
+
     m_pTransformCom->LookAt_Lerp(
         m_pPlayerTransform->Get_State(STATE::POSITION) +
         XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::LOOK)) * 1.f +

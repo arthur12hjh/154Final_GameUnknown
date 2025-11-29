@@ -20,6 +20,9 @@ HRESULT CBehaviorTree::Initialize_Prototype()
 
 HRESULT CBehaviorTree::Initialize(void* pArg)
 {
+    BEHAVIORTREE_DESC* pDesc = static_cast<BEHAVIORTREE_DESC*>(pArg);
+    m_pOwner = pDesc->pOwner;
+
     return S_OK;
 }
 

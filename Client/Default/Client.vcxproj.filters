@@ -430,9 +430,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
       <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
       <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
     </Filter>
@@ -561,6 +558,12 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
       <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
+      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1149,6 +1152,9 @@
     <ClInclude Include="..\Public\Player_IdleLandingState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Deco_CheckAlive.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1716,6 +1722,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIHPFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_CheckAlive.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -51,6 +51,9 @@ HRESULT CBossController::Render()
 
 void CBossController::Damage(void* pArg)
 {
+    
+
+
 }
 
 void CBossController::ActionSuccess(void* pArg)
@@ -59,12 +62,14 @@ void CBossController::ActionSuccess(void* pArg)
 
 HRESULT CBossController::Ready_Behavior(const BOSS_CONTROLLER_DESC& pDesc)
 {
-    auto pClone = m_pGameInstance->Clone_Prototype(PROTOTYPE::COMPONENT, ENUM_CLASS(LEVEL::GAMEPLAY), pDesc.szBehaviorProtoType);
+    CBehaviorTree::BEHAVIORTREE_DESC Desc = {};
+    Desc.pOwner = m_pParent;
+
+    auto pClone = m_pGameInstance->Clone_Prototype(PROTOTYPE::COMPONENT, ENUM_CLASS(LEVEL::GAMEPLAY), pDesc.szBehaviorProtoType, &Desc);
     if (nullptr == pClone)
         return E_FAIL;
 
     m_pBehaviorTree = static_cast<CBehaviorTree*>(pClone);
-    m_pBehaviorTree->SetOwner(m_pParent);
     return S_OK;
 }
 
