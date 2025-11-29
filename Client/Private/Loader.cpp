@@ -265,7 +265,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
 	
 
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Eve_head_nonAnimTest/CH_P_EVE_Face_nonAnimTest.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
@@ -526,7 +526,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_Weapon */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
