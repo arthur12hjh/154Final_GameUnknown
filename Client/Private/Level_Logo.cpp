@@ -51,6 +51,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 	if (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
+		m_pGameInstance->Clear_LevelResource();
 		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
 		{
 			auto pLayer = pLayers.second;

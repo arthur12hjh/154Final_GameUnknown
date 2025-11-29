@@ -6,12 +6,6 @@
 NS_BEGIN(Engine)
 class ENGINE_DLL CAIController abstract : public CGameObject
 {
-public :
-	typedef struct AI_ControllerDesc
-	{
-		CGameObject*				pOwner;
-	}AI_CONTROLLER_DESC;
-
 protected:
 	CAIController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CAIController(const CAIController& Prototype);
@@ -28,9 +22,6 @@ public:
 	virtual HRESULT					Render() override;
 	virtual void					Damage(void* pArg) = 0;
 	virtual void					ActionSuccess(void* pArg) = 0;
-
-protected :
-	CGameObject*					m_pOwner = { nullptr };
 
 public:
 	virtual CGameObject*			Clone(void* pArg) override;
