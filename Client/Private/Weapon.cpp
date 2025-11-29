@@ -34,7 +34,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 		return E_FAIL;
 
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
-	//m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(180.f), XMConvertToRadians(90.f));
+	m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(180.f), XMConvertToRadians(90.f));
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
 
