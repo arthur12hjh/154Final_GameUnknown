@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "MonsterAttackState.h"
 
-#include "MonsterStateMimesis.h"
 #include "GameInstance.h"
-
-#include "AttackHitBox.h"
+#include "MonsterStateMimesis.h"
 #include "Nayitba.h"
 
 CMonsterAttackState::CMonsterAttackState() :
@@ -56,7 +54,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	}
 
 	GaraSetting();
-	GaraHitBox();
+	//GaraHitBox();
 
 	m_bIsEnableChange = false;
 	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);
@@ -138,40 +136,40 @@ void CMonsterAttackState::GaraSetting()
 	}
 }
 
-void CMonsterAttackState::GaraHitBox()
-{
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
-	auto pOwnerInfo = &pEntity->GetMonsterData();
-
-	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-	// 충돌 충돌 충돌
-	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
-
-	// 이걸로 트랜스폼 바꿀지 말지 결정해서 True 면 초기세팅들어가고
-	// false 면 초기세팅 안들어갑니다.
-	HitBoxDesc.bIsApplyTransform = true;
-
-	// 위치 바꾸기
-	XMStoreFloat3(&HitBoxDesc.vPosition, vOwnerPos + vOwnerLook * (pOwnerInfo->fAttackRange * 0.5f));
-
-	// 크기 바꾸기
-	HitBoxDesc.vScale = { 2.f , 2.f, 2.f };
-
-	// 넘길 데이터 구조체
-	HitBoxDesc.pData = static_cast<const void*>(m_pSkillData);
-
-	// 공격자
-	HitBoxDesc.pAttacker = m_pOwner;
-
-	// 생성될 히트박스의 콜리전 모양
-	HitBoxDesc.eColType = COLLIDER::AABB;
-
-	HitBoxDesc.eHitBoxType = HIT_TYPE::MONSTER;
-	HitBoxDesc.eHitObjectType = HIT_TYPE::PLAYER;
-	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Hit_Box_Layer"), &HitBoxDesc);
-}
+//void CMonsterAttackState::GaraHitBox()
+//{
+//	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+//	auto pOwnerInfo = &pEntity->GetMonsterData();
+//
+//	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+//	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+//	// 충돌 충돌 충돌
+//	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
+//
+//	// 이걸로 트랜스폼 바꿀지 말지 결정해서 True 면 초기세팅들어가고
+//	// false 면 초기세팅 안들어갑니다.
+//	HitBoxDesc.bIsApplyTransform = true;
+//
+//	// 위치 바꾸기
+//	XMStoreFloat3(&HitBoxDesc.vPosition, vOwnerPos + vOwnerLook * (pOwnerInfo->fAttackRange * 0.5f));
+//
+//	// 크기 바꾸기
+//	HitBoxDesc.vScale = { 2.f , 2.f, 2.f };
+//
+//	// 넘길 데이터 구조체
+//	HitBoxDesc.pData = static_cast<const void*>(m_pSkillData);
+//
+//	// 공격자
+//	HitBoxDesc.pAttacker = m_pOwner;
+//
+//	// 생성될 히트박스의 콜리전 모양
+//	HitBoxDesc.eColType = COLLIDER::AABB;
+//
+//	HitBoxDesc.eHitBoxType = HIT_TYPE::MONSTER;
+//	HitBoxDesc.eHitObjectType = HIT_TYPE::PLAYER;
+//	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Hit_Box_Layer"), &HitBoxDesc);
+//}
 
 void CMonsterAttackState::BeholderGara(_float fTimeDelta)
 {
@@ -287,7 +285,7 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 			bMoveAction = true;
 		}
 		// 100 ~ 130 프레임 이동
-		else if(0.15f >= fAnimPlayRatio)
+		else if(0.25f >= fAnimPlayRatio)
 		{
 			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));
@@ -381,7 +379,7 @@ void CMonsterAttackState::StatueBGara(_float fTimeDelta)
 	{
 		// 기습 공격
 		// 65 ~ 120
-		if (0.13f >= fAnimPlayRatio)
+		if (0.25f >= fAnimPlayRatio)
 		{
 			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));

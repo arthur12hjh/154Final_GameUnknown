@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\MonsterMimesisController.h" />
     <ClInclude Include="..\Public\MonsterMoveState.h" />
     <ClInclude Include="..\Public\MonsterStateMimesis.h" />
+    <ClInclude Include="..\public\MonsterSuccessActionState.h" />
     <ClInclude Include="..\public\MonsterTranslationState.h" />
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
@@ -361,6 +362,7 @@
     <ClCompile Include="..\Private\MonsterMimesisController.cpp" />
     <ClCompile Include="..\Private\MonsterMoveState.cpp" />
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp" />
+    <ClCompile Include="..\private\MonsterSuccessActionState.cpp" />
     <ClCompile Include="..\private\MonsterTranslationState.cpp" />
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />

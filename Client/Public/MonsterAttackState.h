@@ -30,6 +30,8 @@ public:
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
 
+	const Character_Skill_Desc*					GetSkillData() { return m_pSkillData; }
+
 private :
 	const Naytiba_NetWork_Desc*					m_StaticMonsterData = { nullptr };
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };
@@ -41,11 +43,12 @@ private :
 
 	_float3										m_vMoveDir = {};
 	_float										m_fMoveSpeed = {};
+
 	function<void(_float)>						m_AttackCompletedFunc;
 
 private :
 	void										GaraSetting();
-	void										GaraHitBox();
+	//void										GaraHitBox();
 
 	void										BeholderGara(_float fTimeDelta);
 	void										StatueAGara(_float fTimeDelta);

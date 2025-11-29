@@ -16,6 +16,7 @@
 #include "MonsterDeadState.h"
 #include "MonsterStateMimesis.h"
 #include "MonsterTranslationState.h"
+#include "MonsterSuccessActionState.h"
 #pragma endregion
 
 #include "MonsterFSM.h"
@@ -108,21 +109,41 @@ HRESULT CMonsterMimesisController::Render()
 
 void CMonsterMimesisController::Damage(void* pArg)
 {
+	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	auto pAttackState = dynamic_cast<CMonsterAttackState*>(m_pFSM->GetCurrentState());
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
 		// 이거 죽는모션 나옴 죽으면 
 		// 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
+		m_pFSM->Change_State(TEXT("Dead"), pArg, true);
 		m_bIsDead = true;
-		m_pFSM->Change_State(TEXT("Dead"), pArg);
 	}
 	else
 	{
 		// 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
 		// 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
-		m_pFSM->Change_State(TEXT("Hit"), pArg);
-		m_bIsMimesis = false;
+		_bool bIsHitAble = true;
+		if (pAttackState)
+		{
+			// 나중에 여러 속성 추가할 예정
+			CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+			if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
+			{
+				if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+				{
+					bIsHitAble = false;
+				}
+			}
+		}
+
+		if (bIsHitAble)
+			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
 	}
-	
+}
+
+void CMonsterMimesisController::ActionSuccess(void* pArg)
+{
+	m_pFSM->Change_State(TEXT("ActionSuccess"), pArg, true);
 }
 
 HRESULT CMonsterMimesisController::Ready_Components()
@@ -174,6 +195,9 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 		return E_FAIL;
 
 	if (FAILED(m_pFSM->Add_State(TEXT("Translation"), CMonsterTranslationState::Create(&Desc))))
+		return E_FAIL;
+
+	if (FAILED(m_pFSM->Add_State(TEXT("ActionSuccess"), CMonsterSuccessActionState::Create(&Desc))))
 		return E_FAIL;
 
 	m_pFSM->Change_State(TEXT("Mimesis"));

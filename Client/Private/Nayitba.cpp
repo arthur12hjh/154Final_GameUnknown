@@ -11,6 +11,7 @@
 #include "BossController.h"
 #include "MonsterHitState.h"
 
+#include "Notify.h"
 #include "GameManager.h"
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
@@ -39,6 +40,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	NAYITBA_DESC* pDesc = static_cast<NAYITBA_DESC*>(pArg);
 	m_iMonsterID = pDesc->iMonsterID;
 
+	m_SkillCandidates.reserve(30);
 	if (FAILED(Ready_CharacterData()))
 		return E_FAIL;
 
@@ -47,6 +49,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -61,77 +64,8 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
-	{
-		m_fMotionRatio -= 1.0f;
-		if (0 >= m_fMotionRatio)
-			m_fMotionRatio = 0.f;
-	}
-	
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
-	{
-		m_fMotionRatio += 1.0f;
-		if (1 <= m_fMotionRatio)
-			m_fMotionRatio = 10.f;
-	}
+	__super::Update(fTimeDelta);
 
-#pragma region Hit
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGDN))
-	//{
-	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
-	//	CHARACTER_SKILL_DESC SkillDesc = {};
-	//	strcpy_s(SkillDesc.szAnimationName, "");
-
-	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
-	//	DamageDesc.vHitDir = { 0.f, -1.f, 0.f };
-	//	//SkillDesc.iSkillDamage = 10.f;
-	//	DamageDesc.pSkillData = &SkillDesc;
-
-	//	Damaged(&DamageDesc);
-	//	Safe_Release(DamageDesc.pAttacker);
-	//}
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PGUP))
-	//{
-	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
-	//	CHARACTER_SKILL_DESC SkillDesc = {};
-	//	//SkillDesc.iSkillDamage = 10.f;
-	//	strcpy_s(SkillDesc.szAnimationName, "");
-
-	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
-	//	DamageDesc.vHitDir = { 0.f, 1.f, 0.f };
-	//	DamageDesc.pSkillData = &SkillDesc;
-
-	//	Damaged(&DamageDesc);
-	//	Safe_Release(DamageDesc.pAttacker);
-	//}
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
-	//{
-	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
-	//	CHARACTER_SKILL_DESC SkillDesc = {};
-	//	//SkillDesc.iSkillDamage = 10.f;
-	//	strcpy_s(SkillDesc.szAnimationName, "");
-
-	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
-	//	DamageDesc.vHitDir = { 1.f, 0.f, 0.f };
-	//	DamageDesc.pSkillData = &SkillDesc;
-
-	//	Damaged(&DamageDesc);
-	//	Safe_Release(DamageDesc.pAttacker);
-	//}
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	//{
-	//	DEFAULT_DAMAGE_DESC DamageDesc = {};
-	//	CHARACTER_SKILL_DESC SkillDesc = {};
-	//	//SkillDesc.iSkillDamage = 50.f;
-	//	strcpy_s(SkillDesc.szAnimationName, "");
-
-	//	DamageDesc.pAttacker = m_pGameManager->GetGameCharacter();
-	//	DamageDesc.vHitDir = { -1.f, 0.f, 0.f };
-	//	DamageDesc.pSkillData = &SkillDesc;
-	//	Damaged(&DamageDesc);
-	//	Safe_Release(DamageDesc.pAttacker);
-	//}
-#pragma endregion
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
@@ -145,7 +79,7 @@ void CNayitba::Update(_float fTimeDelta)
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
 
-	__super::Update(fTimeDelta);
+	
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
@@ -176,9 +110,19 @@ HRESULT CNayitba::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
+	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
+
 	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
+
+	return S_OK;
+}
+
+HRESULT CNayitba::ActionSuccess(void* pArg)
+{
+	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
 }
@@ -204,21 +148,20 @@ const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSki
 const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_uint iTypeIndex, _bool bIsRandom)
 {
 	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
-	size_t iSkillIndex = m_MonsterInfo.iAttackList[iTypeIndex].size();
-	if (0 == iSkillIndex)
+	if (0 == m_iNumCandidate)
 		return nullptr;
 
 	if (bIsRandom)
 	{
-		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)iSkillIndex);
-		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][iRandomIndex];
+		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)m_iNumCandidate);
+		pSkill = m_SkillCandidates[iRandomIndex];
 	}
 	else
 	{
-		if (iSkillIndex <= m_iSkillIndex)
+		if (m_iNumCandidate <= m_iSkillIndex)
 			m_iSkillIndex = 0;
 
-		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][m_iSkillIndex];
+		pSkill = m_SkillCandidates[m_iSkillIndex];
 		m_iSkillIndex++;
 	}
 
@@ -268,6 +211,14 @@ HRESULT CNayitba::Ready_CharacterData()
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
 		m_eTeam = OBJECT_TEAM::ENEMY;
+
+		_uint iEndIndex = ENUM_CLASS(SKILL_TYPE::INTERACTION_SKILL);
+		for (_uint i = 0; i <= iEndIndex; ++i)
+		{
+			for (auto& iter : m_MonsterInfo.iAttackList[i])
+				m_SkillCandidates.push_back(iter);
+		}
+		m_iNumCandidate = m_SkillCandidates.size();
 	}
 
 	return S_OK;
@@ -343,10 +294,9 @@ HRESULT CNayitba::ADD_Components()
 		return E_FAIL;
 
 	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
-
 	m_pAIController = static_cast<CAIController*>(pInstnace);
 
-
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 	return S_OK;
 }
 

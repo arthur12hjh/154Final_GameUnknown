@@ -13,10 +13,11 @@ private:
 	virtual ~CLevel_Manager() = default;
 
 public:
+	HRESULT				Clear_LevelResource();
 	HRESULT				Change_Level(class CLevel* pNewLevel);
 	void				Update(_float fTimeDelta);
 	HRESULT				Render();
-
+	
 	_uint				GetCurrentLevelID();
 	CLevel*				GetCurrentLevel();
 

@@ -225,12 +225,11 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	pHitBoxDesc.pAttacker = m_pCharacter;
 
 	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+	pHitBoxDesc.fImpactForce = m_pCharacter->Get_ImpactForce();
 	pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
 
-	_vector vCharacterPosition = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);
 	_vector vCharacterLook = m_pCharacter->GetTransform()->Get_State(STATE::LOOK);
-	vCharacterLook = vCharacterLook * pSkillData->fRange;
-	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPosition);
+	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterLook * pSkillData->fRange);
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
 		ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))

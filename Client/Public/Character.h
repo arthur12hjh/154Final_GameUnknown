@@ -32,12 +32,18 @@ public:
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);
 	void							DetachedMatrix();
 
+	// 데미지 함수
 	virtual HRESULT					Damaged(void* pArg) { return S_OK; }
+	virtual HRESULT					ActionSuccess(void* pArg) { return S_OK; }
 
 	void							Set_Position(_vector vPosition);
 	CModel*							Get_BodyModelCom() { return m_pBodyModelCom; }
 
+	_float							Get_ImpactForce();
+	void							Set_ImpactForce(_float fImpactForce);
+
 	_vector							Get_Position();
+
 	const _float4x4*				Get_WorldMatrixPtr();
 
 protected :
@@ -47,6 +53,8 @@ protected :
 	class CGameManager*				m_pGameManager = { nullptr };
 	class CCollider*				m_pColliderCom = { nullptr };
 	class CNotify*					m_pNotifyCom = { nullptr };
+
+	_float							m_fImpactForce = {};
 	CCharacterController*			m_pCCT = { nullptr };
 
 public:
