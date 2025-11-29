@@ -26,7 +26,8 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	HRESULT Render_Glow();
+
+	_float Get_CurrentFill() const { return m_fCurrentFill; }
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -37,7 +38,15 @@ protected:
 private:
 	CVIBuffer_Rect_Instance* m_pVIBaseBuffer = nullptr;
 
-	_float m_fCurrentFill = 1.0f;   // 현재 값
+	LONGLONG* m_iMaxHp = nullptr;        // 최대 값
+	LONGLONG* m_iCurrentHp = nullptr;        // 최대 값
+
+#ifdef _DEBUG
+	LONGLONG m_Gara = 100;
+	LONGLONG m_MaxGara = 100;
+#endif // DEBUG
+
+	_float m_fCurrentFill = 1.f;   // 현재 값
 	_float m_fTargetFill = 1.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
 

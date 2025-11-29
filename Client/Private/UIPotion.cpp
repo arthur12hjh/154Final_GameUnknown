@@ -28,6 +28,24 @@ HRESULT CUIPotion::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+
+	if (pCharactor)
+	{
+		m_iMaxPotions = const_cast<_int*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxPotions);
+		m_iPotions = const_cast<_int*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentPotions);
+	}
+
+#ifdef _DEBUG
+	else
+	{
+		m_iMaxPotions = &m_MaxGara;
+		m_iPotions = &m_Gara;
+	}
+#endif
+	
+	Safe_Release(pCharactor);
+
 	return S_OK;
 }
 
@@ -40,20 +58,15 @@ void CUIPotion::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (auto pCharactor = CGameManager::GetInstance()->GetGameCharacter())
-	{
-		m_iPotions = (CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentPotions);
-		m_iMaxPotions = (CGameManager::GetInstance()->Get_PlayerDesc()->iMaxPotions);
-		Safe_Release(pCharactor);
-	}
-
+#ifdef _DEBUG
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_iPotions > 0)
-			--m_iPotions;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_iPotions < m_iMaxPotions)
-			++m_iPotions;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iPotions > 0)
+			*m_iPotions -= 1;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iPotions < *m_iMaxPotions)
+			*m_iPotions += 1;
 	}
+#endif
 }
 
 void CUIPotion::Late_Update(_float fTimeDelta)
