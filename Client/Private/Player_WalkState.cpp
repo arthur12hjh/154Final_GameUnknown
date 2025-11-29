@@ -4,9 +4,10 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_WalkState::CPlayer_WalkState(_bool isLanding)
+CPlayer_WalkState::CPlayer_WalkState(_bool isLanding, _bool isEvading)
     : CPlayerState{}
     , m_isLanding { isLanding }
+    , m_isEvading { isEvading }
 {
 }
 
@@ -14,13 +15,18 @@ void CPlayer_WalkState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::WALK;
 
-    //그냥 뛰어
-    if(true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Jump_Run", false , 1.2f);
+    m_isRunStart = true;
+
+    //Jump Run Start로 시작.
+    if (true == m_isEvading)
+    {
+        m_isRunStart = false;
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.3f);
+    }
+    else if (true == m_isLanding)
+        m_pPlayer->Set_Animation("Proto_Jump_Run", false, 1.2f, 0.3f);
     else
         m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
-
-    m_isRunStart = true;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
@@ -89,9 +95,9 @@ PLAYER_TRANSITION_DESC CPlayer_WalkState::Update(_float fTimeDelta)
         m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
     }
      
-    if ((true == m_isRunStart && true == isAnimFinished) || (true == m_isChangingDir && fDot <= 5.f))
+    if ((true == m_isRunStart || true == m_isChangingDir) && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
         m_isRunStart = false;
         m_isChangingDir = false;
     }
@@ -122,12 +128,17 @@ void CPlayer_WalkState::End()
 
 CPlayer_WalkState* CPlayer_WalkState::Create(void* pArg)
 {
-    _bool isLanding = false;
+    _bool isLanding = { false };
+    _bool isEvade = { false };
 
-    if(nullptr != pArg)
-        isLanding = static_cast<_bool*>(pArg);
+    if (nullptr != pArg)
+    {
+        PLAYER_WALK_DESC* pDesc = static_cast<PLAYER_WALK_DESC*>(pArg);
+        isEvade = pDesc->isEvade;
+        isLanding = pDesc->isLand;
+    }
 
-    return new CPlayer_WalkState(isLanding);
+    return new CPlayer_WalkState(isLanding, isEvade);
 }
 
 void CPlayer_WalkState::Free()

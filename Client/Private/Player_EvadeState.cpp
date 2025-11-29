@@ -56,17 +56,21 @@ PLAYER_TRANSITION_DESC CPlayer_EvadeState::Update(_float fTimeDelta)
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-	if(true == m_isBackStep && fAnimationRatio < 0.3f)
+	if(true == m_isBackStep && fAnimationRatio < 0.33f)
 		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.35f);
-	else if(false == m_isBackStep && fAnimationRatio < 0.3f)
+	else if(false == m_isBackStep && fAnimationRatio < 0.33f)
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.35f);
 
-	if(fAnimationRatio >= 0.3f && 
+	if (fAnimationRatio >= 0.35f &&
 		(m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
-		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-		 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
+	{
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
+		m_NextStateDesc.isEvade = true;
+		m_tNextState.pArg = &m_NextStateDesc;
+	}
 
 	else if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;

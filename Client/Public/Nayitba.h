@@ -31,7 +31,9 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	virtual HRESULT					Damaged(void* pArg);
+	 
+	virtual HRESULT					Damaged(void* pArg) override;
+	virtual HRESULT					ActionSuccess(void* pArg) override;
 
 	_uint							GetMonsterID();
 	_float							GetRootMotionRatio() { return m_fMotionRatio; }
@@ -42,11 +44,8 @@ public:
 	//몬스터의 현재 데이터를 반환
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
 	
-	
 	const CHARACTER_SKILL_DESC*		FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*		GetSkillData(_uint iTypeIndex, _bool bIsRandom = true);
-
-
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
@@ -66,12 +65,16 @@ private:
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
-	string							m_szEntryAnim = {};
+	string									m_szEntryAnim = {};
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
-	size_t							m_iSkillIndex = {};
+	size_t									m_iSkillIndex = {};
+
+	size_t									m_iNumCandidate = {};
+	vector<const CHARACTER_SKILL_DESC*>		m_SkillCandidates = {};
 
 private :
 	HRESULT							Ready_CharacterData();
+
 	HRESULT							ADD_Components();
 	HRESULT							ADD_PartObjects();
 

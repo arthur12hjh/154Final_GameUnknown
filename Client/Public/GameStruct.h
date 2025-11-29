@@ -55,31 +55,78 @@ namespace Client
 		float					fCurrentLinkApplyDamage;
 
 		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE     ePlayerMode;
-		class CTransform* pPlayerTransform = { nullptr };
+		PLAYER_MODE				ePlayerMode;
+		class CTransform*		pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
-	enum class ATTACK_DIRECTION { ATK_RIGHT, ATK_LEFT, ATK_DOWN, ATK_UP, END };
-	enum class SKILL_PROPERTY { PARRYABLE, END};
-	enum class SKILL_TYPE { DEFAULT_SKILL, MIMESIS_SKILL, END };
+	// 이건 경우에 따라 사용 할수도 있음
+	enum class ATTACK_DIRECTION
+	{
+		ATK_RIGHT,
+		ATK_LEFT,
+		ATK_DOWN,
+		ATK_UP,
+		END
+	};
+
+	// Skill Type
+	enum class SKILL_TYPE { 
+		DEFAULT_SKILL,			// Default Attack
+		INTERACTION_SKILL,		// Interaction Skill
+		BETA_SKILL,				// Beta Skill
+		ALPHA_SKILL,			// Alpha Skill
+		MIMESIS_SKILL,			// Mimesis Skill
+		END
+	};
+	
+	// enum class 비트 연산 지원안해서 바꿈
+	enum SKILL_PROPERTY : UINT8
+	{
+		// Bit Mask ex 
+		// All Property : 31
+		// Parry & Eavde : 3
+		PARRYABLE		= 0b00000001, // 1  <- 패링가능
+		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
+		BLINKALBE		= 0b00000100, // 4  <- 블링크 가능
+		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
+		EXCUTION		= 0b00010000, // 16 <- 처형
+		END
+	};
+
 	typedef struct Character_Skill_Desc
 	{
-		unsigned int				iSkillID;
+		unsigned int				iSkillID;					// SKILL ID
+		char						szAnimationName[256];		// Play Anim Name
 
-		char						szAnimationName[256];
-		char						szHitAnimationName[256];
+		// Default : None
+		// Anim Able : Anim Name
+		char						szHitAnimationName[256];	// Hit Anim Name
+		char						szLinkBoneName[256];
 
-		long long					iSkillDamage;
+		// SKill Damage
+		long long					iSkillDamage;				// 스킬 데미지
 
-		_float						fRange;
-		_float3						vHitBoxExtents;
+		// Skill Range
+		_float						fRange;						// 스킬 사거리	
 
-		ATTACK_DIRECTION			eATK_Direction;
-		DIRECTION					eDirection;
-		SKILL_TYPE					eSkillType;
-		set<SKILL_PROPERTY>			ProPertyList;
+		// Skill Hit Box Size
+		_float3						vHitBoxExtents;				// 스킬 히트박스 크기
+
+		// Attack Dir
+		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
+
+		// Dir
+		DIRECTION					eDirection;					// 방향 RIGHT LEFT FRONT BACK
+
+		// SKILL TYPE
+		// BeatSKill, AlphaSKill... 
+		SKILL_TYPE					eSkillType;					// 스킬 타입
+
+		// Property
+		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
+		SKILL_PROPERTY				eProPerty;					// 스킬 속성
 	}CHARACTER_SKILL_DESC;
 
 
@@ -107,8 +154,8 @@ namespace Client
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
-
 		_float3				fColliderExtents;
+
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
@@ -149,6 +196,11 @@ namespace Client
 		CGameObject*		pAttacker;
 		_float3				vHitPoint;
 		_float3				vHitDir;
+
+		_float4x4			vHitWorldMatrix;
+		
+		_float3				vImpactDir;
+		_float				fImpactForce;
 
 		void*				pSkillData;
 	}DEFAULT_DAMAGE_DESC;

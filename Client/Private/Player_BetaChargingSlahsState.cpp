@@ -15,7 +15,7 @@ void CPlayer_BetaChargingSlahsState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
-    m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false, 1.2f);
     m_isStartCharge = true;
 }
 
@@ -25,10 +25,10 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
-    //Â÷Â¡ÀÌ ³¡³µ´Ù¸é,
+
     if (true == isAnimFinished && true == m_isStartCharge)
     {
-        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop", true);
+        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop", true, 1.2f);
         m_isLoopCharge = true;
         m_isStartCharge = false;
     }
@@ -39,8 +39,10 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     }
     else if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&  true == m_isLoopCharge)
     {
-        //¾Ö´Ï¸ÞÀÌ¼Ç Àç»ýÇÏ°í °ø°Ý ³ª°¡°Ô Ã³¸®.
-        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false);
+        // ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Ã·ï¿½ ï¿½Ö¾ï¿½Ð°Ì´Ï´ï¿½.
+        m_pPlayer->Set_ImpactForce(10.f * fAnimationRatio);
+        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 1.5f);
+
         m_isLoopCharge = false;
         m_isAttack = true;
     }
@@ -55,7 +57,8 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 
     if (true == m_isAttack && true == isAnimFinished)
     {
-        m_tNextState.eNextState = PLAYER_STATE::WALK;
+        m_pPlayer->Set_ImpactForce(0.f);
+        m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
 
     return m_tNextState;

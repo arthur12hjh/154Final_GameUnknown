@@ -1,12 +1,17 @@
-
 #include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-float4 g_vCamPosition;
 
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;
+Texture2D g_ORMTexture;
+
+//림라이트용 변수
+vector g_vCamPosition;
+float g_fRimLightPower;
+float g_fRimLightStrength;
+float4 g_vRimLightColor;
 
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
@@ -89,10 +94,11 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 vDiffuse : SV_TARGET0;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vRimLight : SV_TARGET3;
+    float4 vDiffuse  : SV_TARGET0;
+    float4 vNormal   : SV_TARGET1;
+    float4 vDepth    : SV_TARGET2;
+    float4 vORM      : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
 };
 
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
@@ -112,8 +118,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    
-    Out.vDiffuse.a = 0.4f;
+    //Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }

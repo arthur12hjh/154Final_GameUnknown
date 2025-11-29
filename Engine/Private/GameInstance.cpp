@@ -347,6 +347,15 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 
 #pragma region LEVEL_MANAGER
 
+HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
+{
+	m_pCameraManager->Clear_Cameras();
+	if (bIsClearPrototypeData)
+		return m_pLevel_Manager->Clear_LevelResource();
+	else
+		return S_OK;
+}
+
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
 {
 	return m_pLevel_Manager->Change_Level(pNewLevel);
@@ -473,6 +482,11 @@ void* CGameInstance::Get_SSAO_Desc()
 void* CGameInstance::Get_MotionBlur_Desc()
 {
 	return m_pRenderer->Get_MotionBlur_Desc();
+}
+
+void* CGameInstance::Get_Volumetric_Desc()
+{
+	return m_pRenderer->Get_Volumetric_Desc();
 }
 
 #endif
@@ -855,10 +869,6 @@ HRESULT CGameInstance::Remove_Camera(const WCHAR* szCameraTag)
 {
 	return m_pCameraManager->Remove_Camera(szCameraTag);
 }
-void CGameInstance::Clear_LevelCameras()
-{
-	m_pCameraManager->Clear_LevelCameras();
-}
 HRESULT CGameInstance::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix)
 {
 	return m_pCameraManager->SetMainCamera(szCameraTag, pPreCameraMatrix);
@@ -870,6 +880,10 @@ CCamera* CGameInstance::GetCamrea(const WCHAR* szCameraTag)
 CCamera* CGameInstance::GetMainCamera()
 {
 	return m_pCameraManager->GetMainCamera();
+}
+_bool CGameInstance::IsMainCamera(CCamera* pCamera)
+{
+	return m_pCameraManager->IsMainCamera(pCamera);
 }
 _matrix CGameInstance::GetMainCameraWorldMatrix()
 {

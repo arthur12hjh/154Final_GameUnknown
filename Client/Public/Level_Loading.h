@@ -15,12 +15,14 @@ private:
 	virtual ~CLevel_Loading() = default;
 
 public:
-	virtual HRESULT Initialize(LEVEL eNextLevelID);
+	virtual HRESULT Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes);
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
 private:
 	LEVEL				m_eNextLevelID = { LEVEL::END };
+	_bool				m_bIsProtoTypes = { false };
+
 	class CLoader*		m_pLoader = { nullptr };
 
 private:
@@ -29,7 +31,7 @@ private:
 
 
 public:
-	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID);
+	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID, _bool bIsResetProtoTypes = true);
 	virtual void Free() override;
 };
 

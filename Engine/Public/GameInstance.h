@@ -60,6 +60,7 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
+	HRESULT				Clear_LevelResource(_bool bIsClearPrototypeData = true);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
 	_uint				GetCurrentLevelID();
 
@@ -98,7 +99,7 @@ public:
 	void*  Get_Fog_Desc();
 	void*  Get_SSAO_Desc();
 	void*  Get_MotionBlur_Desc();
-
+	void*  Get_Volumetric_Desc();
 #endif
 
 #pragma endregion
@@ -237,7 +238,6 @@ public:
 #pragma region Camera Manager
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
-	void							Clear_LevelCameras();
 	// Defaut 매개변수 있습니다.
 	// 카메라 Tag 뒤에 행렬 매트릭스 넣으면 이전 카메라 정보 줍니다.
 	HRESULT							SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix = nullptr);
@@ -249,6 +249,8 @@ public:
 	//	카메라 매니저에서 카메라 포인터 받으면 래퍼런스 카운트 증가함
 	//  가져갔으면 내려주세요
 	CCamera*						GetMainCamera();
+
+	_bool							IsMainCamera(CCamera* pCamera);
 
 	//메인카메라 월드 행렬 가져오기
 	_matrix							GetMainCameraWorldMatrix();

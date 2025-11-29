@@ -35,6 +35,7 @@ HRESULT CThreadPool::Initialize(_uint iNumThread)
 
 void CThreadPool::Update_Async()
 {
+	unique_lock<mutex> lock(m_Worker);
 	while (!m_AddObjectList.empty())
 	{
 		auto Prototype = m_AddObjectList.front();
@@ -42,6 +43,7 @@ void CThreadPool::Update_Async()
 
 		m_pGameInstance->Add_Prototype(Prototype.iLevelID, Prototype.szPrototypeName, Prototype.pPrototype);
 	}
+	lock.unlock();
 
 
 	/*while (!m_CommandList.empty())

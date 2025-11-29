@@ -3,6 +3,9 @@
 #include "State.h"
 
 NS_BEGIN(Client)
+struct Naytiba_NetWork_Desc;
+struct Character_Skill_Desc;
+
 class CMonsterDeadState final : public CState
 {
 private:
@@ -21,7 +24,14 @@ public:
 	virtual		void							End();
 
 private :
+	Naytiba_NetWork_Desc*						m_pNaytibaData = { nullptr };
+	Character_Skill_Desc*						m_pLastHitSkill = { nullptr };
+	
 	DIRECTION									m_eDeadDir = {};
+
+	_float3										m_vImpactDir = {};
+	_float										m_fImpactForce = {};
+
 	_float2										m_fDeadEndTime = {};
 
 public:

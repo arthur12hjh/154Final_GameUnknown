@@ -51,12 +51,6 @@ HRESULT CEntity::Render()
 
 _bool CEntity::Play_Animation(_float fTimeDelta, CTransform* pTargetTransform, _float fRootMotionRatio)
 {
-    /// "          "가 비어있을 경우, 아래에 나열된 작업을 수행합니다.
-    /// Find_PartObject(TEXT("Part_Body")) 를 통해 PartObject를 받습니다.
-    /// PartObject의 Find_Component(TEXT("Com_Model"))을 통해 CModel*을 받습니다.
-    /// 
-    /// 이후, CModel의 Play_Animation함수를 return 해줍니다.
-    /// 
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
@@ -76,20 +70,20 @@ void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
     m_pBodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
 }
 
-void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate);
+    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
 }
 
-void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration)
+void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate);
+    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
 }
 _float CEntity::Get_AnimationRatio()
 {

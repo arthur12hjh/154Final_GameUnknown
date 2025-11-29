@@ -456,6 +456,12 @@ namespace Engine
 		float*			fBias;
 		unsigned int*   iSampleCount;
 	} MOTIONBLUR_DESC;
+
+	typedef struct tagVolumeticInfo {
+		float* fDensity;
+		float* fStepSize;
+		float* fVolumetricG;
+	} VOLUMETRIC_DESC;
 #pragma endregion
 }
 
