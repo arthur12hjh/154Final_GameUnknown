@@ -541,6 +541,27 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Landing">
       <UniqueIdentifier>{5fb787e7-a9a1-4114-a5cc-210d2852ef68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar">
+      <UniqueIdentifier>{032f3bd1-48da-42e6-9b1a-37d8701e48b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion">
+      <UniqueIdentifier>{10153d73-962a-4f9f-abb6-3b1c0284d21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack">
+      <UniqueIdentifier>{85ce6070-0873-4a23-aa87-753bddbdb8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount">
+      <UniqueIdentifier>{fac13108-8daf-4aff-9b5e-80167755d37b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta">
+      <UniqueIdentifier>{01c5e7a1-3d2b-4856-ad35-bb294ffda35d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIShield">
+      <UniqueIdentifier>{d360d8ed-b865-45b3-ab79-1cb581c7dd13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
+      <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1098,6 +1119,27 @@
     <ClInclude Include="..\Public\PlayerIdleFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotion.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotionCount.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotionStack.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBeta.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIHPFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_IdleState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Idle</Filter>
     </ClInclude>
@@ -1653,6 +1695,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotion.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotionCount.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotionStack.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBeta.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHPFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
