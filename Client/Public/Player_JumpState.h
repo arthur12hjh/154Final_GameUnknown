@@ -20,7 +20,7 @@ public:
 private:
 	_float	m_fDegree = { 0.f };
 	_bool   m_isLanding = { false };
-	PLAYER_WALK_DESC m_NextStateDesc;
+	PLAYER_BATTLEWALK_DESC m_NextStateDesc;
 public:
 	static	CPlayer_JumpState* Create(void* pArg);
 	virtual	void			   Free() override;

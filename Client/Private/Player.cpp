@@ -39,13 +39,20 @@ _float CPlayer::Get_AnimationRatio()
 	return m_pBodyModelCom->Get_AnimationRatio();
 }
 
-void CPlayer::Change_PlayerMode(PLAYER_MODE eMode)
+void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
-	//fsm ±³Ã¼
+	//fsm ï¿½ï¿½Ã¼
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	
+	//ï¿½ï¿½ï¿½ï¿½ FSMï¿½ï¿½ ï¿½ï¿½ï¿½Â·Î¸ï¿½ ï¿½ï¿½ï¿½ó°¡°ï¿½ ï¿½ï¿½.. ï¿½Ì°ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½Ï³ï¿½?
+	if(eState == PLAYER_STATE::STATE_END)
+		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	//Change_PlayerModeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½. 
+	else
+		pNextFSM->Change_FSM(eState);
+
 	m_pCurrentFSM->Clear_FSM();
 
 	m_pCurrentFSM = pNextFSM;
@@ -95,10 +102,12 @@ void CPlayer::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
 	{
-		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
+		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::IDLE)
+			Change_PlayerMode(PLAYER_MODE::BATTLE);
+		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
 			Change_PlayerMode(PLAYER_MODE::LOCKON);
 		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
-			Change_PlayerMode(PLAYER_MODE::BATTLE);
+			Change_PlayerMode(PLAYER_MODE::IDLE);
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -159,7 +168,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	//¸ðµç Æ®·£½ºÆûÀÇ ÀÌµ¿ÀÌ ³¡³­ ÈÄ ½ÇÇàµÇ¾î¾ß ÇÔ.
+	//ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½ï¿½.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -185,7 +194,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// ÀÓ½ÃÀÔ´Ï´Ù Àâ±â Å×½ºÆ®¿ë ³ªÁß¿¡ ³Ñ°Ü¹Þ°Å³ª ³Ñ°ÜÁÙµ¥ÀÌÅÍ »ý±â¸é ¸»Á»ÇØÁÖ¼¼¿ä
+		// ï¿½Ó½ï¿½ï¿½Ô´Ï´ï¿½ ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ñ°Ü¹Þ°Å³ï¿½ ï¿½Ñ°ï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½
 		pCharacter->ActionSuccess(nullptr);
 	}
 
@@ -212,7 +221,7 @@ HRESULT CPlayer::Ready_Components()
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
-	//Ä¸½¶ ÄÁÆ®·Ñ·¯¿¡¼­ x´Â ±¸ ¼ººÐ y´Â ±âµÕ ¼ººÐ
+	//Ä¸ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Desc.vSize = _float3(1.f, 1.f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
@@ -240,14 +249,14 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
-	//CWeapon::WEAPON_DESC	WeaponDesc{};
-	//WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
-	//WeaponDesc.pParentTransform = m_pTransformCom;
-	//
-	///* Part_Weapon */
-	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-	//	TEXT("Part_Weapon"), &WeaponDesc)))
-	//	return E_FAIL;
+	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Weapon");
+	WeaponDesc.pParentTransform = m_pTransformCom;
+	
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
+		return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -292,6 +301,10 @@ HRESULT CPlayer::Ready_PartObjects()
 
 HRESULT CPlayer::Ready_PlayerDesc()
 {
+	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxShield = 100;
+	m_PlayerDesc.iMaxBetaEnergy = 20;
+
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
@@ -301,7 +314,11 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
-	m_PlayerDesc.iCurrentBetaEnergy = 100;
+	m_PlayerDesc.iCurrentBetaEnergy = 20;
+
+	m_PlayerDesc.iCurrentPotions = 3;
+	m_PlayerDesc.iMaxPotions = 3;
+
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
 	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
@@ -313,8 +330,9 @@ HRESULT CPlayer::Ready_FSM()
 {
 	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
 	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
+	m_FSMs.emplace(PLAYER_MODE::IDLE, CPlayerIdleFSM::Create());
 
-	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::BATTLE)->second;
+	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::IDLE)->second;
 
 	return S_OK;
 }

@@ -4,6 +4,15 @@
 #include "Engine_Shader_Defines.hlsli"
 #include "Shader_Deferred_Defines.hlsli"
 
+inline float BayerDither(float2 pixelPos)
+{
+    uint x = (uint) pixelPos.x & 3; // % 4
+    uint y = (uint) pixelPos.y & 3; // % 4
+
+    uint v = Bayer4x4[y][x]; // 0 ~ 15
+    return (v + 0.5f) / 16.0f; // 0 ~ 1 사이 값
+}
+
 inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition)
 { 
     float2 vTexcoord;
@@ -12,7 +21,7 @@ inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vP
 
     float fSum = 0.0f;
     
-    float2 fTexelSize = 1.0f / float2(8192.0f, 4608.0f) * 0.5f; // 그림자맵 해상도에 맞게 조정
+    float2 fTexelSize = 1.0f / float2(8192.0f, 4608.0f) * 0.1f; // 그림자맵 해상도에 맞게 조정
 
     // PCF 3x3 샘플
     for (int x = -1; x <= 1; ++x)
@@ -150,12 +159,6 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     float3 vHalfVector = normalize(vFromView + vFromLight);
     float NdotL = saturate(dot(vNormal, vFromLight));
     float NdotV = saturate(dot(vNormal, vFromView));
-    
-    if (NdotL <= 0 || NdotV <= 0)
-    {
-        clamp(NdotL, 0.f, 1.f);
-        clamp(NdotV, 0.f, 1.f);
-    }
     
     float fAlpha = max(fRoughness * fRoughness, 0.1f);
     float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;

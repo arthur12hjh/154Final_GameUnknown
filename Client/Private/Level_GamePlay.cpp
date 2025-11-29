@@ -89,16 +89,16 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-//	LIGHT_DESC			LightDesc{};
-//
-//	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-//	LightDesc.vDiffuse = _float4(6.f, 6.f, 6.f, 1.f);
-//	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-//
-//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-//	return E_FAIL;
+	//LIGHT_DESC			LightDesc{};
+
+	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	//	return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
@@ -344,12 +344,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
-	
 
+	/*
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 		return E_FAIL;
 
-	pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));*/
 
 	return S_OK;
 }
