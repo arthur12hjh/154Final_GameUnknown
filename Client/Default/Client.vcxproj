@@ -342,7 +342,10 @@
     <ClInclude Include="..\Public\UIPotion.h" />
     <ClInclude Include="..\Public\UIPotionCount.h" />
     <ClInclude Include="..\Public\UIPotionStack.h" />
+    <ClInclude Include="..\Public\UIRushSlot.h" />
     <ClInclude Include="..\Public\UIShield.h" />
+    <ClInclude Include="..\Public\UISkillSlot.h" />
+    <ClInclude Include="..\Public\UISkillWrapper.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
@@ -557,7 +560,10 @@
     <ClCompile Include="..\Private\UIPotion.cpp" />
     <ClCompile Include="..\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\Private\UIPotionStack.cpp" />
+    <ClCompile Include="..\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\Private\UIShield.cpp" />
+    <ClCompile Include="..\Private\UISkillSlot.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />

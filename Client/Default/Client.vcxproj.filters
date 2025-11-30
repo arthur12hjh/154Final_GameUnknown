@@ -559,6 +559,15 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
       <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper">
+      <UniqueIdentifier>{36beb1db-6f54-44e5-add1-ddee48a6ff5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot">
+      <UniqueIdentifier>{1fa6e6ff-0b9d-4959-a1d9-a358f6a9f566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
+      <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
       <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
     </Filter>
@@ -1152,6 +1161,15 @@
     <ClInclude Include="..\Public\Player_IdleLandingState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UISkillSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIRushSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Deco_CheckAlive.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
     </ClInclude>
@@ -1722,6 +1740,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIHPFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIRushSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>

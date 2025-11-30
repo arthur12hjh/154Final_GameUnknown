@@ -4,17 +4,18 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
+class CVIBuffer_Rect_Instance;
 class CTexture;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUIPotion final : public CUIBase
+class CUISkillSlot final : public CUIBase
 {
 private:
-	CUIPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUIPotion(const CUIPotion& Prototype);
-	virtual ~CUIPotion() = default;
+	CUISkillSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUISkillSlot(const CUISkillSlot& Prototype);
+	virtual ~CUISkillSlot() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,9 +25,6 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	_int Get_PotionCount() { return static_cast<_int>(*m_iPotions); }
-	_int Get_MaxPotionCount() { return static_cast<_int>(*m_iMaxPotions); }
-
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -34,16 +32,24 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
+	HRESULT Render_Glow();
+	HRESULT Bind_GlowShaderResources();
+
+private:
+	SKILL_STATE m_eSkillState = SKILL_STATE::DEFAULT;
+
+	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = { nullptr };
+	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };
+	CTexture* m_pTextureCom2 = { nullptr };
+	CTexture* m_pShadowTextureCom = { nullptr };
+	CTexture* m_pGlowTextureCom = { nullptr };
+	CTexture* m_pGlowTextureCom2 = { nullptr };
+
 #ifdef _DEBUG
-	_int m_MaxGara = 5;
-	_int m_Gara = 3;
 #endif // DEBUG
 
-	_int* m_iMaxPotions = nullptr;
-	_int* m_iPotions = nullptr;
-
 public:
-	static CUIPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUISkillSlot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

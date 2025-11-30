@@ -290,24 +290,18 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
         if (fCurrentTime < 0.f)
             fCurrentTime += g_fDuration;
     }
-
-    // -------------------------------------------------------
-    // 1) Local matrix for current animation
-    // -------------------------------------------------------
+    
     float4x4 matLocalOriginal = ComputeLocalMatrix(iBoneIndex, fCurrentTime);
     float4x4 matLocalSkin = matLocalOriginal;
 
-    // root translation remove
     if (iBoneIndex == g_iRootIndex)
     {
         matLocalSkin._41 = 0.f;
         matLocalSkin._42 = 0.f;
         matLocalSkin._43 = 0.f;
     }
-
-    // -------------------------------------------------------
-    // 2) Local blending only
-    // -------------------------------------------------------
+    
+    
     if (g_fBlendRatio > 0.f)
     {
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
@@ -322,15 +316,15 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
 
         matLocalSkin = mul(mul(S, R), T);
     }
-
-    // -------------------------------------------------------
-    // 3) Combined build (NO blending here)
-    // -------------------------------------------------------
+    
     float4x4 matCombinedOriginal = matLocalOriginal;
     float4x4 matCombinedSkin = matLocalSkin;
 
     int iParentIndex = InputBone[iBoneIndex].iParentIndex;
-
+    
+    // 요주의 인물. GPU는 CPU와 다르게 선형 연산이 보장되지 않기에 부모 본의 안전 여부를 알 수 없다.
+    // 별 수 있나? 가지뻗듯이 계산을 해줘야한다.
+    // 투패스로 바꿀경우 이 연산이 필요없어지기에, 최적화 1순위. 나중에 보간까지 수정해야해서 살짝 대공사 예정
     while (iParentIndex >= 0)
     {
         float4x4 matParentLocalOriginal = ComputeLocalMatrix(iParentIndex, fCurrentTime);

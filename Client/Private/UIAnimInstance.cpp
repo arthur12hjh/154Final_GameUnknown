@@ -10,7 +10,7 @@ CUIAnimInstance::CUIAnimInstance()
 HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc)
 {
 	m_pTargetUI = pUI;
-	//Safe_AddRef(m_pTargetUI);
+	m_pTargetUI->Set_Anim_Playing(true);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
 
 	return S_OK;
@@ -126,8 +126,21 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 		if (AnimDesc.isBeapBeap)
 		{
+			++m_iRepeatCount;
 			m_isReverse = !m_isReverse;
 			m_fTimeStack = 0.f;
+
+			if (AnimDesc.isLoop)
+				m_iRepeatCount = 0;
+
+			if (m_iRepeatCount >= 2 && !AnimDesc.isLoop)
+			{
+				Stop_Anim();
+				m_pTargetUI->Set_Anim_Playing(false);
+
+				return true;
+			}
+
 			return false;
 		}
 
@@ -199,6 +212,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			if (TrackDesc.szTrackTag == TEXT("SpriteAction"))
 				m_pTargetUI->Set_Texture_Index(static_cast<_uint>(XMVectorGetX(vEndParam)));
 
+			m_pTargetUI->Set_Anim_Playing(false);
+
 			return true;
 		}
 	}
@@ -208,11 +223,16 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 
 void CUIAnimInstance::Stop_Anim()
 {
-	m_pTargetUI->Set_Position(m_pTargetUI->Get_UIBase_OriginDesc().fOffsetX, m_pTargetUI->Get_UIBase_OriginDesc().fOffsetY);
+	/*m_pTargetUI->Set_Position(m_pTargetUI->Get_UIBase_OriginDesc().fOffsetX, m_pTargetUI->Get_UIBase_OriginDesc().fOffsetY);
 	m_pTargetUI->Set_Size(m_pTargetUI->Get_UIBase_OriginDesc().fSizeX, m_pTargetUI->Get_UIBase_OriginDesc().fSizeY);
 	m_pTargetUI->Set_Alpha(m_pTargetUI->Get_UIBase_OriginDesc().fAlpha);
 	if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc())
 		m_pTargetUI->Set_Text_Color(m_pTargetUI->Get_UIBase_OriginDesc().m_tUITextDesc.vColor);
+	if (m_pTargetUI->Get_UIBase_Desc().Get_ShaderDesc())
+		m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc = m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc;*/
+
+	m_pTargetUI->Get_UIBase_Desc() = m_pTargetUI->Get_UIBase_OriginDesc();
+
 	m_fTimeStack = 0.f;
 }
 
