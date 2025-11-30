@@ -120,6 +120,7 @@ private:
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
 	_bool			m_bisLoop = {};
+	_bool			m_bisSpectrum = { false };
 	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER	m_eRender = {};

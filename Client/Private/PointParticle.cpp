@@ -132,8 +132,16 @@ void CPointParticle::Update(_float fTimeDelta)
 			return;
 		}
 	}
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+	_float4x4 CombinedWorldMatrix;
+	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
+
+	if (m_tData.bisSpectrum) {
+		float fLengt = XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) * 5;
+		m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + fLengt;
+		m_CBData.fTimeDelta.z = fLengt;
+	}
+	m_CombinedWorldMatrix = CombinedWorldMatrix;
 	Spread(fTimeDelta);
 }
 
@@ -162,7 +170,6 @@ HRESULT CPointParticle::Render()
 
 void CPointParticle::Stop() {
 	m_bisStop = true;
-	m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 }
 
 void CPointParticle::Play()
@@ -289,7 +296,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
-	m_CBData.iLoopAndCount.x = m_bisStop ? 2 : m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_tData.bisLoop ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fEndTime;
 	m_CBData.fTimeDelta.w = 0;
@@ -352,7 +359,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 
 void CPointParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisStop ? 2 : m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_tData.bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

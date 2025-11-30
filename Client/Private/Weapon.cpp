@@ -59,6 +59,11 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+		m_pSpark->Stop();
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+		m_pSpark->Play();
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -171,7 +176,7 @@ HRESULT CWeapon::Ready_Components()
 
 
 	CTrail::TRAILHIGHLOW Traildesc{};
-	Traildesc.vHigh = _float4(0.f, 4.f, 0.f, 0.f);
+	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);
 	Traildesc.vLow = _float4(0.f, 1.f, 0.f, 0.f);
 	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
@@ -179,11 +184,12 @@ HRESULT CWeapon::Ready_Components()
 	desc.fRotationPerSec = 1.f;
 	desc.fSpeedPerSec = 1.f;
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 3, 0, 1);
-	desc.fRot = _float3(0, XMConvertToRadians(270.f), 0);
+	desc.vPos = XMVectorSet(0, 5, 0, 1);
+	desc.fRot = _float3(0, 0, 0);
 	desc.fSize = 1.5f;
 
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
+	m_pSpark->Play();
 	return S_OK;
 }
 

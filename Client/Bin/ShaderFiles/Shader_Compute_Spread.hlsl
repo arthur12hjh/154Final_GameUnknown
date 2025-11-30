@@ -1,16 +1,16 @@
 struct ParticleVertices
 {
-    float4  vRight;
-    float4  vUp;
-    float4  vLook;
-    float4  vTranslation;
+    float4 vRight;
+    float4 vUp;
+    float4 vLook;
+    float4 vTranslation;
     
     float2 vLifeTime;
     float4x4 WorldMat;
-    float4  vfRoot;
-    float4  vfStart;
-    float2  vfSpeed;
-    float   vfSize;
+    float4 vfRoot;
+    float4 vfStart;
+    float2 vfSpeed;
+    float vfSize;
 };
 
 cbuffer ParticleBuffer : register(b0)
@@ -22,7 +22,7 @@ cbuffer ParticleBuffer : register(b0)
     float2 vfCircle;
     float2 vfTurnPower;
     float2 vfisSphere;
-    int2   viLoopAndCount;
+    int2 viLoopAndCount;
 }
 
 
@@ -36,6 +36,7 @@ void CS(uint3 Gid : SV_GroupID,
            uint GI : SV_GroupIndex)
 {
     bool bisStart = false;
+    float2 fSpectrum = float2(0, 0);
     if (vfPivot.w == 0)
     {
         float4 vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), Input[DTid.x].WorldMat));
@@ -48,8 +49,39 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
-            if (2 == viLoopAndCount.x && !(DTid.x > vfTimeDelta.w - 5 && DTid.x <= vfTimeDelta.w))
+            if (4 == viLoopAndCount.x)
+                return;
+            if (2 == viLoopAndCount.x || 3 == viLoopAndCount.x)
             {
+                fSpectrum.x = vfTimeDelta.w - vfTimeDelta.z;
+                fSpectrum.y = vfTimeDelta.w;
+                if (viLoopAndCount.y < vfTimeDelta.w)
+                {
+                    if (DTid.x <= fmod(vfTimeDelta.w, viLoopAndCount.y))
+                    {
+                        fSpectrum.x = 0;
+                        fSpectrum.y = fmod(vfTimeDelta.w, viLoopAndCount.y);
+                    }
+                    else
+                    {
+                        fSpectrum.y = viLoopAndCount.y - 1;
+                    }
+
+                }
+                if ((DTid.x > fSpectrum.x && DTid.x <= fSpectrum.y))
+                {
+                    g_Out[DTid.x].vLifeTime.x = vfTimeDelta.x;
+                    g_Out[DTid.x].WorldMat = g_WorldMatrix;
+                    
+                    g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + vfisSphere.y * length(Input[DTid.x].WorldMat._11_12_13);
+                    if (3 == viLoopAndCount.x)
+                    {
+                        int iBefore = int(vfTimeDelta.w - vfTimeDelta.z) - 1;
+                        g_Out[DTid.x].vfRoot.xyz = normalize(g_Out[DTid.x].vfStart.xyz - Input[iBefore].vfStart.xyz);
+                        g_Out[DTid.x].vfStart.xyz += (Input[iBefore].vfStart.xyz - g_Out[DTid.x].vfStart.xyz) / vfTimeDelta.z * (int(fSpectrum.y) - DTid.x);
+                    }
+                    g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
+                }
                 return;
             }
             else
@@ -60,16 +92,16 @@ void CS(uint3 Gid : SV_GroupID,
                 if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
                     vDir.xyzw = 0;
             }
+            //g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
+            //g_Out[DTid.x].WorldMat = g_WorldMatrix;
+            //vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
+            //if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
+            //    vDir.xyzw = 0;
             if (0 > g_Out[DTid.x].vLifeTime.x)
                 return;
             else if (0 == vfisSphere.x)
             {
                 g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + Input[DTid.x].vfRoot * length(Input[DTid.x].WorldMat._11_12_13);
-                if (0 <= vfTimeDelta.w - 5)
-                {
-                    g_Out[DTid.x].vfStart.xyz += ((g_Out[DTid.x].vfStart.xyz - Input[vfTimeDelta.w - 5].vfStart.xyz) / (vfTimeDelta.w - DTid.x + 1));
-                }
-                
                 g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
             }
             else if (1 == vfisSphere.x)
@@ -225,9 +257,9 @@ void CS(uint3 Gid : SV_GroupID,
             g_Out[DTid.x].WorldMat = g_WorldMatrix;
             g_Out[DTid.x].vLifeTime.x = fmod(g_Out[DTid.x].vLifeTime.x, g_Out[DTid.x].vLifeTime.y);
         }
-        else if (2 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
+        else if ((2 == viLoopAndCount.x || 3 == viLoopAndCount.x || 4 == viLoopAndCount.x) && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
         {
-            g_Out[DTid.x].vLifeTime.x = vfTimeDelta.w - vfTimeDelta.y;
+            g_Out[DTid.x].vLifeTime.x = -1;
         }
     }
     else
@@ -242,7 +274,7 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
-            if (2 == viLoopAndCount.x)
+            if (4 == viLoopAndCount.x)
                 return;
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
             vDir = normalize(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0));
@@ -409,9 +441,9 @@ void CS(uint3 Gid : SV_GroupID,
             }
             g_Out[DTid.x].vLifeTime.x = fmod(g_Out[DTid.x].vLifeTime.x, g_Out[DTid.x].vLifeTime.y);
         }
-        else if (2 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
+        else if (4 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
         {
-            g_Out[DTid.x].vLifeTime.x = -1;
+            g_Out[DTid.x].vLifeTime.x = vfTimeDelta.w - vfTimeDelta.y;
         }
     }
 }
