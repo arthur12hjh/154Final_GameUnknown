@@ -35,7 +35,6 @@ public:
 private:
 	struct Player_Desc		m_PlayerDesc = {};
 	class CBody_Player*		m_pBody = { nullptr };
-	class CTrailEffect*		m_pTrail = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
 
 	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};

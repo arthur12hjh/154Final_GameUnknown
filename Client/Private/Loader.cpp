@@ -15,6 +15,7 @@
 
 #include "Effect.h"
 #include "Trail.h"
+#include "TrailData.h"
 #include "TrailEffect.h"
 
 #include "GameInstance.h"
@@ -917,6 +918,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CTrail::Create(m_pDevice, m_pContext);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_TrailData */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailData");
+	PrototypeDesc.pPrototype = CTrailData::Create(m_pDevice, m_pContext);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	
 	/* For.Prototype_Component_Shader_VtxMeshEffect */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshEffect");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
@@ -957,9 +963,16 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SpectrumTest.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Slash_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashSpark.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	
+
 	/* For.Prototype_Component_TrailEffect_Test */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Test");
-	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/SaveEffect.binx");
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	//Desc->OnCompleted(this_thread::get_id());

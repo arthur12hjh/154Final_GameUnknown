@@ -164,6 +164,7 @@
     <ClInclude Include="..\public\SpriteEffect.h" />
     <ClInclude Include="..\public\SpriteParticle.h" />
     <ClInclude Include="..\public\Tool_Effect_Defines.h" />
+    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\public\TrailEffect.h" />
     <ClInclude Include="Effect_Editor.h" />
     <ClInclude Include="framework.h" />
@@ -205,6 +206,7 @@
     </ClCompile>
     <ClCompile Include="..\private\SpriteEffect.cpp" />
     <ClCompile Include="..\private\SpriteParticle.cpp" />
+    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\private\TrailEffect.cpp" />
     <ClCompile Include="Effect_Editor.cpp" />
   </ItemGroup>

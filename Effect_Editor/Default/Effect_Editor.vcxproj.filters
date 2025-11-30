@@ -82,6 +82,9 @@
     <Filter Include="02.Object\Effect\Particle\SpriteParticle">
       <UniqueIdentifier>{2f26a5ed-9479-4b36-8ba5-03e3db05269d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\Effect\TrailEffect\TrailData">
+      <UniqueIdentifier>{5b6371cb-e11d-44c9-8f73-eeab6fa72086}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -168,6 +171,9 @@
     <ClInclude Include="..\public\SpriteEffect.h">
       <Filter>02.Object\Effect\SpriteEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>02.Object\Effect\TrailEffect\TrailData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Effect_Editor.ico">
@@ -243,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SpriteParticle.cpp">
       <Filter>02.Object\Effect\Particle\SpriteParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>02.Object\Effect\TrailEffect\TrailData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

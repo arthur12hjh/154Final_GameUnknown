@@ -41,6 +41,7 @@ public:
     virtual void Late_Update(_float fTimeDelta) override;
     virtual HRESULT Render() override;
     void    Stop();
+    void    Play();
 
 private:
     HRESULT Load_Binary(const _char* szFile);

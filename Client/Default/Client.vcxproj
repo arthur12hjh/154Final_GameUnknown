@@ -318,6 +318,7 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\TrailEffect.h" />
     <ClInclude Include="..\Public\UIActionEvent.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
@@ -517,6 +518,7 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\TrailEffect.cpp" />
     <ClCompile Include="..\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />

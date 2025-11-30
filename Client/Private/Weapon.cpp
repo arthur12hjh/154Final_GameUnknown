@@ -6,6 +6,10 @@
 #include "Weapon.h"
 #include "Nayitba.h"
 
+#include "Trail.h"
+#include "TrailEffect.h"
+#include "Effect.h"
+
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
@@ -53,7 +57,8 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 }
 
 void CWeapon::Update(_float fTimeDelta)
-{	
+{
+	m_pSpark->Update(fTimeDelta);
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -71,10 +76,12 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 	}
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
+	m_pSpark->Late_Update(fTimeDelta);
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
@@ -160,6 +167,23 @@ HRESULT CWeapon::Ready_Components()
 
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+
+
+
+	CTrail::TRAILHIGHLOW Traildesc{};
+	Traildesc.vHigh = _float4(0.f, 4.f, 0.f, 0.f);
+	Traildesc.vLow = _float4(0.f, 1.f, 0.f, 0.f);
+	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+
+	CEffect::EFFECT_TRANSFORM_DESC desc;
+	desc.fRotationPerSec = 1.f;
+	desc.fSpeedPerSec = 1.f;
+	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	desc.vPos = XMVectorSet(0, 2, 0, 1);
+	desc.fRot = _float3(0, XMConvertToRadians(270.f), 0);
+	desc.fSize = 1.5f;
+
+	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	return S_OK;
 }
 
@@ -226,4 +250,5 @@ void CWeapon::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pTrail);
 }

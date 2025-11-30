@@ -113,11 +113,6 @@ HRESULT CSpriteParticle::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CSpriteParticle::Priority_Update(_float fTimeDelta)
-{
-
-}
-
 void CSpriteParticle::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
@@ -126,7 +121,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 		return;
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
-		m_bisLoop = false;
+		m_tData.bisLoop = false;
 		if (m_tData.fEndTime + m_tData.fLifeTime.y * 2 <= m_fTime){
 			m_isDead = true;
 			return;
@@ -158,6 +153,16 @@ HRESULT CSpriteParticle::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CSpriteParticle::Stop() {
+	m_bisStop = true;
+	m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
+}
+
+void CSpriteParticle::Play()
+{
+	m_bisStop = false;
 }
 
 HRESULT CSpriteParticle::Ready_Components()
@@ -284,10 +289,10 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 2 : m_tData.bisLoop ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
-	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
-	m_CBData.fTimeDelta.w = m_tData.fEndTime;
+	m_CBData.fTimeDelta.z = m_tData.fEndTime;
+	m_CBData.fTimeDelta.w = 0;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
@@ -347,7 +352,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 
 void CSpriteParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 2 : m_tData.bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

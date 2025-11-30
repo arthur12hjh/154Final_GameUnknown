@@ -100,7 +100,8 @@ public:
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
 	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
-	_float	Stop() { return m_fTime; }
+	void Stop();
+	void Play();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
@@ -119,6 +120,7 @@ private:
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
 	_bool			m_bisLoop = {};
+	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER	m_eRender = {};
 
