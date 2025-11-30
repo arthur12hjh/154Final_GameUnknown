@@ -19,8 +19,10 @@ HRESULT CDeco_CheckAlive::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 CBehaviorNode::NODE_STATE CDeco_CheckAlive::Update(_float fTimeDelta)
 {
     CBossBlackBoard* pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
+    const NAYTIBA_DESC* CharacterInfo = pBlackBoard->GetBossInfo();
+    Safe_Release(pBlackBoard);
 
-    if (0 < pBlackBoard->GetBossInfo()->iCurrentHealth)
+    if (0 < CharacterInfo->iCurrentHealth)
         return NODE_STATE::COMPLETE;
 
     return NODE_STATE::FAIL;
