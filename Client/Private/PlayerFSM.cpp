@@ -29,6 +29,16 @@ void CPlayerFSM::Clear_FSM()
 	Safe_Release(m_pCurrentState);
 }
 
+void CPlayerFSM::Change_State(CPlayerState* pPlayerState)
+{
+	m_pCurrentState->End();
+	pPlayerState->Start();
+
+	//끝내고 기존 상태 없애야 desc 값 넘겨줄 수 있음.
+	Safe_Release(m_pCurrentState);
+	m_pCurrentState = pPlayerState;
+}
+
 void CPlayerFSM::Free()
 {
 	__super::Free();

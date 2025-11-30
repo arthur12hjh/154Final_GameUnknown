@@ -20,7 +20,7 @@
 #include "PlayerBattleFSM.h"
 #include "PlayerIdleFSM.h"
 #include "PlayerLockOnFSM.h"
-#include "PlayerState.h"
+#include "Player_HitState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -49,9 +49,10 @@ void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
 	//Change_PlayerMode���� �� �Է¹��� �� �ְ� ����. 
 	else
+	{
 		pNextFSM->Change_FSM(eState);
-
-	m_pCurrentFSM->Clear_FSM();
+		m_pCurrentFSM->Clear_FSM();
+	}
 
 	m_pCurrentFSM = pNextFSM;
 }
@@ -173,14 +174,45 @@ HRESULT CPlayer::Render()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
+	//typedef struct Default_Damage_Desc
+	//{
+	//	CGameObject* pAttacker;
+	//	_float3				vHitPoint;
+	//	_float3				vHitDir;
+
+	//	_float4x4			vHitWorldMatrix;
+
+	//	_float3				vImpactDir;
+	//	_float				fImpactForce;
+
+	//	void* pSkillData;
+	//}DEFAULT_DAMAGE_DESC;
+
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	vHitDir = pDamageDesc->vHitDir;
+	vHitPoint = pDamageDesc->vHitPoint;
+	vImpactDir = pDamageDesc->vImpactDir;
+	fImpactForce = pDamageDesc->fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+
+	m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// �ӽ��Դϴ� ��� �׽�Ʈ�� ���߿� �Ѱܹްų� �Ѱ��ٵ����� ����� �������ּ���
+		// 임시입니다 잡기 테스트용 나중에 넘겨받거나 넘겨줄데이터 생기면 말좀해주세요
+		// ㄴ 여기서 아마 상태 추가할거같긴 한데 몬스터 본이랑 몬스터 애니메이션 정보 연동해야 될 듯?
 		pCharacter->ActionSuccess(nullptr);
 	}
 
