@@ -26,8 +26,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	_int Get_PotionCount() { return m_iPotions; }
-	_int Get_MaxPotionCount() { return m_iMaxPotions; }
+	_int Get_PotionCount() { return static_cast<_int>(*m_iPotions); }
+	_int Get_MaxPotionCount() { return static_cast<_int>(*m_iMaxPotions); }
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -38,8 +38,13 @@ protected:
 private:
 	CTexture* m_pPotionTexture{ nullptr };
 
-	_int m_iMaxPotions = 3;
-	_int m_iPotions = m_iMaxPotions;
+#ifdef _DEBUG
+	_int m_Gara = 3;
+	_int m_MaxGara = 3;
+#endif // DEBUG
+
+	_int* m_iMaxPotions = nullptr;
+	_int* m_iPotions = nullptr;
 
 public:
 	static CUIPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

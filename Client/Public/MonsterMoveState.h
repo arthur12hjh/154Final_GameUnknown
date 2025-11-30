@@ -37,17 +37,12 @@ private:
 	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
 	CGameObject*								m_pTarget = { nullptr };
 
-	_bool										m_bIsLerp = { false };
-	_float2										m_vLerpTime = {};
-	_float3										m_vMoveDir = {};
-	_float3										m_vLerpStartPos = {};
-
 	DIRECTION									m_vMoveDirection = { DIRECTION::END };
+	_float3										m_vMoveDir = {};
 	_bool										m_bIsRootMotion = { false };
 
 	_bool										m_bIsCaution = { false };
 	_float3										m_vMovePoint = {};
-
 	_float										m_fMoveSpeed = { 2.f };
 
 	// 목표 지점에 들어갔을떄
@@ -56,9 +51,8 @@ private :
 	void										Update_Caution(_float fTimeDelta);
 	void										Update_Move(_float fTimeDelta);
 
-	void										LerpLookAt(_float fTimeDelta);
+	void										LerpLookAt(_float fTimeDelta, _float fSpeed);
 	void										Compute_MoveDirection();
-	//void										Compute_CautionAngle();
 
 public:
 	static	CMonsterMoveState*					Create(void* pArg);

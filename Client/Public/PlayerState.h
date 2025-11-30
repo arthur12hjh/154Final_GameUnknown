@@ -17,6 +17,11 @@ typedef struct tagWalkStateDesc {
 	_bool isLand = { false };
 	_bool isEvade = { false };
 } PLAYER_BATTLEWALK_DESC;
+ 
+typedef struct tagHitStateDesc {
+	_float3 vImpactDir;
+	_float  fImpact;
+} PLAYER_HIT_DESC;
 
 class CPlayerState abstract : public CBase
 {

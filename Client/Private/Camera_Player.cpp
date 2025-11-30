@@ -38,40 +38,40 @@ HRESULT CCamera_Player::Initialize(void* pArg)
 
 void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
-    m_pTransformCom->LookAt_Lerp(
-        m_pPlayerTransform->Get_State(STATE::POSITION) +
-        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::LOOK)) * 1.f +
-        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::UP)) * 1.f, 0.175f);
-
     _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
     _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
 
-    // 회전할 벡터와 각도
-    _vector  StartVector = XMVectorSet(0.f, 5.f, -6.0f, 0.f);
+    // 1) 각도 갱신 (Yaw / Pitch 분리)
+    m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
+    m_fYaw = XMScalarModAngle(m_fYaw);
 
-    m_fRotateX += XMConvertToRadians(fMouseMoveX * 90.f);
-    m_fRotateX = XMScalarModAngle(m_fRotateX);
+    m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
 
-    m_fRotateY += XMConvertToRadians(fMouseMoveY * 45.f);
-    m_fRotateY = XMScalarModAngle(m_fRotateY);
+    _float fPitchLimit = XM_PIDIV2 - 0.2f;
+    if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
+    if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
 
-    // 라디안 제한 ( -90  ~ +90 + 여기에 캐릭터의 Look 벡터까지. )
-    _float fLimit = XMConvertToRadians(15.f);
+    _float3 vPlayerPos = {};
+    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
 
-    if (m_fRotateY > fLimit)
-        m_fRotateY = fLimit;
+    _float fCamDist = 10.f;
 
-    if (m_fRotateY < -fLimit)
-        m_fRotateY = -fLimit;
+    _float cosPitch = cosf(m_fPitch);
+    _float sinPitch = sinf(m_fPitch);
+    _float cosYaw = cosf(m_fYaw);
+    _float sinYaw = sinf(m_fYaw);
 
-    _vector		vQuternion = XMQuaternionRotationRollPitchYaw(m_fRotateY, m_fRotateX, 0.f);
+    _float3 vCamPos = {};
+    vCamPos.x = vPlayerPos.x + fCamDist * cosPitch * sinYaw;
+    vCamPos.y = vPlayerPos.y + fCamDist * sinPitch;
+    vCamPos.z = vPlayerPos.z + fCamDist * cosPitch * cosYaw;
 
-    _matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
-    _vector     vCamPos = XMVector3Rotate(StartVector, vQuternion);
-    _float      fLength = XMVectorGetX(XMVector3Length(vCamPos));
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
 
-    m_pTransformCom->Chase_Lerp(m_pPlayerTransform->Get_State(STATE::POSITION) + vCamPos, fTimeDelta * 0.9f, 0.f);
-
+    m_pTransformCom->LookAt_Lerp(
+        m_pPlayerTransform->Get_State(STATE::POSITION) +
+        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::LOOK)) * 1.f +
+        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::UP)) * 1.f, 0.3f);
 
     __super::Bind_Matrices();
 }
@@ -120,3 +120,43 @@ void CCamera_Player::Free()
 {
     __super::Free();
 }
+
+
+/*
+    m_pTransformCom->LookAt_Lerp(
+        m_pPlayerTransform->Get_State(STATE::POSITION) +
+        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::LOOK)) * 1.f +
+        XMVector3Normalize(m_pPlayerTransform->Get_State(STATE::UP)) * 1.f, 0.175f);
+
+    _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
+    _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
+
+    // 회전할 벡터와 각도
+    _vector  StartVector = XMVectorSet(0.f, 5.f, -6.0f, 0.f);
+
+    m_fRotateX += XMConvertToRadians(fMouseMoveX * 90.f);
+    m_fRotateX = XMScalarModAngle(m_fRotateX);
+
+    m_fRotateY += XMConvertToRadians(fMouseMoveY * 45.f);
+    m_fRotateY = XMScalarModAngle(m_fRotateY);
+
+    // 라디안 제한 ( -90  ~ +90 + 여기에 캐릭터의 Look 벡터까지. )
+    _float fLimit = XMConvertToRadians(15.f);
+
+    if (m_fRotateY > fLimit)
+        m_fRotateY = fLimit;
+
+    if (m_fRotateY < -fLimit)
+        m_fRotateY = -fLimit;
+
+    _vector		vQuternion = XMQuaternionRotationRollPitchYaw(m_fRotateY, m_fRotateX, 0.f);
+
+    _matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
+    _vector     vCamPos = XMVector3Rotate(StartVector, vQuternion);
+    _float      fLength = XMVectorGetX(XMVector3Length(vCamPos));
+
+    m_pTransformCom->Chase_Lerp(m_pPlayerTransform->Get_State(STATE::POSITION) + vCamPos, fTimeDelta * 0.9f, 0.f);
+
+
+    __super::Bind_Matrices();
+*/

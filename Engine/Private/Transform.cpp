@@ -48,9 +48,12 @@ void CTransform::Set_Scale(_vector vScale)
 	Set_State(STATE::LOOK, XMVector3Normalize(Get_State(STATE::LOOK)) * vScale.m128_f32[2]);
 }
 
-void CTransform::Set_Rotation(_vector vRotation)
+void CTransform::Set_Rotation(_vector vRotation, _bool bIsQuaternion)
 {
-	Rotation(vRotation.m128_f32[0], vRotation.m128_f32[1], vRotation.m128_f32[2]);
+	if (bIsQuaternion)
+		Rotation(vRotation.m128_f32[0], vRotation.m128_f32[1], vRotation.m128_f32[2], vRotation.m128_f32[3]);
+	else
+		Rotation(vRotation.m128_f32[0], vRotation.m128_f32[1], vRotation.m128_f32[2]);
 }
 
 void CTransform::Set_Scale(_float fX, _float fY, _float fZ)

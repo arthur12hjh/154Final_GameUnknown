@@ -62,7 +62,7 @@
                                 ],
                                 "szLayerTag": "Layer_Combat",
                                 "szProtoTag": "Prototype_GameObject_UI_HP_FX",
-                                "szUIID": "Hp_Guage_Image_5-1",
+                                "szUIID": "Hp_Guage_HP_FX_5-1",
                                 "szUITag": "Hp_Fx"
                             }
                         ],

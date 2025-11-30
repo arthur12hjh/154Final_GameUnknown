@@ -19,10 +19,7 @@ void CPlayer_BattleWalkState::Start(void* pArg)
 
     //Jump Run Start·Î ½ÃÀÛ.
     if (true == m_isEvading)
-    {
-        m_isRunStart = false;
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.3f);
-    }
+        m_pPlayer->Set_Animation("Proto_Battle_Run_StartAfterEvade", false, 1.2f, 0.3f);
     else if (true == m_isLanding)
         m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.3f);
     else

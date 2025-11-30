@@ -10,7 +10,7 @@ NS_BEGIN(Client)
 class CBossController final : public CAIController
 {
 public:
-	typedef struct BossControllerDesc : public AI_CONTROLLER_DESC
+	typedef struct BossControllerDesc : public GAMEOBJECT_DESC
 	{
 		const WCHAR*			szBehaviorProtoType;
 	}BOSS_CONTROLLER_DESC;
@@ -32,8 +32,12 @@ public:
 
 	virtual	void						Damage(void* pArg) override;
 	virtual void						ActionSuccess(void* pArg) override;
+
 private:
 	CBehaviorTree*						m_pBehaviorTree = { nullptr };
+
+private :
+	HRESULT								Ready_Behavior(const BOSS_CONTROLLER_DESC& pDesc);
 
 public:
 	static	CBossController*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

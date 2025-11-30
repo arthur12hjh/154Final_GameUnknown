@@ -32,6 +32,12 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	m_vImpactDir = pHit_BoxDesc->vImapctDir;
 	m_fImpactForce = pHit_BoxDesc->fImpactForce;
 
+	_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
+
+	_vector vScale{}, vRotation{}, vPosition{};
+	XMMatrixDecompose(&vScale, &vRotation, &vPosition, ParentMatrix);
+	m_pTransformCom->Set_Rotation(vRotation, true);
+
 	if (m_pData)
 	{
 		if (FAILED(Ready_Components(*pHit_BoxDesc)))
@@ -53,15 +59,10 @@ void CAttackHitBox::Update(_float fTimeDelta)
 {
 	if (!m_bIsDelayDead)
 	{
-		_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
-		for (_uint i = 0; i < 3; ++i)
-			ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
-
 		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		ParentMatrix.r[3] += worldMatrix.r[3];
 
-		m_pCullingCollider->UpdateColiision(ParentMatrix);
-		m_pColliderCom->UpdateColiision(ParentMatrix);
+		m_pCullingCollider->UpdateColiision(worldMatrix);
+		m_pColliderCom->UpdateColiision(worldMatrix);
 	}
 	else
 	{
@@ -80,10 +81,6 @@ void CAttackHitBox::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-	{
-		
-	}
 #endif // _DEBUG
 
 }

@@ -58,7 +58,7 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 		auto iter = m_pPreSearchList.find(pTarget);
 		if (fScalar > 0)
 		{
-			if(m_fAiSearchRadius > fScalar)
+			if(m_fAiSearchRadius > acosf(fScalar))
 			{
 				if (iter == m_pPreSearchList.end())
 				{

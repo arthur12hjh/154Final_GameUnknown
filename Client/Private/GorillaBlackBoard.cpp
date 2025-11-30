@@ -5,18 +5,18 @@ CGorillaBlackBoard::CGorillaBlackBoard() : CBossBlackBoard()
 {
 }
 
-HRESULT CGorillaBlackBoard::Initialize()
+HRESULT CGorillaBlackBoard::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(1)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CGorillaBlackBoard* CGorillaBlackBoard::Create()
+CGorillaBlackBoard* CGorillaBlackBoard::Create(void* pArg)
 {
 	CGorillaBlackBoard* pGorilla_BlackBoard = new CGorillaBlackBoard();
-	if (FAILED(pGorilla_BlackBoard->Initialize()))
+	if (FAILED(pGorilla_BlackBoard->Initialize(pArg)))
 	{
 		Safe_Release(pGorilla_BlackBoard);
 		MSG_BOX("Create Fail : Gorilla Black Board");

@@ -37,7 +37,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	{
 		CLevel* pNewLevel = { nullptr };
 
-		m_pGameInstance->Clear_LevelCameras();
+		m_pGameInstance->Clear_LevelResource();
 
 		switch (m_eNextLevelID)
 		{

@@ -88,6 +88,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
+	void    Stop();
+	void    Play();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
@@ -106,6 +108,7 @@ private:
 	_float			m_fTime = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;
+	_bool			m_bisStop = { false };
 
 private:
 	HRESULT							Ready_Components();
