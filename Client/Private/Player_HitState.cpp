@@ -4,8 +4,12 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_HitState::CPlayer_HitState()
+// 히트 방향따라 다르게 처리해줘야 하긴 하는데..
+// 일단 애니메이션 정상화 되면 처리 ㄱㄱ.
+CPlayer_HitState::CPlayer_HitState(_float3 vImpactDir, _float fImpact)
 	: CPlayerState {}
+	, m_vImpactDir { vImpactDir }
+	, m_fImpact { fImpact }
 {
 }
 
@@ -13,12 +17,12 @@ void CPlayer_HitState::Start(void* pArg)
 {
 	m_eState = PLAYER_STATE::HIT;
 
-	m_pPlayer->Set_Animation("Proto_Jump_End", false);
+	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_HitState::Update(_float fTimeDelta)
 {
-	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
+	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 0.8f);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
 	// 끝나면 Idle 
@@ -42,7 +46,15 @@ void CPlayer_HitState::End()
 
 CPlayer_HitState* CPlayer_HitState::Create(void* pArg)
 {
-	return new CPlayer_HitState();
+	_float3 vImpactDir = { 0.f, 0.f, 0.f };
+	_float  fImpact = { 0.f };
+
+	if (nullptr != pArg)
+	{
+		PLAYER_HIT_DESC* pDesc = static_cast<PLAYER_HIT_DESC*>(pArg);
+	}
+
+	return new CPlayer_HitState(vImpactDir, fImpact);
 }
 
 void CPlayer_HitState::Free()

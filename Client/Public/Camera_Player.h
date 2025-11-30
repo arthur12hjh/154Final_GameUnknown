@@ -35,11 +35,11 @@ public:
 private:
 	class CGameManager*		m_pGameManager = { nullptr };
 	class CTransform*		m_pPlayerTransform = { nullptr };
-	_float					m_fMouseSensor = {};
-	_float3					m_vCameraPos = {};
-	_float					m_fRotateX = {};
-	_float					m_fRotateY = {};
-
+	_float					m_fMouseSensor = { 0.f };
+	_float					m_fRotateX = { 0.f };
+	_float					m_fRotateY = { 0.f };
+	_float					m_fYaw = {};
+	_float					m_fPitch = {};
 public:
 	static CCamera_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
