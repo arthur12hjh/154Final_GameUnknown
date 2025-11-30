@@ -71,10 +71,10 @@ namespace Client
 	// 이건 경우에 따라 사용 할수도 있음
 	enum class ATTACK_DIRECTION
 	{
-		ATK_RIGHT,
 		ATK_LEFT,
-		ATK_DOWN,
+		ATK_RIGHT,
 		ATK_UP,
+		ATK_DOWN,
 		END
 	};
 
@@ -96,7 +96,7 @@ namespace Client
 		// Parry & Eavde : 3
 		PARRYABLE		= 0b00000001, // 1  <- 패링가능
 		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
-		BLINKALBE		= 0b00000100, // 4  <- 블링크 가능
+		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
 		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION		= 0b00010000, // 16 <- 처형
 		END
@@ -123,9 +123,6 @@ namespace Client
 
 		// Attack Dir
 		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
-
-		// Dir
-		DIRECTION					eDirection;					// 방향 RIGHT LEFT FRONT BACK
 
 		// SKILL TYPE
 		// BeatSKill, AlphaSKill... 

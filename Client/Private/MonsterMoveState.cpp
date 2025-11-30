@@ -41,10 +41,6 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
     {
         XMStoreFloat3(&m_vMovePoint, pOwner->GetTransform()->Get_State(STATE::POSITION));
 
-        m_bIsLerp = true;
-        XMStoreFloat3(&m_vLerpStartPos, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-        m_vLerpTime = { 0.f, 0.7f };
-
         // 이건 여기서 패트롤 또는 움직임을 제어
         m_vMovePoint.x += m_pGameInstance->Random(-5.f, 5.f);
         m_vMovePoint.y = 0.f;
@@ -67,10 +63,6 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
             _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
             string AnimationName = pOwner->GetStaticMonsterData()->szAnimationName;
             
-            m_bIsLerp = true;
-            XMStoreFloat3(&m_vLerpStartPos, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-            m_vLerpTime = { 0.f, 0.7f };
-
             m_iSectionIndex = 0;
             AnimationName += "_Run_S";
             m_bIsEnableChange = false;
@@ -133,6 +125,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
 
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+    _vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
     _float fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
 
     if (m_pOwnerInfo->fAttackRange * 0.7f > fDistance)
@@ -194,16 +187,21 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 
     _vector vTempOwnerPos = vOwnerPos;
-    vTargetPos.m128_f32[1] = vTempOwnerPos.m128_f32[1] = 0.f;
+    vOwnerLook.m128_f32[1] = vTargetPos.m128_f32[1] = vTempOwnerPos.m128_f32[1] = 0.f;
     _vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+    _float fScalar = acosf(XMVectorGetX(XMVector3Dot(vOwnerLook, vDir)));
 
-    pOwnerTransform->LookAt(vOwnerPos + vDir);
+    if (0.2f <= fabsf(fScalar))
+        LerpLookAt(fTimeDelta, 5.f);
+    else
+        pOwnerTransform->LookAt(vOwnerPos + vDir);
     pOwnerTransform->Move_Direction(fTimeDelta, vMoveDir, m_fMoveSpeed);
 }
 
 void CMonsterMoveState::Update_Move(_float fTimeDelta)
 {
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    _vector vDir = {};
     _bool   bIsAnimLoop = true;
 
     string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
@@ -214,32 +212,20 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
         
         vTargetPos.m128_f32[1] = vOwnerPos.m128_f32[1] = 0.f;
-        _vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+        vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
         if (m_pOwnerInfo->fAttackRange < fDistance || 0 < m_iSectionIndex)
         {
-            if (0 == m_iSectionIndex)
-            {
-                /*AnimationName += "_Run_S";
-                bIsAnimLoop = false;
-                m_bIsEnableChange = false;
-                m_bIsCaution = false;*/
-                if (m_bIsLerp)
-                    LerpLookAt(fTimeDelta);
-
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
-            }
-            else if (1 == m_iSectionIndex)
+            if (1 == m_iSectionIndex)
             {
                 AnimationName += "_Run_L";
                 // 전투 상태라면 이거 Target을 향해서 뛰어간다.
-                m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
+                LerpLookAt(fTimeDelta, 3.f);
                 m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
 
-                if (m_pOwnerInfo->fAttackRange * 0.7f > fDistance)
+                if (m_pOwnerInfo->fAttackRange * 0.65f > fDistance)
                 {
-                    //Compute_CautionAngle();
                     m_iSectionIndex++;
                 }
             }
@@ -248,6 +234,11 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
                 AnimationName += "_Run_E";
                 m_bIsEnableChange = true;
                 bIsAnimLoop = false;
+            }
+            else
+            {
+                LerpLookAt(fTimeDelta, 8.f);
+                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
             }
         }
         else if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
@@ -260,7 +251,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     {
         // 전투 상태가 아니라면 걸어서 배회
         AnimationName += "_Walk_L";
-        _vector vDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vOwnerPos);
+        vDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_vMovePoint) - vOwnerPos));
 
         if (fDistance >= 0.3f)
@@ -268,10 +259,8 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             _vector vMovePoint = XMLoadFloat3(&m_vMovePoint);
             vMovePoint.m128_f32[3] = 1.f;
 
-            if (m_bIsLerp)
-                LerpLookAt(fTimeDelta);
-            else
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 0.5f);
+            LerpLookAt(fTimeDelta, 3.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 0.5f);
         }
         else
         {
@@ -281,11 +270,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     }
 
     pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop);
-
-    if(0 == m_iSectionIndex && m_bIsRootMotion)
-        pEntity->Play_Animation(fTimeDelta, m_pOwner->GetTransform(), 1.f);
-    else
-        pEntity->Play_Animation(fTimeDelta);
+    pEntity->Play_Animation(fTimeDelta);
 
     if (pEntity->IsAnmiationFinished())
     {
@@ -303,13 +288,18 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         
 }
 
-void CMonsterMoveState::LerpLookAt(_float fTimeDelta)
+void CMonsterMoveState::LerpLookAt(_float fTimeDelta, _float fSpeed)
 {
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+    _vector vTempOwnerPos = vOwnerPos;
+
     _vector vTargetPos{}, vLerpEndDir{};
+    _vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
     if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytibaState)
     {
-        vLerpEndDir = XMVector3Normalize(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos);
+        vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+        vTargetPos.m128_f32[1] = vTempOwnerPos.m128_f32[1] = 0.f;
+        vLerpEndDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
     }
     else if(NAYTIBA_STATE::DEFAULT == m_pOwnerInfo->eNaytibaState)
     {
@@ -318,16 +308,10 @@ void CMonsterMoveState::LerpLookAt(_float fTimeDelta)
         vLerpEndDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vTempOwnerPos);
     }
 
-    vLerpEndDir.m128_f32[1] = m_vLerpStartPos.y = 0.f;
-    _float fRatio = m_vLerpTime.x / m_vLerpTime.y;
+    vLerpEndDir.m128_f32[1] = vOwnerLook.m128_f32[1] = 0.f;
 
-    fRatio = Clamp<_float>(fRatio, 0.f, 1.f);
-    _vector LerpLook = XMVectorLerp(XMLoadFloat3(&m_vLerpStartPos), vLerpEndDir, fRatio);
+    _vector LerpLook = XMVectorLerp(vOwnerLook, vLerpEndDir, fTimeDelta * fSpeed);
     m_pOwner->GetTransform()->LookAt(vOwnerPos + LerpLook);
-
-    m_vLerpTime.x += fTimeDelta;
-    if (m_vLerpTime.x > m_vLerpTime.y)
-        m_bIsLerp = false;
 }
 
 void CMonsterMoveState::Compute_MoveDirection()
@@ -342,12 +326,10 @@ void CMonsterMoveState::Compute_MoveDirection()
         if (50 <= fRandom)
         {
             m_vMoveDirection = DIRECTION::RIGHT;
-          //  XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
         }
         else
         {
             m_vMoveDirection = DIRECTION::LEFT;
-          //  XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
         }
         m_fMoveSpeed = 2.0f;
     }
@@ -355,7 +337,6 @@ void CMonsterMoveState::Compute_MoveDirection()
     {
         m_vMoveDirection = DIRECTION::BACK;
         m_fMoveSpeed = 3.0f;
-      //  XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK));
     }
 }
 

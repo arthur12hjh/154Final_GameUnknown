@@ -352,8 +352,8 @@ HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
 	m_pCameraManager->Clear_Cameras();
 	if (bIsClearPrototypeData)
 		return m_pLevel_Manager->Clear_LevelResource();
-	else
-		return S_OK;
+
+	return S_OK;
 }
 
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)

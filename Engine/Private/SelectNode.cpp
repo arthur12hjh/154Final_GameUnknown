@@ -45,7 +45,7 @@ CBehaviorNode::NODE_STATE CSelectNode::Update(_float fTimeDelta)
         }
     }
     
-    return NODE_STATE::RUNNING;
+    return NODE_STATE::FAIL;
 }
 
 void CSelectNode::Bind_BehaviorNode(CBehaviorNode* pNode)

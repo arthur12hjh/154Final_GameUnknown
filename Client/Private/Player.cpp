@@ -41,13 +41,13 @@ void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
-	//fsm ±³Ã¼
+	//fsm ï¿½ï¿½Ã¼
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
 	
-	//ÇöÀç FSMÀÇ »óÅÂ·Î¸¸ µû¶ó°¡°Ô ÇÔ.. ÀÌ°É ¹Ù²ã¾ßÇÏ³ª?
+	//ï¿½ï¿½ï¿½ï¿½ FSMï¿½ï¿½ ï¿½ï¿½ï¿½Â·Î¸ï¿½ ï¿½ï¿½ï¿½ó°¡°ï¿½ ï¿½ï¿½.. ï¿½Ì°ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½Ï³ï¿½?
 	if(eState == PLAYER_STATE::STATE_END)
 		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	//Change_PlayerMode¿¡¼­ °ª ÀÔ·Â¹ÞÀ» ¼ö ÀÖ°Ô º¯°æ. 
+	//Change_PlayerModeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½. 
 	else
 		pNextFSM->Change_FSM(eState);
 
@@ -154,7 +154,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	//¸ðµç Æ®·£½ºÆûÀÇ ÀÌµ¿ÀÌ ³¡³­ ÈÄ ½ÇÇàµÇ¾î¾ß ÇÔ.
+	//ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½ï¿½.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -180,7 +180,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// ÀÓ½ÃÀÔ´Ï´Ù Àâ±â Å×½ºÆ®¿ë ³ªÁß¿¡ ³Ñ°Ü¹Þ°Å³ª ³Ñ°ÜÁÙµ¥ÀÌÅÍ »ý±â¸é ¸»Á»ÇØÁÖ¼¼¿ä
+		// ï¿½Ó½ï¿½ï¿½Ô´Ï´ï¿½ ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ñ°Ü¹Þ°Å³ï¿½ ï¿½Ñ°ï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½
 		pCharacter->ActionSuccess(nullptr);
 	}
 
@@ -207,7 +207,7 @@ HRESULT CPlayer::Ready_Components()
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
-	//Ä¸½¶ ÄÁÆ®·Ñ·¯¿¡¼­ x´Â ±¸ ¼ººÐ y´Â ±âµÕ ¼ººÐ
+	//Ä¸ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Desc.vSize = _float3(1.f, 1.f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);

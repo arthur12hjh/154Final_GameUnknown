@@ -46,6 +46,7 @@ void CMonsterIdleState::Start(void* pArg, CState* pPreState)
             m_bIsEnableChange = false;
             m_bIsPlayStartAnim = true;
         }
+
     }
 }
 

@@ -37,6 +37,9 @@
 #include "MonsterController.h"
 #include "MonsterMimesisController.h"
 
+#include "BossController.h"
+#include "GorillaBehaviorTree.h"
+
 #pragma region BOSS
 #include "Gorilla.h"
 #include "Gorilla_Body.h"
@@ -315,8 +318,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
-	
-
 	/* For.Prototype_Component_Collider_OBB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		COBBCollider::Create(m_pDevice, m_pContext))))
@@ -336,6 +337,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		CBody_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/GiGas.binx", PreTransformMatrix))))
+		return E_FAIL;
+
 
 	/* For.Prototype_GameObject_Face_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
@@ -378,11 +385,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Monster */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
-		CGorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(Loading_UI_For_GamePlay_Level()))
@@ -458,6 +460,13 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	//_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
+	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/GiGas.fbx", PreTransformMatrix);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	 
 	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
@@ -721,13 +730,6 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* SKY BOX*/
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sky");
 	pProtoDesc.pPrototype = CSky::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* Gorilla Body */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Gorilla_Body");
-	pProtoDesc.pPrototype = CGorilla_Body::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1682,6 +1684,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+
 	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
@@ -1692,8 +1696,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
-
-
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
@@ -1831,14 +1833,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/Gorilla.bin", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
-	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
 
@@ -1872,6 +1867,20 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	/* For.Prototype_Component_TargetComponent */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_TargetComponent");
 	pProtoDesc.pPrototype = CTargetComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_BossController */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_BossController");
+	pProtoDesc.pPrototype = CBossController::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_GorillaBehavior */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_GorillaBehaviorTree");
+	pProtoDesc.pPrototype = CGorillaBehaviorTree::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

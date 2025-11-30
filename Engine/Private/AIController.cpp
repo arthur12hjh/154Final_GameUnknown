@@ -20,9 +20,6 @@ HRESULT CAIController::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    AI_CONTROLLER_DESC* pDesc = static_cast<AI_CONTROLLER_DESC*>(pArg);
-    m_pOwner = pDesc->pOwner;
-
     return S_OK;
 }
 
