@@ -50,10 +50,14 @@ void CPlayerBattleFSM::Update(_float fTimeDelta)
 
 void CPlayerBattleFSM::Change_FSM(PLAYER_STATE eNextState)
 {
-	Clear_FSM();
-
 	PLAYER_TRANSITION_DESC Desc;
+
 	Desc.eNextState = eNextState;
+
+	if (Desc.eNextState == PLAYER_STATE::JUMP)
+		return;
+
+	Clear_FSM();
 
 	if (Desc.eNextState == PLAYER_STATE::WALK_END ||
 		Desc.eNextState == PLAYER_STATE::LANDING ||
@@ -85,7 +89,7 @@ CPlayerState* CPlayerBattleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 
 	case PLAYER_STATE::VENDING_INTERACTION: return CPlayer_VendingInteractionState::Create(tTransitionDesc.pArg);
 
-	case PLAYER_STATE::HIT: return CPlayer_HitState::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::HIT: break;
 
 	case PLAYER_STATE::BETA_CHARGINGSLASH: return CPlayer_BetaChargingSlahsState::Create(tTransitionDesc.pArg);
 

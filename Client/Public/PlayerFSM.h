@@ -20,7 +20,8 @@ public:
 	PLAYER_STATE					Get_StateEnum();
 	class CPlayerState*				Get_CurrentState() { return m_pCurrentState;  }
 	void							Clear_FSM();
-
+	//외부에서 상태 주입할 수 있는 메서드. 좋은 구조는 아닌데 일단 편해서..
+	void							Change_State(class CPlayerState* pPlayerState);
 public:
 	virtual void					Change_FSM(PLAYER_STATE eNextState) = 0;
 	virtual HRESULT					Initialize(void* pArg = nullptr) = 0;
