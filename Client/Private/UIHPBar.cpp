@@ -5,6 +5,9 @@
 #include "GameManager.h"
 
 #include "Player.h"
+#ifdef _DEBUG
+#include "../../UI_Editor/Public/UI_Camera.h"
+#endif // DEBUG
 
 CUIHPBar::CUIHPBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -39,8 +42,8 @@ HRESULT CUIHPBar::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxHp = &m_MaxGara;
-		m_iCurrentHp = &m_Gara;
+		m_iMaxHp = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxHealth);
+		m_iCurrentHp = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentHealth);
 	}
 #endif // DEBUG
 
@@ -61,13 +64,13 @@ void CUIHPBar::Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	// 테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iCurrentHp > 0)
 			*m_iCurrentHp -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iCurrentHp < *m_iMaxHp)
 			*m_iCurrentHp += 10;
-	}
+	}*/
 #endif
 	
 	m_fTargetFill = static_cast<_float>(*m_iCurrentHp) / static_cast<_float>(*m_iMaxHp);

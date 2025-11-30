@@ -4,17 +4,19 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
+class CVIBuffer_Rect;
 class CTexture;
+class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUIPotion final : public CUIBase
+class CUISkillWrapper final : public CUIBase
 {
 private:
-	CUIPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUIPotion(const CUIPotion& Prototype);
-	virtual ~CUIPotion() = default;
+	CUISkillWrapper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUISkillWrapper(const CUISkillWrapper& Prototype);
+	virtual ~CUISkillWrapper() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,28 +26,31 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	_int Get_PotionCount() { return static_cast<_int>(*m_iPotions); }
-	_int Get_MaxPotionCount() { return static_cast<_int>(*m_iMaxPotions); }
-
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
+
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-#ifdef _DEBUG
-	_int m_MaxGara = 5;
-	_int m_Gara = 3;
-#endif // DEBUG
+	_float* m_fMaxRushCoolTime = nullptr;
+	_float* m_fCurrentRushCoolTime = nullptr;
 
-	_int* m_iMaxPotions = nullptr;
-	_int* m_iPotions = nullptr;
+	SKILL_STATE* m_eRushState = nullptr;
+	SKILL_STATE m_ePrevRushState = SKILL_STATE::DEFAULT;
+
+	SKILL_STATE* m_eSkillState[4] = { nullptr, nullptr, nullptr, nullptr };
+	SKILL_STATE m_ePrevSkillState[4] = { SKILL_STATE::DEFAULT, SKILL_STATE::DEFAULT, SKILL_STATE::DEFAULT, SKILL_STATE::DEFAULT };
 
 public:
-	static CUIPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUISkillWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 
 NS_END
+
+/*
+여기서 스킬 4개, Rush 컨트롤
+*/

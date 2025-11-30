@@ -3,7 +3,11 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+
 #include "Player.h"
+#ifdef _DEBUG
+#include "../../UI_Editor/Public/UI_Camera.h"
+#endif // DEBUG
 
 CUIPotion::CUIPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -39,8 +43,8 @@ HRESULT CUIPotion::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxPotions = &m_MaxGara;
-		m_iPotions = &m_Gara;
+		m_iMaxPotions = const_cast<_int*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxPotions);
+		m_iPotions = const_cast<_int*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentPotions);
 	}
 #endif
 	
@@ -59,13 +63,13 @@ void CUIPotion::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 #ifdef _DEBUG
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iPotions > 0)
 			*m_iPotions -= 1;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iPotions < *m_iMaxPotions)
 			*m_iPotions += 1;
-	}
+	}*/
 #endif
 }
 
@@ -168,6 +172,4 @@ CGameObject* CUIPotion::Clone(void* pArg)
 void CUIPotion::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pPotionTexture);
 }

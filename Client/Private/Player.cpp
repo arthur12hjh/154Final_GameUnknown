@@ -329,6 +329,13 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.iCurrentPotions = 3;
 	m_PlayerDesc.iMaxPotions = 3;
 
+	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.fMaxRushCoolTime = 5.f;
+	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
+
+	for (int i = 0; i < 4; ++i)
+		m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
 	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;

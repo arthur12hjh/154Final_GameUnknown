@@ -9,6 +9,7 @@ namespace Client
 		enum ARG_TYPE {
 			NONE,
 			BTN_STATE,
+			SKILL_STATE,
 			INT,
 			FLOAT,
 			WSTRING,
