@@ -236,7 +236,7 @@
     <ClInclude Include="..\public\DebugCheatUI.h" />
     <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
-    <ClInclude Include="..\Public\Deco_AttackRange.h" />
+    <ClInclude Include="..\Public\Deco_AttackDelay.h" />
     <ClInclude Include="..\Public\Deco_PhaseChange.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
@@ -316,7 +316,7 @@
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\Public\Task_Dead.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
-    <ClInclude Include="..\Public\Task_GorillaHit.h" />
+    <ClInclude Include="..\Public\Task_Hit.h" />
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
@@ -432,7 +432,7 @@
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
-    <ClCompile Include="..\Private\Deco_AttackRange.cpp" />
+    <ClCompile Include="..\Private\Deco_AttackDelay.cpp" />
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
@@ -530,7 +530,7 @@
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\Private\Task_Dead.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
-    <ClCompile Include="..\Private\Task_GorillaHit.cpp" />
+    <ClCompile Include="..\Private\Task_Hit.cpp" />
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />

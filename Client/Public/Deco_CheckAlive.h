@@ -10,11 +10,11 @@ protected:
 	virtual ~CDeco_CheckAlive() = default;
 
 public:
-	virtual		HRESULT					Initialize_Prototype(const CBehaviorTree* pOwnerTree) override;
+	virtual		HRESULT					Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
 	virtual		NODE_STATE				Update(_float fTimeDelta) override;
 
 public:
-	static	CDeco_CheckAlive*			Create(const CBehaviorTree* pOwnerTree);
+	static	CDeco_CheckAlive*			Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

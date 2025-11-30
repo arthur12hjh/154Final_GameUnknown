@@ -118,41 +118,8 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
       <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="50.Behavior">
-      <UniqueIdentifier>{97a1cc60-d0a3-4bf8-bedd-de310c29f151}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task">
-      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator">
-      <UniqueIdentifier>{598a6be4-e105-42b0-a918-3c2475dd5d56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Service">
-      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Dead">
-      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Idle">
-      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Move">
-      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Wait">
-      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator\PhaseChange">
-      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator\AttackRange">
-      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97.ShaderFiles\UI">
       <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\BlackBoard">
-      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects">
       <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
@@ -436,9 +403,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
       <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
       <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
     </Filter>
@@ -564,6 +528,39 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
       <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard">
+      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Service">
+      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
+      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
+      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move">
+      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait">
+      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
+      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -721,19 +718,19 @@
       <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Wait.h">
-      <Filter>50.Behavior\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Move.h">
-      <Filter>50.Behavior\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Idle.h">
-      <Filter>50.Behavior\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Dead.h">
-      <Filter>50.Behavior\Task\Dead</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_GorillaHit.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    <ClInclude Include="..\Public\Task_Hit.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -748,13 +745,13 @@
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Deco_AttackRange.h">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    <ClInclude Include="..\Public\Deco_AttackDelay.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossBlackBoard.h">
-      <Filter>50.Behavior\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
@@ -1153,7 +1150,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Deco_CheckAlive.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1295,19 +1292,19 @@
       <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Wait.cpp">
-      <Filter>50.Behavior\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Move.cpp">
-      <Filter>50.Behavior\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Idle.cpp">
-      <Filter>50.Behavior\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Dead.cpp">
-      <Filter>50.Behavior\Task\Dead</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Task_GorillaHit.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    <ClCompile Include="..\Private\Task_Hit.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -1322,13 +1319,13 @@
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Deco_AttackRange.cpp">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    <ClCompile Include="..\Private\Deco_AttackDelay.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossBlackBoard.cpp">
-      <Filter>50.Behavior\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
       <Filter>10.GameManager\CharacterDataManager</Filter>
@@ -1724,7 +1721,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

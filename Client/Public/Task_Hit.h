@@ -5,12 +5,13 @@
 NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
+struct Default_Damage_Desc;
 
-class CTask_Move : public CTask
+class CTask_Hit : public CTask
 {
 protected:
-	CTask_Move();
-	virtual ~CTask_Move() = default;
+	CTask_Hit();
+	virtual ~CTask_Hit() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -18,19 +19,19 @@ public:
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
-private :
+private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
 	string								m_szAnimationName = {};
-	DIRECTION							m_eDirection = {};
-	_float3								m_vMoveDir = {};
+	const Default_Damage_Desc*			m_pHit_Data = { nullptr };
 
 private :
-	void								Refresh_MovePoint();
+	void								Refresh_HitMotion();
 
 public:
-	static	CTask_Move*					Create(CBehaviorTree* pOwnerTree);
+	static	CTask_Hit*					Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
+
 };
 NS_END

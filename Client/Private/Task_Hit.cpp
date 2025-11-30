@@ -1,0 +1,100 @@
+#include "pch.h"
+#include "Task_Hit.h"
+
+#include "GameInstance.h"
+#include "BossBlackBoard.h"
+#include "BehaviorTree.h"
+#include "Nayitba.h"
+
+CTask_Hit::CTask_Hit() : CTask()
+{
+}
+
+HRESULT CTask_Hit::Initialize_Prototype(CBehaviorTree* pOwnerTree)
+{
+	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
+		return E_FAIL;
+
+	if (nullptr == m_pOwner)
+		m_pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+
+	if (nullptr == m_pBlackBoard)
+		m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
+
+
+	return S_OK;
+}
+
+CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
+{
+	// 이거 비헤비어 밖에서 데미지 처리가 이루어지는데 
+	// 비헤비어 안에서 애니메이션을 재생해야하네?
+	// 아니지 이거 BlackBoard 접근해서 처리하자
+	auto pHit_Data = m_pBlackBoard->GetHitData();
+	if (pHit_Data)
+	{
+		m_pHit_Data = pHit_Data;
+		Refresh_HitMotion();
+	}
+
+	if(nullptr == m_pHit_Data)
+	{
+		// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
+		// 확인하고 EFail;
+		return NODE_STATE::FAIL;
+	}
+	
+	if (m_pOwner->Play_Animation(fTimeDelta))
+	{
+		m_pHit_Data = nullptr;
+		return NODE_STATE::COMPLETE;
+	}
+		
+
+	return NODE_STATE::RUNNING;
+}
+
+void CTask_Hit::Refresh_HitMotion()
+{
+	auto pSkill_Data = static_cast<const CHARACTER_SKILL_DESC *>(m_pHit_Data->pSkillData);
+	if (!strcmp(pSkill_Data->szHitAnimationName, "None"))
+	{
+		switch (pSkill_Data->eATK_Direction)
+		{
+		case ATTACK_DIRECTION::ATK_LEFT :
+			m_szAnimationName = "Result_Hit_Stand_Light_Fw_Lw";
+			break;
+		case ATTACK_DIRECTION::ATK_RIGHT:
+			m_szAnimationName = "Result_Hit_Stand_Light_Fw_Rw";
+			break;
+		default:
+			m_szAnimationName = "Result_Hit_Stand_Light_Fw";
+			break;
+		}
+	}
+	else
+	{
+		m_szAnimationName = pSkill_Data->szHitAnimationName;
+	}
+
+	m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
+	m_pBlackBoard->SetHitData(nullptr);
+}
+
+CTask_Hit* CTask_Hit::Create(CBehaviorTree* pOwnerTree)
+{
+	CTask_Hit* pTask_GorillaHit = new CTask_Hit();
+	if (FAILED(pTask_GorillaHit->Initialize_Prototype(pOwnerTree)))
+	{
+		Safe_Release(pTask_GorillaHit);
+		MSG_BOX("Create Fail : Task Gorilla Hit");
+	}
+	return pTask_GorillaHit;
+}
+
+void CTask_Hit::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pBlackBoard);
+}

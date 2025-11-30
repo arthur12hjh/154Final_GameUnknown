@@ -4,7 +4,7 @@ CSquenceNode::CSquenceNode() : CBehaviorNode()
 {
 }
 
-HRESULT CSquenceNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CSquenceNode::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	m_eNodeType = BEHAVIOR_NODE_TYPE::SQUENCE;
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
@@ -70,7 +70,7 @@ void CSquenceNode::Bind_BehaviorNode(CBehaviorNode* pNode)
 	}
 }
 
-CSquenceNode* CSquenceNode::Create(const CBehaviorTree* pOwnerTree)
+CSquenceNode* CSquenceNode::Create(CBehaviorTree* pOwnerTree)
 {
 	CSquenceNode* pSquenceNode = new CSquenceNode();
 	if (FAILED(pSquenceNode->Initialize_Prototype(pOwnerTree)))

@@ -9,7 +9,7 @@ private:
 	virtual ~CSquenceNode() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree);
+	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree);
 
 	// 데코레이터 성공 여부 반환
 	virtual	CBehaviorNode::NODE_STATE	Update(_float fTimeDelta);
@@ -23,7 +23,7 @@ private:
 	_uint								m_iIndex = {};
 
 public:
-	static	CSquenceNode*				Create(const CBehaviorTree* pOwnerTree);
+	static	CSquenceNode*				Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 };
 NS_END

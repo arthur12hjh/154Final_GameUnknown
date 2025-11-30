@@ -198,6 +198,9 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	// Create Notify
 	// szNotifyArg01	=> ProtoType Name
 	// szNotifyArg02	=> Layer Name
+	// szNotifyArg03	=> Part Name
+	// szNotifyArg04	=> 컴포넌트 이름
+	// szNotifyArg05	=> 본 이름
 
 	// iNumData1		=>	Skill ID
 	// iNumData2		=>	Col Type

@@ -8,7 +8,7 @@ CDeco_CheckAlive::CDeco_CheckAlive()
 {
 }
 
-HRESULT CDeco_CheckAlive::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CDeco_CheckAlive::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
         return E_FAIL;
@@ -28,7 +28,7 @@ CBehaviorNode::NODE_STATE CDeco_CheckAlive::Update(_float fTimeDelta)
     return NODE_STATE::FAIL;
 }
 
-CDeco_CheckAlive* CDeco_CheckAlive::Create(const CBehaviorTree* pOwnerTree)
+CDeco_CheckAlive* CDeco_CheckAlive::Create(CBehaviorTree* pOwnerTree)
 {
     CDeco_CheckAlive* pAliveDescorator = new CDeco_CheckAlive();
     if (FAILED(pAliveDescorator->Initialize_Prototype(pOwnerTree)))

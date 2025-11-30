@@ -3,6 +3,9 @@
 #include "Task.h"
 
 NS_BEGIN(Client)
+class CNayitba;
+class CBossBlackBoard;
+
 class CTask_Dead : public CTask
 {
 protected:
@@ -10,13 +13,17 @@ protected:
 	virtual ~CTask_Dead() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree) override;
+	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
 
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
+private :
+	CNayitba*							m_pOwner = { nullptr };
+	CBossBlackBoard*					m_pBlackBoard = { nullptr };
+
 public:
-	static	CTask_Dead*					Create(const CBehaviorTree* pOwnerTree);
+	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 	
 };

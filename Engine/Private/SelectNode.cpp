@@ -4,7 +4,7 @@ CSelectNode::CSelectNode() : CBehaviorNode()
 {
 }
 
-HRESULT CSelectNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CSelectNode::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
     m_eNodeType = BEHAVIOR_NODE_TYPE::SELECTOR;
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
@@ -20,32 +20,39 @@ CBehaviorNode::NODE_STATE CSelectNode::Update(_float fTimeDelta)
     for (auto& iter : m_Decorators)
     {
         if (NODE_STATE::FAIL == iter->Update(fTimeDelta))
+        {
             bIsDecorator = false;
+            m_iIndex = 0;
+            return NODE_STATE::FAIL;
+        }
     }
 
     if (bIsDecorator)
     {
-        NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
-        switch (State)
+        while (1)
         {
-        case NODE_STATE::COMPLETE:
-            m_iIndex = 0;
-            return NODE_STATE::COMPLETE;
-        case NODE_STATE::FAIL:
-            m_iIndex++;
-            break;
-        default :
-            return NODE_STATE::RUNNING;
-        }
+            NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
+            switch (State)
+            {
+            case NODE_STATE::COMPLETE:
+                m_iIndex = 0;
+                return NODE_STATE::COMPLETE;
+            case NODE_STATE::FAIL:
+                m_iIndex++;
+                break;
+            default:
+                return NODE_STATE::RUNNING;
+            }
 
-        if (m_Actions.size() <= m_iIndex)
-        {
-            m_iIndex = 0;
-            NODE_STATE::FAIL;
+            if (m_Actions.size() <= m_iIndex)
+            {
+                m_iIndex = 0;
+                return NODE_STATE::FAIL;
+            }
         }
     }
     
-    return NODE_STATE::FAIL;
+    return NODE_STATE::RUNNING;
 }
 
 void CSelectNode::Bind_BehaviorNode(CBehaviorNode* pNode)
@@ -71,7 +78,7 @@ void CSelectNode::Bind_BehaviorNode(CBehaviorNode* pNode)
     }
 }
 
-CSelectNode* CSelectNode::Create(const CBehaviorTree* pOwnerTree)
+CSelectNode* CSelectNode::Create(CBehaviorTree* pOwnerTree)
 {
     CSelectNode* pSelectNode = new CSelectNode();
     if (FAILED(pSelectNode->Initialize_Prototype(pOwnerTree)))

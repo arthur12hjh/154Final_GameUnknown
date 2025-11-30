@@ -2,19 +2,24 @@
 #include "Task_Idle.h"
 
 #include "GameInstance.h"
-
-#include "BehaviorTree.h"
 #include "BossBlackBoard.h"
+#include "GorillaBehaviorTree.h"
 #include "Nayitba.h"
 
 CTask_Idle::CTask_Idle() : CTask()
 {
 }
 
-HRESULT CTask_Idle::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CTask_Idle::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
+
+	if (nullptr == m_pOwner)
+		m_pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+
+	if (nullptr == m_pBlackBoard)
+		m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
 
 	return S_OK;
 }
@@ -22,27 +27,17 @@ HRESULT CTask_Idle::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 CBehaviorNode::NODE_STATE CTask_Idle::Update(_float fTimeDelta)
 {
 	// 여기서 블렉보드 또는 다른곳의 상태가 바뀌면 Complete 호출해서 사용
-	auto pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
-	auto pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
-	string szAnimName = pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+	string szAnimName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 
 	szAnimName += "_BattleIdle01";
-	pOwner->Set_Animation(szAnimName.c_str(), true);
-	pOwner->Play_Animation(fTimeDelta);
-	Safe_Release(pBlackBoard);
-
-	// 여기서 쿨타임마다 Attack을 하든 이동을하든 동작할거임
-	//_vector vPos = pOwner->GetTransform()->Get_State(STATE::POSITION);
-	//_vector vCamPos = XMLoadFloat4(m_pGameInstance->Get_CamPosition());
-
-	//_float fDistance = XMVectorGetX(XMVector3Length(vCamPos - vPos));
-	//if(fDistance <= 5.f)
-	//	return NODE_STATE::COMPLETE;
+	m_pOwner->Set_Animation(szAnimName.c_str(), true);
+	m_pOwner->Play_Animation(fTimeDelta);
 
 	return NODE_STATE::COMPLETE;
 }
 
-CTask_Idle* CTask_Idle::Create(const CBehaviorTree* pOwnerTree)
+CTask_Idle* CTask_Idle::Create(CBehaviorTree* pOwnerTree)
 {
 	CTask_Idle* pTask_Idle = new CTask_Idle();
 	if (FAILED(pTask_Idle->Initialize_Prototype(pOwnerTree)))
@@ -56,4 +51,6 @@ CTask_Idle* CTask_Idle::Create(const CBehaviorTree* pOwnerTree)
 void CTask_Idle::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pBlackBoard);
 }

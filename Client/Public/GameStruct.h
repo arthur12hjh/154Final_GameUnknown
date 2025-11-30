@@ -206,6 +206,6 @@ namespace Client
 		_float3				vImpactDir;
 		_float				fImpactForce;
 
-		void*				pSkillData;
+		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 }
