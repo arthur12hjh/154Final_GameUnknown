@@ -173,7 +173,6 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
 
     m_GlobalBuffer.g_fBlendRatio = 0.f;
 
-
     return;
 }
 
@@ -268,6 +267,8 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
 
             if (AnimationChanged)
                 AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+
+
             return;
         }
 
@@ -581,15 +582,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 {
     _float fScaledDeltaTime = fTimeDelta * m_fAnimationPlayRate;
 
-    // 1) PreBoneMatrices에 이전 프레임 결과 백업 (모션블러용)
-    if (nullptr != m_pOutSource)
-        m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
-
     if (-1 == m_iCurrentAnimIndex ||
         m_iCurrentAnimIndex >= m_iNumAnimations)
         return false;
 
-    // 2) 애니메이션 트랙 업데이트
+    // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime);
 
@@ -605,6 +602,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     }
 
     m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
+
+    if (m_isLerp && m_fBlendElapsed == 0.f)
+    {
+        m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
+    }
 
     if (m_isLerp)
     {
@@ -623,12 +625,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_fBlendRatio = 0.f;
     }
 
-    // 3) ComputeShader 실행 (g_CombinedOut / g_RootOut 갱신)
     Bind_ComputeShader(fScaledDeltaTime);
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    // 4) CPU CBone 전체 동기화 (악세사리, 디버그 뷰용)
+    // CPU CBone 전체 동기화
     if (m_pOutReadBack)
     {
         m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
@@ -653,7 +654,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         }
     }
 
-    // 5) 루트모션 적용 (RootOnly 버퍼 사용)
+    // 루트모션 적용
     if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
     {
         m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);

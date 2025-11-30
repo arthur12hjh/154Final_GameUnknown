@@ -86,12 +86,24 @@ NS_END
     - vNotifyRotation : 보정된 추가 회전값
 
     **Active_Collision ( 전투 로직용 )**
-    - szNotifyArg01   : 충돌체 태그
-    - szNotifyArg02   : 없음
-    - szSocketTag     : 없음
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
-    - vNotifyPosition : 보정된 생성 위치
-    - vNotifyRotation : 보정된 추가 회전값
+    // 콜리전을 생성 Or 콜리전 On
+	// ANIM_NOTIFY
+	// szNotifyTag		=> Notify Event Type
+	
+	// Create Notify
+	// szNotifyArg01	=> ProtoType Name
+	// szNotifyArg02	=> Layer Name
+
+	// iNumData1		=>	Skill ID
+	// iNumData2		=>	Col Type
+	// iNumData3		=>	Hit Box Type
+	// iNumData4		=>	Hit Object Type
+
+	// bIsLocalPos		=>	UseNotifyTransform
+
+	// vNotifyScale		=> Hit Box Size
+	// vNotifyPosition	=> Hit Box Relative Position
+	// vNotifyRotation	=> Hit Box Rotation
 
     **Set_Transform**
     - szNotifyArg01   : 없음
