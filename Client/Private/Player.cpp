@@ -37,13 +37,20 @@ _float CPlayer::Get_AnimationRatio()
 	return m_pBodyModelCom->Get_AnimationRatio();
 }
 
-void CPlayer::Change_PlayerMode(PLAYER_MODE eMode)
+void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
 	//fsm 교체
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	
+	//현재 FSM의 상태로만 따라가게 함.. 이걸 바꿔야하나?
+	if(eState == PLAYER_STATE::STATE_END)
+		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	//Change_PlayerMode에서 값 입력받을 수 있게 변경. 
+	else
+		pNextFSM->Change_FSM(eState);
+
 	m_pCurrentFSM->Clear_FSM();
 
 	m_pCurrentFSM = pNextFSM;
@@ -93,10 +100,12 @@ void CPlayer::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
 	{
-		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
+		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::IDLE)
+			Change_PlayerMode(PLAYER_MODE::BATTLE);
+		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
 			Change_PlayerMode(PLAYER_MODE::LOCKON);
 		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
-			Change_PlayerMode(PLAYER_MODE::BATTLE);
+			Change_PlayerMode(PLAYER_MODE::IDLE);
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -176,6 +185,15 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
+	{
+		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
+
+		// 임시입니다 잡기 테스트용 나중에 넘겨받거나 넘겨줄데이터 생기면 말좀해주세요
+		pCharacter->ActionSuccess(nullptr);
+	}
 
 	return S_OK;
 }
@@ -229,7 +247,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
 	/* Part_Weapon */
@@ -272,6 +290,10 @@ HRESULT CPlayer::Ready_PartObjects()
 
 HRESULT CPlayer::Ready_PlayerDesc()
 {
+	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxShield = 100;
+	m_PlayerDesc.iMaxBetaEnergy = 20;
+
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
@@ -281,7 +303,11 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
-	m_PlayerDesc.iCurrentBetaEnergy = 100;
+	m_PlayerDesc.iCurrentBetaEnergy = 20;
+
+	m_PlayerDesc.iCurrentPotions = 3;
+	m_PlayerDesc.iMaxPotions = 3;
+
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
 	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
@@ -293,8 +319,9 @@ HRESULT CPlayer::Ready_FSM()
 {
 	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
 	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
+	m_FSMs.emplace(PLAYER_MODE::IDLE, CPlayerIdleFSM::Create());
 
-	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::BATTLE)->second;
+	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::IDLE)->second;
 
 	return S_OK;
 }

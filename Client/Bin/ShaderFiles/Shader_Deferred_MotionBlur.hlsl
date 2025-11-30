@@ -51,7 +51,7 @@ PS_OUT_BACKBUFFER PS_MAIN_CAM_MOTIONBLUR(PS_IN In)
 /* 클라단에서 Velocity만 기록해주면 된다. */
 PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out = (PS_OUT_BACKBUFFER) 0;
+    PS_OUT_BACKBUFFER Out;
 
     float4 vBaseColor = g_SceneTexture.Sample(ClampSampler, In.vTexcoord);
     float4 vAccum = vBaseColor;
@@ -59,11 +59,14 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
     unsigned int iSampleCount = g_iSampleCount;
 
     float4 vVelocity = g_VelocityTexture.Sample(ClampSampler, In.vTexcoord);
-
+    
     Out.vBackBuffer = vBaseColor;
    
-    vVelocity.xy /= (float) iSampleCount;
+    if (length(vVelocity.xy) < 0.0001f)
+        return Out;
     
+    vVelocity.xy /= (float) iSampleCount;
+   
     float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).g * 500.f;
     int iCnt = 1;
     

@@ -10,6 +10,7 @@ matrix g_ViewMatrixInv, g_ProjMatrixInv;
 texture2D g_BlurTexture;
 texture2D g_WeightTexture;
 
+texture2D g_EmissiveTexture;
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -33,6 +34,7 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float4 vWeight = 0.f;
+    float vSize;
     
     for (int i = -6; i < 7; ++i)
     {
@@ -41,11 +43,11 @@ PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
-
+        vSize += g_fWeights[i + 6];
     }
     
-    Out.vBlurX = vColor / 10.0f;
-    Out.vWeight = vWeight / 10.0f;
+    Out.vBlurX = vColor / vSize;
+    Out.vWeight = vWeight / vSize;
     
     return Out;    
 }
@@ -57,7 +59,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
     float2 vTexcoord;
     float4 vColor;
     float4 vWeight = 0.f;
-    
+    float vSize;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
@@ -65,10 +67,56 @@ PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+
     }
     
-    Out.vBlurY = vColor / 6.5f;
-    Out.vWeight = vWeight / 6.5f;
+    Out.vBlurY = vColor / vSize;
+    Out.vWeight = (vWeight / vSize);
+    
+    return Out;
+}
+
+PS_OUT_BACKBUFFER PS_MAIN_EMISSIVE_BLUR_X(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+    
+    float2 vTexcoord;
+    float4 vColor = 0.f;
+    float vSize;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
+        vTexcoord.y = In.vTexcoord.y;
+        
+        vColor += g_fWeights[i + 6] * g_EmissiveTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+    }
+    
+    Out.vBackBuffer = vColor / vSize;
+    
+    return Out;
+}
+
+PS_OUT_BACKBUFFER PS_MAIN_EMISSIVE_BLUR_FINAL(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+    
+    float2 vTexcoord;
+    float4 vColor = 0.f;
+    float vSize;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
+        
+        vColor += g_fWeights[i + 6] * g_EmissiveTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+    }
+    
+    Out.vBackBuffer = vColor / vSize;
     
     return Out;
 }
@@ -80,7 +128,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_X();
@@ -90,9 +138,29 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();
+    }
+    // idx 2
+    pass Emissive_Blur_X
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE_BLUR_X();
+    }
+    // idx 3
+    pass Emissive_Blur_Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE_BLUR_FINAL();
     }
 }

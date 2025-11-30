@@ -3,6 +3,10 @@
 #include "Client_Defines.h"
 #include "PlayerState.h"
 
+NS_BEGIN(Engine)
+class CGameInstance;
+NS_END
+
 NS_BEGIN(Client)
 
 class CPlayerFSM abstract : public CBase
@@ -25,7 +29,10 @@ public:
 	virtual class CPlayerState*		Create_State(PLAYER_TRANSITION_DESC tTransitionDesc) = 0;
 
 protected:
+	CGameInstance*					m_pGameInstance = { nullptr };
+	class CGameManager*				m_pGameManager = { nullptr };
 	class CPlayerState*				m_pCurrentState = { nullptr };
+	class CPlayer*					m_pPlayer = { nullptr };
 
 protected:
 	virtual HRESULT					Ready_State() = 0;

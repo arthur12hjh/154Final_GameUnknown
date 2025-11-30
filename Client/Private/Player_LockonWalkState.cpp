@@ -15,19 +15,19 @@ void CPlayer_LockonWalkState::Start(void* pArg)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f);
+		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f, 0.3f);
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f);
+		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f, 0.3f);
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f);
+		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f, 0.3f);
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f);
+		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.3f);
 	}
 }
 

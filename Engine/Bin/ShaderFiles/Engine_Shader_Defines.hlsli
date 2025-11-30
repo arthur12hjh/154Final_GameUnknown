@@ -10,6 +10,18 @@ struct BoneTransformMatrix
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
+sampler AnisoTropy_BLUR_Sampler = sampler_state // π”∏ ¿Ã ¿÷æÓæﬂ ¿«πÃ∞° ¿÷¿Ω
+{
+    Filter = AnisoTropic;
+    MaxAnisotropy = 16;
+    AddressU = wrap;
+    AddressV = wrap;
+    AddressW = wrap;
+    MipLodBias = 1.f; // π”∏  ∑π∫ß +1Ω√ƒ—º≠ ¿«µµ¿˚¿∏∑Œ π∂∞∑
+    MinLOD = 0;
+    MaxLOD = 0xFFFFFFFF;
+    ComparisonFunc = ALWAYS;
+};
 
 sampler ClampSampler = sampler_state
 {

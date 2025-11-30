@@ -139,6 +139,14 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
+	InstanceDesc.iNumInstance = 1;
+
+	/* For.Prototype_Component_VIBuffer_Rect_Instance */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
+		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &InstanceDesc))))
+		return E_FAIL;
+
 #pragma region Shader
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),

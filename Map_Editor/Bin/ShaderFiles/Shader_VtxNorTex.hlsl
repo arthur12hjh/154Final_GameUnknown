@@ -73,11 +73,18 @@ PS_OUT PS_MAIN(PS_IN In)
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    float2 vMaskUV;
+    const float fTexelSize = 512.f;
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
     
-    //vector vMtrlDiffuse = vDestDiffuse * vMask + vSourDiffuse * (1.f - vMask);
+    if (fMaskValue > 0.01f)
+        Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
+    else
+        Out.vDiffuse = vSourDiffuse;
     
-    Out.vDiffuse = vSourDiffuse;
-    
+    //Out.vDiffuse = vSourDiffuse;
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);

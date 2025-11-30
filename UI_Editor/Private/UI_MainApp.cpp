@@ -9,6 +9,7 @@
 #include "UI_Level_Loading.h"
 #include "GUIManager.h"
 #include "UIResourceStore.h"
+#include "GameManager.h"
 
 #include "RigidBody.h"
 
@@ -100,6 +101,9 @@ HRESULT CUI_MainApp::Ready_Manager_Setting()
 
 	m_pUIResourceStore->Initialize(m_pDevice, m_pContext);
 
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Initialize(m_pDevice, m_pContext);
+
 	return S_OK;
 }
 
@@ -121,6 +125,14 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 	/* For.Prototype_Component_VIBuffer_Point */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
+	InstanceDesc.iNumInstance = 1;
+
+	/* For.Prototype_Component_VIBuffer_Rect_Instance */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
+		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &InstanceDesc))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Shader_VtxPosTex */
@@ -165,6 +177,8 @@ void CUI_MainApp::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+
+	CGameManager::DestroyInstance();
 
 	m_pGuiManager->Release_GUI_Manager();
 	Safe_Release(m_pGuiManager);

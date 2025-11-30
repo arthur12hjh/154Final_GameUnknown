@@ -1,20 +1,25 @@
-#include "Engine_Shader_Defines.hlsli"
+#include "Client_Shader_Utils.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_PreWorldMatrix, g_PreViewMatrix;
+
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_EmissiveTexture;
 Texture2D g_ORMTexture;
 
+//림라이트용 변수
 vector g_vCamPosition;
+float g_fRimLightPower;
+float g_fRimLightStrength;
+float4 g_vRimLightColor;
+
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
 
-bool g_IsMotionBlur;
-
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
+
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -98,15 +103,6 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
-
-    
-    //matrix SkinnedMatrix = mul(g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix, g_OffsetMatrices[In.vBlendIndex.x]);
-    //matrix SkinnedMatrix = g_OffsetMatrices[In.vBlendIndex.x];
-    
-    //matrix BoneMatrix = g_OffsetMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-    //    g_OffsetMatrices[In.vBdlendIndex.y] * In.vBlendWeight.y +
-    //    g_OffsetMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-    //    g_OffsetMatrices[In.vBlendIndex.w] * fWeightW;
     
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
@@ -198,10 +194,11 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 vDiffuse : SV_TARGET0;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vORM : SV_Target3;
+    float4 vDiffuse   : SV_TARGET0;
+    float4 vNormal    : SV_TARGET1;
+    float4 vDepth     : SV_TARGET2;
+    float4 vORM       : SV_Target3;
+    float4 vEmissive  : SV_TARGET4; 
 };
 
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
@@ -214,10 +211,10 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse += Out.vDiffuse * g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
 }
@@ -231,51 +228,14 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse += Out.vDiffuse * g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse +
+        Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-
-    /* 림라이트 구현부. 수정 필요. */
-    vector vPosToCam = normalize(g_vCamPosition - In.vWorldPos);
-    float fStrength = 2.f;
-    float fPower = 3.f;
-    float4 vColor = float4(1.f, 1.f, 1.f, 1.f);
-    vector vRimLight = (1 - dot(normalize(In.vNormal), vPosToCam));
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    //림라이트도 더해서 던져.
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     
-    vRimLight = pow(vRimLight, fPower) * fStrength * vColor;
-    
-    Out.vDiffuse += vRimLight;
-
-    return Out;
-}
-
-// 림라이트 켜기 + 이미시브 끄기.
-PS_OUT PS_MAIN_MS_TEST(PS_IN In)
-{
-    PS_OUT Out;
-    
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.4f)
-        discard;
-   
-    Out.vDiffuse = vMtrlDiffuse;
-    //Out.vDiffuse += Out.vDiffuse * g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
-   
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-
-    /* 림라이트 구현부. 수정 필요. */
-    vector vPosToCam = normalize(g_vCamPosition - In.vWorldPos);
-    float fStrength = 2.f;
-    float fPower = 3.f;
-    float4 vColor = float4(1.f, 1.f, 1.f, 1.f);
-    vector vRimLight = (1 - dot(normalize(In.vNormal), vPosToCam));
-    
-    vRimLight = pow(vRimLight, fPower) * fStrength * vColor;
-    
-    Out.vDiffuse += vRimLight;
-
     return Out;
 }
 
@@ -400,3 +360,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_MOTIONBLUR();
     }
 }
+
+
+

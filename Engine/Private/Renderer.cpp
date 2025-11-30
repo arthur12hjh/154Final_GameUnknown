@@ -18,6 +18,7 @@
 #include "DepthofField.h"
 #include "MotionBlur.h"
 #include "SSAO.h"
+#include "Emissive.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -111,6 +112,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pSSAO)
 		return E_FAIL;
 
+	m_pEmissive = CEmissive::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pEmissive)
+		return E_FAIL;
+
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -136,7 +141,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 150.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 150.0f, 150.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 450.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
 
 	if (FAILED(m_pGlow->Ready_Debug(m_vScreenSize.x - 450.f, 150.f, 300.f, 300.f)))
@@ -147,9 +152,9 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pBloom->Ready_Debug(m_vScreenSize.x - 450.f, 450.f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pSSAO->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
-		return E_FAIL;
 	if (FAILED(m_pMotionBlur->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
+		return E_FAIL;
+	if (FAILED(m_pSSAO->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
 	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
 	//	return E_FAIL;
@@ -181,6 +186,9 @@ void CRenderer::Update(_float fTimeDelta)
 	// SSAO 토글.
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
 		m_isSSAO = !m_isSSAO;
+	// 볼류메트릭 토글.
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F10))
+		m_isVolumetric = !m_isVolumetric;
 
 	m_pRadialBlur->Update(fTimeDelta);
 }
@@ -209,7 +217,10 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 	/* Target_ORM */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ORM"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ORM"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	/* Target_Emissive */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	/* MRT_LightAcc */
@@ -261,7 +272,9 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_ORM"))))
 		return E_FAIL;
-	
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
+		return E_FAIL;
+
 	/* MRT_LightAcc */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -326,12 +339,6 @@ void CRenderer::Render()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 
-	//후처리 마무리 하기.
-	Render_Blur();
-	Render_Glow();
-	Render_Distortion();
-	Render_Fog();
-	Render_Bloom();
 	Render_MotionBlur();
 	//렌더 타겟 내용을 백버퍼로 뱉어내게 하기.
 	Render_Deferred();
@@ -383,6 +390,15 @@ void* CRenderer::Get_SSAO_Desc()
 void* CRenderer::Get_MotionBlur_Desc()
 {
 	return m_pMotionBlur->Get_Desc();
+}
+
+void* CRenderer::Get_Volumetric_Desc()
+{
+	m_VolumetricDesc.fDensity = &m_fDensity;
+	m_VolumetricDesc.fStepSize = &m_fStepSize;
+	m_VolumetricDesc.fVolumetricG = &m_fVolumetricG;
+
+	return &m_VolumetricDesc;
 }
 
 void CRenderer::Render_Priority()
@@ -499,32 +515,41 @@ void CRenderer::Render_LightAcc()
 	//SSAO 차폐 연산.
 	m_pSSAO->Render(m_pVIBuffer, TEXT("Target_Depth"), TEXT("Target_Normal"), TEXT("NON_USE"));
 
+	if (false == m_isVolumetric)
+	{
+		m_pGameInstance->Clear_MRT(TEXT("MRT_Volumetric"));
+		return;
+	}
 
-	//if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric"), m_pVolumetricDSV)))
-	//	return;
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric"), m_pVolumetricDSV)))
+		return;
 
-	//if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
-	//	return;
-	//if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
-	//	return;
+	Set_ScreenSize(m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f);
 
-	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
-	//	return;
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
+		return;
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
+		return;
 
-	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
-	//	return;
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
+		return;
 
-	//Set_ScreenSize(m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f);
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
+		return;
 
-	//m_pVIBuffer->Bind_Resources();
+	m_pShader->Bind_RawValue("g_fDensity", &m_fDensity, sizeof(_float));
+	m_pShader->Bind_RawValue("g_fStepSize", &m_fStepSize, sizeof(_float));
+	m_pShader->Bind_RawValue("g_fVolumetricG", &m_fVolumetricG, sizeof(_float));
 
-	//if (FAILED(m_pGameInstance->Render_VolumetricLights(m_pShader, m_pVIBuffer)))
-	//	return;
+	m_pVIBuffer->Bind_Resources();
 
-	//if (FAILED(m_pGameInstance->End_MRT()))
-	//	return;
+	if (FAILED(m_pGameInstance->Render_VolumetricLights(m_pShader, m_pVIBuffer)))
+		return;
 
-	//Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+
+	Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
 }
 
 void CRenderer::Render_Combined()
@@ -584,48 +609,33 @@ void CRenderer::Render_Blend()
 	m_RenderObjects[ENUM_CLASS(RENDER::BLEND)].clear();
 }
 
-void CRenderer::Render_Blur()
-{
-	HRESULT hr = m_pBlur->Render(m_pVIBuffer);
-}
-
-void CRenderer::Render_Glow()
-{
-	HRESULT hr = m_pGlow->Render(m_pVIBuffer);
-}
-
-void CRenderer::Render_Distortion()
-{
-	HRESULT hr = m_pDistortion->Render(m_pVIBuffer);
-}
-
-void CRenderer::Render_Bloom()
-{
-	HRESULT hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_BloomScene"), TEXT("MRT_Scene"));
-}
-
-void CRenderer::Render_Fog()
-{
-	HRESULT hr = m_pFog->Render(m_pVIBuffer);
-}
-
 void CRenderer::Render_Deferred()
 {
+	HRESULT hr = m_pBlur->Render(m_pVIBuffer);
+	hr = m_pEmissive->Render(m_pVIBuffer);
+	hr = m_pGlow->Render(m_pVIBuffer);
+	hr = m_pDistortion->Render(m_pVIBuffer);
+	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_BloomScene"), TEXT("MRT_Scene"));
+	hr = m_pFog->Render(m_pVIBuffer);
+
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
 		return;
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Scene"), m_pShader, "g_SceneTexture")))
 		return;
 
+	//emissive
+	if (FAILED(m_pEmissive->Bind_RenderTarget(m_pShader, "g_EmissiveFinalTexture")))
+		return;
+
+	//blur
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
-
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
 		return;
-
+	//glow
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
 		return;
-
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
 		return;
 
@@ -739,8 +749,8 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pFog->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
-	if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
+	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
 
 	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
@@ -864,6 +874,7 @@ void CRenderer::Free()
 	Safe_Release(m_pDepthofField);
 	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pSSAO);
+	Safe_Release(m_pEmissive);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);
