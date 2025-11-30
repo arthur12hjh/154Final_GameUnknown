@@ -29,6 +29,23 @@ HRESULT CUIHPBar::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+
+	if (pCharactor)
+	{
+		m_iMaxHp = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxHealth);
+		m_iCurrentHp = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentHealth);
+	}
+#ifdef _DEBUG
+	else
+	{
+		m_iMaxHp = &m_MaxGara;
+		m_iCurrentHp = &m_Gara;
+	}
+#endif // DEBUG
+
+	Safe_Release(pCharactor);
+
 	return S_OK;
 }
 
@@ -41,21 +58,19 @@ void CUIHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	
-	if (auto pCharactor = CGameManager::GetInstance()->GetGameCharacter())
-	{
-		m_fTargetFill = static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentHealth) / static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iMaxHealth);
-		Safe_Release(pCharactor);
-	}
 
+#ifdef _DEBUG
 	// 테스트 용
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			m_fTargetFill -= 0.2f;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			m_fTargetFill += 0.2f;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iCurrentHp > 0)
+			*m_iCurrentHp -= 10;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iCurrentHp < *m_iMaxHp)
+			*m_iCurrentHp += 10;
 	}
+#endif
+	
+	m_fTargetFill = static_cast<_float>(*m_iCurrentHp) / static_cast<_float>(*m_iMaxHp);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 

@@ -29,6 +29,24 @@ HRESULT CUIBeta::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+
+	if (pCharactor)
+	{
+		m_iMaxCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxBetaEnergy);
+		m_iCurrentCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentBetaEnergy);
+	}
+
+#ifdef _DEBUG
+	else
+	{
+		m_iMaxCount = &m_MaxGara;
+		m_iCurrentCount = &m_Gara;
+	}
+#endif // DEBUG
+
+	Safe_Release(pCharactor);
+
 	return S_OK;
 }
 
@@ -41,21 +59,18 @@ void CUIBeta::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (auto pCharactor = CGameManager::GetInstance()->GetGameCharacter())
-	{
-		m_fTargetFill = static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentBetaEnergy) / static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iMaxBetaEnergy);
-		m_iTotalCount = CGameManager::GetInstance()->Get_PlayerDesc()->iMaxBetaEnergy;
-		Safe_Release(pCharactor);
-	}
-
+#ifdef _DEBUG
 	// 테스트 용
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-			m_fTargetFill -= 1.f / 20.f;
+			*m_iCurrentCount -= 1;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-			m_fTargetFill += 1.f / 20.f;
+			*m_iCurrentCount += 1;
 	}
+#endif
+
+	m_fTargetFill = static_cast<_float>(*m_iCurrentCount) / static_cast<_float>(*m_iMaxCount);
 
 	if (m_fCurrentFill < m_fTargetFill)
 		m_fCurrentFill = min(m_fCurrentFill + fTimeDelta * m_fSpeed, m_fTargetFill);
@@ -63,20 +78,20 @@ void CUIBeta::Update(_float fTimeDelta)
 		m_fCurrentFill = max(m_fCurrentFill - fTimeDelta * m_fSpeed, m_fTargetFill);
 
 	// (2) 정확한 정수 타일 계산 (float 오차 제거)
-	_float exactFill = m_fCurrentFill * m_iTotalCount;
+	_float exactFill = m_fCurrentFill * *m_iMaxCount;
 
 	// 타일 경계에서 튐 방지용
 	_int filledTiles = (_int)floor(exactFill + 0.00001f);
 
 	// 셰이더로 갈 때는 float(0~1)로 환산
-	m_fCurrentFill = (_float)filledTiles / m_iTotalCount;
+	m_fCurrentFill = (_float)filledTiles / *m_iMaxCount;
 }
 
 void CUIBeta::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	_int filledTiles = static_cast<_int>(m_fCurrentFill * m_iTotalCount);
+	_int filledTiles = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
 
 	// 현재 묶음 인덱스
 	_int currentGroup = filledTiles / m_iPerCount;  // 0~5 범위

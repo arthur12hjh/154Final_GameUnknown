@@ -47,8 +47,15 @@ private:
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
 
 	_int m_iPrevGroupFilled = -1;
-	_int m_iTotalCount = 20;
 	_int m_iPerCount = 4;
+
+#ifdef _DEBUG
+	LONGLONG m_Gara = 20;
+	LONGLONG m_MaxGara = 20;
+#endif // DEBUG
+
+	LONGLONG* m_iMaxCount = nullptr;
+	LONGLONG* m_iCurrentCount = nullptr;
 
 public:
 	static CUIBeta* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -29,6 +29,23 @@ HRESULT CUIShield::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+
+	if (pCharactor)
+	{
+		m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
+		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);
+	}
+#ifdef _DEBUG
+	else
+	{
+		m_iMaxShield = &m_MaxGara;
+		m_iCurrentShield = &m_Gara;
+	}
+#endif // DEBUG
+
+	Safe_Release(pCharactor);
+	
 	return S_OK;
 }
 
@@ -41,21 +58,18 @@ void CUIShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	
-	if (auto pCharactor = CGameManager::GetInstance()->GetGameCharacter())
-	{
-		m_fTargetFill = static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield) / static_cast<_float>(CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-		Safe_Release(pCharactor);
-	}
-
+#ifdef _DEBUG
 	// 테스트 용
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			m_fTargetFill -= 0.2f;
+			*m_iCurrentShield -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			m_fTargetFill += 0.2f;
+			*m_iCurrentShield += 10;
 	}
+#endif
+
+	m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 
