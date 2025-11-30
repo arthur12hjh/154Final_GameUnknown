@@ -179,7 +179,7 @@ HRESULT CWeapon::Ready_Components()
 	desc.fRotationPerSec = 1.f;
 	desc.fSpeedPerSec = 1.f;
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 2, 0, 1);
+	desc.vPos = XMVectorSet(0, 3, 0, 1);
 	desc.fRot = _float3(0, XMConvertToRadians(270.f), 0);
 	desc.fSize = 1.5f;
 
@@ -251,4 +251,5 @@ void CWeapon::Free()
 
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTrail);
+	Safe_Release(m_pSpark);
 }

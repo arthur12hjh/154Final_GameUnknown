@@ -962,7 +962,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Hit_Spark */
+	/* For.Prototype_Component_Effect_SheildBreak_Yellow */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SheildBreak_Yellow");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SheildBreakYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);

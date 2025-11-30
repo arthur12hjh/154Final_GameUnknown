@@ -127,6 +127,8 @@ void CSpriteParticle::Update(_float fTimeDelta)
 			return;
 		}
 	}
+	m_bisStop = true;
+	m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 5, m_tData.iNumInstance);
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
 	Spread(fTimeDelta);

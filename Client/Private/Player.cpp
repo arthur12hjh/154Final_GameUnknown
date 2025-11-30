@@ -130,19 +130,8 @@ void CPlayer::Update(_float fTimeDelta)
 		desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
 		desc.vPos = XMVectorSet(0, 0, 0, 1);
 		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 30.f;
+		desc.fSize = 1.f;
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-			return;
-	
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-		desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
-		desc.vPos = XMVectorSet(0, 0, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 15.f;
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
 			return;
 	

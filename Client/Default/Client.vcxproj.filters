@@ -562,6 +562,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
       <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{be8d982f-166d-4882-a86f-bcbaced58aa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1149,6 +1152,9 @@
     <ClInclude Include="..\Public\Player_IdleLandingState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1716,6 +1722,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIHPFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

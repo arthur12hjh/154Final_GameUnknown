@@ -48,18 +48,28 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
-            if (2 == viLoopAndCount.x)
+            if (2 == viLoopAndCount.x && !(DTid.x > vfTimeDelta.w - 5 && DTid.x <= vfTimeDelta.w))
+            {
                 return;
-            g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-            g_Out[DTid.x].WorldMat = g_WorldMatrix;
-            vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
-            if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
-                vDir.xyzw = 0;
+            }
+            else
+            {
+                g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
+                g_Out[DTid.x].WorldMat = g_WorldMatrix;
+                vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
+                if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
+                    vDir.xyzw = 0;
+            }
             if (0 > g_Out[DTid.x].vLifeTime.x)
                 return;
             else if (0 == vfisSphere.x)
             {
                 g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + Input[DTid.x].vfRoot * length(Input[DTid.x].WorldMat._11_12_13);
+                if (0 <= vfTimeDelta.w - 5)
+                {
+                    g_Out[DTid.x].vfStart.xyz += ((g_Out[DTid.x].vfStart.xyz - Input[vfTimeDelta.w - 5].vfStart.xyz) / (vfTimeDelta.w - DTid.x + 1));
+                }
+                
                 g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
             }
             else if (1 == vfisSphere.x)
@@ -401,7 +411,7 @@ void CS(uint3 Gid : SV_GroupID,
         }
         else if (2 == viLoopAndCount.x && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
         {
-            g_Out[DTid.x].vLifeTime.x = vfTimeDelta.w - vfTimeDelta.y;
+            g_Out[DTid.x].vLifeTime.x = -1;
         }
     }
 }
