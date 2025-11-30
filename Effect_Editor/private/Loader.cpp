@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Loader.h"
 #include "Sky.h"
+#include "Trail.h"
+
 
 
 #include "GameInstance.h"
@@ -238,6 +240,13 @@ HRESULT CLoader::Loading_For_Tool()
 
 
 	m_strMessage = TEXT("객체원형를(을) 로딩 중 입니다.");
+
+
+
+	/* For.Prototype_Component_Trail */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
+		CTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_VIBuffer_Cube"),

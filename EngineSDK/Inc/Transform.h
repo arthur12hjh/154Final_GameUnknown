@@ -30,16 +30,17 @@ public:
 		return &m_WorldMatrix;
 	}
 
-	void			Set_State(STATE eState, _vector vState);
+	void					Set_State(STATE eState, _vector vState);
 
-	void			Set_Scale(_vector vScale);
-	void			Set_Rotation(_vector vRotation);
-	void			Set_Scale(_float fX, _float fY, _float fZ);
+	void					Set_Scale(_vector vScale);
+	void					Set_Rotation(_vector vRotation, _bool bIsQuaternion = false);
+	void					Set_Scale(_float fX, _float fY, _float fZ);
+
 	/* 현재는 가장 업데이트가 늦게 도는 Physx Manager Update 단에서 돌고 있음. */
-	void			Update_PreWorldMatrix();
+	void					Update_PreWorldMatrix();
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
 
 public:
 	/* 이전 프레임 월드 매트릭스 넣을 수 있게 변경. */

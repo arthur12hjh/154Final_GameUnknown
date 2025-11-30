@@ -424,6 +424,21 @@ HRESULT CEffect::Render()
     return S_OK;
 }
 
+void CEffect::Stop() {
+    for (auto pParticle : m_pPointParticles)
+        pParticle->Stop();
+    for (auto pSpriteParticle : m_pSpriteParticles)
+        pSpriteParticle->Stop();
+}
+
+void CEffect::Play()
+{
+    for (auto pParticle : m_pPointParticles)
+        pParticle->Play();
+    for (auto pSpriteParticle : m_pSpriteParticles)
+        pSpriteParticle->Play();
+}
+
 CEffect* CEffect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile)
 {
     auto p = new CEffect(pDevice, pContext);

@@ -145,24 +145,33 @@ const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSki
 	return  m_MonsterInfo.iAttackList[iTypeIndex][iSkillIndex];
 }
 
-const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_uint iTypeIndex, _bool bIsRandom)
+const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeIndex)
 {
 	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
-	if (0 == m_iNumCandidate)
-		return nullptr;
-
-	if (bIsRandom)
+	if(-1 == iTypeIndex)
 	{
-		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)m_iNumCandidate);
-		pSkill = m_SkillCandidates[iRandomIndex];
+		if (0 == m_iNumCandidate)
+			return nullptr;
+
+		if (bIsRandom)
+		{
+			_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)m_iNumCandidate);
+			pSkill = m_SkillCandidates[iRandomIndex];
+		}
+		else
+		{
+			if (m_iNumCandidate <= m_iSkillIndex)
+				m_iSkillIndex = 0;
+
+			pSkill = m_SkillCandidates[m_iSkillIndex];
+			m_iSkillIndex++;
+		}
 	}
 	else
 	{
-		if (m_iNumCandidate <= m_iSkillIndex)
-			m_iSkillIndex = 0;
-
-		pSkill = m_SkillCandidates[m_iSkillIndex];
-		m_iSkillIndex++;
+		size_t iNumSize = m_MonsterInfo.iAttackList[iTypeIndex].size();
+		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0, iNumSize);
+		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][iRandomIndex];
 	}
 
 	return pSkill;
@@ -259,7 +268,7 @@ HRESULT CNayitba::ADD_Components()
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIBehaviorPrototype, BehaviorTreePrototpye);
 
 		CBossController::BOSS_CONTROLLER_DESC ControllerDesc = { };
-		ControllerDesc.pOwner = this;
+		ControllerDesc.pParent = this;
 		ControllerDesc.szBehaviorProtoType = BehaviorTreePrototpye;
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
@@ -267,8 +276,8 @@ HRESULT CNayitba::ADD_Components()
 	}
 	else
 	{
-		CAIController::AI_CONTROLLER_DESC ControllerDesc = { };
-		ControllerDesc.pOwner = this;
+		CAIController::GAMEOBJECT_DESC ControllerDesc = { };
+		ControllerDesc.pParent = this;
 
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)

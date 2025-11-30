@@ -7,6 +7,12 @@ class CBlackBoard;
 
 class ENGINE_DLL CBehaviorTree abstract : public CComponent
 {
+public :
+	typedef struct BehaviorTreeDesc
+	{
+		CGameObject*				pOwner;
+	}BEHAVIORTREE_DESC;
+
 protected :
 	CBehaviorTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBehaviorTree(const CBehaviorTree& Prototype);

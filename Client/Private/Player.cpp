@@ -13,16 +13,14 @@
 #include "GameManager.h"
 #include "Interaction_Component.h"
 #include "Effect.h"
-#include "Trail.h"
 #include "Notify.h"
-#include "TrailEffect.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
 #include "PlayerBattleFSM.h"
 #include "PlayerIdleFSM.h"
 #include "PlayerLockOnFSM.h"
-#include "PlayerState.h"
+#include "Player_HitState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -43,17 +41,18 @@ void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
-	//fsm ±³Ã¼
+	//fsm ï¿½ï¿½Ã¼
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
 	
-	//ÇöÀç FSMÀÇ »óÅÂ·Î¸¸ µû¶ó°¡°Ô ÇÔ.. ÀÌ°É ¹Ù²ã¾ßÇÏ³ª?
+	//ï¿½ï¿½ï¿½ï¿½ FSMï¿½ï¿½ ï¿½ï¿½ï¿½Â·Î¸ï¿½ ï¿½ï¿½ï¿½ó°¡°ï¿½ ï¿½ï¿½.. ï¿½Ì°ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½Ï³ï¿½?
 	if(eState == PLAYER_STATE::STATE_END)
 		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	//Change_PlayerMode¿¡¼­ °ª ÀÔ·Â¹ÞÀ» ¼ö ÀÖ°Ô º¯°æ. 
+	//Change_PlayerModeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½. 
 	else
+	{
 		pNextFSM->Change_FSM(eState);
-
-	m_pCurrentFSM->Clear_FSM();
+		m_pCurrentFSM->Clear_FSM();
+	}
 
 	m_pCurrentFSM = pNextFSM;
 }
@@ -132,19 +131,8 @@ void CPlayer::Update(_float fTimeDelta)
 	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
 	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
 	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 30.f;
+	//	desc.fSize = 1.f;
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-	//		return;
-	//
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
-	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 15.f;
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
 	//		return;
 	//
@@ -161,14 +149,13 @@ void CPlayer::Update(_float fTimeDelta)
 	//
 	//	m_fTime = 0.f;
 	//}
-	//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	//¸ðµç Æ®·£½ºÆûÀÇ ÀÌµ¿ÀÌ ³¡³­ ÈÄ ½ÇÇàµÇ¾î¾ß ÇÔ.
+	//ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½ï¿½.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -187,14 +174,45 @@ HRESULT CPlayer::Render()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
+	//typedef struct Default_Damage_Desc
+	//{
+	//	CGameObject* pAttacker;
+	//	_float3				vHitPoint;
+	//	_float3				vHitDir;
+
+	//	_float4x4			vHitWorldMatrix;
+
+	//	_float3				vImpactDir;
+	//	_float				fImpactForce;
+
+	//	void* pSkillData;
+	//}DEFAULT_DAMAGE_DESC;
+
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	vHitDir = pDamageDesc->vHitDir;
+	vHitPoint = pDamageDesc->vHitPoint;
+	vImpactDir = pDamageDesc->vImpactDir;
+	fImpactForce = pDamageDesc->fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+
+	m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// ÀÓ½ÃÀÔ´Ï´Ù Àâ±â Å×½ºÆ®¿ë ³ªÁß¿¡ ³Ñ°Ü¹Þ°Å³ª ³Ñ°ÜÁÙµ¥ÀÌÅÍ »ý±â¸é ¸»Á»ÇØÁÖ¼¼¿ä
+		// ìž„ì‹œìž…ë‹ˆë‹¤ ìž¡ê¸° í…ŒìŠ¤íŠ¸ìš© ë‚˜ì¤‘ì— ë„˜ê²¨ë°›ê±°ë‚˜ ë„˜ê²¨ì¤„ë°ì´í„° ìƒê¸°ë©´ ë§ì¢€í•´ì£¼ì„¸ìš”
+		// ã„´ ì—¬ê¸°ì„œ ì•„ë§ˆ ìƒíƒœ ì¶”ê°€í• ê±°ê°™ê¸´ í•œë° ëª¬ìŠ¤í„° ë³¸ì´ëž‘ ëª¬ìŠ¤í„° ì• ë‹ˆë©”ì´ì…˜ ì •ë³´ ì—°ë™í•´ì•¼ ë  ë“¯?
 		pCharacter->ActionSuccess(nullptr);
 	}
 
@@ -221,7 +239,7 @@ HRESULT CPlayer::Ready_Components()
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
-	//Ä¸½¶ ÄÁÆ®·Ñ·¯¿¡¼­ x´Â ±¸ ¼ººÐ y´Â ±âµÕ ¼ººÐ
+	//Ä¸ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Desc.vSize = _float3(1.f, 1.f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
@@ -284,14 +302,6 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
-
-	CTrail::TRAILHIGHLOW Traildesc;
-	Traildesc.vHigh = _float4(1, 0, 0, 0);
-	Traildesc.vLow = _float4(-1, 0, 0, 0);
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),
-		TEXT("Part_Trail"), &Traildesc)))
-		return E_FAIL;
-	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
 
 	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);

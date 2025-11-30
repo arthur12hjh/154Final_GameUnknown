@@ -4,6 +4,7 @@
 #include "MeshEffect.h"
 #include "SpriteEffect.h"
 #include "TrailEffect.h"
+#include "TrailData.h"
 #include "SpriteParticle.h"
 
 NS_BEGIN(Engine)
@@ -59,7 +60,7 @@ private:
     CSpriteParticle::SPRITE_PARTICLE_DATA m_tSpriteParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
     CSpriteEffect::SPRITE_DATA m_tSpriteData;
-    CTrailEffect::TRAIL_DATA    m_tTrailData;
+    CTrailData::TRAIL_DATA    m_tTrailData;
     CTransform* m_pTransform = nullptr;
     vector<string> m_ImageFiles[4];
     vector<string> m_ShaderFiles;
@@ -72,8 +73,8 @@ private:
     vector<CSpriteParticle*> m_pSpriteParticles;
     vector<CMeshEffect*> m_pMeshs;
     vector<CSpriteEffect*> m_pSprites;
-    CTrailEffect*    m_pTrailEffect = nullptr;
-    CTrailEffect* m_pDistortionTrailEffect = nullptr;
+    vector<CTrailData*> m_pTrailDatas;
+    CTrailEffect* m_pTrailEffect;
     _char m_SaveFile[128] = "SaveEffect";
     _int       m_iSelectParticle;
     _int       m_iSelectSpriteParticle;
@@ -82,6 +83,7 @@ private:
     _uint       m_iImageType = { 0 };
     _uint       m_iSpriteImageType = { 1 };
     _uint       m_iSelectSize = { 0 };
+    _int       m_iSelectTrailData = { 0 };
     _uint       m_iSelectEffect = { 0 };
     _uint       m_iSelectTrailEffect = { 0 };
     _int       m_iShaderBegine = { 0 };
@@ -98,6 +100,8 @@ private:
     void    Delete_MeshEffect();
     void    Add_SpriteEffect();
     void    Delete_SpriteEffect();
+    void    Add_TrailEffectData();
+    void    Delete_TrailEffectData();
 public:
     HRESULT Save_Binary(const _char* szFile);
     HRESULT Load_Binary(const _char* szFile);

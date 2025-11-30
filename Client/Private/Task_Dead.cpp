@@ -2,7 +2,7 @@
 #include "Task_Dead.h"
 
 #include "BehaviorTree.h"
-#include "ContainerObject.h"
+#include "Nayitba.h"
 
 CTask_Dead::CTask_Dead()
 {
@@ -18,13 +18,12 @@ HRESULT CTask_Dead::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_Dead::Update(_float fTimeDelta)
 {
-    // 애니메이션을 받아서 재생한다.
+    // 애니메이션을 받아서 재생한다. 
+    auto pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+    pOwner->Set_Animation("M_Finish_DeadLink");
+    pOwner->Play_Animation(fTimeDelta);
 
-
-
-
-
-    return NODE_STATE::RUNNING;
+    return NODE_STATE::COMPLETE;
 }
 
 CTask_Dead* CTask_Dead::Create(const CBehaviorTree* pOwnerTree)

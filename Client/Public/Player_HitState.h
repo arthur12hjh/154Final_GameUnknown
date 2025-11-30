@@ -7,7 +7,7 @@ NS_BEGIN(Client)
 class CPlayer_HitState final : public CPlayerState
 {
 private:
-	CPlayer_HitState();
+	CPlayer_HitState(_float3 vImpactDir, _float fImpact);
 	virtual ~CPlayer_HitState() = default;
 
 public:
@@ -17,6 +17,9 @@ public:
 	virtual PLAYER_TRANSITION_DESC	   Update(_float fTimeDelta) override;
 	virtual void			   End() override;
 
+private:
+	_float3 m_vImpactDir = {};
+	_float  m_fImpact = {};
 public:
 	static	CPlayer_HitState* Create(void* pArg);
 	virtual	void			   Free() override;

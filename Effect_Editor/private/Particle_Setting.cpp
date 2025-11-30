@@ -216,7 +216,7 @@ HRESULT CParticle_Setting::Initialize()
     m_iSelectParticle = 0;
     m_iSelectMesh = 0;
 
-    CTrailEffect::TRAIL_DATA tTrailData;
+    CTrailData::TRAIL_DATA tTrailData;
 
     for (_uint i = 0; i < 3; ++i) {
         switch (i) {
@@ -248,17 +248,12 @@ HRESULT CParticle_Setting::Initialize()
     m_pTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
     m_pTrailEffect->Initialize(nullptr);
 
-    m_pTrailEffect->Set_Components(tTrailData);
-    m_tTrailData = m_pTrailEffect->Get_Data();
-
-    tTrailData.fColor = _float4(1, 1, 1, 1);
-    tTrailData.iBegin = 1;
-    tTrailData.iSelectRender = 6;
-
-    m_pDistortionTrailEffect = CTrailEffect::Create(m_pDevice, m_pContext);
-    m_pDistortionTrailEffect->Initialize(nullptr);
-
-    m_pDistortionTrailEffect->Set_Components(tTrailData);
+    CTrailData* pData = CTrailData::Create(m_pDevice, m_pContext);
+    pData->Initialize(m_pTrailEffect);
+    pData->Set_Components(tTrailData);
+    m_pTrailDatas.push_back(pData);
+    m_iSelectTrailData = 0;
+    m_tTrailData = m_pTrailDatas[m_iSelectTrailData]->Get_Data();
 
     return S_OK;
 }
@@ -531,6 +526,69 @@ void CParticle_Setting::Delete_SpriteEffect()
     else {
         Safe_Release(m_pSprites[0]);
         m_pSprites.clear();
+    }
+}
+
+void CParticle_Setting::Add_TrailEffectData()
+{
+
+    CTrailData::TRAIL_DATA tTrailData;
+
+    for (_uint i = 0; i < 3; ++i) {
+        switch (i) {
+        case 0:
+            tTrailData.szMaskTexture = m_ImageFiles[i][0];
+            break;
+        case 1:
+            tTrailData.szDiffuseTexture = m_ImageFiles[i][0];
+            break;
+        case 2:
+            tTrailData.szDissolveTexture = m_ImageFiles[i][0];
+            break;
+        }
+    }
+    tTrailData.fColor = _float4(0, 0, 0, 1);
+
+    tTrailData.fMaskUV = _float2(0, 0);
+    tTrailData.fMaskUVSpeed = _float2(0, 0);
+    tTrailData.fMaskUVSize = _float2(1, 1);
+    tTrailData.fDiffuseUV = _float2(0, 0);
+    tTrailData.fDiffuseUVSpeed = _float2(0, 0);
+    tTrailData.fDiffuseUVSize = _float2(1, 1);
+    tTrailData.fDissolveUV = _float2(0, 0);
+    tTrailData.fDissolveUVSpeed = _float2(0, 0);
+    tTrailData.fDissolveUVSize = _float2(1, 1);
+    tTrailData.iBegin = 0;
+    tTrailData.iSelectRender = 3;
+
+    CTrailData* pData = CTrailData::Create(m_pDevice, m_pContext);
+    pData->Initialize(m_pTrailEffect);
+    pData->Set_Components(tTrailData);
+    m_pTrailDatas.push_back(pData);
+    m_iSelectTrailData = m_pTrailDatas.size() - 1;
+    m_tTrailData = m_pTrailDatas[m_iSelectTrailData]->Get_Data();
+}
+
+void CParticle_Setting::Delete_TrailEffectData()
+{
+    m_pTrailDatas[m_iSelectTrailData]->Get_Data();
+    if (1 < m_pTrailDatas.size()) {
+        _uint i = 0;
+        for (auto j = m_pTrailDatas.begin(); j != m_pTrailDatas.end();) {
+            if (m_iSelectTrailData == i) {
+                Safe_Release((*j));
+                m_pTrailDatas.erase(j);
+                m_iSelectTrailData = max(0, m_iSelectTrailData - 1);
+                m_tTrailData = m_pTrailDatas[m_iSelectTrailData]->Get_Data();
+                break;
+            }
+            ++i;
+            ++j;
+        }
+    }
+    else {
+        Safe_Release(m_pTrailDatas[0]);
+        m_pTrailDatas.clear();
     }
 }
 
@@ -995,64 +1053,87 @@ HRESULT CParticle_Setting::Save_TrailBinary(const _char* szFile)
     ofstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
 
-    char szImageFile[MAX_PATH] = {};
-    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
-    WriteString(fileBinaryStream, szImageFile);
-    memset(szImageFile, 0, sizeof(szImageFile));
+    WriteInt(fileBinaryStream, m_pTrailDatas.size());
+    for (auto pTrailData : m_pTrailDatas) {
+        char szImageFile[MAX_PATH] = {};
+        strncpy_s(szImageFile, sizeof(szImageFile), pTrailData->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
 
-    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
-    WriteString(fileBinaryStream, szImageFile);
-    memset(szImageFile, 0, sizeof(szImageFile));
+        strncpy_s(szImageFile, sizeof(szImageFile), pTrailData->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
 
-    strncpy_s(szImageFile, sizeof(szImageFile), m_pTrailEffect->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
-    WriteString(fileBinaryStream, szImageFile);
-    memset(szImageFile, 0, sizeof(szImageFile));
+        strncpy_s(szImageFile, sizeof(szImageFile), pTrailData->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
 
-    WriteFloat4(fileBinaryStream, m_pTrailEffect->Get_Data().fColor);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUV);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUVSpeed);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fMaskUVSize);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUV);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUVSpeed);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDiffuseUVSize);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUV);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUVSpeed);
-    WriteFloat2(fileBinaryStream, m_pTrailEffect->Get_Data().fDissolveUVSize);
+        WriteFloat4(fileBinaryStream, pTrailData->Get_Data().fColor);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fMaskUV);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fMaskUVSpeed);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fMaskUVSize);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDiffuseUV);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDiffuseUVSpeed);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDiffuseUVSize);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDissolveUV);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDissolveUVSpeed);
+        WriteFloat2(fileBinaryStream, pTrailData->Get_Data().fDissolveUVSize);
 
-    WriteInt(fileBinaryStream, m_pTrailEffect->Get_Data().iBegin);
-    WriteInt(fileBinaryStream, m_pTrailEffect->Get_Data().iSelectRender);
-
+        WriteInt(fileBinaryStream, pTrailData->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pTrailData->Get_Data().iSelectRender);
+    }
     return S_OK;
 }
 
 HRESULT CParticle_Setting::Load_TrailBinary(const _char* szFile)
 {
+    if (0 < m_pTrailDatas.size()) {
+        _uint iTrailCount = m_pTrailDatas.size();
+        for (_uint i = 0; i < iTrailCount; ++i) {
+            Delete_TrailEffectData();
+        }
+    }
     char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/TrailEffect/";
     strcat_s(szBinModelFilePath, MAX_PATH, szFile);
     ifstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+    CTrailData::TRAIL_DATA TrailDesc;
+    _int iTrailCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iTrailCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szDissolveTexture = szTemp;
+        Safe_Delete(szTemp);
 
-    _char* szTemp = ReadString(fileBinaryStream);
-    m_tTrailData.szMaskTexture = szTemp;
-    Safe_Delete(szTemp);
-    szTemp = ReadString(fileBinaryStream);
-    m_tTrailData.szDiffuseTexture = szTemp;
-    Safe_Delete(szTemp);
-    szTemp = ReadString(fileBinaryStream);
-    m_tTrailData.szDissolveTexture = szTemp;
-    Safe_Delete(szTemp);
-    m_tTrailData.fColor = ReadFloat4(fileBinaryStream);
-    m_tTrailData.fMaskUV = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fMaskUVSize = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDiffuseUV = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDissolveUV = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tTrailData.fDissolveUVSize = ReadFloat2(fileBinaryStream);
-    m_tTrailData.iBegin = ReadInt(fileBinaryStream);
-    m_tTrailData.iSelectRender = ReadInt(fileBinaryStream);
+
+
+        TrailDesc.fColor = ReadFloat4(fileBinaryStream);
+        TrailDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+
+
+        TrailDesc.iBegin = ReadInt(fileBinaryStream);
+        TrailDesc.iSelectRender = ReadInt(fileBinaryStream);
+
+        CTrailData* pData = CTrailData::Create(m_pDevice, m_pContext);
+        pData->Initialize(m_pTrailEffect);
+        pData->Set_Components(TrailDesc);
+        m_pTrailDatas.push_back(pData);
+        m_iSelectTrailData = m_pTrailDatas.size() - 1;
+        m_tTrailData = m_pTrailDatas[m_iSelectTrailData]->Get_Data();
+    }
     return S_OK;
 }
 
@@ -1073,8 +1154,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
     ImGui::Text(pattern);
     if (ImGui::Button("Pause", btn)) {
         m_bisPause = !m_bisPause;
-        m_pTrailEffect->Pause();
-        m_pDistortionTrailEffect->Pause();
     }
     ImGui::SameLine();
     ImGui::DragFloat("Speed", &m_fSpeed, 0.1f, 0.1f, 100.f);
@@ -1090,17 +1169,12 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
         ImGui::EndCombo();
     }
-    if (ImGui::TreeNode("Root Transform"))
-    {
-        ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&m_fPosition), 0.1f, -1000.f, 1000.f);
-        ImGui::DragFloat3("Scale", reinterpret_cast<_float*>(&m_fScale), 1.f, 0.f, 100.f);
-        ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&m_fRotation), 1.f, 0.f, 360.f);
-        m_pTransform->Set_State(STATE::POSITION, XMLoadFloat4(&m_fPosition));
-        m_pTransform->Set_Scale(m_fScale.x, m_fScale.y, m_fScale.z);
-        m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
-        ImGui::TreePop();
-    }
     if (4 == m_iSelectMeshParticle) {
+
+        m_pTransform->Set_State(STATE::RIGHT, m_pTrailEffect->GetTransform()->Get_State(STATE::RIGHT));
+        m_pTransform->Set_State(STATE::UP, m_pTrailEffect->GetTransform()->Get_State(STATE::UP));
+        m_pTransform->Set_State(STATE::LOOK, m_pTrailEffect->GetTransform()->Get_State(STATE::LOOK));
+        m_pTransform->Set_State(STATE::POSITION, m_pTrailEffect->GetTransform()->Get_State(STATE::POSITION));
         ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
         if (ImGui::Button("Save", btn)) {
             Save_TrailBinary(m_SaveFile);
@@ -1140,11 +1214,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
 
         if (ImGui::Button("Load", btn)) {
+            
             Load_TrailBinary(m_TrailEffects[m_iSelectTrailEffect].c_str());
-            m_pTrailEffect->Set_Components(m_tTrailData);
+            m_pTrailEffect->Refresh();
         }
     }
     else {
+
+        if (ImGui::TreeNode("Root Transform"))
+        {
+            ImGui::DragFloat3("Position", reinterpret_cast<_float*>(&m_fPosition), 0.1f, -1000.f, 1000.f);
+            ImGui::DragFloat3("Scale", reinterpret_cast<_float*>(&m_fScale), 1.f, 0.f, 100.f);
+            ImGui::DragFloat3("Rotation", reinterpret_cast<_float*>(&m_fRotation), 1.f, 0.f, 360.f);
+            m_pTransform->Set_State(STATE::POSITION, XMLoadFloat4(&m_fPosition));
+            m_pTransform->Set_Scale(m_fScale.x, m_fScale.y, m_fScale.z);
+            m_pTransform->Rotation(XMConvertToRadians(m_fRotation.x), XMConvertToRadians(m_fRotation.y), XMConvertToRadians(m_fRotation.z));
+            ImGui::TreePop();
+        }
+
         ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
         if (ImGui::Button("Save", btn)) {
             Save_Binary(m_SaveFile);
@@ -1252,8 +1339,10 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 return;
             }
             if (ImGui::Button("Stop", btn)) {
-                m_tParticleData.fEndTime = m_pParticles[m_iSelectParticle]->Stop();
-                m_tParticleData.bisLoop = false;
+                m_pParticles[m_iSelectParticle]->Stop();
+            }
+            if (ImGui::Button("Play", btn)) {
+                m_pParticles[m_iSelectParticle]->Play();
             }
 
             m_pParticles[m_iSelectParticle]->Update(m_tParticleData);
@@ -1707,8 +1796,10 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 return;
             }
             if (ImGui::Button("Stop", btn)) {
-                m_tSpriteParticleData.fEndTime = m_pSpriteParticles[m_iSelectSpriteParticle]->Stop();
-                m_tSpriteParticleData.bisLoop = false;
+                m_pSpriteParticles[m_iSelectParticle]->Stop();
+            }
+            if (ImGui::Button("Play", btn)) {
+                m_pSpriteParticles[m_iSelectParticle]->Play();
             }
 
             m_pSpriteParticles[m_iSelectSpriteParticle]->Update(m_tSpriteParticleData);
@@ -2589,154 +2680,185 @@ void CParticle_Setting::Update(_float fTimeDelta)
     case 4: {
         ImGui::SameLine();
 
-        if (ImGui::Button("Replay", btn)) {
-            m_fTime = 0.f;
-            m_pTrailEffect->Set_Components(m_tTrailData);
-
-            m_pDistortionTrailEffect->Set_Components(m_pDistortionTrailEffect->Get_Data());
+        if (ImGui::Button("Add TrailData", btn)) {
+            Add_TrailEffectData();
         }
-        _float speed = m_pTrailEffect->Get_Speed();
-        ImGui::DragFloat("Trail Speed", reinterpret_cast<_float*>(&speed), 0.01f, -100.f, 100.f);
-        m_pTrailEffect->Set_Speed(speed);
-        string szRender;
-        switch (m_tTrailData.iSelectRender)
+        if (0 < m_pTrailDatas.size())
         {
-        case 0:
-            szRender = "NONBLEND";
-            break;
-        case 1:
-            szRender = "NONLIGHT";
-            break;
-        case 2:
-            szRender = "BLUR";
-            break;
-        case 3:
-            szRender = "EFFECT BLEND";
-            break;
-        case 4:
-            szRender = "CLEAN GLOW";
-            break;
-        case 5:
-            szRender = "GLOW";
-            break;
-        case 6:
-            szRender = "DISTORTION";
-            break;
-        case 7:
-            szRender = "BLEND";
-            break;
-        }
-        if (ImGui::BeginCombo("RenderType", szRender.c_str()))
-        {
-            for (_uint i = 0; i <= 7; ++i) {
-
-                _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
-                switch (i)
-                {
-                case 0:
-                    szRender = "NONBLEND";
-                    break;
-                case 1:
-                    szRender = "NONLIGHT";
-                    break;
-                case 2:
-                    szRender = "BLUR";
-                    break;
-                case 3:
-                    szRender = "EFFECT BLEND";
-                    break;
-                case 4:
-                    szRender = "CLEAN GLOW";
-                    break;
-                case 5:
-                    szRender = "GLOW";
-                    break;
-                case 6:
-                    szRender = "DISTORTION";
-                    break;
-                case 7:
-                    szRender = "BLEND";
-                    break;
+            ImGui::SameLine();
+            if (ImGui::Button("Delete TrailData", btn)) {
+                Delete_TrailEffectData();
+                if (0 >= m_pTrailDatas.size()) {
+                    ImGui::End();
+                    return;
                 }
-                if (ImGui::Selectable(szRender.c_str(), sel))
-                    m_tTrailData.iSelectRender = i;
-                if (sel)
-                    ImGui::SetItemDefaultFocus();
             }
-            ImGui::EndCombo();
-        }
-        if (ImGui::Button("Refresh Shader", btn)) {
-            m_pTrailEffect->Set_Components(m_tTrailData);
-            m_pDistortionTrailEffect->Set_Components(m_pDistortionTrailEffect->Get_Data());
-        }
-        ImGui::InputInt("Shader Begine", &m_tTrailData.iBegin);
-        if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
-        {
-            for (_uint i = 0; i < 3; ++i) {
-                _bool sel = i == m_iImageType;
-                if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
-                    m_iImageType = i;
-                if (sel)
-                    ImGui::SetItemDefaultFocus();
+
+            char str[3];
+            snprintf(str, sizeof(str), "%d", m_iSelectTrailData);
+            if (ImGui::BeginCombo("Particles", str))
+            {
+                for (_uint i = 0; i < m_pTrailDatas.size(); ++i) {
+                    _bool sel = i == m_iSelectTrailData;
+                    snprintf(str, sizeof(str), "%d", i);
+                    if (ImGui::Selectable(str, sel)) {
+                        m_iSelectTrailData = i;
+                        m_tTrailData = m_pTrailDatas[m_iSelectTrailData]->Get_Data();
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
             }
-            ImGui::EndCombo();
-        }
 
-        if (ImGui::TreeNode("Sprite Color"))
-        {
-            ImGui::ColorPicker4("MyColor", (_float*)&m_tTrailData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-            ImGui::TreePop();
-        }
+            if (ImGui::Button("Replay", btn)) {
+                m_fTime = 0.f;
+                m_pTrailEffect->Refresh();
+            }
+            _float speed = m_pTrailEffect->Get_Speed();
+            ImGui::DragFloat("Trail Speed", reinterpret_cast<_float*>(&speed), 0.01f, -100.f, 100.f);
+            m_pTrailEffect->Set_Speed(speed);
+            string szRender;
+            switch (m_tTrailData.iSelectRender)
+            {
+            case 0:
+                szRender = "NONBLEND";
+                break;
+            case 1:
+                szRender = "NONLIGHT";
+                break;
+            case 2:
+                szRender = "BLUR";
+                break;
+            case 3:
+                szRender = "EFFECT BLEND";
+                break;
+            case 4:
+                szRender = "CLEAN GLOW";
+                break;
+            case 5:
+                szRender = "GLOW";
+                break;
+            case 6:
+                szRender = "DISTORTION";
+                break;
+            case 7:
+                szRender = "BLEND";
+                break;
+            }
+            if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+            {
+                for (_uint i = 0; i <= 7; ++i) {
 
-        if (ImGui::TreeNode("MaskUV"))
-        {
-            ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tTrailData.fMaskUV), 0.01f, -100.f, 100.f);
-            ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSpeed), 0.01f, -100.f, 100.f);
-            ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSize), 0.01f, -100.f, 100.f);
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("DiffuseUV"))
-        {
-            ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUV), 0.1f, -100.f, 100.f);
-            ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
-            ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("DissolveUV"))
-        {
-            ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUV), 0.1f, -100.f, 100.f);
-            ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
-            ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSize), 0.1f, -100.f, 100.f);
-            ImGui::TreePop();
-        }
-
-
-        ImGui::Separator();
-
-        ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-        if (0 < m_SRVs[m_iImageType].size()) {
-            _uint i = 0;
-            for (auto SRV : m_SRVs[m_iImageType]) {
-                if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                    m_pTrailEffect->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
-                    switch (m_iImageType) {
+                    _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
+                    switch (i)
+                    {
                     case 0:
-                        m_tTrailData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                        szRender = "NONBLEND";
                         break;
                     case 1:
-                        m_tTrailData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                        szRender = "NONLIGHT";
                         break;
                     case 2:
-                        m_tTrailData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                        szRender = "BLUR";
+                        break;
+                    case 3:
+                        szRender = "EFFECT BLEND";
+                        break;
+                    case 4:
+                        szRender = "CLEAN GLOW";
+                        break;
+                    case 5:
+                        szRender = "GLOW";
+                        break;
+                    case 6:
+                        szRender = "DISTORTION";
+                        break;
+                    case 7:
+                        szRender = "BLEND";
                         break;
                     }
+                    if (ImGui::Selectable(szRender.c_str(), sel))
+                        m_tTrailData.iSelectRender = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
                 }
-                if (1 == ++i % 2)
-                    ImGui::SameLine();
+                ImGui::EndCombo();
             }
+            if (ImGui::Button("Refresh Shader", btn)) {
+                m_pTrailDatas[m_iSelectTrailData]->Set_Components(m_tTrailData);
+                m_fTime = 0.f;
+                m_pTrailEffect->Refresh();
+            }
+            ImGui::InputInt("Shader Begine", &m_tTrailData.iBegin);
+            if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+            {
+                for (_uint i = 0; i < 3; ++i) {
+                    _bool sel = i == m_iImageType;
+                    if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                        m_iImageType = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            if (ImGui::TreeNode("Sprite Color"))
+            {
+                ImGui::ColorPicker4("MyColor", (_float*)&m_tTrailData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("MaskUV"))
+            {
+                ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tTrailData.fMaskUV), 0.01f, -100.f, 100.f);
+                ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSpeed), 0.01f, -100.f, 100.f);
+                ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tTrailData.fMaskUVSize), 0.01f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DiffuseUV"))
+            {
+                ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUV), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DissolveUV"))
+            {
+                ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUV), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tTrailData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+
+
+            ImGui::Separator();
+
+            ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+            if (0 < m_SRVs[m_iImageType].size()) {
+                _uint i = 0;
+                for (auto SRV : m_SRVs[m_iImageType]) {
+                    if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                        m_pTrailDatas[m_iSelectTrailData]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+                        switch (m_iImageType) {
+                        case 0:
+                            m_tTrailData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 1:
+                            m_tTrailData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 2:
+                            m_tTrailData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        }
+                    }
+                    if (1 == ++i % 2)
+                        ImGui::SameLine();
+                }
+            }
+            m_pTrailDatas[m_iSelectTrailData]->Update(m_tTrailData);
+            ImGui::EndChild();
         }
-        m_pTrailEffect->Update(m_tTrailData);
-        ImGui::EndChild();
     }
           break;
     }
@@ -2749,12 +2871,49 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
     if (m_iSelectMeshParticle == 4) {
         if (m_bisPause) {
+            for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                m_pMeshs[i]->Priority_Update(fTimeDelta * m_fSpeed);
+                m_pMeshs[i]->Update(fTimeDelta * m_fSpeed);
+                m_pMeshs[i]->Late_Update(fTimeDelta * m_fSpeed);
+            }
+            for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                m_pParticles[i]->Priority_Update(fTimeDelta * m_fSpeed);
+                m_pParticles[i]->Update(fTimeDelta * m_fSpeed);
+                m_pParticles[i]->Late_Update(fTimeDelta * m_fSpeed);
+            }
+            for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                m_pSpriteParticles[i]->Priority_Update(fTimeDelta * m_fSpeed);
+                m_pSpriteParticles[i]->Update(fTimeDelta * m_fSpeed);
+                m_pSpriteParticles[i]->Late_Update(fTimeDelta * m_fSpeed);
+            }
+            for (_uint i = 0; i < m_pSprites.size(); ++i) {
+                m_pSprites[i]->Priority_Update(fTimeDelta * m_fSpeed);
+                m_pSprites[i]->Update(fTimeDelta * m_fSpeed);
+                m_pSprites[i]->Late_Update(fTimeDelta * m_fSpeed);
+            }
             m_pTrailEffect->Priority_Update(fTimeDelta * m_fSpeed);
             m_pTrailEffect->Update(fTimeDelta * m_fSpeed);
             m_pTrailEffect->Late_Update(fTimeDelta * m_fSpeed);
+            for (_uint i = 0; i < m_pTrailDatas.size(); ++i) {
+                m_pTrailDatas[i]->Late_Update(fTimeDelta * m_fSpeed);
+            }
         }
         else {
-            m_pTrailEffect->Late_Update(fTimeDelta * m_fSpeed);
+            for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                m_pMeshs[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                m_pParticles[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                m_pSpriteParticles[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pSprites.size(); ++i) {
+                m_pSprites[i]->Late_Update(0);
+            }
+            for (_uint i = 0; i < m_pTrailDatas.size(); ++i) {
+                m_pTrailDatas[i]->Late_Update(0);
+            }
         }
     }
     else {
@@ -2817,22 +2976,27 @@ void CParticle_Setting::Free()
     for (auto pParticle : m_pParticles)
         Safe_Release(pParticle);
     m_pParticles.clear();
+    for (auto pSpriteParticle : m_pSpriteParticles)
+        Safe_Release(pSpriteParticle);
+    m_pSpriteParticles.clear();
     for (auto pMesh : m_pMeshs)
         Safe_Release(pMesh);
     m_pMeshs.clear();
     for (auto pSprite : m_pSprites)
         Safe_Release(pSprite);
     m_pSprites.clear();
+    for (auto pTrailData : m_pTrailDatas)
+        Safe_Release(pTrailData);
+    m_pTrailDatas.clear();
+    
+    Safe_Release(m_pTrailEffect);
+    
     for (_uint i = 0; i < 4; ++i) {
         for (auto SRV : m_SRVs[i]) {
             Safe_Release(SRV);
         }
         m_SRVs[i].clear();
     }
-    Safe_Release(m_pTrailEffect);
-    Safe_Release(m_pDistortionTrailEffect);
-    
-    
     Safe_Release(m_pTransform);
 }
 

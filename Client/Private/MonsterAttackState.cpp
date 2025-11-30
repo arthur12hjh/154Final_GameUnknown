@@ -35,12 +35,13 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 		auto pMimesisState = dynamic_cast<CMonsterStateMimesis*>(pPreState);
 		if (nullptr != pMimesisState)
 		{
-			m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::MIMESIS_SKILL), false);
+			m_pSkillData = pEntity->GetSkillData(false, ENUM_CLASS(SKILL_TYPE::MIMESIS_SKILL));
 			if (nullptr == m_pSkillData)
 			{
 				m_bIsFinished = true;
 				return;
 			}
+
 			m_szAnimationName = m_pSkillData->szAnimationName;
 			bIsRandomAttack = false;
 		}
@@ -49,12 +50,11 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	_vector vOwnerPos = {};
 	if (bIsRandomAttack)
 	{
-		m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+		m_pSkillData = pEntity->GetSkillData(false);
 		m_szAnimationName = m_pSkillData->szAnimationName;
 	}
 
-	GaraSetting();
-	//GaraHitBox();
+	ReadySetting();
 
 	m_bIsEnableChange = false;
 	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);
@@ -65,31 +65,25 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 {
 	// 여기서 공격 분기
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	SearchTargetDistance();
 
-	if (m_bIsGara)
+	if (m_bIsPattern)
 	{
 		switch (m_StaticMonsterData->iMonsetID)
 		{
 		case 2 :
-			BeholderGara(fTimeDelta);
+			BeholderPattern(fTimeDelta);
 			break;
 		case 4:
-			StatueAGara(fTimeDelta);
+			StatueAPattern(fTimeDelta);
 			break;
 		case 5:
-			StatueBGara(fTimeDelta);
+			StatueBPattern(fTimeDelta);
 			break;
-		}
+		}	
+	}
 
-		if (m_bIsRootGara)
-			m_bIsFinished = pEntity->Play_Animation(fTimeDelta, m_pOwner->GetTransform(), 1.f);
-		else
-			m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
-	}
-	else
-	{
-		m_bIsFinished = pEntity->Play_Animation(fTimeDelta, m_pOwner->GetTransform(), 1.f);
-	}
+	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
 
 	if (m_bIsFinished)
 	{
@@ -103,7 +97,7 @@ void CMonsterAttackState::End()
 
 }
 
-void CMonsterAttackState::GaraSetting()
+void CMonsterAttackState::ReadySetting()
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	auto pOwnerInfo = &pEntity->GetMonsterData();
@@ -130,48 +124,13 @@ void CMonsterAttackState::GaraSetting()
 		else
 			m_fMoveSpeed *= 0.8f;
 
-		m_bIsGara = true;
+		m_bIsPattern = true;
 	}
 	break;
 	}
 }
 
-//void CMonsterAttackState::GaraHitBox()
-//{
-//	auto pEntity = static_cast<CNayitba*>(m_pOwner);
-//	auto pOwnerInfo = &pEntity->GetMonsterData();
-//
-//	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-//	_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-//	// 충돌 충돌 충돌
-//	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
-//
-//	// 이걸로 트랜스폼 바꿀지 말지 결정해서 True 면 초기세팅들어가고
-//	// false 면 초기세팅 안들어갑니다.
-//	HitBoxDesc.bIsApplyTransform = true;
-//
-//	// 위치 바꾸기
-//	XMStoreFloat3(&HitBoxDesc.vPosition, vOwnerPos + vOwnerLook * (pOwnerInfo->fAttackRange * 0.5f));
-//
-//	// 크기 바꾸기
-//	HitBoxDesc.vScale = { 2.f , 2.f, 2.f };
-//
-//	// 넘길 데이터 구조체
-//	HitBoxDesc.pData = static_cast<const void*>(m_pSkillData);
-//
-//	// 공격자
-//	HitBoxDesc.pAttacker = m_pOwner;
-//
-//	// 생성될 히트박스의 콜리전 모양
-//	HitBoxDesc.eColType = COLLIDER::AABB;
-//
-//	HitBoxDesc.eHitBoxType = HIT_TYPE::MONSTER;
-//	HitBoxDesc.eHitObjectType = HIT_TYPE::PLAYER;
-//	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"),
-//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Hit_Box_Layer"), &HitBoxDesc);
-//}
-
-void CMonsterAttackState::BeholderGara(_float fTimeDelta)
+void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
@@ -190,8 +149,6 @@ void CMonsterAttackState::BeholderGara(_float fTimeDelta)
 	}
 	else if(511 == m_pSkillData->iSkillID)
 	{
-		//m_fRootMotionRatio = 1.f;
-		m_bIsRootGara = false;
 		if (0.25f <= fAnimPlayRatio && 0.46f >= fAnimPlayRatio)
 		{
 			bMoveAction = true;
@@ -201,21 +158,18 @@ void CMonsterAttackState::BeholderGara(_float fTimeDelta)
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
-		else if(0.25f >= fAnimPlayRatio)
-		{
-			m_bIsRootGara = true;
-			m_fRootMotionRatio = 1.f;
-		}
 	}
 
 	if (bMoveAction)
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
+		LerpMoveAction(fTimeDelta, fSpeed);
 }
 
-void CMonsterAttackState::StatueAGara(_float fTimeDelta)
+void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
 	_float fSpeed = m_fMoveSpeed;
 	_bool bMoveAction = false;
 
@@ -224,14 +178,12 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 
 	if (521 == m_pSkillData->iSkillID)
 	{
-		m_bIsRootGara = false;
 		//잡기 공격
 		if (0.1f <= fAnimPlayRatio && 0.3 >= fAnimPlayRatio)
 			bMoveAction = true;
 	}
 	else if (522 == m_pSkillData->iSkillID)
 	{
-		m_bIsRootGara = false;
 		// Slash 공격
 		// 0 ~ 40 프레임
 		if (0.0f <= fAnimPlayRatio && 0.24f >= fAnimPlayRatio)
@@ -243,17 +195,17 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 	}
 	else if (523 == m_pSkillData->iSkillID)
 	{
-		m_bIsRootGara = false;
 		// Rush Slash 공격
 		// 30 ~ 80 프레임
 		if (0.15f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
 		{
+			_vector vLerpLook = LerpRotation(fTimeDelta);
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
 			bMoveAction = true;
 		}
 	}
 	else if (524 == m_pSkillData->iSkillID)
 	{
-		m_bIsRootGara = false;
 		// Double Slash
 		// 20 ~ 42 프레임
 		if (0.07f <= fAnimPlayRatio && 0.15f >= fAnimPlayRatio)
@@ -270,13 +222,11 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 		// 109 ~ 140 프레임
 		else if (0.4f <= fAnimPlayRatio && 0.51f >= fAnimPlayRatio)
 		{
-			m_bIsRootGara = true;
 			//m_fRootMotionRatio = 1.f;
 		}
 	}
 	else if (525 == m_pSkillData->iSkillID)
 	{
-		m_bIsRootGara = false;
 		// 기습 공격
 		// 6 ~ 20 프레임 회전
 		if (0.38f <= fAnimPlayRatio && 0.5f >= fAnimPlayRatio)
@@ -288,20 +238,23 @@ void CMonsterAttackState::StatueAGara(_float fTimeDelta)
 		else if(0.25f >= fAnimPlayRatio)
 		{
 			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));
+			_vector vLerpLook = LerpRotation(fTimeDelta);
+
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
 		}
 	}
 
 	if (bMoveAction)
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
+		LerpMoveAction(fTimeDelta, fSpeed);
 }
 
-void CMonsterAttackState::StatueBGara(_float fTimeDelta)
+void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
 	_float fSpeed = m_fMoveSpeed;
-	m_bIsRootGara = false;
 	_bool bMoveAction = false;
 
 	if (531 == m_pSkillData->iSkillID)
@@ -343,6 +296,8 @@ void CMonsterAttackState::StatueBGara(_float fTimeDelta)
 		// 30 ~ 80
 		if (0.15f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
 		{
+			_vector vLerpLook = LerpRotation(fTimeDelta);
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
 			bMoveAction = true;
 		}
 	}
@@ -378,14 +333,17 @@ void CMonsterAttackState::StatueBGara(_float fTimeDelta)
 	else if (537 == m_pSkillData->iSkillID)
 	{
 		// 기습 공격
-		// 65 ~ 120
-		if (0.25f >= fAnimPlayRatio)
+		// 55 ~ 65 회전
+		if (0.25f < fAnimPlayRatio && 0.3f >= fAnimPlayRatio )
 		{
-			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + XMLoadFloat3(&m_vMoveDir));
+			
+			// 지수 제곱
+			// 지수 상수 값 * Time을해서 제곱을 구함 
+			_vector vLerpLook = LerpRotation(fTimeDelta);
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
 		}
 		// 125 ~ 170
-		else if (0.25f <= fAnimPlayRatio && 0.35f >= fAnimPlayRatio)
+		else if (0.3f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
 		{
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
@@ -393,9 +351,40 @@ void CMonsterAttackState::StatueBGara(_float fTimeDelta)
 	}
 
 	if (bMoveAction)
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
+	{
+		LerpMoveAction(fTimeDelta, fSpeed);
+	}
+		
 }
 
+void CMonsterAttackState::SearchTargetDistance()
+{
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+	m_fDistance =	XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
+}
+
+void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
+{
+	if (m_StaticMonsterData->fAttackRange - m_pSkillData->fRange >= m_fDistance)
+		return;
+
+	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
+}
+
+_vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
+{
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+	_vector vLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+
+	vLook.m128_f32[1] = vDir.m128_f32[1] = 0.f;
+	return XMVectorLerp(vLook, vDir, fRatio);
+}
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)
 {

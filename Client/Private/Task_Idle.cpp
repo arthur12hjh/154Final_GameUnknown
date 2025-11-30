@@ -2,8 +2,10 @@
 #include "Task_Idle.h"
 
 #include "GameInstance.h"
+
 #include "BehaviorTree.h"
-#include "Entity.h"
+#include "BossBlackBoard.h"
+#include "Nayitba.h"
 
 CTask_Idle::CTask_Idle() : CTask()
 {
@@ -20,18 +22,24 @@ HRESULT CTask_Idle::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 CBehaviorNode::NODE_STATE CTask_Idle::Update(_float fTimeDelta)
 {
 	// 여기서 블렉보드 또는 다른곳의 상태가 바뀌면 Complete 호출해서 사용
-	auto pOwner = static_cast<CEntity*>(m_pOwnerTree->GetOwner());
-	pOwner->Set_AnimationIndex(1);
+	auto pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+	auto pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
+	string szAnimName = pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+
+	szAnimName += "_BattleIdle01";
+	pOwner->Set_Animation(szAnimName.c_str(), true);
 	pOwner->Play_Animation(fTimeDelta);
+	Safe_Release(pBlackBoard);
 
-	_vector vPos = pOwner->GetTransform()->Get_State(STATE::POSITION);
-	_vector vCamPos = XMLoadFloat4(m_pGameInstance->Get_CamPosition());
+	// 여기서 쿨타임마다 Attack을 하든 이동을하든 동작할거임
+	//_vector vPos = pOwner->GetTransform()->Get_State(STATE::POSITION);
+	//_vector vCamPos = XMLoadFloat4(m_pGameInstance->Get_CamPosition());
 
-	_float fDistance = XMVectorGetX(XMVector3Length(vCamPos - vPos));
-	if(fDistance <= 5.f)
-		return NODE_STATE::COMPLETE;
+	//_float fDistance = XMVectorGetX(XMVector3Length(vCamPos - vPos));
+	//if(fDistance <= 5.f)
+	//	return NODE_STATE::COMPLETE;
 
-	return NODE_STATE::RUNNING;
+	return NODE_STATE::COMPLETE;
 }
 
 CTask_Idle* CTask_Idle::Create(const CBehaviorTree* pOwnerTree)

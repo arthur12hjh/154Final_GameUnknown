@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Bamboo.h" />
@@ -325,6 +326,7 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\TrailEffect.h" />
     <ClInclude Include="..\Public\UIActionEvent.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
@@ -354,6 +356,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Bamboo.cpp" />
@@ -538,6 +541,7 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\TrailEffect.cpp" />
     <ClCompile Include="..\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />

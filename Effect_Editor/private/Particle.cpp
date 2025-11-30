@@ -231,6 +231,17 @@ HRESULT CParticle::Set_Texture(_int iIndex, const char* szPrototype)
 		return E_FAIL;
 	return S_OK;
 }
+
+void CParticle::Stop() {
+	m_bisStop = true;
+	m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
+}
+
+void CParticle::Play()
+{
+	m_bisStop = false;
+}
+
 HRESULT CParticle::Ready_Components()
 {
 	return S_OK;
@@ -325,10 +336,10 @@ HRESULT CParticle::Ready_ComputeShader()
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_pVIBufferCom->IsLoop() ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_bisLoop ? 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
-	m_CBData.fTimeDelta.z = m_tData.fDelayTime;
-	m_CBData.fTimeDelta.w = m_tData.fEndTime;
+	m_CBData.fTimeDelta.z = m_tData.fEndTime;
+	m_CBData.fTimeDelta.w = 0;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
@@ -388,7 +399,7 @@ HRESULT CParticle::Ready_ComputeShader()
 
 void CParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_bisLoop ? 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

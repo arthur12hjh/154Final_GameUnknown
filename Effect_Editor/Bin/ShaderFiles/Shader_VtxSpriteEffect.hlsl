@@ -156,15 +156,11 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
     float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
     
-    float3 N = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2 - 1;
-    float3 T = -normalize(In.vTangent.xyz);
-    float3 B = -normalize(In.vBitangent.xyz);
-    float3 G = -normalize(In.vNormal.xyz);
+    float3 normalOS = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2.0f - 1.0f; // 0~1 => -1~1
+    float3 normalWS = mul((float3x3) g_WorldMatrix, normalOS);
+    normalWS = normalize(normalWS);
     
-    float3x3 TBN = float3x3(T, B, G);
-    float3 finalNormal = normalize(mul(N, TBN));
-    
-    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
+    Out.vNormal = float4(normalWS, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     return Out;
 }
