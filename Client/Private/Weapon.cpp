@@ -58,12 +58,12 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	m_pSpark->Update(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-		m_pSpark->Stop();
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-		m_pSpark->Play();
+	//m_pSpark->Update(fTimeDelta);
+	//
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_pSpark->Stop();
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_pSpark->Play();
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -86,7 +86,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	m_pSpark->Late_Update(fTimeDelta);
+	//m_pSpark->Late_Update(fTimeDelta);
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
