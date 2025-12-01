@@ -29,9 +29,6 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 {
 	PONYTAIL_PLAYER_DESC* pDesc = static_cast<PONYTAIL_PLAYER_DESC*>(pArg);
 
-	//m_pSocketMatrix = pDesc->pSocketMatrix;
-	//strcpy_s(m_szBoneTag, pDesc->szBoneTag);
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -53,18 +50,8 @@ void CPonyTail_Player::Priority_Update(_float fTimeDelta)
 
 void CPonyTail_Player::Update(_float fTimeDelta)
 {
-	//if (*m_pParentState & CCharacter::STATE_ATTACK)
-	//	m_pModelCom->Set_AnimationIndex(0, false);
-	//
-	//if (*m_pParentState & CCharacter::STATE_IDLE)
-	//	m_pModelCom->Set_AnimationIndex(3);
-	//
-	//if (*m_pParentState & CCharacter::STATE_WALK)
-	//	m_pModelCom->Set_AnimationIndex(4);	
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
 }
 
 void CPonyTail_Player::Late_Update(_float fTimeDelta)
@@ -107,15 +94,13 @@ HRESULT CPonyTail_Player::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		//4번 인덱스가 머리, 5번 인덱스가 포니테일
+		if (FAILED(m_pShaderCom->Begin(5)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
-
-
-
 
 	return S_OK;
 }
@@ -155,7 +140,7 @@ HRESULT CPonyTail_Player::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Hair"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

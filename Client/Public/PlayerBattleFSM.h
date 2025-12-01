@@ -18,8 +18,13 @@ public:
 	virtual class CPlayerState* Create_State(PLAYER_TRANSITION_DESC tTransitionDesc) override;
 
 private:
-	virtual HRESULT			Ready_State() override;
+	_float m_fBattleToIdle = { 0.f };
 
+private:
+	virtual HRESULT			Ready_State() override;
+	//Battle to Idle 로직 체크
+	_bool	Check_BattleToIdle(_float fTimeDelta);
+	
 public:
 	static	CPlayerBattleFSM*	Create();
 	virtual	void				Free() override;

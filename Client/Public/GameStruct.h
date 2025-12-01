@@ -75,7 +75,7 @@ namespace Client
 		SKILL_STATE				eBetaSkillState[4];			// 스킬 상태
 
 		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE				ePlayerMode;
+		PLAYER_MODE				ePlayerMode = { PLAYER_MODE::IDLE };
 		class CTransform*		pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
