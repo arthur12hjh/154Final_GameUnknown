@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "Nayitba.h"
 
+#include "GameManager.h"
 #include "Trail.h"
 #include "TrailEffect.h"
 #include "Effect.h"
@@ -218,8 +219,9 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitDir = vHitDir;
 
 		CHARACTER_SKILL_DESC SkillDesc = {};
+		strcpy_s(SkillDesc.szHitAnimationName, "None");
 		SkillDesc.iSkillDamage = 50.f;
-		pDamageDesc.pSkillData = &SkillDesc;
+		pDamageDesc.pSkillData = CGameManager::GetInstance()->Find_SkillData(1000);
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

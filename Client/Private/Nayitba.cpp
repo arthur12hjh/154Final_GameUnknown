@@ -271,6 +271,7 @@ HRESULT CNayitba::ADD_Components()
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
+	m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 
