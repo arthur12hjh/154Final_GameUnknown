@@ -8,6 +8,8 @@
 #include "ContainerObject.h"
 #include "Animation.h"
 
+#include "Material.h"
+
 #include "Extra.h"
 
 
@@ -71,13 +73,26 @@ void CImGui_Manager::Update(_float fTimeDelta)
 	if (m_bIsActive == FALSE)
 		return;
 
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	{
+		m_fTimeRate = m_fTimeRate == 0.f ? 1.f : 0.f;
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LEFT)
+		|| m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_RIGHT)
+		|| m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP)
+		|| m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
+	{
+		m_fTimeRate = 0.f;
+	}
+
 	Update_ToolBar();
 	Update_AnimationList();
 	Update_KeyFrameTool();
 
 	if (nullptr != m_pSelectedObject)
 	{
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta,
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
 	}
 
@@ -132,6 +147,7 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
 		m_iBeforeEventIndex = 0;
+		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
 		
@@ -159,6 +175,7 @@ void CImGui_Manager::Create_Extra(const _wstring& szModelTag)
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
 		m_iBeforeEventIndex = 0;
+		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
 
@@ -364,11 +381,15 @@ void CImGui_Manager::Update_AnimationList()
 	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
 	ImGui::SetNextWindowSize(ImVec2(450, ImGui::GetIO().DisplaySize.y - 50)); // 왼쪽에 갖다붙일거임
 
-
 	ImGui::Begin(u8"Animation List", NULL);
+
+	ImGui::BeginChild(u8"Child_AnimationSearch", ImVec2(0, 120), true);
+
+	m_AnimSearchFilter.Draw("Search", 180.0f);
 
 	if (nullptr == m_pAnimationList)
 	{
+		ImGui::EndChild();
 		ImGui::End();
 		m_iSelectedAnimationIndex = 0;
 		m_iBeforeAnimationIndex = -1;
@@ -378,6 +399,7 @@ void CImGui_Manager::Update_AnimationList()
 	if (!m_pAnimationList || m_pAnimationList->empty())
 	{
 		ImGui::Text("No animations loaded.");
+		ImGui::EndChild();
 		return;
 	}
 
@@ -397,14 +419,19 @@ void CImGui_Manager::Update_AnimationList()
 
 	}
 
+	ImGui::EndChild();
+
 	ImGui::Separator();
-	ImGui::Separator();
+
+	ImGui::BeginChild(u8"Child_AnimationList", ImVec2(0, 0), true);
 
 	for (int i = 0; i < m_pAnimationList->size(); ++i)
 	{
 		CAnimation* pAnimation = (*m_pAnimationList)[i];
 		const char* szAnimationName = pAnimation->Get_Name();
 
+		if (!m_AnimSearchFilter.PassFilter(szAnimationName))
+			continue;
 
 		if (ImGui::Selectable(szAnimationName, m_iSelectedAnimationIndex == i))
 		{
@@ -421,7 +448,7 @@ void CImGui_Manager::Update_AnimationList()
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
 	}
 
-
+	ImGui::EndChild();
 
 	ImGui::End();
 
@@ -465,6 +492,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
+	Update_TextureMap();
 	Update_EventMaker();
 
 	ImGui::End();
@@ -472,6 +500,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 
 void CImGui_Manager::Update_TimeLine()
 {
+
 	if (nullptr == m_pAnimationList)
 	{
 		ImGui::Text("Select Animation");
@@ -484,6 +513,8 @@ void CImGui_Manager::Update_TimeLine()
 		ImGui::Text("Invalid Animation");
 		return;
 	}
+
+	ImGui::BeginChild(u8"ChildTimeLine", ImVec2(0, 500), true);
 	
 	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 360.f);
 
@@ -636,7 +667,7 @@ void CImGui_Manager::Update_TimeLine()
 
 		fRatioX = Clamp(fRatioX, 0.f, 1.f);
 		_bool bIsCursorOnTrackPosition = TRUE;
-		fPosY > 5.f ? bIsCursorOnTrackPosition = FALSE : bIsCursorOnTrackPosition = TRUE;
+		fPosY > (vCanvasRightBottom.y - vCanvasLeftTop.y) ? bIsCursorOnTrackPosition = FALSE : bIsCursorOnTrackPosition = TRUE;
 
 
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_RIGHT))
@@ -682,36 +713,42 @@ void CImGui_Manager::Update_TimeLine()
 
 
 
-		// 마우스 오버시 이벤트 처리는 따로..
-
+		_bool bIsNotifyClicked = FALSE;
 		// 해당 키프레임으로 이동...
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
-			if (bIsCursorOnTrackPosition)
+			_int iIndex = 0;
+			for (auto& vIconPos : vIconPositions)
+			{
+				if (XMVectorGetX(XMVector3Length(XMVectorSet(vIconPos.first - vMousePos.x, vIconPos.second - vMousePos.y, 0.f, 0.f))) < 6.f)
+				{
+					bIsNotifyClicked = TRUE;
+
+					m_iClickedKeyFrame = static_cast<_uint>(fRatioX * pAnimation->Get_Duration());
+
+					if (nullptr == m_pCurrentAnimationEventList)
+					{
+						Update_AnimNotifyList(pAnimation);
+					}
+
+					m_iSelectedEventIndex = iIndex;
+					ImGui::OpenPopup("EventMaker");
+					break;
+				}
+				else
+					++iIndex;
+			}
+
+			if (bIsCursorOnTrackPosition && (bIsNotifyClicked == FALSE))
 			{
 				pAnimation->Set_CurrentTrackPosition(fRatioX * pAnimation->Get_Duration());
 			}
-			else
+		}
+		else if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+		{
+			if (bIsCursorOnTrackPosition && (bIsNotifyClicked == FALSE))
 			{
-				// 이벤트 원이랑 위치 비교..
-				_int iIndex = 0;
-				for (auto& vIconPos : vIconPositions)
-				{
-					if (XMVectorGetX(XMVector3Length(XMVectorSet(vIconPos.first - vMousePos.x, vIconPos.second - vMousePos.y, 0.f, 0.f))) < 6.f)
-					{
-						m_iClickedKeyFrame = static_cast<_uint>(fRatioX * pAnimation->Get_Duration());
-
-						if (nullptr == m_pCurrentAnimationEventList)
-						{
-							Update_AnimNotifyList(pAnimation);
-						}
-
-						m_iSelectedEventIndex = iIndex;
-						ImGui::OpenPopup("EventMaker");
-					}
-					else
-						++iIndex;
-				}
+				pAnimation->Set_CurrentTrackPosition(fRatioX * pAnimation->Get_Duration());
 			}
 		}
 
@@ -764,7 +801,70 @@ void CImGui_Manager::Update_TimeLine()
 	}
 
 
+	ImGui::EndChild();
 
+}
+
+void CImGui_Manager::Update_TextureMap()
+{
+	ImGui::BeginChild(u8"ChildTextureMap", ImVec2(0, 0), true);
+
+	if (nullptr == m_pSelectedObject)
+	{
+		ImGui::EndChild();
+		return;
+	}
+
+	CModel* pSelectedModel = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")));
+
+	/* 1. Combo로 CModel::m_pModel::vMaterials의 리스트를 szName 형식으로 나열한다. */
+	/* 2. 선택 시 그 친구들의 strTexturePaths[TEXTURETYPE::END] 를 순회하며 0번째 인덱스에 있는 텍스쳐를 나열해준다. */
+
+	if (!pSelectedModel)
+	{
+		ImGui::Text("No Model / BinModel");
+		ImGui::EndChild();
+		return;
+	}
+
+	_uint iNumMaterials = pSelectedModel->Get_NumMaterials();
+
+	if (iNumMaterials <= 0)
+	{
+		ImGui::Text("No Materials");
+		ImGui::EndChild();
+		return;
+	}
+
+	
+	vector<const char*> MaterialNames;
+
+	for (int i = 0; i < iNumMaterials; ++i)
+	{
+		MaterialNames.push_back(pSelectedModel->Get_MaterialName(i));
+	}
+
+	ImGui::Combo(
+		"Material",
+		&m_iSelectedMaterial,
+		MaterialNames.data(),
+		iNumMaterials
+	);
+
+	ImGui::Separator();
+	ImGui::Text("Texture Maps");
+
+	vector<CMaterial*>* pMaterials = pSelectedModel->Get_Materials();
+
+	for (int i = 0; i < ENUM_CLASS(BINMATERIAL::TEXTURETYPE::END); ++i)
+	{
+		auto pSRV = pMaterials->at(m_iSelectedMaterial)->Get_SRV(i);
+		ImGui::Text("Type [%d]", i);
+		if(pSRV != nullptr)
+			ImGui::Image((void*)(pMaterials->at(m_iSelectedMaterial)->Get_SRV(i)), ImVec2(64.f, 64.f));
+	}
+
+	ImGui::EndChild();
 }
 
 void CImGui_Manager::Update_EventMaker()
