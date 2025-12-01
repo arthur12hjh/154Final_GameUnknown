@@ -43,8 +43,12 @@ HRESULT CUIBeta::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxCount = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxBetaEnergy);
-		m_iCurrentCount = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentBetaEnergy);
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+		
+		m_iMaxCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxBetaEnergy);
+		m_iCurrentCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);
+		
+		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
@@ -123,7 +127,7 @@ HRESULT CUIBeta::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(7)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::BETA))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))

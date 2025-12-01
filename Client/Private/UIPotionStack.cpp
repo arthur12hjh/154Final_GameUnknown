@@ -57,7 +57,7 @@ HRESULT CUIPotionStack::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(5)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::POTION))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))

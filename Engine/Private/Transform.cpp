@@ -248,7 +248,7 @@ void CTransform::LookAt(_fvector vAt)
 	Set_State(STATE::LOOK, XMVector3Normalize(vLook) * vScale.z);
 }
 
-void CTransform::LookAt_Lerp(_fvector vAt, _float fRatio)
+void CTransform::LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed)
 {
 	_float3		vScale = Get_Scale();
 
@@ -256,7 +256,7 @@ void CTransform::LookAt_Lerp(_fvector vAt, _float fRatio)
 	_vector		vTarget = XMVector3Normalize(vAt - Get_State(STATE::POSITION));
 	vTarget = XMVectorSetW(vTarget, 0.f);
 
-	vLook = XMVector3Normalize(XMVectorLerp(Get_State(STATE::LOOK), vTarget, fRatio));
+	vLook = XMVector3Normalize(XMVectorLerp(Get_State(STATE::LOOK), vTarget, fRatio * fSpeed));
 	vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	vUp = XMVector3Cross(vLook, vRight);
 
@@ -269,8 +269,8 @@ void CTransform::Chase_Lerp(_fvector vTargetPos, _float fTimeDelta, _float fLimi
 {
 	_vector		vPosition = Get_State(STATE::POSITION);
 	_vector		vDirection = vTargetPos - vPosition;
-	_float		fDist = XMVectorGetX(XMVector3Length(vTargetPos - vPosition));
 
+	_float		fDist = XMVectorGetX(XMVector3Length(vTargetPos - vPosition));
 	_vector		vLerp = XMVectorSetW(XMVectorLerp(vPosition, vTargetPos, fTimeDelta * m_fSpeedPerSec), 1.f);
 
 	if (fDist < fLimitDistance)

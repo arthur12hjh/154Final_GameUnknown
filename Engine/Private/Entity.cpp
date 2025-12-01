@@ -49,6 +49,11 @@ HRESULT CEntity::Render()
     return S_OK;
 }
 
+_bool CEntity::CompareAnimationTag(const _char* szAnimationTag)
+{
+    return m_pBodyModelCom->CompareAnimationTag(szAnimationTag);
+}
+
 _bool CEntity::Play_Animation(_float fTimeDelta, CTransform* pTargetTransform, _float fRootMotionRatio)
 {
     if (nullptr == m_pBodyModelCom)

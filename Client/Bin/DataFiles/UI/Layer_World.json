@@ -9,6 +9,7 @@
         "fAlpha": 1.0,
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
+        "fRotation": 0.0,
         "fSizeX": 100.0,
         "fSizeY": 100.0,
         "fX": 0.0,

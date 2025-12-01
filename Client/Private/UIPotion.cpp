@@ -43,8 +43,12 @@ HRESULT CUIPotion::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxPotions = const_cast<_int*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxPotions);
-		m_iPotions = const_cast<_int*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentPotions);
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+
+		m_iMaxPotions = const_cast<_int*>(&pGaraPlayer->Get_Desc()->iMaxPotions);
+		m_iPotions = const_cast<_int*>(&pGaraPlayer->Get_Desc()->iCurrentPotions);
+
+		Safe_Release(pGaraPlayer);
 	}
 #endif
 	
@@ -85,7 +89,7 @@ HRESULT CUIPotion::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(0)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::UI))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))

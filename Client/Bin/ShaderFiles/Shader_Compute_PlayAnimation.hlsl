@@ -11,6 +11,47 @@ float CopySign(float fSource, float fSign)
         return fSource;
 }
 
+float4 MatrixToQuaternion(float4x4 m)
+{
+    float4 q;
+    float trace = m[0][0] + m[1][1] + m[2][2];
+
+    if (trace > 0.0f)
+    {
+        float s = sqrt(trace + 1.0f) * 2.0f; // s = 4 * qw
+        q.w = 0.25f * s;
+        q.x = (m[2][1] - m[1][2]) / s;
+        q.y = (m[0][2] - m[2][0]) / s;
+        q.z = (m[1][0] - m[0][1]) / s;
+    }
+    else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
+    {
+        float s = sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]) * 2.0f; // s = 4 * qx
+        q.w = (m[2][1] - m[1][2]) / s;
+        q.x = 0.25f * s;
+        q.y = (m[0][1] + m[1][0]) / s;
+        q.z = (m[0][2] + m[2][0]) / s;
+    }
+    else if (m[1][1] > m[2][2])
+    {
+        float s = sqrt(1.0f + m[1][1] - m[0][0] - m[2][2]) * 2.0f; // s = 4 * qy
+        q.w = (m[0][2] - m[2][0]) / s;
+        q.x = (m[0][1] + m[1][0]) / s;
+        q.y = 0.25f * s;
+        q.z = (m[1][2] + m[2][1]) / s;
+    }
+    else
+    {
+        float s = sqrt(1.0f + m[2][2] - m[0][0] - m[1][1]) * 2.0f; // s = 4 * qz
+        q.w = (m[1][0] - m[0][1]) / s;
+        q.x = (m[0][2] + m[2][0]) / s;
+        q.y = (m[1][2] + m[2][1]) / s;
+        q.z = 0.25f * s;
+    }
+
+    return normalize(q);
+}
+
 // 크기값 받아서 행렬 만드는 함수
 float4x4 MakeScaleMatrix(float4 vScale)
 {
@@ -60,19 +101,39 @@ float4x4 MakeRotationMatrix(float4 vRotation)
 }
 
 // Slerp
+float4 QuaternionSlerp(float4 q1, float4 q2, float t)
+{
+    float cosTheta = dot(q1, q2);
+
+    if (cosTheta < 0.0f)
+    {
+        q2 = -q2;
+        cosTheta = -cosTheta;
+    }
+
+    if (cosTheta > 0.9995f)
+        return normalize(lerp(q1, q2, t));
+
+    float theta = acos(cosTheta);
+    float sinTheta = sin(theta);
+
+    float w1 = sin((1.0f - t) * theta) / sinTheta;
+    float w2 = sin(t * theta) / sinTheta;
+
+    return q1 * w1 + q2 * w2;
+}
+
+/*
 float4 QuaternionSlerp(float4 q1, float4 q2, float fRatio)
 {
-    // 두 벡터를 내적해서 코사인 세타를 구한다.
     float fCosTheta = dot(q1, q2);
     
-    // 각도가 반대면, 반대로 곱해준다.
     if (fCosTheta < 0.0f)
     {
         q2 = -q2;
         fCosTheta = -fCosTheta;
     }
     
-    // DOT_THRESHOLD
     if (fCosTheta > 0.9995f)
     {
         float4 fResult = q1 + fRatio * (q2 - q1);
@@ -80,14 +141,13 @@ float4 QuaternionSlerp(float4 q1, float4 q2, float fRatio)
     }
     
     
-    // q1 * cosTheta + (q2 - q1 * fCosTheta) * fSinTheta
-    // fSinTheta를 구해주자.
     fCosTheta = clamp(fCosTheta, -1.f, 1.f);
     float fTheta = acos(fCosTheta);
     float fSinTheta = sin(fTheta);
     
     return normalize(q1 * sin((1.f - fRatio) * fTheta) / fSinTheta + q2 * sin(fRatio * fTheta) / fSinTheta);
 }
+*/
 
 struct BoneInfo
 {
@@ -224,42 +284,29 @@ float3 ScaleLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcScale, vDstScale, fRatio);
 }
+
 float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
+    // 축 방향 정규화 (스케일 제거)
     matSrc[0].xyz = normalize(matSrc[0].xyz);
     matSrc[1].xyz = normalize(matSrc[1].xyz);
     matSrc[2].xyz = normalize(matSrc[2].xyz);
-    
+
     matDst[0].xyz = normalize(matDst[0].xyz);
     matDst[1].xyz = normalize(matDst[1].xyz);
     matDst[2].xyz = normalize(matDst[2].xyz);
-    
-    float4 vSrcRotation, vDstRotation;
-    
-    vSrcRotation.w = sqrt(max(0.f, 1.f + matSrc[0][0] + matSrc[1][1] + matSrc[2][2])) * 0.5f;
-    vSrcRotation.x = sqrt(max(0.f, 1.f + matSrc[0][0] - matSrc[1][1] - matSrc[2][2])) * 0.5f;
-    vSrcRotation.y = sqrt(max(0.f, 1.f - matSrc[0][0] + matSrc[1][1] - matSrc[2][2])) * 0.5f;
-    vSrcRotation.z = sqrt(max(0.f, 1.f - matSrc[0][0] - matSrc[1][1] + matSrc[2][2])) * 0.5f;
-    
-    vSrcRotation.x = CopySign(vSrcRotation.x, matSrc[2][1] - matSrc[1][2]);
-    vSrcRotation.y = CopySign(vSrcRotation.y, matSrc[0][2] - matSrc[2][0]);
-    vSrcRotation.z = CopySign(vSrcRotation.z, matSrc[1][0] - matSrc[0][1]);
-    
-    vDstRotation.w = sqrt(max(0.f, 1.f + matDst[0][0] + matDst[1][1] + matDst[2][2])) * 0.5f;
-    vDstRotation.x = sqrt(max(0.f, 1.f + matDst[0][0] - matDst[1][1] - matDst[2][2])) * 0.5f;
-    vDstRotation.y = sqrt(max(0.f, 1.f - matDst[0][0] + matDst[1][1] - matDst[2][2])) * 0.5f;
-    vDstRotation.z = sqrt(max(0.f, 1.f - matDst[0][0] - matDst[1][1] + matDst[2][2])) * 0.5f;
-    
-    vDstRotation.x = CopySign(vDstRotation.x, matDst[2][1] - matDst[1][2]);
-    vDstRotation.y = CopySign(vDstRotation.y, matDst[0][2] - matDst[2][0]);
-    vDstRotation.z = CopySign(vDstRotation.z, matDst[1][0] - matDst[0][1]);
-    
+
+    // 안정형 행렬 -> 쿼터니언 변환 사용
+    float4 vSrcRotation = MatrixToQuaternion(matSrc);
+    float4 vDstRotation = MatrixToQuaternion(matDst);
+
     vSrcRotation.w *= -1.f;
     vDstRotation.w *= -1.f;
- 
-    vSrcRotation = normalize(vSrcRotation);
-    vDstRotation = normalize(vDstRotation);
     
+    // 쿼터니언 부호 정렬 (shortest path)
+    if (dot(vSrcRotation, vDstRotation) < 0.0f)
+        vDstRotation = -vDstRotation;
+
     return QuaternionSlerp(vSrcRotation, vDstRotation, fRatio);
 }
 

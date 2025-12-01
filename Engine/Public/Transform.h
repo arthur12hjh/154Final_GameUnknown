@@ -60,13 +60,11 @@ public:
 	void					Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQuatW);
 
 	void					LookAt(_fvector vAt);
-	//임시로 추가해놓은 코드입니다 ratio 0.1 이상으로 두면 터질 가능성 높음
-	void					LookAt_Lerp(_fvector vAt, _float fRatio);
-	//임시로 추가해놓은 코드입니다 ratio 0.1 이상으로 두면 터질 가능성 높음
+
+	void					LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed = 1.f);
 	void					Chase_Lerp(_fvector vTargetPos, _float fTimeDelta, _float fLimitDistance = 0.f);
-	//입력받은 벡터로 Look 벡터 강제로 세팅 후, 나머지 Right, Up도 보정해주는 함수. 
-	//Set State랑은 로직 좀 다르게 돌아가요.
 	void					Change_Look(_fvector vLook); 
+
 private:
 	class CGameObject*		m_pOwner = nullptr;
 

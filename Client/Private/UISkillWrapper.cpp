@@ -50,16 +50,20 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+
 		for (size_t i = 0; i < 4; ++i)
 		{
-			m_eSkillState[i] = const_cast<SKILL_STATE*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eBetaSkillState[i]);
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
 			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
-		m_eRushState = const_cast<SKILL_STATE*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eRushState);
+		m_eRushState = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
-		m_fMaxRushCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fMaxRushCoolTime);
-		m_fCurrentRushCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fCurrentRushCoolTime);
+		m_fMaxRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);
+		m_fCurrentRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fCurrentRushCoolTime);
+		
+		Safe_Release(pGaraPlayer);
 	}
 #endif
 
@@ -76,19 +80,7 @@ void CUISkillWrapper::Priority_Update(_float fTimeDelta)
 void CUISkillWrapper::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
-
-	//if (m_fRushCoolAmount < 1.f)
-	//{
-	//	m_bRushActive = false; // 플레이어한테 받아오기???
-	//	m_fRushCoolAmount += fTimeDelta / 5.f; // 쿨타임 플레이어한테 받아오기???
-	//}
-	//else
-	//{
-	//	m_bRushActive = true;
-	//	m_fRushCoolAmount = 1.f;
-	//}
 }
-
 
 void CUISkillWrapper::Late_Update(_float fTimeDelta)
 {
@@ -118,11 +110,11 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 				__super::Trigger_Event(TEXT("Rush_Active"), &Arg);
 				break;
 			}
-			/*case SKILL_STATE::USE:
+			case SKILL_STATE::USE:
 			{
 				__super::Trigger_Event(TEXT("Rush_ActiveOff"), &Arg);
 				break;
-			}*/
+			}
 		}
 
 		m_ePrevRushState = *m_eRushState;
@@ -145,9 +137,29 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Default"), &Arg);
 				break;
 			}
+			case SKILL_STATE::ACTIVE_ON:
+			{
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_ActiveOn"), &Arg);
+				
+				_bool bActive = true;
+
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+				Arg.pData = &bActive;
+				__super::Trigger_Event(TEXT("SkillWrapperActive"), &Arg);
+
+				break;
+			}
 			case SKILL_STATE::ACTIVE:
 			{
 				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Active"), &Arg);
+
+				break;
+			}
+			case SKILL_STATE::USE:
+			{
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Use"), &Arg);
+
 				break;
 			}
 			}
@@ -171,10 +183,6 @@ HRESULT CUISkillWrapper::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
 	return S_OK;
 }
 
@@ -185,40 +193,11 @@ HRESULT CUISkillWrapper::Bind_ShaderResources()
 
 HRESULT CUISkillWrapper::Execute(const UI_EVENT_DESC& EventDesc)
 {
-	//const _wstring& Type = EventDesc.szTypeTag;
-	//const _wstring& Arg = EventDesc.szArg;
-	//const _wstring& ActionTag = EventDesc.szActionTag;
-
-	//// 애니메이션
-	//if (Type == TEXT("PlayAnimEvent"))
-	//{
-	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	//	auto AnimTag = m_tUIDesc.m_AnimTags.find(ActionTag);
-
-	//	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	//	Safe_Release(pHUD);
-	//}
-	//if (Type == TEXT("ActionEvent"))
-	//{
-	//}
-
 	return S_OK;
 }
 
 void CUISkillWrapper::CallbackEvent(void* pArg)
 {
-	/*auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
-	if (!arg) return;
-
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	Safe_Release(pHUD);*/
 }
 
 CUISkillWrapper* CUISkillWrapper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

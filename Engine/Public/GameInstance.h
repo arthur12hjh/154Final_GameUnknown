@@ -136,9 +136,9 @@ public:
 	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
 
+#ifdef _DEBUG
 	void								Select_LightRender(CLight* pSelectLight);
 
-#ifdef _DEBUG
 	void								Debug_LightRender();
 #endif
 

@@ -66,6 +66,8 @@ void CUIBase::Update(_float fTimeDelta)
 		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 	}
 	
+	m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(m_tUIDesc.fRotation));
+
 	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
 }
 
@@ -102,6 +104,11 @@ void CUIBase::Set_Position(_float fX, _float fY)
 {
 	m_tUIDesc.fOffsetX = fX;
 	m_tUIDesc.fOffsetY = fY;
+}
+
+void CUIBase::Set_Rotation(_float fRotation)
+{
+	m_tUIDesc.fRotation = fRotation;
 }
 
 void CUIBase::Set_Size(_float fSizeX, _float fSizeY) {

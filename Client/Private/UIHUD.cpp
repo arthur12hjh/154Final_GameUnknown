@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "UIHUD.h"
 #include "HUDLayer.h"
 
@@ -9,12 +9,12 @@
 #include "UIAnimManager.h"
 
 /*
-¿Ã∫•∆Æ, æ÷¥œ∏ﬁ¿Ãº« ∏≈¥œ¿˙ ∏∏µÈ±‚(ΩÃ±€≈Ê¿œ « ø‰X)
-	µ•¿Ã≈Õ∏¶ ¿–∞Ì º“¿Ø
+Ïù¥Î≤§Ìä∏, Ïï†ÎãàÎ©îÏù¥ÏÖò Îß§ÎãàÏ†Ä ÎßåÎì§Í∏∞(Ïã±Í∏ÄÌÜ§Ïùº ÌïÑÏöîX)
+	Îç∞Ïù¥ÌÑ∞Î•º ÏùΩÍ≥† ÏÜåÏú†
 
-UIBaseDescø° ¿Ã UI∞° Ω««‡«“ ¿Ã∫•∆Æ, æ÷¥œ∏ﬁ¿Ãº« ∏Ò∑œ √ﬂ∞°«œ±‚
+UIBaseDescÏóê Ïù¥ UIÍ∞Ä Ïã§ÌñâÌï† Ïù¥Î≤§Ìä∏, Ïï†ÎãàÎ©îÏù¥ÏÖò Î™©Î°ù Ï∂îÍ∞ÄÌïòÍ∏∞
 
-∏µÁ UIµÈ¿∫ HUD∏¶ ≈Î«ÿ ¿Ã∫•∆Æ, æ÷¥œ∏ﬁ¿Ãº« ºˆ«‡
+Î™®Îì† UIÎì§ÏùÄ HUDÎ•º ÌÜµÌï¥ Ïù¥Î≤§Ìä∏, Ïï†ÎãàÎ©îÏù¥ÏÖò ÏàòÌñâ
 */
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -78,7 +78,7 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 
 	CJsonParser::SaveJsonData(szPath, jUIObjects);
 	
-	MSG_BOX("¿˙¿Â º∫∞¯");
+	MSG_BOX("Ï†ÄÏû• ÏÑ±Í≥µ");
 
 	return S_OK;
 }
@@ -101,6 +101,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	jObj["fOffsetY"] = pDesc.fOffsetY;
 	jObj["fSizeX"] = pDesc.fSizeX;
 	jObj["fSizeY"] = pDesc.fSizeY;
+	jObj["fRotation"] = pDesc.fRotation;
 	jObj["iLevel"] = pDesc.iLevel;
 	jObj["iDepth"] = pDesc.iDepth;
 	jObj["iRenderGroup"] = pDesc.iRenderGroup;
@@ -181,7 +182,6 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	if (pDesc.m_Events.size() > 0)
 	{
 		Json jEvents;
-		Json jEvent;
 
 		for (auto it = pDesc.m_Events.begin(); it != pDesc.m_Events.end(); ++it)
 		{
@@ -190,11 +190,14 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			_char szEventTag[MAX_PATH]{};
 			CStringHelper::ConvertWideToUTF(it->first.c_str(), szEventTag);
 
+			Json jEventArray = Json::array();   // ‚≠ê KEY POINT: Îß§ ÌÇ§ÎßàÎã§ ÏÉàÎ°úÏö¥ Î∞∞Ïó¥
+
 			for (size_t i = 0; i < Events.size(); ++i)
 			{
 				Json jEventInfo{};
 				const auto& Event = Events[i];
 
+				// SubscribeEventTags
 				for (auto& SubscribeEvent : Event.szSubscribeEventTags)
 				{
 					_char szSubscribeEventTag[MAX_PATH]{};
@@ -205,14 +208,17 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 
 				CStringHelper::ConvertWideToUTF(Event.szActionTag.c_str(), szText);
 				jEventInfo["szActionTag"] = szText;
+
 				CStringHelper::ConvertWideToUTF(Event.szTypeTag.c_str(), szText);
 				jEventInfo["szTypeTag"] = szText;
+
 				CStringHelper::ConvertWideToUTF(Event.szArg.c_str(), szText);
 				jEventInfo["szArg"] = szText;
 
-				jEvent.push_back(jEventInfo);
+				jEventArray.push_back(jEventInfo);  // ‚≠ê Ï†ïÏÉÅ
 			}
-			jEvents[szEventTag] = jEvent;
+
+			jEvents[szEventTag] = jEventArray;   // ‚≠ê Í∞Å ÌÇ§ÎßàÎã§ ÎèÖÎ¶ΩÎêú Î∞∞Ïó¥ Ï†ÄÏû•
 		}
 
 		jObj["szEvents"] = jEvents;
@@ -286,6 +292,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		Desc.fSizeY = pUIObject["fSizeY"].get<_float>();
 		Desc.fOffsetX = pUIObject["fOffsetX"].get<_float>();
 		Desc.fOffsetY = pUIObject["fOffsetY"].get<_float>();
+		Desc.fRotation = pUIObject["fRotation"].get<_float>();
 		Desc.iDepth = pUIObject["iDepth"].get<_uint>();
 		Desc.iLevel = pUIObject["iLevel"].get<_uint>();
 		Desc.iDrawType = pUIObject["iDrawType"].get<_uint>();
@@ -380,15 +387,16 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 
 		if (pUIObject.contains("szEvents"))
 		{
+			Desc.m_Events.clear();
 			Json jEvents = pUIObject["szEvents"];
 
-			// eventObj¥¬ {"Hover": [...]} ∂«¥¬ {"Click": [...]} «¸≈¬
+			// eventObjÎäî {"Hover": [...]} ÎòêÎäî {"Click": [...]} ÌòïÌÉú
 			for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
 			{
 				WCHAR wTrigger[MAX_PATH]{};
 				CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
 
-				const auto& Events = it.value(); // Action πËø≠
+				const auto& Events = it.value(); // Action Î∞∞Ïó¥
 
 				vector<UI_EVENT_DESC> parsedEvents{};
 
@@ -422,7 +430,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 					parsedEvents.push_back(EventDesc);
 				}
 
-				// √÷¡æ ¿˙¿Â
+				// ÏµúÏ¢Ö Ï†ÄÏû•
 				Desc.m_Events.emplace(wTrigger, parsedEvents);
 			}
 		}
@@ -479,7 +487,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			continue;
 	}
 
-	//MSG_BOX("¿–±‚ º∫∞¯");
+	//MSG_BOX("ÏùΩÍ∏∞ ÏÑ±Í≥µ");
 
 	return S_OK;
 }
@@ -499,6 +507,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	Desc.fSizeY = jData["fSizeY"].get<_float>();
 	Desc.fOffsetX = jData["fOffsetX"].get<_float>();
 	Desc.fOffsetY = jData["fOffsetY"].get<_float>();
+	Desc.fRotation = jData["fRotation"].get<_float>();
 	Desc.iDepth = jData["iDepth"].get<_uint>();
 	Desc.iLevel = jData["iLevel"].get<_uint>();
 	Desc.iDrawType = jData["iDrawType"].get<_uint>();
@@ -594,6 +603,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 
 	if (jData.contains("szEvents"))
 	{	
+		Desc.m_Events.clear();
 		Json jEvents = jData["szEvents"];
 
 		for (auto it = jEvents.begin(); it != jEvents.end(); ++it)
@@ -601,7 +611,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 			WCHAR wTrigger[MAX_PATH]{};
 			CStringHelper::ConvertUTFToWide(it.key().c_str(), wTrigger);
 
-			const auto& Events = it.value(); // Action πËø≠
+			const auto& Events = it.value(); // Action Î∞∞Ïó¥
 
 			vector<UI_EVENT_DESC> parsedEvents{};
 
@@ -635,7 +645,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 				parsedEvents.push_back(EventDesc);
 			}
 
-			// √÷¡æ ¿˙¿Â
+			// ÏµúÏ¢Ö Ï†ÄÏû•
 			Desc.m_Events.emplace(wTrigger, parsedEvents);
 		}
 	}
@@ -697,10 +707,10 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 void CUIHUD::Reset_WorldUI_State(CUIBase* pUI)
 {
 	if (!pUI) return;
-	// æÀ∆ƒ/æ÷¥œ/¿Ã∫•∆Æ µÓ¿« ∑±≈∏¿” ªÛ≈¬ √ ±‚»≠
+	// ÏïåÌåå/Ïï†Îãà/Ïù¥Î≤§Ìä∏ Îì±Ïùò Îü∞ÌÉÄÏûÑ ÏÉÅÌÉú Ï¥àÍ∏∞Ìôî
 	UIBASE_DESC d = pUI->Get_UIBase_OriginDesc();
 	d.fAlpha = 1.f;
-	// « ø‰ Ω√ ¥ı √ ±‚»≠°¶
+	// ÌïÑÏöî Ïãú Îçî Ï¥àÍ∏∞Ìôî‚Ä¶
 	pUI->Set_UIBase_Desc(d);
 
 	m_pUIAnimMgr->Anim_Stop(pUI);
@@ -777,14 +787,14 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 		auto* pUI = dynamic_cast<CUIBase*>(pObj);
 		if (!pUI) return E_FAIL;
 
-		// «Æø° ¿·Ω√ ¥Î±‚: ∫Ò»∞º∫/∞°Ω√º∫ º˚±Ë/æ÷¥œ ¡§¡ˆ
+		// ÌíÄÏóê Ïû†Ïãú ÎåÄÍ∏∞: ÎπÑÌôúÏÑ±/Í∞ÄÏãúÏÑ± Ïà®ÍπÄ/Ïï†Îãà Ï†ïÏßÄ
 		Reset_WorldUI_State(pUI);
 		pUI->SetVisibility(VISIBILITY::HIDDEN);
 		//pUI->Set_Active(false);
-		// Parent æ¯¿Ω (∫Ù∏± ∂ß ∫Ÿ¿”)
+		// Parent ÏóÜÏùå (ÎπåÎ¶¥ Îïå Î∂ôÏûÑ)
 
 		pool.push_back(pUI);
-		// World_Layer¿« ∞¥√º ƒ¡≈◊¿Ã≥ ø°¥¬ ¿ÃπÃ Add_UserInterface∑Œ µÓ∑œµ 
+		// World_LayerÏùò Í∞ùÏ≤¥ Ïª®ÌÖåÏù¥ÎÑàÏóêÎäî Ïù¥ÎØ∏ Add_UserInterfaceÎ°ú Îì±Î°ùÎê®
 	}
 	return S_OK;
 }
@@ -794,20 +804,20 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 	auto it = m_WorldUIs.find(poolKey);
 	if (it == m_WorldUIs.end() || it->second.empty()) return nullptr;
 
-	// ∏« µ⁄ø°º≠ ≤®≥ª±‚
+	// Îß® Îí§ÏóêÏÑú Í∫ºÎÇ¥Í∏∞
 	CUIBase* pUI = it->second.back();
 	//it->second.pop_back();
 
-	// ªÛ≈¬ √ ±‚»≠ »ƒ ªÁøÎ«“ ¡ÿ∫Ò
+	// ÏÉÅÌÉú Ï¥àÍ∏∞Ìôî ÌõÑ ÏÇ¨Ïö©Ìï† Ï§ÄÎπÑ
 	Reset_WorldUI_State(pUI);
 	pUI->Set_DrawType(CUIObject::DRAW_TYPE::WORLD);
 	pUI->SetVisibility(VISIBILITY::VISIBLE);
 
 	if (pParent) {
-		pUI->Set_Parent(pParent);     // °Á ø£¡¯ø°º≠ WORLD Parent µ˚∂Û∞°µµ∑œ ±∏«ˆµ«æÓ ¿÷¿Ω
+		pUI->Set_Parent(pParent);     // ‚Üê ÏóîÏßÑÏóêÏÑú WORLD Parent Îî∞ÎùºÍ∞ÄÎèÑÎ°ù Íµ¨ÌòÑÎêòÏñ¥ ÏûàÏùå
 		//pUI->Set_Offset(vOffset.x, vOffset.y, vOffset.z);
 	}
-	//pUI->Set_Billboard(bBillboard);   // ø£¡¯ø° ∏¬¥¬ API∑Œ ±≥√º
+	//pUI->Set_Billboard(bBillboard);   // ÏóîÏßÑÏóê ÎßûÎäî APIÎ°ú ÍµêÏ≤¥
 
 	return pUI;
 }
@@ -816,16 +826,16 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 {
 	if (!pUI) return;
 
-	// Parent/∞Ë√˛/æ÷¥œ/∞°Ω√º∫ ø¯∫π
+	// Parent/Í≥ÑÏ∏µ/Ïï†Îãà/Í∞ÄÏãúÏÑ± ÏõêÎ≥µ
 	m_pUIAnimMgr->Anim_Stop(pUI);
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
 	//pUI->Set_Active(false);
 	pUI->Set_Parent(nullptr);
 	//pUI->Set_Offset(0, 0, 0);
 
-	// æÓ∂≤ «Æ∑Œ µπæ∆∞•¡ˆ ≈∞∞° « ø‰«œ¥Ÿ∏È:
-	//  - pUI->Get_UIBase_Desc().szProtoTag ∂«¥¬ ƒøΩ∫≈“ PoolKey∏¶ Descø° ¿˙¿Â
-	_wstring szPoolTag = pUI->Get_UIBase_Desc().szProtoTag; // ∞£¥‹ πÊΩƒ
+	// Ïñ¥Îñ§ ÌíÄÎ°ú ÎèåÏïÑÍ∞àÏßÄ ÌÇ§Í∞Ä ÌïÑÏöîÌïòÎã§Î©¥:
+	//  - pUI->Get_UIBase_Desc().szProtoTag ÎòêÎäî Ïª§Ïä§ÌÖÄ PoolKeyÎ•º DescÏóê Ï†ÄÏû•
+	_wstring szPoolTag = pUI->Get_UIBase_Desc().szProtoTag; // Í∞ÑÎã® Î∞©Ïãù
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
 	pUI = nullptr;
@@ -836,7 +846,7 @@ string CUIHUD::WStringToUTF8(const _wstring& wstr)
 	if (wstr.empty()) return {};
 
 	int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
-	std::string result(size_needed - 1, 0); // null ¡¶ø‹
+	std::string result(size_needed - 1, 0); // null Ï†úÏô∏
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &result[0], size_needed, nullptr, nullptr);
 	return result;
 }
@@ -846,7 +856,7 @@ _wstring CUIHUD::UTF8ToWString(const string& str)
 	if (str.empty()) return {};
 
 	_uint size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
-	_wstring result(size_needed - 1, 0); // null ¡¶ø‹
+	_wstring result(size_needed - 1, 0); // null Ï†úÏô∏
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
 	return result;
 }

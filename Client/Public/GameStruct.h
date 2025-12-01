@@ -200,6 +200,9 @@ namespace Client
 		long long			iCurrentHealth;
 		long long			iCurrentShield;
 
+	
+		_float3				fLockOnPoint;
+
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;
 		_float				fMoveSpeed;
@@ -232,6 +235,6 @@ namespace Client
 		_float3				vImpactDir;
 		_float				fImpactForce;
 
-		void*				pSkillData;
+		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 }

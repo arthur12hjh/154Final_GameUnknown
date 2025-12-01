@@ -80,13 +80,13 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	if (m_bIsHitCollider)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}                      
 	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	//m_pSpark->Late_Update(fTimeDelta);
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
@@ -159,7 +159,7 @@ HRESULT CWeapon::Ready_Components()
 
 	/* Com_Collider_OBB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-
+	
 	OBBDesc.vSize = _float3(0.5f, 2.f, 0.5f);
 	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	OBBDesc.vAngles = _float3(0.f,  0.f/*XMConvertToRadians(45.0f)*/, 0.f);
@@ -171,9 +171,8 @@ HRESULT CWeapon::Ready_Components()
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::PLAYER);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
-
-
 
 	CTrail::TRAILHIGHLOW Traildesc{};
 	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);

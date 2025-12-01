@@ -5,7 +5,7 @@ CPhaseChange::CPhaseChange() : CDecorator()
 {
 }
 
-HRESULT CPhaseChange::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CPhaseChange::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
@@ -21,7 +21,7 @@ CBehaviorNode::NODE_STATE CPhaseChange::Update(_float fTimeDelta)
 	return NODE_STATE::FAIL;
 }
 
-CPhaseChange* CPhaseChange::Create(const CBehaviorTree* pOwnerTree)
+CPhaseChange* CPhaseChange::Create(CBehaviorTree* pOwnerTree)
 {
 	CPhaseChange* pPhaseChange = new CPhaseChange();
 	if (FAILED(pPhaseChange->Initialize_Prototype(pOwnerTree)))

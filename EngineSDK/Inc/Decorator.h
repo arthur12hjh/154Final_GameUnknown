@@ -11,7 +11,7 @@ protected:
 	virtual ~CDecorator() = default;
 
 public:
-	virtual		HRESULT					Initialize_Prototype(const CBehaviorTree* pOwnerTree);
+	virtual		HRESULT					Initialize_Prototype(CBehaviorTree* pOwnerTree);
 
 	// 데코레이터 성공 여부 반환
 	virtual	NODE_STATE					Update(_float fTimeDelta);

@@ -76,7 +76,7 @@ HRESULT CUIHPFX::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(3)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::GLOWFX))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))

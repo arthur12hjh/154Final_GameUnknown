@@ -9,6 +9,7 @@
 #include "AttackHitBox.h"
 
 #include "StringHelper.h"
+#include "PartObject.h"
 
 CNotify::CNotify(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
@@ -125,6 +126,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case Client::CNotify::PLAY_SCREENSFX:
 		return Notify_Play_ScreenSFX(AnimNotify);
 		break;
+	case CNotify::ACTIVE_PARTOBJECT_COLLISION:
+		return Notify_Active_PartObject_Collision(AnimNotify);
+		break;
 	case Client::CNotify::UNDEFINED:
 		return Notify_Undefined(AnimNotify);
 		break;
@@ -148,7 +152,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Set_DeltaTimeSpeed")   return SET_DELTATIMESPEED;
 	if (szNotifyTag == "Adjust_Light")         return ADJUST_LIGHT;
 	if (szNotifyTag == "Play_ScreenSFX")       return PLAY_SCREENSFX;
-
+	if (szNotifyTag == "Active_PartObjectCollision") return ACTIVE_PARTOBJECT_COLLISION; 
 
 	return NOTIFY_TYPE::UNDEFINED;
 }
@@ -191,13 +195,16 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// 콜리전을 생성 Or 콜리전 On
+	// 파트오브젝트 콜리전 켜게 하는 함수
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
 
 	// Create Notify
 	// szNotifyArg01	=> ProtoType Name
 	// szNotifyArg02	=> Layer Name
+	// szNotifyArg03	=> Part Name
+	// szNotifyArg04	=> ������Ʈ �̸�
+	// szNotifyArg05	=> �� �̸�
 
 	// iNumData1		=>	Skill ID
 	// iNumData2		=>	Col Type
@@ -207,7 +214,7 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
-
+	
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData01);
 	pHitBoxDesc.pData = pSkillData;
@@ -217,16 +224,16 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData04);
 	pHitBoxDesc.bIsApplyTransform = true;
 	pHitBoxDesc.pAttacker = m_pCharacter;
-
+	
 	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
 	pHitBoxDesc.fImpactForce = m_pCharacter->Get_ImpactForce();
 	//pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
-
+	
 	_vector vCharacterPos = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);
 	_vector vCharacterLook = m_pCharacter->GetTransform()->Get_State(STATE::LOOK);
 	vCharacterPos += vCharacterLook * pSkillData->fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
-
+	
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
 		ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))
 		return E_FAIL;
@@ -272,6 +279,24 @@ HRESULT CNotify::Notify_Adjust_Light(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
 {
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
+{
+	// 파트오브젝트의 콜리전 On
+	// ANIM_NOTIFY
+	// szNotifyTag		=> Notify Event Type
+	
+	// Create Notify
+	// szNotifyArg01	=> PartObject Name ( 파트오브젝트 이름, Part_Body )
+	// szNotifyArg02	=> Component Name ( 충돌체 컴포넌트 이름, Com_Collider )
+	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szComponentName);
+
+	m_pCharacter->Activate_PartObject_Collider(szPartObjectName, szComponentName, AnimNotify);
+
 	return S_OK;
 }
 

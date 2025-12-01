@@ -42,8 +42,12 @@ HRESULT CUIShield::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxShield = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentShield);
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+
+		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxShield);
+		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentShield);
+
+		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
@@ -90,7 +94,7 @@ HRESULT CUIShield::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(6)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::SHIELD))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))

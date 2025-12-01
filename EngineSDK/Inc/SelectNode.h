@@ -9,7 +9,7 @@ private:
 	virtual ~CSelectNode() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree);
+	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree);
 
 	// 데코레이터 성공 여부 반환
 	virtual	NODE_STATE					Update(_float fTimeDelta);
@@ -24,7 +24,7 @@ private :
 	_uint								m_iIndex = {};
 
 public:
-	static	CSelectNode*				Create(const CBehaviorTree* pOwnerTree);
+	static	CSelectNode*				Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

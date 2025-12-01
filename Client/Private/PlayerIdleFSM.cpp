@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Player_IdleState.h"
 #include "Player_IdleWalkState.h"
+#include "Player_IdleWalkEndState.h"
 #include "Player_IdleLandingState.h"
 #include "Player_BattleEvadeState.h"
 #include "Player_JumpState.h"
@@ -74,7 +75,7 @@ CPlayerState* CPlayerIdleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionDes
 	case PLAYER_STATE::EVADE: return CPlayer_BattleEvadeState::Create(tTransitionDesc.pArg);
 	case PLAYER_STATE::JUMP: return CPlayer_JumpState::Create(tTransitionDesc.pArg);
 	case PLAYER_STATE::LANDING: return CPlayer_IdleLandingState::Create(tTransitionDesc.pArg);
-	case PLAYER_STATE::WALK_END: break;
+	case PLAYER_STATE::WALK_END: return CPlayer_IdleWalkEndState::Create(tTransitionDesc.pArg);
 	case PLAYER_STATE::LIGHT_ATTACK: break;
 	case PLAYER_STATE::VENDING_INTERACTION: break;
 	case PLAYER_STATE::HIT: break;

@@ -18,7 +18,7 @@ void CPlayer_IdleWalkState::Start(void* pArg)
     m_isRunStart = true;
 
     if (true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Jump_Run", false, 1.2f, 0.12f);
+        m_pPlayer->Set_Animation("Proto_Jump_Jog", false, 1.2f, 0.12f);
     else
     {
         m_isRunStart = false;
@@ -111,7 +111,7 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     else if (false == isWalking)
-        m_tNextState.eNextState = PLAYER_STATE::IDLE;
+        m_tNextState.eNextState = PLAYER_STATE::WALK_END;
     // 이동은 제일 마지막에.
     m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
 

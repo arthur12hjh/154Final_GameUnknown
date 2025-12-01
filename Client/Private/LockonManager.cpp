@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Player.h"
+#include "Nayitba.h"
 
 CLockonManager::CLockonManager()
     : m_pGameInstance { CGameInstance::GetInstance() }
@@ -41,7 +42,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
 
     if (true == pTargets->empty())
     {
-        m_pTargetTransform = nullptr;
+        m_pTarget = nullptr;
         if(PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
             m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE);
         m_fLockonTimer = 0.f;
@@ -60,9 +61,9 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
             // 타겟 트랜스폼 변경.
             fMinDist = fDist;
             m_fCurrentMinDist = fMinDist;
-            m_pTargetTransform = pTargetTransform;
+            m_pTarget = static_cast<CNayitba* >(pTarget);
 
-            if(m_pTargetTransform != pTargetTransform)
+            if(m_pTarget != pTarget)
                 m_fLockonTimer = 0.f;
         }
     }
@@ -82,7 +83,24 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
 
 CTransform* CLockonManager::Get_TargetTransform()
 {
-    return m_pTargetTransform;
+    if (nullptr == m_pTarget)
+        return nullptr;
+
+    return m_pTarget->GetTransform();
+}
+
+_vector CLockonManager::Get_LockOnPoint()
+{
+#ifdef _DEBUG
+    WCHAR Debug[MAX_PATH] = {};
+    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().fLockOnPoint.x,
+                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.y,
+                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.z);
+
+    OutputDebugStringW(Debug);
+#endif // _DEBUG
+   
+    return XMLoadFloat3(&m_pTarget->GetMonsterData().fLockOnPoint);
 }
 
 void CLockonManager::Lockon(_float fTimeDelta)
@@ -91,12 +109,15 @@ void CLockonManager::Lockon(_float fTimeDelta)
     m_isLock = Find_NearestTarget(fTimeDelta);
 
     // 가까운 타겟이 비어있다면, nullptr 반환.
-    if (nullptr == m_pTargetTransform || (PLAYER_MODE::LOCKON != m_pPlayerDesc->ePlayerMode))
+    if (nullptr == m_pTarget || (PLAYER_MODE::LOCKON != m_pPlayerDesc->ePlayerMode))
         return;
 
     // 만약 존재한다면, 락온 처리.
-    if(true == m_isLock)
-        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTargetTransform->Get_State(STATE::POSITION), 0.15f);
+    if (true == m_isLock)
+    {
+        Get_LockOnPoint();
+        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
+    }
 
     if (false == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {

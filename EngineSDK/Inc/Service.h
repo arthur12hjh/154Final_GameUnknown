@@ -9,7 +9,7 @@ protected :
 	virtual ~CService() = default;
 
 public:
-	virtual		HRESULT					Initialize_Prototype(const CBehaviorTree* pOwnerTree);
+	virtual		HRESULT					Initialize_Prototype(CBehaviorTree* pOwnerTree);
 	virtual		NODE_STATE				Update(_float fTimeDelta);
 
 	float								GetTickTime() { return m_fTickTime; }

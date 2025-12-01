@@ -19,8 +19,8 @@ private:
 
 public:
 	// Desc ¹ÝÈ¯.
+	virtual void Handle_Notify(void* pArg);
 	struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
-	const class CBody_Player* Get_BodyPtr() { return m_pBody; }
 	_float Get_AnimationRatio();
 	void Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState = PLAYER_STATE::STATE_END); 
 
@@ -39,16 +39,16 @@ public:
 
 private:
 	struct Player_Desc		m_PlayerDesc = {};
-
-	class CBody_Player*		m_pBody = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
 
 	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};
 	class CPlayerFSM*		m_pCurrentFSM = { nullptr };
-	_float					m_fTime = { 0.f };
 	_bool					m_isSuperArmor = { false }; 
 
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
+
+	//
+	_float					m_fTime = { 0.f };
 
 private:
 	HRESULT Ready_Components();

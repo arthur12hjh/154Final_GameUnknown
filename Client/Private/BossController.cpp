@@ -3,6 +3,9 @@
 
 #include "GameInstance.h"
 #include "BehaviorTree.h"
+#include "GameManager.h"
+#include "Player.h"
+#include "BossBlackBoard.h"
 
 CBossController::CBossController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CAIController(pDevice, pContext)
@@ -28,6 +31,11 @@ HRESULT CBossController::Initialize(void* pArg)
     if (FAILED(Ready_Behavior(*pControllerDesc)))
         return E_FAIL;
 
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+    pBossBlackBoard->SetTarget(pPlayer);
+    Safe_Release(pPlayer);
+    Safe_Release(pBossBlackBoard);
     return S_OK;
 }
 
@@ -37,6 +45,9 @@ void CBossController::Priority_Update(_float fTimeDelta)
 
 void CBossController::Update(_float fTimeDelta)
 {
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    pBossBlackBoard->SetTargetDistacne();
+    Safe_Release(pBossBlackBoard);
     m_pBehaviorTree->Update(fTimeDelta);
 }
 
@@ -51,9 +62,9 @@ HRESULT CBossController::Render()
 
 void CBossController::Damage(void* pArg)
 {
-    
-
-
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    pBossBlackBoard->SetHitData(static_cast<Default_Damage_Desc*>(pArg));
+    Safe_Release(pBossBlackBoard);
 }
 
 void CBossController::ActionSuccess(void* pArg)

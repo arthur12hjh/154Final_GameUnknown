@@ -4,7 +4,7 @@ CService::CService() : CBehaviorNode()
 {
 }
 
-HRESULT CService::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CService::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	m_eNodeType = BEHAVIOR_NODE_TYPE::SERVICE;
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))

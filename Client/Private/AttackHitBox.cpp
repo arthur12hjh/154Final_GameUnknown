@@ -156,7 +156,6 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 		return;
 
 	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
-	CHARACTER_SKILL_DESC TempDesc = *pDesc;
 	DEFAULT_DAMAGE_DESC pDamageDesc = {};
 
 	pDamageDesc.pAttacker = m_pAttacker;
@@ -165,7 +164,7 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	pDamageDesc.fImpactForce = m_fImpactForce;
 	pDamageDesc.vHitPoint = vHitPoint;
-	pDamageDesc.pSkillData = &TempDesc;
+	pDamageDesc.pSkillData = pDesc;
 
 	pCharacter->Damaged(&pDamageDesc);
 	m_vDelayDead = {0.f, 3.f};
