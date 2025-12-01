@@ -6,6 +6,7 @@ NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
 class CGorillaBehaviorTree;
+class CGameManager;
 
 struct Character_Skill_Desc;
 
@@ -24,17 +25,39 @@ public:
 private :
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
-	const Character_Skill_Desc*			m_pSkillData = { nullptr };
+	CGameManager*						m_pGameManager = { nullptr };
 
-	_uint2								m_iAttackCount = {};
+	queue<const Character_Skill_Desc*>	m_pSkillData = { };
+	const Character_Skill_Desc*			m_pCurSkill_Data = { nullptr };
+
 	_float								m_fMaxDelayTime = {};
+	_float3								m_fAttackMovePoint = {};
+	_float3								m_fAttackMoveDir = {};
+	
+	_float								m_fLerpSpeed = {};
+	_float								m_fMoveSpeed = {};
+	_bool								m_bIsLookAtPoint = {};
+
 	string								m_szDebugAnimation = {};
 	
 private :
-	_bool								SelectRandomPattern();
-	_bool								AttackMoveAction();
-	_bool								Compute_AttackCoolTime();
+	_bool								SelectPattern();
+
+	// 보스 패턴에 대한 정보
+#pragma region Boss Pattern
+	void								SelectAttack(_bool bIsForce = false);
+	void								CrushPattern();
+	void								BackStepPattern();
+	//void								BboyStepPattern();
+
+	void								SelectRandomPattern();
+#pragma endregion
+
+	_bool								AttackMoveAction(_float fTimeDelta);
+	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
 	
+	void								AttackLerpMove(_float fTimeDelta);
+	void								AttackADDMove(_float fTimeDelta);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);

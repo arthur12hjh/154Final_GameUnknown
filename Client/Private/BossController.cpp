@@ -45,6 +45,9 @@ void CBossController::Priority_Update(_float fTimeDelta)
 
 void CBossController::Update(_float fTimeDelta)
 {
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    pBossBlackBoard->SetTargetDistacne();
+    Safe_Release(pBossBlackBoard);
     m_pBehaviorTree->Update(fTimeDelta);
 }
 

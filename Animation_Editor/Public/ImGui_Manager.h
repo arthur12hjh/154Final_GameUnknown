@@ -71,6 +71,7 @@ private:
 	_int								m_iClickedKeyFrame = -1;
 
 	_bool								m_bIsActive;
+	_bool								m_bIsPause = {};
 	_bool								m_bIsActiveTrigger;
 
 	_float								m_fRootMagnification = 0.f;

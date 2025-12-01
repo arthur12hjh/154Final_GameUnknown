@@ -40,11 +40,6 @@
 #include "BossController.h"
 #include "GorillaBehaviorTree.h"
 
-#pragma region BOSS
-#include "Gorilla.h"
-#include "Gorilla_Body.h"
-#pragma endregion
-
 #pragma endregion
 
 #pragma region Client Component
@@ -477,14 +472,6 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	//_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/GiGas.fbx", PreTransformMatrix);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
-	 
-	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
 }

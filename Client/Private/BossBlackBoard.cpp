@@ -32,6 +32,8 @@ void CBossBlackBoard::SetTargetDistacne()
 
     _vector pOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector pTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+    pOwnerPos.m128_f32[1] = pTargetPos.m128_f32[1] = 0.f;
     m_fTargetDistance = XMVectorGetX(XMVector3Length(pTargetPos - pOwnerPos));
 }
 

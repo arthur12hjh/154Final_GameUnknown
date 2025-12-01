@@ -388,12 +388,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
       <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla">
-      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body">
-      <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
       <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
     </Filter>
@@ -762,9 +756,6 @@
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gorilla.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClInclude>
@@ -779,9 +770,6 @@
     </ClInclude>
     <ClInclude Include="..\public\DataManager.h">
       <Filter>10.GameManager\CharacterDataManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Gorilla_Body.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Actor.h">
       <Filter>02.GameObjects\Actor</Filter>
@@ -1188,6 +1176,7 @@
     <ClInclude Include="..\Public\LockonManager.h">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailData.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1351,9 +1340,6 @@
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gorilla.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClCompile>
@@ -1365,9 +1351,6 @@
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
       <Filter>10.GameManager\CharacterDataManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Gorilla_Body.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Actor.cpp">
       <Filter>02.GameObjects\Actor</Filter>
@@ -1774,6 +1757,7 @@
     <ClCompile Include="..\Private\LockonManager.cpp">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">

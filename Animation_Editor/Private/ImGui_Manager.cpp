@@ -75,9 +75,19 @@ void CImGui_Manager::Update(_float fTimeDelta)
 	Update_AnimationList();
 	Update_KeyFrameTool();
 
+	_float fTime = {};
+	
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_PAUSE))
+		m_bIsPause = !m_bIsPause;
+
+	if(m_bIsPause)
+		fTime = 0.f;
+	else
+		fTime = fTimeDelta;
+
 	if (nullptr != m_pSelectedObject)
 	{
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta,
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTime,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
 	}
 
@@ -400,6 +410,7 @@ void CImGui_Manager::Update_AnimationList()
 		ImGui::SameLine();
 		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
 
+		ImGui::Checkbox("Is_Pause", &m_bIsPause);
 	}
 
 	ImGui::Separator();
@@ -641,7 +652,7 @@ void CImGui_Manager::Update_TimeLine()
 
 		fRatioX = Clamp(fRatioX, 0.f, 1.f);
 		_bool bIsCursorOnTrackPosition = TRUE;
-		fPosY > 5.f ? bIsCursorOnTrackPosition = FALSE : bIsCursorOnTrackPosition = TRUE;
+		fPosY > 500.f ? bIsCursorOnTrackPosition = FALSE : bIsCursorOnTrackPosition = TRUE;
 
 
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_RIGHT))
@@ -690,7 +701,7 @@ void CImGui_Manager::Update_TimeLine()
 		// 마우스 오버시 이벤트 처리는 따로..
 
 		// 해당 키프레임으로 이동...
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
 			if (bIsCursorOnTrackPosition)
 			{

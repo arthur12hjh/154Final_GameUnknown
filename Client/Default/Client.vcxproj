@@ -251,10 +251,8 @@
     <ClInclude Include="..\Public\GameStruct.h" />
     <ClInclude Include="..\public\Giwajip.h" />
     <ClInclude Include="..\public\Giwajip2.h" />
-    <ClInclude Include="..\Public\Gorilla.h" />
     <ClInclude Include="..\Public\GorillaBehaviorTree.h" />
     <ClInclude Include="..\Public\GorillaBlackBoard.h" />
-    <ClInclude Include="..\public\Gorilla_Body.h" />
     <ClInclude Include="..\public\Grass.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
     <ClInclude Include="..\public\ImGuiMain.h" />
@@ -452,10 +450,8 @@
     <ClCompile Include="..\private\GameManager.cpp" />
     <ClCompile Include="..\private\Giwajip.cpp" />
     <ClCompile Include="..\private\Giwajip2.cpp" />
-    <ClCompile Include="..\Private\Gorilla.cpp" />
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp" />
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp" />
-    <ClCompile Include="..\private\Gorilla_Body.cpp" />
     <ClCompile Include="..\private\Grass.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">

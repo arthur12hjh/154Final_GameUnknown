@@ -21,18 +21,26 @@ HRESULT CDeco_AttackDelay::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 {
-	_float fMaxAttackDelay = m_pBlackBoard->GetAttackDelay();
-	if (m_fAttackDelay < fMaxAttackDelay)
+	m_pBlackBoard->SetTargetDistacne();
+	_float fDistance = m_pBlackBoard->GetTargetDistance();
+	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
+
+	auto pState = m_pBlackBoard->GetCurState();
+	if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
 	{
-		m_fAttackDelay += fTimeDelta;
-		return NODE_STATE::FAIL;
-	}
-	else
-	{
-		m_fAttackDelay = 0;
-		m_pBlackBoard->SetAttackDelay(0.f);
+		if (m_fAttackDelay <= m_pBlackBoard->GetAttackDelay())
+		{
+			if (fDistance > fATKRange)
+			{
+				m_fAttackDelay += fTimeDelta;
+				return NODE_STATE::FAIL;
+			}
+		}
 	}
 	
+	if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
+		m_fAttackDelay = 0.f;
+
 	return NODE_STATE::COMPLETE;
 }
 

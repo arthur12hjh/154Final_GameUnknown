@@ -33,6 +33,10 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 	{
 		switch (m_eDirection)
 		{
+		case DIRECTION::FRONT:
+			XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
+			break;
+
 		case DIRECTION::LEFT:
 			XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
 			break;
@@ -55,14 +59,33 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
 		_float fScalar = acosf(XMVectorGetX(XMVector3Dot(vOwnerLook, vDir)));
 
-		if (0.1f <= fabsf(fScalar))
+		if (0.1f < fabsf(fScalar))
 			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.0f);
 		else
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 
-		
-		m_pOwner->Play_Animation(fTimeDelta);
+		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
+		if (false == m_bIsCaution)
+		{
+			if (bIsFinished)
+			{
+				m_szAnimationName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+				m_iAnimSection++;
+				switch (m_iAnimSection)
+				{
+				case 1 :
+					m_szAnimationName += "_Run_L";
+					m_pOwner->Set_Animation(m_szAnimationName.c_str(), true);
+					break;
+				case 2:
+					m_szAnimationName += "_Run_E";
+					m_pOwner->Set_Animation(m_szAnimationName.c_str(), false);
+					m_iAnimSection = 0.f;
+					break;
+				}
+			}
+		}
 	}
 	else
 	{
@@ -76,21 +99,39 @@ void CTask_Move::Refresh_MovePoint()
 {
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 
+	m_pBlackBoard->SetTargetDistacne();
+	_float fDistance = m_pBlackBoard->GetTargetDistance();
+	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
+
 	m_szAnimationName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
-	if (50 > fRandomIndex)
+	if (fDistance < fATKRange * 1.5f)
 	{
-		m_eDirection = DIRECTION::LEFT;
-		m_szAnimationName += "_Caution_Lw";
-		m_pOwner->Set_Animation(m_szAnimationName.c_str());
-		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+		if (50 > fRandomIndex)
+		{
+			m_eDirection = DIRECTION::LEFT;
+			m_szAnimationName += "_Caution_Lw";
+			m_pOwner->Set_Animation(m_szAnimationName.c_str());
+			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+		}
+		else
+		{
+			m_eDirection = DIRECTION::RIGHT;
+			m_szAnimationName += "_Caution_Rw";
+			m_pOwner->Set_Animation(m_szAnimationName.c_str());
+			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+		}
+		m_bIsCaution = true;
 	}
 	else
 	{
-		m_eDirection = DIRECTION::RIGHT;
-		m_szAnimationName += "_Caution_Rw";
-		m_pOwner->Set_Animation(m_szAnimationName.c_str());
-		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+		// 여기서 달리기 하자
+		m_szAnimationName += "_Run_S";
+		m_eDirection = DIRECTION::FRONT;
+		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false);
+		m_iAnimSection = 0;
+		m_bIsCaution = false;
 	}
+	
 }
 
 CTask_Move* CTask_Move::Create(CBehaviorTree* pOwnerTree)

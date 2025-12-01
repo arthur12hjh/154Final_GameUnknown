@@ -273,7 +273,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
 	Desc.iMonsterID = 1;
-	Desc.vPosition = { 62.f, 1.f, 12.f };
+	Desc.vPosition = { 62.f, 1.f, 62.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
