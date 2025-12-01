@@ -115,8 +115,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     else if(vORMDesc.a == 2.f)
     {        
         fOcclusion = vORMDesc.r;
-        fMetallic = 0.f;
         fRoughness = vORMDesc.g;
+        fMetallic = 0.f;
         vF0 = float3(0.04, 0.04, 0.04);
         float specFactor = vORMDesc.b;
         

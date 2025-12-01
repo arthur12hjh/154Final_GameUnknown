@@ -102,6 +102,7 @@ HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)
 		return S_OK;
 		break;
 	case binMaterial::DIFFUSE:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Opacity.png"))->Bind_ShaderResource(pShader, "g_DiffuseTexture", 0);
 		return S_OK;
 		break;
 	case binMaterial::SPECULAR:
@@ -123,6 +124,7 @@ HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)
 		return S_OK;
 		break;
 	case binMaterial::OPACITY:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Opacity.png"))->Bind_ShaderResource(pShader, "g_OpacityTexture", 0);
 		return S_OK;
 		break;
 	case binMaterial::DISPLACEMENT:
@@ -160,6 +162,7 @@ HRESULT CMaterial::BindDefaultTexture(CShader* pShader, _uint eType)
 		return S_OK;
 		break;
 	case binMaterial::CLEARCOAT:
+		m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_ORM.png"))->Bind_ShaderResource(pShader, "g_ORSSTexture", 0);
 		return S_OK;
 		break;
 	case binMaterial::TRANSMISSION:

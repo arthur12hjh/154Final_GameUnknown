@@ -66,11 +66,11 @@ namespace Engine
 		MASK = 8,
 		EXTRA1 = 9,
 		EXTRA2 = 10,
-		EXTRA3 = 11,
-		EXTRA4 = 12,
-		EXTRA5 = 13,
-		EXTRA6 = 14,
-		EXTRA7 = 15,
+		OPACITY = 11,
+		EXTRA3 = 12,
+		EXTRA4 = 13,
+		EXTRA5 = 14,
+		EXTRA6 = 15,
 		END
 	};
 
