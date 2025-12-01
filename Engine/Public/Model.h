@@ -65,6 +65,7 @@ public:
 	_uint Get_Mesh_MaterialIndex(_uint iIdx) const;
 	const _char* Get_MeshName(_uint iIdx) const;
 	const _char* Get_MaterialName(_uint iIdx) const;
+	const _uint Get_NumMaterials() const { return m_Materials.size(); }
 	_uint Get_NumMeshes() const {
 		return m_iNumMeshes;
 	}
@@ -72,6 +73,8 @@ public:
 	_int Get_BoneIndex(const _char* pBoneName) const;
 
 	vector<class CBone*>* Get_Bones();
+	vector<class CMaterial*>* Get_Materials();
+
 
 	_uint Get_AnimationKeyFrameIndex() const;
 
