@@ -122,7 +122,7 @@ public:
 	HRESULT Bind_GlobalOffsetMatrices(CShader* pShader);
 
 	_bool			IsAnimationFinished() { return m_isFinish; }
-
+	_bool			CompareAnimationTag(const _char* szAnimationTag);
 	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
 
 

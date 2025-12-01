@@ -684,6 +684,11 @@ HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
     return S_OK;
 }
 
+_bool CModel::CompareAnimationTag(const _char* szAnimationTag)
+{
+    return m_Animations[m_iCurrentAnimIndex]->CompareAnimationTag(szAnimationTag);
+}
+
 aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
 {
     switch (eType)

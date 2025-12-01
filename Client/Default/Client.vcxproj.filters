@@ -577,6 +577,9 @@
     <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
       <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword">
+      <UniqueIdentifier>{44d852bb-6247-411a-ba19-092b64c64ffe}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX">
       <UniqueIdentifier>{defadc56-6f2b-43b0-983a-37d6a3698a66}</UniqueIdentifier>
     </Filter>
@@ -1186,11 +1189,14 @@
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TrailData.h" />
-    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
-      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    <ClInclude Include="..\Public\Player_IdleWalkEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
-      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    <ClInclude Include="..\Public\Player_DrawHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1778,6 +1784,16 @@
     </ClCompile>
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp" />
+    <ClCompile Include="..\Private\Player_IdleWalkEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_DrawHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

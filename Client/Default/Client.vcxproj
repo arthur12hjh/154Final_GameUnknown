@@ -191,9 +191,11 @@
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
+    <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
+    <ClInclude Include="..\Public\Player_IdleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_IdleWalkState.h" />
     <ClInclude Include="..\Public\Player_LightAttackState.h" />
     <ClInclude Include="..\Public\Player_BattleIdleState.h" />
@@ -203,6 +205,7 @@
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -396,9 +399,11 @@
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
+    <ClCompile Include="..\Private\Player_IdleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_IdleWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LightAttackState.cpp" />
     <ClCompile Include="..\Private\Player_BattleIdleState.cpp" />
@@ -408,6 +413,7 @@
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
