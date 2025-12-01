@@ -394,18 +394,31 @@ namespace Engine
 	///  -> 애니메이션 이벤트 관련 구조체
 	typedef struct AnimNotify
 	{
-		std::string						szNotifyTag;
-		std::string						szNotifyArg01;
-		std::string						szNotifyArg02;
+		string							szNotifyTag;
+		string							szNotifyArg01;
+		string							szNotifyArg02;
 		string							szNotifyArg03;
+		string							szNotifyArg04;
+		string							szNotifyArg05;
+		string							szNotifyArg06;
+		string							szNotifyArg07;
+		string							szNotifyArg08;
 
-		int								iNumData1;
-		int								iNumData2;
-		int								iNumData3;
-		int								iNumData4;
+		int								iNumData01;
+		int								iNumData02;
+		int								iNumData03;
+		int								iNumData04;
+		int								iNumData05;
+		int								iNumData06;
+		int								iNumData07;
+		int								iNumData08;
 
-		std::string						szSocketTag;
-		bool							bIsLocalPos;
+		float							fNumData01;
+		float							fNumData02;
+		float							fNumData03;
+		float							fNumData04;
+
+		string							szSocketTag;
 
 		XMFLOAT3						vNotifyScale;
 		XMFLOAT3						vNotifyPosition;

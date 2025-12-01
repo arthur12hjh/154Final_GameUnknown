@@ -209,12 +209,12 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
 
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
-	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData1);
+	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData01);
 	pHitBoxDesc.pData = pSkillData;
 	
-	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData2);
-	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData3);
-	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData4);
+	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData02);
+	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData03);
+	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData04);
 	pHitBoxDesc.bIsApplyTransform = true;
 	pHitBoxDesc.pAttacker = m_pCharacter;
 

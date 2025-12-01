@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Tool_Manager.h"
 
+#include "Extra.h"
+
 #include "Camera_AnimationEditor.h"
 
 CLevel_AnimationEditor::CLevel_AnimationEditor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -89,6 +91,12 @@ HRESULT CLevel_AnimationEditor::Ready_Layer_BackGround(const _wstring& strLayerT
 	//		return E_FAIL;
 	//
 	//}
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Grid"),
+		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
+		return E_FAIL;
+	
+
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::EDITOR), strLayerTag)))
 		return E_FAIL;
