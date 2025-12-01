@@ -559,11 +559,32 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
       <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper">
+      <UniqueIdentifier>{36beb1db-6f54-44e5-add1-ddee48a6ff5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot">
+      <UniqueIdentifier>{1fa6e6ff-0b9d-4959-a1d9-a358f6a9f566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
+      <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
       <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
       <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Lockon">
+      <UniqueIdentifier>{6f1a2b1f-7aec-47a6-89ec-1c3a7dc44792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\LockonManager">
+      <UniqueIdentifier>{22a47143-a8d1-42b2-8ae2-00a6e2f2cff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face\ShaderFile">
+      <UniqueIdentifier>{e5f327b3-eb7d-4a7b-a281-86c09811a342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
+      <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1152,8 +1173,23 @@
     <ClInclude Include="..\Public\Player_IdleLandingState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UISkillSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIRushSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Deco_CheckAlive.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Lockon.h">
+      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LockonManager.h">
+      <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1723,8 +1759,23 @@
     <ClCompile Include="..\Private\UIHPFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UISkillSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIRushSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Lockon.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LockonManager.cpp">
+      <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1771,6 +1822,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -1779,6 +1836,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli">
+      <Filter>97.ShaderFiles\00. Util</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli">
+      <Filter>97.ShaderFiles\00. Util</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli">
       <Filter>97.ShaderFiles\00. Util</Filter>
     </None>
   </ItemGroup>

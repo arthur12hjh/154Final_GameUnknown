@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
+    <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
     <ClInclude Include="..\Public\MonsterDeadState.h" />
@@ -342,7 +344,10 @@
     <ClInclude Include="..\Public\UIPotion.h" />
     <ClInclude Include="..\Public\UIPotionCount.h" />
     <ClInclude Include="..\Public\UIPotionStack.h" />
+    <ClInclude Include="..\Public\UIRushSlot.h" />
     <ClInclude Include="..\Public\UIShield.h" />
+    <ClInclude Include="..\Public\UISkillSlot.h" />
+    <ClInclude Include="..\Public\UISkillWrapper.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
@@ -356,6 +361,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
@@ -367,6 +373,7 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
     <ClCompile Include="..\Private\MonsterDeadState.cpp" />
@@ -557,7 +564,10 @@
     <ClCompile Include="..\Private\UIPotion.cpp" />
     <ClCompile Include="..\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\Private\UIPotionStack.cpp" />
+    <ClCompile Include="..\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\Private\UIShield.cpp" />
+    <ClCompile Include="..\Private\UISkillSlot.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
@@ -576,6 +586,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
@@ -591,6 +603,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

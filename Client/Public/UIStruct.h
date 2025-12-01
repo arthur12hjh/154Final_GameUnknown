@@ -5,10 +5,18 @@
 
 namespace Client
 {
+	typedef struct tagSkillInfoDesc
+	{
+		_int		iSkillIndex{ -1 };
+		_uint		iSkillState{ 0 };
+	}UI_SKILL_INFO_DESC;
+
 	typedef struct tagUIEventArg {
 		enum ARG_TYPE {
 			NONE,
 			BTN_STATE,
+			SKILL_STATE,
+			SKILL_INFO,
 			INT,
 			FLOAT,
 			WSTRING,
