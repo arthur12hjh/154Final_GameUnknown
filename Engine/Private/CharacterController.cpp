@@ -144,7 +144,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.stepOffset = PxMin(0.4f, CCTDesc.height * 0.3f);              // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;
-	CCTDesc.scaleCoeff = 0.95;
+	CCTDesc.scaleCoeff = 0.95f;
 	CCTDesc.invisibleWallHeight = CCTDesc.stepOffset + 0.05f;
 	CCTDesc.maxJumpHeight = CCTDesc.stepOffset;
 	CCTDesc.reportCallback = m_pHitReporter;

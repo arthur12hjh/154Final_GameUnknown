@@ -13,6 +13,11 @@ void CPlayer_BattleEvadeState::Start(void* pArg)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
+	if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode || PLAYER_MODE::LOCKON == m_Desc->ePlayerMode)
+		m_fMaxRatio = 0.35f;
+	else
+		m_fMaxRatio = 0.7f;
+
 	/* 방향 */
 	/* 1. 아무것도 안눌렀으면 백스텝 */
 	/* 2. 방향키 하나라도 눌렀으면 그 방향으로 스텝. (이동 로직이랑 똑같이 카메라 look 기준으로)*/
@@ -59,7 +64,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 	else if(false == m_isBackStep && fAnimationRatio < 0.33f)
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.35f);
 
-	if (fAnimationRatio >= 0.35f &&
+	if (fAnimationRatio >= m_fMaxRatio &&
 		(m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||

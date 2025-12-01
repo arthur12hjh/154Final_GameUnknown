@@ -12,7 +12,7 @@ NS_BEGIN(Client)
 class CNotify final : public CComponent
 {
 public:
-    enum NOTIFY_TYPE { PLAY_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, UNDEFINED, END };
+    enum NOTIFY_TYPE { PLAY_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, ACTIVE_PARTOBJECT_COLLISION, UNDEFINED, END };
 
     typedef struct tagNotifyDesc
     {
@@ -46,14 +46,18 @@ private:
 
     HRESULT Notify_Play_SFX(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Play_Sound(ANIM_NOTIFY AnimNotify);
+    //기존 Collision을 활성화하는 Notify.
     HRESULT Notify_Active_Collision(ANIM_NOTIFY AnimNotify);
+    //파트오브젝트의 콜라이더를 활성화 하기 위한 Notify
+    HRESULT Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Set_Transform(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Set_DynamicTransform(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Set_DeltaTimeSpeed(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Adjust_Light(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Undefined(ANIM_NOTIFY AnimNotify);               // 이름이 지정되어있지 않은 경우, 노티파이 매니저로 패스
 
+    HRESULT Notify_Undefined(ANIM_NOTIFY AnimNotify);               // 이름이 지정되어있지 않은 경우, 노티파이 매니저로 패스
+    
 public:
 	static CNotify* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg);

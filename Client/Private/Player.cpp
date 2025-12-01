@@ -32,6 +32,12 @@ CPlayer::CPlayer(const CPlayer& Prototype)
 {
 }
 
+void CPlayer::Handle_Notify(void* pArg)
+{
+	ANIM_NOTIFY* pNotify = static_cast<ANIM_NOTIFY*>(pArg);
+
+}
+
 _float CPlayer::Get_AnimationRatio()
 {
 	return m_pBodyModelCom->Get_AnimationRatio();
@@ -237,10 +243,10 @@ HRESULT CPlayer::Ready_PartObjects()
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
+	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Weapon");
+	WeaponDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
 	/* Part_Weapon */
@@ -250,7 +256,7 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
-	FaceDesc.pBodyPtr = m_pBody;
+	FaceDesc.pBodyPtr = pBody;
 
 	/* Part_Face */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
@@ -259,7 +265,7 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	CHair_Player::HAIR_PLAYER_DESC HairDesc{};
 	HairDesc.pParentTransform = m_pTransformCom;
-	HairDesc.pBodyPtr = m_pBody;
+	HairDesc.pBodyPtr = pBody;
 	
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
@@ -268,7 +274,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	
 	CPonyTail_Player::PONYTAIL_PLAYER_DESC PonyTailDesc{};
 	PonyTailDesc.pParentTransform = m_pTransformCom;
-	PonyTailDesc.pBodyPtr = m_pBody;
+	PonyTailDesc.pBodyPtr = pBody;
 	
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
@@ -370,7 +376,7 @@ void CPlayer::Update_BetaSkill()
 {
 	_uint iIdx = 0;
 
-	for (_int i = 0; i < m_PlayerDesc.iBetaSkillCount; ++i)
+	for (_uint i = 0; i < m_PlayerDesc.iBetaSkillCount; ++i)
 	{
 		_uint iGauge = m_pGameManager->Find_BetaSkillData(m_PlayerDesc.iBetaSkillId[i])->iRequiredBetaGauge;
 

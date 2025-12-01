@@ -6,8 +6,8 @@
 
 CPlayer_BattleWalkState::CPlayer_BattleWalkState(_bool isLanding, _bool isEvading)
     : CPlayerState{}
+    , m_isEvading{ isEvading }
     , m_isLanding { isLanding }
-    , m_isEvading { isEvading }
 {
 }
 
@@ -19,11 +19,11 @@ void CPlayer_BattleWalkState::Start(void* pArg)
 
     //Jump Run Start로 시작.
     if (true == m_isEvading)
-        m_pPlayer->Set_Animation("Proto_Battle_Run_StartAfterEvade", false, 1.2f, 0.3f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run_StartAfterEvade", false, 1.2f, 0.2f);
     else if (true == m_isLanding)
         m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.3f);
     else
-        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f, 0.05f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
@@ -80,24 +80,14 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
 
     // A나 D를 누르면 카메라 벡터를 기준으로 좌우로 움직이게끔 세팅.
     _vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
-    _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.3f);
+    _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.15f);
     m_Desc->pPlayerTransform->Change_Look(vResult);
 
 
-    //내적 연산결과
-    _float fDot = XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(vPlayerLook, vCameraLook))));
-
-    if (fDot >= 100.f && false == m_isChangingDir && false == m_isRunStart)
+    if (true == m_isRunStart && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
     {
-        m_isChangingDir = true;
-        m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f);
-    }
-     
-    if ((true == m_isRunStart || true == m_isChangingDir) && fAnimationRatio >= 0.7f) //|| (true == m_isChangingDir && fDot <= 5.f))
-    {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.2f, false);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
         m_isRunStart = false;
-        m_isChangingDir = false;
     }
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))

@@ -21,11 +21,10 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D) &&
-        fAnimationRatio >= 0.1f)
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
     {
         m_tNextState.eNextState = PLAYER_STATE::WALK;
     }
