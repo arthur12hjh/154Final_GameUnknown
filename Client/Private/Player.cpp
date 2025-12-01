@@ -317,8 +317,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;
 	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 
-	for (int i = 0; i < 4; ++i)
-		m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState.emplace(0, SKILL_STATE::DEFAULT);
+	m_PlayerDesc.eBetaSkillState.emplace(1, SKILL_STATE::DEFAULT);
 
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;

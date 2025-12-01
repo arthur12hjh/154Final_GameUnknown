@@ -46,6 +46,8 @@ float g_ScrollSpeed = 0.5f; // uv에 따라 및이 이동하는 속도
 bool g_bUseCoolTime = false;
 float g_fCoolAmount = 1.f; // 0~1
 
+bool g_isUseable = false; // 스킬 사용 가능 여부
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -587,12 +589,18 @@ PS_OUT PS_SKILL_SLOT(PS_IN In)
     
     float4 shadow = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
     float4 frame = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
-    float4 icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+    float4 icon = 0.f;
     
     if(g_bUseTintColor)
         TintColor = g_vTintColor;
         
-    icon *= TintColor;
+    
+    
+    if(g_isUseable)
+    {   
+        icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+        icon *= TintColor;
+    }
     
     float4 result = shadow;
     result = lerp(result, frame, frame.a);
@@ -666,9 +674,9 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
     
     if(g_bUseTintColor)
         TintColor = g_vTintColor;
-        
-    icon *= TintColor;
     
+    icon *= TintColor;
+        
     if (g_bUseCoolTime)
     {
         cooltime = g_Texture3.Sample(DefaultSampler, In.vTexcoord);
