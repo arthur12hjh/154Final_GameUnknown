@@ -36,7 +36,7 @@ private:
 	HRESULT Bind_GlowShaderResources();
 
 private:
-	SKILL_STATE m_eSkillState = SKILL_STATE::DEFAULT;
+	UI_SKILL_INFO_DESC m_tSkillInfo{};
 
 	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = { nullptr };
 	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };

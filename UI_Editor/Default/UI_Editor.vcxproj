@@ -172,6 +172,7 @@
     <ClCompile Include="..\..\Client\Private\CanBox.cpp" />
     <ClCompile Include="..\..\Client\Private\DataManager.cpp" />
     <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\LockonManager.cpp" />
     <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp" />
     <ClCompile Include="..\..\Client\Private\Quest.cpp" />
     <ClCompile Include="..\..\Client\Private\QuestManager.cpp" />

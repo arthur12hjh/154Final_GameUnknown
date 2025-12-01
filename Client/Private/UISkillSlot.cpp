@@ -31,23 +31,13 @@ HRESULT CUISkillSlot::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	/*auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+	// 임시 초기화
+	if(m_tUIDesc.szUITag == TEXT("SkillSlot_0"))
+		m_tSkillInfo.iSkillIndex = 0;
+	else if (m_tUIDesc.szUITag == TEXT("SkillSlot_1"))
+		m_tSkillInfo.iSkillIndex = 1;
 
-	if (pCharactor)
-	{
-		m_iMaxPotions = const_cast<_int*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxPotions);
-		m_iPotions = const_cast<_int*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentPotions);
-	}
-
-#ifdef _DEBUG
-	else
-	{
-		m_iMaxPotions = &m_MaxGara;
-		m_iPotions = &m_Gara;
-	}
-#endif
-	
-	Safe_Release(pCharactor);*/
+	m_tSkillInfo.iSkillState = ENUM_CLASS(SKILL_STATE::DEFAULT);
 
 	return S_OK;
 }
@@ -59,18 +49,9 @@ void CUISkillSlot::Priority_Update(_float fTimeDelta)
 
 void CUISkillSlot::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
-	
+	__super::Update(fTimeDelta);	
 
 #ifdef _DEBUG
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
-	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iPotions > 0)
-			*m_iPotions -= 1;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iPotions < *m_iMaxPotions)
-			*m_iPotions += 1;
-	}*/
 #endif
 }
 
@@ -95,7 +76,7 @@ HRESULT CUISkillSlot::Render()
 	if (FAILED(m_pVIBaseBufferCom->Render()))
 		return E_FAIL;
 
-	if (m_eSkillState != SKILL_STATE::DEFAULT)
+	if (m_tSkillInfo.iSkillState != ENUM_CLASS(SKILL_STATE::DEFAULT))
 	{
 		if (FAILED(Render_Glow()))
 			return E_FAIL;
@@ -164,14 +145,25 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
-		return E_FAIL;
+
+	_bool bSkillUseable = false;
+
+	if (m_tSkillInfo.iSkillIndex != -1)
+	{
+		bSkillUseable = true;
+
+		if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", m_tSkillInfo.iSkillIndex))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+			return E_FAIL;
+	}
 
 	_bool bUseTintColor = false;
 
-	if (m_eSkillState == SKILL_STATE::DEFAULT)
+	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 		bUseTintColor = true;
 	
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isUseable", &bSkillUseable, sizeof(_bool))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
 		return E_FAIL;
 
@@ -210,14 +202,14 @@ void CUISkillSlot::CallbackEvent(void* pArg)
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
 
-	auto* state = static_cast<SKILL_STATE*>(arg->pData);
+	auto* pDesc = static_cast<UI_SKILL_INFO_DESC*>(arg->pData);
 	
-	m_eSkillState = *state;
+	m_tSkillInfo = *pDesc;
 
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	
 	// 이거 애니메이션 매니저로 돌리면 안될지도..
-	if (*state == SKILL_STATE::DEFAULT)
+	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 	else
 	{

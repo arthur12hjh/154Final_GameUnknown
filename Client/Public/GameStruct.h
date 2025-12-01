@@ -45,7 +45,8 @@ namespace Client
 		DEFAULT, // 기본상태
 		ACTIVE_ON, // 딱 활성화 됐을 때
 		ACTIVE, // 활성화 상태
-		USE // 스킬 사용
+		USE, // 스킬 사용
+		END, // 스킬 없음
 	};
 
 	typedef struct Player_Desc
@@ -72,7 +73,7 @@ namespace Client
 		float					fMaxRushCoolTime;			// 러쉬 전체 쿨타임
 		float					fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
 
-		SKILL_STATE				eBetaSkillState[4];			// 스킬 상태
+		map<unsigned int, SKILL_STATE>				eBetaSkillState;			// 스킬ID, 스킬 상태
 
 		//플레이어의 전투 상태. battle, idle, lockon
 		PLAYER_MODE				ePlayerMode = { PLAYER_MODE::IDLE };
