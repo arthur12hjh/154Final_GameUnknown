@@ -191,9 +191,11 @@
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
+    <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
+    <ClInclude Include="..\Public\Player_IdleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_IdleWalkState.h" />
     <ClInclude Include="..\Public\Player_LightAttackState.h" />
     <ClInclude Include="..\Public\Player_BattleIdleState.h" />
@@ -203,6 +205,7 @@
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -238,7 +241,7 @@
     <ClInclude Include="..\public\DebugCheatUI.h" />
     <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
-    <ClInclude Include="..\Public\Deco_AttackRange.h" />
+    <ClInclude Include="..\Public\Deco_AttackDelay.h" />
     <ClInclude Include="..\Public\Deco_PhaseChange.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
@@ -251,10 +254,8 @@
     <ClInclude Include="..\Public\GameStruct.h" />
     <ClInclude Include="..\public\Giwajip.h" />
     <ClInclude Include="..\public\Giwajip2.h" />
-    <ClInclude Include="..\Public\Gorilla.h" />
     <ClInclude Include="..\Public\GorillaBehaviorTree.h" />
     <ClInclude Include="..\Public\GorillaBlackBoard.h" />
-    <ClInclude Include="..\public\Gorilla_Body.h" />
     <ClInclude Include="..\public\Grass.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
     <ClInclude Include="..\public\ImGuiMain.h" />
@@ -318,7 +319,7 @@
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\Public\Task_Dead.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
-    <ClInclude Include="..\Public\Task_GorillaHit.h" />
+    <ClInclude Include="..\Public\Task_Hit.h" />
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
@@ -398,9 +399,11 @@
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
+    <ClCompile Include="..\Private\Player_IdleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_IdleWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LightAttackState.cpp" />
     <ClCompile Include="..\Private\Player_BattleIdleState.cpp" />
@@ -410,6 +413,7 @@
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
@@ -442,7 +446,7 @@
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
-    <ClCompile Include="..\Private\Deco_AttackRange.cpp" />
+    <ClCompile Include="..\Private\Deco_AttackDelay.cpp" />
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
@@ -454,10 +458,8 @@
     <ClCompile Include="..\private\GameManager.cpp" />
     <ClCompile Include="..\private\Giwajip.cpp" />
     <ClCompile Include="..\private\Giwajip2.cpp" />
-    <ClCompile Include="..\Private\Gorilla.cpp" />
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp" />
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp" />
-    <ClCompile Include="..\private\Gorilla_Body.cpp" />
     <ClCompile Include="..\private\Grass.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
@@ -540,7 +542,7 @@
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\Private\Task_Dead.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
-    <ClCompile Include="..\Private\Task_GorillaHit.cpp" />
+    <ClCompile Include="..\Private\Task_Hit.cpp" />
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />

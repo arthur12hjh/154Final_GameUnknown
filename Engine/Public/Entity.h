@@ -26,7 +26,7 @@ public:
 	/// CEntity는 무조건 "Part_Body"와
 	///				     "Com_Model" 태그인 CModel 컴포넌트가 존재해야합니다.
 	/// * * * * * * * * * * * * * * * * * *
-
+	_bool				CompareAnimationTag(const _char* szAnimationTag);
 	_bool				Play_Animation(_float fTimeDelta, class CTransform* pTargetTransform = nullptr, _float fRootMotionRatio = 0.f);
 	_bool				IsAnmiationFinished();
 	void				Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);

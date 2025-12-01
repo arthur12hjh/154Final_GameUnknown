@@ -10,13 +10,13 @@ protected:
 	virtual ~CPhaseChange() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree) override;
+	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
 
 	// 데코레이터 성공 여부 반환
 	virtual	NODE_STATE					Update(_float fTimeDelta);
 
 public:
-	CPhaseChange*						Create(const CBehaviorTree* pOwnerTree);
+	CPhaseChange*						Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

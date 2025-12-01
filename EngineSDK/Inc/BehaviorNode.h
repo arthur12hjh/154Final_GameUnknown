@@ -16,14 +16,14 @@ protected :
 	virtual ~CBehaviorNode() = default;
 
 public :
-	virtual		HRESULT					Initialize_Prototype(const CBehaviorTree* pOwnerTree);
+	virtual		HRESULT					Initialize_Prototype(CBehaviorTree* pOwnerTree);
 
 	virtual		NODE_STATE				Update(_float fTimeDelta);
 	
 	const BEHAVIOR_NODE_TYPE&			GetNodeType() { return m_eNodeType; }
 
 protected :
-	const	CBehaviorTree*				m_pOwnerTree = nullptr;
+	CBehaviorTree*						m_pOwnerTree = nullptr;
 	CGameInstance*						m_pGameInstance = { nullptr };
 
 	BEHAVIOR_NODE_TYPE					m_eNodeType = { BEHAVIOR_NODE_TYPE::END };

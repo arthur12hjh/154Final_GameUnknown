@@ -127,7 +127,7 @@ void CMonsterController::Damage(void* pDesc)
 		if (pAttackState)
 		{
 			// 나중에 여러 속성 추가할 예정
-			CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+			const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 			if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 			{
 				if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)

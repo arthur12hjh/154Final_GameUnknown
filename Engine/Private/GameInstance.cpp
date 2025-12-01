@@ -604,11 +604,6 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
-void CGameInstance::Select_LightRender(CLight* pSelectLight)
-{
-	return m_pLight_Manager->Select_LightRender(pSelectLight);
-}
-
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
@@ -620,6 +615,11 @@ HRESULT CGameInstance::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIB
 }
 
 #ifdef _DEBUG
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
+}
+
 void CGameInstance::Debug_LightRender()
 {
 	m_pLight_Manager->Debug_LightRender();

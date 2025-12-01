@@ -417,6 +417,10 @@ void CImGui_Manager::Update_AnimationList()
 		ImGui::SameLine();
 		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
 
+		ImGui::TextColored(vFontColor, "Selected KeyFrame Length:");
+		ImGui::SameLine();
+		ImGui::Text("%f", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Duration());
+
 	}
 
 	ImGui::EndChild();

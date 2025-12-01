@@ -308,10 +308,8 @@ void CMonsterMoveState::LerpLookAt(_float fTimeDelta, _float fSpeed)
         vLerpEndDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vTempOwnerPos);
     }
 
-    vLerpEndDir.m128_f32[1] = vOwnerLook.m128_f32[1] = 0.f;
-
-    _vector LerpLook = XMVectorLerp(vOwnerLook, vLerpEndDir, fTimeDelta * fSpeed);
-    m_pOwner->GetTransform()->LookAt(vOwnerPos + LerpLook);
+    vLerpEndDir.m128_f32[1] = 0.f;
+    m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vLerpEndDir, fTimeDelta, fSpeed);
 }
 
 void CMonsterMoveState::Compute_MoveDirection()

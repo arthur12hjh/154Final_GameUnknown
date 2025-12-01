@@ -23,7 +23,6 @@ private:
 	_bool	m_isRunStart = { false };
 	_bool   m_isLanding = { false }; 
 	_bool   m_isEvading = {  false };
-	_bool   m_isChangingDir = { false }; 
 	_float	m_fDegree = { 0.f }; 
 
 public:

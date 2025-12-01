@@ -58,6 +58,7 @@ private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
 
+	const _float4x4*				m_pLockOnMatrix = { nullptr };
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 

@@ -7,7 +7,7 @@ CBehaviorNode::CBehaviorNode() :
 	Safe_AddRef(m_pGameInstance);
 }
 
-HRESULT CBehaviorNode::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CBehaviorNode::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	if (nullptr == pOwnerTree)
 		return E_FAIL;

@@ -30,22 +30,27 @@ public:
 	_bool		   Find_NearestTarget(_float fTimeDelta);
 	// 락온 모드일때 타겟의 트랜스폼 가져오는 함수.
 	// 락온 모드가 아니라면 nullptr을 반환한다.
-	CTransform*	   Get_TargetTransform();
+	CTransform*					Get_TargetTransform();
+
+	//이거 락온한 위치 받아올수있게 일단 반환함
+	_vector						Get_LockOnPoint();
+
 	// 실질적인 락온 로직이 들어가있음. 락온 모드일때 세팅해주는 함수.
-	void		   Lockon(_float fTimeDelta);
-	void		   Start_Lockon();
+	void						Lockon(_float fTimeDelta);
+	void						Start_Lockon();
 
 private:
-	CGameInstance* m_pGameInstance		= { nullptr };
-	class CPlayer* m_pPlayer			= { nullptr };
-	PLAYER_DESC*   m_pPlayerDesc		= { nullptr };
-	CTransform*	   m_pTargetTransform   = { nullptr }; 
-	_wstring	   m_strMonsterLayerTag = { TEXT("Layer_Monster") };
-	_float		   m_fLockonTimer		= { 0.f };
+	CGameInstance*				m_pGameInstance		= { nullptr };
+	class CPlayer*				m_pPlayer			= { nullptr };
+	PLAYER_DESC*				m_pPlayerDesc		= { nullptr };
 
-	_float		   m_fBattleToIdleTimeAcc = { 0.f };
-	_float		   m_fCurrentMinDist	  = { FLT_MAX };
-	_bool		   m_isLock				  = { false };
+	class CNayitba*				m_pTarget			= { nullptr };
+	_wstring					m_strMonsterLayerTag = { TEXT("Layer_Monster") };
+	_float						m_fLockonTimer		= { 0.f };
+
+	_float						m_fBattleToIdleTimeAcc = { 0.f };
+	_float						m_fCurrentMinDist	  = { FLT_MAX };
+	_bool						m_isLock				  = { false };
 public:
 	static CLockonManager* Create();
 	virtual void Free() override;

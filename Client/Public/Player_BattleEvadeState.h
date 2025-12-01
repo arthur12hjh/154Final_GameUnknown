@@ -21,6 +21,8 @@ private:
 	_bool m_isBackStep = { false };
 	_bool m_isImmediateRun = { false };
 	PLAYER_BATTLEWALK_DESC m_NextStateDesc = {};
+
+	_float m_fMaxRatio = { 0.f }; 
 public:
 	static	CPlayer_BattleEvadeState* Create(void* pArg);
 	virtual	void			   Free() override;
