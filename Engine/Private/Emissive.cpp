@@ -35,6 +35,8 @@ HRESULT CEmissive::Initialize()
     /* MRT_Emissive_Blur_Final */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Emissive_Blur_Final"), TEXT("Target_Emissive_Blur_Final"))))
         return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
@@ -78,6 +80,8 @@ HRESULT CEmissive::Bind_RenderTarget(CShader* pShader, const _char* pConstantNam
     //·»´õÅ¸°Ù ÀÌ¸§ ¹Ù²ãÁà¾ß ÇÔ.
     if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_Final"), pShader, pConstantName)))
         return E_FAIL;
+
+    return S_OK;
 }
 
 #ifdef _DEBUG
