@@ -21,10 +21,6 @@ matrix g_OffsetMatrices[512];
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 
-/* 정점 쉐이더 : */
-/* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
-/* 정점의 구성 정보를 수정, 변경한다 */ 
-
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
@@ -157,7 +153,7 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -176,31 +172,11 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
    
     Out.vDiffuse = vMtrlDiffuse +
         Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     //림라이트도 더해서 던져.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
-    
-    return Out;
-}
-
-PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
-{
-    PS_OUT Out;
-
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.4f)
-        discard;
-   
-    Out.vDiffuse = vMtrlDiffuse;
-    
-    if(Out.vDiffuse.r <= 0.7f)
-        discard;
-    
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }
@@ -221,6 +197,40 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
     Out.vDirection.xy = In.vDirection.xy;
     Out.vDirection.z = 0.f;
     Out.vDirection.w = 1.f;
+    
+    return Out;
+}
+// PS MAIN HAIR
+PS_OUT PS_MAIN_HAIR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    
+    return Out;
+}
+// PS MAIN PONYTAIL
+PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
 }
@@ -259,20 +269,8 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_RIMLIGHT();
     }
-
-    // 눈 마스킹용.
-    // 3 
-    pass Mask
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_EYEMASKING();
-    }
     // 모션 블러
-    // 4
+    // 3
     pass MotionBlur
     {
         SetRasterizerState(RS_Default);
@@ -282,7 +280,24 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MOTIONBLUR();
     }
+    // 4
+    pass Hair
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_HAIR();
+    }
+    // 5
+    pass Ponytail
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_PONYTAIL();
+    }
 }
-
-
-
