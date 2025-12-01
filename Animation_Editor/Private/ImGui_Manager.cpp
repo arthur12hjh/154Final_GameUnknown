@@ -359,6 +359,11 @@ void CImGui_Manager::Update_AnimationList()
 		ImGui::SameLine();
 		ImGui::Text("%d   ", m_iSelectedAnimationIndex);
 
+		ImGui::TextColored(vFontColor, "Max Frame :");
+		ImGui::SameLine();
+		_float fMaxFrame = (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Duration();
+		ImGui::Text("%d   ", (_int)fMaxFrame);
+
 		ImGui::TextColored(vFontColor, "Selected Name:");
 		ImGui::SameLine();
 		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());

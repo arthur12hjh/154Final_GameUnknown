@@ -55,12 +55,13 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
 		_float fScalar = acosf(XMVectorGetX(XMVector3Dot(vOwnerLook, vDir)));
 
-		if (0.2f <= fabsf(fScalar))
-			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta);
+		if (0.1f <= fabsf(fScalar))
+			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.0f);
 		else
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
-
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
+
+		
 		m_pOwner->Play_Animation(fTimeDelta);
 	}
 	else

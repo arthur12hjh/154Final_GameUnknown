@@ -232,7 +232,7 @@ HRESULT CNayitba::Ready_CharacterData()
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
-
+		m_MonsterInfo.fMoveSpeed = m_pInitMonsterInfo->fMoveSpeed;
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
 		m_eTeam = OBJECT_TEAM::ENEMY;
