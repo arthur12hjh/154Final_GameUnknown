@@ -148,7 +148,7 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 
 	_bool bSkillUseable = false;
 
-	if (m_tSkillInfo.iSkillIndex != -1)
+	if (m_tSkillInfo.iSkillIndex >= 0)
 	{
 		bSkillUseable = true;
 

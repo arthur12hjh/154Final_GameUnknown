@@ -40,8 +40,8 @@ private:
 	SKILL_STATE* m_eRushState = nullptr;
 	SKILL_STATE m_ePrevRushState = SKILL_STATE::DEFAULT;
 
-	map<_uint, SKILL_STATE>* m_eSkillState{};
-	map<_uint, SKILL_STATE> m_ePrevSkillState{};
+	SKILL_STATE* m_eSkillState[4];
+	SKILL_STATE m_ePrevSkillState[4];
 
 public:
 	static CUISkillWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
