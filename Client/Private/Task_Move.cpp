@@ -21,6 +21,7 @@ HRESULT CTask_Move::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	if (nullptr == m_pBlackBoard)
 		m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
 
+	m_fSpeed = m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed;
 	return S_OK;
 }
 
@@ -59,7 +60,7 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		else
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
 
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), 3.f);
+		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 		m_pOwner->Play_Animation(fTimeDelta);
 	}
 	else
@@ -80,12 +81,14 @@ void CTask_Move::Refresh_MovePoint()
 		m_eDirection = DIRECTION::LEFT;
 		m_szAnimationName += "_Caution_Lw";
 		m_pOwner->Set_Animation(m_szAnimationName.c_str());
+		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
 	}
 	else
 	{
 		m_eDirection = DIRECTION::RIGHT;
 		m_szAnimationName += "_Caution_Rw";
 		m_pOwner->Set_Animation(m_szAnimationName.c_str());
+		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
 	}
 }
 

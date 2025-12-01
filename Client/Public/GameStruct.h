@@ -174,6 +174,9 @@ namespace Client
 		long long			iCurrentHealth;
 		long long			iCurrentShield;
 
+	
+		_float3				fLockOnPoint;
+
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;
 		_float				fMoveSpeed;

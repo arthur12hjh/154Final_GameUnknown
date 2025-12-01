@@ -27,11 +27,13 @@ private :
 	const Character_Skill_Desc*			m_pSkillData = { nullptr };
 
 	_uint2								m_iAttackCount = {};
+	_float								m_fMaxDelayTime = {};
+	string								m_szDebugAnimation = {};
 	
 private :
 	_bool								SelectRandomPattern();
 	_bool								AttackMoveAction();
-
+	_bool								Compute_AttackCoolTime();
 	
 
 public:

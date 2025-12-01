@@ -22,9 +22,10 @@ private :
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
-	string								m_szAnimationName = {};
 	DIRECTION							m_eDirection = {};
+	string								m_szAnimationName = {};
 	_float3								m_vMoveDir = {};
+	_float								m_fSpeed = {};
 
 private :
 	void								Refresh_MovePoint();

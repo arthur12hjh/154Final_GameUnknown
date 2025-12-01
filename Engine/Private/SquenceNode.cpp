@@ -22,7 +22,7 @@ CBehaviorNode::NODE_STATE CSquenceNode::Update(_float fTimeDelta)
 			bIsDecorator = false;
 	}
 
-	if (bIsDecorator)
+	while (bIsDecorator)
 	{
 		NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
 		switch (State)
@@ -43,6 +43,7 @@ CBehaviorNode::NODE_STATE CSquenceNode::Update(_float fTimeDelta)
 			return NODE_STATE::COMPLETE;
 		}
 	}
+	
 
 	return NODE_STATE::FAIL;
 }

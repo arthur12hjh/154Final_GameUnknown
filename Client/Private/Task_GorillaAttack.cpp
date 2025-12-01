@@ -22,6 +22,7 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 		m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
 
 	m_iAttackCount.y = 4;
+	m_fMaxDelayTime = 3.5f;
 	return S_OK;
 }
 
@@ -33,20 +34,13 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 			return NODE_STATE::FAIL;
 	}
 
-	if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
+	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
+	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || Compute_AttackCoolTime())
 	{
 		m_pSkillData = nullptr;
 		return NODE_STATE::FAIL;
 	}
 
-	if (m_iAttackCount.x >= m_iAttackCount.y)
-	{
-		m_pBlackBoard->SetAttackDelay(1.f);
-		m_pSkillData = nullptr;
-		m_iAttackCount.x = 0.f;
-		return NODE_STATE::FAIL;
-	}
-		
 	// 일단 여기서 고릴라 공격에대한 이동 처리
 	AttackMoveAction();
 
@@ -72,6 +66,7 @@ _bool CTask_GorillaAttack::SelectRandomPattern()
 		return false;
 
 	m_iAttackCount.x++;
+	m_szDebugAnimation = m_pSkillData->szAnimationName;
 	m_pOwner->Set_Animation(m_pSkillData->szAnimationName, false, 1.0f, 1.2f, true);
 	return true;
 }
@@ -98,6 +93,19 @@ _bool CTask_GorillaAttack::AttackMoveAction()
 
 
 	return true;
+}
+
+_bool CTask_GorillaAttack::Compute_AttackCoolTime()
+{
+	if (m_iAttackCount.x >= m_iAttackCount.y)
+	{
+		m_iAttackCount.y = (_uint)m_pGameInstance->Random(2, m_iAttackCount.y);
+		
+		m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(2.f, m_fMaxDelayTime));
+		m_iAttackCount.x = 0.f;
+		return true;
+	}
+	return false;
 }
 
 CTask_GorillaAttack* CTask_GorillaAttack::Create(CBehaviorTree* pOwnerTree)

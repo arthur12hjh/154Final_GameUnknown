@@ -27,28 +27,25 @@ CBehaviorNode::NODE_STATE CSelectNode::Update(_float fTimeDelta)
         }
     }
 
-    if (bIsDecorator)
+    while (bIsDecorator)
     {
-        while (1)
+        NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
+        switch (State)
         {
-            NODE_STATE State = m_Actions[m_iIndex]->Update(fTimeDelta);
-            switch (State)
-            {
-            case NODE_STATE::COMPLETE:
-                m_iIndex = 0;
-                return NODE_STATE::COMPLETE;
-            case NODE_STATE::FAIL:
-                m_iIndex++;
-                break;
-            default:
-                return NODE_STATE::RUNNING;
-            }
+        case NODE_STATE::COMPLETE:
+            m_iIndex = 0;
+            return NODE_STATE::COMPLETE;
+        case NODE_STATE::FAIL:
+            m_iIndex++;
+            break;
+        default:
+            return NODE_STATE::RUNNING;
+        }
 
-            if (m_Actions.size() <= m_iIndex)
-            {
-                m_iIndex = 0;
-                return NODE_STATE::FAIL;
-            }
+        if (m_Actions.size() <= m_iIndex)
+        {
+            m_iIndex = 0;
+            return NODE_STATE::FAIL;
         }
     }
     

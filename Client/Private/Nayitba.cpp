@@ -50,6 +50,12 @@ HRESULT CNayitba::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
+	// 아래 세개중에서 하나
+	// Bip001-Spine
+	// Bip001_Spine1
+	// Bip001_Spine2
+
+	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
 
 	return S_OK;
 }
@@ -78,8 +84,6 @@ void CNayitba::Update(_float fTimeDelta)
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
-
-	
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
@@ -92,6 +96,9 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
+
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
