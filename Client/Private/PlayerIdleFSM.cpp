@@ -85,8 +85,6 @@ CPlayerState* CPlayerIdleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionDes
 	}
 
 	return nullptr;
-
-		return nullptr;
 }
 
 HRESULT CPlayerIdleFSM::Ready_State()

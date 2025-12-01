@@ -46,7 +46,8 @@ public :
 #pragma region DataManager
 	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
 	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
-
+	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
+	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 #pragma endregion
 
