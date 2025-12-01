@@ -5,6 +5,9 @@
 #include "GameManager.h"
 
 #include "Player.h"
+#ifdef _DEBUG
+#include "../../UI_Editor/Public/UI_Camera.h"
+#endif // DEBUG
 
 CUIShield::CUIShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -39,8 +42,8 @@ HRESULT CUIShield::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxShield = &m_MaxGara;
-		m_iCurrentShield = &m_Gara;
+		m_iMaxShield = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxShield);
+		m_iCurrentShield = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentShield);
 	}
 #endif // DEBUG
 
@@ -60,13 +63,13 @@ void CUIShield::Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	// 테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
 			*m_iCurrentShield -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
 			*m_iCurrentShield += 10;
-	}
+	}*/
 #endif
 
 	m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);

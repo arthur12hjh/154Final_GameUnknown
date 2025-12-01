@@ -53,7 +53,9 @@ void CPlayerLockonFSM::Change_FSM(PLAYER_STATE eNextState)
 	PLAYER_TRANSITION_DESC Desc;
 	Desc.eNextState = eNextState;
 
-	if (Desc.eNextState == PLAYER_STATE::JUMP)
+	if (Desc.eNextState == PLAYER_STATE::JUMP ||
+		Desc.eNextState == PLAYER_STATE::HIT ||
+		Desc.eNextState == PLAYER_STATE::BETA_CHARGINGSLASH)
 		return;
 	
 	Clear_FSM();

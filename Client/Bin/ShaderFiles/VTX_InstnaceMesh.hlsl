@@ -168,9 +168,9 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
     
-    vector vNoramlTexture = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vNormalTexture = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
-    float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
+    float3 vNormal = mul(vNormalTexture.xyz * 2.f - 1.f, TangentSpaceMat);
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -197,17 +197,16 @@ PS_OUT PS_REED(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
     
-    vector vNoramlTexture = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vNoramlTexture = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
     float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
-    
     
     //Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
+    
     return Out;
-
 }
 
 struct PS_OUT_NONE_NORMAL
