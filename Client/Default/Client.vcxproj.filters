@@ -1186,7 +1186,6 @@
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TrailData.h" />
-  </ClInclude>
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClInclude>
