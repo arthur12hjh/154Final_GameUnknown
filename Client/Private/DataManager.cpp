@@ -40,6 +40,20 @@ const NAYTIBA_NETWORK_DESC* CDataManager::Find_NaytibaData(_uint iID)
     return &iter->second;
 }
 
+const BETA_SKILL_DESC* CDataManager::Find_BetaSkillData(_uint iSkillID)
+{
+    auto iter = m_pBetaSkills.find(iSkillID);
+    if (iter == m_pBetaSkills.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+map<_uint, BETA_SKILL_DESC>* CDataManager::Get_AllBetaSkillDesc()
+{
+    return &m_pBetaSkills;
+}
+
 const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
 {
     auto iter = m_AnimationNotifyDatas.find(szAnimationTag);
@@ -121,7 +135,11 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
 
+
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
+
+        if (SKILL_TYPE::BETA_SKILL == SkillDesc.eSkillType)
+            AddBetaSkill(SkillDesc.iSkillID, SkillDesc);
     }
 
     return S_OK;
@@ -204,6 +222,28 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         m_AnimationNotifyDatas.emplace(szAnimTag, AnimationNotifyList);
     }
 
+
+    return S_OK;
+}
+
+HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
+{
+    BETA_SKILL_DESC BetaSkillDesc = {};
+
+    memcpy(&BetaSkillDesc, &Desc, sizeof(CHARACTER_SKILL_DESC));
+
+    switch(iSkillID)
+    {
+    //Charge Slash
+    case 1004:
+        BetaSkillDesc.iRequiredBetaGauge = 4;
+        break;
+    default:
+        BetaSkillDesc.iRequiredBetaGauge = 10;
+        break;
+    }
+
+    m_pBetaSkills.emplace(iSkillID, BetaSkillDesc);
 
     return S_OK;
 }
