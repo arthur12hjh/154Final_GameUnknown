@@ -40,22 +40,27 @@ void CUIHPFX::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	//float width = m_tUIDesc.fSizeX;
+	auto pHPBar = dynamic_cast<CUIHPBar*>(m_pParent);
+	if (!pHPBar) return;
 
-	//// Glow의 기본 위치(start)
-	//float startX = -width * 0.5f;
+	_float fill = pHPBar->Get_CurrentFill();
+	_float width = pHPBar->Get_UIBase_Desc().fSizeX;
 
-	//// 이동할 X값
-	//float posX = startX + (width * 0.5f) * dynamic_cast<CUIHPBar*>(m_pParent)->Get_CurrentFill();
+	// pivot = center 기준 Fill 이동 공식
+	_float posX = (width * (fill - 0.5f));
 
-	////m_tUIDesc.fOffsetX *= posX;
+	// 부모 기준 위치
+	_vector vParentPos = pHPBar->GetTransform()->Get_State(STATE::POSITION);
 
-	//m_pTransformCom->Set_State((STATE::POSITION), XMVectorSet(
-	//	XMVectorGetX(m_pTransformCom->Get_State(STATE::POSITION)) + (posX + (width * -0.5f)),
-	//	XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION)),
-	//	XMVectorGetZ(m_pTransformCom->Get_State(STATE::POSITION)),
-	//	0.f
-	//));
+	// Glow 중심 위치 = Parent 중심 + posX
+	_vector vGlowPos = XMVectorSet(
+		XMVectorGetX(vParentPos) + posX,
+		XMVectorGetY(vParentPos),
+		XMVectorGetZ(vParentPos),
+		1.f
+	);
+
+	m_pTransformCom->Set_State(STATE::POSITION, vGlowPos);
 }
 
 void CUIHPFX::Late_Update(_float fTimeDelta)

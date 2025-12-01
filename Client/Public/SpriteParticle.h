@@ -88,12 +88,12 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPointParticleData);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Update(_float fTimeDelta) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
-	_float	Stop() { return m_fTime; }
+	void    Stop();
+	void    Play();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
@@ -107,7 +107,7 @@ private:
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
-	_bool			m_bisLoop = {};
+	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;
 

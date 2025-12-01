@@ -45,11 +45,15 @@ void CPlayerIdleFSM::Update(_float fTimeDelta)
 
 void CPlayerIdleFSM::Change_FSM(PLAYER_STATE eNextState)
 {
-	Clear_FSM();
-
 	PLAYER_TRANSITION_DESC Desc;
-
 	Desc.eNextState = eNextState;
+
+	if (Desc.eNextState == PLAYER_STATE::JUMP ||
+		Desc.eNextState == PLAYER_STATE::HIT ||
+		Desc.eNextState == PLAYER_STATE::BETA_CHARGINGSLASH)
+		return;
+
+	Clear_FSM();
 
 	//idle이나 walk가 아니라면, idle로 강제 보정.
 	if (!(Desc.eNextState == PLAYER_STATE::IDLE ||

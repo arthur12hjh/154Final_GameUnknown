@@ -2,6 +2,7 @@
 
 #include "Tool_Effect_Defines.h"
 #include "GameObject.h"
+#include "TrailData.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Rect;
@@ -15,27 +16,6 @@ NS_BEGIN(Tool_Effect)
 class CTrailEffect final : public CGameObject
 {
 public:
-	typedef struct TrailEffectData
-	{
-		string	szMaskTexture = {};
-		string	szDiffuseTexture = {};
-		string	szDissolveTexture = {};
-		_float4 fColor = {};
-
-		_float2	fMaskUV;
-		_float2	fMaskUVSpeed;
-		_float2	fMaskUVSize;
-		_float2	fDiffuseUV;
-		_float2	fDiffuseUVSpeed;
-		_float2	fDiffuseUVSize;
-		_float2	fDissolveUV;
-		_float2	fDissolveUVSpeed;
-		_float2	fDissolveUVSize;
-
-		_int	iBegin = {};
-		_int	iSelectRender;
-	}TRAIL_DATA;
-
 private:
 	CTrailEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTrailEffect(const CTrailEffect& Prototype);
@@ -44,34 +24,23 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Update(_float fTimeDelta) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	void	Set_Components(TRAIL_DATA tData);
-	void	Update(TRAIL_DATA tData);
-	TRAIL_DATA	Get_Data() { return m_tData; }
-	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
-	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
-	void	Pause() { m_bisPause = !m_bisPause; }
+	HRESULT Render(class CTrailData* pTrailData);
+	void Refresh();
 	_float	Get_Speed() { return m_fSpeed; }
 	void	Set_Speed(_float fSpeed) { m_fSpeed = fSpeed; }
 private:
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
-	CTexture* m_pTexture[3] = {};
-	string    m_szFile[3];
 	CTrail*		m_pTrail = { nullptr };
-	_float		m_fTime = {};
-	_bool		m_bisPause = {};
-	TRAIL_DATA	m_tData;
 	_float		m_fSpeed = { 1.f };
-	_uint	m_iCount = {};
+	_float		m_fTime = {};
+	_uint	m_iSelect = {};
 	RENDER	m_eRender = {};
 
 private:
 	HRESULT							Ready_Components();
-	HRESULT							Bind_ShaderResources();
+	HRESULT							Bind_ShaderResources(CTrailData::TRAIL_DATA tData);
 
 public:
 	static CTrailEffect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

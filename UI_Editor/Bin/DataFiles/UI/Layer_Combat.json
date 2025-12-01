@@ -33,7 +33,7 @@
                                 "Shader": {
                                     "bUseGlow": true,
                                     "bUseTintColor": true,
-                                    "fGlowIntensity": 1.5,
+                                    "fGlowIntensity": 1.9418662786483765,
                                     "fGlowSpread": 0.0,
                                     "vTintColor": [
                                         0.4415094256401062,
@@ -282,6 +282,761 @@
                 "szProtoTag": "Prototype_GameObject_UI_Wrapper",
                 "szUIID": "Combat_Panel_Wrapper_1-1",
                 "szUITag": "Vital_Wrapper"
+            },
+            {
+                "Children": [
+                    {
+                        "Children": [
+                            {
+                                "Children": [
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 2,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Number",
+                                            "szTextureComTag": "Com_Texture_UI_Number"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 0.0,
+                                        "fOffsetY": 0.0,
+                                        "fSizeX": 16.0,
+                                        "fSizeY": 16.0,
+                                        "fX": 1502.0,
+                                        "fY": 773.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_0_Image_4-1",
+                                        "szUITag": "Count_0"
+                                    },
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 4,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Player_Beta",
+                                            "szTextureComTag": "Com_Texture_UI_Player_Beta"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 7.0,
+                                        "fOffsetY": 2.0,
+                                        "fSizeX": 8.0,
+                                        "fSizeY": 8.0,
+                                        "fX": 1502.0,
+                                        "fY": 773.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_0_Image_4-2",
+                                        "szUITag": "Count_0_Deco"
+                                    }
+                                ],
+                                "fAlpha": 1.0,
+                                "fOffsetX": 12.0,
+                                "fOffsetY": 18.0,
+                                "fSizeX": 20.0,
+                                "fSizeY": 20.0,
+                                "fX": 1490.0,
+                                "fY": 755.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                                "szUIID": "SkillFrame_0_Wrapper_3-1",
+                                "szUITag": "Skill_Count_0"
+                            }
+                        ],
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": -25.0,
+                        "fSizeX": 70.0,
+                        "fSizeY": 70.0,
+                        "fX": 1490.0,
+                        "fY": 780.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Skill_0_Active",
+                                "szPrefabTag": "BeapBeap_1"
+                            }
+                        ],
+                        "szEvents": {
+                            "Skill_0_Active_Effect": [
+                                {
+                                    "szActionTag": "Skill_0_Active",
+                                    "szArg": "Skill_0_Active",
+                                    "szSubscribeEventTags": [
+                                        "Skill_0_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_0_Default_Effect": [
+                                {
+                                    "szActionTag": "Skill_0_Default",
+                                    "szArg": "Skill_0_Default",
+                                    "szSubscribeEventTags": [
+                                        "Skill_0_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_SkillSlot",
+                        "szUIID": "Skills_Wrapper_SkillSlot_2-1",
+                        "szUITag": "SkillSlot_0"
+                    },
+                    {
+                        "Children": [
+                            {
+                                "Children": [
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 2,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Number",
+                                            "szTextureComTag": "Com_Texture_UI_Number"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 0.0,
+                                        "fOffsetY": 0.0,
+                                        "fSizeX": 16.0,
+                                        "fSizeY": 16.0,
+                                        "fX": 1462.0,
+                                        "fY": 813.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_1_Image_4-1",
+                                        "szUITag": "Count_1"
+                                    },
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 4,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Player_Beta",
+                                            "szTextureComTag": "Com_Texture_UI_Player_Beta"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 7.0,
+                                        "fOffsetY": 2.0,
+                                        "fSizeX": 8.0,
+                                        "fSizeY": 8.0,
+                                        "fX": 1462.0,
+                                        "fY": 813.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_1_Image_4-2",
+                                        "szUITag": "Count_1_Deco"
+                                    }
+                                ],
+                                "fAlpha": 1.0,
+                                "fOffsetX": 12.0,
+                                "fOffsetY": 18.0,
+                                "fSizeX": 20.0,
+                                "fSizeY": 20.0,
+                                "fX": 1450.0,
+                                "fY": 795.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                                "szUIID": "SkillFrame_1_Wrapper_3-1",
+                                "szUITag": "Skill_Count_1"
+                            }
+                        ],
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -40.0,
+                        "fOffsetY": 15.0,
+                        "fSizeX": 70.0,
+                        "fSizeY": 70.0,
+                        "fX": 1490.0,
+                        "fY": 780.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Skill_1_Active",
+                                "szPrefabTag": "BeapBeap_1"
+                            }
+                        ],
+                        "szEvents": {
+                            "Skill_1_Active_Effect": [
+                                {
+                                    "szActionTag": "Skill_1_Active",
+                                    "szArg": "Skill_1_Active",
+                                    "szSubscribeEventTags": [
+                                        "Skill_1_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_1_Default_Effect": [
+                                {
+                                    "szActionTag": "Skill_1_Default",
+                                    "szArg": "Skill_1_Default",
+                                    "szSubscribeEventTags": [
+                                        "Skill_1_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_SkillSlot",
+                        "szUIID": "Skills_Wrapper_SkillSlot_2-2",
+                        "szUITag": "SkillSlot_1"
+                    },
+                    {
+                        "Children": [
+                            {
+                                "Children": [
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 2,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Number",
+                                            "szTextureComTag": "Com_Texture_UI_Number"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 0.0,
+                                        "fOffsetY": 0.0,
+                                        "fSizeX": 16.0,
+                                        "fSizeY": 16.0,
+                                        "fX": 1502.0,
+                                        "fY": 853.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_2_Image_4-1",
+                                        "szUITag": "Count_2"
+                                    },
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 4,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Player_Beta",
+                                            "szTextureComTag": "Com_Texture_UI_Player_Beta"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 7.0,
+                                        "fOffsetY": 2.0,
+                                        "fSizeX": 8.0,
+                                        "fSizeY": 8.0,
+                                        "fX": 1502.0,
+                                        "fY": 853.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_2_Image_4-2",
+                                        "szUITag": "Count_2_Deco"
+                                    }
+                                ],
+                                "fAlpha": 1.0,
+                                "fOffsetX": 12.0,
+                                "fOffsetY": 18.0,
+                                "fSizeX": 20.0,
+                                "fSizeY": 20.0,
+                                "fX": 1490.0,
+                                "fY": 835.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                                "szUIID": "SkillFrame_2_Wrapper_3-1",
+                                "szUITag": "Skill_Count_2"
+                            }
+                        ],
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 55.0,
+                        "fSizeX": 70.0,
+                        "fSizeY": 70.0,
+                        "fX": 1490.0,
+                        "fY": 780.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Skill_2_Active",
+                                "szPrefabTag": "BeapBeap_1"
+                            }
+                        ],
+                        "szEvents": {
+                            "Skill_2_Active_Effect": [
+                                {
+                                    "szActionTag": "Skill_2_Active",
+                                    "szArg": "Skill_2_Active",
+                                    "szSubscribeEventTags": [
+                                        "Skill_2_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_2_Default_Effect": [
+                                {
+                                    "szActionTag": "Skill_2_Default",
+                                    "szArg": "Skill_2_Default",
+                                    "szSubscribeEventTags": [
+                                        "Skill_2_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_SkillSlot",
+                        "szUIID": "Skills_Wrapper_SkillSlot_2-3",
+                        "szUITag": "SkillSlot_2"
+                    },
+                    {
+                        "Children": [
+                            {
+                                "Children": [
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 2,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Number",
+                                            "szTextureComTag": "Com_Texture_UI_Number"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 0.0,
+                                        "fOffsetY": 0.0,
+                                        "fSizeX": 16.0,
+                                        "fSizeY": 16.0,
+                                        "fX": 1542.0,
+                                        "fY": 813.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_3_Image_4-1",
+                                        "szUITag": "Count_3"
+                                    },
+                                    {
+                                        "Shader": {
+                                            "bUseTintColor": true,
+                                            "vTintColor": [
+                                                0.443136990070343,
+                                                0.49803900718688965,
+                                                0.521569013595581,
+                                                1.0
+                                            ]
+                                        },
+                                        "TextureDesc": {
+                                            "iPass": 0,
+                                            "iTextureIndex": 4,
+                                            "szProtoTag": "Prototype_Component_UI_Texture_Player_Beta",
+                                            "szTextureComTag": "Com_Texture_UI_Player_Beta"
+                                        },
+                                        "fAlpha": 1.0,
+                                        "fOffsetX": 7.0,
+                                        "fOffsetY": 2.0,
+                                        "fSizeX": 8.0,
+                                        "fSizeY": 8.0,
+                                        "fX": 1542.0,
+                                        "fY": 813.0,
+                                        "iDepth": 4,
+                                        "iDrawType": 1,
+                                        "iLevel": 3,
+                                        "iRenderGroup": 9,
+                                        "iVisibility": 0,
+                                        "szLayerTag": "Layer_Combat",
+                                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                                        "szUIID": "Skill_Count_3_Image_4-2",
+                                        "szUITag": "Count_3_Deco"
+                                    }
+                                ],
+                                "fAlpha": 1.0,
+                                "fOffsetX": 12.0,
+                                "fOffsetY": 18.0,
+                                "fSizeX": 20.0,
+                                "fSizeY": 20.0,
+                                "fX": 1530.0,
+                                "fY": 795.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                                "szUIID": "SkillFrame_3_Wrapper_3-3",
+                                "szUITag": "Skill_Count_3"
+                            }
+                        ],
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 40.0,
+                        "fOffsetY": 15.0,
+                        "fSizeX": 70.0,
+                        "fSizeY": 70.0,
+                        "fX": 1490.0,
+                        "fY": 780.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Skill_3_Active",
+                                "szPrefabTag": "BeapBeap_1"
+                            }
+                        ],
+                        "szEvents": {
+                            "Skill_3_Active_Effect": [
+                                {
+                                    "szActionTag": "Skill_3_Active",
+                                    "szArg": "Skill_3_Active",
+                                    "szSubscribeEventTags": [
+                                        "Skill_3_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_3_Default_Effect": [
+                                {
+                                    "szActionTag": "Skill_3_Default",
+                                    "szArg": "Skill_3_Default",
+                                    "szSubscribeEventTags": [
+                                        "Skill_3_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_SkillSlot",
+                        "szUIID": "Skills_Wrapper_SkillSlot_2-4",
+                        "szUITag": "SkillSlot_3"
+                    },
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526,
+                                0.8666666746139526
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": -72.0,
+                        "fSizeX": 36.0,
+                        "fSizeY": 36.0,
+                        "fX": 1490.0,
+                        "fY": 780.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Rush_Active",
+                                "szPrefabTag": "BeapBeap_1"
+                            },
+                            {
+                                "szAnimTag": "Rush_ActiveOn",
+                                "szPrefabTag": "Glow_0_3_Reverse"
+                            }
+                        ],
+                        "szEvents": {
+                            "Rush_Active_Effect": [
+                                {
+                                    "szActionTag": "Rush_Active",
+                                    "szArg": "Rush_Active",
+                                    "szSubscribeEventTags": [
+                                        "Rush_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Rush_ActiveOn_Effect": [
+                                {
+                                    "szActionTag": "Rush_ActiveOn",
+                                    "szArg": "Rush_ActiveOn",
+                                    "szSubscribeEventTags": [
+                                        "Rush_ActiveOn"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Rush_Default_Effect": [
+                                {
+                                    "szActionTag": "Rush_Default",
+                                    "szArg": "Rush_Default",
+                                    "szSubscribeEventTags": [
+                                        "Rush_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_RushSlot",
+                        "szUIID": "Skills_Wrapper_RushSlot_2-5",
+                        "szUITag": "RushSlot"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": 690.0,
+                "fOffsetY": 330.0,
+                "fSizeX": 150.0,
+                "fSizeY": 180.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "Skill_0_Active": [
+                        {
+                            "szActionTag": "Skill_0_Active",
+                            "szArg": "Skill_0_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_0_Default": [
+                        {
+                            "szActionTag": "Skill_0_Default",
+                            "szArg": "Skill_0_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_1_Active": [
+                        {
+                            "szActionTag": "Skill_1_Active",
+                            "szArg": "Skill_1_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_1_Default": [
+                        {
+                            "szActionTag": "Skill_1_Default",
+                            "szArg": "Skill_1_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_2_Default": [
+                        {
+                            "szActionTag": "Skill_2_Default",
+                            "szArg": "Skill_2_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_2_Active": [
+                        {
+                            "szActionTag": "Skill_2_Active",
+                            "szArg": "Skill_2_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_3_Default": [
+                        {
+                            "szActionTag": "Skill_3_Default",
+                            "szArg": "Skill_3_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_3_Active": [
+                        {
+                            "szActionTag": "Skill_3_Active",
+                            "szArg": "Skill_3_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rush_Active": [
+                        {
+                            "szActionTag": "Rush_Active",
+                            "szArg": "Rush_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rush_ActiveOn": [
+                        {
+                            "szActionTag": "Rush_ActiveOn",
+                            "szArg": "Rush_ActiveOn",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rush_Default": [
+                        {
+                            "szActionTag": "Rush_Default",
+                            "szArg": "Rush_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Combat",
+                "szProtoTag": "Prototype_GameObject_UI_SkillWrapper",
+                "szUIID": "Combat_Panel_SkillWrapper_1-2",
+                "szUITag": "SkillWrapper"
             }
         ],
         "fAlpha": 1.0,

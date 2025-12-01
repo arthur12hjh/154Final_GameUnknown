@@ -1,4 +1,5 @@
 #include "Client_Shader_Utils.hlsli"
+#include "Client_Shader_VtxAnimMesh_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_PreWorldMatrix, g_PreViewMatrix;
@@ -23,29 +24,6 @@ StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
-
-struct VS_IN
-{
-    float3 vPosition : POSITION;
-    float3 vNormal : NORMAL;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
-    float2 vTexcoord : TEXCOORD0;
-    
-    uint4 vBlendIndex : BLENDINDEX;
-    float4 vBlendWeight : BLENDWEIGHT;
-};
-
-struct VS_OUT
-{
-    float4 vPosition : SV_POSITION;
-    float4 vNormal : NORMAL;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vWorldPos : TEXCOORD1;
-    float4 vProjPos : TEXCOORD2;
-};
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -86,12 +64,6 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-struct VS_OUT_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
-};
-
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
@@ -121,12 +93,6 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 
     return Out;
 }
-
-struct VS_OUT_MOTIONBLUR
-{
-    float4 vPosition : SV_POSITION;
-    float4 vDirection : TEXCOORD0;
-};
 
 VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
 {
@@ -181,26 +147,6 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     return Out;
 }
 
-struct PS_IN
-{
-    float4 vPosition : SV_POSITION;
-    float4 vNormal : NORMAL;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vWorldPos : TEXCOORD1;
-    float4 vProjPos : TEXCOORD2;
-};
-
-struct PS_OUT
-{
-    float4 vDiffuse   : SV_TARGET0;
-    float4 vNormal    : SV_TARGET1;
-    float4 vDepth     : SV_TARGET2;
-    float4 vORM       : SV_Target3;
-    float4 vEmissive  : SV_TARGET4; 
-};
-
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -211,7 +157,7 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -230,7 +176,7 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
    
     Out.vDiffuse = vMtrlDiffuse +
         Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     //림라이트도 더해서 던져.
@@ -252,24 +198,12 @@ PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
     if(Out.vDiffuse.r <= 0.7f)
         discard;
     
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }
-
-struct PS_IN_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
-};
-
-struct PS_OUT_SHADOW
-{
-    float4 vShadowLightDepth : SV_TARGET0;
-};
-
 
 PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
@@ -279,17 +213,6 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
     
     return Out;
 }
-
-struct PS_IN_MOTIONBLUR
-{
-    float4 vPosition : SV_POSITION;
-    float4 vDirection : TEXCOORD0;
-};
-
-struct PS_OUT_MOTIONBLUR
-{
-    float4 vDirection : SV_TARGET0;
-};
 
 PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 {

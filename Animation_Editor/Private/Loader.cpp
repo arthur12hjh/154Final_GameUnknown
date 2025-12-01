@@ -46,12 +46,12 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
 
-	/* ¼¼¸¶Æ÷¾î, ¹ÂÅØ½º, Å©¸®Æ¼ÄÃ¼½¼Ç */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ø½ï¿½, Å©ï¿½ï¿½Æ¼ï¿½Ã¼ï¿½ï¿½ï¿½ */
 
-	/* ÀÓ°è¿µ¿ª(Èü, µ¥ÀÌÅÍ, ÄÚµå)¿¡ Á¢±ÙÇÏ±âÀ§ÇÑ Å°¸¦ »ý¼ºÇÑ´Ù. */
+	/* ï¿½Ó°è¿µï¿½ï¿½(ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Úµï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ½ÇÁ¦ ·ÎµùÀ» ¼öÇàÇÏ±âÀ§ÇÑ ½º·¹µå¸¦ »ý¼ºÇÑ´Ù. */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;
@@ -93,14 +93,14 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Editor()
 {
-	m_strMessage = TEXT("ÅØ½ºÃÄ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½Ø½ï¿½ï¿½Ä¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("¸ðµ¨¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ðµ¨¸ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -116,7 +116,7 @@ HRESULT CLoader::Loading_For_Editor()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Gigas */
-	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Gigas"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Gigas/SuperGorilla.binx", PreTransformMatrix))))
 		return E_FAIL;
@@ -147,7 +147,7 @@ HRESULT CLoader::Loading_For_Editor()
 
 
 
-	m_strMessage = TEXT("¼ÎÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -178,7 +178,7 @@ HRESULT CLoader::Loading_For_Editor()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("ÄÝ¶óÀÌ´õ¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -194,7 +194,7 @@ HRESULT CLoader::Loading_For_Editor()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("°´Ã¼¿øÇü¸¦(À») ·Îµù Áß ÀÔ´Ï´Ù.");
+	m_strMessage = TEXT("ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½) ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.");
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_BackGround"),
 	//	CBackGround::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
@@ -275,7 +275,7 @@ HRESULT CLoader::Loading_For_Editor()
 	//	return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù..");
+	m_strMessage = TEXT("ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½..");
 
 	m_isFinished = true;
 

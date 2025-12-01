@@ -54,6 +54,9 @@
     <Filter Include="999. CPP From Client\02. GameManager">
       <UniqueIdentifier>{e64b9547-a287-4215-b622-3b1bb1aa555d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. UI_Camera%28Player%29">
+      <UniqueIdentifier>{54394654-8842-4e7a-9422-516e293d89f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIResourceStore.h">
       <Filter>02. UIResourceStore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Camera.h">
+      <Filter>03. UI_Camera%28Player%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +264,21 @@
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Camera.cpp">
+      <Filter>03. UI_Camera%28Player%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\LockonManager.cpp">
+      <Filter>999. CPP From Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

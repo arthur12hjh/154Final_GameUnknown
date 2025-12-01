@@ -1,4 +1,4 @@
-#include "Engine_Shader_Defines.hlsli"
+#include "Client_Shader_Utils.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 
@@ -612,7 +612,7 @@ PS_WEIGHT_OUT PS_POWER(PS_WEIGHT_IN In)
     Out.vDiffuse = g_vColor;
     
     float diffuse = (g_DiffuseTexture.Sample(MirrorSampler, tex).r - 0.5) * 2 * saturate((In.vLifeTime.y - In.vLifeTime.x));
-    Out.vDiffuse = lerp(g_vColor, float4(0.1, 0.2, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
+    Out.vDiffuse = lerp(g_vColor, float4(0.05, 0.1, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
     
     //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x + diffuse * 0.05, MaskTexcoord.y + diffuse * 0.05)).r * saturate(In.vLifeTime.y - In.vLifeTime.x);
     float2 texcoord = float2(MaskTexcoord.x * 1.2 + diffuse * 0.05 - 0.2 * 0.5, MaskTexcoord.y * 1.2 + diffuse * 0.05 - 0.2 * 0.5);

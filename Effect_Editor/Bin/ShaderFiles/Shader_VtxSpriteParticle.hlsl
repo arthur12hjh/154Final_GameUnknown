@@ -770,7 +770,7 @@ PS_WEIGHT_OUT PS_BLUESIGNAL(PS_WEIGHT_IN In)
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
     
-    Out.vDiffuse = lerp(g_vColor, float4(0.1, 0.2, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
+    Out.vDiffuse = lerp(g_vColor, float4(0.05, 0.1, 1, g_vColor.a), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.4)), 3));
     if (In.vTexcoord.y <= 0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))
     {
         float a = (((1 - (In.vTexcoord.y * (1 / (0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))))) * 4) + 1);
@@ -825,7 +825,7 @@ PS_WEIGHT_OUT PS_BLUEMASK(PS_WEIGHT_IN In)
 
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     
-    Out.vDiffuse = lerp(g_vColor, float4(0.08, 0.12, 1, g_vColor.a * 2), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 2)), 3));
+    Out.vDiffuse = lerp(g_vColor, float4(0.05, 0.1, 1, g_vColor.a * 2), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 1.8)), 2));
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x * 1.2);
     if (0 >= Out.vDiffuse.a)
         discard;

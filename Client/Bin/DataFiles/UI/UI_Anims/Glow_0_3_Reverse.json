@@ -17,8 +17,8 @@
         }
     ],
     "fDuration": 0.30000001192092896,
-    "isBeapBeap": false,
+    "isBeapBeap": true,
     "isInfluenceChildren": true,
     "isLoop": false,
-    "szAnimTag": "Glow_0_3"
+    "szAnimTag": "Glow_0_3_Reverse"
 }

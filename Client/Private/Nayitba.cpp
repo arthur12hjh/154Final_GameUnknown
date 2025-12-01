@@ -124,6 +124,9 @@ HRESULT CNayitba::Damaged(void* pArg)
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 
+	//임시 테스트용 코드. 보이면 지워버리셔도 됩니다
+	m_pGameManager->Start_Lockon();
+
 	return S_OK;
 }
 

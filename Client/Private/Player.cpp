@@ -13,16 +13,14 @@
 #include "GameManager.h"
 #include "Interaction_Component.h"
 #include "Effect.h"
-#include "Trail.h"
 #include "Notify.h"
-#include "TrailEffect.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
 #include "PlayerBattleFSM.h"
 #include "PlayerIdleFSM.h"
 #include "PlayerLockOnFSM.h"
-#include "PlayerState.h"
+#include "Player_HitState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -43,17 +41,15 @@ void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
-	//fsm ��ü
+	// FSM 탐색.
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	
-	//���� FSM�� ���·θ� ���󰡰� ��.. �̰� �ٲ���ϳ�?
+	 
 	if(eState == PLAYER_STATE::STATE_END)
 		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	//Change_PlayerMode���� �� �Է¹��� �� �ְ� ����. 
+	// Change_PlayerMode로 변경해준다.
 	else
 		pNextFSM->Change_FSM(eState);
-
-	m_pCurrentFSM->Clear_FSM();
+		//m_pCurrentFSM->Clear_FSM();
 
 	m_pCurrentFSM = pNextFSM;
 }
@@ -98,17 +94,8 @@ void CPlayer::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	m_pGameManager->Lockon(fTimeDelta);
 	Update_FSM(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
-	{
-		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::IDLE)
-			Change_PlayerMode(PLAYER_MODE::BATTLE);
-		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
-			Change_PlayerMode(PLAYER_MODE::LOCKON);
-		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
-			Change_PlayerMode(PLAYER_MODE::IDLE);
-	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
@@ -168,7 +155,6 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	//��� Ʈ�������� �̵��� ���� �� ����Ǿ�� ��.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -190,11 +176,28 @@ HRESULT CPlayer::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	vHitDir = pDamageDesc->vHitDir;
+	vHitPoint = pDamageDesc->vHitPoint;
+	vImpactDir = pDamageDesc->vImpactDir;
+	fImpactForce = pDamageDesc->fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+
+	m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
+
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// �ӽ��Դϴ� ��� �׽�Ʈ�� ���߿� �Ѱܹްų� �Ѱ��ٵ����� ����� �������ּ���
+		// 임시입니다 잡기 테스트용 나중에 넘겨받거나 넘겨줄데이터 생기면 말좀해주세요
+		// ㄴ 여기서 아마 상태 추가할거같긴 한데 몬스터 본이랑 몬스터 애니메이션 정보 연동해야 될 듯?
 		pCharacter->ActionSuccess(nullptr);
 	}
 
@@ -221,8 +224,7 @@ HRESULT CPlayer::Ready_Components()
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
-	//ĸ�� ��Ʈ�ѷ����� x�� �� ���� y�� ��� ����
-	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	Desc.vSize = _float3(2.5f, 2.5f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
@@ -285,14 +287,6 @@ HRESULT CPlayer::Ready_PartObjects()
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
 
-	CTrail::TRAILHIGHLOW Traildesc;
-	Traildesc.vHigh = _float4(1, 0, 0, 0);
-	Traildesc.vLow = _float4(-1, 0, 0, 0);
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),
-		TEXT("Part_Trail"), &Traildesc)))
-		return E_FAIL;
-	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
-
 	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
@@ -319,9 +313,16 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.iCurrentPotions = 3;
 	m_PlayerDesc.iMaxPotions = 3;
 
+	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.fMaxRushCoolTime = 5.f;
+	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
+
+	m_PlayerDesc.eBetaSkillState.emplace(0, SKILL_STATE::DEFAULT);
+	m_PlayerDesc.eBetaSkillState.emplace(1, SKILL_STATE::DEFAULT);
+
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
-	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
+	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
 
 	return S_OK;
 }
@@ -381,3 +382,54 @@ void CPlayer::Free()
 
 	Safe_Release(m_pCurrentFSM);
 }
+
+
+//m_fTime += fTimeDelta;
+//if (5 <= m_fTime) {
+//	CEffect::EFFECT_TRANSFORM_DESC desc;
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 1.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 30.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 15.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = nullptr;
+//	desc.pRootMatrix = nullptr;
+//	desc.vPos = XMVectorSet(5, 3, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 2.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	m_fTime = 0.f;
+//}
+//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);

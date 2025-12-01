@@ -35,12 +35,20 @@ namespace Client
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
 	enum class PLAYER_STATE { 
-		IDLE, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
+		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, VENDING_INTERACTION,
 		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
 
 		STATE_END
 	};
+	enum class SKILL_STATE {
+		DEFAULT, // 기본상태
+		ACTIVE_ON, // 딱 활성화 됐을 때
+		ACTIVE, // 활성화 상태
+		USE, // 스킬 사용
+		END, // 스킬 없음
+	};
+
 	typedef struct Player_Desc
 	{
 		long long				iMaxHealth;
@@ -60,9 +68,15 @@ namespace Client
 
 		int						iCurrentPotions; // 현재 소지한 포션 개수
 		int						iMaxPotions; // 전체 포션 개수
+		
+		SKILL_STATE				eRushState;					// 러쉬 활성화 여부	
+		float					fMaxRushCoolTime;			// 러쉬 전체 쿨타임
+		float					fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
+
+		map<unsigned int, SKILL_STATE>				eBetaSkillState;			// 스킬ID, 스킬 상태
 
 		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE				ePlayerMode;
+		PLAYER_MODE				ePlayerMode = { PLAYER_MODE::IDLE };
 		class CTransform*		pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr }; 
 	}PLAYER_DESC;

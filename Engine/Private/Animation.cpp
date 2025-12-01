@@ -72,12 +72,13 @@ _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool i
 {
 	/* 내 애니메이션의 현재 재생위치. */
 	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
-
+	// m_fCurrentTrackPosition
+	// 
 	if (m_fCurrentTrackPosition >= m_fDuration)
 	{
 		if (true == isLoop)
 		{
-			m_fCurrentTrackPosition = 0.f;
+			m_fCurrentTrackPosition = m_fCurrentTrackPosition - m_fDuration;
 			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
 				iKeyFrameIndex = 0;
 
