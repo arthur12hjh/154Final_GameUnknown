@@ -40,11 +40,11 @@ HRESULT CNotify::Initialize(void* pArg)
 
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
-	// ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ º¯°æµÉ °æ¿ì, ³ëÆ¼ÆÄÀÌ Å¥¸¦ ÃÊ±âÈ­ÇÏ°í »õ·Î Ã¤¿ö³Ö´Â´Ù.
-	while(!m_NotifyQueue.empty())
+	// ì• ë‹ˆë©”ì´ì…˜ì´ ë³€ê²½ë  ê²½ìš°, ë…¸í‹°íŒŒì´ íë¥¼ ì´ˆê¸°í™”í•˜ê³  ìƒˆë¡œ ì±„ì›Œë„£ëŠ”ë‹¤.
+	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
-	if(nullptr == m_pGameManager)
+	if (nullptr == m_pGameManager)
 		return;
 
 	WCHAR szAnimationTagTmp[MAX_PATH];
@@ -75,8 +75,8 @@ void CNotify::Set_ModelCom(CModel* pModel)
 void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
-	{	
-		// ÀÌº¥Æ® È£Ãâ
+	{
+		// ì´ë²¤íŠ¸ í˜¸ì¶œ
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= m_pModelCom->Get_AnimationKeyFrameIndex())
 		{
 			CallNotify(m_NotifyQueue.top());
@@ -191,10 +191,10 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// Äİ¸®ÀüÀ» »ı¼º Or Äİ¸®Àü On
+	// ì½œë¦¬ì „ì„ ìƒì„± Or ì½œë¦¬ì „ On
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
-	
+
 	// Create Notify
 	// szNotifyArg01	=> ProtoType Name
 	// szNotifyArg02	=> Layer Name
@@ -248,7 +248,7 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
-	/* ¹ÌÀû¿ë
+	/* ë¯¸ì ìš©
 	m_pCharacter->Set_Rotation
 	*/
 

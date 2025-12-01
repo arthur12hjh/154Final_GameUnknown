@@ -73,7 +73,7 @@ namespace Client
 		float					fMaxRushCoolTime;			// 러쉬 전체 쿨타임
 		float					fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
 
-		map<unsigned int, SKILL_STATE>				eBetaSkillState;			// 스킬ID, 스킬 상태
+		SKILL_STATE				eBetaSkillState[4];			// 스킬 상태
 
 		//플레이어의 전투 상태. battle, idle, lockon
 		PLAYER_MODE				ePlayerMode = { PLAYER_MODE::IDLE };

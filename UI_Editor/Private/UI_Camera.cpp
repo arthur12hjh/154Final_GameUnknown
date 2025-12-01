@@ -312,11 +312,8 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;
 	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 
-	/*for (int i = 0; i < 4; ++i)
-		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;*/
-
-	m_PlayerDesc.eBetaSkillState.emplace(0, Client::SKILL_STATE::DEFAULT);
-	m_PlayerDesc.eBetaSkillState.emplace(1, Client::SKILL_STATE::DEFAULT);
+	for (int i = 0; i < 4; ++i)
+		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
 
 	return S_OK;
 }

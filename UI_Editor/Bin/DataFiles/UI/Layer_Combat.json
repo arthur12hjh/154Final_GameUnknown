@@ -1037,6 +1037,50 @@
                 "szProtoTag": "Prototype_GameObject_UI_SkillWrapper",
                 "szUIID": "Combat_Panel_SkillWrapper_1-2",
                 "szUITag": "SkillWrapper"
+            },
+            {
+                "Children": [
+                    {
+                        "TextureDesc": {
+                            "iPass": 0,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_Center_Pivot",
+                            "szTextureComTag": "Com_Texture_UI_Center_Pivot"
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fSizeX": 16.0,
+                        "fSizeY": 16.0,
+                        "fX": 800.0,
+                        "fY": 450.0,
+                        "iDepth": 20,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szLayerTag": "Layer_Combat",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "Aim_Wrappper_Image_2-1",
+                        "szUITag": "Center_Pivot"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fSizeX": 75.0,
+                "fSizeY": 75.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Combat",
+                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                "szUIID": "Combat_Panel_Wrapper_1-3",
+                "szUITag": "Aim_Wrappper"
             }
         ],
         "fAlpha": 1.0,
