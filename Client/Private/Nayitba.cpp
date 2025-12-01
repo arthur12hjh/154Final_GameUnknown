@@ -81,9 +81,18 @@ void CNayitba::Update(_float fTimeDelta)
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
+	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
+	
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
+	}
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
@@ -96,9 +105,6 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
-		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
-
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);

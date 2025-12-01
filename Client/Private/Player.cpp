@@ -176,7 +176,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
-	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
 	_float fImpactForce;
@@ -189,6 +188,8 @@ HRESULT CPlayer::Damaged(void* pArg)
 	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
 
 	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
 
 	m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
