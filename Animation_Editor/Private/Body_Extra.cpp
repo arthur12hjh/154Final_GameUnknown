@@ -64,8 +64,6 @@ void CBody_Extra::Update(_float fTimeDelta)
 	//if (*m_pParentState & CCharacter::STATE_WALK)
 	//	m_pModelCom->Set_AnimationIndex(4);
 
-	m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 

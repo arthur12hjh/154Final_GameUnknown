@@ -37,6 +37,7 @@ public:
 	void	Render_Debug();
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
+	void   Set_DebugColliderVisible(_bool isVisible);
 #endif
 	
 private:

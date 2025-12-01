@@ -36,6 +36,11 @@ HRESULT CColliderRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pSha
     return S_OK;
 }
 
+void CColliderRenderer::Set_DebugColliderVisible(_bool bIsVisible)
+{
+    m_isColliderVisible = bIsVisible;
+}
+
 unique_ptr<GeometricPrimitive> CColliderRenderer::CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop)
 {
     GeometricPrimitive::VertexCollection Vertices;
