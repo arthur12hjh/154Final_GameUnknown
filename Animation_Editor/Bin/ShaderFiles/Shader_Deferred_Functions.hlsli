@@ -160,7 +160,7 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     float NdotL = saturate(dot(vNormal, vFromLight));
     float NdotV = saturate(dot(vNormal, vFromView));
     
-    float fAlpha = max(fRoughness * fRoughness, 0.1f);
+    float fAlpha = max(fRoughness * fRoughness, 0.5f);
     float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;
     
     float D = NDF_ggxtr(vNormal, vHalfVector, fAlpha);
