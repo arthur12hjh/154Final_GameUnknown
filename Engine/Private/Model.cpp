@@ -156,6 +156,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
         m_fBlendElapsed = 0.f;
         m_fBlendRatio = 0.f;
     }
+
     m_fBlendDuration = fLerpDuration;
     m_iCurrentAnimIndex = iAnimIndex;
     m_isLoop = isLoop;

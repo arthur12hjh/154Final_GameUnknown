@@ -459,6 +459,11 @@ void CGameInstance::Set_DebugVisible(_bool isVisible)
 	m_pRenderer->Set_DebugVisible(isVisible);
 }
 
+void CGameInstance::Set_DebugColliderVisible(_bool isVisible)
+{
+	m_pRenderer->Set_DebugColliderVisible(isVisible);
+}
+
 void* CGameInstance::Get_DoF_Desc()
 {
 	return m_pRenderer->Get_DoF_Desc();
