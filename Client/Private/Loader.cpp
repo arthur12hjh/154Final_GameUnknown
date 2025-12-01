@@ -271,12 +271,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
+
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.png",
+	//	"g_ORSSTexture", TRUE);
+	//
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve")))->Import_Texture(3, TEXTURE_TYPE::ORSS,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/CH_P_EVE_Head_ORSS.png",
+	//	"g_ORSSTexture", TRUE);
 
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 

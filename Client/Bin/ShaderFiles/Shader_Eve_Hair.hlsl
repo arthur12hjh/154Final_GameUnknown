@@ -6,8 +6,10 @@ matrix g_PreWorldMatrix, g_PreViewMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
+Texture2D g_OpacityTexture;
 Texture2D g_EmissiveTexture;
 Texture2D g_ORMTexture;
+Texture2D g_ORSSTexture;
 
 //림라이트용 변수
 vector g_vCamPosition;
@@ -206,9 +208,11 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.4f)
+    vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
+    vMtrlDiffuse.a = vMtrlOpacity.r;
+    if (vMtrlDiffuse.a < 0.1f)
         discard;
-   
+    
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
@@ -223,9 +227,11 @@ PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.4f)
+    vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
+    vMtrlDiffuse.a = vMtrlOpacity.r;
+    if (vMtrlDiffuse.a < 0.1f)
         discard;
-   
+    
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);

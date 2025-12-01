@@ -32,8 +32,15 @@ public:
 	void				Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 	_float				Get_AnimationRatio();
 
-	void				Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
-	void				Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void				Set_Animation(const _char* szAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+	void				Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
 protected:
 	class CModel*		m_pBodyModelCom = { nullptr };

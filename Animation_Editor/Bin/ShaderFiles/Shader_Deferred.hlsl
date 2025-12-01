@@ -114,9 +114,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     //Specular Map은 따로 Shade 처리해서 
     else if(vORMDesc.a == 2.f)
     {        
-        fMetallic = 0.f;
+        fOcclusion = vORMDesc.r;
         fRoughness = vORMDesc.g;
-        fOcclusion = vORMDesc.b;
+        fMetallic = 0.f;
         vF0 = float3(0.04, 0.04, 0.04);
     }
     //ORM 처리.

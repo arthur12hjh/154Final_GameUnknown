@@ -6,8 +6,10 @@ matrix g_PreWorldMatrix, g_PreViewMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
+Texture2D g_OpacityTexture;
 Texture2D g_EmissiveTexture;
 Texture2D g_ORMTexture;
+Texture2D g_ORSSTexture;
 
 //림라이트용 변수
 vector g_vCamPosition;
@@ -209,9 +211,9 @@ PS_OUT PS_MAIN_MA_MouthInner_Inst(PS_IN In)
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
-   
+       
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -228,7 +230,7 @@ PS_OUT PS_MAIN_M_MikeEyeBlend_Inst(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -245,7 +247,7 @@ PS_OUT PS_MAIN_M_lacrimal_fluid(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -261,10 +263,14 @@ PS_OUT PS_MAIN_MI_EVE_Head_V02(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
+    //vector vMtrlORSS = g_ORSSTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vMtrlORSS.a = 2.f;
+    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    //Out.vORM = vMtrlORSS;
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
@@ -279,7 +285,7 @@ PS_OUT PS_MAIN_MI_EyeRefractive1(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -292,11 +298,12 @@ PS_OUT PS_MAIN_MI_EVE_Eyeshadow_Occlusion(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vMtrlDiffuse.a = vMtrlDiffuse.r;
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -326,8 +333,11 @@ PS_OUT PS_MAIN_MI_EyeBrow1(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
+    vMtrlDiffuse.a = vMtrlOpacity.r;
     if (vMtrlDiffuse.a < 0.4f)
         discard;
+   
    
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -364,7 +374,7 @@ PS_OUT PS_MAIN_MI_Teeth(PS_IN In)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
@@ -449,7 +459,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_M_MikeEyeBlend_Inst();
@@ -459,7 +469,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_M_lacrimal_fluid();
@@ -489,7 +499,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_EVE_Eyeshadow_Occlusion();
@@ -509,7 +519,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_EyeBrow1();
@@ -519,7 +529,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EyeLight_Inst();
