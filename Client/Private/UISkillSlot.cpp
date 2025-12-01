@@ -36,6 +36,10 @@ HRESULT CUISkillSlot::Initialize(void* pArg)
 		m_tSkillInfo.iSkillIndex = 0;
 	else if (m_tUIDesc.szUITag == TEXT("SkillSlot_1"))
 		m_tSkillInfo.iSkillIndex = 1;
+	else if (m_tUIDesc.szUITag == TEXT("SkillSlot_2"))
+		m_tSkillInfo.iSkillIndex = 2;
+	else if (m_tUIDesc.szUITag == TEXT("SkillSlot_3"))
+		m_tSkillInfo.iSkillIndex = 3;
 
 	m_tSkillInfo.iSkillState = ENUM_CLASS(SKILL_STATE::DEFAULT);
 
@@ -58,6 +62,31 @@ void CUISkillSlot::Update(_float fTimeDelta)
 void CUISkillSlot::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	/*if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+		|| m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE))
+	{
+		if (m_bPlayingAnim == false)
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Skill_") + to_wstring(m_tSkillInfo.iSkillIndex) + TEXT("_Active"));
+			if (AnimTag != m_tUIDesc.m_AnimTags.end())
+				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+			Safe_Release(pHUD);
+		}
+	}
+	*/
+	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
+	{
+		if (m_bPlayingAnim == false)
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+			Safe_Release(pHUD);
+		}
+	}
 }
 
 HRESULT CUISkillSlot::Render()
@@ -67,7 +96,7 @@ HRESULT CUISkillSlot::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(8)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::SKILL_SLOT))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
@@ -128,6 +157,11 @@ HRESULT CUISkillSlot::Ready_Components()
 		TEXT("Com_Texture2"), reinterpret_cast<CComponent**>(&m_pTextureCom2))))
 		return E_FAIL;
 
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Slot_Covor"),
+		TEXT("Com_Texture_UI_Skill_Slot_Covor"), reinterpret_cast<CComponent**>(&m_pCoverTextureCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -148,7 +182,7 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 
 	_bool bSkillUseable = false;
 
-	if (m_tSkillInfo.iSkillIndex != -1)
+	if (m_tSkillInfo.iSkillIndex >= 0)
 	{
 		bSkillUseable = true;
 
@@ -157,10 +191,25 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 	}
 
 	_bool bUseTintColor = false;
+	_bool bUseCoverTexture = false;
 
 	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 		bUseTintColor = true;
+
+	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
+	{
+		bUseCoverTexture = true;
+
+		if (FAILED(m_pCoverTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture3", 0)))
+			return E_FAIL;
+	}
 	
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UseCover", &bUseCoverTexture, sizeof(_bool))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isUseable", &bSkillUseable, sizeof(_bool))))
 		return E_FAIL;
 
@@ -210,13 +259,15 @@ void CUISkillSlot::CallbackEvent(void* pArg)
 	
 	// 이거 애니메이션 매니저로 돌리면 안될지도..
 	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
-		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-	else
 	{
-		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-		if (AnimTag != m_tUIDesc.m_AnimTags.end())
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+		Safe_Release(pHUD);
+		return;
 	}
+
+	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+	if (AnimTag != m_tUIDesc.m_AnimTags.end())
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
 	Safe_Release(pHUD);
 }
@@ -226,7 +277,7 @@ HRESULT CUISkillSlot::Render_Glow()
 	if (FAILED(Bind_GlowShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(9)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::SKILL_SLOT_GLOW))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIGlowBufferCom->Bind_Resources()))
@@ -289,6 +340,7 @@ void CUISkillSlot::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pCoverTextureCom);
 	Safe_Release(m_pTextureCom2);
 	Safe_Release(m_pShadowTextureCom);
 	Safe_Release(m_pGlowTextureCom);

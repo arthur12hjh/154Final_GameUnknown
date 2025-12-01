@@ -87,6 +87,8 @@ HRESULT CFace_Player::Mapping_Shader_Material(_uint iIdx)
 		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MA_TeethOcculusion_Inst1))))
 			return E_FAIL;
 	}
+
+	return S_OK;
 }
 
 HRESULT CFace_Player::Initialize_Prototype()

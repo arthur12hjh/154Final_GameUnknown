@@ -16,6 +16,9 @@ private:
 public :
 	const CHARACTER_SKILL_DESC*				Find_SkillData(_uint iSkillID);
 	const NAYTIBA_NETWORK_DESC*				Find_NaytibaData(_uint iID);
+	
+	const BETA_SKILL_DESC*					Find_BetaSkillData(_uint iSkillID);
+	map<_uint, BETA_SKILL_DESC>*			Get_AllBetaSkillDesc();
 
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
@@ -26,6 +29,8 @@ private:
 	//스킬 데이터
 	map<_uint, CHARACTER_SKILL_DESC>		m_pSkillDatas = {};
 
+	//플레이어 데이터
+	map<_uint, BETA_SKILL_DESC>				m_pBetaSkills = {};
 	//보스 데이터
 	map<_uint, NAYTIBA_NETWORK_DESC>		m_pNaytibaDatas = {};
 
@@ -37,7 +42,7 @@ private:
 	HRESULT									LoadNaytibaData(void* pArg);
 	HRESULT									LoadSkillData();
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
-
+	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
 public:
 	static CDataManager*					Create();
 	virtual void							Free() override;

@@ -36,8 +36,11 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 
 	if (pCharactor)
 	{
-		m_eSkillState = const_cast<map<_uint, SKILL_STATE>*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState);
-		m_ePrevSkillState = *m_eSkillState;
+		for (size_t i = 0; i < 4; ++i)
+		{
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState[i]);
+			m_ePrevSkillState[i] = *m_eSkillState[i];
+		}
 
 		m_eRushState = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
@@ -47,13 +50,20 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_eSkillState = const_cast<map<_uint, SKILL_STATE>*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eBetaSkillState);
-		m_ePrevSkillState = *m_eSkillState;
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
 
-		m_eRushState = const_cast<SKILL_STATE*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eRushState);
+		for (size_t i = 0; i < 4; ++i)
+		{
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
+			m_ePrevSkillState[i] = *m_eSkillState[i];
+		}
+
+		m_eRushState = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
-		m_fMaxRushCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fMaxRushCoolTime);
-		m_fCurrentRushCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fCurrentRushCoolTime);
+		m_fMaxRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);
+		m_fCurrentRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fCurrentRushCoolTime);
+		
+		Safe_Release(pGaraPlayer);
 	}
 #endif
 
@@ -70,19 +80,7 @@ void CUISkillWrapper::Priority_Update(_float fTimeDelta)
 void CUISkillWrapper::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
-
-	//if (m_fRushCoolAmount < 1.f)
-	//{
-	//	m_bRushActive = false; // 플레이어한테 받아오기???
-	//	m_fRushCoolAmount += fTimeDelta / 5.f; // 쿨타임 플레이어한테 받아오기???
-	//}
-	//else
-	//{
-	//	m_bRushActive = true;
-	//	m_fRushCoolAmount = 1.f;
-	//}
 }
-
 
 void CUISkillWrapper::Late_Update(_float fTimeDelta)
 {
@@ -112,44 +110,60 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 				__super::Trigger_Event(TEXT("Rush_Active"), &Arg);
 				break;
 			}
-			/*case SKILL_STATE::USE:
+			case SKILL_STATE::USE:
 			{
 				__super::Trigger_Event(TEXT("Rush_ActiveOff"), &Arg);
 				break;
-			}*/
+			}
 		}
 
 		m_ePrevRushState = *m_eRushState;
 	}
 
-	_int iSkillIndex = -1;
-
-	for(auto& skillState : *m_eSkillState)
+	for (size_t i = 0; i < 4; ++i)
 	{
-		++iSkillIndex;
-
-		if (m_ePrevSkillState[skillState.first] != skillState.second)
+		if (m_ePrevSkillState[i] != *m_eSkillState[i])
 		{
-			UI_SKILL_INFO_DESC tDesc = { skillState.first, ENUM_CLASS(skillState.second) };
+			UI_SKILL_INFO_DESC tDesc = { i, ENUM_CLASS(*m_eSkillState[i]) };
 
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;
 			Arg.pData = &tDesc;
 
-			switch (skillState.second)
+			switch (*m_eSkillState[i])
 			{
 			case SKILL_STATE::DEFAULT:
 			{
-				__super::Trigger_Event(TEXT("Skill_") + to_wstring(iSkillIndex) + TEXT("_Default"), &Arg);
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Default"), &Arg);
+				break;
+			}
+			case SKILL_STATE::ACTIVE_ON:
+			{
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_ActiveOn"), &Arg);
+				
+				_bool bActive = true;
+
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+				Arg.pData = &bActive;
+				__super::Trigger_Event(TEXT("SkillWrapperActive"), &Arg);
+
 				break;
 			}
 			case SKILL_STATE::ACTIVE:
 			{
-				__super::Trigger_Event(TEXT("Skill_") + to_wstring(iSkillIndex) + TEXT("_Active"), &Arg);
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Active"), &Arg);
+
+				break;
+			}
+			case SKILL_STATE::USE:
+			{
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Use"), &Arg);
+
 				break;
 			}
 			}
-			m_ePrevSkillState[skillState.first] = skillState.second;
+			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 	}
 }
@@ -169,10 +183,6 @@ HRESULT CUISkillWrapper::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
 	return S_OK;
 }
 
@@ -183,40 +193,11 @@ HRESULT CUISkillWrapper::Bind_ShaderResources()
 
 HRESULT CUISkillWrapper::Execute(const UI_EVENT_DESC& EventDesc)
 {
-	//const _wstring& Type = EventDesc.szTypeTag;
-	//const _wstring& Arg = EventDesc.szArg;
-	//const _wstring& ActionTag = EventDesc.szActionTag;
-
-	//// 애니메이션
-	//if (Type == TEXT("PlayAnimEvent"))
-	//{
-	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	//	auto AnimTag = m_tUIDesc.m_AnimTags.find(ActionTag);
-
-	//	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	//	Safe_Release(pHUD);
-	//}
-	//if (Type == TEXT("ActionEvent"))
-	//{
-	//}
-
 	return S_OK;
 }
 
 void CUISkillWrapper::CallbackEvent(void* pArg)
 {
-	/*auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
-	if (!arg) return;
-
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	Safe_Release(pHUD);*/
 }
 
 CUISkillWrapper* CUISkillWrapper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

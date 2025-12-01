@@ -577,6 +577,15 @@
     <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
       <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX">
+      <UniqueIdentifier>{defadc56-6f2b-43b0-983a-37d6a3698a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX">
+      <UniqueIdentifier>{ffb9b939-4887-48ad-8e66-f704df660386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX">
+      <UniqueIdentifier>{bfa53255-00ae-4b81-bca8-aeb9e9f0d206}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1177,6 +1186,13 @@
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TrailData.h" />
+  </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1758,6 +1774,12 @@
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TrailData.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">

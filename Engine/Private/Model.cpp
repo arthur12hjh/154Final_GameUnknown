@@ -91,6 +91,11 @@ vector<class CBone*>* CModel::Get_Bones()
     return &m_Bones;
 }
 
+vector<class CMaterial*>* CModel::Get_Materials()
+{
+    return &m_Materials;
+}
+
 _uint CModel::Get_AnimationKeyFrameIndex() const
 {
     return m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex();
@@ -579,6 +584,7 @@ HRESULT CModel::Bind_AllMaterials(_uint iMeshIndex, CShader* pShader, _uint iTex
 
     return S_OK;
 }
+
 _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float fRootMotionMagnification)
 {
     _float fScaledDeltaTime = fTimeDelta * m_fAnimationPlayRate;
@@ -1003,10 +1009,17 @@ HRESULT CModel::Ready_ComputeShader()
             for (_uint i = 0; i < iNumData; ++i)
             {
                 if (i < iNumBones)
-                    XMStoreFloat4x4(&vInit[i].BoneLocalTransformMatrix, m_Bones[i]->Get_TransformationMatrix());
+                {
+                    XMStoreFloat4x4(&vInit[i].BoneLocalTransformMatrix,
+                        m_Bones[i]->Get_TransformationMatrix());
+                    XMStoreFloat4x4(&vInit[i].BoneCombinedTransformMatrix,
+                        m_Bones[i]->Get_CombinedTransformationMatrix());
+                }
                 else
+                {
                     XMStoreFloat4x4(&vInit[i].BoneLocalTransformMatrix, XMMatrixIdentity());
-
+                    XMStoreFloat4x4(&vInit[i].BoneCombinedTransformMatrix, XMMatrixIdentity());
+                }
             }
 
             D3D11_BUFFER_DESC desc{};
@@ -1032,43 +1045,50 @@ HRESULT CModel::Ready_ComputeShader()
             }
 
 
+            // 끝난줄 알았지? Out도 세팅해주자
+            {
+                TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+                TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+                TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+                D3D11_SUBRESOURCE_DATA outSub{};
+                outSub.pSysMem = vInit.data();
+
+                Safe_Release(m_pOutSource);
+                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &outSub, &m_pOutSource)))
+                    return E_FAIL;
+
+                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+                    return E_FAIL;
+            }
+
+            // 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고
+            {
+                TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+                TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+                TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+                D3D11_SUBRESOURCE_DATA rootSub{};
+                rootSub.pSysMem = vInit.data(); 
+
+                Safe_Release(m_pRootSource);
+                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &rootSub, &m_pRootSource)))
+                    return E_FAIL;
+
+                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
+                    return E_FAIL;
+            }
+
+
         }
 
     }
 
-    // 끝난줄 알았지? Out도 세팅해주자
-    {
-        TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
-        TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
-        TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-        TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-        if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, nullptr, &m_pOutSource)))
-            return E_FAIL;
-
-        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
-            return E_FAIL;
-
-        //Safe_AddRef(m_pOutSource);
-    }
-
-    // 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고라고라 에휴
-    {
-        TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
-        TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
-        TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-        TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-        if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, nullptr, &m_pRootSource)))
-            return E_FAIL;
-
-        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
-            return E_FAIL;
-
-        //Safe_AddRef(m_pOutSource);
-    }
 
     D3D11_BUFFER_DESC readbackDesc = {};
     readbackDesc.Usage = D3D11_USAGE_STAGING;

@@ -23,3 +23,4 @@ extern HWND g_hWnd;
 
 
 extern bool				g_bIsImgKeyBoardFoucs;
+extern bool				g_bIsMouseLock;

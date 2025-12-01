@@ -47,6 +47,7 @@ private:
 
 	void Update_KeyFrameTool();
 	void Update_TimeLine();
+	void Update_TextureMap();
 	void Update_EventMaker();
 
 
@@ -62,11 +63,15 @@ private:
 	vector<ANIM_NOTIFY>*							m_pCurrentAnimationEventList = { nullptr };
 	unordered_map<_wstring, vector<ANIM_NOTIFY>>*	m_pAnimationEventMap = { nullptr };
 
+	ImGuiTextFilter						m_AnimSearchFilter;
+
 	_int								m_iSelectedAnimationIndex = 0;
 	_int								m_iBeforeAnimationIndex = -1;
 
 	_int								m_iSelectedEventIndex = -1;
 	_int								m_iBeforeEventIndex = -1;
+
+	_int								m_iSelectedMaterial = 0;
 
 	_int								m_iClickedKeyFrame = -1;
 
@@ -75,6 +80,7 @@ private:
 	_bool								m_bIsActiveTrigger;
 
 	_float								m_fRootMagnification = 0.f;
+	_float								m_fTimeRate = 1.f;
 
 public:
 	static CImGui_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
