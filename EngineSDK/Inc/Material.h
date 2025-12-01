@@ -18,6 +18,13 @@ public:
 	HRESULT Initialize(const _char* pModelFilePath, const binMaterial* pBinMaterial);
 	HRESULT Bind_SRV(class CShader* pShader , const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 
+	ID3D11ShaderResourceView* Get_SRV(_uint iTextureType) {
+		if (m_SRVs[iTextureType].size() > 0)
+			return m_SRVs[iTextureType][0];
+		else
+			return nullptr;
+	}
+
 	HRESULT Import_Texture(aiTextureType eType, ID3D11ShaderResourceView* pSRV);
 private:
 	ID3D11Device*					m_pDevice = { nullptr };
