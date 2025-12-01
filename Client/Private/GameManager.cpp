@@ -72,6 +72,16 @@ const NAYTIBA_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
     return m_pDataManager->Find_NaytibaData(iBossID);
 }
 
+const BETA_SKILL_DESC* CGameManager::Find_BetaSkillData(_uint iSkillID)
+{
+    return m_pDataManager->Find_BetaSkillData(iSkillID);
+}
+
+map<_uint, BETA_SKILL_DESC>* CGameManager::Get_AllBetaSkillDesc()
+{
+    return m_pDataManager->Get_AllBetaSkillDesc();
+}
+
 const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
 {
     return m_pDataManager->Find_AnimationNotifyData(szAnimationTag);
