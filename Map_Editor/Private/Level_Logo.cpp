@@ -15,13 +15,10 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 
 HRESULT CLevel_Logo::Initialize()
 {
-	//if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-	//	return E_FAIL;	
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
-	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
+	//CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -34,7 +31,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			return;
 	}
 
-	CImgui_Manager::GetInstance()->Update(fTimeDelta);
+	//CImgui_Manager::GetInstance()->Update(fTimeDelta);
 
 }
 
@@ -42,7 +39,7 @@ HRESULT CLevel_Logo::Render()
 {
 	SetWindowText(g_hWnd, TEXT("로고레벨이빈다"));
 
-	CImgui_Manager::GetInstance()->Render();
+	//CImgui_Manager::GetInstance()->Render();
 
 	return S_OK;
 }

@@ -24,12 +24,13 @@ HRESULT CLevel_Desert::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player_Test"))))
+		return E_FAIL;
 
 	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;*/
 
+	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
 
 	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
 	if (pManager->Get_MapTool_Desert() == nullptr) // MapTool이 아직 생성되지 않았다면
@@ -148,7 +149,7 @@ HRESULT CLevel_Desert::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_Desert::Ready_Layer_Player(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Player"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Player_Test"),
 		ENUM_CLASS(LEVEL::DESERT), strLayerTag)))
 		return E_FAIL;
 
@@ -170,11 +171,8 @@ CLevel_Desert* CLevel_Desert::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 }
 
 
-
-
-
 void CLevel_Desert::Free()
 {
 	__super::Free();
-
+	CImgui_Manager::GetInstance()->DestroyInstance();
 }

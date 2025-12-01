@@ -77,8 +77,8 @@ private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	CGameInstance* m_pGameInstance = { nullptr };
+
 	CTransform* m_pCameraTransform = { nullptr };
-	CTransform* m_pTransform = { nullptr };
 	CTransform* m_pPlayerTransform = { nullptr };
 
 	CGameObject* m_pLastAddedObject = { nullptr };
@@ -108,6 +108,7 @@ private:
 	_float m_fRadius = { 0.f };
 	_float m_fMaxHeight = { 0.f };
 	_float m_fSmoothFactor = { 0.f };
+	_float m_fMoveSpeed = { 3.f };
 
 	DESESRT_RUIN_OBJECT m_eCurrentObject = {};
 
@@ -122,8 +123,9 @@ private:
 private:
 	CNavigation* m_pNavigation = { nullptr }; // 현재 레벨의 네비게이션 컴포넌트
 
-	class CPlayer*			m_pPlayer = { nullptr };
+	class CPlayer_Test*			m_pPlayer = { nullptr };
 	class CTerrain_Desert*	m_pTerrain = { nullptr };
+	class CCamera_Free* m_pCamera = { nullptr };
 
 
 	_vector				m_vNaviPoints[3] = {};

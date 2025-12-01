@@ -266,7 +266,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
-
+	
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
 	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
@@ -1666,8 +1666,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
-
-
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");

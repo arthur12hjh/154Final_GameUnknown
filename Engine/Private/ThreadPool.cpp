@@ -137,7 +137,10 @@ size_t CThreadPool::GetThreadJobCount()
 
 _bool CThreadPool::IsWorkThread()
 {
-	return 0 < m_iWorkdThread;
+	if (0 < m_iWorkdThread)
+		return true;
+
+	return false;
 }
 
 void CThreadPool::FinishedWorkThread(thread::id ThreadID)
@@ -158,7 +161,7 @@ void CThreadPool::FinishedWorkThread(thread::id ThreadID)
 
 	Desc.pContext->FinishCommandList(FALSE, &pCommandList);
 	m_iWorkdThread--;
-	if (0 < m_iWorkdThread)
+	if (0 >= m_iWorkdThread)
 		m_iWorkdThread = 0;
 
 	m_CommandList.push(pCommandList);

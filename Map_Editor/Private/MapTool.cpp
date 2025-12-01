@@ -1595,6 +1595,8 @@ HRESULT CMapTool::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag
 		Safe_Delete(pDataVector);
 		return E_FAIL;
 	}
+
+	return S_OK;
 }
 
 HRESULT CMapTool::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
