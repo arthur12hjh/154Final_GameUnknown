@@ -36,8 +36,11 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 
 	if (pCharactor)
 	{
-		m_eSkillState = const_cast<map<_uint, SKILL_STATE>*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState);
-		m_ePrevSkillState = *m_eSkillState;
+		for (size_t i = 0; i < 4; ++i)
+		{
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState[i]);
+			m_ePrevSkillState[i] = *m_eSkillState[i];
+		}
 
 		m_eRushState = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
@@ -47,8 +50,11 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_eSkillState = const_cast<map<_uint, SKILL_STATE>*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eBetaSkillState);
-		m_ePrevSkillState = *m_eSkillState;
+		for (size_t i = 0; i < 4; ++i)
+		{
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eBetaSkillState[i]);
+			m_ePrevSkillState[i] = *m_eSkillState[i];
+		}
 
 		m_eRushState = const_cast<SKILL_STATE*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
@@ -122,34 +128,30 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 		m_ePrevRushState = *m_eRushState;
 	}
 
-	_int iSkillIndex = -1;
-
-	for(auto& skillState : *m_eSkillState)
+	for (size_t i = 0; i < 4; ++i)
 	{
-		++iSkillIndex;
-
-		if (m_ePrevSkillState[skillState.first] != skillState.second)
+		if (m_ePrevSkillState[i] != *m_eSkillState[i])
 		{
-			UI_SKILL_INFO_DESC tDesc = { skillState.first, ENUM_CLASS(skillState.second) };
+			UI_SKILL_INFO_DESC tDesc = { i, ENUM_CLASS(*m_eSkillState[i]) };
 
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;
 			Arg.pData = &tDesc;
 
-			switch (skillState.second)
+			switch (*m_eSkillState[i])
 			{
 			case SKILL_STATE::DEFAULT:
 			{
-				__super::Trigger_Event(TEXT("Skill_") + to_wstring(iSkillIndex) + TEXT("_Default"), &Arg);
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Default"), &Arg);
 				break;
 			}
 			case SKILL_STATE::ACTIVE:
 			{
-				__super::Trigger_Event(TEXT("Skill_") + to_wstring(iSkillIndex) + TEXT("_Active"), &Arg);
+				__super::Trigger_Event(TEXT("Skill_") + to_wstring(i) + TEXT("_Active"), &Arg);
 				break;
 			}
 			}
-			m_ePrevSkillState[skillState.first] = skillState.second;
+			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 	}
 }

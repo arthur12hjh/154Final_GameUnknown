@@ -41,10 +41,10 @@ HRESULT CNotify::Initialize(void* pArg)
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
 	// 애니메이션이 변경될 경우, 노티파이 큐를 초기화하고 새로 채워넣는다.
-	while(!m_NotifyQueue.empty())
+	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
-	if(nullptr == m_pGameManager)
+	if (nullptr == m_pGameManager)
 		return;
 
 	WCHAR szAnimationTagTmp[MAX_PATH];
@@ -75,7 +75,7 @@ void CNotify::Set_ModelCom(CModel* pModel)
 void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
-	{	
+	{
 		// 이벤트 호출
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= m_pModelCom->Get_AnimationKeyFrameIndex())
 		{
@@ -194,7 +194,7 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	// 콜리전을 생성 Or 콜리전 On
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
-	
+
 	// Create Notify
 	// szNotifyArg01	=> ProtoType Name
 	// szNotifyArg02	=> Layer Name
@@ -211,7 +211,7 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData1);
 	pHitBoxDesc.pData = pSkillData;
-	
+
 	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData2);
 	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData3);
 	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData4);
