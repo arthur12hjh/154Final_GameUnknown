@@ -3,13 +3,13 @@
         {
             "szTrackTag": "GlowIntensity",
             "vEndParam": [
-                0.1,
+                1.5,
                 0.0,
                 0.0,
                 0.0
             ],
             "vStartParam": [
-                0.5,
+                0.0,
                 0.0,
                 0.0,
                 0.0
@@ -17,8 +17,8 @@
         }
     ],
     "fDuration": 0.5,
-    "isBeapBeap": false,
+    "isBeapBeap": true,
     "isInfluenceChildren": true,
-    "isLoop": true,
-    "szAnimTag": "BeapBeap_1"
+    "isLoop": false,
+    "szAnimTag": "Glow_0_5_Reverse"
 }

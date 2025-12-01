@@ -42,8 +42,12 @@ HRESULT CUIHPBar::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxHp = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iMaxHealth);
-		m_iCurrentHp = const_cast<LONGLONG*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->iCurrentHealth);
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+
+		m_iMaxHp = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxHealth);
+		m_iCurrentHp = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentHealth);
+
+		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
@@ -91,7 +95,7 @@ HRESULT CUIHPBar::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(4)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::HP_GAUGE))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))

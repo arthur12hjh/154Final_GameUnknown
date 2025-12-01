@@ -16,9 +16,9 @@
             ]
         }
     ],
-    "fDuration": 0.5,
-    "isBeapBeap": false,
+    "fDuration": 1.0,
+    "isBeapBeap": true,
     "isInfluenceChildren": true,
     "isLoop": true,
-    "szAnimTag": "BeapBeap_1"
+    "szAnimTag": "BeapBeap_3"
 }

@@ -335,6 +335,7 @@
     <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIBeta.h" />
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHPBar.h" />
     <ClInclude Include="..\Public\UIHPFX.h" />
@@ -348,6 +349,7 @@
     <ClInclude Include="..\Public\UIShield.h" />
     <ClInclude Include="..\Public\UISkillSlot.h" />
     <ClInclude Include="..\Public\UISkillWrapper.h" />
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
@@ -555,6 +557,7 @@
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIBeta.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHPBar.cpp" />
     <ClCompile Include="..\Private\UIHPFX.cpp" />
@@ -568,6 +571,7 @@
     <ClCompile Include="..\Private\UIShield.cpp" />
     <ClCompile Include="..\Private\UISkillSlot.cpp" />
     <ClCompile Include="..\Private\UISkillWrapper.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />

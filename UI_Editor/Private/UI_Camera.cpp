@@ -74,7 +74,7 @@ void CUI_Camera::Priority_Update(_float fTimeDelta)
 				//}
 			}
 
-			if (false == m_bIsLock[1])
+			/*if (false == m_bIsLock[1])
 			{
 				_long		MouseMove = {};
 				if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
@@ -86,7 +86,7 @@ void CUI_Camera::Priority_Update(_float fTimeDelta)
 				{
 					m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
 				}
-			}
+			}*/
 		}
 		else
 		{
@@ -234,7 +234,7 @@ void CUI_Camera::Update(_float fTimeDelta)
 		}
 	}
 
-	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+	/*if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
 	{
 		m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
 		m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
@@ -244,7 +244,7 @@ void CUI_Camera::Update(_float fTimeDelta)
 	{
 		m_PlayerDesc.eRushState = Client::SKILL_STATE::ACTIVE_ON;
 		m_PlayerDesc.fCurrentRushCoolTime = m_PlayerDesc.fMaxRushCoolTime;
-	}
+	}*/
 
 	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	//m_pColliderCom->UpdateColiision(WorldMat);

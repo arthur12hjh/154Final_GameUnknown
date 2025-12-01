@@ -6,16 +6,17 @@
 NS_BEGIN(Engine)
 class CVIBuffer_Rect_Instance;
 class CTexture;
+class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUISkillSlot final : public CUIBase
+class CUISkillWrapperLineFX final : public CUIBase
 {
 private:
-	CUISkillSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUISkillSlot(const CUISkillSlot& Prototype);
-	virtual ~CUISkillSlot() = default;
+	CUISkillWrapperLineFX(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUISkillWrapperLineFX(const CUISkillWrapperLineFX& Prototype);
+	virtual ~CUISkillWrapperLineFX() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,25 +33,12 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	HRESULT Render_Glow();
-	HRESULT Bind_GlowShaderResources();
+	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = nullptr;
 
-private:
-	UI_SKILL_INFO_DESC m_tSkillInfo{};
-
-	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = { nullptr };
-	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };
-	CTexture* m_pTextureCom2 = { nullptr };
-	CTexture* m_pShadowTextureCom = { nullptr };
-	CTexture* m_pGlowTextureCom = { nullptr };
-	CTexture* m_pGlowTextureCom2 = { nullptr };
-	CTexture* m_pCoverTextureCom = { nullptr };
-
-#ifdef _DEBUG
-#endif // DEBUG
+	_float m_fTimeAcc = 0.f;
 
 public:
-	static CUISkillSlot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUISkillWrapperLineFX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

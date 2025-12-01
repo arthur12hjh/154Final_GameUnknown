@@ -44,8 +44,12 @@ HRESULT CUIRushSlot::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_fMaxCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fMaxRushCoolTime);
-		m_fCurrentCoolTime = const_cast<_float*>(&dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera())->Get_Desc()->fCurrentRushCoolTime);
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+
+		m_fMaxCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);
+		m_fCurrentCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fCurrentRushCoolTime);
+
+		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
@@ -64,8 +68,9 @@ void CUIRushSlot::Update(_float fTimeDelta)
 
 	m_fCoolAmount = (*m_fCurrentCoolTime / *m_fMaxCoolTime);
 
+	/*
 	if(m_eRushState == SKILL_STATE::ACTIVE_ON && !m_bPlayingAnim)
-		m_eRushState = SKILL_STATE::ACTIVE;
+		m_eRushState = SKILL_STATE::ACTIVE;*/
 
 #ifdef _DEBUG
 	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
@@ -90,7 +95,7 @@ HRESULT CUIRushSlot::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(10)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::RUSH_SLOT))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
@@ -257,7 +262,7 @@ HRESULT CUIRushSlot::Render_Glow()
 	if (FAILED(Bind_GlowShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(11)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::RUSH_SLOT_GLOW))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIGlowBufferCom->Bind_Resources()))
