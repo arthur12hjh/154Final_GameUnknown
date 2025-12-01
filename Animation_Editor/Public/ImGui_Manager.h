@@ -73,6 +73,8 @@ private:
 	_bool								m_bIsActive;
 	_bool								m_bIsActiveTrigger;
 
+	_float								m_fRootMagnification = 0.f;
+
 public:
 	static CImGui_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free();

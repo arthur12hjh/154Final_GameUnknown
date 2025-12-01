@@ -2,10 +2,10 @@
 // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/ 의 Alternative Method 참고
 float CopySign(float fSource, float fSign)
 {
-    if(fSource < 0.f)
+    if (fSource < 0.f)
         fSource *= -1.f;
     
-    if(fSign < 0.f)
+    if (fSign < 0.f)
         return fSource *= -1.f;
     else
         return fSource;
@@ -224,7 +224,6 @@ float3 ScaleLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcScale, vDstScale, fRatio);
 }
-
 float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
     matSrc[0].xyz = normalize(matSrc[0].xyz);
@@ -235,26 +234,28 @@ float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     matDst[1].xyz = normalize(matDst[1].xyz);
     matDst[2].xyz = normalize(matDst[2].xyz);
     
-    
     float4 vSrcRotation, vDstRotation;
     
-    vSrcRotation.w = sqrt(max(0.f, 1.f + matSrc[0][0] + matSrc[1][1] + matSrc[2][2])) / 2.f;
-    vSrcRotation.x = sqrt(max(0.f, 1.f + matSrc[0][0] - matSrc[1][1] - matSrc[2][2])) / 2.f;
-    vSrcRotation.y = sqrt(max(0.f, 1.f - matSrc[0][0] + matSrc[1][1] - matSrc[2][2])) / 2.f;
-    vSrcRotation.z = sqrt(max(0.f, 1.f - matSrc[0][0] - matSrc[1][1] + matSrc[2][2])) / 2.f;
+    vSrcRotation.w = sqrt(max(0.f, 1.f + matSrc[0][0] + matSrc[1][1] + matSrc[2][2])) * 0.5f;
+    vSrcRotation.x = sqrt(max(0.f, 1.f + matSrc[0][0] - matSrc[1][1] - matSrc[2][2])) * 0.5f;
+    vSrcRotation.y = sqrt(max(0.f, 1.f - matSrc[0][0] + matSrc[1][1] - matSrc[2][2])) * 0.5f;
+    vSrcRotation.z = sqrt(max(0.f, 1.f - matSrc[0][0] - matSrc[1][1] + matSrc[2][2])) * 0.5f;
     
     vSrcRotation.x = CopySign(vSrcRotation.x, matSrc[2][1] - matSrc[1][2]);
     vSrcRotation.y = CopySign(vSrcRotation.y, matSrc[0][2] - matSrc[2][0]);
     vSrcRotation.z = CopySign(vSrcRotation.z, matSrc[1][0] - matSrc[0][1]);
     
-    vDstRotation.w = sqrt(max(0.f, 1.f + matDst[0][0] + matDst[1][1] + matDst[2][2])) / 2.f;
-    vDstRotation.x = sqrt(max(0.f, 1.f + matDst[0][0] - matDst[1][1] - matDst[2][2])) / 2.f;
-    vDstRotation.y = sqrt(max(0.f, 1.f - matDst[0][0] + matDst[1][1] - matDst[2][2])) / 2.f;
-    vDstRotation.z = sqrt(max(0.f, 1.f - matDst[0][0] - matDst[1][1] + matDst[2][2])) / 2.f;
+    vDstRotation.w = sqrt(max(0.f, 1.f + matDst[0][0] + matDst[1][1] + matDst[2][2])) * 0.5f;
+    vDstRotation.x = sqrt(max(0.f, 1.f + matDst[0][0] - matDst[1][1] - matDst[2][2])) * 0.5f;
+    vDstRotation.y = sqrt(max(0.f, 1.f - matDst[0][0] + matDst[1][1] - matDst[2][2])) * 0.5f;
+    vDstRotation.z = sqrt(max(0.f, 1.f - matDst[0][0] - matDst[1][1] + matDst[2][2])) * 0.5f;
     
     vDstRotation.x = CopySign(vDstRotation.x, matDst[2][1] - matDst[1][2]);
     vDstRotation.y = CopySign(vDstRotation.y, matDst[0][2] - matDst[2][0]);
     vDstRotation.z = CopySign(vDstRotation.z, matDst[1][0] - matDst[0][1]);
+    
+    vSrcRotation.w *= -1.f;
+    vDstRotation.w *= -1.f;
  
     vSrcRotation = normalize(vSrcRotation);
     vDstRotation = normalize(vDstRotation);
@@ -271,6 +272,7 @@ float3 TranslationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcTranslation, vDstTranslation, fRatio);
 }
+
 [numthreads(128, 1, 1)]
 void CombinedMatrices(uint3 gid : SV_GroupID,
                       uint3 dtid : SV_DispatchThreadID,
@@ -288,22 +290,18 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
         if (fCurrentTime < 0.f)
             fCurrentTime += g_fDuration;
     }
-
-    // 1) 현재 애니 기준 Local
+    
     float4x4 matLocalOriginal = ComputeLocalMatrix(iBoneIndex, fCurrentTime);
-
-    // 2) Skin 용 Local (루트 위치 0)
     float4x4 matLocalSkin = matLocalOriginal;
+
     if (iBoneIndex == g_iRootIndex)
     {
         matLocalSkin._41 = 0.f;
         matLocalSkin._42 = 0.f;
         matLocalSkin._43 = 0.f;
     }
-
-    // ==========================
-    // ★ 여기서만 보간: Local만 수정
-    // ==========================
+    
+    
     if (g_fBlendRatio > 0.f)
     {
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
@@ -312,40 +310,57 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
         float4 vRotationLocal = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
         float3 vTranslationLocal = TranslationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
 
-        float4x4 matLocalScale = MakeScaleMatrix(float4(vScaleLocal, 1.f));
-        float4x4 matLocalRotation = MakeRotationMatrix(vRotationLocal);
-        float4x4 matLocalTranslation = MakeTranslationMatrix(float4(vTranslationLocal, 1.f));
+        float4x4 S = MakeScaleMatrix(float4(vScaleLocal, 1.f));
+        float4x4 R = MakeRotationMatrix(vRotationLocal);
+        float4x4 T = MakeTranslationMatrix(float4(vTranslationLocal, 1.f));
 
-        matLocalSkin = mul(mul(matLocalScale, matLocalRotation), matLocalTranslation);
+        matLocalSkin = mul(mul(S, R), T);
     }
-
-    // 3) Combined 계산 (원래 로직 그대로)
+    
     float4x4 matCombinedOriginal = matLocalOriginal;
     float4x4 matCombinedSkin = matLocalSkin;
 
     int iParentIndex = InputBone[iBoneIndex].iParentIndex;
     
+    // 요주의 인물. GPU는 CPU와 다르게 선형 연산이 보장되지 않기에 부모 본의 안전 여부를 알 수 없다.
+    // 별 수 있나? 가지뻗듯이 계산을 해줘야한다.
+    // 투패스로 바꿀경우 이 연산이 필요없어지기에, 최적화 1순위. 나중에 보간까지 수정해야해서 살짝 대공사 예정
     while (iParentIndex >= 0)
     {
-        float4x4 parentLocal = ComputeLocalMatrix(iParentIndex, fCurrentTime);
-        matCombinedOriginal = mul(matCombinedOriginal, parentLocal);
+        float4x4 matParentLocalOriginal = ComputeLocalMatrix(iParentIndex, fCurrentTime);
+        float4x4 matParentLocalSkin = matParentLocalOriginal;
 
-        float4x4 matParentSkin = parentLocal;
         if (iParentIndex == g_iRootIndex)
         {
-            matParentSkin._41 = 0.f;
-            matParentSkin._42 = 0.f;
-            matParentSkin._43 = 0.f;
+            matParentLocalSkin._41 = 0.f;
+            matParentLocalSkin._42 = 0.f;
+            matParentLocalSkin._43 = 0.f;
         }
-        matCombinedSkin = mul(matCombinedSkin, matParentSkin);
+
+        if (g_fBlendRatio > 0.f)
+        {
+            float4x4 matPrevParentLocal = PrevLocalMatrix[iParentIndex].BoneLocalTransformMatrix;
+
+            float3 vScaleParent = ScaleLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
+            float4 vRotationParent = RotationLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
+            float3 vTranslationParent = TranslationLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
+
+            float4x4 S = MakeScaleMatrix(float4(vScaleParent, 1.f));
+            float4x4 R = MakeRotationMatrix(vRotationParent);
+            float4x4 T = MakeTranslationMatrix(float4(vTranslationParent, 1.f));
+
+            matParentLocalSkin = mul(mul(S, R), T);
+        }
+        
+        matCombinedOriginal = mul(matCombinedOriginal, matParentLocalOriginal);
+        matCombinedSkin = mul(matCombinedSkin, matParentLocalSkin);
 
         iParentIndex = InputBone[iParentIndex].iParentIndex;
     }
-
+    
     matCombinedOriginal = mul(matCombinedOriginal, g_PreTransformMatrix);
     matCombinedSkin = mul(matCombinedSkin, g_PreTransformMatrix);
-
-    // ★ 여기서부터는 더 이상 Prev와 보간 안 함
+    
     g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = matLocalSkin;
     g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = matCombinedSkin;
 

@@ -74,6 +74,13 @@ void CImGui_Manager::Update(_float fTimeDelta)
 	Update_ToolBar();
 	Update_AnimationList();
 	Update_KeyFrameTool();
+
+	if (nullptr != m_pSelectedObject)
+	{
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta,
+			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
+	}
+
 }
 
 void CImGui_Manager::Late_Update(_float fTimeDelta)
@@ -209,14 +216,14 @@ void CImGui_Manager::Update_ToolBar()
 		ImGui::OpenPopup("EditorPreferences");
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Animation"))
-	{
-		ImGui::OpenPopup("Animation");
-	}
-	ImGui::SameLine();
 	if (ImGui::Button("Sound"))
 	{
 		ImGui::OpenPopup("Sound");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Tips&Help"))
+	{
+		ImGui::OpenPopup("Tips&Help");
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Tools"))
@@ -280,10 +287,10 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			Create_Character(TEXT("Prototype_GameObject_Character"));
 			break;
 		case 2:
-			Create_Character(TEXT("Prototype_GameObject_Dororong"));
+			Create_Extra(TEXT("Prototype_Component_Model_Dororong"));
 			break;
 		case 3:
-			Create_Character(TEXT("Prototype_GameObject_Gigas"));
+			Create_Extra(TEXT("Prototype_Component_Model_Gigas"));
 			break;
 		case 4:
 			Create_Extra(TEXT("Prototype_Component_Model_StatueA"));
@@ -309,24 +316,49 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 	static _int iCurrentIndex = 0;
 	static _int iBeforeIndex = 0;
 
-	static _bool iDebugRenderTargetIndex = FALSE;
-	static _bool iDebugPhysicsIndex = FALSE;
+	static _bool bIsDebugRenderTargetIndex = FALSE;
+	static _bool bIsDebugPhysicsIndex = FALSE;
+	static _bool bIsGridActive = FALSE;
+
+	static _float fTimeMultiply = 1.f;
 
 	if (ImGui::BeginPopup("EditorPreferences"))
 	{
 		ImGui::Text("RenderTargets");
-		if (ImGui::Checkbox("Debug RenderTargets", &iDebugRenderTargetIndex))
+		if (ImGui::Checkbox("Debug RenderTargets", &bIsDebugRenderTargetIndex))
 		{
-			iDebugRenderTargetIndex = !iDebugRenderTargetIndex;
-			m_pGameInstance->Set_DebugVisible(iDebugRenderTargetIndex);
+			//iDebugRenderTargetIndex = !iDebugRenderTargetIndex;
+			m_pGameInstance->Set_DebugVisible(bIsDebugRenderTargetIndex);
 		}
+		ImGui::Text("Collision Box");
+		if (ImGui::Checkbox("Debug Collision Box", &bIsDebugPhysicsIndex))
+		{
+			//iDebugRenderTargetIndex = !iDebugRenderTargetIndex;
+			m_pGameInstance->Set_DebugColliderVisible(bIsDebugPhysicsIndex);
+		}
+		ImGui::Text("Timer");
+		if (ImGui::DragFloat("DeltaTime", &fTimeMultiply, 0.01f, 0.f, 3.f, "%.2f"))
+		{
+			m_pGameInstance->SetGameSpeed(fTimeMultiply);
+		}
+		if (ImGui::DragFloat("RootMotion", &m_fRootMagnification, 0.01f, 0.f, 3.f, "%.2f"))
+		{
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Reset"))
+		{
+			if (nullptr != m_pSelectedObject)
+			{
+				static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+			}
+		}
+
 
 		ImGui::Separator();
 
 		ImGui::EndPopup();
 	}
 }
-
 void CImGui_Manager::Update_AnimationList()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 30)); // 화면 상단 좌표
@@ -598,6 +630,7 @@ void CImGui_Manager::Update_TimeLine()
 	}
 
 
+
 	_bool bIsCanvasHovered = ImGui::IsItemHovered(); // 마우스가 타임라인 바 위에 있는지
 	ImVec2 vMousePos = ImGui::GetMousePos();
 
@@ -609,6 +642,50 @@ void CImGui_Manager::Update_TimeLine()
 		fRatioX = Clamp(fRatioX, 0.f, 1.f);
 		_bool bIsCursorOnTrackPosition = TRUE;
 		fPosY > 5.f ? bIsCursorOnTrackPosition = FALSE : bIsCursorOnTrackPosition = TRUE;
+
+
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_RIGHT))
+		{
+			if (pAnimation->Get_fTrackPosition() == pAnimation->Get_Duration() - 1)
+				pAnimation->Set_CurrentTrackPosition(0.f);
+			else if (pAnimation->Get_fTrackPosition() + 1 >= pAnimation->Get_Duration() - 1)
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			else
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() + 1);
+		}
+
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LEFT))
+		{
+			if (pAnimation->Get_fTrackPosition() == 0.f)
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			else if (pAnimation->Get_fTrackPosition() - 1 <= 0.f)
+				pAnimation->Set_CurrentTrackPosition(0.f);
+			else
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() - 1);
+		}
+
+
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
+		{
+			if (pAnimation->Get_fTrackPosition() == pAnimation->Get_Duration() - 1)
+				pAnimation->Set_CurrentTrackPosition(0.f);
+			else if (pAnimation->Get_fTrackPosition() + 5 >= pAnimation->Get_Duration() - 1)
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			else
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() + 5);
+		}
+
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
+		{
+			if (pAnimation->Get_fTrackPosition() == 0.f)
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			else if (pAnimation->Get_fTrackPosition() - 5 <= 0.f)
+				pAnimation->Set_CurrentTrackPosition(0.f);
+			else
+				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() - 5);
+		}
+
+
 
 		// 마우스 오버시 이벤트 처리는 따로..
 
@@ -658,14 +735,28 @@ void CImGui_Manager::Update_TimeLine()
 			AnimNotify.szNotifyArg01.clear();
 			AnimNotify.szNotifyArg02.clear();
 			AnimNotify.szNotifyArg03.clear();
+			AnimNotify.szNotifyArg04.clear();
+			AnimNotify.szNotifyArg05.clear();
+			AnimNotify.szNotifyArg06.clear();
+			AnimNotify.szNotifyArg07.clear();
+			AnimNotify.szNotifyArg08.clear();
+
+			AnimNotify.iNumData01 = 0;
+			AnimNotify.iNumData02 = 0;
+			AnimNotify.iNumData03 = 0;
+			AnimNotify.iNumData04 = 0;
+			AnimNotify.iNumData05 = 0;
+			AnimNotify.iNumData06 = 0;
+			AnimNotify.iNumData07 = 0;
+			AnimNotify.iNumData08 = 0;
+
+			AnimNotify.fNumData01 = 0;
+			AnimNotify.fNumData02 = 0;
+			AnimNotify.fNumData03 = 0;
+			AnimNotify.fNumData04 = 0;
+
 			AnimNotify.szSocketTag.clear();
 
-			AnimNotify.iNumData1 = 0;
-			AnimNotify.iNumData2 = 0;
-			AnimNotify.iNumData3 = 0;
-			AnimNotify.iNumData4 = 0;
-
-			AnimNotify.bIsLocalPos = TRUE;
 			AnimNotify.vNotifyScale = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyPosition = _float3(0.f, 0.f, 0.f);
 			AnimNotify.vNotifyRotation = _float3(0.f, 0.f, 0.f);
@@ -695,15 +786,28 @@ void CImGui_Manager::Update_EventMaker()
 	static _char szNotifyArg01[MAX_PATH];
 	static _char szNotifyArg02[MAX_PATH];
 	static _char szNotifyArg03[MAX_PATH];
+	static _char szNotifyArg04[MAX_PATH];
+	static _char szNotifyArg05[MAX_PATH];
+	static _char szNotifyArg06[MAX_PATH];
+	static _char szNotifyArg07[MAX_PATH];
+	static _char szNotifyArg08[MAX_PATH];
+
+	static	_int	iNumData01 = {};
+	static	_int	iNumData02 = {};
+	static	_int	iNumData03 = {};
+	static	_int	iNumData04 = {};
+	static	_int	iNumData05 = {};
+	static	_int	iNumData06 = {};
+	static	_int	iNumData07 = {};
+	static	_int	iNumData08 = {};
+
+	static	_float	fNumData01 = {};
+	static	_float	fNumData02 = {};
+	static	_float	fNumData03 = {};
+	static	_float	fNumData04 = {};
+
+
 	static _char szSocketTag[MAX_PATH];
-
-	static	_int	iNumData1 = {};
-	static	_int	iNumData2 = {};
-	static	_int	iNumData3 = {};
-	static	_int	iNumData4 = {};
-
-	static _bool bIsLocalPos = TRUE;
-
 	static _float3 vNotifyScale = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyPosition = _float3(0.f, 0.f, 0.f);
 	static _float3 vNotifyRotation = _float3(0.f, 0.f, 0.f);
@@ -719,14 +823,26 @@ void CImGui_Manager::Update_EventMaker()
 			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg01.c_str());
 			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg02.c_str());
 			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg03.c_str());
+			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg04.c_str());
+			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg05.c_str());
+			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg06.c_str());
+			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg07.c_str());
+			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg08.c_str());
 			strcpy_s(szSocketTag, SelectedAnimNotify.szSocketTag.c_str());
 
-			iNumData1 = SelectedAnimNotify.iNumData1;
-			iNumData2 = SelectedAnimNotify.iNumData2;
-			iNumData3 = SelectedAnimNotify.iNumData3;
-			iNumData4 = SelectedAnimNotify.iNumData4;
+			iNumData01 = SelectedAnimNotify.iNumData01;
+			iNumData02 = SelectedAnimNotify.iNumData02;
+			iNumData03 = SelectedAnimNotify.iNumData03;
+			iNumData04 = SelectedAnimNotify.iNumData04;
+			iNumData05 = SelectedAnimNotify.iNumData05;
+			iNumData06 = SelectedAnimNotify.iNumData06;
+			iNumData07 = SelectedAnimNotify.iNumData07;
+			iNumData08 = SelectedAnimNotify.iNumData08;
 
-			bIsLocalPos = SelectedAnimNotify.bIsLocalPos;
+			fNumData01 = SelectedAnimNotify.fNumData01;
+			fNumData02 = SelectedAnimNotify.fNumData02;
+			fNumData03 = SelectedAnimNotify.fNumData03;
+			fNumData04 = SelectedAnimNotify.fNumData04;
 
 			vNotifyScale = SelectedAnimNotify.vNotifyScale;
 			vNotifyPosition = SelectedAnimNotify.vNotifyPosition;
@@ -741,15 +857,27 @@ void CImGui_Manager::Update_EventMaker()
 			szNotifyArg01[0] = '\0';
 			szNotifyArg02[0] = '\0';
 			szNotifyArg03[0] = '\0';
+			szNotifyArg04[0] = '\0';
+			szNotifyArg05[0] = '\0';
+			szNotifyArg06[0] = '\0';
+			szNotifyArg07[0] = '\0';
+			szNotifyArg08[0] = '\0';
+
+			iNumData01 = 0;
+			iNumData02 = 0;
+			iNumData03 = 0;
+			iNumData04 = 0;
+			iNumData05 = 0;
+			iNumData06 = 0;
+			iNumData07 = 0;
+			iNumData08 = 0;
+
+			fNumData01 = 0;
+			fNumData02 = 0;
+			fNumData03 = 0;
+			fNumData04 = 0;
 
 			szSocketTag[0] = '\0';
-
-			iNumData1 = 0;
-			iNumData2 = 0;
-			iNumData3 = 0;
-			iNumData4 = 0;
-
-			bIsLocalPos = TRUE;
 
 			vNotifyScale = _float3(0.f, 0.f, 0.f);
 			vNotifyPosition = _float3(0.f, 0.f, 0.f);
@@ -768,15 +896,29 @@ void CImGui_Manager::Update_EventMaker()
 		ImGui::InputText("Event Arg01", szNotifyArg01, sizeof(szNotifyArg01));
 		ImGui::InputText("Event Arg02", szNotifyArg02, sizeof(szNotifyArg02));
 		ImGui::InputText("Event Arg03", szNotifyArg03, sizeof(szNotifyArg03));
+		ImGui::InputText("Event Arg04", szNotifyArg04, sizeof(szNotifyArg04));
+		ImGui::InputText("Event Arg05", szNotifyArg05, sizeof(szNotifyArg05));
+		ImGui::InputText("Event Arg06", szNotifyArg06, sizeof(szNotifyArg06));
+		ImGui::InputText("Event Arg07", szNotifyArg07, sizeof(szNotifyArg07));
+		ImGui::InputText("Event Arg08", szNotifyArg08, sizeof(szNotifyArg08));
 
-		ImGui::InputInt("NumData1",  reinterpret_cast<int*>(&iNumData1));
-		ImGui::InputInt("NumData2",  reinterpret_cast<int*>(&iNumData2));
-		ImGui::InputInt("NumData3",  reinterpret_cast<int*>(&iNumData3));
-		ImGui::InputInt("NumData4",  reinterpret_cast<int*>(&iNumData4));
+		ImGui::InputInt("Int NumData1",  reinterpret_cast<_int*>(&iNumData01));
+		ImGui::InputInt("Int NumData2",  reinterpret_cast<_int*>(&iNumData02));
+		ImGui::InputInt("Int NumData3",  reinterpret_cast<_int*>(&iNumData03));
+		ImGui::InputInt("Int NumData4",  reinterpret_cast<_int*>(&iNumData04));
+		ImGui::InputInt("Int NumData5",  reinterpret_cast<_int*>(&iNumData05));
+		ImGui::InputInt("Int NumData6",  reinterpret_cast<_int*>(&iNumData06));
+		ImGui::InputInt("Int NumData7",  reinterpret_cast<_int*>(&iNumData07));
+		ImGui::InputInt("Int NumData8",  reinterpret_cast<_int*>(&iNumData08));
+
+		ImGui::InputFloat("Float NumData1",  reinterpret_cast<_float*>(&fNumData01));
+		ImGui::InputFloat("Float NumData2",  reinterpret_cast<_float*>(&fNumData02));
+		ImGui::InputFloat("Float NumData3",  reinterpret_cast<_float*>(&fNumData03));
+		ImGui::InputFloat("Float NumData4",  reinterpret_cast<_float*>(&fNumData04));
 
 		ImGui::InputText("SocketMatrix Tag", szSocketTag, sizeof(szSocketTag));
-		ImGui::Checkbox("Is Local Position", &bIsLocalPos);
 
+		ImGui::InputFloat3("Scale", reinterpret_cast<float*>(&vNotifyScale), "%.3f");
 		ImGui::InputFloat3("Position", reinterpret_cast<float*>(&vNotifyPosition), "%.3f");
 		ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&vNotifyRotation));
 
@@ -793,8 +935,26 @@ void CImGui_Manager::Update_EventMaker()
 			SelectedAnimNotify.szNotifyTag = szNotifyEditTag;
 			SelectedAnimNotify.szNotifyArg01 = szNotifyArg01;
 			SelectedAnimNotify.szNotifyArg02 = szNotifyArg02;
+			SelectedAnimNotify.szNotifyArg03 = szNotifyArg03;
+			SelectedAnimNotify.szNotifyArg04 = szNotifyArg04;
+			SelectedAnimNotify.szNotifyArg05 = szNotifyArg05;
+			SelectedAnimNotify.szNotifyArg06 = szNotifyArg06;
+			SelectedAnimNotify.szNotifyArg07 = szNotifyArg07;
+			SelectedAnimNotify.szNotifyArg08 = szNotifyArg08;
+			SelectedAnimNotify.iNumData01 = iNumData01;
+			SelectedAnimNotify.iNumData02 = iNumData02;
+			SelectedAnimNotify.iNumData03 = iNumData03;
+			SelectedAnimNotify.iNumData04 = iNumData04;
+			SelectedAnimNotify.iNumData05 = iNumData05;
+			SelectedAnimNotify.iNumData06 = iNumData06;
+			SelectedAnimNotify.iNumData07 = iNumData07;
+			SelectedAnimNotify.iNumData08 = iNumData08;
+			SelectedAnimNotify.fNumData01 = fNumData01;
+			SelectedAnimNotify.fNumData02 = fNumData02;
+			SelectedAnimNotify.fNumData03 = fNumData03;
+			SelectedAnimNotify.fNumData04 = fNumData04;
 			SelectedAnimNotify.szSocketTag = szSocketTag;
-			SelectedAnimNotify.bIsLocalPos = bIsLocalPos;
+			SelectedAnimNotify.vNotifyScale = vNotifyScale;
 			SelectedAnimNotify.vNotifyPosition = vNotifyPosition;
 			SelectedAnimNotify.vNotifyRotation = vNotifyRotation;
 			SelectedAnimNotify.iNotifyKeyFrame = m_iClickedKeyFrame;

@@ -13,6 +13,7 @@
 
 #include "GameInstance.h"
 #include "StringHelper.h"
+#include "Grid.h"
 
 #include "Body_Character.h"
 #include "Face_Character.h"
@@ -21,6 +22,7 @@
 #include "Body_Dororong.h"
 #include "Body_Gigas.h"
 #include "Body_Extra.h"
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -108,6 +110,12 @@ HRESULT CLoader::Loading_For_Editor()
 		return E_FAIL;
 
 	_matrix			PreTransformMatrix = XMMatrixIdentity();
+
+	/* For.Prototype_Component_Model_Grid */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Grid"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/GridModel/Plane_Grid.fbx", PreTransformMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Dororong */
 	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -202,6 +210,11 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Grid */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Grid"),
+		CGrid::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Body_Character */
