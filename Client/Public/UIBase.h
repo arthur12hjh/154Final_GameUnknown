@@ -67,6 +67,7 @@ public:
 	}
 
 	void Set_Position(_float fX, _float fY);
+	void Set_Rotation(_float fRotation);
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);

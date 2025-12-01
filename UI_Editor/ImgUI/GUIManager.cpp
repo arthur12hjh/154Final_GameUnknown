@@ -62,9 +62,10 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_ViewModes.push_back(TEXT("Editor"));
     m_ViewModes.push_back(TEXT("Debug"));
 
-    m_AnimTrackTags.reserve(10);
+    m_AnimTrackTags.reserve(20);
     m_AnimTrackTags.push_back(TEXT("Position"));
     m_AnimTrackTags.push_back(TEXT("Size"));
+    m_AnimTrackTags.push_back(TEXT("Rotation"));
     m_AnimTrackTags.push_back(TEXT("Alpha"));
     m_AnimTrackTags.push_back(TEXT("Text_Color"));
     m_AnimTrackTags.push_back(TEXT("Texture_UV"));
@@ -674,6 +675,12 @@ void CGUIManager::View_Options()
             GUI::EndTabItem();
         }
 
+        if (GUI::BeginTabItem("Rotation"))
+        {
+            Set_Rotation();
+            GUI::EndTabItem();
+        }
+
         if (GUI::BeginTabItem("Texture"))
         {
             Set_Texture();
@@ -836,6 +843,43 @@ void CGUIManager::Set_Position()
         UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
         Desc.fOffsetX = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
         Desc.fOffsetY = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
+
+        m_pTargetUI->Set_UIBase_OriginDesc(Desc);
+    }
+    GUI::PopStyleColor();
+}
+
+void CGUIManager::Set_Rotation()
+{
+    string CurrentRot = "CurrentRot : " + to_string(m_pTargetUI->Get_UIBase_Desc().fRotation);
+
+    _vector vRot = m_pTargetUI->GetTransform()->Get_State(STATE::LOOK);
+
+    string Rot = "Origin : " + to_string(m_pTargetUI->Get_UIBase_OriginDesc().fRotation);
+
+    GUI::Separator();
+    GUI::Text(CurrentRot.c_str());
+    GUI::Separator();
+    GUI::Text(Rot.c_str());
+    GUI::Separator();
+
+    GUI::DragFloat("Rotation", &m_pTargetUI->Get_UIBase_Desc().fRotation, 1.f, -180.f, 180.f, "%.2f");
+
+    m_pTargetUI->Set_Rotation(m_pTargetUI->Get_UIBase_Desc().fRotation);
+
+    if (GUI::Button("Reset"))
+    {
+        m_pTargetUI->Set_Rotation(m_pTargetUI->Get_UIBase_OriginDesc().fRotation);
+        m_pTargetUI->Get_UIBase_Desc().fRotation = m_pTargetUI->Get_UIBase_OriginDesc().fRotation;
+    }
+
+    GUI::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.6f, 0.f, 1.0f));
+    if (GUI::Button("Apply"))
+    {
+        //*pOldPos = *pEditedPos;
+
+        UIBASE_DESC Desc = m_pTargetUI->Get_UIBase_Desc();
+        Desc.fRotation = m_pTargetUI->Get_UIBase_Desc().fRotation;
 
         m_pTargetUI->Set_UIBase_OriginDesc(Desc);
     }

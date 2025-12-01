@@ -225,6 +225,8 @@
     <ClCompile Include="..\..\Client\Private\UIShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp" />
+    <ClCompile Include="..\..\Client\Private\UISkillWrapperLineFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />

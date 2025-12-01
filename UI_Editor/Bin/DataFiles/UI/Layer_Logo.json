@@ -11,6 +11,7 @@
                 "fAlpha": 1.0,
                 "fOffsetX": -420.0,
                 "fOffsetY": -150.0,
+                "fRotation": 0.0,
                 "fSizeX": 650.0,
                 "fSizeY": 162.5,
                 "fX": 800.0,
@@ -37,6 +38,7 @@
                         "fAlpha": 0.0,
                         "fOffsetX": -85.0,
                         "fOffsetY": 0.0,
+                        "fRotation": 0.0,
                         "fSizeX": 20.0,
                         "fSizeY": 20.0,
                         "fX": 153.0,
@@ -85,6 +87,14 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 },
                                 {
+                                    "szActionTag": "Default",
+                                    "szArg": "Default",
+                                    "szSubscribeEventTags": [
+                                        "Start_Button_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                },
+                                {
                                     "szActionTag": "Hover",
                                     "szArg": "Hover",
                                     "szSubscribeEventTags": [
@@ -112,6 +122,7 @@
                         "fAlpha": 1.0,
                         "fOffsetX": -22.0,
                         "fOffsetY": 0.0,
+                        "fRotation": 0.0,
                         "fSizeX": 152.0,
                         "fSizeY": 25.0,
                         "fX": 153.0,
@@ -160,6 +171,14 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 },
                                 {
+                                    "szActionTag": "Default",
+                                    "szArg": "Default",
+                                    "szSubscribeEventTags": [
+                                        "Start_Button_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                },
+                                {
                                     "szActionTag": "Hover",
                                     "szArg": "Hover",
                                     "szSubscribeEventTags": [
@@ -178,6 +197,7 @@
                 "fAlpha": 1.0,
                 "fOffsetX": -647.0,
                 "fOffsetY": 0.0,
+                "fRotation": 0.0,
                 "fSizeX": 198.0,
                 "fSizeY": 38.0,
                 "fX": 800.0,
@@ -207,12 +227,37 @@
                             "szTypeTag": "ActionEvent"
                         },
                         {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
                             "szActionTag": "Default",
                             "szArg": "Default",
                             "szTypeTag": "PlayAnimEvent"
                         }
                     ],
                     "Start_Button_Hover": [
+                        {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
+                            "szActionTag": "Click",
+                            "szArg": "Change_Level",
+                            "szTypeTag": "ActionEvent"
+                        },
+                        {
+                            "szActionTag": "Default",
+                            "szArg": "Default",
+                            "szTypeTag": "PlayAnimEvent"
+                        },
                         {
                             "szActionTag": "Click",
                             "szArg": "Change_Level",
@@ -260,6 +305,7 @@
         "fAlpha": 1.0,
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
+        "fRotation": 0.0,
         "fSizeX": 1600.0,
         "fSizeY": 900.0,
         "fX": 800.0,
