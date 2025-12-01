@@ -1,5 +1,4 @@
-#include "Engine_Shader_Defines.hlsli"
-
+#include "Client_Shader_Utils.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 textureCUBE g_Texture;

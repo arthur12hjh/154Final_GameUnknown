@@ -406,6 +406,20 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
+	/* For.Prototype_Component_Shader_Eve_Face */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Eve_Face");
+	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Eve_Face.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_Component_Shader_Eve_Hair */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Eve_Hair");
+	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Eve_Hair.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Shader_VtxAnimMesh */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Instance_Model");
 	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/VTX_InstnaceMesh.hlsl"), VTX_NONEANIM_INSTANCE_DESC::Elements, VTX_NONEANIM_INSTANCE_DESC::iNumElements);

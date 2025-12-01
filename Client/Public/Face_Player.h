@@ -15,6 +15,15 @@ NS_BEGIN(Client)
 class CFace_Player final : public CPlayer_Parts
 {
 public:
+	enum class FACE_MATERIAL {
+		//이 4개는 그냥 둬야함
+		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR,
+
+		MA_MouthInner_Inst, M_MikeEyeBlend_Inst, M_lacrimal_fluid,
+		MI_EVE_Head_V02, MI_EyeRefractive1, MI_EVE_Eyeshadow_Occlusion,
+		NewMaterial, MI_EyeBrow1, EyeLight_Inst,
+		MI_Teeth, MA_TeethOcculusion_Inst1,
+	};
 	typedef struct tagFace_Player_Desc : public CPartObject::PARTOBJECT_DESC
 	{
 		void*			pBodyPtr = { nullptr };
@@ -24,6 +33,9 @@ private:
 	CFace_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFace_Player(const CFace_Player& Prototype);
 	virtual ~CFace_Player() = default;
+
+public:
+	HRESULT Mapping_Shader_Material(_uint iIdx);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
