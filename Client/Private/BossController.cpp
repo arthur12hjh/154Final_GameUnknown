@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "BehaviorTree.h"
 #include "GameManager.h"
+#include "Nayitba.h"
 #include "Player.h"
 #include "BossBlackBoard.h"
 
@@ -31,11 +32,11 @@ HRESULT CBossController::Initialize(void* pArg)
     if (FAILED(Ready_Behavior(*pControllerDesc)))
         return E_FAIL;
 
-    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
-    pBossBlackBoard->SetTarget(pPlayer);
-    Safe_Release(pPlayer);
-    Safe_Release(pBossBlackBoard);
+    //auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    //auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+    //pBossBlackBoard->SetTarget(pPlayer);
+    //Safe_Release(pPlayer);
+    //Safe_Release(pBossBlackBoard);
     return S_OK;
 }
 
@@ -45,9 +46,15 @@ void CBossController::Priority_Update(_float fTimeDelta)
 
 void CBossController::Update(_float fTimeDelta)
 {
+    auto pNayitba = static_cast<CNayitba*>(m_pParent);
+    auto pTargetList = pNayitba->GetTraceObejectList();
+
     auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    pBossBlackBoard->SetTargetDistacne();
+    if(!pTargetList->empty())
+        pBossBlackBoard->SetTarget(pTargetList->front());
+
     Safe_Release(pBossBlackBoard);
+
     m_pBehaviorTree->Update(fTimeDelta);
 }
 
