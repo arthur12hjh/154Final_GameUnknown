@@ -56,8 +56,8 @@ private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 	VOLUMETRIC_DESC						m_VolumetricDesc = {};
 	_float								m_fDensity = { 0.065f }; 
-	_float								m_fStepSize = { 0.125f };
-	_float								m_fVolumetricG = { 0.001f };
+	_float								m_fStepSize = { 0.055f };
+	_float								m_fVolumetricG = { 0.028f };
 	_bool								m_isVolumetric = { false };
 
 	_uint2								m_vScreenSize = {};

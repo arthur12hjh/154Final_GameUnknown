@@ -145,13 +145,13 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-	CCTDesc.contactOffset = 0.1f;             // 충돌 감지 오프셋
-	CCTDesc.stepOffset = PxMin(0.4f, CCTDesc.height * 0.3f);              // 계단 올라갈 수 있는 높이
-	CCTDesc.slopeLimit = cosf(PxPi / 3);      // 오르막 각도 제한
+	CCTDesc.contactOffset = 0.05f;                // 충돌 감지 오프셋
+	CCTDesc.stepOffset = 0.35f;                // 계단 올라갈 수 있는 높이
+	CCTDesc.slopeLimit = cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;
-	CCTDesc.scaleCoeff = 0.95f;
-	CCTDesc.invisibleWallHeight = CCTDesc.stepOffset + 0.05f;
-	CCTDesc.maxJumpHeight = CCTDesc.stepOffset;
+	CCTDesc.scaleCoeff = 0.9f;
+	CCTDesc.invisibleWallHeight = 0.0f;
+	CCTDesc.maxJumpHeight = 0.0f;
 	CCTDesc.reportCallback = m_pHitReporter;
 	CCTDesc.behaviorCallback = m_pBehaviorCallback;
 	CCTDesc.nonWalkableMode = PxControllerNonWalkableMode::ePREVENT_CLIMBING;
@@ -189,7 +189,7 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	// 선택적 세팅
 	CCTDesc.contactOffset		= 0.05f;                // 충돌 감지 오프셋
 	CCTDesc.stepOffset			= 0.35f;                // 계단 올라갈 수 있는 높이
-	CCTDesc.slopeLimit			= cosf(PxPi / 3);      // 오르막 각도 제한
+	CCTDesc.slopeLimit			= cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density				= 10.0f;
 	CCTDesc.scaleCoeff			= 0.9f;
 	CCTDesc.invisibleWallHeight = 0.0f;

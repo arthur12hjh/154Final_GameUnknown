@@ -13,7 +13,7 @@ CPlayer_SheatheHairpin::CPlayer_SheatheHairpin()
 void CPlayer_SheatheHairpin::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::SHEATHE_HAIRPIN;
-	m_pPlayer->Set_Animation("Proto_Run_Blade_Start", false, 1.2f); 
+	m_pPlayer->Set_Animation("Proto_Run_Blade_Start", false, 1.2f, 0.2f); 
 }
 
 PLAYER_TRANSITION_DESC CPlayer_SheatheHairpin::Update(_float fTimeDelta)

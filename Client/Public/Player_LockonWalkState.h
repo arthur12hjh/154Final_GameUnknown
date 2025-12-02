@@ -9,7 +9,7 @@ class CPlayer_LockonWalkState final : public CPlayerState
 public:
 	enum class DIRECTION { STRAIGHT, LEFT, RIGHT, BACKWARD };
 private:
-	CPlayer_LockonWalkState();
+	CPlayer_LockonWalkState(_bool isRunning = false);
 	virtual ~CPlayer_LockonWalkState() = default;
 
 public:
@@ -21,7 +21,7 @@ public:
 
 private:
 	_bool m_isRunStart = { true };
-
+	_bool m_isRunning = { false };
 public:
 	static	CPlayer_LockonWalkState* Create(void* pArg);
 	virtual	void			   Free() override;

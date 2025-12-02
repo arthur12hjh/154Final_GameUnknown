@@ -754,8 +754,8 @@ void CRenderer::Render_Debug()
 
 	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-	//	return;
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
+		return;
 
 }
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)

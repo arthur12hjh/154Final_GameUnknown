@@ -22,6 +22,11 @@ CPlayerState::CPlayerState()
 	m_tNextState.pArg = nullptr;
 }
 
+_bool CPlayerState::isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_STATE ePlayerState)
+{
+	return true;
+}
+
 void CPlayerState::Start(void* pArg)
 {
 }

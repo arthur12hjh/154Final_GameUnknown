@@ -79,9 +79,13 @@ PLAYER_TRANSITION_DESC CPlayer_DrawHairpin::Update(_float fTimeDelta)
 
     if (true == isAnimFinished)
     {
-        m_tNextState.eNextState = PLAYER_STATE::WALK_END;
+        m_tNextState.eNextState = PLAYER_STATE::WALK;
         m_tNextState.eMode = PLAYER_MODE::BATTLE;
         m_tNextState.isChangeMode = true;
+        PLAYER_BATTLEWALK_DESC Desc;
+        Desc.isEvade = true;
+        Desc.isLand = true;
+        m_tNextState.pArg = &Desc;
     }
 
     return m_tNextState;
