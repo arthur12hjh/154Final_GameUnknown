@@ -153,10 +153,12 @@ private:
 	ID3D11Buffer* m_pOutSource = { nullptr };
 	ID3D11Buffer* m_pRootSource = { nullptr };
 	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
+	ID3D11Buffer* m_pLerpBoneMatrices = { nullptr };
 	ID3D11Buffer* m_pOutReadBack = { nullptr };
 
 	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView* m_pLerpBoneMatricesSRV = { nullptr };
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;

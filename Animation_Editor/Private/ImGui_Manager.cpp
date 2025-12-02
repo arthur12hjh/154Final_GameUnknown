@@ -496,7 +496,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
-	Update_TextureMap();
+	//Update_TextureMap();
 	Update_EventMaker();
 
 	ImGui::End();
@@ -518,7 +518,7 @@ void CImGui_Manager::Update_TimeLine()
 		return;
 	}
 
-	ImGui::BeginChild(u8"ChildTimeLine", ImVec2(0, 500), true);
+	//ImGui::BeginChild(u8"ChildTimeLine", ImVec2(0, 500), true);
 	
 	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 360.f);
 
@@ -805,7 +805,7 @@ void CImGui_Manager::Update_TimeLine()
 	}
 
 
-	ImGui::EndChild();
+	//ImGui::EndChild();
 
 }
 

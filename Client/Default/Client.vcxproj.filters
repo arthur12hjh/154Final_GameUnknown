@@ -1244,6 +1244,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Deco_FindTarget.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+	</ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1858,6 +1861,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Deco_FindTarget.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+	</ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

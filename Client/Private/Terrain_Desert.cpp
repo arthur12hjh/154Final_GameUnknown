@@ -27,6 +27,7 @@ HRESULT CTerrain_Desert::Initialize(void* pArg)
 
 	m_pGameInstance->Add_Terrain_ToPhysx(m_pVIBufferCom);
 
+
 	return S_OK;
 }
 
