@@ -548,9 +548,9 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Weapon */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

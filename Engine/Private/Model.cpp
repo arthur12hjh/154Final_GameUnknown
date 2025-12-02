@@ -146,7 +146,7 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
 
 void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
-    if (m_iCurrentAnimIndex == iAnimIndex || bIsRestart == FALSE)
+    if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
         return;
 
     if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
