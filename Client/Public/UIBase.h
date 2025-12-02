@@ -48,12 +48,12 @@ public:
 		m_iZOrder = iDepth;
 	}
 
-	void Set_Parent(CGameObject* pParent) {
+	/*void Set_Parent(CGameObject* pParent) {
 		m_pParent = pParent;
 	}
 	CUIBase* Get_Parent() {
 		return dynamic_cast<CUIBase*>(m_pParent);
-	}
+	}*/
 
 	void Set_DrawType(DRAW_TYPE eDrawType) {
 		m_tUIDesc.iDrawType = ENUM_CLASS(eDrawType);
@@ -88,6 +88,8 @@ public:
 
 	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
 
+	void Set_TargetPos(const _vector& pPos) { m_pTargetPos = pPos; }
+
 #ifdef _DEBUG
 	void Render_Debug_Rect();
 #endif
@@ -107,6 +109,8 @@ protected:
 	_bool					m_bFollowParent{ true };
 	_bool					m_bPlayingAnim{ false };
 
+	_vector					m_pTargetPos{0.f};
+
 private:
 	HRESULT Ready_Texture();
 	HRESULT Ready_Events();
@@ -117,7 +121,6 @@ private:
 
 	// ★ 공통 유효성 검사: 항상 UI_EVENT_ARG_DESC* 만 허용
 	bool ValidateEventArg(void* pArg) const;
-
 
 #ifdef _DEBUG
 	HRESULT Ready_Components_For_Debug();

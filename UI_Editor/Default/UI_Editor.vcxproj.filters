@@ -373,6 +373,39 @@
     <ClCompile Include="..\..\Client\Private\UISkillWrapperOnFX.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_IdleWalkEndState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIWorldWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIMonsterHPBar.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIMonsterHPFX.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIMonsterShield.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossHPBar.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossHPBarFX.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossShield.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_SheatheHairpin.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
