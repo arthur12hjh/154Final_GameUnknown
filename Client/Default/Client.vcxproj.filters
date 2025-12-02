@@ -1155,9 +1155,6 @@
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerBattleFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
     </ClInclude>
@@ -1179,14 +1176,8 @@
     <ClInclude Include="..\Public\Player_LockonWalkState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerLockonFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PlayerIdleFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHPBar.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
@@ -1804,9 +1795,6 @@
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerBattleFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PlayerFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
     </ClCompile>
@@ -1828,14 +1816,8 @@
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerLockonFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerIdleFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Character</Filter>

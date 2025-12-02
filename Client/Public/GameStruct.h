@@ -71,7 +71,7 @@ namespace Client
 
 		int								iCurrentPotions; // 현재 소지한 포션 개수
 		int								iMaxPotions; // 전체 포션 개수
-		
+
 		//
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
@@ -82,13 +82,20 @@ namespace Client
 
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
-		SKILL_STATE						eBetaSkillState[4];			// 사용중인 스킬 상태
+		SKILL_STATE						eBetaSkillState[4];
+		//_bool							eBetaSkillState[4];			// 사용중인 스킬 상태 여부
 		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
 
 		// 플레이어의 전투 상태. battle, idle, lockon
 		PLAYER_MODE						ePlayerMode = { PLAYER_MODE::IDLE };
-		class CTransform*				pPlayerTransform = { nullptr };
-		class CCharacterController*		pPlayerController = { nullptr }; 
+		class CTransform* pPlayerTransform = { nullptr };
+		class CCharacterController* pPlayerController = { nullptr };
+
+		bool   isRequestLockonToggle = { false };
+		float  fCurrentMinDist = { FLT_MAX };
+		float  fModeTimer = { 0.f };
+		bool   HasTarget = { false };
+
 	}PLAYER_DESC;
 
 	// 스킬 구조체
