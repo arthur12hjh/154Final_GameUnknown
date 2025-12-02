@@ -117,7 +117,6 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (true == m_isLock)
     {
         Get_LockOnPoint();
-        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
 
         if (!m_pLockonUI)
         {
@@ -139,11 +138,11 @@ void CLockonManager::Lockon(_float fTimeDelta)
         }
     }
 
-    if (false == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
-        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
-            m_pTarget->GetTransform()->Get_State(STATE::POSITION),
-            0.15f);
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
+                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
 }
 
