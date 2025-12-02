@@ -589,6 +589,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX">
       <UniqueIdentifier>{bfa53255-00ae-4b81-bca8-aeb9e9f0d206}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1188,7 +1191,6 @@
     <ClInclude Include="..\Public\LockonManager.h">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\Player_IdleWalkEndState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
     </ClInclude>
@@ -1197,6 +1199,11 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_SheatheHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1778,7 +1785,6 @@
     <ClCompile Include="..\Private\LockonManager.cpp">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClCompile>
@@ -1794,6 +1800,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1839,12 +1848,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
