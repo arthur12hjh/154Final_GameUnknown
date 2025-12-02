@@ -974,16 +974,45 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Spectrum_Test */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Spectrum_Test");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SpectrumTest.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
-
 	/* For.Prototype_Component_Effect_Slash_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashSpark.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Heal */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Heal");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Heal.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Evasion */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Evasion");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Evasion.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_SwordCharge */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SwordCharge");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordCharge.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_ChargeAttack_AfterSword */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_ChargeAttack_AfterSword");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ChargeAttackAfterSword.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_SlashSkill */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SlashSkill");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashSkill.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Shock */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Shock");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Parrying */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Parrying");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 
 	/* For.Prototype_Component_TrailEffect_Test */

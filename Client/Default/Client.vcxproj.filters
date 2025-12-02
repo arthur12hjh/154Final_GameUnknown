@@ -565,6 +565,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
       <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{f2947632-fb08-41fc-8f2d-302eabf15e54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1155,6 +1158,9 @@
     <ClInclude Include="..\public\Deco_CheckAlive.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1725,6 +1731,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

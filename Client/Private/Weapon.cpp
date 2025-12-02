@@ -58,12 +58,33 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	//m_pSpark->Update(fTimeDelta);
-	//
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-	//	m_pSpark->Stop();
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-	//	m_pSpark->Play();
+	m_pSpark->Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+		m_pSpark->Stop();
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+		m_pSpark->Play();
+	if (nullptr != m_pCharge) {
+		m_pCharge->Update(fTimeDelta);
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->Play();
+		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->End();
+		if (m_pCharge->isDead())
+			Safe_Release(m_pCharge);
+	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
+		CEffect::EFFECT_TRANSFORM_DESC desc;
+		desc.fRotationPerSec = 1.f;
+		desc.fSpeedPerSec = 1.f;
+		desc.pRootMatrix = &m_CombinedWorldMatrix;
+		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
+		desc.fRot = _float3(0, 0, 0);
+		desc.fSize = 0.3f;
+
+		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
+		m_pCharge->Play();
+	}
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -81,12 +102,14 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 	}
-	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
-
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
+	m_pSpark->Late_Update(fTimeDelta);
+	if (nullptr != m_pCharge) {
+		m_pCharge->Late_Update(fTimeDelta);
+	}
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	//m_pSpark->Late_Update(fTimeDelta);
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
@@ -190,6 +213,8 @@ HRESULT CWeapon::Ready_Components()
 
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
+	
+
 	return S_OK;
 }
 
