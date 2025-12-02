@@ -10,8 +10,8 @@
 9,M_Gorilla_S03_StraightAttack,None,None,18,5,"2,2,2",4,0,11
 10,M_Gorilla_S06_BlowMoveBack,None,None,18,5,"2,2,2",4,3,11
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,5,"2,2,2",4,2,11
-12,M_Gorilla_S10_SawSpinAttack,None,None,18,5,"2,2,2",4,0,11
-13,M_GorillaB_S18_ThrowStone2,None,None,18,5,"2,2,2",5,2,11
+12,M_Gorilla_S10_SawSpinAttack,None,None,18,5,"2,2,2",4,1,11
+13,M_GorillaB_S18_ThrowStone2,None,None,18,5,"2,2,2",5,1,11
 511,M_Beholder_SwingDouble,None,None,11,5,"1,1,2",4,0,11
 512,M_Beholder_Swing,None,None,12,5,"1,1,2",4,0,1
 513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",4,0,9

@@ -66,6 +66,9 @@ private:
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
+	const _float4x4*				m_RootBoneMat = { nullptr };
+	const _float4x4*				m_BodyMat = { nullptr };
+
 	string									m_szEntryAnim = {};
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
 	size_t									m_iSkillIndex = {};
