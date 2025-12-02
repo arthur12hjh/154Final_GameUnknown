@@ -1,0 +1,109 @@
+[
+    {
+        "Children": [
+            {
+                "Shader": {
+                    "bUseTintColor": true,
+                    "vTintColor": [
+                        0.6781853437423706,
+                        0.8196078538894653,
+                        0.7680301666259766,
+                        1.0
+                    ]
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 27.0,
+                "fRotation": 0.0,
+                "fSizeX": 704.0,
+                "fSizeY": 16.0,
+                "fX": 785.0,
+                "fY": 104.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 1,
+                "szLayerTag": "Layer_Boss",
+                "szProtoTag": "Prototype_GameObject_UI_Boss_Shield",
+                "szUIID": "Vital_Wrapper_Shield_2-3",
+                "szUITag": "Boss_Shield"
+            },
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 1.7732466459274292,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.4415094256401062,
+                                0.4401765763759613,
+                                0.08830190449953079,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 100.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 70.0,
+                        "fSizeY": 110.0,
+                        "fX": 785.0,
+                        "fY": 104.0,
+                        "iDepth": 6,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Hp_Fx_BeapBeap",
+                                "szPrefabTag": "BeapBeap_2"
+                            }
+                        ],
+                        "szLayerTag": "Layer_Boss",
+                        "szProtoTag": "Prototype_GameObject_UI_Boss_HPFX",
+                        "szUIID": "Hp_Guage_HP_FX_5-1",
+                        "szUITag": "Boss_Hp_Fx"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 704.0,
+                "fSizeY": 24.0,
+                "fX": 785.0,
+                "fY": 104.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Boss",
+                "szProtoTag": "Prototype_GameObject_UI_Boss_HPBar",
+                "szUIID": "Vital_Wrapper_HPBar_2-1",
+                "szUITag": "Monster_Hp"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": -15.0,
+        "fOffsetY": -346.0,
+        "fRotation": 0.0,
+        "fSizeX": 704.0,
+        "fSizeY": 150.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 1,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 1,
+        "szLayerTag": "Layer_Boss",
+        "szProtoTag": "Prototype_GameObject_UI_BossVitalWrapper",
+        "szUIID": "Combat_Panel_Wrapper_1-1",
+        "szUITag": "Boss_Vital_Wrapper"
+    }
+]

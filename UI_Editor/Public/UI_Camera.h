@@ -18,6 +18,12 @@ public:
 		_float		fMouseSensor;
 	}UI_CAMERA_DESC;
 
+	typedef struct tagMonsterDesc : public Client::Naytiba_Desc
+	{
+		long long			iMaxHealth;
+		long long			iMaxShield;
+	}MONSTER_DESC;
+
 private:
 	CUI_Camera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUI_Camera(const CUI_Camera& Prototype);
@@ -36,9 +42,11 @@ public:
 	void						GetCameraLock(_bool(&pOut)[2]);
 
 	const struct Client::Player_Desc*	Get_Desc() { return &m_PlayerDesc; }
+	const MONSTER_DESC*	Get_MonsterDesc() { return &m_MonsterDesc; }
 
 private:
 	HRESULT						Ready_PlayerDesc();
+	HRESULT						Ready_MonsterDesc();
 
 private:
 	_bool						m_bIsCameraAnimation = { false };
@@ -51,10 +59,9 @@ private:
 
 	_float						m_fMouseSensor = {};
 
-	struct Client::Player_Desc			m_PlayerDesc = {};
+	struct Client::Player_Desc	m_PlayerDesc = {};
+	MONSTER_DESC				m_MonsterDesc = {};
 
-	// UITool에서 쓰는 중 나중에 지우겠습니다
-	//CBoxCollider*					m_pColliderCom{ nullptr };
 
 public:
 	static CUI_Camera*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

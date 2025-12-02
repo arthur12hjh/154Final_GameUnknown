@@ -1,93 +1,62 @@
 #include "pch.h"
-#include "UIShield.h"
+#include "UIBossShield.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#include "Player.h"
-#ifdef _DEBUG
-#include "../../UI_Editor/Public/UI_Camera.h"
-#endif // DEBUG
+#include "UIBossVitalWrapper.h"
 
-CUIShield::CUIShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIBossShield::CUIBossShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUIShield::CUIShield(const CUIShield& Prototype) 
+CUIBossShield::CUIBossShield(const CUIBossShield& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUIShield::Initialize_Prototype()
+HRESULT CUIBossShield::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUIShield::Initialize(void* pArg)
+HRESULT CUIBossShield::Initialize(void* pArg)
 {	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter()};
-
-	if (pCharactor)
-	{
-		m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);
-	}
-#ifdef _DEBUG
-	else
-	{
-		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
-
-		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentShield);
-
-		Safe_Release(pGaraPlayer);
-	}
-#endif // DEBUG
-
-	Safe_Release(pCharactor);
 	
 	return S_OK;
 }
 
-void CUIShield::Priority_Update(_float fTimeDelta)
+void CUIBossShield::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
 }
 
-void CUIShield::Update(_float fTimeDelta)
+void CUIBossShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-#ifdef _DEBUG
-	// 테스트 용
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent) && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			*m_iCurrentShield -= 10;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			*m_iCurrentShield += 10;
-	}*/
-#endif
+		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
 
-	m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
+		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentShield) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxShield);
 
-	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
-
+		m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
+	}
 }
 
-void CUIShield::Late_Update(_float fTimeDelta)
+void CUIBossShield::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 }
 
-HRESULT CUIShield::Render()
+HRESULT CUIBossShield::Render()
 {
 	__super::Render();
 
@@ -110,7 +79,7 @@ HRESULT CUIShield::Render()
 	return S_OK;
 }
 
-HRESULT CUIShield::Ready_Components()
+HRESULT CUIBossShield::Ready_Components()
 {
 	__super::Ready_Components();
 
@@ -127,7 +96,7 @@ HRESULT CUIShield::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUIShield::Bind_ShaderResources()
+HRESULT CUIBossShield::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -142,13 +111,13 @@ HRESULT CUIShield::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vUV{};
-	vUV.x = 12.f;
+	vUV.x = 17.f;
 	vUV.y = 2.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
 		return E_FAIL;
 	
-	_float fGroupCount{ 2.f };
+	_float fGroupCount{ 5.f };
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GroupCount", &fGroupCount, sizeof(_float))))
 		return E_FAIL;
@@ -174,18 +143,23 @@ HRESULT CUIShield::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CUIShield::Execute(const UI_EVENT_DESC& EventDesc)
+HRESULT CUIBossShield::Execute(const UI_EVENT_DESC& EventDesc)
 {
 	return S_OK;
 }
 
-void CUIShield::CallbackEvent(void* pArg)
+//HRESULT CUIBossShield::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIBossShield::CallbackEvent(void* pArg)
 {
 }
 
-CUIShield* CUIShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIBossShield* CUIBossShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUIShield* pInstance = new CUIShield(pDevice, pContext);
+	CUIBossShield* pInstance = new CUIBossShield(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -196,20 +170,20 @@ CUIShield* CUIShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CUIShield::Clone(void* pArg)
+CGameObject* CUIBossShield::Clone(void* pArg)
 {
-	CUIShield* pInstance = new CUIShield(*this);
+	CUIBossShield* pInstance = new CUIBossShield(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUIShield");
+		MSG_BOX("Failed to Cloned : CUIBossShield");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUIShield::Free()
+void CUIBossShield::Free()
 {
 	__super::Free();
 

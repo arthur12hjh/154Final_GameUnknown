@@ -341,6 +341,13 @@
     <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIBeta.h" />
+    <ClInclude Include="..\Public\UIBossHPBar.h" />
+    <ClInclude Include="..\Public\UIBossHPBarFX.h" />
+    <ClInclude Include="..\Public\UIBossShield.h" />
+    <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
+    <ClInclude Include="..\Public\UIMonsterHPBar.h" />
+    <ClInclude Include="..\Public\UIMonsterHPFX.h" />
+    <ClInclude Include="..\Public\UIMonsterShield.h" />
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHPBar.h" />
@@ -358,6 +365,7 @@
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\Public\UIWorldWrapper.h" />
     <ClInclude Include="..\public\Vending.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
@@ -569,6 +577,13 @@
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIBeta.cpp" />
+    <ClCompile Include="..\Private\UIBossHPBar.cpp" />
+    <ClCompile Include="..\Private\UIBossHPBarFX.cpp" />
+    <ClCompile Include="..\Private\UIBossShield.cpp" />
+    <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
+    <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
+    <ClCompile Include="..\Private\UIMonsterHPFX.cpp" />
+    <ClCompile Include="..\Private\UIMonsterShield.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHPBar.cpp" />
@@ -585,6 +600,7 @@
     <ClCompile Include="..\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />

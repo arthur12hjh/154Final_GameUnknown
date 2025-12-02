@@ -1,30 +1,29 @@
 #include "pch.h"
-#include "UIShield.h"
+#include "UIMonsterShield.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#include "Player.h"
 #ifdef _DEBUG
 #include "../../UI_Editor/Public/UI_Camera.h"
 #endif // DEBUG
 
-CUIShield::CUIShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIMonsterShield::CUIMonsterShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUIShield::CUIShield(const CUIShield& Prototype) 
+CUIMonsterShield::CUIMonsterShield(const CUIMonsterShield& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUIShield::Initialize_Prototype()
+HRESULT CUIMonsterShield::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUIShield::Initialize(void* pArg)
+HRESULT CUIMonsterShield::Initialize(void* pArg)
 {	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,36 +31,36 @@ HRESULT CUIShield::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter()};
+	auto pCharactor{ nullptr };
 
 	if (pCharactor)
 	{
-		m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);
+		/*m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
+		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);*/
 	}
 #ifdef _DEBUG
 	else
 	{
 		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
 
-		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentShield);
+		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iMaxShield);
+		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iCurrentShield);
 
 		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
-	Safe_Release(pCharactor);
+	//Safe_Release(pCharactor);
 	
 	return S_OK;
 }
 
-void CUIShield::Priority_Update(_float fTimeDelta)
+void CUIMonsterShield::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
 }
 
-void CUIShield::Update(_float fTimeDelta)
+void CUIMonsterShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
@@ -82,12 +81,12 @@ void CUIShield::Update(_float fTimeDelta)
 
 }
 
-void CUIShield::Late_Update(_float fTimeDelta)
+void CUIMonsterShield::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 }
 
-HRESULT CUIShield::Render()
+HRESULT CUIMonsterShield::Render()
 {
 	__super::Render();
 
@@ -110,7 +109,7 @@ HRESULT CUIShield::Render()
 	return S_OK;
 }
 
-HRESULT CUIShield::Ready_Components()
+HRESULT CUIMonsterShield::Ready_Components()
 {
 	__super::Ready_Components();
 
@@ -127,7 +126,7 @@ HRESULT CUIShield::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUIShield::Bind_ShaderResources()
+HRESULT CUIMonsterShield::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -142,13 +141,13 @@ HRESULT CUIShield::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vUV{};
-	vUV.x = 12.f;
-	vUV.y = 2.f;
+	vUV.x = 4.f;
+	vUV.y = 1.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
 		return E_FAIL;
 	
-	_float fGroupCount{ 2.f };
+	_float fGroupCount{ 1.f };
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GroupCount", &fGroupCount, sizeof(_float))))
 		return E_FAIL;
@@ -159,7 +158,7 @@ HRESULT CUIShield::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vGap{ };
-	vGap.x = 10.0f / m_tUIDesc.fSizeX;
+	vGap.x = 0.0f;
 	vGap.y = 0.0f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVGap", &vGap, sizeof(_float2))))
@@ -174,18 +173,23 @@ HRESULT CUIShield::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CUIShield::Execute(const UI_EVENT_DESC& EventDesc)
+HRESULT CUIMonsterShield::Execute(const UI_EVENT_DESC& EventDesc)
 {
 	return S_OK;
 }
 
-void CUIShield::CallbackEvent(void* pArg)
+//HRESULT CUIMonsterShield::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
+//{
+//	return S_OK;
+//}
+
+void CUIMonsterShield::CallbackEvent(void* pArg)
 {
 }
 
-CUIShield* CUIShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUIMonsterShield* CUIMonsterShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUIShield* pInstance = new CUIShield(pDevice, pContext);
+	CUIMonsterShield* pInstance = new CUIMonsterShield(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -196,20 +200,20 @@ CUIShield* CUIShield::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CGameObject* CUIShield::Clone(void* pArg)
+CGameObject* CUIMonsterShield::Clone(void* pArg)
 {
-	CUIShield* pInstance = new CUIShield(*this);
+	CUIMonsterShield* pInstance = new CUIMonsterShield(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUIShield");
+		MSG_BOX("Failed to Cloned : CUIMonsterShield");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUIShield::Free()
+void CUIMonsterShield::Free()
 {
 	__super::Free();
 

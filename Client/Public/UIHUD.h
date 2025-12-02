@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CHUDLayer;
 class CTexture;
+class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
@@ -46,10 +47,12 @@ public:
 
 	CUIBase* Rent_WorldUI(const _wstring& szPoolTag,
 							CGameObject* pParent,
-							const _float3& vOffset = { 0,0,0 },
+							const _float3& vTargetPos = { 0,0,0 },
 							_bool bBillboard = true);
 
 	void Return_WorldUI(CUIBase*& pUI);
+
+	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
 
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
@@ -67,6 +70,8 @@ private:
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
 
 	unordered_map<_wstring, vector<CUIBase*>> m_WorldUIs;
+
+	CGameInstance* m_pGameInstance{ nullptr };
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

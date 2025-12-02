@@ -50,7 +50,8 @@ private:
 
 	_float						m_fBattleToIdleTimeAcc = { 0.f };
 	_float						m_fCurrentMinDist	  = { FLT_MAX };
-	_bool						m_isLock				  = { false };
+	_bool						m_isLock			  = { false };
+	class CUIBase*				m_pLockonUI				= { nullptr };
 public:
 	static CLockonManager* Create();
 	virtual void Free() override;
