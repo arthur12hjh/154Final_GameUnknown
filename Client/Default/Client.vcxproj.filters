@@ -606,9 +606,12 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
       <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="03.Effects\TrailEffect\TrailData">
       <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
+      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1218,8 +1221,6 @@
     <ClInclude Include="..\Public\Player_SheatheHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
-    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
     <ClInclude Include="..\Public\Building_Ruin.h">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
@@ -1231,6 +1232,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Canyon.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Deco_FindTarget.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
 	</ClInclude>
     <ClInclude Include="..\public\TrailData.h">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
@@ -1842,6 +1855,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Canyon.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_FindTarget.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
 	</ClCompile>
     <ClCompile Include="..\private\TrailData.cpp">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>

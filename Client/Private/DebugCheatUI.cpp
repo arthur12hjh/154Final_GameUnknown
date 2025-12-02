@@ -68,6 +68,7 @@ HRESULT CDebugCheatUI::Render()
 
 void CDebugCheatUI::SetLevelMainCamera()
 {
+#ifdef _DEBUG
     Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
 
@@ -88,7 +89,7 @@ void CDebugCheatUI::SetLevelMainCamera()
     {
         strcpy_s(m_szSelectCamera, "Not Find Main Camera");
     }
-
+#endif // _DEBUG
 }
 
 void CDebugCheatUI::DrawObjectDebug()

@@ -73,12 +73,10 @@ void CTask_GorillaAttack::SelectRandomPattern()
 {
 	// 여기서 거리가 일단 멀어지면 날라오거나
 	// 돌을 던지는 패턴을 하자
-	if(30 >= m_pGameInstance->Random(0.f, 100.f))
-		m_pSkillData.push(m_pOwner->GetSkillData());
+	if(40 >= m_pGameInstance->Random(0.f, 100.f))
+		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
 	else
-	{
 		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
-	}
 
 	SelectAttack();
 }
@@ -141,7 +139,19 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 		m_pBlackBoard->SetAttackData(m_pSkillData.front());
 		m_pSkillData.pop();
 
-		m_pOwner->Set_Animation(m_pBlackBoard->GetAttackData()->szAnimationName, false, 1.0f, 0.12f, true);
+		auto pSkill_Data = m_pBlackBoard->GetAttackData();
+
+		switch (pSkill_Data->iSkillID)
+		{
+		case 7 : 
+		case 8:
+			m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true, 42.f, 0.f, true);
+			break;
+
+		default :
+			m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true);
+			break;
+		}
 	}
 }
 
@@ -157,7 +167,7 @@ void CTask_GorillaAttack::BackStepPattern()
 	m_pSkillData.push(m_pGameManager->Find_SkillData(10));
 
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-	if (0 < fRandomIndex)
+	if (40.f < fRandomIndex)
 	{
 		CrushPattern();
 		
@@ -172,8 +182,8 @@ void CTask_GorillaAttack::BackStepPattern()
 		//
 		//굴러가는 돌~
 		//데굴 데굴 굴러가요~
-
-
+		m_pSkillData.push(m_pGameManager->Find_SkillData(13));
+		SelectAttack();
 	}
 }
 
@@ -295,9 +305,10 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			// M_Gorilla_S05_LeftBlowMoveRight
 			// Max Frame : 94
 			// Frame : 19 ~ 37
-			if (0.2f <= fAnimationRatio && 0.39f >= fAnimationRatio)
+			if (0.2f <= fAnimationRatio && 0.4f >= fAnimationRatio)
 			{
 				XMStoreFloat3(&m_fAttackMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+				m_fMoveSpeed = 7.f;
 				bIsMove = true;
 			}
 		}
@@ -311,6 +322,7 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			if (0.2f <= fAnimationRatio && 0.4f >= fAnimationRatio)
 			{
 				XMStoreFloat3(&m_fAttackMoveDir, -1.f * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+				m_fMoveSpeed = 7.f;
 				bIsMove = true;
 			}
 		}
