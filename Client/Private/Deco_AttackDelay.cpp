@@ -36,6 +36,16 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 				return NODE_STATE::FAIL;
 			}
 		}
+		else if (fDistance > fATKRange)
+		{
+			if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
+			{
+				if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
+					m_fAttackDelay = 0.f;
+
+				return NODE_STATE::COMPLETE;
+			}
+		}
 	}
 	
 	if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())

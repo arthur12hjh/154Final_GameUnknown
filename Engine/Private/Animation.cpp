@@ -68,13 +68,14 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 	return false;
 }
 
-_int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta)
+_int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta, _float fEndTrackPosition)
 {
 	/* 내 애니메이션의 현재 재생위치. */
 	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
 	// m_fCurrentTrackPosition
 	// 
-	if (m_fCurrentTrackPosition >= m_fDuration)
+	if (m_fCurrentTrackPosition >= m_fDuration
+		|| (fEndTrackPosition != -1.f && m_fCurrentTrackPosition >= fEndTrackPosition))
 	{
 		if (true == isLoop)
 		{

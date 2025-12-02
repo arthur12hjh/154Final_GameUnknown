@@ -144,7 +144,7 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
     return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart)
+void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
     if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
         return;
@@ -162,14 +162,32 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
         m_fBlendRatio = 0.f;
     }
 
+    m_fEndTrackPosition = fEndTrackPosition;
+    m_fStartTrackPosition = fStartTrackPosition;
+    _float fPreTrackPosition = -1.f;
+    if (FALSE == isResetTrackPosition)
+    {
+        fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+    }
+
     m_fBlendDuration = fLerpDuration;
     m_iCurrentAnimIndex = iAnimIndex;
     m_isLoop = isLoop;
+
 
     if (AnimationChanged)
         AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
 
     m_Animations[m_iCurrentAnimIndex]->Reset();
+
+    if (FALSE == isResetTrackPosition)
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
+    }
+    else
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
+    }
 
     m_iFlagPreRootModified = ROOTFLAG_RESET;
     XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
@@ -182,7 +200,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
     return;
 }
 
-void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
     _char pName[MAX_PATH] = {};
 
@@ -211,11 +229,29 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
                 m_fBlendRatio = 0.f;
             }
 
+            m_fEndTrackPosition = fEndTrackPosition;
+            m_fStartTrackPosition = fStartTrackPosition;
+            _float fPreTrackPosition = -1.f;
+            if (FALSE == isResetTrackPosition)
+            {
+                fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+            }
+
             m_fBlendDuration = fLerpDuration;
             m_iCurrentAnimIndex = iAnimIndex;
             m_isLoop = isLoop;
 
+
             m_Animations[m_iCurrentAnimIndex]->Reset();
+
+            if (FALSE == isResetTrackPosition)
+            {
+                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
+            }
+            else
+            {
+                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
+            }
 
             m_iFlagPreRootModified = ROOTFLAG_RESET;
             XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
@@ -234,7 +270,7 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
     }
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
     _uint iAnimIndex = 0;
     m_fAnimationPlayRate = fAnimationPlayRate;
@@ -259,11 +295,28 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
                 m_fBlendRatio = 0.f;
             }
 
+            m_fEndTrackPosition = fEndTrackPosition;
+            m_fStartTrackPosition = fStartTrackPosition;
+            _float fPreTrackPosition = -1.f;
+            if (FALSE == isResetTrackPosition)
+            {
+                fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+            }
+
             m_fBlendDuration = fLerpDuration;
             m_iCurrentAnimIndex = iAnimIndex;
             m_isLoop = isLoop;
 
             m_Animations[m_iCurrentAnimIndex]->Reset();
+
+            if (FALSE == isResetTrackPosition)
+            {
+                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
+            }
+            else
+            {
+                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
+            }
 
             m_iFlagPreRootModified = ROOTFLAG_RESET;
             XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
@@ -595,7 +648,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     // 애니메이션 트랙 업데이트
     _int iAnimationState =
-        m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime);
+        m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
 
     if (iAnimationState == ANIMATIONFLAG_FINISH)
         m_isFinish = TRUE;
@@ -715,15 +768,15 @@ aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
         return aiTextureType_HEIGHT;
     case TEXTURE_TYPE::EXTRA2:
         return aiTextureType_SHININESS;
-    case TEXTURE_TYPE::EXTRA3:
+    case TEXTURE_TYPE::OPACITY:
         return aiTextureType_OPACITY;
-    case TEXTURE_TYPE::EXTRA4:
+    case TEXTURE_TYPE::EXTRA3:
         return aiTextureType_DISPLACEMENT;
-    case TEXTURE_TYPE::EXTRA5:
+    case TEXTURE_TYPE::EXTRA4:
         return aiTextureType_LIGHTMAP;
-    case TEXTURE_TYPE::EXTRA6:
+    case TEXTURE_TYPE::EXTRA5:
         return aiTextureType_REFLECTION;
-    case TEXTURE_TYPE::EXTRA7:
+    case TEXTURE_TYPE::EXTRA6:
         return aiTextureType_AMBIENT_OCCLUSION;
     case TEXTURE_TYPE::END:
         return aiTextureType_NONE;

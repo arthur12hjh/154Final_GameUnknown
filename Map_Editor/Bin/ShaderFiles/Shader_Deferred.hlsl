@@ -114,10 +114,19 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     //Specular Map은 따로 Shade 처리해서 
     else if(vORMDesc.a == 2.f)
     {        
-        fMetallic = 0.f;
+        fOcclusion = vORMDesc.r;
         fRoughness = vORMDesc.g;
-        fOcclusion = vORMDesc.b;
+        fMetallic = 0.f;
         vF0 = float3(0.04, 0.04, 0.04);
+        float specFactor = vORMDesc.b;
+        
+        float3 dielectricF0 = float3(0.04f, 0.04f, 0.04f);
+        float baseF0 = 0.04f;
+        float oneMinusBaseF0 = 1.0f - baseF0;
+
+        fMetallic = saturate((specFactor - baseF0) / oneMinusBaseF0);
+
+        vF0 = lerp(dielectricF0, vAlbedo.xyz, fMetallic);
     }
     //ORM 처리.
     else

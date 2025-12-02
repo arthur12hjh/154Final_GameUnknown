@@ -1540,46 +1540,61 @@ HRESULT CMapTool::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag
 	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
-	if (iNumObjs == 0) 
+	if (iNumObjs == 0)
 		return S_OK;
 
-	MODEL_INSTANCE_LOAD_DESC LoadDesc;
-	LoadDesc.iNumInstance = iNumObjs;
-	LoadDesc.InstancingData.reserve(iNumObjs);
+	vector<VTX_INSTANCE_MODEL>* pDataVector = nullptr;
+	HRESULT hr = S_OK;
 
-	for (_uint i = 0; i < iNumObjs; ++i)
+	try
 	{
-		SAVEDOBJECTINFO info;
-		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
-		
-		_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-		_vector vScale = {};
-		_vector vRotation = {};
-		_vector vPosition = {};
-		XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-		
-		_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-		// 순서: Scale * Rotation * Translation (SRT 순서)
-		_matrix matFinalWorld = matScale * matRotation * matTranslation;
+		pDataVector = new vector<VTX_INSTANCE_MODEL>();
+		pDataVector->reserve(iNumObjs);
 
-		VTX_INSTANCE_MODEL InstanceData{};
-		XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
-		XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
-		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
-		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+		for (_uint i = 0; i < iNumObjs; ++i)
+		{
+			SAVEDOBJECTINFO info;
+			ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		LoadDesc.InstancingData.push_back(InstanceData);
+			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+			_vector vScale = {};
+			_vector vRotation = {};
+			_vector vPosition = {};
+			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+
+			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+			_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+			VTX_INSTANCE_MODEL InstanceData{};
+			XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
+			XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
+			XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
+			XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+
+			pDataVector->push_back(InstanceData);
+		}
+
+		Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
+		FinalLoadDesc.iNumInstance = iNumObjs;
+		FinalLoadDesc.pPrototypeTag = protoTag;
+		FinalLoadDesc.pInstancingData = pDataVector;
+
+		hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_InstanceModel"),
+			ENUM_CLASS(LEVEL::VILLAGE), pLayerTag, &FinalLoadDesc);
+
+		if (FAILED(hr))
+		{
+			Safe_Delete(pDataVector);
+			return E_FAIL;
+		}
 	}
-
-	Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
-	FinalLoadDesc.iNumInstance = LoadDesc.iNumInstance;
-	FinalLoadDesc.pInstancingData = &LoadDesc.InstancingData;
-	FinalLoadDesc.pPrototypeTag = protoTag;
-
-	HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_InstanceModel"),
-		ENUM_CLASS(LEVEL::VILLAGE), pLayerTag, &FinalLoadDesc);
+	catch (const std::bad_alloc& e)
+	{
+		Safe_Delete(pDataVector);
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -1686,10 +1701,10 @@ HRESULT CMapTool::Save_Terrain_HeightMap(const _char* szHeightMapFilePath)
 
 			_float fHeightValue = pHeightData[iIndex] * 10.f;
 
-			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+			_uint ucHeight = static_cast<_uint>(fHeightValue);
 
 			// R, G, B 채널에 동일한 높이 값을 설정
-			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+			pPixels[iIndex] = fHeightValue;
 		}
 	}
 

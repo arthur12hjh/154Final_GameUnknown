@@ -79,7 +79,7 @@ private:
 	_bool								m_bIsPause = {};
 	_bool								m_bIsActiveTrigger;
 
-	_float								m_fRootMagnification = 0.f;
+	_float								m_fRootMagnification = 1.f;
 	_float								m_fTimeRate = 1.f;
 
 public:

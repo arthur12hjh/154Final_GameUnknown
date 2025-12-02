@@ -17,6 +17,8 @@ public:
 	virtual PLAYER_TRANSITION_DESC	    Update(_float fTimeDelta) override;
 	virtual void						End() override;
 
+private:
+	_float m_fDegree = { 0.f };
 public:
 	static	CPlayer_SheatheHairpin* Create(void* pArg);
 	virtual	void			   Free() override;

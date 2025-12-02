@@ -23,54 +23,18 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 {
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
-		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-	{
-		_vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
-		_bool isWalking = { false };
-
-		m_fDegree = 0.f;
-
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		{
-			isWalking = true;
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-				m_fDegree -= 90.f;
-
-			else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-				m_fDegree += 90.f;
-		}
-
-		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		{
-			m_fDegree += 180.f;
-			isWalking = true;
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-				m_fDegree += 90.f;
-
-			else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-				m_fDegree -= 90.f;
-		}
-
-		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		{
-			m_fDegree -= 90.f;
-
-			isWalking = true;
-		}
-
-		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		{
-			m_fDegree += 90.f;
-			isWalking = true;
-		}
-
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.6f);
-	}
+
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 0.6f);
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+		m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 0.6f);
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+		m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 0.6f);
 
 	if (false == m_Desc->pPlayerController->Get_Gravity())
 	{

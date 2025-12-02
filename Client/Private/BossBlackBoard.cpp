@@ -74,6 +74,16 @@ void CBossBlackBoard::SetAttackDelay(_float fDelay)
     m_fAttackDelay = fDelay;
 }
 
+void CBossBlackBoard::SetAttackData(const Character_Skill_Desc* pAttack_Data)
+{
+    m_pAttack_Skill = pAttack_Data;
+}
+
+const Character_Skill_Desc* CBossBlackBoard::GetAttackData()
+{
+    return m_pAttack_Skill;
+}
+
 void CBossBlackBoard::Free()
 {
     __super::Free();

@@ -124,28 +124,6 @@ VS_OUT VS_CONE(VS_IN In)
     return Out;
 }
 
-struct VS_OUT_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
-};
-
-
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
-{
-    VS_OUT_SHADOW Out;
-
-    matrix matWV, matWVP;
-    
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-    
-    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vProjPos = Out.vPosition;
-
-    return Out;
-}
-
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
 /* 정점의 모든 정보를 보간하여 픽셀을 만든다. -> 래스터라이즈 */ 
@@ -159,6 +137,11 @@ struct PS_IN
     float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
+};
+
+struct PS_NONLIGHT_OUT
+{
+    float4 vColor : SV_TARGET0;
 };
 
 struct PS_OUT
@@ -198,7 +181,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vector color = g_DiffuseTexture.Sample(MirrorSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y)) * g_vColor;
         color.a = (1 - abs(MaskTexcoord.x * 1.2));
         Out.vColor.rgb = Out.vColor.rgb * (1 - color.a) + color.rgb * color.a;
-    Out.vColor.a = g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x * max((abs(1 - saturate(time * 3))) * 4, 0.8), MaskTexcoord.y)).r;
+    Out.vColor.a *= g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x * max((abs(1 - saturate(time * 3))) * 4, 0.8), MaskTexcoord.y)).r;
         if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + time * 2)
             discard;
     
@@ -238,9 +221,9 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
-PS_OUT PS_DISTORTION(PS_IN In)
+PS_NONLIGHT_OUT PS_DISTORTION(PS_IN In)
 {
-    PS_OUT Out;
+    PS_NONLIGHT_OUT Out;
     
     
     
@@ -290,9 +273,9 @@ PS_OUT PS_Hit(PS_IN In)
     return Out;
 }
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
-PS_OUT PS_CIRCLE_DISTORTION(PS_IN In)
+PS_NONLIGHT_OUT PS_CIRCLE_DISTORTION(PS_IN In)
 {
-    PS_OUT Out;
+    PS_NONLIGHT_OUT Out;
     
     
     
@@ -319,36 +302,16 @@ PS_NORMAL_OUT PS_NORMAL_COLOR(PS_IN In)
         discard;
     Out.vDiffuse = g_vColor;
     Out.vDiffuse *= abs(MaskTexcoord.y) * 2;
-    //Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
-    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     return Out;
 }
 
-PS_OUT PS_COLOR(PS_IN In)
+PS_NONLIGHT_OUT PS_COLOR(PS_IN In)
 {
-    PS_OUT Out;
+    PS_NONLIGHT_OUT Out;
     
     Out.vColor = g_vColor;
-    return Out;
-}
-
-struct PS_IN_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
-};
-
-struct PS_OUT_SHADOW
-{
-    float4 vShadowLightDepth : SV_TARGET0;
-};
-
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
-{
-    PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
-    
-    Out.vShadowLightDepth.x = In.vProjPos.w / 500.0f;;
-    
     return Out;
 }
 

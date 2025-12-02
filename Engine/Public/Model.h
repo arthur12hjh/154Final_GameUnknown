@@ -95,10 +95,17 @@ public:
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
 public:
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
-	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void Set_Animation(const _wstring& strAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
@@ -169,6 +176,9 @@ private:
 	_float						m_fBlendElapsed = 0.f;
 	_float						m_fBlendRatio = 0.f;
 	_float						m_fBlendDuration = 0.12f;
+
+	_float						m_fEndTrackPosition = -1.f;
+	_float						m_fStartTrackPosition = 0.f;
 
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};

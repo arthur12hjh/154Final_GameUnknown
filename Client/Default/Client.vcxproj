@@ -157,7 +157,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
+    <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="..\public\BoxOpenEvent.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\DesertObject.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
@@ -324,6 +327,7 @@
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
     <ClInclude Include="..\Public\Terrain.h" />
+    <ClInclude Include="..\Public\Terrain_Desert.h" />
     <ClInclude Include="..\Public\TestEveHead.h" />
     <ClInclude Include="..\public\TombStone.h" />
     <ClInclude Include="..\public\TombStoneBase1.h" />
@@ -364,7 +368,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
+    <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
@@ -375,6 +381,7 @@
     <ClCompile Include="..\private\BoxOpenEvent.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\Private\DesertObject.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
@@ -547,6 +554,7 @@
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
+    <ClCompile Include="..\Private\Terrain_Desert.cpp" />
     <ClCompile Include="..\Private\TestEveHead.cpp" />
     <ClCompile Include="..\private\TombStone.cpp" />
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
