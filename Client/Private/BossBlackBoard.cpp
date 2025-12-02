@@ -22,13 +22,17 @@ HRESULT CBossBlackBoard::Initialize(void* pArg)
 
 void CBossBlackBoard::SetTarget(CGameObject* pGameObject)
 {
+    //m_pTarget = nullptr;
     m_pTarget = pGameObject;
 }
 
 void CBossBlackBoard::SetTargetDistacne()
 {
     if (nullptr == m_pTarget)
+    {
         m_fTargetDistance = -1;
+        return;
+    }
 
     _vector pOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector pTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);

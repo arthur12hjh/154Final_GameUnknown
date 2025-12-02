@@ -6,7 +6,6 @@
 #include "Weapon.h"
 #include "Nayitba.h"
 
-#include "GameManager.h"
 #include "Trail.h"
 #include "TrailEffect.h"
 #include "Effect.h"
@@ -38,8 +37,10 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
+
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
-	m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(90.f), XMConvertToRadians(0.f));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
 
@@ -59,33 +60,52 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	//m_pSpark->Update(fTimeDelta);
+	m_pSpark->Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+		m_pSpark->Stop();
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+		m_pSpark->Play();
+	if (nullptr != m_pCharge) {
+		m_pCharge->Update(fTimeDelta);
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->Play();
+		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->End();
+		if (m_pCharge->isDead())
+			Safe_Release(m_pCharge);
+	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
+		CEffect::EFFECT_TRANSFORM_DESC desc;
+		desc.fRotationPerSec = 1.f;
+		desc.fSpeedPerSec = 1.f;
+		desc.pRootMatrix = &m_CombinedWorldMatrix;
+		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
+		desc.fRot = _float3(0, 0, 0);
+		desc.fSize = 10.f;
+
+		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"), &desc));
+		m_pCharge->Play();
+	}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_vRotationQuaternion.x -= fTimeDelta * 30.f;
 	//
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-	//	m_pSpark->Stop();
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-	//	m_pSpark->Play();
-	//if (nullptr != m_pCharge) {
-	//	m_pCharge->Update(fTimeDelta);
-	//	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-	//		m_pCharge->Play();
-	//	if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-	//		m_pCharge->End();
-	//	if (m_pCharge->isDead())
-	//		Safe_Release(m_pCharge);
-	//}
-	//else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
-	//	CEffect::EFFECT_TRANSFORM_DESC desc;
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	//	desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 10.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	//	m_vRotationQuaternion.y += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+	//	m_vRotationQuaternion.y -= fTimeDelta * 30.f;
 	//
-	//	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"), &desc));
-	//	m_pCharge->Play();
-	//}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
+	//	m_vRotationQuaternion.z += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
+	//	m_vRotationQuaternion.z -= fTimeDelta * 30.f;
+	//
+	//
+	//m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
+	//
+	//swprintf_s(m_szRotationAngle, L"%.1f, %.1f, %.1f", m_vRotationQuaternion.x, m_vRotationQuaternion.y, m_vRotationQuaternion.z);
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -104,11 +124,12 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}                      
-	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);;
-	//m_pSpark->Late_Update(fTimeDelta);
-	//if (nullptr != m_pCharge) {
-	//	m_pCharge->Late_Update(fTimeDelta);
-	//}
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);;
+	m_pSpark->Late_Update(fTimeDelta);
+	if (nullptr != m_pCharge) {
+		m_pCharge->Late_Update(fTimeDelta);
+	}
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -138,6 +159,7 @@ HRESULT CWeapon::Render()
 			return E_FAIL;
 	}
 
+	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 0), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
 
 	return S_OK;
 }
@@ -244,9 +266,8 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitDir = vHitDir;
 
 		CHARACTER_SKILL_DESC SkillDesc = {};
-		strcpy_s(SkillDesc.szHitAnimationName, "None");
 		SkillDesc.iSkillDamage = 50.f;
-		pDamageDesc.pSkillData = CGameManager::GetInstance()->Find_SkillData(1000);
+		pDamageDesc.pSkillData = &SkillDesc;
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

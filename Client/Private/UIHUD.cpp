@@ -835,7 +835,7 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 
 	// 어떤 풀로 돌아갈지 키가 필요하다면:
 	//  - pUI->Get_UIBase_Desc().szProtoTag 또는 커스텀 PoolKey를 Desc에 저장
-	_wstring szPoolTag = pUI->Get_UIBase_Desc().szProtoTag; // 간단 방식
+	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag; // 간단 방식
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
 	pUI = nullptr;

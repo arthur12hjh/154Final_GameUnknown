@@ -179,6 +179,7 @@ void CDebugHierarchy::DrawObjectInfo(CGameObject* pDrawObject)
 
 void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
 {
+#ifdef _DEBUG
     // 1 : Collider Size & Collider Radius
     // 2 : Collider Tag Change
     // 3 : Collider Ignore Change
@@ -265,7 +266,7 @@ void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
         ImGui::Text("Hit Type : Static");
         break;
     }
-
+#endif // _DEBUG
 }
 
 CDebugHierarchy* CDebugHierarchy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

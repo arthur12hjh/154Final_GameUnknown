@@ -76,8 +76,8 @@ void CUIBase::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	if (m_eVisibility == VISIBILITY::VISIBLE)
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
-#elif
-	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
+#else
+	if (m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
 #endif
 }

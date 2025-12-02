@@ -264,20 +264,7 @@ HRESULT CNayitba::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
-	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-	SenceComDesc.fAiSearchRadius = 60.f;
-	SenceComDesc.fAiTargetSearchDistance = 10.f;
-	SenceComDesc.m_fAiTargetLostTime = 20.f;
-
-	/* Prototype_Component_TargetComponent */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
-		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
-		return E_FAIL;
-
-	m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
-	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-
+	
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -293,6 +280,20 @@ HRESULT CNayitba::ADD_Components()
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
 			return E_FAIL;
+
+		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
+		SenceComDesc.fAiSearchRadius = 60.f;
+		SenceComDesc.fAiTargetSearchDistance = 20.f;
+		SenceComDesc.m_fAiTargetLostTime = 20.f;
+
+		/* Prototype_Component_TargetComponent */
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
+			TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
+			return E_FAIL;
+
+		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
+		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 	}
 	else
 	{
@@ -302,6 +303,21 @@ HRESULT CNayitba::ADD_Components()
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
 			return E_FAIL;
+
+		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
+		SenceComDesc.fAiSearchRadius = 60.f;
+		SenceComDesc.fAiTargetSearchDistance = 10.f;
+		SenceComDesc.m_fAiTargetLostTime = 20.f;
+
+		/* Prototype_Component_TargetComponent */
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
+			TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
+			return E_FAIL;
+
+		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
+		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+
 	}
 
 	/* Com_CCT */
@@ -350,10 +366,11 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
-	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
-		m_szEntryAnim += "_BattleStart";
-	else
-		m_szEntryAnim += "_BattleEnd";
+
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		m_pAISenceCom->Add_SenceTargetObject(pTarget);
+	}
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

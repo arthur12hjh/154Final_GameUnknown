@@ -170,6 +170,7 @@
     <ClInclude Include="..\public\BoxOpenEvent.h" />
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\public\Deco_FindTarget.h" />
     <ClInclude Include="..\Public\DesertObject.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
@@ -381,6 +382,7 @@
     <ClCompile Include="..\private\BoxOpenEvent.cpp" />
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\private\Deco_FindTarget.cpp" />
     <ClCompile Include="..\Private\DesertObject.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
