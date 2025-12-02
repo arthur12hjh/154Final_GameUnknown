@@ -60,13 +60,33 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	//m_pSpark->Update(fTimeDelta);
-	//
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-	//	m_pSpark->Stop();
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-	//	m_pSpark->Play();
+	m_pSpark->Update(fTimeDelta);
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+		m_pSpark->Stop();
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+		m_pSpark->Play();
+	if (nullptr != m_pCharge) {
+		m_pCharge->Update(fTimeDelta);
+		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->Play();
+		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+			m_pCharge->End();
+		if (m_pCharge->isDead())
+			Safe_Release(m_pCharge);
+	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
+		CEffect::EFFECT_TRANSFORM_DESC desc;
+		desc.fRotationPerSec = 1.f;
+		desc.fSpeedPerSec = 1.f;
+		desc.pRootMatrix = &m_CombinedWorldMatrix;
+		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
+		desc.fRot = _float3(0, 0, 0);
+		desc.fSize = 10.f;
+
+		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"), &desc));
+		m_pCharge->Play();
+	}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
@@ -104,7 +124,12 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}                      
-	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);;
+	m_pSpark->Late_Update(fTimeDelta);
+	if (nullptr != m_pCharge) {
+		m_pCharge->Late_Update(fTimeDelta);
+	}
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -280,4 +305,5 @@ void CWeapon::Free()
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTrail);
 	Safe_Release(m_pSpark);
+	Safe_Release(m_pCharge);
 }
