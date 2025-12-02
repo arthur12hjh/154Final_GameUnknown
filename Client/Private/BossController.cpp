@@ -94,6 +94,7 @@ void CBossController::Damage(void* pArg)
         if (bIsHitAble)
             pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
     }
+    Safe_Release(pBossBlackBoard);
 }
 
 void CBossController::ActionSuccess(void* pArg)

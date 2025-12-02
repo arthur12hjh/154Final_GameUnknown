@@ -45,8 +45,10 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	}
 	else
 	{
+#ifdef _DEBUG
 		m_bIsDelayDead = true;
 		Set_Dead(true);
+#endif
 	}
 	return S_OK;
 }
@@ -57,6 +59,7 @@ void CAttackHitBox::Priority_Update(_float fTimeDelta)
 
 void CAttackHitBox::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	if (!m_bIsDelayDead)
 	{
 		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -70,17 +73,26 @@ void CAttackHitBox::Update(_float fTimeDelta)
 		if (m_vDelayDead.x > m_vDelayDead.y)
 			Set_Dead(true);
 	}
+#else
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+	m_pColliderCom->UpdateColiision(worldMatrix);
+#endif
 }
 
 void CAttackHitBox::Late_Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	if (!m_bIsDelayDead)
 	{
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}
 
-#ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#else
+	if(!m_isDead)
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
 #endif // _DEBUG
 
 }
@@ -167,8 +179,13 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	pDamageDesc.pSkillData = pDesc;
 
 	pCharacter->Damaged(&pDamageDesc);
-	m_vDelayDead = {0.f, 3.f};
+#ifdef _DEBUG
+	m_vDelayDead = { 0.f, 3.f };
 	m_bIsDelayDead = true;
+#else
+	Set_Dead(true);
+#endif // _DEBUG
+
 }
 
 void CAttackHitBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
