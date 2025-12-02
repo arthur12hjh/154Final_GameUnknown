@@ -43,6 +43,9 @@ private:
 	class CTrailEffect* m_pTrail = { nullptr };
 	class CEffect* m_pSpark = { nullptr };
 
+	TCHAR						m_szRotationAngle[MAX_PATH] = {};
+	_float3						m_vRotationQuaternion;
+
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };
 	

@@ -37,8 +37,10 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
+
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
-	m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(90.f), XMConvertToRadians(0.f));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
 
@@ -64,6 +66,26 @@ void CWeapon::Update(_float fTimeDelta)
 	//	m_pSpark->Stop();
 	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
 	//	m_pSpark->Play();
+
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_vRotationQuaternion.x -= fTimeDelta * 30.f;
+	//
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	//	m_vRotationQuaternion.y += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+	//	m_vRotationQuaternion.y -= fTimeDelta * 30.f;
+	//
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
+	//	m_vRotationQuaternion.z += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
+	//	m_vRotationQuaternion.z -= fTimeDelta * 30.f;
+	//
+	//
+	//m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
+	//
+	//swprintf_s(m_szRotationAngle, L"%.1f, %.1f, %.1f", m_vRotationQuaternion.x, m_vRotationQuaternion.y, m_vRotationQuaternion.z);
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -112,6 +134,7 @@ HRESULT CWeapon::Render()
 			return E_FAIL;
 	}
 
+	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 0), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
 
 	return S_OK;
 }
