@@ -184,7 +184,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
-	if(false == m_isSuperArmor)
+	if(false == m_PlayerDesc.isSuperArmor)
 		m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
