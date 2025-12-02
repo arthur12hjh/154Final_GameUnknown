@@ -119,9 +119,10 @@ void CPlayer::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	m_pGameManager->Lockon(fTimeDelta);
-	Update_FSM(fTimeDelta);
+
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill();
+	Update_FSM(fTimeDelta);
 	
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }

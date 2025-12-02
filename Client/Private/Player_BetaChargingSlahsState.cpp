@@ -11,6 +11,15 @@ CPlayer_BetaChargingSlahsState::CPlayer_BetaChargingSlahsState()
 {
 }
 
+_bool CPlayer_BetaChargingSlahsState::CanEnter(class CPlayer* pPlayer, PLAYER_DESC* pPlayerDesc)
+{
+    //차징 슬래시는 1004번
+    if (true == pPlayer->Use_BetaSkill(1004))
+        return true;
+
+    return false;
+}
+
 void CPlayer_BetaChargingSlahsState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
@@ -38,7 +47,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     }
     else if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&  true == m_isLoopCharge)
     {
-        // �ϴ� ���÷� �־�а̴ϴ�.
+        // 플레이어의 충격량.
         m_pPlayer->Set_ImpactForce(10.f * fAnimationRatio);
         m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 1.5f);
 
@@ -48,8 +57,8 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
      
     if (true == m_isAttack && 
         (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)  ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S)  ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.65f)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
