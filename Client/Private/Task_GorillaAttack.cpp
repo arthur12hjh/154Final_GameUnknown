@@ -105,6 +105,7 @@ _bool CTask_GorillaAttack::SelectPattern()
 	}
 	else
 	{
+		m_PrePatternIndex = 0;
 		m_CurPatternIndex = 3;
 	}
 
