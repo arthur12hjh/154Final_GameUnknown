@@ -17,10 +17,7 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
-#include "PlayerBattleFSM.h"
-#include "PlayerIdleFSM.h"
-#include "PlayerLockOnFSM.h"
-#include "Player_HitState.h"
+#include "PlayerFSM.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -41,21 +38,6 @@ void CPlayer::Handle_Notify(void* pArg)
 _float CPlayer::Get_AnimationRatio()
 {
 	return m_pBodyModelCom->Get_AnimationRatio();
-}
-
-void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
-{
-	m_PlayerDesc.ePlayerMode = eMode;
-
-	// FSM 탐색.
-	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	 
-	if(eState == PLAYER_STATE::STATE_END)
-		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	else
-		pNextFSM->Change_FSM(eState);
-
-	m_pCurrentFSM = pNextFSM;
 }
 
 // 인자로 들어온 스킬 id의 스킬이 사용 가능한지 확인.
@@ -184,8 +166,14 @@ HRESULT CPlayer::Damaged(void* pArg)
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
-	if(false == m_PlayerDesc.isSuperArmor)
-		m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
+	if (false == m_PlayerDesc.isSuperArmor)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+
+		m_pFSM->Handle_Transition(Desc);
+	}
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
@@ -339,18 +327,14 @@ HRESULT CPlayer::Ready_BetaSkillDesc()
 
 HRESULT CPlayer::Ready_FSM()
 {
-	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
-	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
-	m_FSMs.emplace(PLAYER_MODE::IDLE, CPlayerIdleFSM::Create());
-
-	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::IDLE)->second;
+	m_pFSM = CPlayerFSM::Create();
 
 	return S_OK;
 }
 
 void CPlayer::Update_FSM(_float fTimeDelta)
 {
-	m_pCurrentFSM->Update(fTimeDelta);
+	m_pFSM->Update(fTimeDelta);
 }
 
 void CPlayer::Update_RushSkill(_float fTimeDelta)
@@ -423,12 +407,7 @@ void CPlayer::Free()
 
 	Safe_Release(m_pColliderCom);
 
-	for (auto& iter : m_FSMs)
-		Safe_Release(iter.second);
-
-	m_FSMs.clear();
-
-	Safe_Release(m_pCurrentFSM);
+	Safe_Release(m_pFSM);
 }
 
 

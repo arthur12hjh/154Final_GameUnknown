@@ -188,9 +188,6 @@
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
-    <ClInclude Include="..\Public\PlayerBattleFSM.h" />
-    <ClInclude Include="..\Public\PlayerIdleFSM.h" />
-    <ClInclude Include="..\Public\PlayerLockonFSM.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
@@ -408,10 +405,7 @@
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
-    <ClCompile Include="..\Private\PlayerBattleFSM.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
-    <ClCompile Include="..\Private\PlayerIdleFSM.cpp" />
-    <ClCompile Include="..\Private\PlayerLockonFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />

@@ -22,7 +22,6 @@ public:
 	virtual void Handle_Notify(void* pArg);
 	struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
 	_float Get_AnimationRatio();
-	void Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState = PLAYER_STATE::STATE_END); 
 
 	_bool Use_BetaSkill(_uint iSkillID);
 	_bool Use_RushSkill();
@@ -40,9 +39,7 @@ private:
 	struct Player_Desc		m_PlayerDesc = {};
 	CCollider*				m_pColliderCom = { nullptr };
 
-	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};
-	class CPlayerFSM*		m_pCurrentFSM = { nullptr };
-
+	class CPlayerFSM* m_pFSM = { nullptr };
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 
 	//
