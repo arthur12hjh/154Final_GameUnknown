@@ -173,6 +173,12 @@ void CSpriteParticle::Play()
 	m_bisStop = false;
 }
 
+void CSpriteParticle::End()
+{
+	m_tData.fEndTime = m_fTime;
+}
+
+
 HRESULT CSpriteParticle::Ready_Components()
 {
 	_tchar sztPrototype[256] = { 0, };
@@ -297,7 +303,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = 0;
 	m_CBData.fTimeDelta.w = 0;
@@ -360,7 +366,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 
 void CSpriteParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : m_tData.bisLoop ? 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

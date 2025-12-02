@@ -42,6 +42,7 @@ private:
 
 	class CTrailEffect* m_pTrail = { nullptr };
 	class CEffect* m_pSpark = { nullptr };
+	class CEffect* m_pCharge = { nullptr };
 
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;

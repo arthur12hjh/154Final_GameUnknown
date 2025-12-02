@@ -38,6 +38,7 @@ namespace Client
 		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, VENDING_INTERACTION,
 		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
+		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
 		STATE_END
 	};
@@ -75,6 +76,9 @@ namespace Client
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
 		float							fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
+
+		bool							isSuperArmor = { false };
+		bool							isLookFixed = { false };
 
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,

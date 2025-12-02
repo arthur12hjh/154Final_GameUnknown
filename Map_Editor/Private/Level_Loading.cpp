@@ -14,9 +14,10 @@ CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 }
 
-HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
+HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 {
 	m_eNextLevelID = eNextLevelID;
+	m_bIsProtoTypes = bIsResetProtoTypes;
 
 	/* 다음 레벨에 대한 자원을 로드하여 준비해둔다. */
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, eNextLevelID);
@@ -37,7 +38,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	{
 		CLevel* pNewLevel = { nullptr };
 
-		m_pGameInstance->Clear_LevelResource();
+		m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
 
 		switch (m_eNextLevelID)
 		{
@@ -52,7 +53,6 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			break;
 		}
 
-		
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
 			return;
 	}
@@ -75,11 +75,11 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID)
+CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 {
 	CLevel_Loading* pInstance = new CLevel_Loading(pDevice, pContext, eLevelID);
 
-	if (FAILED(pInstance->Initialize(eNextLevelID)))
+	if (FAILED(pInstance->Initialize(eNextLevelID, bIsResetProtoTypes)))
 	{
 		MSG_BOX("Failed to Created : CLevel_Loading");
 		Safe_Release(pInstance);

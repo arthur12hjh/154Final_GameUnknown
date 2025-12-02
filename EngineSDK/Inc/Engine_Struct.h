@@ -261,7 +261,7 @@ namespace Engine
 
 	typedef struct tagModelInstanceLoadDesc
 	{
-		const wchar_t* pPrototypeTag = nullptr;
+		const wchar_t* pPrototypeTag = nullptr;   // 컴포넌트 태그
 		unsigned int iNumInstance = 0;
 		vector<VTX_INSTANCE_MODEL>* pInstancingData;
 	}MODEL_INSTANCE_LOAD_DESC;

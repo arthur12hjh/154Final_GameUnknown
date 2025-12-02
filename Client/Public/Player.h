@@ -26,7 +26,6 @@ public:
 
 	_bool Use_BetaSkill(_uint iSkillID);
 	_bool Use_RushSkill();
-	void  Set_SuperArmor(_bool bFlag) { m_isSuperArmor = bFlag; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -43,7 +42,6 @@ private:
 
 	map<PLAYER_MODE, class CPlayerFSM*> m_FSMs = {};
 	class CPlayerFSM*		m_pCurrentFSM = { nullptr };
-	_bool					m_isSuperArmor = { false }; 
 
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 

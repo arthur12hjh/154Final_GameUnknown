@@ -56,6 +56,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(200.f, 50.5f, 260.f, 1.f));
+
+
 
 	return S_OK;
 }
@@ -271,6 +274,7 @@ HRESULT CNayitba::ADD_Components()
 		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
 		return E_FAIL;
 
+	m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 

@@ -439,6 +439,14 @@ void CEffect::Play()
         pSpriteParticle->Play();
 }
 
+void CEffect::End()
+{
+    for (auto pParticle : m_pPointParticles)
+        pParticle->End();
+    for (auto pSpriteParticle : m_pSpriteParticles)
+        pSpriteParticle->End();
+}
+
 CEffect* CEffect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile)
 {
     auto p = new CEffect(pDevice, pContext);

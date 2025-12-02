@@ -37,7 +37,7 @@ void CTerrain_Desert::Priority_Update(_float fTimeDelta)
 
 void CTerrain_Desert::Update(_float fTimeDelta)
 {
-
+	//m_pVIBufferCom->Culling(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CTerrain_Desert::Late_Update(_float fTimeDelta)

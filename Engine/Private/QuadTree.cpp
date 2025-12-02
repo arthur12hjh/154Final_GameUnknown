@@ -22,21 +22,21 @@ HRESULT CQuadTree::Initialize(_uint iLT, _uint iRT, _uint iRB, _uint iLB)
 	iLC = (m_iCorners[CORNER_LT] + m_iCorners[CORNER_LB]) >> 1;
 	iTC = (m_iCorners[CORNER_LT] + m_iCorners[CORNER_RT]) >> 1;
 	iRC = (m_iCorners[CORNER_RT] + m_iCorners[CORNER_RB]) >> 1;
-	iBC = (m_iCorners[CORNER_LB] + m_iCorners[CORNER_RB]) >> 1;	
+	iBC = (m_iCorners[CORNER_LB] + m_iCorners[CORNER_RB]) >> 1;
 
 	m_pChildren[CORNER_LT] = CQuadTree::Create(m_iCorners[CORNER_LT], iTC, m_iCenter, iLC);
 	m_pChildren[CORNER_RT] = CQuadTree::Create(iTC, m_iCorners[CORNER_RT], iRC, m_iCenter);
 	m_pChildren[CORNER_RB] = CQuadTree::Create(m_iCenter, iRC, m_iCorners[CORNER_RB], iBC);
 	m_pChildren[CORNER_LB] = CQuadTree::Create(iLC, m_iCenter, iBC, m_iCorners[CORNER_LB]);
 
-    return S_OK;
+	return S_OK;
 }
 
 void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVertexPositions, _uint* pIndices, _uint* pNumIndices)
 {
-	if (nullptr == m_pChildren[CORNER_LT] || 
+	if (nullptr == m_pChildren[CORNER_LT] ||
 		true == isDraw(pGameInstance, pVertexPositions))
-	{	
+	{
 		_bool		isDraw[NEIGHBOR_END] = { true, true, true, true };
 
 		for (size_t i = 0; i < NEIGHBOR_END; i++)
@@ -176,7 +176,7 @@ void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVertexPosi
 		{
 			if (nullptr != m_pChildren[i])
 				m_pChildren[i]->Culling(pGameInstance, pVertexPositions, pIndices, pNumIndices);
-		}		
+		}
 	}
 
 }
@@ -238,7 +238,6 @@ _bool CQuadTree::isDraw(CGameInstance* pGameInstance, const _float3* pVertexPosi
 
 	return false;
 
-	return _bool();
 }
 
 CQuadTree* CQuadTree::Create(_uint iLT, _uint iRT, _uint iRB, _uint iLB)
@@ -256,7 +255,7 @@ CQuadTree* CQuadTree::Create(_uint iLT, _uint iRT, _uint iRB, _uint iLB)
 
 void CQuadTree::Free()
 {
-    __super::Free();
+	__super::Free();
 
 	for (auto& pChild : m_pChildren)
 		Safe_Release(pChild);
