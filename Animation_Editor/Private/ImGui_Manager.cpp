@@ -922,11 +922,11 @@ void CImGui_Manager::Update_EventMaker()
 			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg01.c_str());
 			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg02.c_str());
 			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg03.c_str());
-			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg04.c_str());
-			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg05.c_str());
-			strcpy_s(szNotifyArg03, SelectedAnimNotify.szNotifyArg06.c_str());
-			strcpy_s(szNotifyArg01, SelectedAnimNotify.szNotifyArg07.c_str());
-			strcpy_s(szNotifyArg02, SelectedAnimNotify.szNotifyArg08.c_str());
+			strcpy_s(szNotifyArg04, SelectedAnimNotify.szNotifyArg04.c_str());
+			strcpy_s(szNotifyArg05, SelectedAnimNotify.szNotifyArg05.c_str());
+			strcpy_s(szNotifyArg06, SelectedAnimNotify.szNotifyArg06.c_str());
+			strcpy_s(szNotifyArg07, SelectedAnimNotify.szNotifyArg07.c_str());
+			strcpy_s(szNotifyArg08, SelectedAnimNotify.szNotifyArg08.c_str());
 			strcpy_s(szSocketTag, SelectedAnimNotify.szSocketTag.c_str());
 
 			iNumData01 = SelectedAnimNotify.iNumData01;

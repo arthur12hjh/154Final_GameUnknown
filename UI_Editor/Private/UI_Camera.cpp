@@ -32,6 +32,9 @@ HRESULT CUI_Camera::Initialize(void* pArg)
 	if(FAILED(Ready_PlayerDesc()))
 		return E_FAIL;
 
+	if(FAILED(Ready_MonsterDesc()))
+		return E_FAIL;
+
 	/* Com_Collider_AABB */
 	//CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
 	//
@@ -118,6 +121,10 @@ void CUI_Camera::Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
 	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7) && m_MonsterDesc.iCurrentHealth > 0)
+			m_MonsterDesc.iCurrentHealth -= 10;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8) && m_MonsterDesc.iCurrentHealth < m_MonsterDesc.iMaxHealth)
+			m_MonsterDesc.iCurrentHealth += 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_PlayerDesc.iCurrentHealth > 0)
 			m_PlayerDesc.iCurrentHealth -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
@@ -142,6 +149,10 @@ void CUI_Camera::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
 	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7) && m_MonsterDesc.iCurrentShield > 0)
+			m_MonsterDesc.iCurrentShield -= 10;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8) && m_MonsterDesc.iCurrentShield < m_MonsterDesc.iMaxShield)
+			m_MonsterDesc.iCurrentShield += 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_PlayerDesc.iCurrentShield > 0)
 			m_PlayerDesc.iCurrentShield -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield)
@@ -314,6 +325,17 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 
 	for (int i = 0; i < 4; ++i)
 		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
+
+	return S_OK;
+}
+
+HRESULT CUI_Camera::Ready_MonsterDesc()
+{
+	m_MonsterDesc.iMaxHealth = 100;
+	m_MonsterDesc.iMaxShield = 100;
+
+	m_MonsterDesc.iCurrentHealth = 100;
+	m_MonsterDesc.iCurrentShield = 100;
 
 	return S_OK;
 }

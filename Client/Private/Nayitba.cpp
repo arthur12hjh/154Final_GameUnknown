@@ -17,6 +17,8 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
+#include "UIHUD.h"
+
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
 {
@@ -281,7 +283,7 @@ HRESULT CNayitba::ADD_Components()
 			return E_FAIL;
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-		SenceComDesc.fAiSearchRadius = 60.f;
+		SenceComDesc.fAiSearchRadius = 360.f;
 		SenceComDesc.fAiTargetSearchDistance = 20.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 
@@ -369,6 +371,12 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
 		m_pAISenceCom->Add_SenceTargetObject(pTarget);
+
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
+
+		Safe_Release(pUIHUD);
 	}
 }
 

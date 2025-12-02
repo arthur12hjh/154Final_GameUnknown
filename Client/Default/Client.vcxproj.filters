@@ -604,11 +604,35 @@
     <Filter Include="02.GameObjects\Map\Desert\Environment\Canyon">
       <UniqueIdentifier>{e9b70ca5-8a0f-4311-9a2a-95c279cd1ae9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
-      <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
-    </Filter>
+	<Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
+		<UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
+	</Filter>
     <Filter Include="03.Effects\TrailEffect\TrailData">
       <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI">
+      <UniqueIdentifier>{d20edc83-b322-478f-9486-c23a95911687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar">
+      <UniqueIdentifier>{d7fd1cfc-a8b8-4b4c-a217-fc82535521b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX">
+      <UniqueIdentifier>{98a9b411-09df-4e7c-9afb-8f3c84f65184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield">
+      <UniqueIdentifier>{b490d414-3f8c-47db-9483-b7b8e1159dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper">
+      <UniqueIdentifier>{e944b3c3-6320-4dd2-874b-e724e26da971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar">
+      <UniqueIdentifier>{4f8fcab0-fb1b-4759-a675-45cbdb4b3515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield">
+      <UniqueIdentifier>{ee2c705e-42bd-4ffb-9cb1-8197f62ed832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX">
+      <UniqueIdentifier>{37c3e0f8-291d-458e-9fa8-a175d8da52b1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
       <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
@@ -1221,6 +1245,42 @@
     <ClInclude Include="..\Public\Player_SheatheHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIWorldWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterHPFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossVitalWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossHPBarFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+        <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+        <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Building_Ruin.h">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
@@ -1248,7 +1308,7 @@
     <ClInclude Include="..\public\TrailData.h">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClInclude>
-  </ItemGroup>
+</ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
       <Filter>100.ETC</Filter>
@@ -1843,6 +1903,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIWorldWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterHPFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossVitalWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossHPBarFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Building_Ruin.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>

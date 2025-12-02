@@ -10,12 +10,12 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUIShield final : public CUIBase
+class CUIMonsterShield final : public CUIBase
 {
 private:
-	CUIShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUIShield(const CUIShield& Prototype);
-	virtual ~CUIShield() = default;
+	CUIMonsterShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUIMonsterShield(const CUIMonsterShield& Prototype);
+	virtual ~CUIMonsterShield() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -38,17 +38,12 @@ private:
 	LONGLONG* m_iMaxShield = nullptr;        // 최대 값
 	LONGLONG* m_iCurrentShield = nullptr;
 
-#ifdef _DEBUG
-	LONGLONG m_Gara = 100;
-	LONGLONG m_MaxGara = 100;
-#endif // DEBUG
-
 	_float m_fCurrentFill = 1.0f;   // 현재 값
 	_float m_fTargetFill = 1.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
 
 public:
-	static CUIShield* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUIMonsterShield* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

@@ -5,6 +5,9 @@
 #include "Player.h"
 #include "Nayitba.h"
 
+#include "UIHUD.h"
+#include "UIBase.h"
+
 CLockonManager::CLockonManager()
     : m_pGameInstance { CGameInstance::GetInstance() }
 {
@@ -61,7 +64,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
             // Å¸°Ù Æ®·£½ºÆû º¯°æ.
             fMinDist = fDist;
             m_fCurrentMinDist = fMinDist;
-            m_pTarget = static_cast<CNayitba* >(pTarget);
+            m_pTarget = static_cast<CNayitba*>(pTarget);
 
             if(m_pTarget != pTarget)
                 m_fLockonTimer = 0.f;
@@ -116,8 +119,26 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (true == m_isLock)
     {
         Get_LockOnPoint();
-        if(false == m_pPlayerDesc->isLookFixed)
-            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
+        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
+
+        if (!m_pLockonUI)
+        {
+            CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
+
+            Safe_Release(pUIHUD);
+        }
+    }
+    else
+    {
+        if (m_pLockonUI)
+        {
+            CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            pUIHUD->Return_WorldUI(m_pLockonUI);
+
+            Safe_Release(pUIHUD);
+        }
     }
 
     if (false == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
