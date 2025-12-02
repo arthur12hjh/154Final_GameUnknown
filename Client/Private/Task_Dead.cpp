@@ -1,17 +1,24 @@
 #include "pch.h"
 #include "Task_Dead.h"
 
-#include "BehaviorTree.h"
+#include "BossBlackBoard.h"
+#include "GorillaBehaviorTree.h"
 #include "Nayitba.h"
 
 CTask_Dead::CTask_Dead()
 {
 }
 
-HRESULT CTask_Dead::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CTask_Dead::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
         return E_FAIL;
+
+    if (nullptr == m_pOwner)
+        m_pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+
+    if (nullptr == m_pBlackBoard)
+        m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
 
     return S_OK;
 }
@@ -19,14 +26,13 @@ HRESULT CTask_Dead::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
 CBehaviorNode::NODE_STATE CTask_Dead::Update(_float fTimeDelta)
 {
     // 애니메이션을 받아서 재생한다. 
-    auto pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
-    pOwner->Set_Animation("M_Finish_DeadLink");
-    pOwner->Play_Animation(fTimeDelta);
+    m_pOwner->Set_Animation("M_Finish_DeadLink");
+    m_pOwner->Play_Animation(fTimeDelta);
 
     return NODE_STATE::COMPLETE;
 }
 
-CTask_Dead* CTask_Dead::Create(const CBehaviorTree* pOwnerTree)
+CTask_Dead* CTask_Dead::Create(CBehaviorTree* pOwnerTree)
 {
     CTask_Dead* pTask_Dead = new CTask_Dead();
     if (FAILED(pTask_Dead->Initialize_Prototype(pOwnerTree)))
@@ -40,4 +46,6 @@ CTask_Dead* CTask_Dead::Create(const CBehaviorTree* pOwnerTree)
 void CTask_Dead::Free()
 {
     __super::Free();
+
+    Safe_Release(m_pBlackBoard);
 }

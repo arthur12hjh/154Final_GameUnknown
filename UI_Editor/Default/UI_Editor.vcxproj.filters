@@ -54,6 +54,15 @@
     <Filter Include="999. CPP From Client\02. GameManager">
       <UniqueIdentifier>{e64b9547-a287-4215-b622-3b1bb1aa555d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. UI_Camera%28Player%29">
+      <UniqueIdentifier>{54394654-8842-4e7a-9422-516e293d89f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\03. Player">
+      <UniqueIdentifier>{56260941-1664-4202-a963-1142d790fe44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\03. Player\FSM">
+      <UniqueIdentifier>{1222751c-453f-4423-96d4-4facdcf7964c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -119,6 +128,9 @@
     <ClInclude Include="..\Public\UIResourceStore.h">
       <Filter>02. UIResourceStore</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Camera.h">
+      <Filter>03. UI_Camera%28Player%29</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UI_Editor.cpp">
@@ -166,28 +178,13 @@
     <ClCompile Include="..\Private\UI_Loader.cpp">
       <Filter>01.Level\Loading\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIBase.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIButton.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIHUD.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIWrapper.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIPanel.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIText.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIResourceStore.cpp">
       <Filter>02. UIResourceStore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIImage.cpp">
+    <ClCompile Include="..\Private\UI_Camera.cpp">
+      <Filter>03. UI_Camera%28Player%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIActionEvent.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIAnimInstance.cpp">
@@ -196,49 +193,31 @@
     <ClCompile Include="..\..\Client\Private\UIAnimManager.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIActionEvent.cpp">
+    <ClCompile Include="..\..\Client\Private\UIBase.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBeta.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIButton.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIHPBar.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIHPFX.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIHUD.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIImage.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIPanel.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp">
-      <Filter>999. CPP From Client\00. UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\CanBox.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\RewordEvent.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Actor.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Camera_Free.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Sky.cpp">
-      <Filter>999. CPP From Client\01. CanBox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\DataManager.cpp">
-      <Filter>999. CPP From Client\02. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\GameManager.cpp">
-      <Filter>999. CPP From Client\02. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\TestQuest.cpp">
-      <Filter>999. CPP From Client\02. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\QuestManager.cpp">
-      <Filter>999. CPP From Client\02. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Quest.cpp">
-      <Filter>999. CPP From Client\02. GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIHPBar.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIPotion.cpp">
@@ -250,13 +229,148 @@
     <ClCompile Include="..\..\Client\Private\UIPotionStack.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIShield.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIBeta.cpp">
+    <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\UIHPFX.cpp">
+    <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIText.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIWrapper.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Actor.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\CanBox.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Quest.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\RewordEvent.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Sky.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TestQuest.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\DataManager.cpp">
+      <Filter>999. CPP From Client\02. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\GameManager.cpp">
+      <Filter>999. CPP From Client\02. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\QuestManager.cpp">
+      <Filter>999. CPP From Client\02. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp">
+      <Filter>999. CPP From Client\01. CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player.cpp">
+      <Filter>999. CPP From Client\03. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Notify.cpp">
+      <Filter>999. CPP From Client\03. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\LockonManager.cpp">
+      <Filter>999. CPP From Client\02. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Character.cpp">
+      <Filter>999. CPP From Client\03. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_AerialAttack.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleEvadeState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleIdleState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleLandingState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleWalkEndState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleWalkState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlahsState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_HitState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_IdleLandingState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_IdleState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_IdleWalkState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_JumpState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_LightAttackState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_LockonEvadeState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_LockonIdleState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_LockonWalkState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_Parts.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_VendingInteractionState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerBattleFSM.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerBehaviorCallback.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerCCTHitReporter.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerFSM.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerIdleFSM.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerLockonFSM.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PlayerState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UISkillWrapperLineFX.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UISkillWrapperOnFX.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>

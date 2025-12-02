@@ -264,8 +264,9 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 _float CGameInstance::Random_Normal()
 {
 	random_device	rd;
+	uniform_real_distribution<_float> distribution(0, 1.f);
 
-	return static_cast<_float>(rd()) / (rd.max)();
+	return distribution(rd);
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)
@@ -459,6 +460,11 @@ void CGameInstance::Set_DebugVisible(_bool isVisible)
 	m_pRenderer->Set_DebugVisible(isVisible);
 }
 
+void CGameInstance::Set_DebugColliderVisible(_bool isVisible)
+{
+	m_pRenderer->Set_DebugColliderVisible(isVisible);
+}
+
 void* CGameInstance::Get_DoF_Desc()
 {
 	return m_pRenderer->Get_DoF_Desc();
@@ -599,11 +605,6 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
-void CGameInstance::Select_LightRender(CLight* pSelectLight)
-{
-	return m_pLight_Manager->Select_LightRender(pSelectLight);
-}
-
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
@@ -615,6 +616,11 @@ HRESULT CGameInstance::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIB
 }
 
 #ifdef _DEBUG
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
+}
+
 void CGameInstance::Debug_LightRender()
 {
 	m_pLight_Manager->Debug_LightRender();

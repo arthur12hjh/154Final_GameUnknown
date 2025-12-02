@@ -758,7 +758,6 @@ void CRenderer::Render_Debug()
 	//	return;
 
 }
-
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pColliderRenderer->Add_DebugComponent(pDebugCom);
@@ -769,6 +768,14 @@ HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 	return m_pColliderRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 
+#endif
+
+
+#ifdef _DEBUG
+void CRenderer::Set_DebugColliderVisible(_bool isVisible)
+{
+	m_pColliderRenderer->Set_DebugColliderVisible(isVisible);
+}
 #endif
 
 HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)

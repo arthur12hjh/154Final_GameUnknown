@@ -43,6 +43,12 @@ float g_GlowSpread = 1.0f; // 빛이 퍼지는 정도 1 ~ 4 정도 추천
 bool g_bScroll = false; // uv사용 여부
 float g_ScrollSpeed = 0.5f; // uv에 따라 및이 이동하는 속도
 
+bool g_bUseCoolTime = false;
+float g_fCoolAmount = 1.f; // 0~1
+
+bool g_isUseable = false; // 스킬 사용 가능 여부
+bool g_UseCover = false;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -575,6 +581,208 @@ PS_OUT PS_BETA(PS_IN In)
 
 /*------------------[E_BETA]----------------*/
 
+/*------------------[S_SKILL_SLOT]----------------*/
+PS_OUT PS_SKILL_SLOT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 TintColor = 1.f;
+    
+    float4 shadow = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    float4 frame = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+    float4 icon = 0.f;
+    float4 cover = 0.f;
+    
+    if(g_bUseTintColor)
+        TintColor = g_vTintColor;
+    
+    if(g_isUseable)
+    {   
+        icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+        icon *= TintColor;
+    }
+    
+    if (g_UseCover)
+    {   
+        cover = g_Texture3.Sample(DefaultSampler, In.vTexcoord) * g_Alpha;
+    }
+    
+    float4 result = shadow;
+    result = lerp(result, frame, frame.a);
+    result = lerp(result, icon, icon.a);
+    result = lerp(result, cover, cover.a);
+    
+    Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_SKILL_SLOT]----------------*/
+
+/*------------------[S_SKILL_SLOT_GLOW]----------------*/
+
+PS_OUT PS_SKILL_SLOT_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+  
+    float2 uv = In.vTexcoord;
+
+    float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    float4 glow1 = g_Texture1.Sample(DefaultSampler, uv);
+    
+    if(g_bUseGlow)
+    {
+        glow0.rgb += glow0.rgb * g_GlowIntensity;
+        glow0.rgb *= glow0.a * 0.5f;
+        glow1.rgb += glow1.rgb * (g_GlowIntensity * 5.f);
+        glow1.rgb *= glow1.a * 0.5f;
+    }
+    
+    float4 result = glow0;
+    result = lerp(result, glow1, glow1.a);
+    
+    Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_SKILL_SLOT_GLOW]----------------*/
+
+/*------------------[S_RUSH_SLOT]----------------*/
+float CoolMask(float2 uv, float amount)
+{
+    // UV 중심 기준 (-0.5 ~ 0.5)
+    float2 centerUV = uv - float2(0.5f, 0.5f);
+
+    centerUV.x = -centerUV.x; // Y축 반전
+    
+    // atan2(y, x) 로 각도 구하기 (-pi ~ pi)
+    float angle = atan2(centerUV.x, centerUV.y);
+    
+    // 0 ~ 1로 정규화
+    float t = (angle + 3.14159265f) / (2.0f * 3.14159265f);
+
+    // 시계 방향 FillAmount보다 크면 가림
+    return step(t, amount);
+}
+
+PS_OUT PS_RUSH_SLOT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 TintColor = 1.f;
+    //float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
+    
+    float4 shadow = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    float4 frame = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+    float4 icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+    float4 cooltime = 0.f;
+    
+    if(g_bUseTintColor)
+        TintColor = g_vTintColor;
+    
+    icon *= TintColor;
+        
+    if (g_bUseCoolTime)
+    {
+        cooltime = g_Texture3.Sample(DefaultSampler, In.vTexcoord);
+        
+        float mask = CoolMask(In.vTexcoord, g_fCoolAmount);
+        cooltime *= mask;
+        cooltime.a *= 1.25f;
+    }
+    
+    float4 result = shadow;
+    result = lerp(result, frame, frame.a);
+    result = lerp(result, icon, icon.a);
+    result = lerp(result, cooltime, cooltime.a);
+    //result += cooltime * CoolTimeColor;
+    
+    Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_RUSH_SLOT]----------------*/
+
+/*------------------[S_RUSH_SLOT_GLOW]----------------*/
+
+PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+  
+    float2 uv = In.vTexcoord;
+
+    //float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
+    
+    float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    
+    if(g_bUseGlow)
+    {
+        glow0.rgb += glow0.rgb * g_GlowIntensity;
+        glow0.rgb *= glow0.a * 0.5;
+    }
+    
+    float4 result = glow0;
+    
+    Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_RUSH_SLOT_GLOW]----------------*/
+
+/*------------------[S_SKILL_WRAPPER_ON_LINE]----------------*/
+
+PS_OUT PS_SKILL_WRAPPER_ON_LINE(PS_IN In)
+{
+    PS_OUT Out;
+  
+    float2 uv = In.vTexcoord;
+
+    float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    float4 glow1 = g_Texture1.Sample(DefaultSampler, uv);
+    
+    glow0.rgb += glow0.rgb * g_GlowIntensity;
+    glow0.rgb *= glow0.a * 0.5f;
+    glow1.rgb += glow1.rgb * g_GlowIntensity;
+    glow1.rgb *= glow1.a * 0.5f;
+    
+    float4 result = saturate(glow0 + glow1);
+    
+    Out.vColor = result * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_RUSH_SLOT_GLOW]----------------*/
+
+/*------------------[S_SKILL_WRAPPER_ON_FX]----------------*/
+
+PS_OUT PS_SKILL_WRAPPER_ON_FX(PS_IN In)
+{
+    PS_OUT Out;
+  
+    float2 uv = In.vTexcoord;
+
+    float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    float mask = g_Texture1.Sample(DefaultSampler, uv).r;
+    
+    glow0.rgb += glow0.rgb * g_GlowIntensity;
+    glow0.rgb *= glow0.a * 0.5f;
+    
+    float alpha = mask;
+
+    glow0.rgb *= alpha; // Additive 유지하면서 투명하게 만들기
+    glow0.a = alpha;
+    
+    Out.vColor = glow0 * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_SKILL_WRAPPER_ON_FX]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -587,7 +795,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-    pass Debug // 1
+    pass DEBUG // 1
     {
         SetRasterizerState(RS_Wireframe);
         SetDepthStencilState(DSS_Default, 0);
@@ -597,7 +805,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DEBUG();
     }
 
-    pass Glow // 2
+    pass GLOW // 2
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
@@ -607,7 +815,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_UI_GLOW();
     }
     
-    pass GlowFX // 3
+    pass GLOWFX // 3
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
@@ -667,4 +875,75 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_BETA();
     }
 
+    pass BETA_FX // 8
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+    
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BETA();
+    }
+
+    pass SKILL_SLOT // 9
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SKILL_SLOT();
+    }
+
+    pass SKILL_SLOT_GLOW // 10
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SKILL_SLOT_GLOW();
+    }
+
+    pass RUSH_SLOT // 11
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RUSH_SLOT();
+    }
+
+    pass RUSH_SLOT_GLOW // 12
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RUSH_SLOT_GLOW();
+    }
+
+    pass SKILL_WRAPPER_ON_LINE // 13
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SKILL_WRAPPER_ON_LINE();
+    }
+
+    pass SKILL_WRAPPER_ON_FX // 13
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SKILL_WRAPPER_ON_FX();
+    }
 }

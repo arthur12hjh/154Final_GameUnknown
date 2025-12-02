@@ -4,6 +4,7 @@
 
 #include "DataManager.h"
 #include "QuestManager.h"
+#include "LockonManager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
@@ -13,6 +14,10 @@ IMPLEMENT_SINGLETON(CGameManager);
 HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     if (FAILED(Setting_Manager(pDevice, pContext)))
+        return E_FAIL;
+
+    m_pLockonManager = CLockonManager::Create();
+    if (nullptr == m_pLockonManager)
         return E_FAIL;
 
     m_pDataManager = CDataManager::Create();
@@ -31,11 +36,8 @@ void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
     if (m_pPlayer == pCharacter)
         return;
 
-    //if (m_pPlayer)
-    //    Safe_Release(m_pPlayer);
-
     m_pPlayer = pCharacter;
-    ///Safe_AddRef(m_pPlayer);
+    m_pLockonManager->Bind_Player(m_pPlayer);
 }
 
 CPlayer* CGameManager::GetGameCharacter()
@@ -70,6 +72,16 @@ const NAYTIBA_NETWORK_DESC* CGameManager::Find_BossData(_uint iBossID)
     return m_pDataManager->Find_NaytibaData(iBossID);
 }
 
+const BETA_SKILL_DESC* CGameManager::Find_BetaSkillData(_uint iSkillID)
+{
+    return m_pDataManager->Find_BetaSkillData(iSkillID);
+}
+
+map<_uint, BETA_SKILL_DESC>* CGameManager::Get_AllBetaSkillDesc()
+{
+    return m_pDataManager->Get_AllBetaSkillDesc();
+}
+
 const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
 {
     return m_pDataManager->Find_AnimationNotifyData(szAnimationTag);
@@ -97,6 +109,29 @@ void CGameManager::CompletedQuest(_uint iQuestID)
 {
     m_pQuestManager->CompletedQuest(iQuestID);
 }
+
+#pragma region LOCKON
+
+CTransform* CGameManager::Get_TargetTransform()
+{
+    return m_pLockonManager->Get_TargetTransform();
+}
+void CGameManager::Lockon(_float fTimeDelta)
+{
+    m_pLockonManager->Lockon(fTimeDelta);
+}
+void CGameManager::Start_Lockon()
+{
+    m_pLockonManager->Start_Lockon();
+}
+_float CGameManager::Get_CurMinDist()
+{
+    return m_pLockonManager->Get_CurMinDist();
+}
+_bool CGameManager::Get_Lockon()
+{
+    return m_pLockonManager->Get_Lockon();
+}
 #pragma endregion
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -119,6 +154,7 @@ void CGameManager::Free()
     //Safe_Release(m_pPlayer);
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
+    Safe_Release(m_pLockonManager);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);

@@ -67,6 +67,7 @@ public:
 	}
 
 	void Set_Position(_float fX, _float fY);
+	void Set_Rotation(_float fRotation);
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);
@@ -85,6 +86,8 @@ public:
 	_bool Get_Follow_Parent() { return m_bFollowParent; }
 	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
 
+	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
+
 #ifdef _DEBUG
 	void Render_Debug_Rect();
 #endif
@@ -102,6 +105,7 @@ protected:
 	vector<_wstring>						m_SubscribeEvents{}; // 내가 구독할 이벤트 목록
 
 	_bool					m_bFollowParent{ true };
+	_bool					m_bPlayingAnim{ false };
 
 private:
 	HRESULT Ready_Texture();

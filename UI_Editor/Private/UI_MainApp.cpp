@@ -4,7 +4,7 @@
 
 #include "GameInstance.h"
 
-#include "Camera_Free.h"
+#include "UI_Camera.h"
 
 #include "UI_Level_Loading.h"
 #include "GUIManager.h"
@@ -150,9 +150,9 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Camera_Free */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
-		CCamera_Free::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_Camera */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_UI_Camera"),
+		CUI_Camera::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

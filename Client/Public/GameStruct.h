@@ -41,30 +41,50 @@ namespace Client
 
 		STATE_END
 	};
+	enum class SKILL_STATE {
+		DEFAULT,   // 비활성화
+		ACTIVE_ON, // 딱 활성화 됐을 때
+		ACTIVE,	   // 활성화 상태
+		USE,	   // 스킬 쓴 순간
+		END,	   //
+	};
+
 	typedef struct Player_Desc
 	{
-		long long				iMaxHealth;
-		long long				iMaxShield;
-		long long				iMaxBetaEnergy;
+		long long						iMaxHealth;
+		long long						iMaxShield;
+		//베타 에너지 최대치
+		long long						iMaxBetaEnergy;
 
-		long long				iCurrentHealth;
-		long long				iCurrentShield;
-		long long				iCurrentBetaEnergy;
+		long long						iCurrentHealth;
+		long long						iCurrentShield;
+		//현재 베타 에너지
+		long long						iCurrentBetaEnergy;
 
-		long long				iCurrentAttackPoint;
-		long long				iCurrentShieldATK;
+		long long						iCurrentAttackPoint;
+		long long						iCurrentShieldATK;
 
-		float					fCurrentCTPercent;
-		float					fCurrentCTDamage;
-		float					fCurrentLinkApplyDamage;
+		float							fCurrentCTPercent;
+		float							fCurrentCTDamage;
+		float							fCurrentLinkApplyDamage;
 
-		int						iCurrentPotions; // 현재 소지한 포션 개수
-		int						iMaxPotions; // 전체 포션 개수
+		int								iCurrentPotions; // 현재 소지한 포션 개수
+		int								iMaxPotions; // 전체 포션 개수
+		
+		//
+		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
+		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
+		float							fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
 
-		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE				ePlayerMode;
-		class CTransform*		pPlayerTransform = { nullptr };
-		class CCharacterController* pPlayerController = { nullptr }; 
+		// 베타스킬 상태들
+		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
+		SKILL_STATE						eBetaSkillState[4];			// 사용중인 스킬 상태
+		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
+
+		// 플레이어의 전투 상태. battle, idle, lockon
+		PLAYER_MODE						ePlayerMode = { PLAYER_MODE::IDLE };
+		class CTransform*				pPlayerTransform = { nullptr };
+		class CCharacterController*		pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -131,8 +151,14 @@ namespace Client
 		// Property
 		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
 		SKILL_PROPERTY				eProPerty;					// 스킬 속성
-	}CHARACTER_SKILL_DESC;
+ 
+	} CHARACTER_SKILL_DESC;
 
+	typedef struct tagPlayerBetaSkillDesc : public CHARACTER_SKILL_DESC
+	{
+		//요구되는 베타스킬 게이지 량
+		_uint iRequiredBetaGauge;
+	} BETA_SKILL_DESC;
 
 	// 몬스터 구조체
 	// 인게임용
@@ -174,6 +200,9 @@ namespace Client
 		long long			iCurrentHealth;
 		long long			iCurrentShield;
 
+	
+		_float3				fLockOnPoint;
+
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;
 		_float				fMoveSpeed;
@@ -206,6 +235,6 @@ namespace Client
 		_float3				vImpactDir;
 		_float				fImpactForce;
 
-		void*				pSkillData;
+		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 }

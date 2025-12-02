@@ -9,6 +9,7 @@
 #include "AttackHitBox.h"
 
 #include "StringHelper.h"
+#include "PartObject.h"
 
 CNotify::CNotify(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
@@ -40,11 +41,11 @@ HRESULT CNotify::Initialize(void* pArg)
 
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
-	// ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ º¯°æµÉ °æ¿ì, ³ëÆ¼ÆÄÀÌ Å¥¸¦ ÃÊ±âÈ­ÇÏ°í »õ·Î Ã¤¿ö³Ö´Â´Ù.
-	while(!m_NotifyQueue.empty())
+	// ì• ë‹ˆë©”ì´ì…˜ì´ ë³€ê²½ë  ê²½ìš°, ë…¸í‹°íŒŒì´ íë¥¼ ì´ˆê¸°í™”í•˜ê³  ìƒˆë¡œ ì±„ì›Œë„£ëŠ”ë‹¤.
+	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
-	if(nullptr == m_pGameManager)
+	if (nullptr == m_pGameManager)
 		return;
 
 	WCHAR szAnimationTagTmp[MAX_PATH];
@@ -75,8 +76,8 @@ void CNotify::Set_ModelCom(CModel* pModel)
 void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
-	{	
-		// ÀÌº¥Æ® È£Ãâ
+	{
+		// ì´ë²¤íŠ¸ í˜¸ì¶œ
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= m_pModelCom->Get_AnimationKeyFrameIndex())
 		{
 			CallNotify(m_NotifyQueue.top());
@@ -125,6 +126,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case Client::CNotify::PLAY_SCREENSFX:
 		return Notify_Play_ScreenSFX(AnimNotify);
 		break;
+	case CNotify::ACTIVE_PARTOBJECT_COLLISION:
+		return Notify_Active_PartObject_Collision(AnimNotify);
+		break;
 	case Client::CNotify::UNDEFINED:
 		return Notify_Undefined(AnimNotify);
 		break;
@@ -148,7 +152,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Set_DeltaTimeSpeed")   return SET_DELTATIMESPEED;
 	if (szNotifyTag == "Adjust_Light")         return ADJUST_LIGHT;
 	if (szNotifyTag == "Play_ScreenSFX")       return PLAY_SCREENSFX;
-
+	if (szNotifyTag == "Active_PartObjectCollision") return ACTIVE_PARTOBJECT_COLLISION; 
 
 	return NOTIFY_TYPE::UNDEFINED;
 }
@@ -191,13 +195,16 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// Äİ¸®ÀüÀ» »ı¼º Or Äİ¸®Àü On
+	// íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ ì½œë¦¬ì „ ì¼œê²Œ í•˜ëŠ” í•¨ìˆ˜
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
-	
+
 	// Create Notify
 	// szNotifyArg01	=> ProtoType Name
 	// szNotifyArg02	=> Layer Name
+	// szNotifyArg03	=> Part Name
+	// szNotifyArg04	=> ÄÄÆ÷³ÍÆ® ÀÌ¸§
+	// szNotifyArg05	=> º» ÀÌ¸§
 
 	// iNumData1		=>	Skill ID
 	// iNumData2		=>	Col Type
@@ -207,26 +214,26 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
-
+	
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
-	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData1);
+	auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData01);
 	pHitBoxDesc.pData = pSkillData;
 	
-	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData2);
-	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData3);
-	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData4);
+	pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData02);
+	pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData03);
+	pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData04);
 	pHitBoxDesc.bIsApplyTransform = true;
 	pHitBoxDesc.pAttacker = m_pCharacter;
-
+	
 	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
 	pHitBoxDesc.fImpactForce = m_pCharacter->Get_ImpactForce();
 	//pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
-
+	
 	_vector vCharacterPos = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);
 	_vector vCharacterLook = m_pCharacter->GetTransform()->Get_State(STATE::LOOK);
 	vCharacterPos += vCharacterLook * pSkillData->fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
-
+	
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
 		ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))
 		return E_FAIL;
@@ -248,7 +255,7 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
-	/* ¹ÌÀû¿ë
+	/* ë¯¸ì ìš©
 	m_pCharacter->Set_Rotation
 	*/
 
@@ -272,6 +279,24 @@ HRESULT CNotify::Notify_Adjust_Light(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
 {
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
+{
+	// íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ì˜ ì½œë¦¬ì „ On
+	// ANIM_NOTIFY
+	// szNotifyTag		=> Notify Event Type
+	
+	// Create Notify
+	// szNotifyArg01	=> PartObject Name ( íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ ì´ë¦„, Part_Body )
+	// szNotifyArg02	=> Component Name ( ì¶©ëŒì²´ ì»´í¬ë„ŒíŠ¸ ì´ë¦„, Com_Collider )
+	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);
+	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szComponentName);
+
+	m_pCharacter->Activate_PartObject_Collider(szPartObjectName, szComponentName, AnimNotify);
+
 	return S_OK;
 }
 

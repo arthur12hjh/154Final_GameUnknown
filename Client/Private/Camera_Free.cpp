@@ -2,7 +2,7 @@
 #include "Camera_Free.h"
 
 #include "GameInstance.h"
-//#include "Interaction_Component.h"
+#include "Interaction_Component.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera { pDevice, pContext }
@@ -44,6 +44,9 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
+	if (false == m_pGameInstance->IsMainCamera(this))
+		return;
+
 	m_fMouseSensor = 0.1f;
 	if(m_pGameInstance->IsMainCamera(this))
 	{
@@ -63,12 +66,12 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 					m_pTransformCom->Go_Right(fTimeDelta);
 
-				//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-				//{
-				//	auto pInterraction = m_pGameInstance->GetNearInteraction();
-				//	if (pInterraction)
-				//		pInterraction->Action_InteractionEvent(this);
-				//}
+				if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+				{
+					auto pInterraction = m_pGameInstance->GetNearInteraction();
+					if (pInterraction)
+						pInterraction->Action_InteractionEvent(this);
+				}
 			}
 
 			if (false == m_bIsLock[1])

@@ -14,6 +14,7 @@ NS_END
 NS_BEGIN(Client)
 class CQuestManager;
 class CDataManager;
+class CLockonManager;
 
 class CGameManager final : public CBase
 {
@@ -45,7 +46,8 @@ public :
 #pragma region DataManager
 	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
 	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
-
+	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
+	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 #pragma endregion
 
@@ -64,15 +66,32 @@ public :
 	void						CompletedQuest(_uint iQuestID);
 #pragma endregion
 
+
+#pragma region LOCKON
+public:
+	// 락온 모드일때 타겟의 트랜스폼 가져오는 함수.
+	// 락온 모드가 아니라면 nullptr을 반환.
+	CTransform* Get_TargetTransform();
+	// 실질적인 락온 로직이 들어가있음. 락온 모드일때 세팅해주는 함수.
+	void		Lockon(_float fTimeDelta);
+	// 락온 스타트
+	void		Start_Lockon();
+	_float		Get_CurMinDist();
+	_bool		Get_Lockon();
+
+#pragma endregion
+
 private :
-	ID3D11Device*				m_pDevice = nullptr;
-	ID3D11DeviceContext*		m_pContext = nullptr;
-	CGameInstance*				m_pGameInstance = nullptr;
-	CQuestManager*				m_pQuestManager = nullptr;
+	ID3D11Device*			m_pDevice = { nullptr };
+	ID3D11DeviceContext*	m_pContext = { nullptr };
+	CGameInstance*			m_pGameInstance = { nullptr };
 
-	CPlayer*					m_pPlayer = nullptr;
-	CDataManager*				m_pDataManager = nullptr;
+	CDataManager*			m_pDataManager = { nullptr };
+	CQuestManager*			m_pQuestManager = { nullptr };
+	CLockonManager*			m_pLockonManager = { nullptr };
 
+	//플레이어 매니저 굳이 안만들고 이대로 둘게요 이게 더 편할듯
+	CPlayer*				m_pPlayer = { nullptr };
 private :
 	HRESULT						Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 

@@ -3,6 +3,9 @@
 
 #include "GameInstance.h"
 #include "BehaviorTree.h"
+#include "GameManager.h"
+#include "Player.h"
+#include "BossBlackBoard.h"
 
 CBossController::CBossController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CAIController(pDevice, pContext)
@@ -28,6 +31,11 @@ HRESULT CBossController::Initialize(void* pArg)
     if (FAILED(Ready_Behavior(*pControllerDesc)))
         return E_FAIL;
 
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+    pBossBlackBoard->SetTarget(pPlayer);
+    Safe_Release(pPlayer);
+    Safe_Release(pBossBlackBoard);
     return S_OK;
 }
 
@@ -37,6 +45,9 @@ void CBossController::Priority_Update(_float fTimeDelta)
 
 void CBossController::Update(_float fTimeDelta)
 {
+    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    pBossBlackBoard->SetTargetDistacne();
+    Safe_Release(pBossBlackBoard);
     m_pBehaviorTree->Update(fTimeDelta);
 }
 
@@ -51,9 +62,38 @@ HRESULT CBossController::Render()
 
 void CBossController::Damage(void* pArg)
 {
-    
+    DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
+    auto pBossBlackBoard = dynamic_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentHealth)
+    {
+        // 이거 죽는모션 나옴 죽으면 
+        // 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
+        pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+    }
+    else
+    {
+        // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
+        // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
+        _bool bIsHitAble = true;
 
+        const Character_Skill_Desc* pAttackData = pBossBlackBoard->GetAttackData();
+        if (CBossBlackBoard::BOSS_STATE::ATTACK == pBossBlackBoard->GetCurState())
+        {
+            // 나중에 여러 속성 추가할 예정
+            const CHARACTER_SKILL_DESC* pSkillData = pBossBlackBoard->GetAttackData();
+            if (SKILL_PROPERTY::SUPERARMOR & pSkillData->eProPerty)
+            {
+                if (SKILL_TYPE::BETA_SKILL != pSkillData->eSkillType)
+                {
+                    bIsHitAble = false;
+                }
+            }
+        }
+
+        if (bIsHitAble)
+            pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
+    }
 }
 
 void CBossController::ActionSuccess(void* pArg)

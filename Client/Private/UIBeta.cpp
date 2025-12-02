@@ -5,6 +5,9 @@
 #include "GameManager.h"
 
 #include "Player.h"
+#ifdef _DEBUG
+#include "../../UI_Editor/Public/UI_Camera.h"
+#endif // DEBUG
 
 CUIBeta::CUIBeta(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -40,8 +43,12 @@ HRESULT CUIBeta::Initialize(void* pArg)
 #ifdef _DEBUG
 	else
 	{
-		m_iMaxCount = &m_MaxGara;
-		m_iCurrentCount = &m_Gara;
+		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+		
+		m_iMaxCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxBetaEnergy);
+		m_iCurrentCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);
+		
+		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
@@ -61,13 +68,13 @@ void CUIBeta::Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	// 테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
 			*m_iCurrentCount -= 1;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
 			*m_iCurrentCount += 1;
-	}
+	}*/
 #endif
 
 	m_fTargetFill = static_cast<_float>(*m_iCurrentCount) / static_cast<_float>(*m_iMaxCount);
@@ -120,7 +127,7 @@ HRESULT CUIBeta::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(7)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::BETA))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))

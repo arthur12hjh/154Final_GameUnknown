@@ -38,6 +38,9 @@ HRESULT CCamera_Player::Initialize(void* pArg)
 
 void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
+
     _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
     _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
 

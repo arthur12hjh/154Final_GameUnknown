@@ -170,6 +170,7 @@ private:
 
 	void Set_Size();
 	void Set_Position();
+	void Set_Rotation();
 	void Set_Texture();
 	void Set_Text();
 

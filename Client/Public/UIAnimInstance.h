@@ -43,6 +43,8 @@ private:
 	_bool m_isAnimFinish = false;
 	_bool m_isReverse = false;
 
+	_uint m_iRepeatCount = 0;
+
 	UI_ANIM_DESC m_tUIAnimDesc{};
 
 	CUIBase* m_pTargetUI{ nullptr };

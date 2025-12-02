@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
+    <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
     <ClInclude Include="..\Public\MonsterDeadState.h" />
@@ -189,9 +191,11 @@
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
+    <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
+    <ClInclude Include="..\Public\Player_IdleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_IdleWalkState.h" />
     <ClInclude Include="..\Public\Player_LightAttackState.h" />
     <ClInclude Include="..\Public\Player_BattleIdleState.h" />
@@ -201,6 +205,7 @@
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -236,7 +241,7 @@
     <ClInclude Include="..\public\DebugCheatUI.h" />
     <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
-    <ClInclude Include="..\Public\Deco_AttackRange.h" />
+    <ClInclude Include="..\Public\Deco_AttackDelay.h" />
     <ClInclude Include="..\Public\Deco_PhaseChange.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
@@ -249,10 +254,8 @@
     <ClInclude Include="..\Public\GameStruct.h" />
     <ClInclude Include="..\public\Giwajip.h" />
     <ClInclude Include="..\public\Giwajip2.h" />
-    <ClInclude Include="..\Public\Gorilla.h" />
     <ClInclude Include="..\Public\GorillaBehaviorTree.h" />
     <ClInclude Include="..\Public\GorillaBlackBoard.h" />
-    <ClInclude Include="..\public\Gorilla_Body.h" />
     <ClInclude Include="..\public\Grass.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
     <ClInclude Include="..\public\ImGuiMain.h" />
@@ -316,7 +319,7 @@
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\Public\Task_Dead.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
-    <ClInclude Include="..\Public\Task_GorillaHit.h" />
+    <ClInclude Include="..\Public\Task_Hit.h" />
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
@@ -333,6 +336,7 @@
     <ClInclude Include="..\Public\UIAnimManager.h" />
     <ClInclude Include="..\Public\UIBase.h" />
     <ClInclude Include="..\Public\UIBeta.h" />
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UIButton.h" />
     <ClInclude Include="..\Public\UIHPBar.h" />
     <ClInclude Include="..\Public\UIHPFX.h" />
@@ -342,7 +346,11 @@
     <ClInclude Include="..\Public\UIPotion.h" />
     <ClInclude Include="..\Public\UIPotionCount.h" />
     <ClInclude Include="..\Public\UIPotionStack.h" />
+    <ClInclude Include="..\Public\UIRushSlot.h" />
     <ClInclude Include="..\Public\UIShield.h" />
+    <ClInclude Include="..\Public\UISkillSlot.h" />
+    <ClInclude Include="..\Public\UISkillWrapper.h" />
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\public\Vending.h" />
@@ -356,6 +364,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
@@ -367,6 +376,7 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
     <ClCompile Include="..\Private\MonsterDeadState.cpp" />
@@ -389,9 +399,11 @@
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
+    <ClCompile Include="..\Private\Player_IdleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_IdleWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LightAttackState.cpp" />
     <ClCompile Include="..\Private\Player_BattleIdleState.cpp" />
@@ -401,6 +413,7 @@
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
@@ -433,7 +446,7 @@
     <ClCompile Include="..\private\DebugCheatUI.cpp" />
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
-    <ClCompile Include="..\Private\Deco_AttackRange.cpp" />
+    <ClCompile Include="..\Private\Deco_AttackDelay.cpp" />
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
@@ -445,10 +458,8 @@
     <ClCompile Include="..\private\GameManager.cpp" />
     <ClCompile Include="..\private\Giwajip.cpp" />
     <ClCompile Include="..\private\Giwajip2.cpp" />
-    <ClCompile Include="..\Private\Gorilla.cpp" />
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp" />
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp" />
-    <ClCompile Include="..\private\Gorilla_Body.cpp" />
     <ClCompile Include="..\private\Grass.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
@@ -531,7 +542,7 @@
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\Private\Task_Dead.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
-    <ClCompile Include="..\Private\Task_GorillaHit.cpp" />
+    <ClCompile Include="..\Private\Task_Hit.cpp" />
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />
@@ -548,6 +559,7 @@
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
     <ClCompile Include="..\Private\UIBase.cpp" />
     <ClCompile Include="..\Private\UIBeta.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
     <ClCompile Include="..\Private\UIHPBar.cpp" />
     <ClCompile Include="..\Private\UIHPFX.cpp" />
@@ -557,7 +569,11 @@
     <ClCompile Include="..\Private\UIPotion.cpp" />
     <ClCompile Include="..\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\Private\UIPotionStack.cpp" />
+    <ClCompile Include="..\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\Private\UIShield.cpp" />
+    <ClCompile Include="..\Private\UISkillSlot.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapper.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\private\Vending.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
@@ -576,6 +592,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
@@ -591,6 +609,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

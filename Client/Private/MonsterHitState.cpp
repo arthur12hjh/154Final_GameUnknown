@@ -28,7 +28,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     string   szAnimationName = "Result_Hit_Stand_Light";
     auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
-    auto pSkillData = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+    auto pSkillData = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
     // 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 
     // 이름 더해주자
     if (nullptr == pDesc->pAttacker)
@@ -88,7 +88,6 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
         {
             XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
-            m_vImpactDir.y += 0.1f;
         }
         else
         {

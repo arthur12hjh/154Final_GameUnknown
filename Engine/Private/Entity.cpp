@@ -49,6 +49,11 @@ HRESULT CEntity::Render()
     return S_OK;
 }
 
+_bool CEntity::CompareAnimationTag(const _char* szAnimationTag)
+{
+    return m_pBodyModelCom->CompareAnimationTag(szAnimationTag);
+}
+
 _bool CEntity::Play_Animation(_float fTimeDelta, CTransform* pTargetTransform, _float fRootMotionRatio)
 {
     if (nullptr == m_pBodyModelCom)
@@ -70,20 +75,20 @@ void CEntity::Set_AnimationIndex(_int iAnimIndex, _bool isLoop)
     m_pBodyModelCom->Set_AnimationIndex(iAnimIndex, isLoop);
 }
 
-void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
+void CEntity::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
+    m_pBodyModelCom->Set_Animation(szAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart, fEndTrackPosition, fStartTrackPosition, isResetTrackPosition);
 }
 
-void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart)
+void CEntity::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
     if (nullptr == m_pBodyModelCom)
         Import_ModelPtr();
 
-    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart);
+    m_pBodyModelCom->Set_Animation(strAnimationTag, isLoop, fAnimationPlayRate, fLerpDuration, bIsRestart, fEndTrackPosition, fStartTrackPosition, isResetTrackPosition);
 }
 _float CEntity::Get_AnimationRatio()
 {

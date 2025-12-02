@@ -9,8 +9,6 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUIPotionCount;
-
 class CUIPotion final : public CUIBase
 {
 private:
@@ -36,11 +34,9 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	CTexture* m_pPotionTexture{ nullptr };
-
 #ifdef _DEBUG
+	_int m_MaxGara = 5;
 	_int m_Gara = 3;
-	_int m_MaxGara = 3;
 #endif // DEBUG
 
 	_int* m_iMaxPotions = nullptr;

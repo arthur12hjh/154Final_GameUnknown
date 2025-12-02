@@ -107,6 +107,12 @@
     <Filter Include="02.GameObjects\Entity\Extra\Body_Extra">
       <UniqueIdentifier>{8ba18357-72e3-4174-8aee-71aaca5dfbc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\BackGround\BackGround">
+      <UniqueIdentifier>{9332c89b-ee92-40e8-9dcd-c1c87638b298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\BackGround\Grid">
+      <UniqueIdentifier>{0f9f936d-5440-49d5-99b2-44c1e458b613}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -141,9 +147,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Loader.h">
       <Filter>01.Levels\Loading\Loader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BackGround.h">
-      <Filter>02.GameObjects\BackGround</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
       <Filter>02.GameObjects\Entity\Character</Filter>
@@ -223,6 +226,12 @@
     <ClInclude Include="..\Public\Body_Extra.h">
       <Filter>02.GameObjects\Entity\Extra\Body_Extra</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BackGround.h">
+      <Filter>02.GameObjects\BackGround\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grid.h">
+      <Filter>02.GameObjects\BackGround\Grid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -251,9 +260,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Loader.cpp">
       <Filter>01.Levels\Loading\Loader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\BackGround.cpp">
-      <Filter>02.GameObjects\BackGround</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Entity\Character</Filter>
@@ -323,6 +329,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_Extra.cpp">
       <Filter>02.GameObjects\Entity\Extra\Body_Extra</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGround.cpp">
+      <Filter>02.GameObjects\BackGround\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grid.cpp">
+      <Filter>02.GameObjects\BackGround\Grid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

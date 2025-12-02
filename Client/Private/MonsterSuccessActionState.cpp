@@ -43,6 +43,7 @@ void CMonsterSuccessActionState::Update(_float fTimeDelta)
 	if (m_bIsFinished)
 	{
 		m_bIsEnableChange = true;
+		m_bIsFinished = true;
 	}
 }
 

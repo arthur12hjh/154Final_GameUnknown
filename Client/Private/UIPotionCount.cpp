@@ -53,7 +53,7 @@ HRESULT CUIPotionCount::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(0)))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::UI))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -88,6 +88,9 @@ HRESULT CUIPotionCount::Ready_Components()
 
 HRESULT CUIPotionCount::Bind_ShaderResources()
 {
+	if(FAILED(__super::Bind_ShaderResources()))
+		return E_FAIL;
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))

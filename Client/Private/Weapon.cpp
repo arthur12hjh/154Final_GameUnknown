@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "Nayitba.h"
 
+#include "GameManager.h"
 #include "Trail.h"
 #include "TrailEffect.h"
 #include "Effect.h"
@@ -38,7 +39,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 		return E_FAIL;
 
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
-	m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(180.f), XMConvertToRadians(90.f));
+	m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(90.f), XMConvertToRadians(0.f));
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
 
@@ -58,33 +59,12 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	m_pSpark->Update(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-		m_pSpark->Stop();
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-		m_pSpark->Play();
-	if (nullptr != m_pCharge) {
-		m_pCharge->Update(fTimeDelta);
-		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->Play();
-		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->End();
-		if (m_pCharge->isDead())
-			Safe_Release(m_pCharge);
-	}
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
-		CEffect::EFFECT_TRANSFORM_DESC desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = &m_CombinedWorldMatrix;
-		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 0.3f;
-
-		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
-		m_pCharge->Play();
-	}
+	//m_pSpark->Update(fTimeDelta);
+	//
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_pSpark->Stop();
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_pSpark->Play();
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -101,12 +81,10 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	if (m_bIsHitCollider)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
-	}
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
-	m_pSpark->Late_Update(fTimeDelta);
-	if (nullptr != m_pCharge) {
-		m_pCharge->Late_Update(fTimeDelta);
-	}
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}                      
+	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
+
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -182,7 +160,7 @@ HRESULT CWeapon::Ready_Components()
 
 	/* Com_Collider_OBB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-
+	
 	OBBDesc.vSize = _float3(0.5f, 2.f, 0.5f);
 	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	OBBDesc.vAngles = _float3(0.f,  0.f/*XMConvertToRadians(45.0f)*/, 0.f);
@@ -194,9 +172,8 @@ HRESULT CWeapon::Ready_Components()
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::PLAYER);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
-
-
 
 	CTrail::TRAILHIGHLOW Traildesc{};
 	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);
@@ -213,8 +190,6 @@ HRESULT CWeapon::Ready_Components()
 
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
-	
-
 	return S_OK;
 }
 
@@ -244,8 +219,9 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitDir = vHitDir;
 
 		CHARACTER_SKILL_DESC SkillDesc = {};
+		strcpy_s(SkillDesc.szHitAnimationName, "None");
 		SkillDesc.iSkillDamage = 50.f;
-		pDamageDesc.pSkillData = &SkillDesc;
+		pDamageDesc.pSkillData = CGameManager::GetInstance()->Find_SkillData(1000);
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

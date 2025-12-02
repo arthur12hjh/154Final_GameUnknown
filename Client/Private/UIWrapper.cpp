@@ -54,18 +54,6 @@ void CUIWrapper::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	if (m_tUIDesc.szUITag == TEXT("Player_Hp_Bar"))
-	{
-		UI_EVENT_ARG_DESC Arg{};
-		_int PlayerHp = 100;
-		Arg.Type = UI_EVENT_ARG_DESC::INT;
-		Arg.pData = &PlayerHp;
-
-		__super::Trigger_Event(TEXT("Player_HP"), &Arg);
-
-		return;
-	}
-
 	if (m_ePrevBtnState != m_eBtnState)
 	{
 		UI_EVENT_ARG_DESC Arg{};

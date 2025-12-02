@@ -5,7 +5,7 @@
 #include "GameInstance.h"
 
 CPlayer_LockonWalkState::CPlayer_LockonWalkState()
-	: CPlayerState {}
+	: CPlayerState{}
 {
 }
 
@@ -34,11 +34,6 @@ void CPlayer_LockonWalkState::Start(void* pArg)
 
 PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 {
-	_bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
-	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
-
-	if (true == m_isRunStart && true == isAnimationFinished)
-		m_isRunStart = false;
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
@@ -79,7 +74,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.05f);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.12f);
 
@@ -91,9 +86,16 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
-		else
-			m_tNextState.eNextState = PLAYER_STATE::IDLE;
-	
+	else
+		m_tNextState.eNextState = PLAYER_STATE::IDLE;
+
+
+	_bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
+	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
+
+	if (true == m_isRunStart && 0.833f <= fAnimationRatio)
+		m_isRunStart = false;
+
 	return m_tNextState;
 }
 

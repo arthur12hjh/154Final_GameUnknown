@@ -1,0 +1,47 @@
+[
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 12.34000015258789,
+                "fNumData02": 23.450000762939453,
+                "fNumData03": 3.4560000896453857,
+                "fNumData04": 4.789000034332275,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 1,
+                "iNumData02": 2,
+                "iNumData03": 3,
+                "iNumData04": 4,
+                "iNumData05": 5,
+                "iNumData06": 6,
+                "iNumData07": 7,
+                "iNumData08": 8,
+                "szNotifyArg01": "PC_Foley_Jump_whoosh_1.wav",
+                "szNotifyArg02": "two",
+                "szNotifyArg03": "three",
+                "szNotifyArg04": "four",
+                "szNotifyArg05": "five",
+                "szNotifyArg06": "six",
+                "szNotifyArg07": "seven",
+                "szNotifyArg08": "eight",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "CanUTellMeWhy",
+                "vNotifyPosition": [
+                    2.0,
+                    3.0,
+                    4.0
+                ],
+                "vNotifyRotation": [
+                    6.0,
+                    7.0,
+                    8.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Battle_Jump_Forward_End"
+    }
+]
