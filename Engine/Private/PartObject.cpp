@@ -62,6 +62,11 @@ const _float4x4* CPartObject::Get_BoneMatrixPtr(const _char* pBoneName) const
     return m_pModelCom->Get_BoneMatrixPtr(pBoneName);;
 }
 
+const _float4x4* CPartObject::Get_CombinedMatrixPtr() const
+{
+    return &m_CombinedWorldMatrix;
+}
+
 void CPartObject::Free()
 {
     __super::Free();

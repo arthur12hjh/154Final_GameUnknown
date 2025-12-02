@@ -159,9 +159,18 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 
 HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 {
+	const _float4x4* pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
+
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
+	if (!AnimNotify.szNotifyArg08.empty())
+	{
+		_TCHAR szPartObjectName[MAX_PATH];
+		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szPartObjectName);
+		pWorldMatrix = m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr();
+	}
+
 	if (AnimNotify.szSocketTag.compare("None") == 0)
 	{
 		EffectDesc.pRootMatrix = nullptr;
@@ -169,17 +178,17 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 	}
 	else if (AnimNotify.szSocketTag.compare("Transform") == 0)
 	{
-		EffectDesc.pRootMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
+		EffectDesc.pRootMatrix = pWorldMatrix;
 		EffectDesc.pWorldMatrix = nullptr;
 	}
 	else
 	{
 		EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(AnimNotify.szSocketTag.c_str());
-		EffectDesc.pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
+		EffectDesc.pWorldMatrix = pWorldMatrix;
 	}
 	EffectDesc.vPos = XMVectorSet(AnimNotify.vNotifyPosition.x, AnimNotify.vNotifyPosition.y, AnimNotify.vNotifyPosition.z, 1);
 	EffectDesc.fRot = _float3(AnimNotify.vNotifyRotation.x, AnimNotify.vNotifyRotation.y, AnimNotify.vNotifyRotation.z);
-	EffectDesc.fSize = 1.f;
+	EffectDesc.fSize = AnimNotify.vNotifyScale.x;
 
 	_TCHAR szEffectTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szEffectTag);
