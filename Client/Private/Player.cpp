@@ -118,6 +118,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(217.f, 55.f, 250.f, 1.f));
 	m_pColliderCom->SetOwner(this);
 
 	return S_OK;
@@ -183,7 +184,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
-	if(false == m_isSuperArmor)
+	if(false == m_PlayerDesc.isSuperArmor)
 		m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)

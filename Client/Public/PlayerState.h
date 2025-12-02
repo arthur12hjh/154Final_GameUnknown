@@ -47,7 +47,7 @@ protected:
 	//만약 STATE_END가 아니라면 상태 변경.
 	PLAYER_TRANSITION_DESC   m_tNextState = {};
 	PLAYER_STATE   m_eState = { PLAYER_STATE::STATE_END };
-	const struct Player_Desc* m_Desc = { nullptr };
+	struct Player_Desc* m_Desc = { nullptr };
 
 public:
 	virtual	void					Free() override;

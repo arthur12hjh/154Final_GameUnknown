@@ -42,6 +42,7 @@ private:
 
 	class CTrailEffect* m_pTrail = { nullptr };
 	class CEffect* m_pSpark = { nullptr };
+	class CEffect* m_pCharge = { nullptr };
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };

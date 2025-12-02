@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Maptool_Defines.h"
-#include "GameObject.h"
+#include "DesertObject.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -10,11 +10,8 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CBuilding_Ruin final : public CGameObject
+class CBuilding_Ruin final : public CDesertObject
 {
-public:
-	const _tchar* Get_ComponentTag() const { return m_ComponentTag; }
-
 private:
 	CBuilding_Ruin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBuilding_Ruin(const CBuilding_Ruin& Prototype);
@@ -29,18 +26,12 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-
-	const _tchar* m_ComponentTag = {};
-
-private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
 
 public:
 	static CBuilding_Ruin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CDesertObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

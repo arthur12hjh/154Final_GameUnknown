@@ -32,7 +32,7 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 	m_pGameInstance->Add_Camera(TEXT("MainCamera"), this);
 	m_pGameInstance->SetMainCamera(TEXT("MainCamera"));
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(250.f, 20.f, 150.f, 1.f));
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(255.f, 80.f, 255.f, 1.f));
 	return S_OK;
 }
 

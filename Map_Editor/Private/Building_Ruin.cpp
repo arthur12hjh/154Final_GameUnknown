@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CBuilding_Ruin::CBuilding_Ruin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CDesertObject{ pDevice, pContext }
 {
 }
 
 CBuilding_Ruin::CBuilding_Ruin(const CBuilding_Ruin& Prototype)
-	: CGameObject{ Prototype }
+	: CDesertObject{ Prototype }
 {
 }
 
@@ -29,7 +29,10 @@ HRESULT CBuilding_Ruin::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(nullptr)))
 		return E_FAIL;
 
-	m_ComponentTag = pDesc->pComponentTag;
+	if (pDesc && pDesc->pComponentTag)
+	{
+		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
+	}
 	
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
@@ -61,16 +64,14 @@ HRESULT CBuilding_Ruin::Render()
 
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -121,7 +122,7 @@ CBuilding_Ruin* CBuilding_Ruin::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CGameObject* CBuilding_Ruin::Clone(void* pArg)
+CDesertObject* CBuilding_Ruin::Clone(void* pArg)
 {
 	CBuilding_Ruin* pInstance = new CBuilding_Ruin(*this);
 

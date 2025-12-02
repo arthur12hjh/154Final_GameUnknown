@@ -52,11 +52,18 @@ public:
 	void								SetAttackDelay(_float fDelay);
 	_float								GetAttackDelay() { return m_fAttackDelay; }
 
+	void								SetAttackData(const Character_Skill_Desc* pAttack_Data);
+	const Character_Skill_Desc*			GetAttackData();
+
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 
 	const Naytiba_NetWork_Desc*			m_BossDefualtInfo = { nullptr };
 	const Naytiba_Desc*					m_BossCurrentInfo = { nullptr };
+	
+	// 스킬 구조체
+	const Character_Skill_Desc*			m_pAttack_Skill = { nullptr };
+	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
 	_float								m_fTargetDistance = {};
