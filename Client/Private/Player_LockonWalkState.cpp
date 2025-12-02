@@ -74,7 +74,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.05f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.2f, FALSE, -1.f, 14.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.12f);
 
