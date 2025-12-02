@@ -37,9 +37,10 @@ private :
 	
 	_float								m_fLerpSpeed = {};
 	_float								m_fMoveSpeed = {};
-	_bool								m_bIsLookAtPoint = {};
 
-	string								m_szDebugAnimation = {};
+	_bool								m_bIsLookAtPoint = {};
+	_bool								m_bIsAttackStartLerp = {};
+	_float2								m_vLerpTime = { 0.f, 0.7f };
 	
 private :
 	_bool								SelectPattern();
@@ -59,6 +60,8 @@ private :
 	
 	void								AttackLerpMove(_float fTimeDelta);
 	void								AttackADDMove(_float fTimeDelta);
+
+	void								LookAtPoint(_float fTimeDelta);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);
