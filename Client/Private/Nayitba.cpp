@@ -56,7 +56,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(200.f, 50.5f, 260.f, 1.f));
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
 
 
 
