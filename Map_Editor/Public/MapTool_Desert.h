@@ -53,7 +53,8 @@ public:
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
-	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	//HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
 	HRESULT Save_Terrain_HeightMap(const _char* szHeightMapFilePath);

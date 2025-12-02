@@ -1,6 +1,6 @@
 #pragma once 
 #include "MapTool_Defines.h"
-#include "GameObject.h"
+#include "DesertObject.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Instance_Model;
@@ -8,7 +8,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Tool_Map)
-class CInstance_Desert : public CGameObject
+class CInstance_Desert : public CDesertObject
 {
 private:
 	CInstance_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -31,8 +31,6 @@ public:
 
 private:
 	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	_tchar m_ComponentTag[256] = {};
 
 private:
 	HRESULT						Ready_Components(const _tchar* PrototypeTag);
@@ -41,7 +39,7 @@ private:
 
 public:
 	static CInstance_Desert* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CDesertObject* Clone(void* pArg) override;
 	virtual void				Free() override;
 };
 NS_END

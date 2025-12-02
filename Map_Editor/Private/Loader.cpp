@@ -71,6 +71,7 @@
 #include "Building_Ruin.h"
 #include "Player_Test.h"
 #include "Canyon.h"
+#include "Instance_Desert.h"
 #pragma endregion
 
 
@@ -226,7 +227,7 @@ HRESULT CLoader::Loading_For_Village()
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
@@ -869,8 +870,36 @@ HRESULT CLoader::Loading_For_Desert_Canyon2(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
 
-	/* For.Prototype_Component_Model_Canyon_100A */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	///* For.Prototype_Component_Model_Canyon_100A */
+	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
+	//ModelDesc.iNumInstance = 1;
+	//ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	//ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
+	//ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_100A.binx";
+	//ModelDesc.PreModelMatrix = PreTransformMatrix;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Canyon_100A"),
+	//	CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
+	//	return E_FAIL;
+
+	///* For.Prototype_Component_Model_Canyon_101A */
+	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//ModelDesc.iNumInstance = 1;
+	//ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	//ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
+	//ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_101A.binx";
+	//ModelDesc.PreModelMatrix = PreTransformMatrix;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Canyon_101A"),
+	//	CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc))))
+	//	return E_FAIL;
+
+
+	/* For.Prototype_Component_Model_Canyon_100A */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_100A");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_100A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -1000,6 +1029,13 @@ HRESULT CLoader::Loading_For_Desert_Canyon2(void* pArg)
 	/* For.Prototype_GameObject_Canyon */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Canyon");
 	pProtoDesc.pPrototype = CCanyon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Instance_Desert */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Instance_Desert");
+	pProtoDesc.pPrototype = CInstance_Desert::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

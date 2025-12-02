@@ -8,6 +8,7 @@
 #include "Camera_Free.h"
 #include "DesertObject.h"
 #include "Player_Test.h"
+#include "Instance_Desert.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -748,7 +749,7 @@ HRESULT CMapTool_Desert::Render()
 
 	ImGui::Text("Change Terrain Height.");
 
-	static _char szHeightMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/Height.bmp";
+	static _char szHeightMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/Height2.bmp";
 	ImGui::InputText("HeightMap File Path", szHeightMapFilePath, sizeof(szHeightMapFilePath));
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -1492,8 +1493,8 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Building_Ruin")))) return S_OK;
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK;
-
+	//if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK; 
 
 	ofs.close();
 
@@ -1543,7 +1544,7 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
 	ifs.close();
 
 	return S_OK;
@@ -1599,65 +1600,60 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 	return S_OK;
 }
 
-HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag)
 {
+	// 1. 저장된 Layer_Canyon 오브젝트의 개수를 읽습니다.
 	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
-	if (iNumObjs == 0)
-		return S_OK;
+	if (iNumObjs == 0) return S_OK;
 
-	vector<VTX_INSTANCE_MODEL>* pDataVector = nullptr;
-	HRESULT hr = S_OK;
+	std::map<std::wstring, std::vector<VTX_INSTANCE_MODEL>> groupedInstanceData;
 
-	try
+	for (_uint i = 0; i < iNumObjs; ++i)
 	{
-		pDataVector = new vector<VTX_INSTANCE_MODEL>();
-		pDataVector->reserve(iNumObjs);
+		SAVEDOBJECTINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		for (_uint i = 0; i < iNumObjs; ++i)
-		{
-			SAVEDOBJECTINFO info;
-			ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
+		_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+		_vector vScale, vRotation, vPosition;
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-			_vector vScale = {};
-			_vector vRotation = {};
-			_vector vPosition = {};
-			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+		_matrix matFinalWorld = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale))
+			* XMMatrixRotationQuaternion(vRotation)
+			* XMMatrixTranslationFromVector(vPosition);
 
-			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-			_matrix matFinalWorld = matScale * matRotation * matTranslation;
+		VTX_INSTANCE_MODEL InstanceData{};
+		XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
+		XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
+		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
+		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
 
-			VTX_INSTANCE_MODEL InstanceData{};
-			XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
-			XMStoreFloat4(&InstanceData.vUp, matFinalWorld.r[1]);
-			XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
-			XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
+		// Component Tag(예: "Prototype_Component_Model_Canyon_100A")를 Key로 사용합니다.
+		std::wstring strTag = info.szComponentTag;
 
-			pDataVector->push_back(InstanceData);
-		}
+		// 2. 변환된 wstring을 Key로 사용하여 그룹화
+		groupedInstanceData[strTag].push_back(InstanceData);
+	}
 
-		Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
-		FinalLoadDesc.iNumInstance = iNumObjs;
-		FinalLoadDesc.pPrototypeTag = protoTag;
-		FinalLoadDesc.pInstancingData = pDataVector;
+	for (auto& pair : groupedInstanceData)
+	{
+		Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc = {};
+		FinalLoadDesc.iNumInstance = (_uint)pair.second.size();
 
-		hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_InstanceModel"),
-			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &FinalLoadDesc);
+		FinalLoadDesc.pPrototypeTag = pair.first.c_str();
+
+		FinalLoadDesc.pInstancingData = const_cast<std::vector<VTX_INSTANCE_MODEL>*>(&pair.second);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT),
+			TEXT("Prototype_GameObject_Instance_Desert"),
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, // 원본 레이어 태그 "Layer_Canyon" 사용
+			&FinalLoadDesc);
 
 		if (FAILED(hr))
 		{
-			Safe_Delete(pDataVector);
 			return E_FAIL;
 		}
-	}
-	catch (const std::bad_alloc& e)
-	{
-		Safe_Delete(pDataVector);
-		return E_FAIL;
 	}
 
 	return S_OK;
@@ -1718,10 +1714,10 @@ HRESULT CMapTool_Desert::Save_Terrain_HeightMap(const _char* szHeightMapFilePath
 
 			_float fHeightValue = pHeightData[iIndex] * 10.f;
 
-			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+			_uint ucHeight = static_cast<_uint>(fHeightValue);
 
 			// R, G, B 채널에 동일한 높이 값을 설정
-			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+			pPixels[iIndex] = fHeightValue;
 		}
 	}
 
@@ -1760,6 +1756,7 @@ HRESULT CMapTool_Desert::Save_Terrain_HeightMap(const _char* szHeightMapFilePath
 	Safe_Delete_Array(pHeightData);
 
 	return S_OK;
+
 }
 
 //HRESULT CMapTool_Desert::Save_MaskMap(const _char* szFilePath)

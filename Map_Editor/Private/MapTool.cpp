@@ -1701,10 +1701,10 @@ HRESULT CMapTool::Save_Terrain_HeightMap(const _char* szHeightMapFilePath)
 
 			_float fHeightValue = pHeightData[iIndex] * 10.f;
 
-			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+			_uint ucHeight = static_cast<_uint>(fHeightValue);
 
 			// R, G, B 채널에 동일한 높이 값을 설정
-			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+			pPixels[iIndex] = fHeightValue;
 		}
 	}
 

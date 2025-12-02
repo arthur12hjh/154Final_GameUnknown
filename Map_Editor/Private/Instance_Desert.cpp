@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CInstance_Desert::CInstance_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	CGameObject(pDevice, pContext)
+	CDesertObject(pDevice, pContext)
 {
 }
 
 CInstance_Desert::CInstance_Desert(const CInstance_Desert& Prototype) :
-	CGameObject(Prototype)
+	CDesertObject(Prototype)
 {
 }
 
@@ -71,7 +71,7 @@ HRESULT CInstance_Desert::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
-	for (size_t i = 0; i < iNumMeshes; i++)
+	for (_uint i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", TEXTURE_TYPE::DIFFUSE, 0)))
 			return E_FAIL;
@@ -144,7 +144,7 @@ CInstance_Desert* CInstance_Desert::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance_Desert;
 }
 
-CGameObject* CInstance_Desert::Clone(void* pArg)
+CDesertObject* CInstance_Desert::Clone(void* pArg)
 {
 	CInstance_Desert* pInstance_Desert = new CInstance_Desert(*this);
 	if (FAILED(pInstance_Desert->Initialize(pArg)))
