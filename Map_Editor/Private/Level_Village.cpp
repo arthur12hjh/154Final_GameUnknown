@@ -35,6 +35,9 @@ HRESULT CLevel_Village::Initialize()
 	/*if (FAILED(Ready_Layer_Reed(TEXT("Layer_Reed"))))
 		return E_FAIL;*/
 
+	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
+
+
 	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
 	if (pManager->Get_MapTool() == nullptr) // MapTool이 아직 생성되지 않았다면
 	{

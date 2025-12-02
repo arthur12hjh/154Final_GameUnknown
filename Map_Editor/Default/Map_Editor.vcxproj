@@ -170,6 +170,7 @@
     <ClInclude Include="..\public\Building_Ruin.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_Tool.h" />
+    <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\public\CherryBlossom1.h" />
     <ClInclude Include="..\public\CherryBlossom2.h" />
     <ClInclude Include="..\public\CherryBlossom3.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\Public\CM_Rock7.h" />
     <ClInclude Include="..\Public\CM_Rock8.h" />
     <ClInclude Include="..\Public\CM_Rock9.h" />
+    <ClInclude Include="..\public\DesertObject.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
@@ -206,6 +208,7 @@
     <ClInclude Include="..\Public\Inscription_L.h" />
     <ClInclude Include="..\Public\Inscription_R.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
+    <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\public\Level_Desert.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -220,6 +223,7 @@
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\public\Player_Test.h" />
     <ClInclude Include="..\Public\Reed.h" />
     <ClInclude Include="..\public\Rock.h" />
     <ClInclude Include="..\Public\Rock1.h" />
@@ -260,6 +264,7 @@
     <ClCompile Include="..\private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_Tool.cpp" />
+    <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp" />
     <ClCompile Include="..\private\CherryBlossom2.cpp" />
     <ClCompile Include="..\private\CherryBlossom3.cpp" />
@@ -278,6 +283,7 @@
     <ClCompile Include="..\Private\CM_Rock7.cpp" />
     <ClCompile Include="..\Private\CM_Rock8.cpp" />
     <ClCompile Include="..\Private\CM_Rock9.cpp" />
+    <ClCompile Include="..\private\DesertObject.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
@@ -312,6 +318,7 @@
     <ClCompile Include="..\Private\Inscription_L.cpp" />
     <ClCompile Include="..\Private\Inscription_R.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
+    <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\private\Level_Desert.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
@@ -328,6 +335,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\private\Player_Test.cpp" />
     <ClCompile Include="..\Private\Reed.cpp" />
     <ClCompile Include="..\private\Rock.cpp" />
     <ClCompile Include="..\Private\Rock1.cpp" />
