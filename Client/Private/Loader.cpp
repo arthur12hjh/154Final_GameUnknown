@@ -360,9 +360,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Body_Player*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
@@ -571,9 +571,9 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Weapon */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1011,16 +1011,45 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Spectrum_Test */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Spectrum_Test");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SpectrumTest.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
-
 	/* For.Prototype_Component_Effect_Slash_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashSpark.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Heal */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Heal");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Heal.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Evasion */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Evasion");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Evasion.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_SwordCharge */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SwordCharge");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordCharge.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_ChargeAttack_AfterSword */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_ChargeAttack_AfterSword");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ChargeAttackAfterSword.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_SlashSkill */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SlashSkill");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashSkill.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Shock */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Shock");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Parrying */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Parrying");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 
 	/* For.Prototype_Component_TrailEffect_Test */
@@ -1735,11 +1764,11 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
 	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
+	Desc->pAddObejct.push_back(pProtoDesc);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain_Desert");
 	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/Height2.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)

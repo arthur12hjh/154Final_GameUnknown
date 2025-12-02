@@ -26,9 +26,10 @@ private :
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	CGameManager*						m_pGameManager = { nullptr };
-
 	queue<const Character_Skill_Desc*>	m_pSkillData = { };
-	const Character_Skill_Desc*			m_pCurSkill_Data = { nullptr };
+
+	_int								m_PrePatternIndex = {};
+	_int								m_CurPatternIndex = {};
 
 	_float								m_fMaxDelayTime = {};
 	_float3								m_fAttackMovePoint = {};

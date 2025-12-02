@@ -264,8 +264,9 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 _float CGameInstance::Random_Normal()
 {
 	random_device	rd;
+	uniform_real_distribution<_float> distribution(0, 1.f);
 
-	return static_cast<_float>(rd()) / (rd.max)();
+	return distribution(rd);
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)

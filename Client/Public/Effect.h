@@ -42,6 +42,7 @@ public:
     virtual HRESULT Render() override;
     void    Stop();
     void    Play();
+    void    End();
 
 private:
     HRESULT Load_Binary(const _char* szFile);

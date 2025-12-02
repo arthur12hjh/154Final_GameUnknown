@@ -94,6 +94,7 @@ public:
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
 	void    Stop();
 	void    Play();
+	void    End();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };

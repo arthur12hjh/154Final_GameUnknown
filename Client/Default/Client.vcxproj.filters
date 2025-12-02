@@ -589,6 +589,7 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX">
       <UniqueIdentifier>{bfa53255-00ae-4b81-bca8-aeb9e9f0d206}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="02.GameObjects\Map\Desert">
       <UniqueIdentifier>{f4e47b99-0d6b-47f1-a018-0bfa32ea1537}</UniqueIdentifier>
     </Filter>
@@ -606,6 +607,10 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
       <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
+=======
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+>>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1206,7 +1211,6 @@
     <ClInclude Include="..\Public\LockonManager.h">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\Player_IdleWalkEndState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
     </ClInclude>
@@ -1218,6 +1222,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\Public\Building_Ruin.h">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
@@ -1229,6 +1234,10 @@
     </ClInclude>
     <ClInclude Include="..\public\Canyon.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+=======
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+>>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1810,7 +1819,6 @@
     <ClCompile Include="..\Private\LockonManager.cpp">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClCompile>
@@ -1827,6 +1835,7 @@
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\Private\Building_Ruin.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClCompile>
@@ -1838,6 +1847,10 @@
     </ClCompile>
     <ClCompile Include="..\private\Canyon.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+=======
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+>>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1883,12 +1896,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
