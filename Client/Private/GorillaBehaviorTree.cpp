@@ -6,9 +6,25 @@
 #include "SquenceNode.h"
 #include "SelectNode.h"
 
+#pragma region Behavior Node
+
+// Condition Node
+#pragma region Decorator
+#include "Deco_CheckAlive.h"
+#include "Deco_AttackDelay.h"
+#pragma endregion
+
+// Action Node
+#pragma region Task
 #include "Task_Dead.h"
 #include "Task_Idle.h"
+#include "Task_Move.h"
 #include "Task_GorillaAttack.h"
+#include "Task_Hit.h"
+#pragma endregion
+
+#include "Task_GorillaAttack.h"
+#pragma endregion
 
 CGorillaBehaviorTree::CGorillaBehaviorTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CBehaviorTree(pDevice, pContext)
@@ -27,6 +43,9 @@ HRESULT CGorillaBehaviorTree::Initialize_Prototype()
 
 HRESULT CGorillaBehaviorTree::Initialize(void* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	if (FAILED(Ready_BlackBoard()))
 		return E_FAIL;
 
@@ -43,7 +62,10 @@ void CGorillaBehaviorTree::Update(_float fTimeDelta)
 
 HRESULT CGorillaBehaviorTree::Ready_BlackBoard()
 {
-	m_pBlackBoard = CGorillaBlackBoard::Create();
+	CGorillaBlackBoard::BOSS_BLACKBOARD_DESC pDesc = {};
+	pDesc.pOwner = m_pOwner;
+
+	m_pBlackBoard = CGorillaBlackBoard::Create(&pDesc);
 	if (nullptr == m_pBlackBoard)
 		return E_FAIL;
 
@@ -53,14 +75,55 @@ HRESULT CGorillaBehaviorTree::Ready_BlackBoard()
 HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 {
 	// 여기서 생성해서 노드 구성
-	auto pRootSquence = CSquenceNode::Create(this);
-	if (nullptr == pRootSquence)
+	auto pRootSelect = CSelectNode::Create(this);
+	if (nullptr == pRootSelect)
 		return E_FAIL;
 
-	pRootSquence->Bind_BehaviorNode(CTask_Idle::Create(this));
-	pRootSquence->Bind_BehaviorNode(CTask_GorillaAttack::Create(this));
+#pragma region Hit
+	auto pHitSquence = CSelectNode::Create(this);
+	if (nullptr == pHitSquence)
+		return E_FAIL;
 
-	m_pRootNode = pRootSquence;
+	pHitSquence->Bind_BehaviorNode(CTask_Hit::Create(this));
+#pragma endregion
+
+#pragma region ATTACK
+	auto pAttackSelector = CSelectNode::Create(this);
+	if (nullptr == pAttackSelector)
+		return E_FAIL;
+
+	// 공격 범위 데코레이터 추가
+	pAttackSelector->Bind_BehaviorNode(CDeco_AttackDelay::Create(this));
+	pAttackSelector->Bind_BehaviorNode(CTask_GorillaAttack::Create(this));
+#pragma endregion
+
+#pragma region Move
+	auto pMoveSelector = CSelectNode::Create(this);
+	if (nullptr == pMoveSelector)
+		return E_FAIL;
+
+	pMoveSelector->Bind_BehaviorNode(pAttackSelector);
+	pMoveSelector->Bind_BehaviorNode(CTask_Move::Create(this));
+#pragma endregion
+
+#pragma region Idle Node
+	// Idle 노드 아래 구성할거임
+	auto pAliveSquence = CSelectNode::Create(this);
+	if (nullptr == pAliveSquence)
+		return E_FAIL;
+	
+	pAliveSquence->Bind_BehaviorNode(CDeco_CheckAlive::Create(this));
+
+	pAliveSquence->Bind_BehaviorNode(pHitSquence);
+	pAliveSquence->Bind_BehaviorNode(pMoveSelector);
+	pAliveSquence->Bind_BehaviorNode(CTask_Idle::Create(this));
+#pragma endregion
+
+	// 트리구성 1차 트리
+	pRootSelect->Bind_BehaviorNode(pAliveSquence);
+	pRootSelect->Bind_BehaviorNode(CTask_Dead::Create(this));
+	
+	m_pRootNode = pRootSelect;
 	return S_OK;
 }
 

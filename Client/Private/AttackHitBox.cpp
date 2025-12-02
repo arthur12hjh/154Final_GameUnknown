@@ -32,6 +32,12 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	m_vImpactDir = pHit_BoxDesc->vImapctDir;
 	m_fImpactForce = pHit_BoxDesc->fImpactForce;
 
+	_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
+
+	_vector vScale{}, vRotation{}, vPosition{};
+	XMMatrixDecompose(&vScale, &vRotation, &vPosition, ParentMatrix);
+	m_pTransformCom->Set_Rotation(vRotation, true);
+
 	if (m_pData)
 	{
 		if (FAILED(Ready_Components(*pHit_BoxDesc)))
@@ -53,15 +59,10 @@ void CAttackHitBox::Update(_float fTimeDelta)
 {
 	if (!m_bIsDelayDead)
 	{
-		_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
-		for (_uint i = 0; i < 3; ++i)
-			ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
-
 		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		ParentMatrix.r[3] += worldMatrix.r[3];
 
-		m_pCullingCollider->UpdateColiision(ParentMatrix);
-		m_pColliderCom->UpdateColiision(ParentMatrix);
+		m_pCullingCollider->UpdateColiision(worldMatrix);
+		m_pColliderCom->UpdateColiision(worldMatrix);
 	}
 	else
 	{
@@ -80,10 +81,6 @@ void CAttackHitBox::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-	{
-		
-	}
 #endif // _DEBUG
 
 }
@@ -159,7 +156,6 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 		return;
 
 	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
-	CHARACTER_SKILL_DESC TempDesc = *pDesc;
 	DEFAULT_DAMAGE_DESC pDamageDesc = {};
 
 	pDamageDesc.pAttacker = m_pAttacker;
@@ -168,7 +164,7 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	pDamageDesc.fImpactForce = m_fImpactForce;
 	pDamageDesc.vHitPoint = vHitPoint;
-	pDamageDesc.pSkillData = &TempDesc;
+	pDamageDesc.pSkillData = pDesc;
 
 	pCharacter->Damaged(&pDamageDesc);
 	m_vDelayDead = {0.f, 3.f};

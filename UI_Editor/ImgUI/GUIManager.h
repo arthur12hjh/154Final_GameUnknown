@@ -3,6 +3,7 @@
 #include "Tool_UI_Defines.h"
 #include "Base.h"
 #include "UIStruct.h"
+#include "GameStruct.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -17,6 +18,8 @@ class CUIPanel;
 class CUIWrapper;
 class CUIImage;
 class CUIHUD;
+class CPlayer;
+class CGameManager;
 NS_END
 
 namespace GUI
@@ -148,6 +151,7 @@ private:
 
 	void Editor_Window();
 	void Show_UIObject_List();
+	void Show_DataList();
 
 	void Create_Layer();
 	void Add_Child(class Client::CUIBase* pObj);
@@ -166,6 +170,7 @@ private:
 
 	void Set_Size();
 	void Set_Position();
+	void Set_Rotation();
 	void Set_Texture();
 	void Set_Text();
 

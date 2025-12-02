@@ -25,7 +25,7 @@ public:
 
 private :
 	Naytiba_NetWork_Desc*						m_pNaytibaData = { nullptr };
-	Character_Skill_Desc*						m_pLastHitSkill = { nullptr };
+	const Character_Skill_Desc*					m_pLastHitSkill = { nullptr };
 	
 	DIRECTION									m_eDeadDir = {};
 

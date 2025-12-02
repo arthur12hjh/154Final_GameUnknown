@@ -37,22 +37,26 @@ private :
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };
 
 	CGameObject*								m_pTarget = { nullptr };
-	_bool										m_bIsGara = {};
-	_bool										m_bIsRootGara = { false };
-	_float										m_fRootMotionRatio = {};
+	
+	// 특정 몬스터의 행동에 대한 정의
+	_bool										m_bIsPattern = {};
 
 	_float3										m_vMoveDir = {};
+	_float										m_fDistance = {};
 	_float										m_fMoveSpeed = {};
 
 	function<void(_float)>						m_AttackCompletedFunc;
 
 private :
-	void										GaraSetting();
-	//void										GaraHitBox();
+	void										ReadySetting();
 
-	void										BeholderGara(_float fTimeDelta);
-	void										StatueAGara(_float fTimeDelta);
-	void										StatueBGara(_float fTimeDelta);
+	void										BeholderPattern(_float fTimeDelta);
+	void										StatueAPattern(_float fTimeDelta);
+	void										StatueBPattern(_float fTimeDelta);
+
+	void										SearchTargetDistance();
+	void										LerpMoveAction(_float fTimeDelta, _float fSpeed);
+	_vector										LerpRotation(_float fRatio, _float fSpeed = 1.f);
 
 
 public:

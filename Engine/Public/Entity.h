@@ -26,14 +26,21 @@ public:
 	/// CEntity는 무조건 "Part_Body"와
 	///				     "Com_Model" 태그인 CModel 컴포넌트가 존재해야합니다.
 	/// * * * * * * * * * * * * * * * * * *
-
+	_bool				CompareAnimationTag(const _char* szAnimationTag);
 	_bool				Play_Animation(_float fTimeDelta, class CTransform* pTargetTransform = nullptr, _float fRootMotionRatio = 0.f);
 	_bool				IsAnmiationFinished();
 	void				Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 	_float				Get_AnimationRatio();
 
-	void				Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
-	void				Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void				Set_Animation(const _char* szAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+	void				Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
 protected:
 	class CModel*		m_pBodyModelCom = { nullptr };

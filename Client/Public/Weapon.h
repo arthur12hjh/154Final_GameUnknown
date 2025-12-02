@@ -38,7 +38,10 @@ public:
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	_bool						m_bIsHitCollider = { false };
+	_bool						m_bIsHitCollider = { true };
+
+	class CTrailEffect* m_pTrail = { nullptr };
+	class CEffect* m_pSpark = { nullptr };
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };

@@ -41,6 +41,12 @@ HRESULT CHair_Player::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::OPACITY, "g_OpacityTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
 	return S_OK;
 }
 
@@ -51,16 +57,6 @@ void CHair_Player::Priority_Update(_float fTimeDelta)
 
 void CHair_Player::Update(_float fTimeDelta)
 {
-	//if (*m_pParentState & CCharacter::STATE_ATTACK)
-	//	m_pModelCom->Set_AnimationIndex(0, false);
-	//
-	//if (*m_pParentState & CCharacter::STATE_IDLE)
-	//	m_pModelCom->Set_AnimationIndex(3);
-	//
-	//if (*m_pParentState & CCharacter::STATE_WALK)
-	//	m_pModelCom->Set_AnimationIndex(4);	
-
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
@@ -92,27 +88,17 @@ HRESULT CHair_Player::Render()
 
 		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+
+		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Begin(0)))
+		//4번 인덱스가 머리, 5번 인덱스가 포니테일
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
-
-
-
 
 	return S_OK;
 }
@@ -152,7 +138,7 @@ HRESULT CHair_Player::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Hair"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

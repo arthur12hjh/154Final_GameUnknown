@@ -13,16 +13,14 @@
 #include "GameManager.h"
 #include "Interaction_Component.h"
 #include "Effect.h"
-#include "Trail.h"
 #include "Notify.h"
-#include "TrailEffect.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
 #include "PlayerBattleFSM.h"
 #include "PlayerIdleFSM.h"
 #include "PlayerLockOnFSM.h"
-#include "PlayerState.h"
+#include "Player_HitState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -34,21 +32,64 @@ CPlayer::CPlayer(const CPlayer& Prototype)
 {
 }
 
+void CPlayer::Handle_Notify(void* pArg)
+{
+	ANIM_NOTIFY* pNotify = static_cast<ANIM_NOTIFY*>(pArg);
+
+}
+
 _float CPlayer::Get_AnimationRatio()
 {
 	return m_pBodyModelCom->Get_AnimationRatio();
 }
 
-void CPlayer::Change_PlayerMode(PLAYER_MODE eMode)
+void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
 {
 	m_PlayerDesc.ePlayerMode = eMode;
 
-	//fsm ±≥√º
+	// FSM ÌÉêÏÉâ.
 	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	m_pCurrentFSM->Clear_FSM();
+	 
+	if(eState == PLAYER_STATE::STATE_END)
+		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
+	else
+		pNextFSM->Change_FSM(eState);
 
 	m_pCurrentFSM = pNextFSM;
+}
+
+// Ïù∏ÏûêÎ°ú Îì§Ïñ¥Ïò® Ïä§ÌÇ¨ idÏùò Ïä§ÌÇ¨Ïù¥ ÏÇ¨Ïö© Í∞ÄÎä•ÌïúÏßÄ ÌôïÏù∏.
+// ÏÇ¨Ïö©Í∞ÄÎä•ÌïòÎã§Î©¥ Í≤åÏù¥ÏßÄ Í∞êÏÜå ÌõÑ Í∞í Î¶¨ÌÑ¥.
+_bool CPlayer::Use_BetaSkill(_uint iSkillID)
+{
+	_uint iIdx = 0;
+	for (_uint i = 0; i < m_PlayerDesc.iBetaSkillCount; ++i)
+	{
+		if (m_PlayerDesc.iBetaSkillId[i] == iSkillID)
+		{
+			_uint iGauge = m_pGameManager->Find_BetaSkillData(iSkillID)->iRequiredBetaGauge;
+
+			if (iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+			{
+				m_PlayerDesc.iCurrentBetaEnergy -= iGauge;
+				m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::USE;
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+_bool CPlayer::Use_RushSkill()
+{
+	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+		return false;
+
+	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
+
+	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -71,9 +112,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_PlayerDesc()))
 		return E_FAIL;
 
+	if (FAILED(Ready_BetaSkillDesc()))
+		return E_FAIL;
+
 	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(217.f, 55.f, 250.f, 1.f));
 	m_pColliderCom->SetOwner(this);
 
 	return S_OK;
@@ -91,75 +136,18 @@ void CPlayer::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	m_pGameManager->Lockon(fTimeDelta);
 	Update_FSM(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_CAPSLOCK))
-	{
-		if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::BATTLE)
-			Change_PlayerMode(PLAYER_MODE::LOCKON);
-		else if (m_PlayerDesc.ePlayerMode == PLAYER_MODE::LOCKON)
-			Change_PlayerMode(PLAYER_MODE::BATTLE);
-	}
-
+	Update_RushSkill(fTimeDelta);
+	Update_BetaSkill();
+	
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
-
-	//m_fTime += fTimeDelta;
-	//if (5 <= m_fTime) {
-	//	CEffect::EFFECT_TRANSFORM_DESC desc;
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 1.f;
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-	//		return;
-	//
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
-	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 30.f;
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-	//		return;
-	//
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
-	//	desc.vPos = XMVectorSet(0, 0, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 15.f;
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-	//		return;
-	//
-	//	desc.fRotationPerSec = 1.f;
-	//	desc.fSpeedPerSec = 1.f;
-	//	desc.pWorldMatrix = nullptr;
-	//	desc.pRootMatrix = nullptr;
-	//	desc.vPos = XMVectorSet(5, 3, 0, 1);
-	//	desc.fRot = _float3(0, 0, 0);
-	//	desc.fSize = 2.f;
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
-	//		return;
-	//
-	//	m_fTime = 0.f;
-	//}
-	//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	//∏µÁ ∆Æ∑£Ω∫∆˚¿« ¿Ãµø¿Ã ≥°≥≠ »ƒ Ω««‡µ«æÓæﬂ «‘.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -179,13 +167,32 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	vHitDir = pDamageDesc->vHitDir;
+	vHitPoint = pDamageDesc->vHitPoint;
+	vImpactDir = pDamageDesc->vImpactDir;
+	fImpactForce = pDamageDesc->fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
+
+	if(false == m_isSuperArmor)
+		m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
 
-		// ¿”Ω√¿‘¥œ¥Ÿ ¿‚±‚ ≈◊Ω∫∆ÆøÎ ≥™¡ﬂø° ≥—∞‹πﬁ∞≈≥™ ≥—∞‹¡Ÿµ•¿Ã≈Õ ª˝±‚∏È ∏ª¡ª«ÿ¡÷ººø‰
+		// ÏûÑÏãúÏûÖÎãàÎã§ Ïû°Í∏∞ ÌÖåÏä§Ìä∏Ïö© ÎÇòÏ§ëÏóê ÎÑòÍ≤®Î∞õÍ±∞ÎÇò ÎÑòÍ≤®Ï§ÑÎç∞Ïù¥ÌÑ∞ ÏÉùÍ∏∞Î©¥ ÎßêÏ¢ÄÌï¥Ï£ºÏÑ∏Ïöî
+		// „Ñ¥ Ïó¨Í∏∞ÏÑú ÏïÑÎßà ÏÉÅÌÉú Ï∂îÍ∞ÄÌï†Í±∞Í∞ôÍ∏¥ ÌïúÎç∞ Î™¨Ïä§ÌÑ∞ Î≥∏Ïù¥Îûë Î™¨Ïä§ÌÑ∞ Ïï†ÎãàÎ©îÏù¥ÏÖò Ï†ïÎ≥¥ Ïó∞ÎèôÌï¥Ïïº Îê† ÎìØ?
 		pCharacter->ActionSuccess(nullptr);
 	}
 
@@ -212,8 +219,7 @@ HRESULT CPlayer::Ready_Components()
 
 	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
 	Desc.tUserData = tUserData;
-	//ƒ∏Ω∂ ƒ¡∆Æ∑—∑Øø°º≠ x¥¬ ±∏ º∫∫– y¥¬ ±‚µ’ º∫∫–
-	Desc.vSize = _float3(1.f, 1.f, 0.f);
+	Desc.vSize = _float3(2.5f, 2.5f, 0.f);
 	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
@@ -238,10 +244,10 @@ HRESULT CPlayer::Ready_PartObjects()
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	m_pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
+	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pSocketMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+	WeaponDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
 	/* Part_Weapon */
@@ -251,7 +257,7 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
-	FaceDesc.pBodyPtr = m_pBody;
+	FaceDesc.pBodyPtr = pBody;
 
 	/* Part_Face */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
@@ -260,7 +266,7 @@ HRESULT CPlayer::Ready_PartObjects()
 
 	CHair_Player::HAIR_PLAYER_DESC HairDesc{};
 	HairDesc.pParentTransform = m_pTransformCom;
-	HairDesc.pBodyPtr = m_pBody;
+	HairDesc.pBodyPtr = pBody;
 	
 	/* Part_Hair */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
@@ -269,20 +275,12 @@ HRESULT CPlayer::Ready_PartObjects()
 	
 	CPonyTail_Player::PONYTAIL_PLAYER_DESC PonyTailDesc{};
 	PonyTailDesc.pParentTransform = m_pTransformCom;
-	PonyTailDesc.pBodyPtr = m_pBody;
+	PonyTailDesc.pBodyPtr = pBody;
 	
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
-
-	CTrail::TRAILHIGHLOW Traildesc;
-	Traildesc.vHigh = _float4(1, 0, 0, 0);
-	Traildesc.vLow = _float4(-1, 0, 0, 0);
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Test"),
-		TEXT("Part_Trail"), &Traildesc)))
-		return E_FAIL;
-	m_pTrail = dynamic_cast<CTrailEffect*>(Find_PartObject(TEXT("Part_Trail")));
 
 	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
@@ -292,6 +290,13 @@ HRESULT CPlayer::Ready_PartObjects()
 
 HRESULT CPlayer::Ready_PlayerDesc()
 {
+	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxShield = 100;
+	
+	//Î≤†ÌÉÄ ÏóêÎÑàÏßÄ
+	m_PlayerDesc.iMaxBetaEnergy = 20;
+	m_PlayerDesc.iCurrentBetaEnergy = 20;
+
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
@@ -301,11 +306,35 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
-	m_PlayerDesc.iCurrentBetaEnergy = 100;
-	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
-	m_PlayerDesc.pPlayerController = m_pCCT;
-	m_PlayerDesc.ePlayerMode = PLAYER_MODE::BATTLE;
 
+	m_PlayerDesc.iCurrentPotions = 3;
+	m_PlayerDesc.iMaxPotions = 3;
+
+	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.fMaxRushCoolTime = 5.f;
+	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
+
+	//DefaultÍ∞Ä ÎπÑÌôúÏÑ±Ìôî ÏÉÅÌÉú
+	memset(m_PlayerDesc.iBetaSkillId, 0, sizeof(_uint) * 4);
+
+	m_PlayerDesc.eBetaSkillState[0] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[1] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
+
+	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
+	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Ready_BetaSkillDesc()
+{
+	//Ï∂îÌõÑ Ï∂îÍ∞Ä ÏòàÏ†ï
+	m_PlayerDesc.iBetaSkillCount = 1;
+	m_PlayerDesc.iBetaSkillId[0] = 1004;
+	
 	return S_OK;
 }
 
@@ -313,8 +342,9 @@ HRESULT CPlayer::Ready_FSM()
 {
 	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
 	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
+	m_FSMs.emplace(PLAYER_MODE::IDLE, CPlayerIdleFSM::Create());
 
-	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::BATTLE)->second;
+	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::IDLE)->second;
 
 	return S_OK;
 }
@@ -322,6 +352,44 @@ HRESULT CPlayer::Ready_FSM()
 void CPlayer::Update_FSM(_float fTimeDelta)
 {
 	m_pCurrentFSM->Update(fTimeDelta);
+}
+
+void CPlayer::Update_RushSkill(_float fTimeDelta)
+{
+	// active on ÏÉÅÌÉúÎùºÎ©¥ activeÎ°ú Îã§Ïãú Ï†ÑÌôò
+	if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eRushState)
+		m_PlayerDesc.eRushState = SKILL_STATE::ACTIVE;
+
+	// use ÏÉÅÌÉúÎùºÎ©¥ DefaultÎ°ú Îã§Ïãú Ï†ÑÌôò
+	if (SKILL_STATE::USE == m_PlayerDesc.eRushState)
+		m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+
+	m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
+
+	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+		m_PlayerDesc.eRushState = SKILL_STATE::ACTIVE_ON;
+
+	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime)
+		m_PlayerDesc.fCurrentRushCoolTime = m_PlayerDesc.fMaxRushCoolTime;
+}
+
+void CPlayer::Update_BetaSkill()
+{
+	_uint iIdx = 0;
+
+	for (_uint i = 0; i < m_PlayerDesc.iBetaSkillCount; ++i)
+	{
+		_uint iGauge = m_pGameManager->Find_BetaSkillData(m_PlayerDesc.iBetaSkillId[i])->iRequiredBetaGauge;
+
+		if (iGauge < m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
+		if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE_ON;
+
+		if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+	}
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -363,3 +431,54 @@ void CPlayer::Free()
 
 	Safe_Release(m_pCurrentFSM);
 }
+
+
+//m_fTime += fTimeDelta;
+//if (5 <= m_fTime) {
+//	CEffect::EFFECT_TRANSFORM_DESC desc;
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 1.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-R-Hand");
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 30.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SheildBreak_Yellow"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+//	desc.pRootMatrix = m_pBody->Get_BoneMatrixPtr("Bip001-L-Hand");
+//	desc.vPos = XMVectorSet(0, 0, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 15.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Spectrum_Test"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	desc.fRotationPerSec = 1.f;
+//	desc.fSpeedPerSec = 1.f;
+//	desc.pWorldMatrix = nullptr;
+//	desc.pRootMatrix = nullptr;
+//	desc.vPos = XMVectorSet(5, 3, 0, 1);
+//	desc.fRot = _float3(0, 0, 0);
+//	desc.fSize = 2.f;
+//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Hit_Spark"),
+//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &desc)))
+//		return;
+//
+//	m_fTime = 0.f;
+//}
+//m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);

@@ -38,15 +38,20 @@ HRESULT CCamera_AnimationEditor::Initialize(void* pArg)
 
 void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 {
+	ImGuiIO& io = ImGui::GetIO();
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		m_pTransformCom->Go_Left(fTimeDelta);
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_pTransformCom->Go_Right(fTimeDelta);
+	if (!io.WantCaptureKeyboard)
+	{
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+			m_pTransformCom->Go_Backward(fTimeDelta);
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+			m_pTransformCom->Go_Left(fTimeDelta);
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pTransformCom->Go_Right(fTimeDelta);
+	}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	//{
 	//	m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * 5.f, 0.f, 0.f));
@@ -56,8 +61,6 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 	//	m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, fTimeDelta * -5.f, 0.f, 0.f));
 	//}
 	
-	
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE))
 	{
 		_long MouseMove = {};

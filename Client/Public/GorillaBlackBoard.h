@@ -8,12 +8,12 @@ private:
 	CGorillaBlackBoard();
 	virtual ~CGorillaBlackBoard() = default;
 
-public :
-	HRESULT								Initialize();
+	virtual		HRESULT					Initialize(void* pArg);
+
 
 
 public:
-	static		CGorillaBlackBoard*		Create();
+	static		CGorillaBlackBoard*		Create(void* pArg);
 	virtual		void					Free() override;
 };
 NS_END

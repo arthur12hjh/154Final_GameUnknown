@@ -50,6 +50,15 @@ HRESULT CNayitba::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
+	// 아래 세개중에서 하나
+	// Bip001-Spine
+	// Bip001_Spine1
+	// Bip001_Spine2
+
+	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(200.f, 50.5f, 260.f, 1.f));
+
+
 
 	return S_OK;
 }
@@ -75,11 +84,18 @@ void CNayitba::Update(_float fTimeDelta)
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
+	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
+	
 	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	
+	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
+	}
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
@@ -108,7 +124,7 @@ HRESULT CNayitba::Render()
 HRESULT CNayitba::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	CHARACTER_SKILL_DESC* pSkillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
@@ -116,6 +132,9 @@ HRESULT CNayitba::Damaged(void* pArg)
 	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
+
+	//임시 테스트용 코드. 보이면 지워버리셔도 됩니다
+	m_pGameManager->Start_Lockon();
 
 	return S_OK;
 }
@@ -145,24 +164,33 @@ const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSki
 	return  m_MonsterInfo.iAttackList[iTypeIndex][iSkillIndex];
 }
 
-const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_uint iTypeIndex, _bool bIsRandom)
+const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeIndex)
 {
 	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
-	if (0 == m_iNumCandidate)
-		return nullptr;
-
-	if (bIsRandom)
+	if(-1 == iTypeIndex)
 	{
-		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)m_iNumCandidate);
-		pSkill = m_SkillCandidates[iRandomIndex];
+		if (0 == m_iNumCandidate)
+			return nullptr;
+
+		if (bIsRandom)
+		{
+			_uint iRandomIndex = (_uint)m_pGameInstance->Random(0.f, (_float)m_iNumCandidate);
+			pSkill = m_SkillCandidates[iRandomIndex];
+		}
+		else
+		{
+			if (m_iNumCandidate <= m_iSkillIndex)
+				m_iSkillIndex = 0;
+
+			pSkill = m_SkillCandidates[m_iSkillIndex];
+			m_iSkillIndex++;
+		}
 	}
 	else
 	{
-		if (m_iNumCandidate <= m_iSkillIndex)
-			m_iSkillIndex = 0;
-
-		pSkill = m_SkillCandidates[m_iSkillIndex];
-		m_iSkillIndex++;
+		size_t iNumSize = m_MonsterInfo.iAttackList[iTypeIndex].size();
+		_uint iRandomIndex = (_uint)m_pGameInstance->Random(0, iNumSize);
+		pSkill = m_MonsterInfo.iAttackList[iTypeIndex][iRandomIndex];
 	}
 
 	return pSkill;
@@ -207,7 +235,7 @@ HRESULT CNayitba::Ready_CharacterData()
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
-
+		m_MonsterInfo.fMoveSpeed = m_pInitMonsterInfo->fMoveSpeed;
 		m_MonsterInfo.iCurrentPhase = m_pInitMonsterInfo->iNumPhase;
 
 		m_eTeam = OBJECT_TEAM::ENEMY;
@@ -259,7 +287,7 @@ HRESULT CNayitba::ADD_Components()
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIBehaviorPrototype, BehaviorTreePrototpye);
 
 		CBossController::BOSS_CONTROLLER_DESC ControllerDesc = { };
-		ControllerDesc.pOwner = this;
+		ControllerDesc.pParent = this;
 		ControllerDesc.szBehaviorProtoType = BehaviorTreePrototpye;
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
@@ -267,8 +295,8 @@ HRESULT CNayitba::ADD_Components()
 	}
 	else
 	{
-		CAIController::AI_CONTROLLER_DESC ControllerDesc = { };
-		ControllerDesc.pOwner = this;
+		CAIController::GAMEOBJECT_DESC ControllerDesc = { };
+		ControllerDesc.pParent = this;
 
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)

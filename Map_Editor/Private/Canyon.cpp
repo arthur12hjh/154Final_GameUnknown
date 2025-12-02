@@ -46,6 +46,15 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 
 void CCanyon::Update(_float fTimeDelta)
 {
+	_vector vWorldPos = m_pTransformCom->Get_State(STATE::POSITION);
+
+	// 2. 출력할 문자열을 포맷합니다.
+	wchar_t szOutput[256];
+	swprintf_s(szOutput, 256, L"Player Position: X: %.3f, Y: %.3f, Z: %.3f\n",
+		XMVectorGetX(vWorldPos), XMVectorGetY(vWorldPos), XMVectorGetZ(vWorldPos));
+
+	// 3. Visual Studio 출력 창에 출력합니다.
+	OutputDebugString(szOutput);
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)

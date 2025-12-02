@@ -30,16 +30,17 @@ public:
 		return &m_WorldMatrix;
 	}
 
-	void			Set_State(STATE eState, _vector vState);
+	void					Set_State(STATE eState, _vector vState);
 
-	void			Set_Scale(_vector vScale);
-	void			Set_Rotation(_vector vRotation);
-	void			Set_Scale(_float fX, _float fY, _float fZ);
+	void					Set_Scale(_vector vScale);
+	void					Set_Rotation(_vector vRotation, _bool bIsQuaternion = false);
+	void					Set_Scale(_float fX, _float fY, _float fZ);
+
 	/* 현재는 가장 업데이트가 늦게 도는 Physx Manager Update 단에서 돌고 있음. */
-	void			Update_PreWorldMatrix();
+	void					Update_PreWorldMatrix();
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
 
 public:
 	/* 이전 프레임 월드 매트릭스 넣을 수 있게 변경. */
@@ -59,13 +60,11 @@ public:
 	void					Rotation(_float fQuatX, _float fQuatY, _float fQuatZ, _float fQuatW);
 
 	void					LookAt(_fvector vAt);
-	//임시로 추가해놓은 코드입니다 ratio 0.1 이상으로 두면 터질 가능성 높음
-	void					LookAt_Lerp(_fvector vAt, _float fRatio);
-	//임시로 추가해놓은 코드입니다 ratio 0.1 이상으로 두면 터질 가능성 높음
+
+	void					LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed = 1.f);
 	void					Chase_Lerp(_fvector vTargetPos, _float fTimeDelta, _float fLimitDistance = 0.f);
-	//입력받은 벡터로 Look 벡터 강제로 세팅 후, 나머지 Right, Up도 보정해주는 함수. 
-	//Set State랑은 로직 좀 다르게 돌아가요.
 	void					Change_Look(_fvector vLook); 
+
 private:
 	class CGameObject*		m_pOwner = nullptr;
 

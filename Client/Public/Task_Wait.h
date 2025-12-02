@@ -10,7 +10,7 @@ private:
 	virtual ~CTask_Wait() = default;
 
 public:
-	HRESULT								Initialize_Prototype(const CBehaviorTree* pOwnerTree, _float fWaitTime);
+	HRESULT								Initialize_Prototype(CBehaviorTree* pOwnerTree, _float fWaitTime);
 
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
@@ -19,7 +19,7 @@ private :
 	_float2								m_vTime = {};
 
 public:
-	static	CTask_Wait*					Create(const CBehaviorTree* pOwnerTree, _float fWaitTime);
+	static	CTask_Wait*					Create(CBehaviorTree* pOwnerTree, _float fWaitTime);
 	virtual	void						Free() override;
 };
 NS_END

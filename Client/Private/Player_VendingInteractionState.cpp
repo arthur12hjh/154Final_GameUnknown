@@ -18,8 +18,6 @@ void CPlayer_VendingInteractionState::Start(void* pArg)
 
 PLAYER_TRANSITION_DESC CPlayer_VendingInteractionState::Update(_float fTimeDelta)
 {
-    __super::Update(fTimeDelta);
-
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
 
     if (true == isAnimationFinished)

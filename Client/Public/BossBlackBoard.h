@@ -1,6 +1,5 @@
 #pragma once
 #include "Client_Defines.h"
-#include "GameStruct.h"
 #include "BlackBoard.h"
 
 NS_BEGIN(Engine)
@@ -8,27 +7,66 @@ class CGameObject;
 NS_END
 
 NS_BEGIN(Client)
+struct Naytiba_NetWork_Desc;
+struct Default_Damage_Desc;
+struct Naytiba_Desc;
+
 class CBossBlackBoard abstract : public CBlackBoard
 {
+public:
+	enum class BOSS_STATE
+	{
+		IDLE, ATTACK, HIT, MOVE, GROOGY, DEAD, END
+	};
+
+	typedef struct BossBlackBoardDesc
+	{
+		CGameObject*					pOwner;
+
+	}BOSS_BLACKBOARD_DESC;
+
 protected :
 	CBossBlackBoard();
 	virtual ~CBossBlackBoard() = default;
 
 public:
-	HRESULT								Initialize(_uint iBossID);
+	virtual HRESULT						Initialize(void* pArg) override;
 
 	// 보스 타겟 세팅
 	void								SetTarget(CGameObject* pGameObject);
 	CGameObject*						GetTarget() { return m_pTarget; }
 
-	const NAYTIBA_NETWORK_DESC*			GetBossDefaultInfo() { return m_BossDefualtInfo; }
-	NAYTIBA_DESC&						GetBossInfo() { return m_BossCurrentInfo; }
+	const Naytiba_NetWork_Desc*			GetBossDefaultInfo() { return m_BossDefualtInfo; }
+	const Naytiba_Desc*					GetBossInfo() { return m_BossCurrentInfo; }
+
+	void								SetTargetDistacne();
+	_float								GetTargetDistance() { return m_fTargetDistance; }
+
+	void								SetCurState(BOSS_STATE eState);
+	const BOSS_STATE&					GetCurState() { return m_eCurState; }
+	const BOSS_STATE&					GetPreState() const { return m_ePreState; }
+
+	void								SetHitData(const Default_Damage_Desc* pSkill);
+	const Default_Damage_Desc*			GetHitData();
+
+	void								SetAttackDelay(_float fDelay);
+	_float								GetAttackDelay() { return m_fAttackDelay; }
 
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 
-	const NAYTIBA_NETWORK_DESC*			m_BossDefualtInfo = { nullptr };
-	NAYTIBA_DESC						m_BossCurrentInfo;
+	const Naytiba_NetWork_Desc*			m_BossDefualtInfo = { nullptr };
+	const Naytiba_Desc*					m_BossCurrentInfo = { nullptr };
+	Default_Damage_Desc					m_pHit_Data = { nullptr };
+
+	_float								m_fTargetDistance = {};
+	_float								m_fAttackDelay = {};
+
+	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
+	BOSS_STATE							m_eCurState = { BOSS_STATE::END };
+
+private :
+	_bool								m_bIsHit = { false };
 
 public:
 	virtual		void					Free() override;

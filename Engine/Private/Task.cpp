@@ -4,7 +4,7 @@ CTask::CTask() : CBehaviorNode()
 {
 }
 
-HRESULT CTask::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CTask::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
     m_eNodeType = BEHAVIOR_NODE_TYPE::TASK;
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))

@@ -65,6 +65,7 @@ public:
 	_uint Get_Mesh_MaterialIndex(_uint iIdx) const;
 	const _char* Get_MeshName(_uint iIdx) const;
 	const _char* Get_MaterialName(_uint iIdx) const;
+	const _uint Get_NumMaterials() const { return m_Materials.size(); }
 	_uint Get_NumMeshes() const {
 		return m_iNumMeshes;
 	}
@@ -72,6 +73,8 @@ public:
 	_int Get_BoneIndex(const _char* pBoneName) const;
 
 	vector<class CBone*>* Get_Bones();
+	vector<class CMaterial*>* Get_Materials();
+
 
 	_uint Get_AnimationKeyFrameIndex() const;
 
@@ -92,10 +95,17 @@ public:
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
 public:
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
-	void Set_Animation(const _wstring& strAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE);
+	void Set_Animation(const _wstring& strAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
@@ -119,7 +129,7 @@ public:
 	HRESULT Bind_GlobalOffsetMatrices(CShader* pShader);
 
 	_bool			IsAnimationFinished() { return m_isFinish; }
-
+	_bool			CompareAnimationTag(const _char* szAnimationTag);
 	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
 
 
@@ -166,6 +176,9 @@ private:
 	_float						m_fBlendElapsed = 0.f;
 	_float						m_fBlendRatio = 0.f;
 	_float						m_fBlendDuration = 0.12f;
+
+	_float						m_fEndTrackPosition = -1.f;
+	_float						m_fStartTrackPosition = 0.f;
 
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};

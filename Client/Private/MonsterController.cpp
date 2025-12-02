@@ -40,7 +40,7 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	auto pNayitba = static_cast<CNayitba*>(m_pOwner);
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	auto pDefaultData = pNayitba->GetStaticMonsterData();
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
@@ -69,7 +69,7 @@ void CMonsterController::Update(_float fTimeDelta)
 
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 		{
-			auto pNayitba = static_cast<CNayitba*>(m_pOwner);
+			auto pNayitba = static_cast<CNayitba*>(m_pParent);
 			if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
 			{
 				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
@@ -127,7 +127,7 @@ void CMonsterController::Damage(void* pDesc)
 		if (pAttackState)
 		{
 			// 나중에 여러 속성 추가할 예정
-			CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+			const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 			if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 			{
 				if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -171,7 +171,7 @@ HRESULT CMonsterController::Ready_Components()
 HRESULT CMonsterController::Ready_FSM()
 {
 	CStateMachine::STATEMACHINE_DESC Desc = {};
-	Desc.pOwner = m_pOwner;
+	Desc.pOwner = m_pParent;
 
 	auto pClone = m_pGameInstance->Clone_Prototype(PROTOTYPE::COMPONENT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Monster_FSM"), &Desc);
 	if (nullptr == pClone)
@@ -206,14 +206,14 @@ HRESULT CMonsterController::Ready_FSM()
 void CMonsterController::Battle_Action(_float fTimeDelta)
 {
 	// 이거 배틀상태가 아니라면 안되게 하자
-	auto pNayitba = static_cast<CNayitba*>(m_pOwner);
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
 	m_pTargetCom->Target_Search(pNayitba->GetTraceObejectList());
 	auto pTarget = m_pTargetCom->GetTarget();
 
-	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vOwnerPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
 	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 

@@ -48,14 +48,27 @@ HRESULT CData_Manager::Save_Data()
             jMember["szNotifyArg01"] = pMember.szNotifyArg01.c_str();
             jMember["szNotifyArg02"] = pMember.szNotifyArg02.c_str();
             jMember["szNotifyArg03"] = pMember.szNotifyArg03.c_str();
+            jMember["szNotifyArg04"] = pMember.szNotifyArg04.c_str();
+            jMember["szNotifyArg05"] = pMember.szNotifyArg05.c_str();
+            jMember["szNotifyArg06"] = pMember.szNotifyArg06.c_str();
+            jMember["szNotifyArg07"] = pMember.szNotifyArg07.c_str();
+            jMember["szNotifyArg08"] = pMember.szNotifyArg08.c_str();
             
-            jMember["iNumData1"] = pMember.iNumData1;
-            jMember["iNumData2"] = pMember.iNumData2;
-            jMember["iNumData3"] = pMember.iNumData3;
-            jMember["iNumData4"] = pMember.iNumData4;
+            jMember["iNumData01"] = pMember.iNumData01;
+            jMember["iNumData02"] = pMember.iNumData02;
+            jMember["iNumData03"] = pMember.iNumData03;
+            jMember["iNumData04"] = pMember.iNumData04;
+            jMember["iNumData05"] = pMember.iNumData05;
+            jMember["iNumData06"] = pMember.iNumData06;
+            jMember["iNumData07"] = pMember.iNumData07;
+            jMember["iNumData08"] = pMember.iNumData08;
+
+            jMember["fNumData01"] = pMember.fNumData01;
+            jMember["fNumData02"] = pMember.fNumData02;
+            jMember["fNumData03"] = pMember.fNumData03;
+            jMember["fNumData04"] = pMember.fNumData04;
 
             jMember["szSocketTag"] = pMember.szSocketTag.c_str();
-			jMember["bIsLocalPos"] = pMember.bIsLocalPos;
 
             jMember["vNotifyScale"] = {
                pMember.vNotifyScale.x,
@@ -73,6 +86,7 @@ HRESULT CData_Manager::Save_Data()
                 pMember.vNotifyRotation.y,
                 pMember.vNotifyRotation.z
 			};
+
             jMember["iNotifyKeyFrame"] = pMember.iNotifyKeyFrame;
 
             jData["AnimationNotifies"].push_back(jMember);
@@ -133,14 +147,27 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
             AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
             AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
             AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
+            AnimNotify.szNotifyArg04 = pAnimNotify["szNotifyArg04"].get<string>();
+            AnimNotify.szNotifyArg05 = pAnimNotify["szNotifyArg05"].get<string>();
+            AnimNotify.szNotifyArg06 = pAnimNotify["szNotifyArg06"].get<string>();
+            AnimNotify.szNotifyArg07 = pAnimNotify["szNotifyArg07"].get<string>();
+            AnimNotify.szNotifyArg08 = pAnimNotify["szNotifyArg08"].get<string>();
 
-            AnimNotify.iNumData1 = pAnimNotify["iNumData1"].get<_int>();
-            AnimNotify.iNumData2 = pAnimNotify["iNumData2"].get<_int>();
-            AnimNotify.iNumData3 = pAnimNotify["iNumData3"].get<_int>();
-            AnimNotify.iNumData4 = pAnimNotify["iNumData4"].get<_int>();
+            AnimNotify.iNumData01 = pAnimNotify["iNumData01"].get<_int>();
+            AnimNotify.iNumData02 = pAnimNotify["iNumData02"].get<_int>();
+            AnimNotify.iNumData03 = pAnimNotify["iNumData03"].get<_int>();
+            AnimNotify.iNumData04 = pAnimNotify["iNumData04"].get<_int>();
+            AnimNotify.iNumData05 = pAnimNotify["iNumData05"].get<_int>();
+            AnimNotify.iNumData06 = pAnimNotify["iNumData06"].get<_int>();
+            AnimNotify.iNumData07 = pAnimNotify["iNumData07"].get<_int>();
+            AnimNotify.iNumData08 = pAnimNotify["iNumData08"].get<_int>();
+
+            AnimNotify.fNumData01 = pAnimNotify["fNumData01"].get<_float>();
+            AnimNotify.fNumData02 = pAnimNotify["fNumData02"].get<_float>();
+            AnimNotify.fNumData03 = pAnimNotify["fNumData03"].get<_float>();
+            AnimNotify.fNumData04 = pAnimNotify["fNumData04"].get<_float>();
 
             AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
-			AnimNotify.bIsLocalPos = pAnimNotify["bIsLocalPos"].get<bool>();
 
             AnimNotify.vNotifyScale = {
                pAnimNotify["vNotifyScale"][0].get<_float>(),
@@ -182,5 +209,6 @@ CData_Manager* CData_Manager::Create()
 
 void CData_Manager::Free()
 {
+    m_AnimationNotifyDatas.clear();
     __super::Free();
 }

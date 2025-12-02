@@ -4,9 +4,9 @@ CBlackBoard::CBlackBoard()
 {
 }
 
-CBlackBoard* CBlackBoard::Create()
+void CBlackBoard::SetOwner(CGameObject* pOwner)
 {
-    return nullptr;
+    m_pOwner = pOwner;
 }
 
 void CBlackBoard::Free()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
+#include "ClientStruct.h"
 #include "Level.h"
 #include "VIBuffer_Instance_Model.h"
 
@@ -12,6 +13,7 @@ public:
 	typedef struct SavedObjectInfo
 	{
 		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
 	}SAVEDOBJECTINFO;
 
 	typedef struct tagModelInstanceLoadDesc
@@ -47,6 +49,9 @@ private:
 	HRESULT Load_Map_Data();
 	HRESULT Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+
+	HRESULT Load_Map_Desert_Data(const _char* szFilePath);
+	HRESULT Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 
 	HRESULT Load_Light_Data();

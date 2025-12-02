@@ -7,14 +7,21 @@
 NS_BEGIN(Client)
 
 typedef struct tagPlayerState { 
-	PLAYER_STATE eNextState = PLAYER_STATE::STATE_END;
-	void* pArg = { nullptr }; 
+	PLAYER_STATE eNextState = { PLAYER_STATE::STATE_END };
+	PLAYER_MODE eMode = { PLAYER_MODE::END };
+	_bool isChangeMode = { false };
+	void* pArg = { nullptr };
 } PLAYER_TRANSITION_DESC; 
 
 typedef struct tagWalkStateDesc {
 	_bool isLand = { false };
 	_bool isEvade = { false };
-} PLAYER_WALK_DESC;
+} PLAYER_BATTLEWALK_DESC;
+ 
+typedef struct tagHitStateDesc {
+	_float3 vImpactDir;
+	_float  fImpact;
+} PLAYER_HIT_DESC;
 
 class CPlayerState abstract : public CBase
 {

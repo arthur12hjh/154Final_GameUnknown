@@ -48,7 +48,6 @@ void CGigas::Priority_Update(_float fTimeDelta)
 
 void CGigas::Update(_float fTimeDelta)
 {
-Progress:
 	__super::Update(fTimeDelta);
 }
 

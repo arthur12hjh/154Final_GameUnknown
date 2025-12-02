@@ -5,6 +5,8 @@
 // 상속 받아서 변수 정의해서 GetSet 만들어서 사용하는 형태임
 
 NS_BEGIN(Engine)
+class CGameObject;
+
 class ENGINE_DLL CBlackBoard abstract : public CBase
 {
 protected :
@@ -12,7 +14,15 @@ protected :
 	virtual ~CBlackBoard() = default;
 
 public :
-	static		CBlackBoard*		Create();
+	virtual		HRESULT				Initialize(void* pArg) = 0;
+
+	void							SetOwner(CGameObject* pOwner);
+	CGameObject*					GetOwner() { return m_pOwner; }
+
+protected :
+	CGameObject*					m_pOwner = { nullptr };
+
+public :
 	virtual		void				Free() override; 
 };
 NS_END

@@ -137,10 +137,7 @@ size_t CThreadPool::GetThreadJobCount()
 
 _bool CThreadPool::IsWorkThread()
 {
-	if (0 < m_iWorkdThread)
-		return true;
-
-	return false;
+	return 0 < m_iWorkdThread ? true : false;
 }
 
 void CThreadPool::FinishedWorkThread(thread::id ThreadID)

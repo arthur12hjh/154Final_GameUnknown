@@ -99,6 +99,11 @@ HRESULT CTerrain::Ready_Components()
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
+	/* Com_ORM */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain_ORM"),
+		TEXT("Com_ORM"), reinterpret_cast<CComponent**>(&m_pORMTextureCom))))
+		return E_FAIL;
+
 	/* Com_Mask */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Reed_Mask"),
 		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
@@ -130,6 +135,18 @@ HRESULT CTerrain::Bind_ShaderResources()
 	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
 		return E_FAIL;
 
+	
+	//테스트 코드. 나중에 지우셔도 돼요
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		m_isORM = !m_isORM;
+
+	if (true == m_isORM)
+	{
+		if (FAILED(m_pORMTextureCom->Bind_ShaderResources(m_pShaderCom, "g_ORMTexture")))
+			return E_FAIL;
+	}
+
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
 	{
 		if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
@@ -146,7 +163,7 @@ CTerrain* CTerrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : pGraphic_Device");
+		MSG_BOX("Failed to Created : CTerrain");
 		Safe_Release(pInstance);
 	}
 
@@ -175,4 +192,5 @@ void CTerrain::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMaskCom);
+	Safe_Release(m_pORMTextureCom);
 }

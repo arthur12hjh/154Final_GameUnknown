@@ -2,7 +2,7 @@
 #include "UI_Level_GamePlay.h"
 
 #include "Actor.h"
-#include "Camera_Free.h"
+#include "UI_Camera.h"
 
 #include "GameInstance.h"
 #include "UIHUD.h"
@@ -17,18 +17,18 @@ CUI_Level_GamePlay::CUI_Level_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContex
 
 HRESULT CUI_Level_GamePlay::Initialize()
 {
-	//if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
+		return E_FAIL;
 
-	//auto pGameCharacter = m_pGameInstance->GetMainCamera();
-	//m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
-	//Safe_Release(pGameCharacter);
+	/*auto pGameCharacter = m_pGameInstance->GetMainCamera();
+	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
+	Safe_Release(pGameCharacter);*/
 
 	return S_OK;
 }
@@ -46,7 +46,7 @@ HRESULT CUI_Level_GamePlay::Render()
 
 HRESULT CUI_Level_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
-	/*CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
+	CUI_Camera::UI_CAMERA_DESC			CameraDesc{};
 	CameraDesc.fFov = XMConvertToRadians(60.0f);
 	CameraDesc.fNear = 0.1f;
 	CameraDesc.fFar = 500.f;
@@ -56,9 +56,9 @@ HRESULT CUI_Level_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	CameraDesc.fMouseSensor = 0.1f;
 
-	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
-	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
-	m_pGameInstance->SetMainCamera(TEXT("FreeCamera"));*/
+	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_UI_Camera"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("UI_Camera"), static_cast<CCamera*>(pCamera));
+	m_pGameInstance->SetMainCamera(TEXT("UI_Camera"));
 
 	return S_OK;
 }
@@ -75,6 +75,11 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
 
+	pUIHUD->Anim_Play(TEXT("Layer_Combat"), TEXT("Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
+
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
+		return E_FAIL;*/
+
 	//if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 	//	return E_FAIL;
 	//
@@ -85,9 +90,9 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 
 HRESULT CUI_Level_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
 
 	//CActor::ACTOR_DESC ProbDesc = {};
 	//ProbDesc.bIsApplyTransform = true;

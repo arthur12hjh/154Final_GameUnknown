@@ -9,7 +9,7 @@ protected:
 	virtual ~CTask() = default;
 
 public:
-	virtual	HRESULT						Initialize_Prototype(const CBehaviorTree* pOwnerTree) override;
+	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
 
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;

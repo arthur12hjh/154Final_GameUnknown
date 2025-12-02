@@ -5,7 +5,7 @@ CDecorator::CDecorator() : CBehaviorNode()
 }
 
 
-HRESULT CDecorator::Initialize_Prototype(const CBehaviorTree* pOwnerTree)
+HRESULT CDecorator::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
     m_eNodeType = BEHAVIOR_NODE_TYPE::DECORATOR;
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))

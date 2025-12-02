@@ -5,10 +5,25 @@
 
 namespace Client
 {
+	enum class UI_SHADER_PASS {
+		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE, POTION,
+		SHIELD, BETA, BETA_FX, SKILL_SLOT, SKILL_SLOT_GLOW,
+		RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE,
+		SKILL_WRAPPER_ON_FX
+	};
+
+	typedef struct tagSkillInfoDesc
+	{
+		_int		iSkillIndex{ -1 };
+		_uint		iSkillState{ 0 };
+	}UI_SKILL_INFO_DESC;
+
 	typedef struct tagUIEventArg {
 		enum ARG_TYPE {
 			NONE,
 			BTN_STATE,
+			SKILL_STATE,
+			SKILL_INFO,
 			INT,
 			FLOAT,
 			WSTRING,
@@ -118,6 +133,7 @@ namespace Client
 	typedef struct tagUIBaseDesc : public CUIObject::UIOBJECT_DESC
 	{
 		float fOffsetX{ 0.f }, fOffsetY{ 0.f };
+		float fRotation{ 0.f };
 		float fAlpha{ 1.f };
 		unsigned int iLevel{ 0 };
 		unsigned int iDepth{ 0 };

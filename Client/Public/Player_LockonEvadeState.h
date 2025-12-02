@@ -22,7 +22,7 @@ public:
 
 private:
 	EVADE_DIR m_eDirection = {};
-
+	PLAYER_BATTLEWALK_DESC m_tNextStateDesc = {};
 public:
 	static	CPlayer_LockonEvadeState* Create(void* pArg);
 	virtual	void			   Free() override;

@@ -19,6 +19,77 @@ CFace_Player::CFace_Player(const CFace_Player& Prototype)
 {
 }
 
+HRESULT CFace_Player::Mapping_Shader_Material(_uint iIdx)
+{
+	// idx 0 (Shader pass : 4)	
+	if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MA_MouthInner_Inst") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MA_MouthInner_Inst))))
+			return E_FAIL;
+	}
+	// idx 1 (Shader pass : 5)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "M_MikeEyeBlend_Inst") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::M_MikeEyeBlend_Inst))))
+			return E_FAIL;
+	}
+	// idx 2 (Shader pass : 6)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "M_lacrimal_fluid") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::M_lacrimal_fluid))))
+			return E_FAIL;
+	}
+	// idx 3 (Shader pass : 7)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_EVE_Head_V02") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_EVE_Head_V02))))
+			return E_FAIL;
+	}
+	// idx 4 (Shader pass : 8)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_EyeRefractive1") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_EyeRefractive1))))
+			return E_FAIL;
+	}
+	// idx 5 (Shader pass : 9)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_EVE_Eyeshadow_Occlusion") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_EVE_Eyeshadow_Occlusion))))
+			return E_FAIL;
+	}
+	// idx 6 (Shader pass : 10)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "NewMaterial") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::NewMaterial))))
+			return E_FAIL;
+	}
+	// idx 7 (Shader pass : 11)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_EyeBrow1") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_EyeBrow1))))
+			return E_FAIL;
+	}
+	// idx 8 (Shader pass : 12)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "EyeLight_Inst") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::EyeLight_Inst))))
+			return E_FAIL;
+	}
+	// idx 9 (Shader pass : 13)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_Teeth") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_Teeth))))
+			return E_FAIL;
+	}
+	// idx 10 (Shader pass : 14)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MA_TeethOcculusion_Inst1") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MA_TeethOcculusion_Inst1))))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
 
 HRESULT CFace_Player::Initialize_Prototype()
 {
@@ -43,9 +114,11 @@ HRESULT CFace_Player::Initialize(void* pArg)
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::OPACITY, "g_OpacityTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
 
 	return S_OK;
 }
@@ -57,22 +130,12 @@ void CFace_Player::Priority_Update(_float fTimeDelta)
 
 void CFace_Player::Update(_float fTimeDelta)
 {
-	//if (*m_pParentState & CCharacter::STATE_ATTACK)
-	//	m_pModelCom->Set_AnimationIndex(0, false);
-	//
-	//if (*m_pParentState & CCharacter::STATE_IDLE)
-	//	m_pModelCom->Set_AnimationIndex(3);
-	//
-	//if (*m_pParentState & CCharacter::STATE_WALK)
-	//	m_pModelCom->Set_AnimationIndex(4);	
-
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CFace_Player::Late_Update(_float fTimeDelta)
 {
-	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
@@ -87,18 +150,18 @@ HRESULT CFace_Player::Render()
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
+	//Shader_Eve_Face
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_EVE_Eyeshadow_Occlusion") == 0
-			|| strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "EyeLight_Inst") == 0)
-		{
-			//if (FAILED(m_pShaderCom->Begin()))
-			//	return E_FAIL;
+		//if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_EVE_Eyeshadow_Occlusion") == 0)
+		//{
+		//	//if (FAILED(m_pShaderCom->Begin()))
+		//	//	return E_FAIL;
 
-			//if (FAILED(m_pModelCom->Render(i)))
-			//	return E_FAIL;
-			continue;
-		}
+		//	//if (FAILED(m_pModelCom->Render(i)))
+		//	//	return E_FAIL;
+		//	continue;
+		//}
 
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
@@ -112,7 +175,8 @@ HRESULT CFace_Player::Render()
 		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		//여기서 머테리얼 인덱스 따라 패스 구분.
+		if(FAILED(Mapping_Shader_Material(i)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
@@ -157,7 +221,7 @@ HRESULT CFace_Player::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Face"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

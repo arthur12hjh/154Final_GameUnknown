@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "Level_Loading.h"
 
 #include "Actor.h"
 #include "Nayitba.h"
@@ -34,7 +35,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
-		return E_FAIL;
+ 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
@@ -53,7 +54,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Map_Data();
+	//Load_Map_Data();
+	Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert.bin");
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
@@ -65,17 +67,16 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
 }
 
 HRESULT CLevel_GamePlay::Render()
 {
-
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
 #else
 	SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
 #endif // _DEBUG
-
 
 	return S_OK;
 }
@@ -87,16 +88,16 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-//	LIGHT_DESC			LightDesc{};
-//
-//	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-//	LightDesc.vDiffuse = _float4(6.f, 6.f, 6.f, 1.f);
-//	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-//	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-//
-//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-//	return E_FAIL;
+	//LIGHT_DESC			LightDesc{};
+
+	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	//	return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
@@ -221,7 +222,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;*/
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Desert"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
@@ -261,44 +266,45 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	for (size_t i = 0; i < 1; i++)
-	{
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-			return E_FAIL;
-	}
+	//for (size_t i = 0; i < 1; i++)
+	//{
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Monster"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//		return E_FAIL;
+	//}
 
 	CNayitba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	Desc.iMonsterID = 2;
-	Desc.vPosition = { 42.f, 1.f, 12.f };
+	Desc.iMonsterID = 1;
+	Desc.vPosition = { 62.f, 1.f, 62.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	Desc.iMonsterID = 3;
-	Desc.vPosition = { 15.f, 1.f, 15.f };
+
+	//Desc.iMonsterID = 3;
+	//Desc.vPosition = { 15.f, 1.f, 15.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
+
+	/*Desc.iMonsterID = 4;
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
-
-	Desc.iMonsterID = 4;
-	Desc.vPosition = { 21.f, 1.f, 25.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
-
 	Desc.iMonsterID = 5;
-	Desc.vPosition = { 35.f, 1.f, 31.f };
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//		return E_FAIL;
 
 	return S_OK;
 }
@@ -337,6 +343,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
 		return E_FAIL;
 	
+	pUIHUD->Anim_Play(TEXT("Layer_Combat"), TEXT("Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 		return E_FAIL;
@@ -526,6 +533,74 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 	{
 		Safe_Delete(pDataVector); 
 		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
+	ifs.close();
+
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDOBJECTINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
+
+		RuinComponentDesc Desc = {};
+		Desc.pComponentTag = info.szComponentTag;
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+
+		if (SUCCEEDED(hr))
+		{
+			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
+			if (pObjs && !pObjs->empty())
+			{
+				CGameObject* pObj = pObjs->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
+				if (pTransform)
+				{
+					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+
+					_vector vScale = {};
+					_vector vRotation = {};
+					_vector vPosition = {};
+					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+
+					// 순서: Scale * Rotation * Translation (SRT 순서)
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
+
+				}
+			}
+		}
 	}
 
 	return S_OK;

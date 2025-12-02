@@ -118,41 +118,8 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
       <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="50.Behavior">
-      <UniqueIdentifier>{97a1cc60-d0a3-4bf8-bedd-de310c29f151}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task">
-      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator">
-      <UniqueIdentifier>{598a6be4-e105-42b0-a918-3c2475dd5d56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Service">
-      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Dead">
-      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Idle">
-      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Move">
-      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Task\Wait">
-      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator\PhaseChange">
-      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\Decorator\AttackRange">
-      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97.ShaderFiles\UI">
       <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="50.Behavior\BlackBoard">
-      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects">
       <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
@@ -376,59 +343,8 @@
     <Filter Include="02.GameObjects\Character\Player">
       <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Weapon">
-      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Parts">
-      <UniqueIdentifier>{f9ff9b15-0039-4b3e-aded-3fa60784543f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Parts\Hair">
-      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Parts\Face">
-      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Parts\Body">
-      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\Parts\PonyTail">
-      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State">
       <UniqueIdentifier>{fea85870-6048-4bb4-9f16-3a49def8d9bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle">
-      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Walk">
-      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial">
-      <UniqueIdentifier>{5440f9a3-45c6-439e-8a44-2f0068e9c5cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump">
-      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk">
-      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Attack">
-      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Landing">
-      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Evade">
-      <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Hit">
-      <UniqueIdentifier>{58c823c4-5a32-437e-b510-580cd5b9f22f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\Interaction">
-      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\Battle\lockon">
-      <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\01. FSM">
       <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
@@ -472,26 +388,14 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
       <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla">
-      <UniqueIdentifier>{74d28501-001e-4fd5-8802-9449d27da0c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body">
-      <UniqueIdentifier>{67361f08-7f94-44d2-9aab-3c38feb3c06d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
       <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
       <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
       <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
       <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
@@ -525,9 +429,183 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
       <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
-   </Filter>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates">
+      <UniqueIdentifier>{294263e1-de50-4109-a46b-224a96877c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Attack">
+      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit">
+      <UniqueIdentifier>{58c823c4-5a32-437e-b510-580cd5b9f22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts">
+      <UniqueIdentifier>{f9ff9b15-0039-4b3e-aded-3fa60784543f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair">
+      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face">
+      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Body">
+      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\PonyTail">
+      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\03. Weapon">
+      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle">
+      <UniqueIdentifier>{3a7ebc78-50dc-4039-ac6c-3ff33cfb27a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle">
+      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Walk">
+      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Landing">
+      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Evade">
+      <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Interaction">
+      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon">
+      <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Jump">
+      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack">
+      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Idle">
+      <UniqueIdentifier>{fe853f77-99c9-4906-8306-1f011008172e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Walk">
+      <UniqueIdentifier>{232e0a39-f2da-4e0e-a52c-faeadefb084e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Landing">
+      <UniqueIdentifier>{5fb787e7-a9a1-4114-a5cc-210d2852ef68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar">
+      <UniqueIdentifier>{032f3bd1-48da-42e6-9b1a-37d8701e48b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion">
+      <UniqueIdentifier>{10153d73-962a-4f9f-abb6-3b1c0284d21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack">
+      <UniqueIdentifier>{85ce6070-0873-4a23-aa87-753bddbdb8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount">
+      <UniqueIdentifier>{fac13108-8daf-4aff-9b5e-80167755d37b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta">
+      <UniqueIdentifier>{01c5e7a1-3d2b-4856-ad35-bb294ffda35d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIShield">
+      <UniqueIdentifier>{d360d8ed-b865-45b3-ab79-1cb581c7dd13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX">
+      <UniqueIdentifier>{f1fe0ac5-848d-4af6-8ea0-d59062df6a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper">
+      <UniqueIdentifier>{36beb1db-6f54-44e5-add1-ddee48a6ff5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot">
+      <UniqueIdentifier>{1fa6e6ff-0b9d-4959-a1d9-a358f6a9f566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
+      <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
+      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard">
+      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Service">
+      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
+      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
+      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move">
+      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait">
+      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
+      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Lockon">
+      <UniqueIdentifier>{6f1a2b1f-7aec-47a6-89ec-1c3a7dc44792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\LockonManager">
+      <UniqueIdentifier>{22a47143-a8d1-42b2-8ae2-00a6e2f2cff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face\ShaderFile">
+      <UniqueIdentifier>{e5f327b3-eb7d-4a7b-a281-86c09811a342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
+      <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword">
+      <UniqueIdentifier>{44d852bb-6247-411a-ba19-092b64c64ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX">
+      <UniqueIdentifier>{defadc56-6f2b-43b0-983a-37d6a3698a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX">
+      <UniqueIdentifier>{ffb9b939-4887-48ad-8e66-f704df660386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX">
+      <UniqueIdentifier>{bfa53255-00ae-4b81-bca8-aeb9e9f0d206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert">
+      <UniqueIdentifier>{f4e47b99-0d6b-47f1-a018-0bfa32ea1537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building">
+      <UniqueIdentifier>{1a4f5d2d-b05a-455c-a23a-8c8b04e5cd25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Terrain">
+      <UniqueIdentifier>{72153769-9b9e-45db-960b-c033022a502e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment">
+      <UniqueIdentifier>{9b6be86f-e104-4d92-b83d-7e3cba3d50a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Canyon">
+      <UniqueIdentifier>{e9b70ca5-8a0f-4311-9a2a-95c279cd1ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
+      <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -568,10 +646,10 @@
       <Filter>02.GameObjects\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Body_Player.h">
-      <Filter>02.GameObjects\Character\Player\Parts\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon.h">
-      <Filter>02.GameObjects\Character\Player\Weapon</Filter>
+      <Filter>02.GameObjects\Character\Player\03. Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ForkLift.h">
       <Filter>02.GameObjects\TestModel\ForkLift</Filter>
@@ -676,28 +754,28 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Face_Player.h">
-      <Filter>02.GameObjects\Character\Player\Parts\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Face</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hair_Player.h">
-      <Filter>02.GameObjects\Character\Player\Parts\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hair</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PonyTail_Player.h">
-      <Filter>02.GameObjects\Character\Player\Parts\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Wait.h">
-      <Filter>50.Behavior\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Move.h">
-      <Filter>50.Behavior\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Idle.h">
-      <Filter>50.Behavior\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Dead.h">
-      <Filter>50.Behavior\Task\Dead</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_GorillaHit.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    <ClInclude Include="..\Public\Task_Hit.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -708,26 +786,20 @@
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Gorilla.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Deco_AttackRange.h">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    <ClInclude Include="..\Public\Deco_AttackDelay.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossBlackBoard.h">
-      <Filter>50.Behavior\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DataManager.h">
       <Filter>10.GameManager\CharacterDataManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Gorilla_Body.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Actor.h">
       <Filter>02.GameObjects\Actor</Filter>
@@ -996,35 +1068,35 @@
     <ClInclude Include="..\Public\SpriteParticle.h">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_IdleState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
+    <ClInclude Include="..\Public\Player_BattleIdleState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_Parts.h">
-      <Filter>02.GameObjects\Character\Player\Parts</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Player.h">
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_WalkState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
+    <ClInclude Include="..\Public\Player_BattleWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_WalkEndState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
+    <ClInclude Include="..\Public\Player_BattleWalkEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LightAttackState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_LandingState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Landing</Filter>
+    <ClInclude Include="..\Public\Player_BattleLandingState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Landing</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_JumpState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Jump</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_AerialAttack.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterStateMimesis.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
@@ -1041,17 +1113,17 @@
     <ClInclude Include="..\Public\BossController.h">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_EvadeState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Evade</Filter>
+    <ClInclude Include="..\Public\Player_BattleEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_HitState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Hit</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Interaction</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerBattleFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
@@ -1069,19 +1141,94 @@
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LockonEvadeState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LockonWalkState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerLockonFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerIdleFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotion.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotionCount.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPotionStack.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBeta.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIHPFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_IdleState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_IdleWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_IdleLandingState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIRushSlot.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Deco_CheckAlive.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Lockon.h">
+      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LockonManager.h">
+      <Filter>10.GameManager\LockonManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrailData.h" />
+    <ClInclude Include="..\Public\Player_IdleWalkEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_DrawHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+    <ClInclude Include="..\Public\Building_Ruin.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain_Desert.h">
+      <Filter>02.GameObjects\Map\Desert\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DesertObject.h">
+      <Filter>02.GameObjects\Map\Desert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Canyon.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1121,10 +1268,10 @@
       <Filter>02.GameObjects\Camera\Camera_Free</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Body_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Parts\Body</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon.cpp">
-      <Filter>02.GameObjects\Character\Player\Weapon</Filter>
+      <Filter>02.GameObjects\Character\Player\03. Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ForkLift.cpp">
       <Filter>02.GameObjects\TestModel\ForkLift</Filter>
@@ -1214,28 +1361,28 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIWrapper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Face_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Parts\Face</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Face</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hair_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Parts\Hair</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PonyTail_Player.cpp">
-      <Filter>02.GameObjects\Character\Player\Parts\PonyTail</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Wait.cpp">
-      <Filter>50.Behavior\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Move.cpp">
-      <Filter>50.Behavior\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Idle.cpp">
-      <Filter>50.Behavior\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Dead.cpp">
-      <Filter>50.Behavior\Task\Dead</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Task_GorillaHit.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    <ClCompile Include="..\Private\Task_Hit.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -1246,23 +1393,17 @@
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Gorilla.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
-      <Filter>50.Behavior\Decorator\PhaseChange</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Deco_AttackRange.cpp">
-      <Filter>50.Behavior\Decorator\AttackRange</Filter>
+    <ClCompile Include="..\Private\Deco_AttackDelay.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossBlackBoard.cpp">
-      <Filter>50.Behavior\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
       <Filter>10.GameManager\CharacterDataManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Gorilla_Body.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Gorilla\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Actor.cpp">
       <Filter>02.GameObjects\Actor</Filter>
@@ -1516,9 +1657,6 @@
     <ClCompile Include="..\Private\Prob_Vehicle.cpp">
       <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Character.cpp">
-      <Filter>02.GameObjects\Character</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
     </ClCompile>
@@ -1528,14 +1666,14 @@
     <ClCompile Include="..\Private\SpriteParticle.cpp">
       <Filter>03.Effects\Particle\SpriteParticle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_IdleState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
+    <ClCompile Include="..\Private\Player_BattleIdleState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Parts.cpp">
-      <Filter>02.GameObjects\Character\Player\Parts</Filter>
+      <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Character\Player</Filter>
@@ -1543,23 +1681,23 @@
     <ClCompile Include="..\Private\Camera_Player.cpp">
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_WalkState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
+    <ClCompile Include="..\Private\Player_BattleWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Walk</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_WalkEndState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Walk</Filter>
+    <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LightAttackState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_LandingState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Landing</Filter>
+    <ClCompile Include="..\Private\Player_BattleLandingState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Landing</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_JumpState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Jump</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Jump</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_AerialAttack.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Aerial\Attk</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
@@ -1576,17 +1714,17 @@
     <ClCompile Include="..\private\MonsterTranslationState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_EvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Evade</Filter>
+    <ClCompile Include="..\Private\Player_BattleEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Attack</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_HitState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Hit</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\Interaction</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerBattleFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
@@ -1604,19 +1742,102 @@
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\Battle\lockon</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerLockonFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerIdleFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character.cpp">
+      <Filter>02.GameObjects\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_IdleState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_IdleWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_IdleLandingState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Landing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotion.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotionCount.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionCount</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPotionStack.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPotion\UIPotionStack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBeta.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIHPFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar\UIHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIRushSlot.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_CheckAlive.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Lockon.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LockonManager.cpp">
+      <Filter>10.GameManager\LockonManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp" />
+    <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp" />
+    <ClCompile Include="..\Private\Player_IdleWalkEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_DrawHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Building_Ruin.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain_Desert.cpp">
+      <Filter>02.GameObjects\Map\Desert\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DesertObject.cpp">
+      <Filter>02.GameObjects\Map\Desert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Canyon.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1663,6 +1884,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -1671,6 +1898,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli">
+      <Filter>97.ShaderFiles\00. Util</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli">
+      <Filter>97.ShaderFiles\00. Util</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli">
       <Filter>97.ShaderFiles\00. Util</Filter>
     </None>
   </ItemGroup>

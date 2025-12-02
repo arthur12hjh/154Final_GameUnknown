@@ -739,8 +739,8 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Shadow"), m_pShader, m_pVIBuffer)))
 	//	return;
-	if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
+	//if (FAILED(m_pBlur->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
 	//if (FAILED(m_pGlow->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 	//if (FAILED(m_pDistortion->Render_Debug(m_pVIBuffer, m_pShader)))
@@ -752,13 +752,12 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-		return;
+	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
+	//	return;
 
 }
-
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pColliderRenderer->Add_DebugComponent(pDebugCom);
@@ -769,6 +768,14 @@ HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 	return m_pColliderRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 
+#endif
+
+
+#ifdef _DEBUG
+void CRenderer::Set_DebugColliderVisible(_bool isVisible)
+{
+	m_pColliderRenderer->Set_DebugColliderVisible(isVisible);
+}
 #endif
 
 HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)

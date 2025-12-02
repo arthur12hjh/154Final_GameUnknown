@@ -35,39 +35,66 @@ namespace Client
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
 	enum class PLAYER_STATE { 
-		IDLE, WALK, WALK_END, JUMP, LIGHT_ATTACK, 
+		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, VENDING_INTERACTION,
 		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
 
 		STATE_END
 	};
+	enum class SKILL_STATE {
+		DEFAULT,   // 비활성화
+		ACTIVE_ON, // 딱 활성화 됐을 때
+		ACTIVE,	   // 활성화 상태
+		USE,	   // 스킬 쓴 순간
+		END,	   //
+	};
+
 	typedef struct Player_Desc
 	{
-		long long				iCurrentHealth;
-		long long				iCurrentShield;
-		long long				iCurrentBetaEnergy;
+		long long						iMaxHealth;
+		long long						iMaxShield;
+		//베타 에너지 최대치
+		long long						iMaxBetaEnergy;
 
-		long long				iCurrentAttackPoint;
-		long long				iCurrentShieldATK;
+		long long						iCurrentHealth;
+		long long						iCurrentShield;
+		//현재 베타 에너지
+		long long						iCurrentBetaEnergy;
 
-		float					fCurrentCTPercent;
-		float					fCurrentCTDamage;
-		float					fCurrentLinkApplyDamage;
+		long long						iCurrentAttackPoint;
+		long long						iCurrentShieldATK;
 
-		//플레이어의 전투 상태. battle, idle, lockon
-		PLAYER_MODE				ePlayerMode;
-		class CTransform*		pPlayerTransform = { nullptr };
-		class CCharacterController* pPlayerController = { nullptr }; 
+		float							fCurrentCTPercent;
+		float							fCurrentCTDamage;
+		float							fCurrentLinkApplyDamage;
+
+		int								iCurrentPotions; // 현재 소지한 포션 개수
+		int								iMaxPotions; // 전체 포션 개수
+		
+		//
+		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
+		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
+		float							fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
+
+		// 베타스킬 상태들
+		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
+		SKILL_STATE						eBetaSkillState[4];			// 사용중인 스킬 상태
+		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
+
+		// 플레이어의 전투 상태. battle, idle, lockon
+		PLAYER_MODE						ePlayerMode = { PLAYER_MODE::IDLE };
+		class CTransform*				pPlayerTransform = { nullptr };
+		class CCharacterController*		pPlayerController = { nullptr }; 
 	}PLAYER_DESC;
 
 	// 스킬 구조체
 	// 이건 경우에 따라 사용 할수도 있음
 	enum class ATTACK_DIRECTION
 	{
-		ATK_RIGHT,
 		ATK_LEFT,
-		ATK_DOWN,
+		ATK_RIGHT,
 		ATK_UP,
+		ATK_DOWN,
 		END
 	};
 
@@ -89,7 +116,7 @@ namespace Client
 		// Parry & Eavde : 3
 		PARRYABLE		= 0b00000001, // 1  <- 패링가능
 		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
-		BLINKALBE		= 0b00000100, // 4  <- 블링크 가능
+		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
 		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION		= 0b00010000, // 16 <- 처형
 		END
@@ -117,9 +144,6 @@ namespace Client
 		// Attack Dir
 		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
 
-		// Dir
-		DIRECTION					eDirection;					// 방향 RIGHT LEFT FRONT BACK
-
 		// SKILL TYPE
 		// BeatSKill, AlphaSKill... 
 		SKILL_TYPE					eSkillType;					// 스킬 타입
@@ -127,8 +151,14 @@ namespace Client
 		// Property
 		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
 		SKILL_PROPERTY				eProPerty;					// 스킬 속성
-	}CHARACTER_SKILL_DESC;
+ 
+	} CHARACTER_SKILL_DESC;
 
+	typedef struct tagPlayerBetaSkillDesc : public CHARACTER_SKILL_DESC
+	{
+		//요구되는 베타스킬 게이지 량
+		_uint iRequiredBetaGauge;
+	} BETA_SKILL_DESC;
 
 	// 몬스터 구조체
 	// 인게임용
@@ -170,6 +200,9 @@ namespace Client
 		long long			iCurrentHealth;
 		long long			iCurrentShield;
 
+	
+		_float3				fLockOnPoint;
+
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;
 		_float				fMoveSpeed;
@@ -202,6 +235,6 @@ namespace Client
 		_float3				vImpactDir;
 		_float				fImpactForce;
 
-		void*				pSkillData;
+		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 }

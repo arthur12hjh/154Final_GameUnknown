@@ -198,7 +198,8 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
             _uint srcIdx = col * iNumVerticesZ + row;           // 스왑된 소스 인덱스
             _uint dstIdx = row * iNumVerticesX + col;           // PhysX가 요구하는 인덱스
 
-            _float fHeight = pHeightData[srcIdx];
+
+            _float fHeight = pHeightData[srcIdx] * 100.f;
 
             pSamples[dstIdx].height = (PxI16)fHeight;
             pSamples[dstIdx].materialIndex0 = 0;
@@ -216,7 +217,7 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 
     PxHeightField* pHeightField = PxCreateHeightField(HeightFieldDesc);
 
-    PxHeightFieldGeometry hfGeom(pHeightField, PxMeshGeometryFlags(), 1.0f, 1.0f, 1.0f);
+    PxHeightFieldGeometry hfGeom(pHeightField, PxMeshGeometryFlags(), 1 / 100.0f, 1.0f, 1.0f);
 
     PxTransform pose(PxVec3(-0.5f, 0, -0.5f));
     

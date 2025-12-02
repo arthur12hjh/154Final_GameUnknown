@@ -352,8 +352,8 @@ HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
 	m_pCameraManager->Clear_Cameras();
 	if (bIsClearPrototypeData)
 		return m_pLevel_Manager->Clear_LevelResource();
-	else
-		return S_OK;
+
+	return S_OK;
 }
 
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
@@ -457,6 +457,11 @@ HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
 void CGameInstance::Set_DebugVisible(_bool isVisible)
 {
 	m_pRenderer->Set_DebugVisible(isVisible);
+}
+
+void CGameInstance::Set_DebugColliderVisible(_bool isVisible)
+{
+	m_pRenderer->Set_DebugColliderVisible(isVisible);
 }
 
 void* CGameInstance::Get_DoF_Desc()
@@ -599,11 +604,6 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
-void CGameInstance::Select_LightRender(CLight* pSelectLight)
-{
-	return m_pLight_Manager->Select_LightRender(pSelectLight);
-}
-
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
@@ -615,6 +615,11 @@ HRESULT CGameInstance::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVIB
 }
 
 #ifdef _DEBUG
+void CGameInstance::Select_LightRender(CLight* pSelectLight)
+{
+	return m_pLight_Manager->Select_LightRender(pSelectLight);
+}
+
 void CGameInstance::Debug_LightRender()
 {
 	m_pLight_Manager->Debug_LightRender();

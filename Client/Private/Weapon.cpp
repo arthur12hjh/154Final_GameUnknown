@@ -6,6 +6,10 @@
 #include "Weapon.h"
 #include "Nayitba.h"
 
+#include "Trail.h"
+#include "TrailEffect.h"
+#include "Effect.h"
+
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
@@ -33,9 +37,9 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
-	m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(180.f), XMConvertToRadians(90.f));
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
+	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
+	m_pTransformCom->Rotation(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(90.f));
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
 
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
@@ -53,7 +57,13 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 }
 
 void CWeapon::Update(_float fTimeDelta)
-{	
+{
+	//m_pSpark->Update(fTimeDelta);
+	//
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_pSpark->Stop();
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_pSpark->Play();
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -70,7 +80,9 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	if (m_bIsHitCollider)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
-	}
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}                      
+	//m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -147,7 +159,7 @@ HRESULT CWeapon::Ready_Components()
 
 	/* Com_Collider_OBB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-
+	
 	OBBDesc.vSize = _float3(0.5f, 2.f, 0.5f);
 	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	OBBDesc.vAngles = _float3(0.f,  0.f/*XMConvertToRadians(45.0f)*/, 0.f);
@@ -159,7 +171,24 @@ HRESULT CWeapon::Ready_Components()
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::PLAYER);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+
+	CTrail::TRAILHIGHLOW Traildesc{};
+	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);
+	Traildesc.vLow = _float4(0.f, 1.f, 0.f, 0.f);
+	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+
+	CEffect::EFFECT_TRANSFORM_DESC desc;
+	desc.fRotationPerSec = 1.f;
+	desc.fSpeedPerSec = 1.f;
+	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	desc.vPos = XMVectorSet(0, 5, 0, 1);
+	desc.fRot = _float3(0, 0, 0);
+	desc.fSize = 1.5f;
+
+	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
+	m_pSpark->Play();
 	return S_OK;
 }
 
@@ -226,4 +255,6 @@ void CWeapon::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pTrail);
+	Safe_Release(m_pSpark);
 }

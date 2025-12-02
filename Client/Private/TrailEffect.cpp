@@ -4,57 +4,19 @@
 #include "Trail.h"
 
 CTrailEffect::CTrailEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CPartObject{ pDevice, pContext }
+    : CGameObject{ pDevice, pContext }
 {
 }
 
 CTrailEffect::CTrailEffect(const CTrailEffect& Prototype)
-    : CPartObject{ Prototype },
-    m_tData{ Prototype.m_tData },
-    m_eRender{ Prototype.m_eRender }
+    : CGameObject{ Prototype },
+    m_tDatas{Prototype.m_tDatas}
 {
-    m_eTeam = Prototype.m_eTeam;
 }
 
 HRESULT CTrailEffect::Initialize_Prototype(const _char* szFile)
 {
     Load_Binary(szFile);
-
-    switch (m_tData.iSelectRender)
-    {
-    case 0:
-        m_eRender = RENDER::NONBLEND;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    case 1:
-        m_eRender = RENDER::NONLIGHT;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    case 2:
-        m_eRender = RENDER::BLUR;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    case 3:
-        m_eRender = RENDER::GLOW;
-        m_eTeam = OBJECT_TEAM::NEUTRAL;
-        break;
-    case 4:
-        m_eRender = RENDER::GLOW;
-        m_eTeam = OBJECT_TEAM::ENEMY;
-        break;
-    case 5:
-        m_eRender = RENDER::GLOW;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    case 6:
-        m_eRender = RENDER::DISTORTION;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    case 7:
-        m_eRender = RENDER::BLEND;
-        m_eTeam = OBJECT_TEAM::FRIENDLY;
-        break;
-    }
     return S_OK;
 }
 
@@ -62,13 +24,15 @@ HRESULT CTrailEffect::Initialize(void* pArg)
 {
     if(nullptr == pArg)
         return E_FAIL;
-    if (FAILED(__super::Initialize(nullptr)))
+    if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    /* Com_Trail */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
         TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
         return E_FAIL;
-    if (FAILED(Ready_Components()))
+
+    if (FAILED(Ready_Components(pArg)))
         return E_FAIL;
 
     m_fTime = 0.f;
@@ -83,119 +47,108 @@ HRESULT CTrailEffect::Load_Binary(const _char* szFile)
     ifstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
 
-    _char* szTemp = ReadString(fileBinaryStream);
-    m_tData.szMaskTexture = szTemp;
-    Safe_Delete(szTemp);
-    szTemp = ReadString(fileBinaryStream);
-    m_tData.szDiffuseTexture = szTemp;
-    Safe_Delete(szTemp);
-    szTemp = ReadString(fileBinaryStream);
-    m_tData.szDissolveTexture = szTemp;
-    Safe_Delete(szTemp);
-    m_tData.fColor = ReadFloat4(fileBinaryStream);
-    m_tData.fMaskUV = ReadFloat2(fileBinaryStream);
-    m_tData.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tData.fMaskUVSize = ReadFloat2(fileBinaryStream);
-    m_tData.fDiffuseUV = ReadFloat2(fileBinaryStream);
-    m_tData.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tData.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
-    m_tData.fDissolveUV = ReadFloat2(fileBinaryStream);
-    m_tData.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
-    m_tData.fDissolveUVSize = ReadFloat2(fileBinaryStream);
-    m_tData.iBegin = ReadInt(fileBinaryStream);
-    m_tData.iSelectRender = ReadInt(fileBinaryStream);
+    CTrailData::TRAIL_DATA TrailDesc;
+    _int iTrailCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iTrailCount; ++i) {
+        _char* szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szMaskTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szDiffuseTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        TrailDesc.szDissolveTexture = szTemp;
+        Safe_Delete(szTemp);
+        
+        TrailDesc.fColor = ReadFloat4(fileBinaryStream);
+        TrailDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+        TrailDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+
+
+        TrailDesc.iBegin = ReadInt(fileBinaryStream);
+        TrailDesc.iSelectRender = ReadInt(fileBinaryStream);
+        m_tDatas.push_back(TrailDesc);
+    }
     return S_OK;
 }
 void    CTrailEffect::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail) {
     m_fTime += fTimeDelta;
     m_pTrail->Update_Trail(matCurrentWorld, fTimeDelta, bMakeTrail);
-    m_pGameInstance->Add_RenderGroup(m_eRender, this);
+    for (auto pData : m_pTrailDatas) {
+        pData->Add_RenderGroup();
+    }
 }
 
-HRESULT CTrailEffect::Render()
+HRESULT CTrailEffect::Render(CTrailData* pTrailData)
 {
-    if (FAILED(Bind_ShaderResources()))
+    if (FAILED(Bind_ShaderResources(pTrailData->Get_Data())))
         return E_FAIL;
-
-
-    if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+    if (FAILED(pTrailData->Bind_Texture(m_pShaderCom)))
         return E_FAIL;
-
-    m_pTrail->Render();
+    if (FAILED(m_pTrail->Render()))
+        return E_FAIL;
     return S_OK;
 }
 
-HRESULT CTrailEffect::Ready_Components()
+HRESULT CTrailEffect::Ready_Components(void* pArg)
 {
-    _tchar sztPrototype[256] = { 0, };
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
-    /* Com_Texture */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
-        TEXT("Com_MaskTexture"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
-        return E_FAIL;
-    memset(sztPrototype, 0, sizeof(sztPrototype));
-
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDiffuseTexture.c_str(), strlen(m_tData.szDiffuseTexture.c_str()), sztPrototype, 256);
-    /* Com_Texture */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
-        TEXT("Com_DiffuseTexture"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
-        return E_FAIL;
-    memset(sztPrototype, 0, sizeof(sztPrototype));
-
-    MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szDissolveTexture.c_str(), strlen(m_tData.szDissolveTexture.c_str()), sztPrototype, 256);
-    /* Com_Texture */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
-        TEXT("Com_DissolveTexture"), reinterpret_cast<CComponent**>(&m_pTexture[2]))))
-        return E_FAIL;
-
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxTrail"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
+
+
+    char pattern[30] = {};
+
+
+    for (auto tData : m_tDatas) {
+        CTrailData* trailData = static_cast<CTrailData*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailData"), this));
+        trailData->Set_Data(tData);
+        m_pTrailDatas.push_back(trailData);
+    }
+    m_tDatas.clear();
     return S_OK;
 }
 
-HRESULT CTrailEffect::Bind_ShaderResources()
+HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
 {
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
         return E_FAIL;
-
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
         return E_FAIL;
 
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &tData.fColor, sizeof(_float4))))
         return E_FAIL;
 
 
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &tData.fMaskUV, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &tData.fMaskUVSpeed, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &tData.fMaskUVSize, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &tData.fDiffuseUV, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &tData.fDiffuseUVSpeed, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &tData.fDiffuseUVSize, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &tData.fDissolveUV, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &tData.fDissolveUVSpeed, sizeof(_float2))))
         return E_FAIL;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
-        return E_FAIL;
-
-    if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &tData.fDissolveUVSize, sizeof(_float2))))
         return E_FAIL;
 
-    if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
-        return E_FAIL;
-
-    if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
-        return E_FAIL;
     return S_OK;
 }
 
@@ -230,9 +183,10 @@ void CTrailEffect::Free()
     __super::Free();
     Safe_Release(m_pShaderCom);
     Safe_Release(m_pTrail);
-    for (_uint i = 0; i < 3; ++i) {
-        Safe_Release(m_pTexture[i]);
+    for (auto pTrailData : m_pTrailDatas) {
+        Safe_Release(pTrailData);
     }
+    m_pTrailDatas.clear();
 }
 
 
@@ -253,28 +207,6 @@ _int CTrailEffect::ReadInt(ifstream& fileBinaryStream)
     _int iValue;
     fileBinaryStream.read((_char*)&iValue, sizeof(_int));
     return iValue;
-}
-
-RENDER CTrailEffect::ReadRENDER(ifstream& fileBinaryStream)
-{
-    _int iValue;
-    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
-    switch (iValue)
-    {
-    case 0:
-        return RENDER::NONBLEND;
-    case 1:
-        return RENDER::NONLIGHT;
-    case 2:
-        return RENDER::BLUR;
-    case 3:
-        return RENDER::GLOW;
-    case 4:
-        return RENDER::DISTORTION;
-    case 5:
-        return RENDER::BLEND;
-    }
-    return RENDER::UI;
 }
 
 _float4 CTrailEffect::ReadFloat4(ifstream& fileBinaryStream)

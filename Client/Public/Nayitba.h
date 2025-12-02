@@ -45,7 +45,7 @@ public:
 	const NAYTIBA_DESC&				GetMonsterData() { return m_MonsterInfo; }
 	
 	const CHARACTER_SKILL_DESC*		FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
-	const CHARACTER_SKILL_DESC*		GetSkillData(_uint iTypeIndex, _bool bIsRandom = true);
+	const CHARACTER_SKILL_DESC*		GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
@@ -58,6 +58,7 @@ private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
 
+	const _float4x4*				m_pLockOnMatrix = { nullptr };
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 
