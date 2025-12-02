@@ -73,7 +73,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         m_fBattleToIdleTimeAcc = 0.f;
 
         if (PLAYER_MODE::IDLE == m_pPlayerDesc->ePlayerMode)
-            m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE);
+            m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE, PLAYER_STATE::DRAW_HAIRPIN);
 
         return true;
     }
@@ -116,7 +116,8 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (true == m_isLock)
     {
         Get_LockOnPoint();
-        m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
     }
 
     if (false == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)

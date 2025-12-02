@@ -12,6 +12,8 @@
 #include "Player_VendingInteractionState.h"
 #include "Player_BetaChargingSlahsState.h"
 #include "Player_BattleLandingState.h"
+#include "Player_DrawHairpin.h"
+#include "Player_SheatheHairpin.h"
 
 CPlayerLockonFSM::CPlayerLockonFSM()
 	: CPlayerFSM {}
