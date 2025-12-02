@@ -14,6 +14,7 @@ CPlayer_BetaChargingSlahsState::CPlayer_BetaChargingSlahsState()
 void CPlayer_BetaChargingSlahsState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
+    m_Desc->isLookFixed = true;
 
     m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false, 1.2f);
     m_isStartCharge = true;
@@ -64,6 +65,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
 
 void CPlayer_BetaChargingSlahsState::End()
 {
+    m_Desc->isLookFixed = false;
 }
 
 CPlayer_BetaChargingSlahsState* CPlayer_BetaChargingSlahsState::Create(void* pArg)

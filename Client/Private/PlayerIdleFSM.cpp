@@ -8,6 +8,8 @@
 #include "Player_IdleLandingState.h"
 #include "Player_BattleEvadeState.h"
 #include "Player_JumpState.h"
+#include "Player_DrawHairpin.h"
+#include "Player_SheatheHairpin.h"
 
 CPlayerIdleFSM::CPlayerIdleFSM()
     : CPlayerFSM {}
@@ -80,6 +82,8 @@ CPlayerState* CPlayerIdleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionDes
 	case PLAYER_STATE::VENDING_INTERACTION: break;
 	case PLAYER_STATE::HIT: break;
 	case PLAYER_STATE::BETA_CHARGINGSLASH: break;
+	case PLAYER_STATE::DRAW_HAIRPIN: return CPlayer_DrawHairpin::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::SHEATHE_HAIRPIN: return CPlayer_SheatheHairpin::Create(tTransitionDesc.pArg);
 	case PLAYER_STATE::AERIAL_ATTACK: break;
 	case PLAYER_STATE::STATE_END: break;
 	default: break;

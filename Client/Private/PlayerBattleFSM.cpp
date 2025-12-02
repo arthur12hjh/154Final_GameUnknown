@@ -12,6 +12,8 @@
 #include "Player_VendingInteractionState.h"
 #include "Player_BetaChargingSlahsState.h"
 #include "Player_BattleLandingState.h"
+#include "Player_DrawHairpin.h"
+#include "Player_SheatheHairpin.h"
 
 #include "GameManager.h"
 #include "GameInstance.h"
@@ -103,7 +105,8 @@ CPlayerState* CPlayerBattleFSM::Create_State(PLAYER_TRANSITION_DESC tTransitionD
 	case PLAYER_STATE::HIT: break;
 
 	case PLAYER_STATE::BETA_CHARGINGSLASH: return CPlayer_BetaChargingSlahsState::Create(tTransitionDesc.pArg);
-
+	case PLAYER_STATE::DRAW_HAIRPIN: return CPlayer_DrawHairpin::Create(tTransitionDesc.pArg);
+	case PLAYER_STATE::SHEATHE_HAIRPIN: return CPlayer_SheatheHairpin::Create(tTransitionDesc.pArg);
 	//미구현 상태
 	case PLAYER_STATE::AERIAL_ATTACK: break;
 	case PLAYER_STATE::STATE_END: break;
@@ -134,7 +137,7 @@ _bool CPlayerBattleFSM::Check_BattleToIdle(_float fTimeDelta)
 	if (m_fBattleToIdle >= 5.f)
 	{
 		m_fBattleToIdle = 0.f;
-		m_pPlayer->Change_PlayerMode(PLAYER_MODE::IDLE, m_pCurrentState->Get_State());
+		m_pPlayer->Change_PlayerMode(PLAYER_MODE::IDLE, PLAYER_STATE::SHEATHE_HAIRPIN);
 		return true;
 	}
 
