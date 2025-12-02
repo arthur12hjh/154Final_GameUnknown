@@ -30,6 +30,7 @@ public:
 	virtual HRESULT			Render();
 
 	const	_float4x4*		Get_BoneMatrixPtr(const _char* pBoneName) const;
+	const	_float4x4*		Get_CombinedMatrixPtr() const;
 
 protected:	
 	class CModel*			m_pModelCom = { nullptr };
