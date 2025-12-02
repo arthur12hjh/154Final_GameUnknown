@@ -25,13 +25,13 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 3.5f;
+	m_fMaxDelayTime = 5.5f;
 	return S_OK;
 }
 
 CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 {
-	if (nullptr == m_pCurSkill_Data)
+	if (nullptr == m_pBlackBoard->GetAttackData())
 	{
 		if (false == SelectPattern())
 			return NODE_STATE::FAIL;
@@ -44,7 +44,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 			m_pSkillData.pop();
 
 		Compute_AttackCoolTime(true);
-		m_pCurSkill_Data = nullptr;
+		m_pBlackBoard->SetAttackData(nullptr);
 		return NODE_STATE::FAIL;
 	}
 
@@ -59,7 +59,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		{
 			Compute_AttackCoolTime();
 			m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
-			m_pCurSkill_Data = nullptr;
+			m_pBlackBoard->SetAttackData(nullptr);
 			return NODE_STATE::COMPLETE;
 		}
 		else
@@ -80,9 +80,6 @@ void CTask_GorillaAttack::SelectRandomPattern()
 		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
 	}
 
-
-
-
 	SelectAttack();
 }
 
@@ -96,18 +93,41 @@ _bool CTask_GorillaAttack::SelectPattern()
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 		/*if (30.f > fRandomIndex)
 			BboyStepPattern();
-		else*/ if (50.f > fRandomIndex)
-			BackStepPattern();
+		else*/ if (30.f > fRandomIndex)
+		{
+			m_CurPatternIndex = 1;
+		}
 		else
-			SelectRandomPattern();
-			
+		{
+			m_PrePatternIndex = 0;
+			m_CurPatternIndex = 2;
+		}
 	}
 	else
 	{
-		CrushPattern();
+		m_CurPatternIndex = 3;
 	}
 
-	if (nullptr == m_pCurSkill_Data)
+	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
+	{
+		m_PrePatternIndex = m_CurPatternIndex;
+		switch (m_CurPatternIndex)
+		{
+		case 1 :
+			BackStepPattern();
+			break;
+		case 2:
+			SelectRandomPattern();
+			break;
+		case 3:
+			CrushPattern();
+			break;
+		}
+	}
+	else
+		SelectPattern();
+
+	if (nullptr == m_pBlackBoard->GetAttackData())
 		return false;
 
 	return true;
@@ -117,10 +137,10 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 {
 	if (!m_pSkillData.empty())
 	{
-		m_pCurSkill_Data = m_pSkillData.front();
+		m_pBlackBoard->SetAttackData(m_pSkillData.front());
 		m_pSkillData.pop();
 
-		m_pOwner->Set_Animation(m_pCurSkill_Data->szAnimationName, false, 1.0f, 0.12f, true);
+		m_pOwner->Set_Animation(m_pBlackBoard->GetAttackData()->szAnimationName, false, 1.0f, 0.12f, true);
 	}
 }
 
@@ -139,6 +159,7 @@ void CTask_GorillaAttack::BackStepPattern()
 	if (0 < fRandomIndex)
 	{
 		CrushPattern();
+		
 	}
 	else
 	{
@@ -182,8 +203,6 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 	if (0 > fDistance)
 		return false;
 
-
-		
 	// 여기서 선택된 스킬에 대한 정보를 처리한다.
 	_bool  bIsMove{ false }, bIsLerpMove{ false };
 	m_bIsLookAtPoint = true;
@@ -200,9 +219,10 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
 	_vector vReverseDir = -1 * vDir;
 	
-	if (m_pCurSkill_Data)
+	auto pAttackData = m_pBlackBoard->GetAttackData();
+	if (pAttackData)
 	{
-		switch (m_pCurSkill_Data->iSkillID)
+		switch (pAttackData->iSkillID)
 		{
 		case 2 : 
 		{
@@ -362,7 +382,7 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 
 _bool CTask_GorillaAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
-	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(2.5f, m_fMaxDelayTime));
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(3.5f, m_fMaxDelayTime));
 	return true;
 }
 
