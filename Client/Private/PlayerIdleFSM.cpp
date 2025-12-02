@@ -38,7 +38,7 @@ void CPlayerIdleFSM::Update(_float fTimeDelta)
 	{
 		m_pCurrentState->End();
 		CPlayerState* pNextState = Create_State(tState);
-		pNextState->Start();
+		pNextState->Start(); 
 
 		//끝내고 기존 상태 없애야 desc 값 넘겨줄 수 있음.
 		Safe_Release(m_pCurrentState);
