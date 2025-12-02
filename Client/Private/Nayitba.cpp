@@ -58,9 +58,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
+	m_RootBoneMat = m_pBodyModelCom->Get_BoneMatrixPtr("Root");
+
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
-
-
 
 	return S_OK;
 }
@@ -206,6 +206,20 @@ CAIController* CNayitba::GetController()
 const list<CGameObject*>* CNayitba::GetTraceObejectList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
+}
+
+_vector CNayitba::CalculateRootMotion()
+{
+	_matrix RootMatrix = XMLoadFloat4x4(m_RootBoneMat);
+	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
+
+	_vector vRootPos = RootMatrix.r[3];
+	_vector vSpinePos = SpineMatrix.r[3];
+
+	vRootPos.m128_f32[1] = vSpinePos.m128_f32[1] = 0.f;
+
+	_vector vLocalCal = vSpinePos - vRootPos;
+	return XMVector3TransformCoord(RootMatrix.r[3] + vLocalCal, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 HRESULT CNayitba::Ready_CharacterData()
