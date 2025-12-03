@@ -12,6 +12,7 @@ class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
+struct Default_Status;
 class CQuestManager;
 class CDataManager;
 class CLockonManager;
@@ -79,6 +80,13 @@ public:
 	_float		Get_CurMinDist();
 	_bool		Get_Lockon();
 
+#pragma endregion
+
+#pragma region Damage Logic
+	// 매개변수 1 : Default Status 구조체 정보
+	// 매개변수 2 : 데미지 량
+	// 매개변수 3 : 쉴드로 감쇠할 데미지의 퍼센트
+	void					ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
 
 private :

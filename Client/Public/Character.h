@@ -32,7 +32,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	virtual HRESULT					CallNotify(const AnimNotify* pNotify);
+	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();

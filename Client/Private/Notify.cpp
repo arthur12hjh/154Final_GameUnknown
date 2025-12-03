@@ -253,6 +253,7 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	// iNumData3		=>	Hit Box Type
 	// iNumData4		=>	Hit Object Type
 
+	//	return E_FAIL;
 	//_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
 	//CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
 	//CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
@@ -278,9 +279,8 @@ HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 	//
 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))
-	//	return E_FAIL;
 
-	m_pCharacter->CallNotify(&AnimNotify);
+	m_pCharacter->CallNotify(ACTIVE_COLLISION, &AnimNotify);
 
 	return S_OK;
 }
