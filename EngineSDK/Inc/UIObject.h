@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CUIObject abstract : public CGameObject
 {
 public:
-	enum class DRAW_TYPE { WORLD, SCREEN, END };
+	enum class DRAW_TYPE { WORLD, SCREEN, WORLD_SCREEN, END };
 
 	typedef struct tagUIObjectDesc : public CGameObject::GAMEOBJECT_DESC
 	{
@@ -42,6 +42,7 @@ protected:
 	_uint					m_iZOrder = {};
 	_float4x4				m_ProjMatrix = {};
 	_float4x4				m_CombinedMatrix = {};
+
 
 protected :
 	// 변경 되어야 하는 포지션

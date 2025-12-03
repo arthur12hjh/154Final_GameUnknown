@@ -252,7 +252,7 @@ void CGUIManager::Show_UIObject_List()
                 for (const auto& pObjPair : *pUIObjects)
                 {
                     Client::CUIBase* pObj = dynamic_cast<Client::CUIBase*>(pObjPair.second);
-                    if (!pObj->Get_Parent()) // 루트만 그린다 (부모 없는 객체)
+                    if (!pObj->GetParent()) // 루트만 그린다 (부모 없는 객체)
                         Draw_Hierarchy(pObj);
                     else
                         continue;
@@ -397,7 +397,7 @@ void CGUIManager::Add_Child(Client::CUIBase* pParent)
         pParent->Add_Child(pCreatedObj);
 
         if (dynamic_cast<Client::CUIBase*>(pCreatedObj))
-            dynamic_cast<Client::CUIBase*>(pCreatedObj)->Set_Parent(pParent);
+            dynamic_cast<Client::CUIBase*>(pCreatedObj)->SetParent(pParent);
 
         strcpy_s(m_szCloneProtoTag, sizeof(m_szCloneProtoTag), "");
         strcpy_s(m_szCloneUITag, sizeof(m_szCloneUITag), "");

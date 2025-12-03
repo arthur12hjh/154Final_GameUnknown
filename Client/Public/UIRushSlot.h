@@ -36,10 +36,12 @@ private:
 	HRESULT Bind_GlowShaderResources();
 
 private:
-	SKILL_STATE m_eRushState = SKILL_STATE::DEFAULT;
+	UI_SKILL_INFO_DESC m_tRushInfo{};
 	_float* m_fCurrentCoolTime = nullptr;
 	_float* m_fMaxCoolTime = nullptr;
 	_float m_fCoolAmount = 0.f;
+
+	_bool m_bRushActiveOn{ false };
 
 	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = { nullptr };
 	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };
@@ -48,6 +50,7 @@ private:
 	CTexture* m_pShadowTextureCom = { nullptr };
 	CTexture* m_pGlowTextureCom = { nullptr };
 	CTexture* m_pGlowTextureCom2 = { nullptr };
+	CTexture* m_pRushGlowTextureCom = { nullptr };
 
 #ifdef _DEBUG
 #endif // DEBUG

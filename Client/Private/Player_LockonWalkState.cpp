@@ -4,31 +4,42 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_LockonWalkState::CPlayer_LockonWalkState()
+CPlayer_LockonWalkState::CPlayer_LockonWalkState(_bool isRunning)
 	: CPlayerState{}
+	, m_isRunning { isRunning }
 {
 }
 
 void CPlayer_LockonWalkState::Start(void* pArg)
 {
 	m_eState = PLAYER_STATE::WALK;
-	m_isRunStart = true;
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+	if (false == m_isRunning)
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward_Start"), false, 1.f, 0.15f);
+		m_isRunStart = true;
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward_Start"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward_Start"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left_Start"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.15f);
 	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+
+	else if (true == m_isRunning)
 	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward_Start"), false, 1.f, 0.15f);
-	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left_Start"), false, 1.f, 0.15f);
-	}
-	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-	{
-		m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.15f);
+		m_isRunStart = false;
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), false, 1.f, 0.15f);
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), false, 1.f, 0.15f);
 	}
 }
 
@@ -83,6 +94,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
@@ -105,7 +118,15 @@ void CPlayer_LockonWalkState::End()
 
 CPlayer_LockonWalkState* CPlayer_LockonWalkState::Create(void* pArg)
 {
-	return new CPlayer_LockonWalkState();
+	if(nullptr == pArg)
+		return new CPlayer_LockonWalkState();
+
+	_bool* isRunning = static_cast<_bool*>(pArg);
+
+	if(true == *isRunning)
+		return new CPlayer_LockonWalkState(*isRunning);
+
+	return new CPlayer_LockonWalkState(*isRunning);
 }
 
 void CPlayer_LockonWalkState::Free()

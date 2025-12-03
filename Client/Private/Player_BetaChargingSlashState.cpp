@@ -1,17 +1,26 @@
 #include "pch.h"
 
-#include "Player_BetaChargingSlahsState.h"
+#include "Player_BetaChargingSlashState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
 
-CPlayer_BetaChargingSlahsState::CPlayer_BetaChargingSlahsState()
+CPlayer_BetaChargingSlashState::CPlayer_BetaChargingSlashState()
     : CPlayerState {}
 {
 }
 
-void CPlayer_BetaChargingSlahsState::Start(void* pArg)
+_bool CPlayer_BetaChargingSlashState::CanEnter(class CPlayer* pPlayer, PLAYER_DESC* pPlayerDesc)
+{
+    //차징 슬래시는 1004번
+    if (true == pPlayer->Use_BetaSkill(1004))
+        return true;
+
+    return false;
+}
+
+void CPlayer_BetaChargingSlashState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
     m_Desc->isLookFixed = true;
@@ -20,7 +29,7 @@ void CPlayer_BetaChargingSlahsState::Start(void* pArg)
     m_isStartCharge = true;
 }
 
-PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
 {
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta, m_Desc->pPlayerTransform, 1.f);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
@@ -38,7 +47,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     }
     else if (false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&  true == m_isLoopCharge)
     {
-        // �ϴ� ���÷� �־�а̴ϴ�.
+        // 플레이어의 충격량.
         m_pPlayer->Set_ImpactForce(10.f * fAnimationRatio);
         m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 1.5f);
 
@@ -48,8 +57,8 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
      
     if (true == m_isAttack && 
         (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)  ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S)  ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.65f)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
@@ -63,17 +72,17 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlahsState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BetaChargingSlahsState::End()
+void CPlayer_BetaChargingSlashState::End()
 {
     m_Desc->isLookFixed = false;
 }
 
-CPlayer_BetaChargingSlahsState* CPlayer_BetaChargingSlahsState::Create(void* pArg)
+CPlayer_BetaChargingSlashState* CPlayer_BetaChargingSlashState::Create(void* pArg)
 {
-    return new CPlayer_BetaChargingSlahsState();
+    return new CPlayer_BetaChargingSlashState();
 }
 
-void CPlayer_BetaChargingSlahsState::Free()
+void CPlayer_BetaChargingSlashState::Free()
 {
     __super::Free();
 }

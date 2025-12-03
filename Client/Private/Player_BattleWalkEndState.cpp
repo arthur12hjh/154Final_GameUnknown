@@ -33,6 +33,10 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
         fAnimationRatio >= 0.1f)
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1) &&
+        fAnimationRatio >= 0.1f)
+        m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
+
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2) &&
         fAnimationRatio >= 0.1f)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;

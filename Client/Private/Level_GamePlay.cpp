@@ -348,10 +348,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	
 	pUIHUD->Anim_Play(TEXT("Layer_Combat"), TEXT("Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
-	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 		return E_FAIL;
 
-	pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));*/
+	//pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Boss"))))
+		return E_FAIL;
+	pUIHUD->Anim_Play(TEXT("Layer_Boss"), TEXT("Boss_Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	return S_OK;
 }

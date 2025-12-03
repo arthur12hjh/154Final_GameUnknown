@@ -56,7 +56,7 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
 
 		auto iter = m_pPreSearchList.find(pTarget);
-		if (fScalar > 0)
+		if (fScalar > 0 || m_fAiSearchRadius >= XM_2PI)
 		{
 			if(m_fAiSearchRadius > acosf(fScalar))
 			{

@@ -32,7 +32,7 @@ HRESULT CUIShield::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
+	auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter()};
 
 	if (pCharactor)
 	{
@@ -148,6 +148,11 @@ HRESULT CUIShield::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
 		return E_FAIL;
 	
+	_float fGroupCount{ 2.f };
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_GroupCount", &fGroupCount, sizeof(_float))))
+		return E_FAIL;
+
 	_float fFillAmount = m_fCurrentFill;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
@@ -160,6 +165,9 @@ HRESULT CUIShield::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVGap", &vGap, sizeof(_float2))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &m_tUIDesc.m_tUIShaderDesc.bUseTintColor, sizeof(_bool))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &m_tUIDesc.m_tUIShaderDesc.vTintColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -170,11 +178,6 @@ HRESULT CUIShield::Execute(const UI_EVENT_DESC& EventDesc)
 {
 	return S_OK;
 }
-
-//HRESULT CUIShield::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
-//{
-//	return S_OK;
-//}
 
 void CUIShield::CallbackEvent(void* pArg)
 {
