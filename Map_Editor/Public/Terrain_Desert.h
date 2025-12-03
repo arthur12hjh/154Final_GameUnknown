@@ -45,10 +45,11 @@ private:
 	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	CTexture* m_pORMTextureCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
 	class CMapTool_Desert* m_pMaptool = { nullptr };
-
+	_bool				m_isORM = { false };
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

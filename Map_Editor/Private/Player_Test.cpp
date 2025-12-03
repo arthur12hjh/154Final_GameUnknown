@@ -19,7 +19,7 @@ HRESULT CPlayer_Test::Initialize_Prototype()
 
 HRESULT CPlayer_Test::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
@@ -34,21 +34,17 @@ void CPlayer_Test::Priority_Update(_float fTimeDelta)
 
 void CPlayer_Test::Update(_float fTimeDelta)
 {
-	_vector vWorldPos = m_pTransformCom->Get_State(STATE::POSITION);
-
-	// 2. 출력할 문자열을 포맷합니다.
-	wchar_t szOutput[256];
-	swprintf_s(szOutput, 256, L"Player Position: X: %.3f, Y: %.3f, Z: %.3f\n",
-		XMVectorGetX(vWorldPos), XMVectorGetY(vWorldPos), XMVectorGetZ(vWorldPos));
-
-	// 3. Visual Studio 출력 창에 출력합니다.
-	OutputDebugString(szOutput);
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CPlayer_Test::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+//#ifdef _DEBUG
+//	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+//
+//#endif
 }
 
 HRESULT CPlayer_Test::Render()
@@ -89,6 +85,16 @@ HRESULT CPlayer_Test::Ready_Components()
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 5.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -138,7 +144,7 @@ void CPlayer_Test::Free()
 {
 	__super::Free();
 
-	//Safe_Release(m_p)
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 }

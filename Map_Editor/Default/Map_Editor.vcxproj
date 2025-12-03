@@ -189,6 +189,7 @@
     <ClInclude Include="..\Public\CM_Rock7.h" />
     <ClInclude Include="..\Public\CM_Rock8.h" />
     <ClInclude Include="..\Public\CM_Rock9.h" />
+    <ClInclude Include="..\public\Deco.h" />
     <ClInclude Include="..\public\DesertObject.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
@@ -209,10 +210,14 @@
     <ClInclude Include="..\Public\Inscription_R.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\public\Iron_Floor.h" />
     <ClInclude Include="..\public\Level_Desert.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_Village.h" />
+    <ClInclude Include="..\public\Lift_Body.h" />
+    <ClInclude Include="..\public\Lift_Controller.h" />
+    <ClInclude Include="..\public\Lift_Platform.h" />
     <ClInclude Include="..\public\LightTool.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\LoadingBG.h" />
@@ -283,6 +288,7 @@
     <ClCompile Include="..\Private\CM_Rock7.cpp" />
     <ClCompile Include="..\Private\CM_Rock8.cpp" />
     <ClCompile Include="..\Private\CM_Rock9.cpp" />
+    <ClCompile Include="..\private\Deco.cpp" />
     <ClCompile Include="..\private\DesertObject.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
@@ -319,10 +325,14 @@
     <ClCompile Include="..\Private\Inscription_R.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Level_Desert.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_Village.cpp" />
+    <ClCompile Include="..\private\Lift_Body.cpp" />
+    <ClCompile Include="..\private\Lift_Controller.cpp" />
+    <ClCompile Include="..\private\Lift_Platform.cpp" />
     <ClCompile Include="..\private\LightTool.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingBG.cpp" />
