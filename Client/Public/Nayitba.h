@@ -37,6 +37,8 @@ public:
 
 	_uint							GetMonsterID();
 	_float							GetRootMotionRatio() { return m_fMotionRatio; }
+	void							ComputeDamageLogic(const long long& iDamage);
+
 	const list<CGameObject*>*		GetTargetList();
 
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
@@ -54,6 +56,8 @@ public:
 	CAIController*					GetController();
 	const list<CGameObject*>*		GetTraceObejectList();
 
+	_vector							CalculateRootMotion();
+
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
@@ -67,7 +71,6 @@ private:
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
 	const _float4x4*				m_RootBoneMat = { nullptr };
-	const _float4x4*				m_BodyMat = { nullptr };
 
 	string									m_szEntryAnim = {};
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스

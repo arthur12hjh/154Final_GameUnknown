@@ -822,9 +822,6 @@
     <ClInclude Include="..\Public\GorillaBlackBoard.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClInclude>
@@ -1304,6 +1301,9 @@
     </ClInclude>
     <ClInclude Include="..\public\TrailData.h">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GorillaBehaviorTree.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_SheatheHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>

@@ -58,9 +58,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
+	m_RootBoneMat = m_pBodyModelCom->Get_BoneMatrixPtr("Root");
+
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
-
-
 
 	return S_OK;
 }
@@ -75,7 +75,7 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
+	
 
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
@@ -98,6 +98,7 @@ void CNayitba::Update(_float fTimeDelta)
 		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
 	}
+	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
@@ -131,7 +132,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	ComputeDamageLogic(pSkillDesc->iSkillDamage);
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 
@@ -150,6 +151,25 @@ HRESULT CNayitba::ActionSuccess(void* pArg)
 _uint CNayitba::GetMonsterID()
 {
 	return m_iMonsterID;
+}
+
+void CNayitba::ComputeDamageLogic(const long long& iDamage)
+{
+	long long AttackDamage = iDamage * 0.3f;
+	long long GuardDamage = iDamage * 0.7f;
+	long long OverDamage = GuardDamage - m_MonsterInfo.iCurrentShield;
+
+	if (0 < OverDamage)
+	{
+		AttackDamage += OverDamage;
+		m_MonsterInfo.iCurrentShield = 0.f;
+	}
+	else
+		m_MonsterInfo.iCurrentShield -= GuardDamage;
+
+	m_MonsterInfo.iCurrentHealth -= AttackDamage;
+	if (0 >= m_MonsterInfo.iCurrentHealth)
+		m_MonsterInfo.iCurrentHealth = 0.f;
 }
 
 const list<CGameObject*>* CNayitba::GetTargetList()
@@ -206,6 +226,20 @@ CAIController* CNayitba::GetController()
 const list<CGameObject*>* CNayitba::GetTraceObejectList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
+}
+
+_vector CNayitba::CalculateRootMotion()
+{
+	_matrix RootMatrix = XMLoadFloat4x4(m_RootBoneMat);
+	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
+
+	_vector vRootPos = RootMatrix.r[3];
+	_vector vSpinePos = SpineMatrix.r[3];
+
+	vRootPos.m128_f32[1] = vSpinePos.m128_f32[1] = 0.f;
+
+	_vector vLocalCal = vSpinePos - vRootPos;
+	return XMVector3TransformCoord(RootMatrix.r[3] + vLocalCal, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 HRESULT CNayitba::Ready_CharacterData()

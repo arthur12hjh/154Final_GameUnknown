@@ -36,9 +36,11 @@ private :
 	_float3								m_fAttackMoveDir = {};
 	
 	_float								m_fLerpSpeed = {};
+
+	_float								m_fDir = {};
 	_float								m_fMoveSpeed = {};
 
-	_bool								m_bIsLookAtPoint = {};
+	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
 	_float2								m_vLerpTime = { 0.f, 0.7f };
 	
@@ -49,6 +51,7 @@ private :
 #pragma region Boss Pattern
 	void								SelectAttack(_bool bIsForce = false);
 	void								CrushPattern();
+	void								MoveAttackPattern();
 	void								BackStepPattern();
 	//void								BboyStepPattern();
 

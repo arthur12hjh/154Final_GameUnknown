@@ -220,9 +220,6 @@
     <ClCompile Include="..\private\Level_Tool.cpp">
       <Filter>02.Object\01.Levels\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ImgBase.cpp">
-      <Filter>30.ImgUI\ui\Img</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Img_Manager.cpp">
       <Filter>30.ImgUI\ui\Img_Manager</Filter>
     </ClCompile>
@@ -252,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="..\private\TrailData.cpp">
       <Filter>02.Object\Effect\TrailEffect\TrailData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImgBase.cpp">
+      <Filter>30.ImgUI\ui\Img</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

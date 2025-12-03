@@ -78,7 +78,8 @@ void CNotify::Update(_float fTimeDelta)
 	while (!m_NotifyQueue.empty())
 	{
 		// 이벤트 호출
-		if (m_NotifyQueue.top().iNotifyKeyFrame <= m_pModelCom->Get_AnimationKeyFrameIndex())
+		_uint index = m_pModelCom->Get_AnimationKeyFrameIndex();
+		if (m_NotifyQueue.top().iNotifyKeyFrame <= index)
 		{
 			CallNotify(m_NotifyQueue.top());
 			m_NotifyQueue.pop();
