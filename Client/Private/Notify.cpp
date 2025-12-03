@@ -41,7 +41,7 @@ HRESULT CNotify::Initialize(void* pArg)
 
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
-	// ì• ë‹ˆë©”ì´ì…˜ì´ ë³€ê²½ë  ê²½ìš°, ë…¸í‹°íŒŒì´ íë¥¼ ì´ˆê¸°í™”í•˜ê³  ìƒˆë¡œ ì±„ì›Œë„£ëŠ”ë‹¤.
+	// ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ º¯°æµÉ °æ¿ì, ³ëÆ¼ÆÄÀÌ Å¥¸¦ ÃÊ±âÈ­ÇÏ°í »õ·Î Ã¤¿ö³Ö´Â´Ù.
 	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
@@ -77,7 +77,7 @@ void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
 	{
-		// ì´ë²¤íŠ¸ í˜¸ì¶œ
+		// ÀÌº¥Æ® È£Ãâ
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= m_pModelCom->Get_AnimationKeyFrameIndex())
 		{
 			CallNotify(m_NotifyQueue.top());
@@ -159,20 +159,36 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 
 HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 {
+	const _float4x4* pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
+
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
+	if (!AnimNotify.szNotifyArg08.empty())
+	{
+		_TCHAR szPartObjectName[MAX_PATH];
+		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szPartObjectName);
+		pWorldMatrix = m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr();
+	}
+
 	if (AnimNotify.szSocketTag.compare("None") == 0)
 	{
-		EffectDesc.pRootMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+	}
+	else if (AnimNotify.szSocketTag.compare("Transform") == 0)
+	{
+		EffectDesc.pRootMatrix = pWorldMatrix;
+		EffectDesc.pWorldMatrix = nullptr;
 	}
 	else
 	{
 		EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(AnimNotify.szSocketTag.c_str());
+		EffectDesc.pWorldMatrix = pWorldMatrix;
 	}
 	EffectDesc.vPos = XMVectorSet(AnimNotify.vNotifyPosition.x, AnimNotify.vNotifyPosition.y, AnimNotify.vNotifyPosition.z, 1);
 	EffectDesc.fRot = _float3(AnimNotify.vNotifyRotation.x, AnimNotify.vNotifyRotation.y, AnimNotify.vNotifyRotation.z);
-	EffectDesc.fSize = 1.f;
+	EffectDesc.fSize = AnimNotify.vNotifyScale.x;
 
 	_TCHAR szEffectTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szEffectTag);
@@ -195,7 +211,7 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ ì½œë¦¬ì „ ì¼œê²Œ í•˜ëŠ” í•¨ìˆ˜
+	// Äİ¸®ÀüÀ» »ı¼º Or Äİ¸®Àü On
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
 
@@ -255,7 +271,7 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
-	/* ë¯¸ì ìš©
+	/* ¹ÌÀû¿ë
 	m_pCharacter->Set_Rotation
 	*/
 
@@ -284,13 +300,13 @@ HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ì˜ ì½œë¦¬ì „ On
+	// ?ŒíŠ¸?¤ë¸Œ?íŠ¸??ì½œë¦¬??On
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
 	
 	// Create Notify
-	// szNotifyArg01	=> PartObject Name ( íŒŒíŠ¸ì˜¤ë¸Œì íŠ¸ ì´ë¦„, Part_Body )
-	// szNotifyArg02	=> Component Name ( ì¶©ëŒì²´ ì»´í¬ë„ŒíŠ¸ ì´ë¦„, Com_Collider )
+	// szNotifyArg01	=> PartObject Name ( ?ŒíŠ¸?¤ë¸Œ?íŠ¸ ?´ë¦„, Part_Body )
+	// szNotifyArg02	=> Component Name ( ì¶©ëŒì²?ì»´í¬?ŒíŠ¸ ?´ë¦„, Com_Collider )
 	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szComponentName);

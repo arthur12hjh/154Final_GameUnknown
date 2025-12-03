@@ -21,12 +21,12 @@ private:
 	_uint			m_iCorners[CORNER_END] = { };
 	_uint			m_iCenter = {};
 
-	CQuadTree*		m_pChildren[CORNER_END] = { nullptr };
-	CQuadTree*		m_pNeighbors[NEIGHBOR_END] = { nullptr, nullptr, nullptr, nullptr };
+	CQuadTree* m_pChildren[CORNER_END] = { nullptr };
+	CQuadTree* m_pNeighbors[NEIGHBOR_END] = { nullptr, nullptr, nullptr, nullptr };
 
 private:
 	_bool isDraw(class CGameInstance* pGameInstance, const _float3* pVertexPositions);
-	
+
 
 public:
 	static CQuadTree* Create(_uint iLT, _uint iRT, _uint iRB, _uint iLB);

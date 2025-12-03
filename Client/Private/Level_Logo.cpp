@@ -40,7 +40,10 @@ HRESULT CLevel_Logo::Initialize()
 
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
 	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
+
+#ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
+#endif // _DEBUG
 
 	return S_OK;
 }

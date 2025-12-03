@@ -23,6 +23,10 @@ typedef struct tagHitStateDesc {
 	_float  fImpact;
 } PLAYER_HIT_DESC;
 
+typedef struct tagLockonWalkStateDesc {
+	_bool isAlreadyRunning = { false }; 
+} PLAYER_LOCKON_WALK_DESC;
+
 class CPlayerState abstract : public CBase
 {
 protected:
@@ -31,7 +35,7 @@ protected:
 
 public:
 	PLAYER_STATE Get_State() { return m_eState; }
-
+	virtual _bool isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_STATE ePlayerState); 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
 	// void* 디폴트 매개변수 잡아서 넘겨받습니다.
@@ -47,7 +51,7 @@ protected:
 	//만약 STATE_END가 아니라면 상태 변경.
 	PLAYER_TRANSITION_DESC   m_tNextState = {};
 	PLAYER_STATE   m_eState = { PLAYER_STATE::STATE_END };
-	const struct Player_Desc* m_Desc = { nullptr };
+	struct Player_Desc* m_Desc = { nullptr };
 
 public:
 	virtual	void					Free() override;

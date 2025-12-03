@@ -54,12 +54,16 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//Load_Map_Data();
-	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
-	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
-	Safe_Release(pGameCharacter);
+	////Load_Map_Data();
+	//Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert.bin");
+	//auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
+	//m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
+	//Safe_Release(pGameCharacter);
 
+#ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
+#endif // _DEBUG
+
 	return S_OK;
 }
 
@@ -221,7 +225,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;*/
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Desert"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
@@ -248,7 +256,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 45.f, 1.f, 45.f };
+	Desc.vPosition = { 217.f, 52.f, 250.f };
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
@@ -343,7 +351,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
 		return E_FAIL;
 
-	pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	//pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Boss"))))
+		return E_FAIL;
+	pUIHUD->Anim_Play(TEXT("Layer_Boss"), TEXT("Boss_Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	return S_OK;
 }
@@ -528,6 +541,74 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 	{
 		Safe_Delete(pDataVector); 
 		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
+	ifs.close();
+
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDOBJECTINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
+
+		RuinComponentDesc Desc = {};
+		Desc.pComponentTag = info.szComponentTag;
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+
+		if (SUCCEEDED(hr))
+		{
+			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
+			if (pObjs && !pObjs->empty())
+			{
+				CGameObject* pObj = pObjs->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
+				if (pTransform)
+				{
+					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+
+					_vector vScale = {};
+					_vector vRotation = {};
+					_vector vPosition = {};
+					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+
+					// 순서: Scale * Rotation * Translation (SRT 순서)
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
+
+				}
+			}
+		}
 	}
 
 	return S_OK;

@@ -47,7 +47,14 @@ private:
 
 
 	HRESULT Loading_For_Desert();
-	HRESULT Loading_For_Desert_Building_Ruin(void *pArg);
+	HRESULT Loading_For_Desert_Building_Ruin(void* pArg);
+	HRESULT Loading_For_Desert_Canyon1(void* pArg);
+	HRESULT Loading_For_Desert_Canyon1_1(void* pArg);
+	HRESULT Loading_For_Desert_Canyon1_2(void* pArg);
+	HRESULT Loading_For_Desert_Canyon2(void* pArg);
+	HRESULT Loading_For_Desert_Canyon2_1(void* pArg);
+	HRESULT Loading_For_Desert_Canyon2_2(void* pArg);
+	
 
 
 

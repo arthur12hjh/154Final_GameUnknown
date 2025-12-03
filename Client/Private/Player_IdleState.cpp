@@ -30,10 +30,10 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
+    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))

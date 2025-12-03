@@ -31,6 +31,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonIdleState::Update(_float fTimeDelta)
         m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+        m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;

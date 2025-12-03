@@ -9,6 +9,14 @@ CPlayer_LightAttackState::CPlayer_LightAttackState()
 {
 }
 
+_bool CPlayer_LightAttackState::isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_STATE ePlayerState)
+{
+    if (ePlayerState == PLAYER_STATE::LIGHT_ATTACK)
+        return false;
+
+    return true;
+}
+
 void CPlayer_LightAttackState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;

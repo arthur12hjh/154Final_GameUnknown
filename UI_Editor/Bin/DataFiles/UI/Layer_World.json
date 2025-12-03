@@ -8,7 +8,7 @@
         },
         "fAlpha": 1.0,
         "fOffsetX": 0.0,
-        "fOffsetY": 0.0,
+        "fOffsetY": 70.0,
         "fRotation": 0.0,
         "fSizeX": 100.0,
         "fSizeY": 100.0,
@@ -24,5 +24,119 @@
         "szProtoTag": "Prototype_GameObject_UI_Image",
         "szUIID": "World_Panel_Image_1-1",
         "szUITag": "World_Test"
+    },
+    {
+        "Children": [
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseTintColor": true,
+                            "fGlowIntensity": 1.766465425491333,
+                            "fGlowSpread": 0.0,
+                            "vTintColor": [
+                                0.4415094256401062,
+                                0.4401765763759613,
+                                0.08830190449953079,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": 100.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 45.0,
+                        "fSizeY": 64.28571319580078,
+                        "fX": 0.0,
+                        "fY": -4.0,
+                        "iDepth": 6,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Hp_Fx_BeapBeap",
+                                "szPrefabTag": "BeapBeap_2"
+                            }
+                        ],
+                        "szLayerTag": "Layer_World",
+                        "szProtoTag": "Prototype_GameObject_UI_Monster_HPFX",
+                        "szUIID": "Monster_HP_FX_5-1",
+                        "szUITag": "MonsterHp_Fx"
+                    }
+                ],
+                "Shader": {
+                    "bUseUV": true,
+                    "fUVOffsetX": 0.0,
+                    "fUVOffsetY": 0.0,
+                    "fUVScaleX": 22.0,
+                    "fUVScaleY": 2.0
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": -4.0,
+                "fRotation": 0.0,
+                "fSizeX": 176.0,
+                "fSizeY": 16.0,
+                "fX": 0.0,
+                "fY": 0.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_World",
+                "szProtoTag": "Prototype_GameObject_UI_Monster_HPBar",
+                "szUIID": "Vital_Wrapper_Monster_HPBar_2-1",
+                "szUITag": "Monster_Hp"
+            },
+            {
+                "Shader": {
+                    "bUseTintColor": true,
+                    "vTintColor": [
+                        0.6781853437423706,
+                        0.8196078538894653,
+                        0.7680301666259766,
+                        1.0
+                    ]
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -72.0,
+                "fOffsetY": 8.0,
+                "fRotation": 0.0,
+                "fSizeX": 32.0,
+                "fSizeY": 8.0,
+                "fX": 0.0,
+                "fY": 0.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_World",
+                "szProtoTag": "Prototype_GameObject_UI_Monster_Shield",
+                "szUIID": "Vital_Wrapper_Monster_Shield_2-3",
+                "szUITag": "Monster_Shield"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 176.0,
+        "fSizeY": 24.0,
+        "fX": 0.0,
+        "fY": 0.0,
+        "iDepth": 1,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_World",
+        "szProtoTag": "Prototype_GameObject_UI_WorldWrapper",
+        "szUIID": "WorldWrapper_1-1",
+        "szUITag": "UI_Monster_Vital"
     }
 ]

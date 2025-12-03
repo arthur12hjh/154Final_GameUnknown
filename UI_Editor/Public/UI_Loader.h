@@ -56,6 +56,7 @@ private:
 
 	HRESULT Loading_UI_For_Combat_HUD_Vitals();
 	HRESULT Loading_UI_For_Combat_HUD_Skills();
+	HRESULT Loading_UI_For_World();
 
 public:
 	static CUI_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

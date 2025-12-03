@@ -7,6 +7,10 @@
 
 #include "UIBase.h"
 #include "UIAnimManager.h"
+#include "GameInstance.h"
+#include "Camera.h"
+
+#include "UIBossVitalWrapper.h"
 
 /*
 이벤트, 애니메이션 매니저 만들기(싱글톤일 필요X)
@@ -28,6 +32,8 @@ HRESULT CUIHUD::Initialize()
 	
 	if (!m_pUIAnimMgr)
 		return E_FAIL;
+
+	m_pGameInstance = CGameInstance::GetInstance();
 	
 	m_pUIAnimMgr->Load_Anim_Files();
 
@@ -39,6 +45,20 @@ void CUIHUD::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	m_pUIAnimMgr->Update(fTimeDelta);
+
+	for(auto& pPool : m_WorldUIs)
+	{
+		for (auto& pObj : pPool.second)
+		{
+			CUIBase* pUIBase = dynamic_cast<CUIBase*>(pObj);
+			if (pUIBase && pUIBase->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				pUIBase->Priority_Update(fTimeDelta);
+				pUIBase->Update(fTimeDelta);
+				pUIBase->Late_Update(fTimeDelta);
+			}
+		}
+	}
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
@@ -58,7 +78,7 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 		{
 			CUIBase* pUI = dynamic_cast<CUIBase*>(pUIObj.second);
 
-			if (!pUI->Get_Parent())
+			if (!pUI->GetParent())
 			{
 				Json jChildren;
 
@@ -81,6 +101,24 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 	MSG_BOX("저장 성공");
 
 	return S_OK;
+}
+
+void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Boss"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pUIObjects = pLayer->second->Get_UserInterfaces();
+
+	auto pUI = pUIObjects->find(TEXT("Boss_Vital_Wrapper"));
+
+	CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(pUI->second);
+	if (!pVitalWrapper)
+		return;
+
+	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
@@ -117,7 +155,10 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	jObj["szProtoTag"] = szText;
 
 	if (pDesc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::WORLD))
-		jObj["szPoolTag"] = pDesc.szPoolTag;
+	{
+		CStringHelper::ConvertWideToUTF(pDesc.szPoolTag.c_str(), szText);
+		jObj["szPoolTag"] = szText;
+	}
 
 	if (pDesc.Get_ShaderDesc())
 	{
@@ -691,7 +732,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 
 	if (Desc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN))
 	{
-		pCreatedObj->Set_Parent(pUIParent);
+		pCreatedObj->SetParent(pUIParent);
 		pUIParent->Add_Child(pCreatedObj);
 	}
 
@@ -799,7 +840,7 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	return S_OK;
 }
 
-CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3& vOffset, _bool bBillboard)
+CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3& vTargetPos, _bool bBillboard)
 {
 	auto it = m_WorldUIs.find(poolKey);
 	if (it == m_WorldUIs.end() || it->second.empty()) return nullptr;
@@ -810,12 +851,17 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 
 	// 상태 초기화 후 사용할 준비
 	Reset_WorldUI_State(pUI);
-	pUI->Set_DrawType(CUIObject::DRAW_TYPE::WORLD);
+	pUI->Set_DrawType((CUIObject::DRAW_TYPE)pUI->Get_UIBase_Desc().iDrawType);
 	pUI->SetVisibility(VISIBILITY::VISIBLE);
 
 	if (pParent) {
-		pUI->Set_Parent(pParent);     // ← 엔진에서 WORLD Parent 따라가도록 구현되어 있음
-		//pUI->Set_Offset(vOffset.x, vOffset.y, vOffset.z);
+		pUI->SetParent(pParent);     // ← 엔진에서 WORLD Parent 따라가도록 구현되어 있음
+		
+		/*_vector vPos = XMVectorSetW(XMLoadFloat3(&vTargetPos), 1.f);
+		if (vTargetPos.x == 0.f && vTargetPos.y == 0.f && vTargetPos.z == 0.f)
+			vPos = pParent->GetTransform()->Get_State(STATE::POSITION);*/
+
+		pUI->Set_TargetPos(&vTargetPos);
 	}
 	//pUI->Set_Billboard(bBillboard);   // 엔진에 맞는 API로 교체
 
@@ -830,14 +876,16 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	m_pUIAnimMgr->Anim_Stop(pUI);
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
 	//pUI->Set_Active(false);
-	pUI->Set_Parent(nullptr);
+	pUI->SetParent(nullptr);
+	pUI->Set_TargetPos(nullptr );
 	//pUI->Set_Offset(0, 0, 0);
 
 	// 어떤 풀로 돌아갈지 키가 필요하다면:
 	//  - pUI->Get_UIBase_Desc().szProtoTag 또는 커스텀 PoolKey를 Desc에 저장
-	_wstring szPoolTag = pUI->Get_UIBase_Desc().szProtoTag; // 간단 방식
+	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag; // 간단 방식
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
+	//Safe_Release(pUI);
 	pUI = nullptr;
 }
 

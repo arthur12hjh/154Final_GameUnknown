@@ -57,10 +57,19 @@ private:
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
 
+	HRESULT Loading_For_GamePlay_Map_DesertA(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertB(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertC(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertD(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertE(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertF(void* pArg);
+
+
 	HRESULT Loading_UI_For_Logo_Level();
 	HRESULT Loading_UI_For_GamePlay_Level();
 	HRESULT Loading_UI_For_Combat_HUD_Vitals();
 	HRESULT Loading_UI_For_Combat_HUD_Skills();
+	HRESULT Loading_UI_For_World();
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

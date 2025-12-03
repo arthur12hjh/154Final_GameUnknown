@@ -665,8 +665,9 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     if (m_isLerp && m_fBlendElapsed == 0.f)
     {
-        m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
+        m_pContext->CopyResource(m_pLerpBoneMatrices, m_pOutSource);
     }
+    m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
 
     if (m_isLerp)
     {
@@ -905,6 +906,16 @@ HRESULT CModel::Ready_ComputeShader()
     PreBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&PreBoneBufferDesc, nullptr, &m_pPreBoneMatrices);
+
+    D3D11_BUFFER_DESC LerpBoneBufferDesc = {};
+    LerpBoneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    LerpBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+    LerpBoneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    LerpBoneBufferDesc.CPUAccessFlags = 0;
+    LerpBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+    LerpBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+    m_pDevice->CreateBuffer(&PreBoneBufferDesc, nullptr, &m_pLerpBoneMatrices);
 
 #pragma region GLOBAL BUFFER SETTING
 
@@ -1298,17 +1309,17 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     _uint iGroupCount = (m_Bones.size() + 127) / 128;
 
     // 여기서 PreBoneMatrices SRV를 CS t4에 바인딩
-    if (m_pPreBoneMatricesSRV == nullptr)
+    if (m_pLerpBoneMatricesSRV == nullptr)
     {
         D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
         SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
         SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
         SRVDesc.Buffer.NumElements = m_Bones.size();
-        HRESULT hr = m_pDevice->CreateShaderResourceView(m_pPreBoneMatrices, &SRVDesc, &m_pPreBoneMatricesSRV);
+        HRESULT hr = m_pDevice->CreateShaderResourceView(m_pLerpBoneMatrices, &SRVDesc, &m_pLerpBoneMatricesSRV);
         if (FAILED(hr))
             return E_FAIL;
     }
-    ID3D11ShaderResourceView* preBoneSRV[1] = { m_pPreBoneMatricesSRV };
+    ID3D11ShaderResourceView* preBoneSRV[1] = { m_pLerpBoneMatricesSRV };
     m_pContext->CSSetShaderResources(4, 1, preBoneSRV);
 
     m_pComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
@@ -1640,9 +1651,11 @@ void CModel::Free()
     Safe_Release(m_pOutReadBack);
     //Safe_Release(m_pOutSource);
     Safe_Release(m_pPreBoneMatrices);
+    Safe_Release(m_pLerpBoneMatrices);
 
     Safe_Release(m_pBoneMatricesSRV);
     Safe_Release(m_pPreBoneMatricesSRV);
+    Safe_Release(m_pLerpBoneMatricesSRV);
     Safe_Release(m_pComputeShaderCom);
 
 }

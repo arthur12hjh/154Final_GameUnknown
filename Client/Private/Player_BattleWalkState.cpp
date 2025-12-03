@@ -18,7 +18,12 @@ void CPlayer_BattleWalkState::Start(void* pArg)
     m_isRunStart = true;
 
     //Jump Run Start·Î ½ÃÀÛ.
-    if (true == m_isEvading)
+    if (true == m_isEvading && true == m_isLanding)
+    {
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
+        m_isRunStart = false;
+    }
+    else if (true == m_isEvading)
         m_pPlayer->Set_Animation("Proto_Battle_Run_StartAfterEvade", false, 1.2f, 0.2f);
     else if (true == m_isLanding)
         m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.3f);
@@ -98,6 +103,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+        m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;

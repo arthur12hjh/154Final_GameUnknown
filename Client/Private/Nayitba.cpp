@@ -17,6 +17,8 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
+#include "UIHUD.h"
+
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
 {
@@ -56,6 +58,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
+
+
 
 	return S_OK;
 }
@@ -130,9 +135,8 @@ HRESULT CNayitba::Damaged(void* pArg)
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 
-	//임시 테스트용 코드. 보이면 지워버리셔도 됩니다
+	// 이제 진짜라고 합니다.
 	m_pGameManager->Start_Lockon();
-
 	return S_OK;
 }
 
@@ -261,20 +265,7 @@ HRESULT CNayitba::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
-	CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-	SenceComDesc.fAiSearchRadius = 60.f;
-	SenceComDesc.fAiTargetSearchDistance = 10.f;
-	SenceComDesc.m_fAiTargetLostTime = 20.f;
-
-	/* Prototype_Component_TargetComponent */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
-		TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
-		return E_FAIL;
-
-	m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
-	m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-	m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-
+	
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -290,6 +281,20 @@ HRESULT CNayitba::ADD_Components()
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
 			return E_FAIL;
+
+		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
+		SenceComDesc.fAiSearchRadius = 360.f;
+		SenceComDesc.fAiTargetSearchDistance = 20.f;
+		SenceComDesc.m_fAiTargetLostTime = 20.f;
+
+		/* Prototype_Component_TargetComponent */
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
+			TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
+			return E_FAIL;
+
+		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
+		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
 	}
 	else
 	{
@@ -299,6 +304,21 @@ HRESULT CNayitba::ADD_Components()
 		pInstnace = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), ControllerProtoType, &ControllerDesc);
 		if (nullptr == pInstnace)
 			return E_FAIL;
+
+		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
+		SenceComDesc.fAiSearchRadius = 60.f;
+		SenceComDesc.fAiTargetSearchDistance = 10.f;
+		SenceComDesc.m_fAiTargetLostTime = 20.f;
+
+		/* Prototype_Component_TargetComponent */
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_AISence"),
+			TEXT("Com_AI_SenceCom"), reinterpret_cast<CComponent**>(&m_pAISenceCom), &SenceComDesc)))
+			return E_FAIL;
+
+		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
+		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+
 	}
 
 	/* Com_CCT */
@@ -347,10 +367,17 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
 	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
-	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
-		m_szEntryAnim += "_BattleStart";
-	else
-		m_szEntryAnim += "_BattleEnd";
+
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		m_pAISenceCom->Add_SenceTargetObject(pTarget);
+
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
+
+		Safe_Release(pUIHUD);
+	}
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

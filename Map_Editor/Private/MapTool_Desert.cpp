@@ -5,8 +5,10 @@
 #include "Cell.h"
 #include "Terrain_Desert.h"
 #include <fstream>
-#include "InstanceModel.h"
-#include "Building_Ruin.h"
+#include "Camera_Free.h"
+#include "DesertObject.h"
+#include "Player_Test.h"
+#include "Instance_Desert.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -21,16 +23,26 @@ HRESULT CMapTool_Desert::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	m_pGameInstance = CGameInstance::GetInstance();
 
 	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Layer_Terrain"));
+	list<CGameObject*>* pCameraList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Layer_Camera"));
+	list<CGameObject*>* pPlayerList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Layer_Player_Test"));
 
 	if (pTerrainList != nullptr && !pTerrainList->empty())
-	{
 		m_pTerrain = dynamic_cast<CTerrain_Desert*>(pTerrainList->back());
-	}
 	else
-	{
 		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
-	}
 
+	if (pCameraList != nullptr && !pCameraList->empty())
+		m_pCamera = dynamic_cast<CCamera_Free*>(pCameraList->back());
+	else
+		m_pCamera = nullptr; // 안전하게 nullptr로 설정
+
+	if (pPlayerList != nullptr && !pPlayerList->empty())
+		m_pPlayer = dynamic_cast<CPlayer_Test*>(pPlayerList->back());
+	else
+		m_pPlayer = nullptr; // 안전하게 nullptr로 설정
+
+	m_pCameraTransform = m_pCamera->GetTransform();
+	m_pPlayerTransform = m_pPlayer->GetTransform();
 
 	return S_OK;
 }
@@ -98,6 +110,401 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Building_Ruin"); layerTag = TEXT("Layer_Building_Ruin");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_B");
 				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_1A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_1A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_2A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_2A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_3A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_3A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_4A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_4A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_5A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_5A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_6A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_6A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_12A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_12A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_14A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_14A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_14B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_14B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_15A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_15A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_16A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_16A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_16B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_16B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_17A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_17A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_17B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_17B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_18A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_18A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_20A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_20A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_21A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_21A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_22A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_22A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_23A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_23A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_24A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_24A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_35A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_35A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39C)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39C");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39D)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39D");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_43A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_43A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_44A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_44A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_46A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_46A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_50A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_50A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_52A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_52A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_55A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_55A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_58A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_58A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_59A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_59A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_60A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_60A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_61A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_61A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_65A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_65A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_66A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_66A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_67A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_67A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_69A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_69A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_71A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_71A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_80A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_80A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_81A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_81A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_93A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_93A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_95A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_95A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_96A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_96A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_97A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_97A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_98A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_98A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_100A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_100A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_101A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_101A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_103A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_103A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_104A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_104A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_105A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_105A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_106A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_106A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_108A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_108A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_109A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_109A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_110A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_110A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_111A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_111A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_112A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_112A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_113A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_113A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_115A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_115A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_116A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_116A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_117A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_117A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_121A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_121A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_122A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_122A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_123A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_123A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_125A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_125A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_126A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_126A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127C)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127C");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127D)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127D");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127E)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127E");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128C)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128C");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_131A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_131A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132C)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132C");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_133B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_133B");
+				}
 
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT)
 				{
@@ -117,8 +524,15 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				{
 					m_pTerrain->Change_Height_Flat(vPickPoint, fHeight, m_fRadius);
 				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PLAYER)
+				{
+					m_pPlayerTransform->Set_State(STATE::POSITION, vPickPoint);
+				}
 
-				hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+				if (pDesc.pComponentTag == nullptr)
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag);
+				else
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
 
 				if (SUCCEEDED(hr))
 				{
@@ -191,28 +605,28 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
 				{
-					vPosition += pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+					vPosition += pTransform->Get_State(STATE::LOOK) * m_fMoveSpeed * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
 				{
-					vPosition -= pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+					vPosition -= pTransform->Get_State(STATE::LOOK) * m_fMoveSpeed * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
 				{
-					vPosition -= pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+					vPosition -= pTransform->Get_State(STATE::RIGHT) * m_fMoveSpeed * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
 				{
-					vPosition += pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+					vPosition += pTransform->Get_State(STATE::RIGHT) * m_fMoveSpeed * fTimeDelta;
 				}
 
 				pTransform->Set_State(STATE::POSITION, vPosition);
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
+					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMVectorSet(0.f, m_fMoveSpeed * fTimeDelta, 0.f, 0.f));
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) - XMVectorSet(0.f, 3.f * fTimeDelta, 0.f, 0.f));
+					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) - XMVectorSet(0.f, m_fMoveSpeed * fTimeDelta, 0.f, 0.f));
 			}
 		}
 
@@ -284,6 +698,7 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+#pragma region HeightMap Menu
 	// 1. 하이트맵 높이 조절 메뉴
 	/*if (ImGui::Button("INCREASE_CIRCLE"))
 	{
@@ -334,7 +749,7 @@ HRESULT CMapTool_Desert::Render()
 
 	ImGui::Text("Change Terrain Height.");
 
-	static _char szHeightMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/Height.bmp";
+	static _char szHeightMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/Height2.bmp";
 	ImGui::InputText("HeightMap File Path", szHeightMapFilePath, sizeof(szHeightMapFilePath));
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -357,7 +772,9 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
+#pragma endregion
 
+#pragma region MaskMap Menu
 	//if (ImGui::Button("MASK_MAP_BALCK"))
 	//{
 	//	m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_BLACK;
@@ -405,6 +822,9 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
+#pragma endregion
+
+#pragma region Navigation Menu
 	// 4. 네비게이션 편집 메뉴
 	ImGui::Text("Navigation Editor");
 	if (ImGui::Checkbox("Navi Edit Mode", &m_bIsNaviEditMode))
@@ -471,6 +891,7 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
+#pragma endregion
 
 	ImGui::Text("Registered Models");
 
@@ -478,7 +899,7 @@ HRESULT CMapTool_Desert::Render()
 	// 1. 메인 테마/레벨 선택 드롭다운 (콤보 박스 사용 권장)
 	// ----------------------------------------------------
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT" };
+	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON"};
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -499,7 +920,7 @@ HRESULT CMapTool_Desert::Render()
 
 		const _char* modelNames[] = { "Player" };
 
-		const _char* buildingNames[] = { "Door_A", "Door_B"};
+		const _char* buildingNames[] = { "Door_A", "Door_B", "Xion_Building"};
 
 		const _char* environmentNames[] = { "Bamboo" };
 
@@ -507,12 +928,11 @@ HRESULT CMapTool_Desert::Render()
 		{
 			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
 			{
-				//if (nSelectedModel == 0) // Player
-				//{
-				//	m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
-				//	m_CurrentLayerName = TEXT("Layer_Player");
-				//}
-
+				if (nSelectedModel == 0) // Player
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
+					m_CurrentLayerName = TEXT("Layer_Player_Test");
+				}
 			}
 		}
 		if (ImGui::CollapsingHeader("Buildings"))
@@ -527,6 +947,11 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedBuilding == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::DOOR_B;
+					m_CurrentLayerName = TEXT("Layer_Building_Ruin");
+				}
+				else if (nSelectedBuilding == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING;
 					m_CurrentLayerName = TEXT("Layer_Building_Ruin");
 				}
 
@@ -573,7 +998,177 @@ HRESULT CMapTool_Desert::Render()
 		}
 	}
 
+	else if (m_eCurrentMap == DESERT_THEME::CANYON)
+	{
+		ImGui::Text("Desert Common Objects");
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
+		// 2. 모델 배치 / 삭제메뉴
+		_int nSelectedCharacter = -1;
+		_int nSelectedVeryBigCanyon = -1;
+		_int nSelectedBigCanyon = -1;
+		_int nSelectedMiddleCanyon = -1;
+		_int nSelectedSmallCanyon = -1;
+		_int nSelectedRock = -1;
+		_int nSelectedStone = -1;
+
+		const _char* characterNames[] = { "Player" };
+		
+		const _char* veryBigCanyonNames[] = { "CANYON_127A","CANYON_127B", "CANYON_127C", "CANYON_127D", "CANYON_127E", "CANYON_128A", "CANYON_128B","CANYON_128C",
+												"CANYON_132A", "CANYON_132B", "CANYON_132C", "CANYON_133B" };
+		
+		const _char* bigCanyonNames[] = {  "CANYON_3A", "CANYON_12A", "CANYON_22A", "CANYON_23A", "CANYON_39A", "CANYON_39C", "CANYON_39D", "CANYON_65A", "CANYON_66A", 
+										 "CANYON_67A", "CANYON_69A", "CANYON_71A",   "CANYON_97A", "CANYON_105A", "CANYON_106A", "CANYON_108A", "CANYON_125A", "CANYON_126A" };
+
+		const _char* middleCanyonNames[] = { "CANYON_5A", "CANYON_21A", "CANYON_24A", "CANYON_35A", "CANYON_80A", "CANYON_81A", "CANYON_101A", "CANYON_103A", "CANYON_104A", "CANYON_109A", "CANYON_110A", "CANYON_111A", "CANYON_112A", "CANYON_113A", "CANYON_115A" };
+		
+		const _char* smallCanyonNames[] = { "CANYON_1A", "CANYON_2A", "CANYON_6A", "CANYON_20A", "CANYON_93A", "CANYON_95A", "CANYON_96A", "CANYON_116A", "CANYON_117A"};
+		
+		const _char* rockNames[] = { "CANYON_14B", "CANYON_15A", "CANYON_17A", "CANYON_17B", "CANYON_52A", "CANYON_55A", "CANYON_60A", "CANYON_61A", "CANYON_98A", 
+									"CANYON_100A", "CANYON_121A", "CANYON_122A", };
+
+		const _char* stoneNames[] = { "CANYON_4A", "CANYON_14A", "CANYON_16A", "CANYON_16B", "CANYON_18A", "CANYON_43A", "CANYON_44A", "CANYON_46A", "CANYON_50A", 
+									"CANYON_58A", "CANYON_59A", "CANYON_123A", "CANYON_131A" };
+
+		if (ImGui::CollapsingHeader("Character"))
+		{
+			if (ImGui::ListBox("##Character", &nSelectedCharacter, characterNames, IM_ARRAYSIZE(characterNames), 7))
+			{
+				if (nSelectedCharacter == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
+					m_CurrentLayerName = TEXT("Layer_Player_Test");
+				}
+
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Canyon"))
+		{
+			if (ImGui::CollapsingHeader("Very Big Canyon (12)"))
+			{
+				if (ImGui::ListBox("Very Big Canyon", &nSelectedVeryBigCanyon, veryBigCanyonNames, IM_ARRAYSIZE(veryBigCanyonNames), 5))
+				{
+					if (nSelectedVeryBigCanyon == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_127A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_127B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_127C; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_127D; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_127E; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_128A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_128B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_128C; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_132A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 9) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_132B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_132C; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedVeryBigCanyon == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_133B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+			if (ImGui::CollapsingHeader("Big Canyon (18)"))
+			{
+				if (ImGui::ListBox("##BigCanyonList", &nSelectedBigCanyon, bigCanyonNames, IM_ARRAYSIZE(bigCanyonNames), 5))
+				{
+					m_CurrentLayerName = TEXT("Layer_Canyon");
+					if (nSelectedBigCanyon == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_3A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_12A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_22A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_23A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_39A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_39C; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_39D; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_65A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_66A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 9) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_67A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_69A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_71A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 12) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_97A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 13) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_105A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 14) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_106A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 15) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_108A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 16) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_125A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedBigCanyon == 17) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_126A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+			if (ImGui::CollapsingHeader("Middle Canyon (15)"))
+			{
+				if (ImGui::ListBox("##MiddleCanyonList", &nSelectedMiddleCanyon, middleCanyonNames, IM_ARRAYSIZE(middleCanyonNames), 5))
+				{
+					m_CurrentLayerName = TEXT("Layer_Canyon");
+					if (nSelectedMiddleCanyon == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_5A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_21A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_24A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_35A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_80A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_81A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_101A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_103A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_104A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 9) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_109A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_110A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_111A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 12) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_112A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 13) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_113A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedMiddleCanyon == 14) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_115A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+			if (ImGui::CollapsingHeader("Small Canyon (9)"))
+			{
+				if (ImGui::ListBox("##SmallCanyonList", &nSelectedSmallCanyon, smallCanyonNames, IM_ARRAYSIZE(smallCanyonNames), 5))
+				{
+					m_CurrentLayerName = TEXT("Layer_Canyon");
+					if (nSelectedSmallCanyon == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_1A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_2A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_6A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_20A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_93A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_95A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_96A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_116A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedSmallCanyon == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_117A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+			if (ImGui::CollapsingHeader("Rock (12)"))
+			{
+				if (ImGui::ListBox("##RockList", &nSelectedRock, rockNames, IM_ARRAYSIZE(rockNames), 5))
+				{
+					m_CurrentLayerName = TEXT("Layer_Canyon");
+					if (nSelectedRock == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_14B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_15A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_17A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_17B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_52A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_55A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_60A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_61A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_98A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 9) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_100A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_121A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedRock == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_122A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+			if (ImGui::CollapsingHeader("Stone (13)"))
+			{
+				if (ImGui::ListBox("##StoneList", &nSelectedStone, stoneNames, IM_ARRAYSIZE(stoneNames), 5))
+				{
+					m_CurrentLayerName = TEXT("Layer_Canyon");
+					if (nSelectedStone == 0) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_4A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 1) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_14A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 2) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_16A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 3) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_16B; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 4) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_18A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 5) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_43A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 6) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_44A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 7) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_46A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 8) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_50A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 9) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_58A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_59A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_123A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+					else if (nSelectedStone == 12) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_131A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+		}
+	}
+
 	// 삭제 버튼
+#pragma region Delete_Object
 	if (ImGui::Button("Delete All"))
 	{
 		m_pObjects = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), m_CurrentLayerName);
@@ -663,7 +1258,21 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
+#pragma endregion
 
+	if (ImGui::CollapsingHeader("Object Placement Control"))
+	{
+		ImGui::InputFloat("Move Speed", &m_fMoveSpeed, 1.0f, 0.0f, "%.2f");
+
+		if (m_fMoveSpeed < 0.1f)
+		{
+			m_fMoveSpeed = 0.1f;
+		}
+	}
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+#pragma region Teleport
 	// 3. 특정좌표로 텔레포트
 	ImGui::SetNextItemWidth(50.f);
 	ImGui::InputFloat("X", &m_fX);
@@ -677,12 +1286,13 @@ HRESULT CMapTool_Desert::Render()
 
 	if (ImGui::Button("Teleport"))
 	{
-		//m_pPlayerTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1));
+		m_pCameraTransform->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, m_fZ, 1.f));
 	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
+#pragma endregion
 
 	ImGui::Text("Object Control");
 	if (ImGui::Checkbox("Object Deplay Mode", &m_bIsDeplayMode))
@@ -701,6 +1311,7 @@ HRESULT CMapTool_Desert::Render()
 	}
 	ImGui::Text("Instruction: Select object on screen to drag.");
 
+#pragma region Object_Rotation
 	// 오브젝트 스케일링, 회전하기
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -754,7 +1365,9 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
+#pragma endregion
 
+#pragma region Object_Scale
 	ImGui::Text("Object Scale");
 	ImGui::Text("X");
 	ImGui::SameLine();
@@ -770,6 +1383,7 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(50.f);
 	ImGui::InputFloat("##ScaleZ", &m_fScaleZ);
+#pragma endregion
 
 	if (ImGui::Button("Scale_All_Layer"))
 	{
@@ -879,7 +1493,8 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Building_Ruin")))) return S_OK;
-
+	//if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK; 
 
 	ofs.close();
 
@@ -897,18 +1512,18 @@ HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar*
 	{
 		for (auto pObject : *pObj)
 		{
-			CBuilding_Ruin* pBuildingRuin = dynamic_cast<CBuilding_Ruin*>(pObject);
+			CDesertObject* pDesertObject = dynamic_cast<CDesertObject*>(pObject);
 			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
 
-			if (pTransform && pBuildingRuin)
+			if (pTransform && (pDesertObject))
 			{
 				SAVEDOBJECTINFO info;
 				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
 				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
 				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
 
-				const _tchar* pTag = pBuildingRuin->Get_ComponentTag();
-				lstrcpynW(info.szComponentTag, pTag, 256);
+				const _tchar* pTag = pDesertObject->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
 
 				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDOBJECTINFO));
 			}
@@ -926,9 +1541,10 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
 		return E_FAIL;
 	}
-	
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
 	ifs.close();
 
 	return S_OK;
@@ -984,17 +1600,15 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 	return S_OK;
 }
 
-HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag)
 {
+	// 1. 저장된 Layer_Canyon 오브젝트의 개수를 읽습니다.
 	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
-	if (iNumObjs == 0)
-		return S_OK;
+	if (iNumObjs == 0) return S_OK;
 
-	MODEL_INSTANCE_LOAD_DESC LoadDesc;
-	LoadDesc.iNumInstance = iNumObjs;
-	LoadDesc.InstancingData.reserve(iNumObjs);
+	std::map<std::wstring, std::vector<VTX_INSTANCE_MODEL>> groupedInstanceData;
 
 	for (_uint i = 0; i < iNumObjs; ++i)
 	{
@@ -1002,16 +1616,12 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
 		_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-		_vector vScale = {};
-		_vector vRotation = {};
-		_vector vPosition = {};
+		_vector vScale, vRotation, vPosition;
 		XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-		_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-		// 순서: Scale * Rotation * Translation (SRT 순서)
-		_matrix matFinalWorld = matScale * matRotation * matTranslation;
+		_matrix matFinalWorld = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale))
+			* XMMatrixRotationQuaternion(vRotation)
+			* XMMatrixTranslationFromVector(vPosition);
 
 		VTX_INSTANCE_MODEL InstanceData{};
 		XMStoreFloat4(&InstanceData.vRight, matFinalWorld.r[0]);
@@ -1019,16 +1629,32 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
 		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
 
-		LoadDesc.InstancingData.push_back(InstanceData);
+		// Component Tag(예: "Prototype_Component_Model_Canyon_100A")를 Key로 사용합니다.
+		std::wstring strTag = info.szComponentTag;
+
+		// 2. 변환된 wstring을 Key로 사용하여 그룹화
+		groupedInstanceData[strTag].push_back(InstanceData);
 	}
 
-	Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc;
-	FinalLoadDesc.iNumInstance = LoadDesc.iNumInstance;
-	FinalLoadDesc.pInstancingData = &LoadDesc.InstancingData;
-	FinalLoadDesc.pPrototypeTag = protoTag;
+	for (auto& pair : groupedInstanceData)
+	{
+		Engine::MODEL_INSTANCE_LOAD_DESC FinalLoadDesc = {};
+		FinalLoadDesc.iNumInstance = (_uint)pair.second.size();
 
-	HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_InstanceModel"),
-		ENUM_CLASS(LEVEL::DESERT), pLayerTag, &FinalLoadDesc);
+		FinalLoadDesc.pPrototypeTag = pair.first.c_str();
+
+		FinalLoadDesc.pInstancingData = const_cast<std::vector<VTX_INSTANCE_MODEL>*>(&pair.second);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT),
+			TEXT("Prototype_GameObject_Instance_Desert"),
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, // 원본 레이어 태그 "Layer_Canyon" 사용
+			&FinalLoadDesc);
+
+		if (FAILED(hr))
+		{
+			return E_FAIL;
+		}
+	}
 
 	return S_OK;
 }
@@ -1088,10 +1714,10 @@ HRESULT CMapTool_Desert::Save_Terrain_HeightMap(const _char* szHeightMapFilePath
 
 			_float fHeightValue = pHeightData[iIndex] * 10.f;
 
-			_ubyte ucHeight = static_cast<_ubyte>(fHeightValue);
+			_uint ucHeight = static_cast<_uint>(fHeightValue);
 
 			// R, G, B 채널에 동일한 높이 값을 설정
-			pPixels[iIndex] = (ucHeight << 16) | (ucHeight << 8) | ucHeight;
+			pPixels[iIndex] = fHeightValue;
 		}
 	}
 
@@ -1130,6 +1756,7 @@ HRESULT CMapTool_Desert::Save_Terrain_HeightMap(const _char* szHeightMapFilePath
 	Safe_Delete_Array(pHeightData);
 
 	return S_OK;
+
 }
 
 //HRESULT CMapTool_Desert::Save_MaskMap(const _char* szFilePath)

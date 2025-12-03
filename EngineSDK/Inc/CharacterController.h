@@ -56,6 +56,7 @@ public:
 	void Update_PrePxPosition(class CTransform* pOwnerTransform);
 	void Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform);
 	void Update_ControllerTransform();
+	void Set_Position(_vector vPosition);
 	_vector Calc_Gravity(_float fTimeDelta);
 
 private:

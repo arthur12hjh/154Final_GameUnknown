@@ -134,6 +134,7 @@ void CDebugHierarchy::UpdateTransform(_float3 vPosition)
     for (auto& iter : m_pSelectList)
     {
         iter->GetTransform()->Set_State(STATE::POSITION, XMLoadFloat3(&vPosition));
+        static_cast<CCharacterController*>(iter->Find_Component(TEXT("Com_CCT")))->Set_Position(iter->GetTransform()->Get_State(STATE::POSITION));
     }
 }
 
@@ -178,6 +179,7 @@ void CDebugHierarchy::DrawObjectInfo(CGameObject* pDrawObject)
 
 void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
 {
+#ifdef _DEBUG
     // 1 : Collider Size & Collider Radius
     // 2 : Collider Tag Change
     // 3 : Collider Ignore Change
@@ -264,7 +266,7 @@ void CDebugHierarchy::DrawEditorCollider(CCollider* pCollider)
         ImGui::Text("Hit Type : Static");
         break;
     }
-
+#endif // _DEBUG
 }
 
 CDebugHierarchy* CDebugHierarchy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
