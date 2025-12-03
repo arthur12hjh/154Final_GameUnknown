@@ -43,7 +43,6 @@ float3 Calc_ViewSpace(float fDepth, float2 vTexCoord)
     
     //NDC 상의 공간.
     float4 vScreenPos = float4(vTexCoord, fDepth, 1.f);
-    
     float4 vViewSpace = mul(vScreenPos, g_ProjMatrixInv);
     
     /* 
@@ -68,7 +67,7 @@ float2 Calc_UV(float3 vViewSpacePosition)
     // z는 0 ~ 1, x,y는 -1 ~ 1로 고정.
     vSamplePosScreen.xyz /= vSamplePosScreen.w;
     // x,y는 0 ~ 1로 (UV값으로) 변환.
-    vSamplePosScreen.xy = vSamplePosScreen.xy * 0.5f + 0.5f;
+    vSamplePosScreen.x = vSamplePosScreen.x * 0.5f + 0.5f;
     vSamplePosScreen.y = 1.f - vSamplePosScreen.y;
     
     return vSamplePosScreen.xy;
@@ -150,17 +149,20 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
         if(vOffsetUV.x < 0 || vOffsetUV.x > 1.f || vOffsetUV.y < 0 || vOffsetUV.y > 1.f)
             continue;
         
-        // View Space Z
-        float fGeometryZ = g_DepthTexture.Sample(DefaultSampler, vOffsetUV).g * 500.f;
-        float fRangeCheck = smoothstep(0.0f, 1.0f, fRadius / abs(vViewPos.z - fGeometryZ));
-        
-        //깊이 기반 비교.
+        float fSampleDepthNDC = g_DepthTexture.Sample(DefaultSampler, vOffsetUV).r;
+        float3 vGeoPos = Calc_ViewSpace(fSampleDepthNDC, vOffsetUV);
+        float fGeoZ = vGeoPos.z; //실제 geometry view-space Z
+
+        // range check
+        float fDeltaZ = abs(vViewPos.z - fGeoZ);
+        fDeltaZ = max(fDeltaZ, 0.001f);
+        float fRangeCheck = smoothstep(0.f, 1.f, fRadius / fDeltaZ);
+
+        // bias
         float fBias = lerp(g_fBiasMin, g_fBiasMax, vDepth.g);
-        
-        if (fGeometryZ <= vSamplePos.z - fBias)
-        {
+
+        if (fGeoZ <= vSamplePos.z - fBias)
             fOcclusion += fRangeCheck;
-        }
     }
     
     // 샘플링 평균
