@@ -15,6 +15,13 @@ namespace Engine
 
 namespace Client
 {
+	typedef struct Default_Status
+	{
+		long long						iCurrentHealth;
+		long long						iCurrentShield;
+	}DEFAULT_STATUS;
+
+
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
 	// 기본세팅 요거
 	typedef struct Character_NetWork_Desc
@@ -46,6 +53,7 @@ namespace Client
 
 		STATE_END
 	};
+
 	enum class SKILL_STATE {
 		DEFAULT,   // 비활성화
 		ACTIVE_ON, // 딱 활성화 됐을 때
@@ -54,15 +62,13 @@ namespace Client
 		END,	   //
 	};
 
-	typedef struct Player_Desc
+	typedef struct Player_Desc : public DEFAULT_STATUS
 	{
 		long long						iMaxHealth;
 		long long						iMaxShield;
 		//베타 에너지 최대치
 		long long						iMaxBetaEnergy;
 
-		long long						iCurrentHealth;
-		long long						iCurrentShield;
 		//현재 베타 에너지
 		long long						iCurrentBetaEnergy;
 
@@ -212,14 +218,10 @@ namespace Client
 	// 인게임용
 	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
 	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
-	typedef struct Naytiba_Desc
+	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
 
-		long long			iCurrentHealth;
-		long long			iCurrentShield;
-
-	
 		_float3				fLockOnPoint;
 
 		_float2				fAttackCoolTime;

@@ -94,6 +94,15 @@ void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTa
 
 }
 
+void CPlayer::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pPartObject = Find_PartObject(strPartTag);
+	if (nullptr == pPartObject)
+		return;
+
+	pPartObject->Activate_PartObject_Collider(strColliderTag, NotifyRef);
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	return S_OK;
@@ -159,10 +168,10 @@ void CPlayer::Late_Update(_float fTimeDelta)
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
 	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif
 }
@@ -198,6 +207,12 @@ HRESULT CPlayer::Damaged(void* pArg)
 		Desc.isChangeMode = false;
 		Desc.eNextState = PLAYER_STATE::HIT;
 
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
 		m_pFSM->Handle_Transition(Desc);
 	}
 
@@ -211,6 +226,16 @@ HRESULT CPlayer::Damaged(void* pArg)
 	}
 
 	return S_OK;
+}
+
+void CPlayer::SetSillDataID(_uint iSkillID)
+{
+	m_iSkillID = iSkillID;
+}
+
+_int CPlayer::GetSillDataID()
+{
+	return m_iSkillID;
 }
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
@@ -271,6 +296,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pParent = this;
 	WeaponDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
@@ -278,6 +304,8 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
 		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;
+
+	m_pWeapon = static_cast<CWeapon *>(Find_PartObject(TEXT("Part_Weapon")));
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
