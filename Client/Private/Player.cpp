@@ -74,6 +74,25 @@ _bool CPlayer::Use_RushSkill()
 	return S_OK;
 }
 
+void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)
+{
+	// 어떤 방식으로 짜야하지?
+	// 1) strPartTag가 empty일 경우, Player에서 탐색
+	//    strPartTag가 있을 경우, strPartTag로 모델을 탐색
+	// 2) strObjectTag라는 매핑된 값을 문자열 탐색해서 찾고, Play() 함수를 실행함
+	// 3) 그 모델들은 시간이 지난 후 알아서 Stop() << 시발아 이거 어케만드노
+
+	if (strPartTag.empty())
+	{
+
+	}
+	else
+	{
+		Find_PartObject(strPartTag)->Active_SFX(strObjectTag, NotifyReference);
+	}
+
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	return S_OK;

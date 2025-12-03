@@ -36,6 +36,7 @@ public:
 
 	void						Enable_HitCollider(_bool bIsFlag);
 
+	virtual void				Active_SFX(const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)override;
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 	_bool						m_bIsHitCollider = { true };
