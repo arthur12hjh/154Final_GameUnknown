@@ -354,7 +354,7 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
         
         matCombinedOriginal = mul(matCombinedOriginal, matParentLocalOriginal);
         matCombinedSkin = mul(matCombinedSkin, matParentLocalSkin);
-
+        
         iParentIndex = InputBone[iParentIndex].iParentIndex;
     }
     

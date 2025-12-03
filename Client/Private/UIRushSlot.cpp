@@ -67,25 +67,61 @@ void CUIRushSlot::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	m_fCoolAmount = (*m_fCurrentCoolTime / *m_fMaxCoolTime);
-
-	/*
-	if(m_eRushState == SKILL_STATE::ACTIVE_ON && !m_bPlayingAnim)
-		m_eRushState = SKILL_STATE::ACTIVE;*/
-
-#ifdef _DEBUG
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
-	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && *m_iPotions > 0)
-			*m_iPotions -= 1;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && *m_iPotions < *m_iMaxPotions)
-			*m_iPotions += 1;
-	}*/
-#endif
 }
 
 void CUIRushSlot::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	if (m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
+		&& m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
+		&& m_bPlayingAnim == false)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+		Safe_Release(pHUD);
+	}
+	else if (m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
+		&& m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+		&& m_bPlayingAnim == false)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Rush_ActiveOn"));
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+		m_bRushActiveOn = true;
+
+		Safe_Release(pHUD);
+	}
+	else if (m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+		&& m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+		&& m_bPlayingAnim == false)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Rush_Active"));
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+		m_bRushActiveOn = false;
+
+		Safe_Release(pHUD);
+	}
+	else if (m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+		&& m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
+		&& m_bPlayingAnim == true)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Rush_Use"));
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+		Safe_Release(pHUD);
+	}
 }
 
 HRESULT CUIRushSlot::Render()
@@ -104,7 +140,7 @@ HRESULT CUIRushSlot::Render()
 	if (FAILED(m_pVIBaseBufferCom->Render()))
 		return E_FAIL;
 
-	if (m_eRushState != SKILL_STATE::DEFAULT)
+	if (m_tRushInfo.iSkillState != ENUM_CLASS(SKILL_STATE::DEFAULT))
 	{
 		if (FAILED(Render_Glow()))
 			return E_FAIL;
@@ -153,13 +189,18 @@ HRESULT CUIRushSlot::Ready_Components()
 
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
-		TEXT("Com_GlowTexture"), reinterpret_cast<CComponent**>(&m_pGlowTextureCom))))
+		TEXT("Com_RushGlowTexture"), reinterpret_cast<CComponent**>(&m_pRushGlowTextureCom))))
 		return E_FAIL;
 
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
+		TEXT("Com_GlowTexture"), reinterpret_cast<CComponent**>(&m_pGlowTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
 		TEXT("Com_GlowTexture2"), reinterpret_cast<CComponent**>(&m_pGlowTextureCom2))))
-		return E_FAIL;	
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -184,7 +225,7 @@ HRESULT CUIRushSlot::Bind_ShaderResources()
 	_bool bUseTintColor = false;
 	_bool bUseCoolTime = false;
 
-	if (m_eRushState == SKILL_STATE::DEFAULT)
+	if (m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 	{
 		bUseTintColor = true;
 		bUseCoolTime = true;
@@ -237,11 +278,11 @@ void CUIRushSlot::CallbackEvent(void* pArg)
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
 
-	auto* state = static_cast<SKILL_STATE*>(arg->pData);
+	auto* state = static_cast<UI_SKILL_INFO_DESC*>(arg->pData);
 	
-	m_eRushState = *state;
+	m_tRushInfo = *state;
 
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	
 	if (*state == SKILL_STATE::DEFAULT)
 	{
@@ -254,7 +295,7 @@ void CUIRushSlot::CallbackEvent(void* pArg)
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
-	Safe_Release(pHUD);
+	Safe_Release(pHUD);*/
 }
 
 HRESULT CUIRushSlot::Render_Glow()
@@ -283,7 +324,7 @@ HRESULT CUIRushSlot::Bind_GlowShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	
-	if(m_eRushState == SKILL_STATE::ACTIVE_ON)
+	/*if(m_eRushState == SKILL_STATE::ACTIVE_ON)
 		if (FAILED(m_pGlowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 			return E_FAIL;
 	if (m_eRushState == SKILL_STATE::ACTIVE)
@@ -292,8 +333,21 @@ HRESULT CUIRushSlot::Bind_GlowShaderResources()
 			return E_FAIL;
 		if (FAILED(m_pShadowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
 			return E_FAIL;
+	}*/
+
+	if (FAILED(m_pGlowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+		return E_FAIL;
+	if (FAILED(m_pShadowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
+		return E_FAIL;
+
+	if (m_bRushActiveOn)
+	{
+		if (FAILED(m_pRushGlowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0)))
+			return E_FAIL;
 	}
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bRushActiveOn", &m_bRushActiveOn, sizeof(_bool))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
@@ -339,6 +393,7 @@ void CUIRushSlot::Free()
 	Safe_Release(m_pShadowTextureCom);
 	Safe_Release(m_pGlowTextureCom);
 	Safe_Release(m_pGlowTextureCom2);
+	Safe_Release(m_pRushGlowTextureCom);
 	Safe_Release(m_pVIBaseBufferCom);
 	Safe_Release(m_pVIGlowBufferCom);
 }

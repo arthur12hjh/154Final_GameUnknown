@@ -637,6 +637,15 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
       <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
+      <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hairpin">
+      <UniqueIdentifier>{f1c04c9b-b8bc-44d5-9444-3ac8b7b32b8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot\UIRushSlotFX">
+      <UniqueIdentifier>{a6ed4823-6d2d-4a75-8c2e-c4f8e0ba481c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1143,7 +1152,7 @@
     <ClInclude Include="..\Public\Player_BattleEvadeState.h">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h">
+    <ClInclude Include="..\Public\Player_BetaChargingSlashState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_HitState.h">
@@ -1230,9 +1239,6 @@
     <ClInclude Include="..\Public\Player_DrawHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
-      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClInclude>
@@ -1298,6 +1304,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BetaTripletState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hairpin_Player.h">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1786,7 +1801,7 @@
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp">
+    <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_HitState.cpp">
@@ -1883,9 +1898,6 @@
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIWorldWrapper.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI</Filter>
     </ClCompile>
@@ -1930,6 +1942,15 @@
     </ClCompile>
     <ClCompile Include="..\private\TrailData.cpp">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BetaTripletState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hairpin_Player.cpp">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

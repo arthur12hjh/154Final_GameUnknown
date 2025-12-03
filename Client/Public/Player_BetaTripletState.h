@@ -4,13 +4,14 @@
 
 NS_BEGIN(Client)
 
-class CPlayer_BetaChargingSlahsState final : public CPlayerState
+class CPlayer_BetaTripletState final : public CPlayerState
 {
 private:
-	CPlayer_BetaChargingSlahsState();
-	virtual ~CPlayer_BetaChargingSlahsState() = default;
+	CPlayer_BetaTripletState();
+	virtual ~CPlayer_BetaTripletState() = default;
 
 public:
+	//상태 진입 전에 진입 가능한 녀석인지 체크합니다. 플레이어 정보 요구하거나 하는 녀석들은 다 얘 있어야 편해요
 	static _bool CanEnter(class CPlayer* pPlayer, PLAYER_DESC* pPlayerDesc);
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
 	// void* 디폴트 매개변수 잡아서 넘겨받습니다.
@@ -19,11 +20,10 @@ public:
 	virtual void						 End() override;
 
 private:
-	_bool						m_isStartCharge = { false };
-	_bool						m_isLoopCharge = { false };
-	_bool						m_isAttack = { false };
+	_bool m_HasLockedOn = { false }; 
+
 public:
-	static	CPlayer_BetaChargingSlahsState* Create(void* pArg);
+	static	CPlayer_BetaTripletState* Create(void* pArg);
 	virtual	void			   Free() override;
 
 };

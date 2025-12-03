@@ -83,7 +83,7 @@ void CUIBase::Update(_float fTimeDelta)
 
 		//_vector vParentPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
 		// 1) World → View
-		_vector vView = XMVector3Transform(m_pTargetPos, view);
+		_vector vView = XMVector3Transform(XMVectorSetW(XMLoadFloat3(m_pTargetPos), 1.f), view);
 
 		// 카메라 뒤에 있으면 표시 불가
 		if (XMVectorGetZ(vView) < 0.1f)

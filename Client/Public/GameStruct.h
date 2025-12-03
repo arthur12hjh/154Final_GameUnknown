@@ -37,7 +37,11 @@ namespace Client
 	enum class PLAYER_STATE { 
 		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, VENDING_INTERACTION,
-		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
+		HIT, 
+		BETA_CHARGINGSLASH, BETA_TRIPLET,
+		
+		AERIAL_ATTACK, //미구현
+		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
 		STATE_END
@@ -82,6 +86,7 @@ namespace Client
 
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
+		//bool							eBetaSkillState[4];
 		SKILL_STATE						eBetaSkillState[4];
 		//_bool							eBetaSkillState[4];			// 사용중인 스킬 상태 여부
 		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
@@ -95,6 +100,9 @@ namespace Client
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
+		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
+		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
+		bool   isWeaponVisible = { false };
 
 	}PLAYER_DESC;
 

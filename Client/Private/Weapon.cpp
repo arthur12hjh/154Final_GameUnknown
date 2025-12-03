@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "Player.h"
 #include "Weapon.h"
@@ -11,12 +12,12 @@
 #include "Effect.h"
 
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
 CWeapon::CWeapon(const CWeapon& Prototype) 
-	: CPartObject{ Prototype }
+	: CPlayer_Parts{ Prototype }
 {
 }
 
@@ -49,6 +50,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
+	m_pPlayerDesc = m_pGameManager->Get_PlayerDesc();
 
 	return S_OK;
 }
@@ -80,12 +82,12 @@ void CWeapon::Update(_float fTimeDelta)
 		desc.fRotationPerSec = 1.f;
 		desc.fSpeedPerSec = 1.f;
 		desc.pRootMatrix = &m_CombinedWorldMatrix;
-		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
+		desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
 		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 10.f;
+		desc.fSize = 0.3f;
 
-		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"), &desc));
-		m_pCharge->Play();
+		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
+		m_pCharge->Play(4.f);
 	}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
@@ -125,11 +127,18 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}                      
 
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);;
+
+
+	//=============== RENDERING LOGIC =================//
+	if (false == isVisible())
+		return;
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
 	m_pSpark->Late_Update(fTimeDelta);
 	if (nullptr != m_pCharge) {
 		m_pCharge->Late_Update(fTimeDelta);
 	}
+
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -143,7 +152,6 @@ HRESULT CWeapon::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -270,6 +278,11 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.pSkillData = &SkillDesc;
 		pNaytiba->Damaged(&pDamageDesc);
 	}
+}
+
+_bool CWeapon::isVisible()
+{
+	return m_pPlayerDesc->isWeaponVisible;
 }
 
 CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

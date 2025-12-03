@@ -190,9 +190,11 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
-    <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h" />
+    <ClInclude Include="..\Public\Player_BetaChargingSlashState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
+    <ClInclude Include="..\Public\Player_BetaTripletState.h" />
     <ClInclude Include="..\Public\Player_DrawHairpin.h" />
+    <ClInclude Include="..\Public\Hairpin_Player.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
@@ -408,9 +410,11 @@
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
-    <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp" />
+    <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_BetaTripletState.cpp" />
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
+    <ClCompile Include="..\Private\Hairpin_Player.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />

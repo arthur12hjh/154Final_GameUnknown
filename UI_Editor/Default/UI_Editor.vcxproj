@@ -175,14 +175,10 @@
     <ClCompile Include="..\..\Client\Private\LockonManager.cpp" />
     <ClCompile Include="..\..\Client\Private\Notify.cpp" />
     <ClCompile Include="..\..\Client\Private\Player.cpp" />
-    <ClCompile Include="..\..\Client\Private\PlayerBattleFSM.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerBehaviorCallback.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerCCTHitReporter.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerFSM.cpp" />
-    <ClCompile Include="..\..\Client\Private\PlayerIdleFSM.cpp" />
-    <ClCompile Include="..\..\Client\Private\PlayerLockonFSM.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerState.cpp" />
-    <ClCompile Include="..\..\Client\Private\Player_AerialAttack.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleEvadeState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleIdleState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleLandingState.cpp" />

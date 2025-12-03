@@ -54,11 +54,6 @@ void CS(uint3 Gid : SV_GroupID,
             vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
             if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
                 vDir.xyzw = 0;
-            //g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-            //g_Out[DTid.x].WorldMat = g_WorldMatrix;
-            //vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
-            //if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
-            //    vDir.xyzw = 0;
             if (0 > g_Out[DTid.x].vLifeTime.x)
                 return;
             else if (0 == vfisSphere.x)
@@ -471,11 +466,6 @@ void Spectrum(uint3 Gid : SV_GroupID,
             if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
                 vDir.xyzw = 0;
         }
-            //g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-            //g_Out[DTid.x].WorldMat = g_WorldMatrix;
-            //vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
-            //if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
-            //    vDir.xyzw = 0;
         if (0 > g_Out[DTid.x].vLifeTime.x)
             return;
         else if (0 == vfisSphere.x)
@@ -1290,7 +1280,6 @@ void Converge(uint3 Gid : SV_GroupID,
                 else
                 {
                     g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y))) * vfTimeDelta.x * length(Input[DTid.x].WorldMat._11_12_13) * (length(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz) / length(Input[DTid.x].WorldMat._11_12_13)) * 5;
-                    //g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity + (vRight * fGravity * vfTimeDelta.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y)) + (vUp * fGravity * vfTimeDelta.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y))) * length(Input[DTid.x].WorldMat._11_12_13);
                 }
                 break;
             case 2:
@@ -1324,40 +1313,6 @@ void Converge(uint3 Gid : SV_GroupID,
         {
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
         }
-        //if ((2 == viLoopAndCount.x || 3 == viLoopAndCount.x)  && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
-        //{
-        //
-        //    switch (int(vfisSphere.x))
-        //    {
-        //        case 0:{
-        //                g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + Input[DTid.x].vfRoot * length(Input[DTid.x].WorldMat._11_12_13);
-        //                g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
-        //            }
-        //            break;
-        //        case 1:{
-        //            
-        //                g_Out[DTid.x].WorldMat = g_WorldMatrix;
-        //                vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));
-        //                if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
-        //                    vDir.xyzw = 0;
-        //                g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + vDir * vfisSphere.y * length(Input[DTid.x].WorldMat._11_12_13);
-        //                g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
-        //            }
-        //            break;
-        //        case 2:{
-        //        
-        //                float4 vRight = float4(g_WorldMatrix._11_12_13 * sin(vfTimeDelta.y), 0);
-        //                float4 vUp = float4(g_WorldMatrix._31_32_33 * cos(vfTimeDelta.y), 0);
-        //                g_Out[DTid.x].vfStart = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
-        //                vRight = float4(g_WorldMatrix._11_12_13 * sin(vfTimeDelta.y - g_Out[DTid.x].vLifeTime.x), 0);
-        //                vUp = float4(g_WorldMatrix._31_32_33 * cos(vfTimeDelta.y - g_Out[DTid.x].vLifeTime.x), 0);
-        //                g_Out[DTid.x].vTranslation = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
-        //            }
-        //            break;
-        //    }
-        //    g_Out[DTid.x].WorldMat = g_WorldMatrix;
-        //    g_Out[DTid.x].vLifeTime.x = fmod(g_Out[DTid.x].vLifeTime.x, g_Out[DTid.x].vLifeTime.y);
-        //}
     }
     else
     {

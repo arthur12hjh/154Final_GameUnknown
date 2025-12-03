@@ -94,6 +94,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 

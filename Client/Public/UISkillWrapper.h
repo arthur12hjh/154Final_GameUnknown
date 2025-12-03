@@ -42,6 +42,8 @@ private:
 
 	SKILL_STATE* m_eSkillState[4];
 	SKILL_STATE m_ePrevSkillState[4];
+	/*SKILL_STATE* m_eSkillState[4];
+	SKILL_STATE m_ePrevSkillState[4];*/
 
 public:
 	static CUISkillWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

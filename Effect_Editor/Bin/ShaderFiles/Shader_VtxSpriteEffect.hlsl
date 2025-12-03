@@ -86,22 +86,11 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> OutStream)
     Out[3].vTexcoord = float2(0.f, 1.f);
     Out[3].vProjPos = Out[3].vPosition;
     
-    
-    
-    Out[0].vNormal = float4(0, 0, 0, 0);
-    Out[1].vNormal = float4(0, 0, 0, 0);
-    Out[2].vNormal = float4(0, 0, 0, 0);
-    Out[3].vNormal = float4(0, 0, 0, 0);
-    
-    vector vSourDir, vDestDir, vNormal;
-    vSourDir = float4(In[0].vPosition.xyz - vR + vU, 1.f) - float4(In[0].vPosition.xyz + vR + vU, 1.f);
-    vDestDir = float4(In[0].vPosition.xyz - vR - vU, 1.f) - float4(In[0].vPosition.xyz - vR + vU, 1.f);
-    vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
     for (int i = 0; i < 4; ++i)
     {
-        Out[i].vNormal = float4(normalize(vNormal.xyz), 0);
-        Out[i].vTangent = float4(normalize(vRightRot), 0);
-        Out[i].vBitangent = float4(normalize(vUpRot), 0);
+        Out[i].vNormal = float4(normalize(-g_CamMatrix._31_32_33), 0);
+        Out[i].vTangent = -float4(normalize(vRightRot), 0);
+        Out[i].vBitangent = -float4(normalize(vUpRot), 0);
     }
     
     
@@ -153,14 +142,21 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord) * g_vColor;
     if (0.5 > Out.vDiffuse.a)
         discard;
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
-    float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
     
-    float3 normalOS = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2.0f - 1.0f; // 0~1 => -1~1
-    float3 normalWS = mul((float3x3) g_WorldMatrix, normalOS);
-    normalWS = normalize(normalWS);
+    float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
+    float3 normal;
+    normal.xy = rg;
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg))); // Z 재계산
+    normal = normalize(normal);
     
-    Out.vNormal = float4(normalWS, 1.f);
+    float3 N = normal;
+    float3 T = normalize(In.vTangent.xyz);
+    float3 B = normalize(In.vBitangent.xyz);
+    float3 G = normalize(In.vNormal.xyz);
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     return Out;
 }
@@ -176,17 +172,21 @@ PS_NORMAL_OUT PS_NORMAL_MASK_MAIN(PS_IN In)
     if (Out.vDiffuse.r <= 0.25f)
         discard;
     Out.vDiffuse *= g_vColor;
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, fTexcoord);
-    float3 vNormal = mul(normalize(vNormalDesc.xyz), (float3x3) g_WorldMatrix);
     
-    float3 N = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xyz * 2 - 1;
-    float3 T = -normalize(In.vTangent.xyz);
-    float3 B = -normalize(In.vBitangent.xyz);
-    float3 G = -normalize(In.vNormal.xyz);
+    
+    float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
+    float3 normal;
+    normal.xy = rg;
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg))); // Z 재계산
+    normal = normalize(normal);
+    
+    float3 N = normal;
+    float3 T = normalize(In.vTangent.xyz);
+    float3 B = normalize(In.vBitangent.xyz);
+    float3 G = normalize(In.vNormal.xyz);
     
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
-    
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     return Out;
