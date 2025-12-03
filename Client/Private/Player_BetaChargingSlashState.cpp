@@ -59,7 +59,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
         (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)  ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S)  ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.65f)
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.55f)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
 

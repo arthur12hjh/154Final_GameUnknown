@@ -75,7 +75,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 		m_tNextState.pArg = &m_NextStateDesc;
 	}
 
-	else if (true == isAnimFinished)
+	else if (fAnimationRatio >= m_fMaxRatio + 0.1f)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
 	return m_tNextState;
