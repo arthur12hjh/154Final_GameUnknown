@@ -33,26 +33,28 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 
 void CLevel_Loading::Update(_float fTimeDelta)
 {
-	if (true == m_pLoader->isFinished() &&
-		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))
+	if (true == m_pLoader->isFinished())
 	{
-		m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
-
-		CLevel* pNewLevel = { nullptr };
-
-		switch (m_eNextLevelID)
+		if (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))
 		{
-		case LEVEL::LOGO:
-			pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext, m_eNextLevelID);
-			break;
-		case LEVEL::GAMEPLAY:
-			pNewLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext, m_eNextLevelID);
-			break;
-		}
+			m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
 
-		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
-			return;		
-	}	
+			CLevel* pNewLevel = { nullptr };
+
+			switch (m_eNextLevelID)
+			{
+			case LEVEL::LOGO:
+				pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext, m_eNextLevelID);
+				break;
+			case LEVEL::GAMEPLAY:
+				pNewLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext, m_eNextLevelID);
+				break;
+			}
+
+			if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
+				return;
+		}
+	}
 }
 
 HRESULT CLevel_Loading::Render()
