@@ -1,6 +1,474 @@
 [
     {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 1,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Trail",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
         "szAnimationTag": "Proto_Sword_Lightattack_01_Root"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 1,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Trail",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_02_Root"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 1,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Trail",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_03_Root"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_ComboParry_LinkAttack2_1"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Caution_Cw"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 1,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Trail",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Sword_Lightattack_04_Root"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 23,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Shock",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    5.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 32,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Shock",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    5.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 54,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Shock",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    5.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    4.0,
+                    4.0,
+                    4.0
+                ]
+            }
+        ],
+        "szAnimationTag": "P_Eve_Sword_SlotNormal_ChainStab"
     },
     {
         "AnimationNotifies": [
@@ -115,7 +583,7 @@
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    1.0,
+                    3.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -131,99 +599,6 @@
             }
         ],
         "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex"
-    },
-    {
-        "AnimationNotifies": [
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 0,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Evasion",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Transform",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    20.0,
-                    20.0,
-                    20.0
-                ]
-            }
-        ],
-        "szAnimationTag": "Proto_Lockon_Evade_Left"
-    },
-    {
-        "AnimationNotifies": [
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 15,
-                "iNumData01": 12,
-                "iNumData02": 1,
-                "iNumData03": 4,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
-                "szNotifyArg02": "Hit_Box_Layer",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Active_Collision",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        ],
-        "szAnimationTag": "M_Gorilla_S10_SawSpinAttack"
-    },
-    {
-        "szAnimationTag": "M_Gorilla_KnockDownDead"
     },
     {
         "AnimationNotifies": [
@@ -277,6 +652,108 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
+                "iNotifyKeyFrame": 15,
+                "iNumData01": 12,
+                "iNumData02": 1,
+                "iNumData03": 4,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "Hit_Box_Layer",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "M_Gorilla_S10_SawSpinAttack"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_KnockDownDead"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Finish_S_Curves"
+    },
+    {
+        "szAnimationTag": "ADD_BASE"
+    },
+    {
+        "szAnimationTag": "Aim_DownLeft"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Evasion",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    20.0,
+                    20.0,
+                    20.0
+                ]
+            }
+        ],
+        "szAnimationTag": "Proto_Lockon_Evade_Left"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
                 "iNotifyKeyFrame": 0,
                 "iNumData01": 0,
                 "iNumData02": 0,
@@ -314,9 +791,6 @@
             }
         ],
         "szAnimationTag": "P_Eve_Peaceful_Evade_Forward"
-    },
-    {
-        "szAnimationTag": "M_Gorilla_S04_RightBlowMoveLeft"
     },
     {
         "AnimationNotifies": [
@@ -362,6 +836,9 @@
             }
         ],
         "szAnimationTag": "P_Eve_Peaceful_Evade_Backward"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_S04_RightBlowMoveLeft"
     },
     {
         "AnimationNotifies": [
@@ -454,9 +931,6 @@
         "szAnimationTag": "Proto_Lockon_Evade_Right"
     },
     {
-        "szAnimationTag": "M_Gorilla_S24_LeftAttack"
-    },
-    {
         "AnimationNotifies": [
             {
                 "fNumData01": 0.0,
@@ -502,6 +976,9 @@
         "szAnimationTag": "M_Gorilla_S03_StraightAttack"
     },
     {
+        "szAnimationTag": "M_Gorilla_S24_LeftAttack"
+    },
+    {
         "AnimationNotifies": [
             {
                 "fNumData01": 0.0,
@@ -545,6 +1022,51 @@
             }
         ],
         "szAnimationTag": "M_Gorilla_S06_BlowMoveBack"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 0,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Charge",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop"
     },
     {
         "AnimationNotifies": [
@@ -635,6 +1157,12 @@
         "szAnimationTag": "M_Gorilla_S05_LeftBlowMoveRight"
     },
     {
+        "szAnimationTag": "M_Finish_DeadLink"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_S01_ShortMoveLeft"
+    },
+    {
         "szAnimationTag": "M_Gorilla_S08_RightSwingCombo"
     },
     {
@@ -642,6 +1170,9 @@
     },
     {
         "szAnimationTag": "M_Gorilla_S11_SmashChain"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Caution_Fw"
     },
     {
         "AnimationNotifies": [
@@ -983,5 +1514,95 @@
     },
     {
         "szAnimationTag": "M_GorillaB_S18_ThrowStone2"
+    },
+    {
+        "szAnimationTag": "Hit_Sword_Normal_LinkAttack1_Curves"
+    },
+    {
+        "szAnimationTag": "M_Finish_Dead"
+    },
+    {
+        "szAnimationTag": "M_Finish_DeadLink_Curves"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_BattleIdle01"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Caution_Bw"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Caution_Lw"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Caution_Rw"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Finish_L"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Finish_L_Curves"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Finish_S"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Run_E"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Run_L"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_Run_S"
+    },
+    {
+        "szAnimationTag": "M_Gorilla_S02_ShortMoveRight"
+    },
+    {
+        "szAnimationTag": "Additive_Rotate"
+    },
+    {
+        "AnimationNotifies": [
+            {
+                "fNumData01": 0.800000011920929,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 10,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Charge",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging"
     }
 ]

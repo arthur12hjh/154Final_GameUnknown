@@ -63,32 +63,41 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
+	m_pCharge->Update(fTimeDelta);
+	
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-		m_pSpark->Stop();
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-		m_pSpark->Play();
-	if (nullptr != m_pCharge) {
-		m_pCharge->Update(fTimeDelta);
-		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->Play();
-		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->End();
-		if (m_pCharge->isDead())
-			Safe_Release(m_pCharge);
-	}
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
-		CEffect::EFFECT_TRANSFORM_DESC desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = &m_CombinedWorldMatrix;
-		desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 0.3f;
+	//ANIM_NOTIFY GaraNotify;
+	//GaraNotify.fNumData01 = 1.f;
+	//
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+	//	Active_SFX(TEXT("Trail"), GaraNotify);
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+	//	Active_SFX(TEXT("Spark"), GaraNotify);
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
+	//	Active_SFX(TEXT("Charge"), GaraNotify);
 
-		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
-		m_pCharge->Play(4.f);
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_pSpark->Stop();
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_pSpark->Play();
+	//if (nullptr != m_pCharge) {
+	//	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	//		m_pCharge->Play();
+	//	if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	//		m_pCharge->End();
+	//}
+	//else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
+	//	CEffect::EFFECT_TRANSFORM_DESC desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	//	desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 0.3f;
+	//
+	//	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
+	//	m_pCharge->Play(4.f);
+	//}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
@@ -132,12 +141,17 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	//=============== RENDERING LOGIC =================//
 	if (false == isVisible())
 		return;
-
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
-	m_pSpark->Late_Update(fTimeDelta);
-	if (nullptr != m_pCharge) {
-		m_pCharge->Late_Update(fTimeDelta);
+	
+	if (m_fTrailTime > 0.f)
+	{
+		m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
+		m_fTrailTime -= fTimeDelta;
+		if (m_fTrailTime <= 0.f)
+			m_pSpark->Stop();
 	}
+	m_pSpark->Late_Update(fTimeDelta);
+	m_pCharge->Late_Update(fTimeDelta);
+
 
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
@@ -201,25 +215,25 @@ void CWeapon::Enable_HitCollider(_bool bIsFlag)
 	m_bIsHitCollider = bIsFlag;
 }
 
-void CWeapon::Active_SFX(const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)
+void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
 {
-	// ¾î¶² ¹æ½ÄÀ¸·Î Â¥¾ßÇÏÁö?
-	// 1) strPartTag°¡ emptyÀÏ °æ¿ì, Player¿¡¼­ Å½»ö (V)
-	//    strPartTag°¡ ÀÖÀ» °æ¿ì, strPartTag·Î ¸ðµ¨À» Å½»ö (V)
-	// 2) strObjectTag¶ó´Â ¸ÅÇÎµÈ °ªÀ» ¹®ÀÚ¿­ Å½»öÇØ¼­ Ã£°í, Play() ÇÔ¼ö¸¦ ½ÇÇàÇÔ
-	// 3) ±× ¸ðµ¨µéÀº ½Ã°£ÀÌ Áö³­ ÈÄ ¾Ë¾Æ¼­ Stop() << ½Ã¹ß¾Æ ÀÌ°Å ¾îÄÉ¸¸µå³ë
+	// ï¿½î¶² ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Â¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
+	// 1) strPartTagï¿½ï¿½ emptyï¿½ï¿½ ï¿½ï¿½ï¿½, Playerï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ (V)
+	//    strPartTagï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, strPartTagï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ (V)
+	// 2) strObjectTagï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ Å½ï¿½ï¿½ï¿½Ø¼ï¿½ Ã£ï¿½ï¿½, Play() ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// 3) ï¿½ï¿½ ï¿½ðµ¨µï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ë¾Æ¼ï¿½ Stop() << ï¿½Ã¹ß¾ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½É¸ï¿½ï¿½ï¿½ï¿½
 
 	if (strObjectTag == TEXT("Trail"))
 	{
-
+		m_fTrailTime = NotifyReference.fNumData01;
 	}
 	else if (strObjectTag == TEXT("Spark"))
 	{
-
+		m_pSpark->Play();
 	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
-
+		m_pCharge->Play(NotifyReference.fNumData01);
 	}
 
 }
@@ -269,6 +283,19 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
 	m_pSpark->Stop();
+
+	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
+	ChargeDesc.fRotationPerSec = 1.f;
+	ChargeDesc.fSpeedPerSec = 1.f;
+	ChargeDesc.pRootMatrix = &m_CombinedWorldMatrix;
+	ChargeDesc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
+	ChargeDesc.fRot = _float3(0, 0, 0);
+	ChargeDesc.fSize = 0.3f;
+
+	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
+	m_pCharge->Play();
+	m_pCharge->Stop();
+	
 	return S_OK;
 }
 

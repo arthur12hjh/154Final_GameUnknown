@@ -36,7 +36,8 @@ public:
 
 	void						Enable_HitCollider(_bool bIsFlag);
 
-	virtual void				Active_SFX(const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)override;
+	virtual void				Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 	_bool						m_bIsHitCollider = { true };
@@ -48,6 +49,8 @@ private:
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;
 	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
+
+	_float						m_fTrailTime = -10.f;
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };

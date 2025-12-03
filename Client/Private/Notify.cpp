@@ -166,7 +166,7 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 {
 	const _float4x4* pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
 
-	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+  	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 	if (!AnimNotify.szNotifyArg08.empty())
