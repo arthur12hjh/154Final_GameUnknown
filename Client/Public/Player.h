@@ -26,6 +26,9 @@ public:
 	_bool Use_BetaSkill(_uint iSkillID);
 	_bool Use_RushSkill();
 
+
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)override;
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
