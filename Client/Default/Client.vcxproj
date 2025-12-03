@@ -342,6 +342,7 @@
     <ClInclude Include="..\Public\UIBeta.h" />
     <ClInclude Include="..\Public\UIBossHPBar.h" />
     <ClInclude Include="..\Public\UIBossHPBarFX.h" />
+    <ClInclude Include="..\Public\UIBossName.h" />
     <ClInclude Include="..\Public\UIBossShield.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
@@ -577,6 +578,7 @@
     <ClCompile Include="..\Private\UIBeta.cpp" />
     <ClCompile Include="..\Private\UIBossHPBar.cpp" />
     <ClCompile Include="..\Private\UIBossHPBarFX.cpp" />
+    <ClCompile Include="..\Private\UIBossName.cpp" />
     <ClCompile Include="..\Private\UIBossShield.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />

@@ -31,24 +31,24 @@ HRESULT CUIMonsterShield::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	auto pCharactor{ nullptr };
-
-	if (pCharactor)
-	{
-		/*m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);*/
-	}
-#ifdef _DEBUG
-	else
-	{
-		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
-
-		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iMaxShield);
-		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iCurrentShield);
-
-		Safe_Release(pGaraPlayer);
-	}
-#endif // DEBUG
+//	auto pCharactor{ nullptr };
+//
+//	if (pCharactor)
+//	{
+//		/*m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
+//		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);*/
+//	}
+//#ifdef _DEBUG
+//	else
+//	{
+//		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
+//
+//		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iMaxShield);
+//		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iCurrentShield);
+//
+//		Safe_Release(pGaraPlayer);
+//	}
+//#endif // DEBUG
 
 	//Safe_Release(pCharactor);
 	
@@ -75,10 +75,10 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 	}*/
 #endif
 
-	m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
+	/*if (m_iCurrentShield)
+		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
-
 }
 
 void CUIMonsterShield::Late_Update(_float fTimeDelta)

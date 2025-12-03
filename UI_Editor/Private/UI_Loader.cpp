@@ -27,6 +27,7 @@
 #include "UIBossHPBar.h"
 #include "UIBossHPBarFX.h"
 #include "UIBossShield.h"
+#include "UIBossName.h"
 
 #include "GameInstance.h"
 #include "UIResourceStore.h"
@@ -250,11 +251,19 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 
 	/* For.Prototype_Component_UI_Texture_Boss_Vital_Shadow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Boss_Vital_Shadow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
-		TEXT("Com_Texture_UI_Boss_Vital_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Boss_Vital_Shadow.png"), 1);
+		TEXT("Com_Texture_UI_Boss_Vital_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Boss_Name */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
+		TEXT("Com_Texture_UI_Boss_Name"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1);
 
 	/* For.Prototype_GameObject_UI_WorldWrapper */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossVitalWrapper"),
@@ -274,6 +283,11 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_GameObject_UI_Boss_Shield */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_Shield"),
 		CUIBossShield::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_BossName */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossName"),
+		CUIBossName::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
