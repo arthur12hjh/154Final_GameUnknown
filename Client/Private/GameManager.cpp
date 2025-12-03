@@ -46,7 +46,7 @@ CPlayer* CGameManager::GetGameCharacter()
     return m_pPlayer;
 }
 
-const PLAYER_DESC* CGameManager::Get_PlayerDesc()
+PLAYER_DESC* CGameManager::Get_PlayerDesc()
 {
     return m_pPlayer->Get_Desc();
 }
@@ -131,6 +131,27 @@ _float CGameManager::Get_CurMinDist()
 _bool CGameManager::Get_Lockon()
 {
     return m_pLockonManager->Get_Lockon();
+}
+#pragma endregion
+
+#pragma region Damage Logic
+void CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
+{
+    long long AttackDamage = iDamage * (1.f - fPercent);
+    long long GuardDamage = iDamage * fPercent;
+    long long OverDamage = GuardDamage - pInfo->iCurrentShield;
+
+    if (0 < OverDamage)
+    {
+        AttackDamage += OverDamage;
+        pInfo->iCurrentShield = 0.f;
+    }
+    else
+        pInfo->iCurrentShield -= GuardDamage;
+
+    pInfo->iCurrentHealth -= AttackDamage;
+    if (0 >= pInfo->iCurrentHealth)
+        pInfo->iCurrentHealth = 0.f;
 }
 #pragma endregion
 

@@ -34,12 +34,13 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 
 void CLevel_Loading::Update(_float fTimeDelta)
 {
-	if (true == m_pLoader->isFinished() &&
-		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))
+	if (true == m_pLoader->isFinished())
 	{
-		m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
+		if (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))
+		{
+			m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
 
-		CLevel* pNewLevel = { nullptr };
+			CLevel* pNewLevel = { nullptr };
 
 		switch (m_eNextLevelID)
 		{
@@ -54,9 +55,10 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			break;
 		}
 
-		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
-			return;		
-	}	
+			if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
+				return;
+		}
+	}
 }
 
 HRESULT CLevel_Loading::Render()

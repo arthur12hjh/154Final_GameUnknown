@@ -38,8 +38,9 @@ void CParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_bisLoop = false;
-		if (m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime)
-			return;
+	}
+	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+		return;
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
@@ -48,8 +49,7 @@ void CParticle::Update(_float fTimeDelta)
 
 void CParticle::Late_Update(_float fTimeDelta)
 {
-	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
-	{
+	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);

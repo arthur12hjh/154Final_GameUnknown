@@ -34,7 +34,7 @@
                                 "Shader": {
                                     "bUseGlow": true,
                                     "bUseTintColor": true,
-                                    "fGlowIntensity": 2.3483645915985107,
+                                    "fGlowIntensity": 1.7361011505126953,
                                     "fGlowSpread": 0.0,
                                     "vTintColor": [
                                         0.4415094256401062,
@@ -324,7 +324,7 @@
                                         "fSizeX": 16.0,
                                         "fSizeY": 16.0,
                                         "fX": 1502.0,
-                                        "fY": 773.0,
+                                        "fY": 764.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -358,7 +358,7 @@
                                         "fSizeX": 8.0,
                                         "fSizeY": 8.0,
                                         "fX": 1502.0,
-                                        "fY": 773.0,
+                                        "fY": 764.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -377,7 +377,7 @@
                                 "fSizeX": 20.0,
                                 "fSizeY": 20.0,
                                 "fX": 1490.0,
-                                "fY": 755.0,
+                                "fY": 746.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -403,10 +403,10 @@
                         },
                         "fAlpha": 1.0,
                         "fOffsetX": 0.0,
-                        "fOffsetY": -25.0,
+                        "fOffsetY": -34.0,
                         "fRotation": 0.0,
-                        "fSizeX": 70.0,
-                        "fSizeY": 70.0,
+                        "fSizeX": 85.0,
+                        "fSizeY": 85.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -429,16 +429,6 @@
                             }
                         ],
                         "szEvents": {
-                            "Skill_0_Active_Effect": [
-                                {
-                                    "szActionTag": "Skill_0_Active",
-                                    "szArg": "Skill_0_Active",
-                                    "szSubscribeEventTags": [
-                                        "Skill_0_Active"
-                                    ],
-                                    "szTypeTag": "PlayAnimEvent"
-                                }
-                            ],
                             "Skill_0_ActiveOn_Effect": [
                                 {
                                     "szActionTag": "Skill_0_ActiveOn",
@@ -449,12 +439,12 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "Skill_0_Use_Effect": [
+                            "Skill_0_Active_Effect": [
                                 {
-                                    "szActionTag": "Skill_0_Use",
-                                    "szArg": "Skill_0_Use",
+                                    "szActionTag": "Skill_0_Active",
+                                    "szArg": "Skill_0_Active",
                                     "szSubscribeEventTags": [
-                                        "Skill_0_Use"
+                                        "Skill_0_Active"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -465,6 +455,16 @@
                                     "szArg": "Skill_0_Default",
                                     "szSubscribeEventTags": [
                                         "Skill_0_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_0_Use_Effect": [
+                                {
+                                    "szActionTag": "Skill_0_Use",
+                                    "szArg": "Skill_0_Use",
+                                    "szSubscribeEventTags": [
+                                        "Skill_0_Use"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -501,8 +501,8 @@
                                         "fRotation": 0.0,
                                         "fSizeX": 16.0,
                                         "fSizeY": 16.0,
-                                        "fX": 1462.0,
-                                        "fY": 813.0,
+                                        "fX": 1457.0,
+                                        "fY": 810.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -535,8 +535,8 @@
                                         "fRotation": 0.0,
                                         "fSizeX": 8.0,
                                         "fSizeY": 8.0,
-                                        "fX": 1462.0,
-                                        "fY": 813.0,
+                                        "fX": 1457.0,
+                                        "fY": 810.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -554,8 +554,8 @@
                                 "fRotation": 0.0,
                                 "fSizeX": 20.0,
                                 "fSizeY": 20.0,
-                                "fX": 1450.0,
-                                "fY": 795.0,
+                                "fX": 1445.0,
+                                "fY": 792.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -580,11 +580,11 @@
                             ]
                         },
                         "fAlpha": 1.0,
-                        "fOffsetX": -40.0,
-                        "fOffsetY": 15.0,
+                        "fOffsetX": -45.0,
+                        "fOffsetY": 12.0,
                         "fRotation": 0.0,
-                        "fSizeX": 70.0,
-                        "fSizeY": 70.0,
+                        "fSizeX": 85.0,
+                        "fSizeY": 85.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -607,16 +607,6 @@
                             }
                         ],
                         "szEvents": {
-                            "Skill_1_Active_Effect": [
-                                {
-                                    "szActionTag": "Skill_1_Active",
-                                    "szArg": "Skill_1_Active",
-                                    "szSubscribeEventTags": [
-                                        "Skill_1_Active"
-                                    ],
-                                    "szTypeTag": "PlayAnimEvent"
-                                }
-                            ],
                             "Skill_1_ActiveOn_Effect": [
                                 {
                                     "szActionTag": "Skill_1_ActiveOn",
@@ -627,12 +617,12 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "Skill_1_Use_Effect": [
+                            "Skill_1_Active_Effect": [
                                 {
-                                    "szActionTag": "Skill_1_Use",
-                                    "szArg": "Skill_1_Use",
+                                    "szActionTag": "Skill_1_Active",
+                                    "szArg": "Skill_1_Active",
                                     "szSubscribeEventTags": [
-                                        "Skill_1_Use"
+                                        "Skill_1_Active"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -643,6 +633,16 @@
                                     "szArg": "Skill_1_Default",
                                     "szSubscribeEventTags": [
                                         "Skill_1_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_1_Use_Effect": [
+                                {
+                                    "szActionTag": "Skill_1_Use",
+                                    "szArg": "Skill_1_Use",
+                                    "szSubscribeEventTags": [
+                                        "Skill_1_Use"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -680,7 +680,7 @@
                                         "fSizeX": 16.0,
                                         "fSizeY": 16.0,
                                         "fX": 1502.0,
-                                        "fY": 853.0,
+                                        "fY": 858.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -714,7 +714,7 @@
                                         "fSizeX": 8.0,
                                         "fSizeY": 8.0,
                                         "fX": 1502.0,
-                                        "fY": 853.0,
+                                        "fY": 858.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -733,7 +733,7 @@
                                 "fSizeX": 20.0,
                                 "fSizeY": 20.0,
                                 "fX": 1490.0,
-                                "fY": 835.0,
+                                "fY": 840.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -759,10 +759,10 @@
                         },
                         "fAlpha": 1.0,
                         "fOffsetX": 0.0,
-                        "fOffsetY": 55.0,
+                        "fOffsetY": 60.0,
                         "fRotation": 0.0,
-                        "fSizeX": 70.0,
-                        "fSizeY": 70.0,
+                        "fSizeX": 85.0,
+                        "fSizeY": 85.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -785,16 +785,6 @@
                             }
                         ],
                         "szEvents": {
-                            "Skill_2_Active_Effect": [
-                                {
-                                    "szActionTag": "Skill_2_Active",
-                                    "szArg": "Skill_2_Active",
-                                    "szSubscribeEventTags": [
-                                        "Skill_2_Active"
-                                    ],
-                                    "szTypeTag": "PlayAnimEvent"
-                                }
-                            ],
                             "Skill_2_ActiveOn_Effect": [
                                 {
                                     "szActionTag": "Skill_2_ActiveOn",
@@ -805,12 +795,12 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "Skill_2_Use_Effect": [
+                            "Skill_2_Active_Effect": [
                                 {
-                                    "szActionTag": "Skill_2_Use",
-                                    "szArg": "Skill_2_Use",
+                                    "szActionTag": "Skill_2_Active",
+                                    "szArg": "Skill_2_Active",
                                     "szSubscribeEventTags": [
-                                        "Skill_2_Use"
+                                        "Skill_2_Active"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -821,6 +811,16 @@
                                     "szArg": "Skill_2_Default",
                                     "szSubscribeEventTags": [
                                         "Skill_2_Default"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Skill_2_Use_Effect": [
+                                {
+                                    "szActionTag": "Skill_2_Use",
+                                    "szArg": "Skill_2_Use",
+                                    "szSubscribeEventTags": [
+                                        "Skill_2_Use"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -857,8 +857,8 @@
                                         "fRotation": 0.0,
                                         "fSizeX": 16.0,
                                         "fSizeY": 16.0,
-                                        "fX": 1542.0,
-                                        "fY": 813.0,
+                                        "fX": 1547.0,
+                                        "fY": 810.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -891,8 +891,8 @@
                                         "fRotation": 0.0,
                                         "fSizeX": 8.0,
                                         "fSizeY": 8.0,
-                                        "fX": 1542.0,
-                                        "fY": 813.0,
+                                        "fX": 1547.0,
+                                        "fY": 810.0,
                                         "iDepth": 4,
                                         "iDrawType": 1,
                                         "iLevel": 3,
@@ -910,8 +910,8 @@
                                 "fRotation": 0.0,
                                 "fSizeX": 20.0,
                                 "fSizeY": 20.0,
-                                "fX": 1530.0,
-                                "fY": 795.0,
+                                "fX": 1535.0,
+                                "fY": 792.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -936,11 +936,11 @@
                             ]
                         },
                         "fAlpha": 1.0,
-                        "fOffsetX": 40.0,
-                        "fOffsetY": 15.0,
+                        "fOffsetX": 45.0,
+                        "fOffsetY": 12.0,
                         "fRotation": 0.0,
-                        "fSizeX": 70.0,
-                        "fSizeY": 70.0,
+                        "fSizeX": 85.0,
+                        "fSizeY": 85.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -963,16 +963,6 @@
                             }
                         ],
                         "szEvents": {
-                            "Skill_3_Active_Effect": [
-                                {
-                                    "szActionTag": "Skill_3_Active",
-                                    "szArg": "Skill_3_Active",
-                                    "szSubscribeEventTags": [
-                                        "Skill_3_Active"
-                                    ],
-                                    "szTypeTag": "PlayAnimEvent"
-                                }
-                            ],
                             "Skill_3_ActiveOn_Effect": [
                                 {
                                     "szActionTag": "Skill_3_ActiveOn",
@@ -983,12 +973,12 @@
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "Skill_3_Use_Effect": [
+                            "Skill_3_Active_Effect": [
                                 {
-                                    "szActionTag": "Skill_3_Use",
-                                    "szArg": "Skill_3_Use",
+                                    "szActionTag": "Skill_3_Active",
+                                    "szArg": "Skill_3_Active",
                                     "szSubscribeEventTags": [
-                                        "Skill_3_Use"
+                                        "Skill_3_Active"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -1002,6 +992,16 @@
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
+                            ],
+                            "Skill_3_Use_Effect": [
+                                {
+                                    "szActionTag": "Skill_3_Use",
+                                    "szArg": "Skill_3_Use",
+                                    "szSubscribeEventTags": [
+                                        "Skill_3_Use"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
                             ]
                         },
                         "szLayerTag": "Layer_Combat",
@@ -1010,10 +1010,60 @@
                         "szUITag": "SkillSlot_3"
                     },
                     {
+                        "Children": [
+                            {
+                                "Shader": {
+                                    "bUseGlow": true,
+                                    "fGlowIntensity": 0.0,
+                                    "fGlowSpread": 0.0
+                                },
+                                "TextureDesc": {
+                                    "iPass": 3,
+                                    "iTextureIndex": 0,
+                                    "szProtoTag": "Prototype_Component_UI_Texture_Skill_On_Fx",
+                                    "szTextureComTag": "Com_Texture_UI_Skill_On_Fx"
+                                },
+                                "fAlpha": 1.0,
+                                "fOffsetX": 0.0,
+                                "fOffsetY": 0.0,
+                                "fRotation": 0.0,
+                                "fSizeX": 150.0,
+                                "fSizeY": 150.0,
+                                "fX": 1490.0,
+                                "fY": 695.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szAnimTags": [
+                                    {
+                                        "szAnimTag": "Rush_ActiveOn",
+                                        "szPrefabTag": "Glow_Wave_0"
+                                    }
+                                ],
+                                "szEvents": {
+                                    "RushFX_ActiveOn_Effect": [
+                                        {
+                                            "szActionTag": "Rush_ActiveOn",
+                                            "szArg": "Rush_ActiveOn",
+                                            "szSubscribeEventTags": [
+                                                "Rush_ActiveOn"
+                                            ],
+                                            "szTypeTag": "PlayAnimEvent"
+                                        }
+                                    ]
+                                },
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Image",
+                                "szUIID": "Rush_Fx_Image_3-3",
+                                "szUITag": "Rush_Fx"
+                            }
+                        ],
                         "Shader": {
                             "bUseGlow": true,
                             "bUseTintColor": true,
-                            "fGlowIntensity": 0.0,
+                            "fGlowIntensity": 0.41999149322509766,
                             "fGlowSpread": 0.0,
                             "vTintColor": [
                                 0.8666666746139526,
@@ -1024,10 +1074,10 @@
                         },
                         "fAlpha": 1.0,
                         "fOffsetX": 0.0,
-                        "fOffsetY": -72.0,
+                        "fOffsetY": -85.0,
                         "fRotation": 0.0,
-                        "fSizeX": 36.0,
-                        "fSizeY": 36.0,
+                        "fSizeX": 42.0,
+                        "fSizeY": 42.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -1042,7 +1092,11 @@
                             },
                             {
                                 "szAnimTag": "Rush_ActiveOn",
-                                "szPrefabTag": "Glow_0_3_Reverse"
+                                "szPrefabTag": "Glow_0_5_Reverse"
+                            },
+                            {
+                                "szAnimTag": "Rush_Use",
+                                "szPrefabTag": "FadeOut_0_5"
                             }
                         ],
                         "szEvents": {
@@ -1075,6 +1129,16 @@
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
+                            ],
+                            "Rush_Use_Effect": [
+                                {
+                                    "szActionTag": "Rush_Use",
+                                    "szArg": "Rush_Use",
+                                    "szSubscribeEventTags": [
+                                        "Rush_Use"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
                             ]
                         },
                         "szLayerTag": "Layer_Combat",
@@ -1097,8 +1161,8 @@
                                 "fRotation": 0.0,
                                 "fSizeX": 141.0,
                                 "fSizeY": 70.5,
-                                "fX": 1152.0,
-                                "fY": 675.0,
+                                "fX": 1142.0,
+                                "fY": 683.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -1134,13 +1198,13 @@
                                     "fGlowSpread": 0.0
                                 },
                                 "fAlpha": 0.0,
-                                "fOffsetX": -29.0,
-                                "fOffsetY": -12.0,
+                                "fOffsetX": -32.0,
+                                "fOffsetY": -26.0,
                                 "fRotation": -22.0,
-                                "fSizeX": 705.0,
+                                "fSizeX": 713.0,
                                 "fSizeY": 73.0,
-                                "fX": 1152.0,
-                                "fY": 675.0,
+                                "fX": 1142.0,
+                                "fY": 683.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -1176,13 +1240,13 @@
                                     "fGlowSpread": 0.0
                                 },
                                 "fAlpha": 0.0,
-                                "fOffsetX": 312.0,
-                                "fOffsetY": 123.0,
+                                "fOffsetX": 310.0,
+                                "fOffsetY": 110.0,
                                 "fRotation": 0.0,
-                                "fSizeX": 235.0,
-                                "fSizeY": 235.0,
-                                "fX": 1152.0,
-                                "fY": 675.0,
+                                "fSizeX": 250.0,
+                                "fSizeY": 250.0,
+                                "fX": 1142.0,
+                                "fY": 683.0,
                                 "iDepth": 3,
                                 "iDrawType": 1,
                                 "iLevel": 3,
@@ -1213,11 +1277,11 @@
                             }
                         ],
                         "fAlpha": 0.0,
-                        "fOffsetX": -338.0,
-                        "fOffsetY": -105.0,
+                        "fOffsetX": -348.0,
+                        "fOffsetY": -97.0,
                         "fRotation": 0.0,
-                        "fSizeX": 825.0,
-                        "fSizeY": 390.0,
+                        "fSizeX": 870.0,
+                        "fSizeY": 400.0,
                         "fX": 1490.0,
                         "fY": 780.0,
                         "iDepth": 2,
@@ -1235,8 +1299,8 @@
                 "fOffsetX": 690.0,
                 "fOffsetY": 330.0,
                 "fRotation": 0.0,
-                "fSizeX": 150.0,
-                "fSizeY": 180.0,
+                "fSizeX": 174.0,
+                "fSizeY": 205.0,
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 1,
@@ -1263,6 +1327,13 @@
                         {
                             "szActionTag": "Rush_Default",
                             "szArg": "Rush_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rush_Use": [
+                        {
+                            "szActionTag": "Rush_Use",
+                            "szArg": "Rush_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
@@ -1294,17 +1365,17 @@
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "Skill_0_Use": [
-                        {
-                            "szActionTag": "Skill_0_Use",
-                            "szArg": "Skill_0_Use",
-                            "szTypeTag": "ActionEvent"
-                        }
-                    ],
                     "Skill_0_Default": [
                         {
                             "szActionTag": "Skill_0_Default",
                             "szArg": "Skill_0_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_0_Use": [
+                        {
+                            "szActionTag": "Skill_0_Use",
+                            "szArg": "Skill_0_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
@@ -1322,17 +1393,17 @@
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "Skill_1_Use": [
-                        {
-                            "szActionTag": "Skill_1_Use",
-                            "szArg": "Skill_1_Use",
-                            "szTypeTag": "ActionEvent"
-                        }
-                    ],
                     "Skill_1_Default": [
                         {
                             "szActionTag": "Skill_1_Default",
                             "szArg": "Skill_1_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_1_Use": [
+                        {
+                            "szActionTag": "Skill_1_Use",
+                            "szArg": "Skill_1_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
@@ -1350,17 +1421,17 @@
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "Skill_2_Use": [
-                        {
-                            "szActionTag": "Skill_2_Use",
-                            "szArg": "Skill_2_Use",
-                            "szTypeTag": "ActionEvent"
-                        }
-                    ],
                     "Skill_2_Default": [
                         {
                             "szActionTag": "Skill_2_Default",
                             "szArg": "Skill_2_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_2_Use": [
+                        {
+                            "szActionTag": "Skill_2_Use",
+                            "szArg": "Skill_2_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
@@ -1378,17 +1449,17 @@
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "Skill_3_Use": [
-                        {
-                            "szActionTag": "Skill_3_Use",
-                            "szArg": "Skill_3_Use",
-                            "szTypeTag": "ActionEvent"
-                        }
-                    ],
                     "Skill_3_Default": [
                         {
                             "szActionTag": "Skill_3_Default",
                             "szArg": "Skill_3_Default",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Skill_3_Use": [
+                        {
+                            "szActionTag": "Skill_3_Use",
+                            "szArg": "Skill_3_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ]

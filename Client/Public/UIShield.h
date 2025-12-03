@@ -10,8 +10,6 @@ NS_END
 
 NS_BEGIN(Client)
 
-class UIActionEvent;
-
 class CUIShield final : public CUIBase
 {
 private:

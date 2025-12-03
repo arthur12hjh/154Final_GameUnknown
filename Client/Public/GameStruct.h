@@ -15,6 +15,13 @@ namespace Engine
 
 namespace Client
 {
+	typedef struct Default_Status
+	{
+		long long						iCurrentHealth;
+		long long						iCurrentShield;
+	}DEFAULT_STATUS;
+
+
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
 	// 기본세팅 요거
 	typedef struct Character_NetWork_Desc
@@ -37,11 +44,16 @@ namespace Client
 	enum class PLAYER_STATE { 
 		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, VENDING_INTERACTION,
-		HIT, BETA_CHARGINGSLASH, AERIAL_ATTACK, //미구현
+		HIT, 
+		BETA_CHARGINGSLASH, BETA_TRIPLET,
+		
+		AERIAL_ATTACK, //미구현
+		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
 		STATE_END
 	};
+
 	enum class SKILL_STATE {
 		DEFAULT,   // 비활성화
 		ACTIVE_ON, // 딱 활성화 됐을 때
@@ -50,15 +62,13 @@ namespace Client
 		END,	   //
 	};
 
-	typedef struct Player_Desc
+	typedef struct Player_Desc : public DEFAULT_STATUS
 	{
 		long long						iMaxHealth;
 		long long						iMaxShield;
 		//베타 에너지 최대치
 		long long						iMaxBetaEnergy;
 
-		long long						iCurrentHealth;
-		long long						iCurrentShield;
 		//현재 베타 에너지
 		long long						iCurrentBetaEnergy;
 
@@ -71,7 +81,7 @@ namespace Client
 
 		int								iCurrentPotions; // 현재 소지한 포션 개수
 		int								iMaxPotions; // 전체 포션 개수
-		
+
 		//
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
@@ -82,13 +92,24 @@ namespace Client
 
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
-		SKILL_STATE						eBetaSkillState[4];			// 사용중인 스킬 상태
+		//bool							eBetaSkillState[4];
+		SKILL_STATE						eBetaSkillState[4];
+		//_bool							eBetaSkillState[4];			// 사용중인 스킬 상태 여부
 		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
 
 		// 플레이어의 전투 상태. battle, idle, lockon
 		PLAYER_MODE						ePlayerMode = { PLAYER_MODE::IDLE };
-		class CTransform*				pPlayerTransform = { nullptr };
-		class CCharacterController*		pPlayerController = { nullptr }; 
+		class CTransform* pPlayerTransform = { nullptr };
+		class CCharacterController* pPlayerController = { nullptr };
+
+		bool   isRequestLockonToggle = { false };
+		float  fCurrentMinDist = { FLT_MAX };
+		float  fModeTimer = { 0.f };
+		bool   HasTarget = { false };
+		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
+		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
+		bool   isWeaponVisible = { false };
+
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -197,14 +218,10 @@ namespace Client
 	// 인게임용
 	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
 	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
-	typedef struct Naytiba_Desc
+	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
 
-		long long			iCurrentHealth;
-		long long			iCurrentShield;
-
-	
 		_float3				fLockOnPoint;
 
 		_float2				fAttackCoolTime;

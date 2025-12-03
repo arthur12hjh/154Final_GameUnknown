@@ -36,10 +36,13 @@ private :
 	_float3								m_fAttackMoveDir = {};
 	
 	_float								m_fLerpSpeed = {};
-	_float								m_fMoveSpeed = {};
-	_bool								m_bIsLookAtPoint = {};
 
-	string								m_szDebugAnimation = {};
+	_float								m_fDir = {};
+	_float								m_fMoveSpeed = {};
+
+	_bool								m_bIsLookAtPoint = { false };
+	_bool								m_bIsAttackStartLerp = {};
+	_float2								m_vLerpTime = { 0.f, 0.7f };
 	
 private :
 	_bool								SelectPattern();
@@ -48,6 +51,7 @@ private :
 #pragma region Boss Pattern
 	void								SelectAttack(_bool bIsForce = false);
 	void								CrushPattern();
+	void								MoveAttackPattern();
 	void								BackStepPattern();
 	//void								BboyStepPattern();
 
@@ -59,6 +63,8 @@ private :
 	
 	void								AttackLerpMove(_float fTimeDelta);
 	void								AttackADDMove(_float fTimeDelta);
+
+	void								LookAtPoint(_float fTimeDelta);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);

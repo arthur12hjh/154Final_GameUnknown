@@ -32,6 +32,9 @@ HRESULT CUI_Camera::Initialize(void* pArg)
 	if(FAILED(Ready_PlayerDesc()))
 		return E_FAIL;
 
+	if(FAILED(Ready_MonsterDesc()))
+		return E_FAIL;
+
 	/* Com_Collider_AABB */
 	//CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
 	//
@@ -118,6 +121,10 @@ void CUI_Camera::Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
 	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7) && m_MonsterDesc.iCurrentHealth > 0)
+			m_MonsterDesc.iCurrentHealth -= 10;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8) && m_MonsterDesc.iCurrentHealth < m_MonsterDesc.iMaxHealth)
+			m_MonsterDesc.iCurrentHealth += 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_PlayerDesc.iCurrentHealth > 0)
 			m_PlayerDesc.iCurrentHealth -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
@@ -142,10 +149,57 @@ void CUI_Camera::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
 	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7) && m_MonsterDesc.iCurrentShield > 0)
+			m_MonsterDesc.iCurrentShield -= 10;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8) && m_MonsterDesc.iCurrentShield < m_MonsterDesc.iMaxShield)
+			m_MonsterDesc.iCurrentShield += 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_PlayerDesc.iCurrentShield > 0)
 			m_PlayerDesc.iCurrentShield -= 10;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield)
 			m_PlayerDesc.iCurrentShield += 10;
+	}
+
+	// 스킬
+
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_H))
+	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+			m_PlayerDesc.eBetaSkillState[0] = false;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
+			m_PlayerDesc.eBetaSkillState[1] = false;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
+			m_PlayerDesc.eBetaSkillState[2] = false;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+			m_PlayerDesc.eBetaSkillState[3] = false;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_MINUS))
+		{
+			for (size_t i = 0; i < 4; ++i)
+				m_PlayerDesc.eBetaSkillState[i] = false;
+		}
+	}
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
+	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+			m_PlayerDesc.eBetaSkillState[0] = true;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
+			m_PlayerDesc.eBetaSkillState[1] = true;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
+			m_PlayerDesc.eBetaSkillState[2] = true;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+			m_PlayerDesc.eBetaSkillState[3] = true;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_MINUS))
+		{
+			for (size_t i = 0; i < 4; ++i)
+				m_PlayerDesc.eBetaSkillState[i] = true;
+		}
+	}*/
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		if (Client::SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i])
+			m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::ACTIVE;
+		if (Client::SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i])
+			m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
 	}
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_H))
@@ -234,6 +288,27 @@ void CUI_Camera::Update(_float fTimeDelta)
 		}
 	}
 
+	// active on 상태라면 active로 다시 전환
+	if (Client::SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eRushState)
+		m_PlayerDesc.eRushState = Client::SKILL_STATE::ACTIVE;
+
+	// use 상태라면 Default로 다시 전환
+	if (Client::SKILL_STATE::USE == m_PlayerDesc.eRushState)
+		m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
+
+
+	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
+		m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
+	}
+	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime
+		&& m_PlayerDesc.eRushState == Client::SKILL_STATE::DEFAULT)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime = m_PlayerDesc.fMaxRushCoolTime;
+		m_PlayerDesc.eRushState = Client::SKILL_STATE::ACTIVE_ON;
+	}
+
 	/*if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
 	{
 		m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
@@ -314,6 +389,17 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 
 	for (int i = 0; i < 4; ++i)
 		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
+
+	return S_OK;
+}
+
+HRESULT CUI_Camera::Ready_MonsterDesc()
+{
+	m_MonsterDesc.iMaxHealth = 100;
+	m_MonsterDesc.iMaxShield = 100;
+
+	m_MonsterDesc.iCurrentHealth = 100;
+	m_MonsterDesc.iCurrentShield = 100;
 
 	return S_OK;
 }

@@ -5,6 +5,9 @@
 #include "Player.h"
 #include "Nayitba.h"
 
+#include "UIHUD.h"
+#include "UIBase.h"
+
 CLockonManager::CLockonManager()
     : m_pGameInstance { CGameInstance::GetInstance() }
 {
@@ -29,56 +32,55 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
     if (m_fLockonTimer <= 1.5f)
         return false;
 
-    list<CGameObject*>* pTargets = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), m_strMonsterLayerTag.c_str());
+    list<CGameObject*>* pTargets =
+        m_pGameInstance->GetAllObejctToLayer(
+            m_pGameInstance->GetCurrentLevelID(),
+            m_strMonsterLayerTag.c_str());
 
-    _float fMinDist = FLT_MAX;
-    m_fCurrentMinDist = fMinDist;
+    // 기본값 초기화
+    m_pPlayerDesc->HasTarget = false;
+    m_pPlayerDesc->fCurrentMinDist = FLT_MAX;
 
-    // 타겟 트랜스폼이 비어있다면, 타겟 트랜스폼 비우고 생략.
-    // 플레이어의 락온 모드도 제거해줘야 한다.
-    // 이 과정이 없으면 중간에 몬스터가 죽거나 사라지게 되면 터짐
-    if (nullptr == pTargets)
-        return false;
-
-    if (true == pTargets->empty())
+    if (nullptr == pTargets || pTargets->empty())
     {
         m_pTarget = nullptr;
-        if(PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
-            m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE);
         m_fLockonTimer = 0.f;
-
         return false;
     }
+
+    _float fMinDist = FLT_MAX;
+    CNayitba* pBest = nullptr;
 
     for (auto& pTarget : *pTargets)
     {
         CTransform* pTargetTransform = pTarget->GetTransform();
-        _float fDist = XMVectorGetX(XMVector3Length(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION) - pTargetTransform->Get_State(STATE::POSITION)));
+        _float fDist = XMVectorGetX(XMVector3Length(
+            m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION) -
+            pTargetTransform->Get_State(STATE::POSITION)));
 
-        // 더 가까운 타겟을 발견했다면
         if (fMinDist > fDist)
         {
-            // 타겟 트랜스폼 변경.
             fMinDist = fDist;
+            pBest = static_cast<CNayitba*>(pTarget);
             m_fCurrentMinDist = fMinDist;
-            m_pTarget = static_cast<CNayitba* >(pTarget);
+            m_pTarget = static_cast<CNayitba*>(pTarget);
 
             if(m_pTarget != pTarget)
                 m_fLockonTimer = 0.f;
         }
     }
 
-    if (fMinDist < 30.f)
+    m_pTarget = pBest;
+
+    if (m_pTarget)
     {
-        m_fBattleToIdleTimeAcc = 0.f;
-
-        if (PLAYER_MODE::IDLE == m_pPlayerDesc->ePlayerMode)
-            m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE, PLAYER_STATE::DRAW_HAIRPIN);
-
-        return true;
+        m_pPlayerDesc->HasTarget = true;
+        m_pPlayerDesc->fCurrentMinDist = fMinDist;
+        m_fCurrentMinDist = fMinDist;
+        m_isLock = true; 
     }
 
-    return false;
+    return m_pPlayerDesc->HasTarget;
 }
 
 CTransform* CLockonManager::Get_TargetTransform()
@@ -105,36 +107,50 @@ _vector CLockonManager::Get_LockOnPoint()
 
 void CLockonManager::Lockon(_float fTimeDelta)
 {
-    // 우선 가까운 타겟 찾기.
-    m_isLock = Find_NearestTarget(fTimeDelta);
+    // 타겟 정보 업데이트 (bHasTarget, fCurrentMinDist 셋팅)
+    Find_NearestTarget(fTimeDelta);
 
-    // 가까운 타겟이 비어있다면, nullptr 반환.
-    if (nullptr == m_pTarget || (PLAYER_MODE::LOCKON != m_pPlayerDesc->ePlayerMode))
+    if (!m_pTarget)
         return;
 
-    // 만약 존재한다면, 락온 처리.
-    if (true == m_isLock)
+    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         Get_LockOnPoint();
-        if(false == m_pPlayerDesc->isLookFixed)
-            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(m_pTarget->GetTransform()->Get_State(STATE::POSITION), 0.15f);
-    }
 
-    if (false == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+        if (!m_pLockonUI)
+        {
+            CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
+
+            // 몬스터 체력
+            m_pMonsterVitalUI = pUIHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
+
+            Safe_Release(pUIHUD);
+        }
+
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
+                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
+    }
+    else
     {
-        m_pPlayer->Change_PlayerMode(PLAYER_MODE::BATTLE);
-        m_fLockonTimer = -1.f; 
+        if (m_pLockonUI)
+        {
+            CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            pUIHUD->Return_WorldUI(m_pLockonUI);
+            // 몬스터 체력
+            pUIHUD->Return_WorldUI(m_pMonsterVitalUI);
+
+            Safe_Release(pUIHUD);
+        }
     }
 }
 
 void CLockonManager::Start_Lockon()
 {
-    //플레이어가 락온 모드가 아니라면
-    if (PLAYER_MODE::LOCKON != m_pPlayerDesc->ePlayerMode)
-    {
-        // 락온 모드로 변경.
-        m_pPlayer->Change_PlayerMode(PLAYER_MODE::LOCKON);
-    }
+    // 락온모드 시작. 키입력으로 넣을때 추가할 것
+    m_pPlayerDesc->isRequestLockonToggle = true;
 }
 
 CLockonManager* CLockonManager::Create()

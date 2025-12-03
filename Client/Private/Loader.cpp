@@ -138,6 +138,16 @@
 #include "UISkillSlot.h"
 #include "UIRushSlot.h"
 
+#include "UIWorldWrapper.h"
+#include "UIMonsterHPBar.h"
+#include "UIMonsterHPFX.h"
+#include "UIMonsterShield.h"
+#include "UIBossVitalWrapper.h"
+#include "UIBossHPBar.h"
+#include "UIBossHPBarFX.h"
+#include "UIBossShield.h"
+#include "UIBossName.h"
+
 #pragma region Map_Desert
 #include "Canyon.h"
 #include "Building_Ruin.h"
@@ -149,6 +159,8 @@
 #include "Iron_Floor.h"
 #include "Deco.h"
 #pragma endregion
+
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -1744,8 +1756,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-
 
 	//Desc->OnCompleted(this_thread::get_id());
 
@@ -3376,6 +3386,9 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level()
 	if (FAILED(Loading_UI_For_Combat_HUD_Skills()))
 		return E_FAIL;
 
+	if (FAILED(Loading_UI_For_World()))
+		return E_FAIL;
+
 	/* For.Prototype_Component_UI_Texture_Center_Pivot */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1))))
@@ -3384,6 +3397,16 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_Component_UI_Texture_Number */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Number/Number_%d.png"), 10))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Boss_Vital_Shadow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Boss_Name */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1))))
 		return E_FAIL;
 
 	// 객체 원형
@@ -3405,6 +3428,31 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Image"),
 		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_WorldWrapper */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossVitalWrapper"),
+		CUIBossVitalWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Boss_HPBar */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_HPBar"),
+		CUIBossHPBar::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Boss_HPFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_HPFX"),
+		CUIBossHPBarFX::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Boss_Shield */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_Shield"),
+		CUIBossShield::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_BossName */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossName"),
+		CUIBossName::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -3582,6 +3630,38 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills()
 		CUIRushSlot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_UI_For_World()
+{
+	/* For.Prototype_Component_UI_Texture_LockOn */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1))))
+		return E_FAIL;
+
+	/*=====================================================================================================*/
+
+	/* For.Prototype_GameObject_UI_WorldWrapper */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_WorldWrapper"),
+		CUIWorldWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Monster_HPBar */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_HPBar"),
+		CUIMonsterHPBar::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Monster_HPFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_HPFX"),
+		CUIMonsterHPFX::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Monster_Shield */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_Shield"),
+		CUIMonsterShield::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }

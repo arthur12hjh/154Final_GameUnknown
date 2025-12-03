@@ -64,7 +64,7 @@ void CUIImage::Update(_float fTimeDelta)
 	//		//m_pGameInstance->UnBind_Observer(TEXT("UI_Button_Hover"), m_pEventHandle);
 	//}
 
-	__super::Update(fTimeDelta);
+ 	__super::Update(fTimeDelta);
 }
 
 void CUIImage::Late_Update(_float fTimeDelta)
@@ -147,6 +147,11 @@ HRESULT CUIImage::Ready_Components()
 HRESULT CUIImage::Bind_ShaderResources()
 {
 	__super::Bind_ShaderResources();
+
+	/*if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;*/
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;

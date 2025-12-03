@@ -6,7 +6,10 @@
 
 #include "ImGuiManager.h"
 #include "DebugHierarchy.h"
+
+#include "Player.h"
 #include "Camera_Free.h"
+
 #include "StringHelper.h"
 #include "GameManager.h"
 
@@ -68,6 +71,7 @@ HRESULT CDebugCheatUI::Render()
 
 void CDebugCheatUI::SetLevelMainCamera()
 {
+#ifdef _DEBUG
     Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
 
@@ -88,7 +92,7 @@ void CDebugCheatUI::SetLevelMainCamera()
     {
         strcpy_s(m_szSelectCamera, "Not Find Main Camera");
     }
-
+#endif // _DEBUG
 }
 
 void CDebugCheatUI::DrawObjectDebug()
@@ -103,6 +107,14 @@ void CDebugCheatUI::DrawObjectDebug()
         ImGui::EndTooltip();
     }
 
+    ImGui::InputFloat3("Teleport Point", m_vTeleportPoint);
+    if (ImGui::Button("Player Teleport Button"))
+    {
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(m_vTeleportPoint[0], m_vTeleportPoint[1], m_vTeleportPoint[2], 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
 #endif // _DEBUG
 }
 

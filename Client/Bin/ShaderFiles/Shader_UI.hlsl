@@ -49,6 +49,8 @@ float g_fCoolAmount = 1.f; // 0~1
 bool g_isUseable = false; // 스킬 사용 가능 여부
 bool g_UseCover = false;
 
+bool g_bRushActiveOn = false;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -163,7 +165,7 @@ PS_OUT PS_MAIN(PS_IN In)
     // ----------------------------
     Out.vColor.a *= g_Alpha;
 
-    if (Out.vColor.a <= 0.05f)
+    if (Out.vColor.a <= 0.0f)
         discard;
 
     return Out;
@@ -409,7 +411,8 @@ PS_OUT PS_POTION(PS_IN In)
     // ----------------------------
     
     float4 GaugeColor = g_Texture.Sample(DefaultSampler, uv);
-
+    float4 TintColor = 1.f;
+    
     // ----------------------------
     //  Fill Clip (윗쪽부터 잘림)
     // ----------------------------
@@ -419,10 +422,13 @@ PS_OUT PS_POTION(PS_IN In)
         discard;
     }
     
+    if(g_bUseTintColor)
+        TintColor = g_vTintColor;
+    
     // ----------------------------
     //  Alpha 적용
     // ----------------------------
-    Out.vColor = GaugeColor;
+    Out.vColor = GaugeColor *= TintColor;
     //Out.vColor.a *= g_Alpha;
 
     return Out;
@@ -439,72 +445,141 @@ PS_OUT PS_SHIELD(PS_IN In)
 
     float2 uv = In.vTexcoord;
 
-    float rightFill = saturate((g_fFillAmount - 0.5) * 2.0);
-    float leftFill = saturate(g_fFillAmount * 2.0);
+    //// -----------------------------------------
+    //// 타입 보정
+    //// -----------------------------------------
+    int groupCount = (int) floor(g_GroupCount);
 
-    float leftEnd = 0.5 - g_UVGap * 0.5;
-    float rightStart = 0.5 + g_UVGap * 0.5;
-
-    // GAP → 완전 투명
-    if (uv.x > leftEnd && uv.x < rightStart)
+    if (groupCount <= 0)
         return Out;
 
-    //-----------------------------------------------
-    // LEFT BLOCK (배경 FULL + 전경만 Clip)
-    //-----------------------------------------------
-    if (uv.x < leftEnd)
-    {
-        float localX = uv.x / leftEnd;
+    // -----------------------------------------
+    // GAP + BLOCK 레이아웃 계산
+    // -----------------------------------------
+    float totalGap = g_UVGap * (groupCount - 1);
+    float blockWidth = (1.0 - totalGap) / groupCount;
+    float totalUnit = blockWidth + g_UVGap;
 
-        // ---- 타일 반복 UV ----
-        float2 tileUV;
-        tileUV.x = frac(localX * g_UVScale.x);
-        tileUV.y = frac(uv.y * g_UVScale.y);
+    float pos = uv.x / totalUnit;
+    int blockIndex = (int) floor(pos);
 
-        // 1) 배경은 항상 FULL
-        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-        // 2) 전경은 FillAmount 기준으로 잘라냄
-        float4 fgColor = float4(0, 0, 0, 0);
-
-        if (localX <= leftFill)        // 조건 만족할 때만 FG를 그린다
-            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-        fgColor *= g_vTintColor;
-        
-        // 최종 색 = BG + FG
-        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
+    if (blockIndex < 0 || blockIndex >= groupCount)
         return Out;
-    }
 
+    float blockStart = blockIndex * totalUnit;
+    float blockEnd = blockStart + blockWidth;
 
-    //-----------------------------------------------
-    // RIGHT BLOCK (배경 FULL + 전경만 Clip)
-    //-----------------------------------------------
-    if (uv.x > rightStart)
-    {
-        float localX = (uv.x - rightStart) / (1.0 - rightStart);
-
-        float2 tileUV;
-        tileUV.x = frac(localX * g_UVScale.x);
-        tileUV.y = frac(uv.y * g_UVScale.y);
-
-        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-        float4 fgColor = float4(0, 0, 0, 0);
-
-        if (localX <= rightFill)
-            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-        fgColor *= g_vTintColor;
-        
-        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
+    // GAP 영역
+    if (uv.x > blockEnd && uv.x < blockEnd + g_UVGap.x)
         return Out;
-    }
 
+    // -----------------------------------------
+    // Block 내 local X
+    // -----------------------------------------
+    float localX = (uv.x - blockStart) / blockWidth;
+    localX = saturate(localX);
+
+    // -----------------------------------------
+    // FillAmount
+    // -----------------------------------------
+    float totalFill = g_fFillAmount * groupCount;
+    float localFill = saturate(totalFill - blockIndex);
+
+    // -----------------------------------------
+    // UV Tile
+    // -----------------------------------------
+    float2 tileUV = float2(0, 0);
+    tileUV.x = frac(localX * g_UVScale.x);
+    tileUV.y = frac(uv.y * g_UVScale.y);
+
+    // BG
+    float4 bg = g_Texture0.Sample(DefaultSampler, tileUV);
+
+    // FG
+    float4 fg = float4(0, 0, 0, 0);
+    if (localX <= localFill)
+        fg = g_Texture1.Sample(DefaultSampler, tileUV);
+
+    if (g_bUseTintColor)
+        fg *= g_vTintColor;
+
+    Out.vColor = lerp(bg, fg, fg.a);
+    
     return Out;
 }
 
+//PS_OUT PS_SHIELD(PS_IN In)
+//{    
+//    PS_OUT Out;
+//    Out.vColor = float4(0, 0, 0, 0);
+
+//    float2 uv = In.vTexcoord;
+
+//    float rightFill = saturate((g_fFillAmount - 0.5) * g_GroupCount);
+//    float leftFill = saturate(g_fFillAmount * g_GroupCount);
+    
+//    float leftEnd = 0.5 - g_UVGap * 0.5;
+//    float rightStart = 0.5 + g_UVGap * 0.5;
+
+//    // GAP → 완전 투명
+//    if (uv.x > leftEnd && uv.x < rightStart)
+//        return Out;
+
+//    //-----------------------------------------------
+//    // LEFT BLOCK (배경 FULL + 전경만 Clip)
+//    //-----------------------------------------------
+//    if (uv.x < leftEnd)
+//    {
+//        float localX = uv.x / leftEnd;
+
+//        // ---- 타일 반복 UV ----
+//        float2 tileUV;
+//        tileUV.x = frac(localX * g_UVScale.x);
+//        tileUV.y = frac(uv.y * g_UVScale.y);
+
+//        // 1) 배경은 항상 FULL
+//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
+
+//        // 2) 전경은 FillAmount 기준으로 잘라냄
+//        float4 fgColor = float4(0, 0, 0, 0);
+
+//        if (localX <= leftFill)        // 조건 만족할 때만 FG를 그린다
+//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
+
+//        fgColor *= g_vTintColor;
+        
+//        // 최종 색 = BG + FG
+//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
+//        return Out;
+//    }
+
+
+//    //-----------------------------------------------
+//    // RIGHT BLOCK (배경 FULL + 전경만 Clip)
+//    //-----------------------------------------------
+//    if (uv.x > rightStart)
+//    {
+//        float localX = (uv.x - rightStart) / (1.0 - rightStart);
+
+//        float2 tileUV;
+//        tileUV.x = frac(localX * g_UVScale.x);
+//        tileUV.y = frac(uv.y * g_UVScale.y);
+
+//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
+
+//        float4 fgColor = float4(0, 0, 0, 0);
+
+//        if (localX <= rightFill)
+//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
+
+//        fgColor *= g_vTintColor;
+        
+//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
+//        return Out;
+//    }
+
+//    return Out;
+//}
 
 /*------------------[E_SHIELD]----------------*/
 
@@ -709,21 +784,54 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
 
 PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
 {
+    //PS_OUT Out;
+  
+    //float2 uv = In.vTexcoord;
+
+    ////float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
+    
+    //float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    
+    //if(g_bUseGlow)
+    //{
+    //    glow0.rgb += glow0.rgb * g_GlowIntensity;
+    //    glow0.rgb *= glow0.a * 0.5;
+    //}
+    
+    //float4 result = glow0;
+    
+    //Out.vColor = result;
+    
+    //return Out;
+    
     PS_OUT Out;
   
     float2 uv = In.vTexcoord;
 
-    //float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
-    
     float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    float4 glow1 = g_Texture1.Sample(DefaultSampler, uv);
+    float4 glow2 = 0.f;
+    float4 glow3 = 0.f;
     
-    if(g_bUseGlow)
+    if (g_bUseGlow)
     {
         glow0.rgb += glow0.rgb * g_GlowIntensity;
-        glow0.rgb *= glow0.a * 0.5;
+        glow0.rgb *= glow0.a * 0.5f;
+        glow1.rgb += glow1.rgb * (g_GlowIntensity * 5.f);
+        glow1.rgb *= glow1.a * 0.5f;
     }
     
     float4 result = glow0;
+    result = lerp(result, glow1, glow1.a);
+    
+    if (g_bRushActiveOn)
+    {
+        glow2 = g_Texture2.Sample(DefaultSampler, uv);
+        
+        glow2.rgb += glow2.rgb * (g_GlowIntensity * 0.5f);
+        glow2.rgb *= glow2.a * 0.25f;
+        result += glow2;
+    }
     
     Out.vColor = result;
     
@@ -787,7 +895,7 @@ technique11 DefaultTechnique
 {
     pass UI // 0
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

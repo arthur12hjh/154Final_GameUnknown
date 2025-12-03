@@ -7,6 +7,8 @@
 #include "UIPlayAnimEvent.h"
 #include "UIActionEvent.h"
 
+#include "UIWorldWrapper.h"
+
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
 {
@@ -55,20 +57,81 @@ void CUIBase::Priority_Update(_float fTimeDelta)
 
 void CUIBase::Update(_float fTimeDelta)
 {
-	////부모 따라가기
-	if (dynamic_cast<CUIBase*>(m_pParent))
+	if (m_eDrawType == CUIObject::DRAW_TYPE::SCREEN)
 	{
-		m_eVisibility = m_pParent->GetVisibility();
+		//부모 따라가기
+		if (dynamic_cast<CUIBase*>(m_pParent))
+		{
 		
-		m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
-		m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
+			m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
+			m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
-		m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
-	}
-	
-	m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(m_tUIDesc.fRotation));
+			//m_eVisibility = VISIBILITY(dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity);
+			//m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
 
-	ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
+			/*if (dynamic_cast<CUIWorldWrapper*>(m_pParent) && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				_float4 vParentPos{};
+				XMStoreFloat4(&vParentPos, m_pParent->GetTransform()->Get_State(STATE::POSITION));
+
+				m_tUIDesc.fX = vParentPos.x;
+				m_tUIDesc.fY = vParentPos.y;
+
+				m_eVisibility = m_pParent->GetVisibility();
+			}*/
+		}
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(m_tUIDesc.fRotation));
+
+		ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
+	}
+	else if(m_eDrawType == CUIObject::DRAW_TYPE::WORLD_SCREEN)
+	{
+		if (!m_pParent || !m_pTargetPos)
+			return;
+
+		/*if (m_pParent->GetVisibility() == VISIBILITY::HIDDEN)
+			return;
+
+		m_eVisibility = m_pParent->GetVisibility();*/
+
+		// View / Projection 행렬 로드
+		_matrix view = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+		_matrix proj = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+
+		//_vector vParentPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
+		// 1) World → View
+		_vector vView = {};
+			
+		if(m_pTargetPos)
+			vView = XMVector3Transform(XMVectorSetW(XMLoadFloat3(m_pTargetPos), 1.f), view);
+
+		// 카메라 뒤에 있으면 표시 불가
+		if (XMVectorGetZ(vView) < 0.1f)
+			return;
+
+		// 2) View → Clip
+		_vector vClip = XMVector3Transform(vView, proj);
+
+		// 3) Clip → NDC
+		_float w = XMVectorGetW(vClip);
+		_float3 ndc;
+		XMStoreFloat3(&ndc, vClip / w); // (-1~1)
+
+		// 4) NDC → Screen
+		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
+
+		if (m_pTargetPos)
+		{
+			m_tUIDesc.fX = ndc.x * half.x + half.x;   // [-1~1] → [0~width]
+			m_tUIDesc.fY = -ndc.y * half.y + half.y;  // Y 반전
+			
+			m_pTransformCom->Set_State(STATE::POSITION,
+				XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX - half.x, -(m_tUIDesc.fY + m_tUIDesc.fOffsetY) + half.y, 0.f, 1.f));
+		}
+
+		for(auto& pChild : m_Children)
+			Update_Children(pChild);
+	}
 }
 
 void CUIBase::Late_Update(_float fTimeDelta)
@@ -76,8 +139,8 @@ void CUIBase::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	if (m_eVisibility == VISIBILITY::VISIBLE)
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
-#elif
-	if ((m_tUIDesc.Get_UI_Texture_Desc() || m_tUIDesc.Get_UI_Text_Desc()) && m_eVisibility == VISIBILITY::VISIBLE )
+#else
+	if (m_eVisibility == VISIBILITY::VISIBLE )
 		m_pGameInstance->Add_RenderGroup((RENDER)m_tUIDesc.iRenderGroup, this);
 #endif
 }
@@ -230,6 +293,52 @@ HRESULT CUIBase::Ready_Texture()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
+{
+	UIBASE_DESC Desc = m_tOriginUIDesc;
+	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Pooled_") + to_wstring(iIdx);
+
+	CGameObject* pObj = nullptr;
+	if (FAILED(pHUD->Add_UserInterface(Desc.iLevel, Desc.szProtoTag.c_str(),
+		Desc.szLayerTag.c_str(), Desc.szUITag.c_str(),
+		&pObj, &Desc)))
+		return nullptr;
+
+	CUIBase* pUIBase = dynamic_cast<CUIBase*>(pObj);
+
+	if (!pUIBase)
+		return nullptr;
+
+	// 3) Children deep clone
+	//pUIBase->m_Children.clear(); // 기존 children 포인터 복사된 것 제거
+
+	for (auto* pChild : m_Children)
+	{
+		CUIBase* pClonedChild = pChild->Clone_UI(pHUD, iIdx);
+		pClonedChild->SetParent(pUIBase);
+
+		pUIBase->Add_Child(pClonedChild);
+	}
+
+	return pUIBase;
+}
+
+void CUIBase::Update_Children(CUIBase* pObj)
+{
+	pObj->SetVisibility(pObj->GetParent()->GetVisibility());
+
+	pObj->Get_UIBase_Desc().fX = XMVectorGetX(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+	pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+
+	pObj->GetTransform()->Set_State(STATE::POSITION,
+		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX, pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+
+	for (auto& pChild : *pObj->Get_Children())
+	{
+		pObj->Update_Children(pChild);
+	}
 }
 
 #ifdef _DEBUG

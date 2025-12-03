@@ -17,10 +17,7 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
-#include "PlayerBattleFSM.h"
-#include "PlayerIdleFSM.h"
-#include "PlayerLockOnFSM.h"
-#include "Player_HitState.h"
+#include "PlayerFSM.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -41,21 +38,6 @@ void CPlayer::Handle_Notify(void* pArg)
 _float CPlayer::Get_AnimationRatio()
 {
 	return m_pBodyModelCom->Get_AnimationRatio();
-}
-
-void CPlayer::Change_PlayerMode(PLAYER_MODE eMode, PLAYER_STATE eState)
-{
-	m_PlayerDesc.ePlayerMode = eMode;
-
-	// FSM 탐색.
-	CPlayerFSM* pNextFSM = m_FSMs.find(eMode)->second;
-	 
-	if(eState == PLAYER_STATE::STATE_END)
-		pNextFSM->Change_FSM(m_pCurrentFSM->Get_CurrentState()->Get_State());
-	else
-		pNextFSM->Change_FSM(eState);
-
-	m_pCurrentFSM = pNextFSM;
 }
 
 // 인자로 들어온 스킬 id의 스킬이 사용 가능한지 확인.
@@ -87,9 +69,38 @@ _bool CPlayer::Use_RushSkill()
 	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
 		return false;
 
+	m_PlayerDesc.eRushState = SKILL_STATE::USE; // [JU] Rush Use로 상태 변환
 	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 
 	return S_OK;
+}
+
+void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	// 어떤 방식으로 짜야하지?
+	// 1) strPartTag가 empty일 경우, Player에서 탐색
+	//    strPartTag가 있을 경우, strPartTag로 모델을 탐색
+	// 2) strObjectTag라는 매핑된 값을 문자열 탐색해서 찾고, Play() 함수를 실행함
+	// 3) 그 모델들은 시간이 지난 후 알아서 Stop() << 시발아 이거 어케만드노
+
+	if (strPartTag.empty())
+	{
+
+	}
+	else
+	{
+		Find_PartObject(strPartTag)->Active_SFX(strObjectTag, NotifyReference);
+	}
+
+}
+
+void CPlayer::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pPartObject = Find_PartObject(strPartTag);
+	if (nullptr == pPartObject)
+		return;
+
+	pPartObject->Activate_PartObject_Collider(strColliderTag, NotifyRef);
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -136,9 +147,15 @@ void CPlayer::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	m_pGameManager->Lockon(fTimeDelta);
-	Update_FSM(fTimeDelta);
+
+	Update_TestLogic(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill();
+	Update_FSM(fTimeDelta);
+	
+	// [JU] Use_RushSkill 테스트(마우스 우클릭)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
+		Use_RushSkill();
 	
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -150,10 +167,10 @@ void CPlayer::Late_Update(_float fTimeDelta)
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
 	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif
 }
@@ -183,8 +200,20 @@ HRESULT CPlayer::Damaged(void* pArg)
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
-	if(false == m_PlayerDesc.isSuperArmor)
-		m_pCurrentFSM->Change_State(CPlayer_HitState::Create(nullptr));
+	if (false == m_PlayerDesc.isSuperArmor)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
+		m_pFSM->Handle_Transition(Desc);
+	}
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
@@ -198,6 +227,27 @@ HRESULT CPlayer::Damaged(void* pArg)
 	return S_OK;
 }
 
+void CPlayer::SetSillDataID(_uint iSkillID)
+{
+	m_iSkillID = iSkillID;
+}
+
+_int CPlayer::GetSillDataID()
+{
+	return m_iSkillID;
+}
+
+void CPlayer::Update_TestLogic(_float fTimeDelta)
+{
+	m_fTestTimer += fTimeDelta;
+
+	if (m_fTestTimer >= 2.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	{
+		m_PlayerDesc.iCurrentBetaEnergy++;
+		m_fTestTimer = 0.f;
+	}
+}
+
 HRESULT CPlayer::Ready_Components()
 {
 	/* Com_Collider_AABB */
@@ -208,7 +258,6 @@ HRESULT CPlayer::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	/* Com_CCT */
@@ -246,6 +295,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
 	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pParent = this;
 	WeaponDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
 	WeaponDesc.pParentTransform = m_pTransformCom;
 	
@@ -253,6 +303,8 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
 		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;
+
+	m_pWeapon = static_cast<CWeapon *>(Find_PartObject(TEXT("Part_Weapon")));
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -294,7 +346,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	//베타 에너지
 	m_PlayerDesc.iMaxBetaEnergy = 20;
-	m_PlayerDesc.iCurrentBetaEnergy = 20;
+	m_PlayerDesc.iCurrentBetaEnergy = 0;
 
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
@@ -331,26 +383,23 @@ HRESULT CPlayer::Ready_PlayerDesc()
 HRESULT CPlayer::Ready_BetaSkillDesc()
 {
 	//추후 추가 예정
-	m_PlayerDesc.iBetaSkillCount = 1;
+	m_PlayerDesc.iBetaSkillCount = 2;
 	m_PlayerDesc.iBetaSkillId[0] = 1004;
-	
+	m_PlayerDesc.iBetaSkillId[1] = 1005;
+
 	return S_OK;
 }
 
 HRESULT CPlayer::Ready_FSM()
 {
-	m_FSMs.emplace(PLAYER_MODE::BATTLE, CPlayerBattleFSM::Create());
-	m_FSMs.emplace(PLAYER_MODE::LOCKON, CPlayerLockonFSM::Create());
-	m_FSMs.emplace(PLAYER_MODE::IDLE, CPlayerIdleFSM::Create());
-
-	m_pCurrentFSM = m_FSMs.find(PLAYER_MODE::IDLE)->second;
+	m_pFSM = CPlayerFSM::Create();
 
 	return S_OK;
 }
 
 void CPlayer::Update_FSM(_float fTimeDelta)
 {
-	m_pCurrentFSM->Update(fTimeDelta);
+	m_pFSM->Update(fTimeDelta);
 }
 
 void CPlayer::Update_RushSkill(_float fTimeDelta)
@@ -361,15 +410,23 @@ void CPlayer::Update_RushSkill(_float fTimeDelta)
 
 	// use 상태라면 Default로 다시 전환
 	if (SKILL_STATE::USE == m_PlayerDesc.eRushState)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 		m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	}
 
-	m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
-
+	// [JU] Default일 때만 쿨타임 증가
 	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
+		m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	}
+	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime
+		&& m_PlayerDesc.eRushState != SKILL_STATE::ACTIVE) // [JU] 쿨타임 다 차면 활성화(active on)
+	{
 		m_PlayerDesc.eRushState = SKILL_STATE::ACTIVE_ON;
-
-	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime)
 		m_PlayerDesc.fCurrentRushCoolTime = m_PlayerDesc.fMaxRushCoolTime;
+	}
 }
 
 void CPlayer::Update_BetaSkill()
@@ -380,13 +437,16 @@ void CPlayer::Update_BetaSkill()
 	{
 		_uint iGauge = m_pGameManager->Find_BetaSkillData(m_PlayerDesc.iBetaSkillId[i])->iRequiredBetaGauge;
 
-		if (iGauge < m_PlayerDesc.iCurrentBetaEnergy)
+		if (SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
 
-		if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+		else if (SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE_ON;
 
-		if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
 	}
 }
@@ -423,12 +483,7 @@ void CPlayer::Free()
 
 	Safe_Release(m_pColliderCom);
 
-	for (auto& iter : m_FSMs)
-		Safe_Release(iter.second);
-
-	m_FSMs.clear();
-
-	Safe_Release(m_pCurrentFSM);
+	Safe_Release(m_pFSM);
 }
 
 

@@ -198,6 +198,4 @@ CGameObject* CHair_Player::Clone(void* pArg)
 void CHair_Player::Free()
 {
 	__super::Free();
-
-
 }

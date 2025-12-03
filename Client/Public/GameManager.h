@@ -12,6 +12,7 @@ class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
+struct Default_Status;
 class CQuestManager;
 class CDataManager;
 class CLockonManager;
@@ -38,7 +39,7 @@ public :
 	// 캐릭터 꺼내오면 레퍼런스 증가함 
 	// 다 쓰면 감소시켜주세요
 	class CPlayer*				GetGameCharacter();
-	const PLAYER_DESC*			Get_PlayerDesc();
+	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion
@@ -79,6 +80,13 @@ public:
 	_float		Get_CurMinDist();
 	_bool		Get_Lockon();
 
+#pragma endregion
+
+#pragma region Damage Logic
+	// 매개변수 1 : Default Status 구조체 정보
+	// 매개변수 2 : 데미지 량
+	// 매개변수 3 : 쉴드로 감쇠할 데미지의 퍼센트
+	void					ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
 
 private :

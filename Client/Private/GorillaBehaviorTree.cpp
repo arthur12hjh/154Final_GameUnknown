@@ -11,6 +11,7 @@
 // Condition Node
 #pragma region Decorator
 #include "Deco_CheckAlive.h"
+#include "Deco_FindTarget.h"
 #include "Deco_AttackDelay.h"
 #pragma endregion
 
@@ -102,6 +103,7 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 	if (nullptr == pMoveSelector)
 		return E_FAIL;
 
+	pMoveSelector->Bind_BehaviorNode(CDeco_FindTarget::Create(this));
 	pMoveSelector->Bind_BehaviorNode(pAttackSelector);
 	pMoveSelector->Bind_BehaviorNode(CTask_Move::Create(this));
 #pragma endregion

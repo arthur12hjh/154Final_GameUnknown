@@ -2954,19 +2954,10 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
         }
     }
-    //m_pVIBufferCom->Spread(fTimeDelta);
 }
 
 HRESULT CParticle_Setting::Render()
 {
-
-
-    //m_pShaderCom->Begin(m_iShaderBegine);
-    //
-    //
-    //m_pVIBufferCom->Bind_Resources();
-    //
-    //m_pVIBufferCom->Render();
     return S_OK;
 }
 

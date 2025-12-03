@@ -607,6 +607,9 @@
     <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
       <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Levels\Scarlet">
       <UniqueIdentifier>{e36c3514-947c-4060-a97a-b4aa551ab48f}</UniqueIdentifier>
     </Filter>
@@ -630,6 +633,42 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Controller">
       <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI">
+      <UniqueIdentifier>{d20edc83-b322-478f-9486-c23a95911687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar">
+      <UniqueIdentifier>{d7fd1cfc-a8b8-4b4c-a217-fc82535521b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX">
+      <UniqueIdentifier>{98a9b411-09df-4e7c-9afb-8f3c84f65184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield">
+      <UniqueIdentifier>{b490d414-3f8c-47db-9483-b7b8e1159dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper">
+      <UniqueIdentifier>{e944b3c3-6320-4dd2-874b-e724e26da971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar">
+      <UniqueIdentifier>{4f8fcab0-fb1b-4759-a675-45cbdb4b3515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield">
+      <UniqueIdentifier>{ee2c705e-42bd-4ffb-9cb1-8197f62ed832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX">
+      <UniqueIdentifier>{37c3e0f8-291d-458e-9fa8-a175d8da52b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
+      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
+      <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hairpin">
+      <UniqueIdentifier>{f1c04c9b-b8bc-44d5-9444-3ac8b7b32b8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
+      <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -806,9 +845,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBlackBoard.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deco_PhaseChange.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
@@ -1140,7 +1176,7 @@
     <ClInclude Include="..\Public\Player_BattleEvadeState.h">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_BetaChargingSlahsState.h">
+    <ClInclude Include="..\Public\Player_BetaChargingSlashState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_HitState.h">
@@ -1148,9 +1184,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PlayerBattleFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
@@ -1173,14 +1206,8 @@
     <ClInclude Include="..\Public\Player_LockonWalkState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerLockonFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PlayerIdleFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHPBar.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
@@ -1237,11 +1264,42 @@
     <ClInclude Include="..\Public\Player_DrawHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
-      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
-    <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIWorldWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterHPFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossVitalWrapper.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossShield.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossHPBarFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossHPBar.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Building_Ruin.h">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
@@ -1253,6 +1311,36 @@
     </ClInclude>
     <ClInclude Include="..\public\Canyon.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperLineFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISkillWrapperOnFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Deco_FindTarget.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrailData.h">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GorillaBehaviorTree.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SheatheHairpin.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BetaTripletState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hairpin_Player.h">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossName.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Scarlet.h">
       <Filter>01.Levels\Scarlet</Filter>
@@ -1762,7 +1850,7 @@
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_BetaChargingSlahsState.cpp">
+    <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_HitState.cpp">
@@ -1770,9 +1858,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerBattleFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
@@ -1795,14 +1880,8 @@
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerLockonFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerIdleFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Character</Filter>
@@ -1869,8 +1948,29 @@
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
+    <ClCompile Include="..\Private\UIWorldWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterHPFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterHPBar\UIMonsterHPFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossVitalWrapper.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossHPBar.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossShield.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossHPBarFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Building_Ruin.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
@@ -1883,6 +1983,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Canyon.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco_FindTarget.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp">
+      <Filter>03.Effects\TrailEffect\TrailData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BetaTripletState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hairpin_Player.cpp">
+      <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossName.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Scarlet.cpp">
       <Filter>01.Levels\Scarlet</Filter>
