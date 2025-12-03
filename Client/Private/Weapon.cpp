@@ -268,6 +268,7 @@ HRESULT CWeapon::Ready_Components()
 
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
+	m_pSpark->Stop();
 	return S_OK;
 }
 
