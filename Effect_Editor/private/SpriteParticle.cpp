@@ -38,8 +38,8 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_bisLoop = false;
-		if (m_tData.fEndTime + m_tData.fLifeTime.y * 2 <= m_fTime)
-			return;
+	}if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+		return;
 	}
 
 	_float4x4 CombinedWorldMatrix;
@@ -57,8 +57,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
-	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y * 2 < m_fTime))
-	{
+	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);

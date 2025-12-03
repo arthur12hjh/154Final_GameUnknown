@@ -49,6 +49,7 @@ HRESULT CEffect::Initialize(void* pArg)
                 m_pParentWorldMat = pDesc->pWorldMatrix;
             }
         }
+        
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
         m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
@@ -304,6 +305,18 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 void CEffect::Update(_float fTimeDelta)
 {
+    if (0 <= m_fStopTime) {
+        m_fStopTime -= fTimeDelta;
+    }
+    else if(-10 < m_fStopTime){
+        m_fStopTime = -10;
+        for (auto pParticle : m_pPointParticles) {
+            pParticle->End();
+        }
+        for (auto pSpriteParticle : m_pSpriteParticles) {
+            pSpriteParticle->End();
+        }
+    }
     for (auto pMeshEffect : m_pMeshEffects) {
         pMeshEffect->Update(fTimeDelta);
     }
@@ -431,8 +444,9 @@ void CEffect::Stop() {
         pSpriteParticle->Stop();
 }
 
-void CEffect::Play()
+void CEffect::Play(_float fTime)
 {
+    m_fStopTime = fTime;
     for (auto pParticle : m_pPointParticles)
         pParticle->Play();
     for (auto pSpriteParticle : m_pSpriteParticles)

@@ -26,6 +26,9 @@ public:
 	_bool Use_BetaSkill(_uint iSkillID);
 	_bool Use_RushSkill();
 
+
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)override;
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -34,6 +37,12 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Damaged(void* pArg) override;
+
+public:
+	// 테스트용 로직들이라 한군데 모아놧습니다 
+	// 나중에 한번에 정리할게요.
+	void Update_TestLogic(_float fTimeDelta);
+	_float m_fTestTimer = { 0.f };
 
 private:
 	struct Player_Desc		m_PlayerDesc = {};

@@ -21,6 +21,10 @@ PLAYER_TRANSITION_DESC CPlayer_DrawHairpin::Update(_float fTimeDelta)
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
+    //추후 비녀 가리는 로직도 추가할 것.
+    if (9 / 102.f <= fAnimationRatio)
+        m_Desc->isWeaponVisible = true;
+
     if (true == isAnimFinished)
     {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;

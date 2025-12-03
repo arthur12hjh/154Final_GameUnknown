@@ -16,7 +16,7 @@ CTrail::CTrail(const CTrail& Prototype)
 
 HRESULT CTrail::Initialize_Prototype()
 {
-	m_iNumVertices = 144;
+	m_iNumVertices = 200;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
@@ -130,70 +130,35 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		return;
 	}
 
+	_vector vBeforeHigh = XMLoadFloat4(&m_vPreHighPositions[1]);
+	_vector vAfterHigh = XMVector3TransformCoord(XMLoadFloat4(&m_vHigh), matCurrentWorld);
+	_float fLength = XMVectorGetX(XMVector3Length(vAfterHigh - vBeforeHigh));
+	_int iNum = 1;
+	if (1 < fLength)
+		iNum = fLength;
 	_uint index = m_fTime / 0.015f;
 	m_fTime -= 0.015f * index;
-	if (1 < index) {
-		for (int i = 0; i < index; ++i) {
-			if (i != 0) {
-				memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
-				memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
-			}
-			_vector vBeforeHigh = XMLoadFloat4(&m_vPreHighPositions[1]);
-			_vector vAfterHigh = XMVector3TransformCoord(XMLoadFloat4(&m_vHigh), matCurrentWorld);
-			_vector vBeforeLow = XMLoadFloat4(&m_vPreLowPositions[1]);
-			_vector vAfterLow = XMVector3TransformCoord(XMLoadFloat4(&m_vLow), matCurrentWorld);
-			 XMStoreFloat4(&m_vPreHighPositions[2], vBeforeHigh + (vAfterHigh - vBeforeHigh) / (index - i));
-			 XMStoreFloat4(&m_vPreLowPositions[2], vBeforeLow + (vAfterLow - vBeforeLow) / (index - i));
-			 m_vPreHighPositions[2].w = 1;
-			 m_vPreLowPositions[2].w = 1;
-			 _vector vHighPositions[4]{};
-			 _vector vLowPositions[4]{};
-			 _float fValue = {};
-			 for (int i = 0; i < 3; ++i) {
-				 vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
-				 vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
-			 }
-			 for (int i = 0; i < 4; ++i) {
-				 fValue = (_float)i / 3;
-	
-				 vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
-				 vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
-	
-				 if (m_iNumPresent + 2 >= m_iNumVertices) {
-					 m_iNumPresent -= 2;
-					 memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
-				 }
-				 XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
-				 XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
-	
-				 m_iNumPresent += 2;
-			 }
-	
-		}
+	_vector vHighPositions[4]{};
+	_vector vLowPositions[4]{};
+	_float fValue = {};
+	for (int i = 0; i < 3; ++i) {
+		vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
+		vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
 	}
-	else {
-		_vector vHighPositions[4]{};
-		_vector vLowPositions[4]{};
-		_float fValue = {};
-		for (int i = 0; i < 3; ++i) {
-			vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
-			vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
+	for (int i = 0; i < 4 * iNum * index; ++i) {
+		fValue = (_float)i / ((4 * iNum * index) - 1);
+
+		vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
+		vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
+
+		if (m_iNumPresent + 2 >= m_iNumVertices) {
+			m_iNumPresent -= 2;
+			memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
 		}
-		for (int i = 0; i < 4; ++i) {
-			fValue = (_float)i / 3;
+		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
+		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
 
-			vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
-			vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
-
-			if (m_iNumPresent + 2 >= m_iNumVertices) {
-				m_iNumPresent -= 2;
-				memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
-			}
-			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
-			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
-
-			m_iNumPresent += 2;
-		}
+		m_iNumPresent += 2;
 	}
 	_uint iIndexLow;
 	_uint iIndexHigh;

@@ -78,7 +78,7 @@ void CTask_GorillaAttack::SelectRandomPattern()
 {
 	// 여기서 거리가 일단 멀어지면 날라오거나
 	// 돌을 던지는 패턴을 하자
-	if(40 >= m_pGameInstance->Random(0.f, 100.f))
+	if(50 >= m_pGameInstance->Random(0.f, 100.f))
 		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
 	else
 		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
@@ -91,9 +91,10 @@ _bool CTask_GorillaAttack::SelectPattern()
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 
-	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.3f)
+	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
 	{
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+
 		/*if (30.f > fRandomIndex)
 			BboyStepPattern();
 		else*/ if (30.f > fRandomIndex)
@@ -103,13 +104,16 @@ _bool CTask_GorillaAttack::SelectPattern()
 		else
 		{
 			m_PrePatternIndex = 0;
-			m_CurPatternIndex = 2;
+			if(65 > fRandomIndex)
+				m_CurPatternIndex = 2;
+			else
+				m_CurPatternIndex = 3;
 		}
 	}
 	else
 	{
 		m_PrePatternIndex = 0;
-		m_CurPatternIndex = 3;
+		m_CurPatternIndex = 4;
 	}
 
 	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
@@ -124,6 +128,9 @@ _bool CTask_GorillaAttack::SelectPattern()
 			SelectRandomPattern();
 			break;
 		case 3:
+			MoveAttackPattern();
+			break;
+		case 4:
 			CrushPattern();
 			break;
 		}
@@ -145,25 +152,29 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 		m_pSkillData.pop();
 
 		auto pSkill_Data = m_pBlackBoard->GetAttackData();
-
-		switch (pSkill_Data->iSkillID)
-		{
-		case 7 : 
-		case 8:
-			m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true, 42.f, 0.f, true);
-			break;
-
-		default :
-			m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true);
-			break;
-		}
+		m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true);
 	}
+
+	if (3 == m_CurPatternIndex && m_pSkillData.empty())
+		m_bIsAttackStartLerp = true;
 }
 
 void CTask_GorillaAttack::CrushPattern()
 {
 	m_pSkillData.push(m_pGameManager->Find_SkillData(2));
 	m_pSkillData.push(m_pGameManager->Find_SkillData(12));
+	SelectAttack();
+}
+
+void CTask_GorillaAttack::MoveAttackPattern()
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (50.f > fRandomIndex)
+		m_pSkillData.push(m_pGameManager->Find_SkillData(7));
+	else
+		m_pSkillData.push(m_pGameManager->Find_SkillData(8));
+
+	m_pSkillData.push(m_pGameManager->Find_SkillData(9));
 	SelectAttack();
 }
 
@@ -307,31 +318,32 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 		break;
 		case 7:
 		{
-			// M_Gorilla_S05_LeftBlowMoveRight
-			// Max Frame : 94
-			// Frame : 19 ~ 37
-			if (0.2f <= fAnimationRatio && 0.4f >= fAnimationRatio)
+			// M_Gorilla_S02_ShortMoveLeft
+			// Max Frame : 30
+			// Frame : 20 ~ 25
+			if (0.8f >= fAnimationRatio)
 			{
-				XMStoreFloat3(&m_fAttackMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
-				m_fMoveSpeed = 7.f;
-				bIsMove = true;
+				XMStoreFloat3(&m_fAttackMovePoint, vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * -7.f);
+				m_fLerpSpeed = 5.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
 			}
 		}
 		break;
 		case 8:
 		{
-			// M_Gorilla_S04_RightBlowMoveLeft
-			// Max Frame : 92
-			// Frame : 19 ~ 37
-			
-			if (0.2f <= fAnimationRatio && 0.4f >= fAnimationRatio)
+			// M_Gorilla_S02_ShortMoveRight
+			// Max Frame : 30
+			// Frame : 20 ~ 25
+			if (0.8f >= fAnimationRatio)
 			{
-				XMStoreFloat3(&m_fAttackMoveDir, -1.f * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
-				m_fMoveSpeed = 7.f;
-				bIsMove = true;
+				XMStoreFloat3(&m_fAttackMovePoint, vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 7.f);
+				m_fLerpSpeed = 5.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
 			}
 		}
-		break;
+		break;	
 		case 10:
 		{
 			// 이건 여기서 무빙 위치를 다시 만들어주자
@@ -389,7 +401,6 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 
 	m_fLerpSpeed = 3.f;
 
-
 	if(bIsLerpMove)
 		AttackLerpMove(fTimeDelta);
 	if (bIsMove)
@@ -419,6 +430,7 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 {
 	// 거리기반으로 속도 조절해보자
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_fAttackMoveDir), m_fMoveSpeed);
+
 }
 
 void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)

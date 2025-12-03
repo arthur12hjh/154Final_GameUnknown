@@ -79,6 +79,7 @@ public:
 #pragma region OBJECT_MANAGER
 	CComponent*								Get_PartObject_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPartTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	HRESULT									Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
+	CGameObject*							Add_Get_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	
 	// Layer에 있는 모든 오브젝트를 가져옴	
 	list<CGameObject*>*						GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag);

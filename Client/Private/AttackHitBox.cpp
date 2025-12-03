@@ -163,22 +163,22 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 
 void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-	if (nullptr == pCharacter)
-		return;
+	//auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	//if (nullptr == pCharacter)
+	//	return;
 
-	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
-	DEFAULT_DAMAGE_DESC pDamageDesc = {};
+	//auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
+	//DEFAULT_DAMAGE_DESC pDamageDesc = {};
 
-	pDamageDesc.pAttacker = m_pAttacker;
-	pDamageDesc.vHitDir = vHitDir;
-	pDamageDesc.vImpactDir = m_vImpactDir;
-	pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
-	pDamageDesc.fImpactForce = m_fImpactForce;
-	pDamageDesc.vHitPoint = vHitPoint;
-	pDamageDesc.pSkillData = pDesc;
+	//pDamageDesc.pAttacker = m_pAttacker;
+	//pDamageDesc.vHitDir = vHitDir;
+	//pDamageDesc.vImpactDir = m_vImpactDir;
+	//pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	//pDamageDesc.fImpactForce = m_fImpactForce;
+	//pDamageDesc.vHitPoint = vHitPoint;
+	//pDamageDesc.pSkillData = pDesc;
 
-	pCharacter->Damaged(&pDamageDesc);
+	//pCharacter->Damaged(&pDamageDesc);
 #ifdef _DEBUG
 	m_vDelayDead = { 0.f, 3.f };
 	m_bIsDelayDead = true;

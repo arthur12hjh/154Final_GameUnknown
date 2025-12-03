@@ -113,8 +113,7 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (!m_pTarget)
         return;
 
-    // 만약 존재한다면, 락온 처리.
-    if (true == m_isLock)
+    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         Get_LockOnPoint();
 
@@ -125,6 +124,10 @@ void CLockonManager::Lockon(_float fTimeDelta)
 
             Safe_Release(pUIHUD);
         }
+
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
+                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
     else
     {
@@ -136,13 +139,6 @@ void CLockonManager::Lockon(_float fTimeDelta)
 
             Safe_Release(pUIHUD);
         }
-    }
-
-    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
-    {
-        if(false == m_pPlayerDesc->isLookFixed)
-            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
-                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
 }
 

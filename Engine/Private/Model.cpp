@@ -98,7 +98,7 @@ vector<class CMaterial*>* CModel::Get_Materials()
 
 _uint CModel::Get_AnimationKeyFrameIndex() const
 {
-    return m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex();
+    return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
 const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const

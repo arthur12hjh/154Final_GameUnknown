@@ -12,7 +12,7 @@ CPlayer_BattleIdleState::CPlayer_BattleIdleState()
 void CPlayer_BattleIdleState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::IDLE;
-    m_pPlayer->Set_Animation("Proto_Battle_Idle", true);
+    m_pPlayer->Set_Animation("Proto_Battle_Idle", true, 1.f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
@@ -30,6 +30,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
         m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+        m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;

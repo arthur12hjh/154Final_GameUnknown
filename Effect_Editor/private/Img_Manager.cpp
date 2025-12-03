@@ -32,7 +32,6 @@ HRESULT CImg_Manager::Ready_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* 
 
 	m_ImGuiIo = io;
 
-	// 창 위치를 (0,0)으로 설정
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	m_ImGuiWindowFlag = ImGuiWindowFlags_NoTitleBar |
@@ -44,7 +43,6 @@ HRESULT CImg_Manager::Ready_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* 
 		ImGuiWindowFlags_NoBringToFrontOnFocus |
 		ImGuiWindowFlags_MenuBar;
 
-	// 패딩과 테두리를 고려해 창 스타일 비활성화
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	//ImGui::SetNextWindowDockID(ImGui::GetID("IndependentDockSpace"), ImGuiCond_FirstUseEver);

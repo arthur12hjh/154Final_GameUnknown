@@ -85,7 +85,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.2f, FALSE, -1.f, 14.f, TRUE);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f, FALSE, -1.f, 14.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.12f);
 
@@ -94,6 +94,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 

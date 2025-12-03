@@ -18,6 +18,9 @@ protected :
 public:
 	// 파트오브젝트 콜라이더 켜는 노티파이 끌고 들어가는 함수.
 	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, ANIM_NOTIFY){};
+
+	// Clone 한 GameObject 켜는 노티파이 끌고 들어가는 함수
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference) {};
 	
 	virtual HRESULT					Initialize_Prototype() override;
 	virtual HRESULT					Initialize(void* pArg) override;

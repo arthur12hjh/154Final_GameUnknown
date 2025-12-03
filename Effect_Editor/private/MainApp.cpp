@@ -6,11 +6,6 @@
 #include "GameInstance.h"
 #include "Camera_Free.h"
 
-/********************************
-* ´ëÀçÈÆÀÇ ÀºÃÑ ÀÌ ¾ó¸¶³ª °ü´ëÇÑ°¡ *
-* ´ë¹Î¼®ÀÇ ÀºÃÑ ÀÌ ¾ó¸¶³ª Âù¶õÇÑ°¡ *
-********************************/
-
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
@@ -63,7 +58,6 @@ HRESULT CMainApp::Render()
 
 HRESULT CMainApp::Ready_Default_Setting()
 {
-	/* [Âü°í] MakeSpriteFont "³Ø½¼Lv1°íµñ Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 154ex.spritefont */
 	/*if (FAILED(m_pGameInstance->Add_Font(TEXT("Spoqa_16"), TEXT("../Bin/Resources/Fonts/Spoqa_Han_Sans_Neo_Medium16.spritefont"))))
 		return E_FAIL;*/
 
