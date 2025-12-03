@@ -132,7 +132,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-	m_MonsterInfo.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	ComputeDamageLogic(pSkillDesc->iSkillDamage);
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 
@@ -151,6 +151,25 @@ HRESULT CNayitba::ActionSuccess(void* pArg)
 _uint CNayitba::GetMonsterID()
 {
 	return m_iMonsterID;
+}
+
+void CNayitba::ComputeDamageLogic(const long long& iDamage)
+{
+	long long AttackDamage = iDamage * 0.3f;
+	long long GuardDamage = iDamage * 0.7f;
+	long long OverDamage = GuardDamage - m_MonsterInfo.iCurrentShield;
+
+	if (0 < OverDamage)
+	{
+		AttackDamage += OverDamage;
+		m_MonsterInfo.iCurrentShield = 0.f;
+	}
+	else
+		m_MonsterInfo.iCurrentShield -= GuardDamage;
+
+	m_MonsterInfo.iCurrentHealth -= AttackDamage;
+	if (0 >= m_MonsterInfo.iCurrentHealth)
+		m_MonsterInfo.iCurrentHealth = 0.f;
 }
 
 const list<CGameObject*>* CNayitba::GetTargetList()

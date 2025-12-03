@@ -37,6 +37,8 @@ public:
 
 	_uint							GetMonsterID();
 	_float							GetRootMotionRatio() { return m_fMotionRatio; }
+	void							ComputeDamageLogic(const long long& iDamage);
+
 	const list<CGameObject*>*		GetTargetList();
 
 	const NAYTIBA_NETWORK_DESC*		GetStaticMonsterData() { return m_pInitMonsterInfo; }
