@@ -74,7 +74,7 @@ _bool CPlayer::Use_RushSkill()
 	return S_OK;
 }
 
-void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)
+void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
 {
 	// 어떤 방식으로 짜야하지?
 	// 1) strPartTag가 empty일 경우, Player에서 탐색

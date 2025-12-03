@@ -27,7 +27,7 @@ public:
 	_bool Use_RushSkill();
 
 
-	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, ANIM_NOTIFY& NotifyReference)override;
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

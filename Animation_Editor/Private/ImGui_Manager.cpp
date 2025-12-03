@@ -496,7 +496,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
-	//Update_TextureMap();
+	Update_TextureMap();
 	Update_EventMaker();
 
 	ImGui::End();

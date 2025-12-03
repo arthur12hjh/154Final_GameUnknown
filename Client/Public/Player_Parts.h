@@ -23,6 +23,8 @@ public:
 	virtual void			Late_Update(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
+	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+
 protected:
 	class CGameManager* m_pGameManager = { nullptr };
 
