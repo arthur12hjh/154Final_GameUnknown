@@ -89,9 +89,11 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 	// 러쉬 활성화 변화 감지
 	if (*m_eRushState != m_ePrevRushState)
 	{
+		UI_SKILL_INFO_DESC tDesc = { 0, ENUM_CLASS(m_ePrevRushState), ENUM_CLASS(*m_eRushState) };
+
 		UI_EVENT_ARG_DESC Arg{};
-		Arg.Type = UI_EVENT_ARG_DESC::SKILL_STATE;
-		Arg.pData = m_eRushState;
+		Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;
+		Arg.pData = &tDesc;
 
 		switch(*m_eRushState)
 		{
@@ -112,7 +114,7 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 			}
 			case SKILL_STATE::USE:
 			{
-				__super::Trigger_Event(TEXT("Rush_ActiveOff"), &Arg);
+				__super::Trigger_Event(TEXT("Rush_Use"), &Arg);
 				break;
 			}
 		}
@@ -124,7 +126,7 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 	{
 		if (m_ePrevSkillState[i] != *m_eSkillState[i])
 		{
-			UI_SKILL_INFO_DESC tDesc = { i, ENUM_CLASS(*m_eSkillState[i]) };
+			UI_SKILL_INFO_DESC tDesc = {i, ENUM_CLASS(m_ePrevSkillState[i]), ENUM_CLASS(*m_eSkillState[i])};
 
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;

@@ -49,6 +49,8 @@ float g_fCoolAmount = 1.f; // 0~1
 bool g_isUseable = false; // 스킬 사용 가능 여부
 bool g_UseCover = false;
 
+bool g_bRushActiveOn = false;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -782,21 +784,54 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
 
 PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
 {
+    //PS_OUT Out;
+  
+    //float2 uv = In.vTexcoord;
+
+    ////float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
+    
+    //float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    
+    //if(g_bUseGlow)
+    //{
+    //    glow0.rgb += glow0.rgb * g_GlowIntensity;
+    //    glow0.rgb *= glow0.a * 0.5;
+    //}
+    
+    //float4 result = glow0;
+    
+    //Out.vColor = result;
+    
+    //return Out;
+    
     PS_OUT Out;
   
     float2 uv = In.vTexcoord;
 
-    //float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
-    
     float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
+    float4 glow1 = g_Texture1.Sample(DefaultSampler, uv);
+    float4 glow2 = 0.f;
+    float4 glow3 = 0.f;
     
-    if(g_bUseGlow)
+    if (g_bUseGlow)
     {
         glow0.rgb += glow0.rgb * g_GlowIntensity;
-        glow0.rgb *= glow0.a * 0.5;
+        glow0.rgb *= glow0.a * 0.5f;
+        glow1.rgb += glow1.rgb * (g_GlowIntensity * 5.f);
+        glow1.rgb *= glow1.a * 0.5f;
     }
     
     float4 result = glow0;
+    result = lerp(result, glow1, glow1.a);
+    
+    if (g_bRushActiveOn)
+    {
+        glow2 = g_Texture2.Sample(DefaultSampler, uv);
+        
+        glow2.rgb += glow2.rgb * (g_GlowIntensity * 0.5f);
+        glow2.rgb *= glow2.a * 0.25f;
+        result += glow2;
+    }
     
     Out.vColor = result;
     

@@ -857,11 +857,11 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 	if (pParent) {
 		pUI->SetParent(pParent);     // ← 엔진에서 WORLD Parent 따라가도록 구현되어 있음
 		
-		_vector vPos = XMVectorSetW(XMLoadFloat3(&vTargetPos), 1.f);
+		/*_vector vPos = XMVectorSetW(XMLoadFloat3(&vTargetPos), 1.f);
 		if (vTargetPos.x == 0.f && vTargetPos.y == 0.f && vTargetPos.z == 0.f)
-			vPos = pParent->GetTransform()->Get_State(STATE::POSITION);
+			vPos = pParent->GetTransform()->Get_State(STATE::POSITION);*/
 
-		pUI->Set_TargetPos(vPos);
+		pUI->Set_TargetPos(&vTargetPos);
 	}
 	//pUI->Set_Billboard(bBillboard);   // 엔진에 맞는 API로 교체
 
@@ -877,7 +877,7 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
 	//pUI->Set_Active(false);
 	pUI->SetParent(nullptr);
-	pUI->Set_TargetPos(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	pUI->Set_TargetPos(nullptr );
 	//pUI->Set_Offset(0, 0, 0);
 
 	// 어떤 풀로 돌아갈지 키가 필요하다면:
