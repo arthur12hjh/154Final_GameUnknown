@@ -127,10 +127,10 @@ void CPointParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_tData.bisLoop = false;
-		if (m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime) {
-			m_isDead = true;
-			return;
-		}
+	}
+	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+		m_isDead = true;
+		return;
 	}
 	_float4x4 CombinedWorldMatrix;
 	XMStoreFloat4x4(&CombinedWorldMatrix,
@@ -147,8 +147,7 @@ void CPointParticle::Update(_float fTimeDelta)
 
 void CPointParticle::Late_Update(_float fTimeDelta)
 {
-	if (m_tData.fDelayTime > m_fTime || (0 < m_tData.fEndTime && m_tData.fEndTime + m_tData.fLifeTime.y <= m_fTime))
-	{
+	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);

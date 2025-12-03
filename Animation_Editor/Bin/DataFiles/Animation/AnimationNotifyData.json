@@ -1,47 +1,77 @@
 [
     {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex"
+    },
+    {
+        "szAnimationTag": "Eve_BalanceWalk_Turn_Side_90_L"
+    },
+    {
+        "szAnimationTag": "Eve_BalanceWalk_Start_Hang_Idle"
+    },
+    {
+        "szAnimationTag": "Eve_BalanceWalk_Turn_Side_90_R"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChainStab1_Ex"
+    },
+    {
+        "szAnimationTag": "Eve_BalanceWalk_Turn_Forward_180_R"
+    },
+    {
+        "szAnimationTag": "EVE_BarSwing_Catch"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChainStabCombo1_Ex"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash2_Ex"
+    },
+    {
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging"
+    },
+    {
         "AnimationNotifies": [
             {
-                "fNumData01": 12.34000015258789,
-                "fNumData02": 23.450000762939453,
-                "fNumData03": 3.4560000896453857,
-                "fNumData04": 4.789000034332275,
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
                 "iNotifyKeyFrame": 0,
-                "iNumData01": 1,
-                "iNumData02": 2,
-                "iNumData03": 3,
-                "iNumData04": 4,
-                "iNumData05": 5,
-                "iNumData06": 6,
-                "iNumData07": 7,
-                "iNumData08": 8,
-                "szNotifyArg01": "PC_Foley_Jump_whoosh_1.wav",
-                "szNotifyArg02": "two",
-                "szNotifyArg03": "three",
-                "szNotifyArg04": "four",
-                "szNotifyArg05": "five",
-                "szNotifyArg06": "six",
-                "szNotifyArg07": "seven",
-                "szNotifyArg08": "eight",
-                "szNotifyTag": "Play_Sound",
-                "szSocketTag": "CanUTellMeWhy",
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "",
                 "vNotifyPosition": [
-                    2.0,
-                    3.0,
-                    4.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "vNotifyRotation": [
-                    6.0,
-                    7.0,
-                    8.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],
-        "szAnimationTag": "Proto_Battle_Jump_Forward_End"
+        "szAnimationTag": "P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop"
     }
 ]

@@ -41,7 +41,7 @@ public:
     virtual void Late_Update(_float fTimeDelta) override;
     virtual HRESULT Render() override;
     void    Stop();
-    void    Play();
+    void    Play(_float fTime = -10);
     void    End();
 
 private:
@@ -59,6 +59,7 @@ private:
     const   _float4x4* m_pParentWorldMat = { nullptr };
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
+    _float	        m_fStopTime = {};
     vector<CMeshEffect*> m_pMeshEffects;
     vector<CPointParticle*> m_pPointParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;

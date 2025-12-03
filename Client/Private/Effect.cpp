@@ -49,6 +49,7 @@ HRESULT CEffect::Initialize(void* pArg)
                 m_pParentWorldMat = pDesc->pWorldMatrix;
             }
         }
+        
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
         m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
@@ -431,8 +432,9 @@ void CEffect::Stop() {
         pSpriteParticle->Stop();
 }
 
-void CEffect::Play()
+void CEffect::Play(_float fTime)
 {
+    m_fStopTime = fTime;
     for (auto pParticle : m_pPointParticles)
         pParticle->Play();
     for (auto pSpriteParticle : m_pSpriteParticles)

@@ -288,6 +288,15 @@ PS_NONLIGHT_OUT PS_CIRCLE_DISTORTION(PS_IN In)
     Out.vColor *= abs(MaskTexcoord.y) * 2;
     return Out;
 }
+
+float hole[16] =
+{
+    0, 8, 2, 10,
+    12, 4, 14, 6,
+     3, 11, 1, 9,
+    15, 7, 13, 5
+};
+
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NORMAL_OUT PS_NORMAL_COLOR(PS_IN In)
 {
@@ -301,7 +310,7 @@ PS_NORMAL_OUT PS_NORMAL_COLOR(PS_IN In)
     if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
         discard;
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse *= abs(MaskTexcoord.y) * 2;
+    //Out.vDiffuse *= abs(MaskTexcoord.y) * 2;
     Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     return Out;
