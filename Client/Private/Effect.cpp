@@ -39,7 +39,7 @@ HRESULT CEffect::Initialize(void* pArg)
 {
     if (FAILED(__super::Initialize(nullptr)))
         return E_FAIL;
-
+    m_fStopTime = -10.f;
     if (nullptr != pArg)
     {
         EFFECT_TRANSFORM_DESC* pDesc = static_cast<EFFECT_TRANSFORM_DESC*>(pArg);

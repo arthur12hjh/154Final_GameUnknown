@@ -37,6 +37,7 @@ private:
 public:
 	HRESULT Mapping_Shader_Material(_uint iIdx);
 
+	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
