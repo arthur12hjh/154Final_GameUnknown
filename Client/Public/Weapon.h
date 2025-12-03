@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "PartObject.h"
+#include "Player_Parts.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -11,7 +11,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CWeapon final : public CPartObject
+class CWeapon final : public CPlayer_Parts
 {
 public:
 	typedef struct tagWeapon_Desc : public CPartObject::PARTOBJECT_DESC
@@ -40,12 +40,13 @@ private:
 	CCollider*					m_pColliderCom = { nullptr };
 	_bool						m_bIsHitCollider = { true };
 
-	class CTrailEffect* m_pTrail = { nullptr };
-	class CEffect* m_pSpark = { nullptr };
-	class CEffect* m_pCharge = { nullptr };
+	class CTrailEffect*			m_pTrail = { nullptr };
+	class CEffect*				m_pSpark = { nullptr };
+	class CEffect*				m_pCharge = { nullptr };
 
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;
+	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };
@@ -53,9 +54,9 @@ private:
 private:
 	HRESULT						Ready_Components();
 	HRESULT						Bind_ShaderResources();
-
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
+	_bool						isVisible(); 
 public:
 	static CWeapon*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg) override;

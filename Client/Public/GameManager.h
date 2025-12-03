@@ -38,7 +38,7 @@ public :
 	// 캐릭터 꺼내오면 레퍼런스 증가함 
 	// 다 쓰면 감소시켜주세요
 	class CPlayer*				GetGameCharacter();
-	const PLAYER_DESC*			Get_PlayerDesc();
+	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion

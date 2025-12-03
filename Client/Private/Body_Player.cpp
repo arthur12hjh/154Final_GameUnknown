@@ -69,19 +69,19 @@ HRESULT CBody_Player::Render()
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//림라이트 테스트. 추후 컴포넌트로 제공 예정
-	_float fRimLightPower = { 2.f };
-	_float fRimLightStrength = { 3.f };
-	_float4 vRimLightColor = { 1.f, 0.f, 0.f, 1.f };
+	////림라이트 테스트. 추후 컴포넌트로 제공 예정
+	//_float fRimLightPower = { 2.f };
+	//_float fRimLightStrength = { 3.f };
+	//_float4 vRimLightColor = { 1.f, 0.f, 0.f, 1.f };
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vRimLightColor", &vRimLightColor, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightPower", &fRimLightPower, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightStrength", &fRimLightStrength, sizeof(_float))))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vRimLightColor", &vRimLightColor, sizeof(_float4))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightPower", &fRimLightPower, sizeof(_float))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightStrength", &fRimLightStrength, sizeof(_float))))
+	//	return E_FAIL;
 
 
 	for (size_t i = 0; i < iNumMeshes; i++)
@@ -89,8 +89,8 @@ HRESULT CBody_Player::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		//if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-		//	return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
@@ -102,7 +102,7 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 
 		//rimlight 버전
-		if (FAILED(m_pShaderCom->Begin(2)))
+		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

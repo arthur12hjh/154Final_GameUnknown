@@ -17,7 +17,8 @@
 #include "Player_BattleWalkState.h"
 #include "Player_LockonWalkState.h"
 #include "Player_LightAttackState.h"
-#include "Player_BetaChargingSlahsState.h"
+#include "Player_BetaChargingSlashState.h"
+#include "Player_BetaTripletState.h"
 #include "Player_JumpState.h"
 #include "Player_BattleLandingState.h"
 #include "Player_IdleLandingState.h"
@@ -180,7 +181,14 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE)
 			return nullptr;
 
-		return CPlayer_BetaChargingSlahsState::Create(tDesc.pArg);
+		return CPlayer_BetaChargingSlashState::Create(tDesc.pArg);
+		break;
+
+	case PLAYER_STATE::BETA_TRIPLET:
+		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE)
+			return nullptr;
+
+		return CPlayer_BetaTripletState::Create(tDesc.pArg);
 		break;
 	}
 
@@ -195,6 +203,8 @@ void CPlayerFSM::Handle_Transition(PLAYER_TRANSITION_DESC& Desc)
 		if (false == m_pCurrentState->isTransferAble(Desc.eMode, Desc.eNextState))
 			return;
 
+		PLAYER_MODE ePrePlayerMode = m_pPlayerDesc->ePlayerMode;
+
 		// 모드 변경
 		m_pPlayerDesc->ePlayerMode = Desc.eMode;
 
@@ -203,7 +213,14 @@ void CPlayerFSM::Handle_Transition(PLAYER_TRANSITION_DESC& Desc)
 		{
 			CPlayerState* pNextState = Create_State(Desc);
 			if (nullptr != pNextState)
+			{
+				if (ePrePlayerMode == PLAYER_MODE::IDLE && (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::BATTLE || m_pPlayerDesc->ePlayerMode == PLAYER_MODE::LOCKON))
+					m_pPlayerDesc->isWeaponVisible = true;
+				if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE && (ePrePlayerMode == PLAYER_MODE::BATTLE || ePrePlayerMode == PLAYER_MODE::LOCKON))
+					m_pPlayerDesc->isWeaponVisible = false;
+
 				Change_State(pNextState);
+			}
 		}
 
 		// 여기서 끝. 모드만 바꾸고 상태 유지했다면 그냥 return
@@ -240,12 +257,12 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 	// Battle to Idle 자동 전환 (적 없고 거리 멀어지면 5초 후 Idle)
 	if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::BATTLE)
 	{
-		if (false == m_pPlayerDesc->HasTarget ||
-			m_pPlayerDesc->fCurrentMinDist > 40.0f)
+		if ((false == m_pPlayerDesc->HasTarget || m_pPlayerDesc->fCurrentMinDist > 40.0f) && 
+			 PLAYER_STATE::IDLE == m_pCurrentState->Get_State())
 		{
 			m_pPlayerDesc->fModeTimer += fTimeDelta;
 
-			if (m_pPlayerDesc->fModeTimer >= 5.0f)
+			if (m_pPlayerDesc->fModeTimer >= 2.5f)
 			{
 				m_pPlayerDesc->fModeTimer = 0.f;
 				m_pPlayerDesc->ePlayerMode = PLAYER_MODE::IDLE;
@@ -304,7 +321,11 @@ _bool CPlayerFSM::Check_CanStateEnter(PLAYER_TRANSITION_DESC& Desc)
 	switch (Desc.eNextState)
 	{
 	case PLAYER_STATE::BETA_CHARGINGSLASH:
-		return CPlayer_BetaChargingSlahsState::CanEnter(m_pPlayer, m_pPlayerDesc);
+		return CPlayer_BetaChargingSlashState::CanEnter(m_pPlayer, m_pPlayerDesc);
+		break;
+
+	case PLAYER_STATE::BETA_TRIPLET:
+		return CPlayer_BetaTripletState::CanEnter(m_pPlayer, m_pPlayerDesc);
 		break;
 
 	default:

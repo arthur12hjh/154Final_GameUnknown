@@ -46,7 +46,7 @@ CPlayer* CGameManager::GetGameCharacter()
     return m_pPlayer;
 }
 
-const PLAYER_DESC* CGameManager::Get_PlayerDesc()
+PLAYER_DESC* CGameManager::Get_PlayerDesc()
 {
     return m_pPlayer->Get_Desc();
 }

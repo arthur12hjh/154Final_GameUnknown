@@ -1,31 +1,29 @@
 #include "pch.h"
-#include "Hair_Player.h"
-#include "Body_Player.h"
 
-#include "Bone.h"
-#include "Model.h"
+#include "Hairpin_Player.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
+#include "Body_Player.h"
 #include "Player.h"
 
-CHair_Player::CHair_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPlayer_Parts{ pDevice, pContext }
+CHairpin_Player::CHairpin_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+    : CPlayer_Parts{ pDevice, pContext }
 {
 }
 
-CHair_Player::CHair_Player(const CHair_Player& Prototype)
-	: CPlayer_Parts{ Prototype }
+CHairpin_Player::CHairpin_Player(const CHairpin_Player& Prototype)
+    : CPlayer_Parts{ Prototype }
 {
 }
 
-
-HRESULT CHair_Player::Initialize_Prototype()
+HRESULT CHairpin_Player::Initialize_Prototype()
 {
-	return S_OK;
+    return S_OK;
 }
 
-HRESULT CHair_Player::Initialize(void* pArg)
+HRESULT CHairpin_Player::Initialize(void* pArg)
 {
 	HAIR_PLAYER_DESC* pDesc = static_cast<HAIR_PLAYER_DESC*>(pArg);
 	//m_pSocketMatrix = pDesc->pSocketMatrix;
@@ -46,32 +44,27 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
-	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
+	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
+	
 	return S_OK;
 }
 
-void CHair_Player::Priority_Update(_float fTimeDelta)
+void CHairpin_Player::Priority_Update(_float fTimeDelta)
 {
-
 }
 
-void CHair_Player::Update(_float fTimeDelta)
+void CHairpin_Player::Update(_float fTimeDelta)
 {
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
-void CHair_Player::Late_Update(_float fTimeDelta)
+void CHairpin_Player::Late_Update(_float fTimeDelta)
 {
-	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-#ifdef _DEBUG
-
-#endif
 }
 
-HRESULT CHair_Player::Render()
+HRESULT CHairpin_Player::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -92,8 +85,7 @@ HRESULT CHair_Player::Render()
 		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
-		//4번 인덱스가 머리, 5번 인덱스가 포니테일
-		if (FAILED(m_pShaderCom->Begin(4)))
+		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
@@ -103,7 +95,7 @@ HRESULT CHair_Player::Render()
 	return S_OK;
 }
 
-HRESULT CHair_Player::Render_Shadow()
+HRESULT CHairpin_Player::Render_Shadow()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -130,7 +122,7 @@ HRESULT CHair_Player::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CHair_Player::Ready_Components()
+HRESULT CHairpin_Player::Ready_Components()
 {
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Hair_Eve"),
@@ -138,14 +130,14 @@ HRESULT CHair_Player::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Hair"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CHair_Player::Bind_ShaderResources()
+HRESULT CHairpin_Player::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
@@ -158,44 +150,42 @@ HRESULT CHair_Player::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CHair_Player::Bind_BoneToPartBody(void* pArg)
+HRESULT CHairpin_Player::Bind_BoneToPartBody(void* pArg)
 {
 	CBody_Player* pBody = static_cast<CBody_Player*>(pArg);
 
 	m_pBodyModelCom = static_cast<CModel*>(pBody->Find_Component(TEXT("Com_Model")));
 
-
-
 	return S_OK;
 }
 
-CHair_Player* CHair_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CHairpin_Player* CHairpin_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CHair_Player* pInstance = new CHair_Player(pDevice, pContext);
+	CHairpin_Player* pInstance = new CHairpin_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CHair_Player");
+		MSG_BOX("Failed to Created : CHairpin_Player");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CHair_Player::Clone(void* pArg)
+CGameObject* CHairpin_Player::Clone(void* pArg)
 {
-	CHair_Player* pInstance = new CHair_Player(*this);
+	CHairpin_Player* pInstance = new CHairpin_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CHair_Player");
+		MSG_BOX("Failed to Cloned : CHairpin_Player");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CHair_Player::Free()
+void CHairpin_Player::Free()
 {
 	__super::Free();
 }
