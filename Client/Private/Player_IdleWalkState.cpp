@@ -17,13 +17,7 @@ void CPlayer_IdleWalkState::Start(void* pArg)
     m_eState = PLAYER_STATE::WALK;
     m_isRunStart = true;
 
-    if (true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Jump_Jog", false, 1.2f, 0.12f);
-    else
-    {
-        m_isRunStart = false;
-        m_pPlayer->Set_Animation("Proto_Jog", true, 1.2f, 0.3f);
-    }
+    m_pPlayer->Set_Animation("Proto_Jog", true, 1.2f, 0.3f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)

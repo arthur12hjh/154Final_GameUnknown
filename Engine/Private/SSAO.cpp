@@ -36,21 +36,21 @@ HRESULT CSSAO::Initialize()
         return E_FAIL;
 
     /* Target_SSAO. Y에 대해서도 블러처리 수행. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
         return E_FAIL;
     /* MRT_SSAO */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
         return E_FAIL;
 
     /* Target_SSAO_BlurX. Y에 대해서도 블러처리 수행. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO_BlurX"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO_BlurX"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
         return E_FAIL;
     /* MRT_SSAO_BlurX */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO_BlurX"))))
         return E_FAIL;
 
     /* Target_SSAO_BlurY. Y에 대해서도 블러처리 수행. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO_BlurY"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO_BlurY"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
         return E_FAIL;
     /* MRT_SSAO_BlurY */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_BlurY"), TEXT("Target_SSAO_BlurY"))))

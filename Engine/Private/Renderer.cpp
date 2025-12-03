@@ -154,7 +154,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pMotionBlur->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pSSAO->Ready_Debug(150.f, 150.f, 300.f, 300.f)))
+	if (FAILED(m_pSSAO->Ready_Debug(450.f, 450.f, 300.f, 300.f)))
 		return E_FAIL;
 	//if (FAILED(m_pFog->Ready_Debug(750.f, 150.f, 300, 300)))
 	//	return E_FAIL;
@@ -752,8 +752,8 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-	//	return;
+	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
 		return;
 

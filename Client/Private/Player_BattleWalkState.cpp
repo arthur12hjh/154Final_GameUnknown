@@ -15,7 +15,7 @@ void CPlayer_BattleWalkState::Start(void* pArg)
 {
     m_eState = PLAYER_STATE::WALK;
 
-    m_isRunStart = true;
+      m_isRunStart = true;
 
     //Jump Run Start·Î ½ÃÀÛ.
     if (true == m_isEvading && true == m_isLanding)
@@ -26,7 +26,7 @@ void CPlayer_BattleWalkState::Start(void* pArg)
     else if (true == m_isEvading)
         m_pPlayer->Set_Animation("Proto_Battle_Run_StartAfterEvade", false, 1.2f, 0.2f);
     else if (true == m_isLanding)
-        m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.3f);
+        m_pPlayer->Set_Animation("Proto_Battle_Jump_Run", false, 1.2f, 0.2f);
     else
         m_pPlayer->Set_Animation("Proto_Battle_Run_Start", false, 1.2f, 0.05f);
 }
@@ -89,9 +89,23 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     m_Desc->pPlayerTransform->Change_Look(vResult);
 
 
-    if (true == m_isRunStart && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
+    if(true == m_isLanding  &&  true == isAnimFinished)
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f, FALSE, 0.f, 8.f, TRUE);
+        m_isRunStart = false;
+        m_isLanding = false;
+        m_isEvading = false;
+    }
+
+    if (true == m_isEvading && true == isAnimFinished)
+    {
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
+        m_isRunStart = false;
+    }
+
+    else if (true == m_isRunStart && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
+    {
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
         m_isRunStart = false;
     }
 

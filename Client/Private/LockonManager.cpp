@@ -113,8 +113,7 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (!m_pTarget)
         return;
 
-    // 만약 존재한다면, 락온 처리.
-    if (true == m_isLock)
+    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         Get_LockOnPoint();
 
@@ -123,8 +122,15 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
             m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
 
+            // 몬스터 체력
+            m_pMonsterVitalUI = pUIHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
+
             Safe_Release(pUIHUD);
         }
+
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
+                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
     else
     {
@@ -133,16 +139,11 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             pUIHUD->Return_WorldUI(m_pLockonUI);
+            // 몬스터 체력
+            pUIHUD->Return_WorldUI(m_pMonsterVitalUI);
 
             Safe_Release(pUIHUD);
         }
-    }
-
-    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
-    {
-        if(false == m_pPlayerDesc->isLookFixed)
-            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
-                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
 }
 

@@ -212,6 +212,7 @@
     <ClCompile Include="..\..\Client\Private\UIBeta.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossHPBarFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIBossName.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />

@@ -25,7 +25,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleLandingState::Update(_float fTimeDelta)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
-		fAnimationRatio >= 0.1f)
+		fAnimationRatio >= 0.75f)
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
 	else if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;

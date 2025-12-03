@@ -90,6 +90,9 @@ public:
 
 	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
 
+	CUIBase* Clone_UI(CUIHUD* pHUD, _uint iIdx);
+	void Update_Children(CUIBase* pChild);
+
 #ifdef _DEBUG
 	void Render_Debug_Rect();
 #endif
