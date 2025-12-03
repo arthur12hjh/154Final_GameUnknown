@@ -130,13 +130,15 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	if (m_bIsHitCollider)
+	if (m_bIsEnableCollider)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
+
+#ifdef _DEBUG
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 	}                      
-
-
 
 	//=============== RENDERING LOGIC =================//
 	if (false == isVisible())
@@ -157,9 +159,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-#endif
+
 }
 
 HRESULT CWeapon::Render()
@@ -210,19 +210,8 @@ HRESULT CWeapon::Render_Shadow()
 	return S_OK;
 }
 
-void CWeapon::Enable_HitCollider(_bool bIsFlag)
-{
-	m_bIsHitCollider = bIsFlag;
-}
-
 void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
 {
-	// � ������� ¥������?
-	// 1) strPartTag�� empty�� ���, Player���� Ž�� (V)
-	//    strPartTag�� ���� ���, strPartTag�� ���� Ž�� (V)
-	// 2) strObjectTag��� ���ε� ���� ���ڿ� Ž���ؼ� ã��, Play() �Լ��� ������
-	// 3) �� �𵨵��� �ð��� ���� �� �˾Ƽ� Stop() << �ù߾� �̰� ���ɸ����
-
 	if (strObjectTag == TEXT("Trail"))
 	{
 		m_fTrailTime = NotifyReference.fNumData01;
@@ -236,6 +225,22 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 		m_pCharge->Play(NotifyReference.fNumData01);
 	}
 
+}
+
+void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pComponents = Find_Component(strColliderTag);
+	if (nullptr == pComponents)
+		return;
+
+	m_bIsEnableCollider = NotifyRef.iNumData01;
+	if (false == m_bIsEnableCollider)
+		static_cast<CCollider*>(pComponents)->ResetCollision();
+}
+
+void CWeapon::EnableCollider(_bool bIsEnable)
+{
+	m_bIsEnableCollider = bIsEnable;
 }
 
 HRESULT CWeapon::Ready_Components()
@@ -324,9 +329,7 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		CHARACTER_SKILL_DESC SkillDesc = {};
-		SkillDesc.iSkillDamage = 50.f;
-		pDamageDesc.pSkillData = &SkillDesc;
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer *>(m_pParent)->GetSillDataID());
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

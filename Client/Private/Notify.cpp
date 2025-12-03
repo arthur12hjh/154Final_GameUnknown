@@ -237,49 +237,6 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// ƒ›∏Æ¿¸¿ª ª˝º∫ Or ƒ›∏Æ¿¸ On
-	// ANIM_NOTIFY
-	// szNotifyTag		=> Notify Event Type
-
-	// Create Notify
-	// szNotifyArg01	=> ProtoType Name
-	// szNotifyArg02	=> Layer Name
-	// szNotifyArg03	=> Part Name
-	// szNotifyArg04	=> ƒƒ∆˜≥Õ∆Æ ¿Ã∏ß
-	// szNotifyArg05	=> ∫ª ¿Ã∏ß
-
-	// iNumData1		=>	Skill ID
-	// iNumData2		=>	Col Type
-	// iNumData3		=>	Hit Box Type
-	// iNumData4		=>	Hit Object Type
-
-	//	return E_FAIL;
-	//_TCHAR szLayerName[MAX_PATH], szProtoType[MAX_PATH];
-	//CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szProtoType);
-	//CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szLayerName);
-	//
-	//CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
-	//auto pSkillData = m_pGameManager->Find_SkillData(AnimNotify.iNumData01);
-	//pHitBoxDesc.pData = pSkillData;
-	//
-	//pHitBoxDesc.eColType = COLLIDER(AnimNotify.iNumData02);
-	//pHitBoxDesc.eHitBoxType = HIT_TYPE(AnimNotify.iNumData03);
-	//pHitBoxDesc.eHitObjectType = HIT_TYPE(AnimNotify.iNumData04);
-	//pHitBoxDesc.bIsApplyTransform = true;
-	//pHitBoxDesc.pAttacker = m_pCharacter;
-	//
-	//pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
-	//pHitBoxDesc.fImpactForce = m_pCharacter->Get_ImpactForce();
-	////pHitBoxDesc.vRotation = AnimNotify.vNotifyRotation;
-	//
-	//_vector vCharacterPos = m_pCharacter->GetTransform()->Get_State(STATE::POSITION);
-	//_vector vCharacterLook = m_pCharacter->GetTransform()->Get_State(STATE::LOOK);
-	//vCharacterPos += vCharacterLook * pSkillData->fRange;
-	//XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
-	//
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szProtoType,
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), szLayerName, &pHitBoxDesc)))
-
 	m_pCharacter->CallNotify(ACTIVE_COLLISION, &AnimNotify);
 
 	return S_OK;
@@ -328,13 +285,6 @@ HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
 
 HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
 {
-	// ?åÌä∏?§Î∏å?ùÌä∏??ÏΩúÎ¶¨??On
-	// ANIM_NOTIFY
-	// szNotifyTag		=> Notify Event Type
-	
-	// Create Notify
-	// szNotifyArg01	=> PartObject Name ( ?åÌä∏?§Î∏å?ùÌä∏ ?¥Î¶Ñ, Part_Body )
-	// szNotifyArg02	=> Component Name ( Ï∂©ÎèåÏ≤?Ïª¥Ìè¨?åÌä∏ ?¥Î¶Ñ, Com_Collider )
 	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg02.c_str(), szComponentName);

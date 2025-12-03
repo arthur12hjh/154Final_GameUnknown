@@ -41,7 +41,9 @@ private:
 	CCamera*					m_pSelectCamera = nullptr;
 	CTransform*					m_pCameraTransform = nullptr;
 
+	_float						m_vTeleportPoint[3] = {};
 	_float						m_fGameSpeed = {1.f};
+
 	_bool						m_bIsCamLerp = false;
 	_bool						m_bIsCameraLock[2] = { false, false };
 	_bool						m_bIsTeleport = false;

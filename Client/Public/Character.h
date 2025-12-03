@@ -19,7 +19,9 @@ protected :
 
 public:
 	// 파트오브젝트 콜라이더 켜는 노티파이 끌고 들어가는 함수.
-	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, ANIM_NOTIFY){};
+	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef){};
+	
+	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify * pNotify);
 
 	// Clone 한 GameObject 켜는 노티파이 끌고 들어가는 함수
 	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) {};
@@ -32,7 +34,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
+
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();
