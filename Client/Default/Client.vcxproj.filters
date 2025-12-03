@@ -643,9 +643,6 @@
     <Filter Include="02.GameObjects\Character\Player\02. Parts\Hairpin">
       <UniqueIdentifier>{f1c04c9b-b8bc-44d5-9444-3ac8b7b32b8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot\UIRushSlotFX">
-      <UniqueIdentifier>{a6ed4823-6d2d-4a75-8c2e-c4f8e0ba481c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
       <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
     </Filter>
