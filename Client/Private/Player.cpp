@@ -69,6 +69,7 @@ _bool CPlayer::Use_RushSkill()
 	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
 		return false;
 
+	m_PlayerDesc.eRushState = SKILL_STATE::USE; // [JU] Rush Use로 상태 변환
 	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 
 	return S_OK;
@@ -140,10 +141,13 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pGameManager->Lockon(fTimeDelta);
 
 	Update_TestLogic(fTimeDelta);
-
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill();
 	Update_FSM(fTimeDelta);
+	
+	// [JU] Use_RushSkill 테스트(마우스 우클릭)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
+		Use_RushSkill();
 	
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -379,15 +383,23 @@ void CPlayer::Update_RushSkill(_float fTimeDelta)
 
 	// use 상태라면 Default로 다시 전환
 	if (SKILL_STATE::USE == m_PlayerDesc.eRushState)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime = 0.f;
 		m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	}
 
-	m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
-
+	// [JU] Default일 때만 쿨타임 증가
 	if (m_PlayerDesc.fCurrentRushCoolTime < m_PlayerDesc.fMaxRushCoolTime)
+	{
+		m_PlayerDesc.fCurrentRushCoolTime += fTimeDelta;
+		m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	}
+	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime
+		&& m_PlayerDesc.eRushState != SKILL_STATE::ACTIVE) // [JU] 쿨타임 다 차면 활성화(active on)
+	{
 		m_PlayerDesc.eRushState = SKILL_STATE::ACTIVE_ON;
-
-	else if (m_PlayerDesc.fCurrentRushCoolTime >= m_PlayerDesc.fMaxRushCoolTime)
 		m_PlayerDesc.fCurrentRushCoolTime = m_PlayerDesc.fMaxRushCoolTime;
+	}
 }
 
 void CPlayer::Update_BetaSkill()
@@ -401,7 +413,7 @@ void CPlayer::Update_BetaSkill()
 		if (SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
 
-		else if (SKILL_STATE::USE == m_PlayerDesc.eRushState && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+		else if (SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
 
 		else if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)

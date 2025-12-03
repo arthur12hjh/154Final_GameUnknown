@@ -119,6 +119,9 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 		return;
 
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
+
+	for(auto& pChild : *pVitalWrapper->Get_Children())
+		pVitalWrapper->Update_Children(pChild);
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
@@ -884,6 +887,10 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	// Parent/계층/애니/가시성 원복
 	m_pUIAnimMgr->Anim_Stop(pUI);
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
+
+	for (auto& pChild : *pUI->Get_Children())
+		pUI->Update_Children(pChild);
+
 	//pUI->Set_Active(false);
 	pUI->SetParent(nullptr);
 	pUI->Set_TargetPos(nullptr );
@@ -894,7 +901,6 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag; // 간단 방식
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
-	//Safe_Release(pUI);
 	pUI = nullptr;
 }
 

@@ -65,14 +65,14 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 #ifdef _DEBUG
-	// 테스트 용
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+	//테스트 용
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			*m_iCurrentShield -= 10;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			*m_iCurrentShield += 10;
-	}*/
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
+			m_fTargetFill -= 0.1f;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
+			m_fTargetFill += 0.1f;
+	}
 #endif
 
 	/*if (m_iCurrentShield)
