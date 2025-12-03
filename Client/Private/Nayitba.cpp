@@ -75,7 +75,7 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
+	
 
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
@@ -98,6 +98,7 @@ void CNayitba::Update(_float fTimeDelta)
 		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
 	}
+	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
