@@ -5,9 +5,11 @@
 
 NS_BEGIN(Engine)
 class CModel;
+struct AnimNotify;
 NS_END
 
 NS_BEGIN(Client)
+
 class CCharacter abstract : public CEntity
 {
 protected :
@@ -30,6 +32,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	virtual HRESULT					CallNotify(const AnimNotify* pNotify);
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();

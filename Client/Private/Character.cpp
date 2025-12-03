@@ -64,6 +64,11 @@ HRESULT CCharacter::Render()
 	return S_OK;
 }
 
+HRESULT CCharacter::CallNotify(const AnimNotify* pNotify)
+{
+	return E_NOTIMPL;
+}
+
 void CCharacter::SocketAttachment(const _float4x4* pAttachedMatrix)
 {
 	m_pSocketMatrix = pAttachedMatrix;
