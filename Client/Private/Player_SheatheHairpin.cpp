@@ -24,6 +24,11 @@ PLAYER_TRANSITION_DESC CPlayer_SheatheHairpin::Update(_float fTimeDelta)
     _vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
     _bool isWalking = { false };
 
+
+	//추후 비녀 가리는 로직도 추가할 것.
+	if (9 / 45.f <= fAnimationRatio)
+		m_Desc->isWeaponVisible = false;
+
 	if (true == isAnimFinished)
 	{
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;

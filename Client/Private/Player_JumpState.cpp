@@ -26,8 +26,9 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.6f);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 0.6f);
+	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.6f);
+
 
 	if (false == m_Desc->pPlayerController->Get_Gravity())
 	{

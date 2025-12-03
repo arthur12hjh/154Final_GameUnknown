@@ -120,6 +120,8 @@ void CPlayer::Update(_float fTimeDelta)
 
 	m_pGameManager->Lockon(fTimeDelta);
 
+	Update_TestLogic(fTimeDelta);
+
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill();
 	Update_FSM(fTimeDelta);
@@ -186,6 +188,17 @@ HRESULT CPlayer::Damaged(void* pArg)
 	}
 
 	return S_OK;
+}
+
+void CPlayer::Update_TestLogic(_float fTimeDelta)
+{
+	m_fTestTimer += fTimeDelta;
+
+	if (m_fTestTimer >= 2.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	{
+		m_PlayerDesc.iCurrentBetaEnergy++;
+		m_fTestTimer = 0.f;
+	}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -283,7 +296,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	
 	//베타 에너지
 	m_PlayerDesc.iMaxBetaEnergy = 20;
-	m_PlayerDesc.iCurrentBetaEnergy = 20;
+	m_PlayerDesc.iCurrentBetaEnergy = 0;
 
 	m_PlayerDesc.iCurrentHealth = 100;
 	m_PlayerDesc.iCurrentShield = 100;
@@ -320,9 +333,10 @@ HRESULT CPlayer::Ready_PlayerDesc()
 HRESULT CPlayer::Ready_BetaSkillDesc()
 {
 	//추후 추가 예정
-	m_PlayerDesc.iBetaSkillCount = 1;
+	m_PlayerDesc.iBetaSkillCount = 2;
 	m_PlayerDesc.iBetaSkillId[0] = 1004;
-	
+	m_PlayerDesc.iBetaSkillId[1] = 1005;
+
 	return S_OK;
 }
 
@@ -365,13 +379,16 @@ void CPlayer::Update_BetaSkill()
 	{
 		_uint iGauge = m_pGameManager->Find_BetaSkillData(m_PlayerDesc.iBetaSkillId[i])->iRequiredBetaGauge;
 
-		if (iGauge < m_PlayerDesc.iCurrentBetaEnergy)
+		if (SKILL_STATE::USE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
 
-		if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+		else if (SKILL_STATE::USE == m_PlayerDesc.eRushState && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::DEFAULT == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE_ON;
 
-		if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
+		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
 	}
 }
