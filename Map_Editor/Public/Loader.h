@@ -54,6 +54,15 @@ private:
 	HRESULT Loading_For_Desert_Canyon2(void* pArg);
 	HRESULT Loading_For_Desert_Canyon2_1(void* pArg);
 	HRESULT Loading_For_Desert_Canyon2_2(void* pArg);
+	HRESULT Loading_For_Desert_Deco(void* pArg);
+	HRESULT Loading_For_Desert_Archi(void* pArg);
+
+	HRESULT Loading_For_Desert_Instance_Canyon1(void* pArg);
+	HRESULT Loading_For_Desert_Instance_Canyon1_1(void* pArg);
+	HRESULT Loading_For_Desert_Instance_Canyon1_2(void* pArg);
+	HRESULT Loading_For_Desert_Instance_Canyon2(void* pArg);
+	HRESULT Loading_For_Desert_Instance_Canyon2_1(void* pArg);
+	HRESULT Loading_For_Desert_Instance_Canyon2_2(void* pArg);
 	
 
 

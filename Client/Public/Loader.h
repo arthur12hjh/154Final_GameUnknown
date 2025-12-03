@@ -51,11 +51,13 @@ private:
 	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Shader(void* pArg);
 	HRESULT Loading_For_GamePlay_Effect(void* pArg);
-	HRESULT Loading_For_GamePlay_Map(void* pArg);
-	HRESULT Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg);
-	HRESULT Loading_For_GamePlay_Map_Scarlet_Building(void* pArg);
 	HRESULT Loading_For_GamePlay_InstanceMesh(void* pArg);
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
+
+	HRESULT Loading_For_GamePlay_Map(void* pArg);
+
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Building(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg);
 
 	HRESULT Loading_For_GamePlay_Map_DesertA(void* pArg);
 	HRESULT Loading_For_GamePlay_Map_DesertB(void* pArg);
@@ -64,6 +66,18 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertE(void* pArg);
 	HRESULT Loading_For_GamePlay_Map_DesertF(void* pArg);
 
+	HRESULT Loading_For_Desert_Deco(void* pArg);
+	HRESULT Loading_For_Desert_Archi(void* pArg);
+
+//#pragma region Level_Scarlet
+//	HRESULT Loading_For_Scarlet_Mesh(void* pArg);
+//	HRESULT Loading_For_Scarlet_InstanceMesh(void* pArg);
+//	HRESULT Loading_For_Scarlet_Shader(void* pArg);
+//	HRESULT Loading_For_Scarlet();
+//	HRESULT Loading_For_Scarlet_Map(void* pArg);
+//	HRESULT Loading_For_Scarlet_Map_Environment(void* pArg);
+//	HRESULT Loading_For_Scarlet_Map_Building(void* pArg);
+//#pragma endregion
 
 	HRESULT Loading_UI_For_Logo_Level();
 	HRESULT Loading_UI_For_GamePlay_Level();

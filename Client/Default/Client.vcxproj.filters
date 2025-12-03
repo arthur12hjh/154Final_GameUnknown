@@ -589,7 +589,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX">
       <UniqueIdentifier>{bfa53255-00ae-4b81-bca8-aeb9e9f0d206}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="02.GameObjects\Map\Desert">
       <UniqueIdentifier>{f4e47b99-0d6b-47f1-a018-0bfa32ea1537}</UniqueIdentifier>
     </Filter>
@@ -607,10 +606,30 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
       <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
-=======
-    <Filter Include="03.Effects\TrailEffect\TrailData">
-      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
->>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
+    </Filter>
+    <Filter Include="01.Levels\Scarlet">
+      <UniqueIdentifier>{e36c3514-947c-4060-a97a-b4aa551ab48f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Instance">
+      <UniqueIdentifier>{feb07ccf-2b93-4640-8e0d-0b5098c71ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Deco">
+      <UniqueIdentifier>{75c96b6f-14a0-4fcf-8735-302970638a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Lift">
+      <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Iron_Floor">
+      <UniqueIdentifier>{e0b6f843-a98c-4464-8bee-422c2ad226f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Body">
+      <UniqueIdentifier>{db40156a-341f-48f3-9c2a-148808dd66a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Platform">
+      <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Controller">
+      <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1211,6 +1230,7 @@
     <ClInclude Include="..\Public\LockonManager.h">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\Player_IdleWalkEndState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Walk</Filter>
     </ClInclude>
@@ -1222,7 +1242,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
-<<<<<<< HEAD
     <ClInclude Include="..\Public\Building_Ruin.h">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClInclude>
@@ -1234,10 +1253,27 @@
     </ClInclude>
     <ClInclude Include="..\public\Canyon.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
-=======
-    <ClInclude Include="..\public\TrailData.h">
-      <Filter>03.Effects\TrailEffect\TrailData</Filter>
->>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Scarlet.h">
+      <Filter>01.Levels\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Instance_Desert.h">
+      <Filter>02.GameObjects\Map\Desert\Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Iron_Floor.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Iron_Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Deco.h">
+      <Filter>02.GameObjects\Map\Desert\Deco</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lift_Body.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lift_Controller.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lift_Platform.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1819,6 +1855,7 @@
     <ClCompile Include="..\Private\LockonManager.cpp">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperLineFX</Filter>
     </ClCompile>
@@ -1835,7 +1872,6 @@
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="..\Private\Building_Ruin.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Building_Ruin</Filter>
     </ClCompile>
@@ -1847,10 +1883,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Canyon.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
-=======
-    <ClCompile Include="..\private\TrailData.cpp">
-      <Filter>03.Effects\TrailEffect\TrailData</Filter>
->>>>>>> 3157c6450b0794d2ee38e8e8af2f2f3173f2246a
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Scarlet.cpp">
+      <Filter>01.Levels\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Instance_Desert.cpp">
+      <Filter>02.GameObjects\Map\Desert\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Body.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Iron_Floor.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Iron_Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Controller.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Deco.cpp">
+      <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1896,14 +1949,12 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
-      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

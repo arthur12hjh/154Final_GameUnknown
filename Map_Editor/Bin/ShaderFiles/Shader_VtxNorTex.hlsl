@@ -1,10 +1,10 @@
-#include "Engine_Shader_Defines.hlsli"
+#include "../../../Client/Bin/ShaderFiles/Client_Shader_Utils.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DiffuseTexture[1];
+texture2D g_ORMTexture;
 texture2D g_MaskTexture;
-
 
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
@@ -20,23 +20,23 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float4 vNormal : NORMAL;
-    float2 vTexcoord : TEXCOORD0;   
+    float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
-    VS_OUT Out;       
+    VS_OUT Out;
   
     matrix matWV, matWVP;
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);   
+    matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;        
-    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix));    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix));
     Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
     return Out;
@@ -60,6 +60,8 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
 };
 
 
@@ -69,7 +71,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vSourDiffuse = g_DiffuseTexture[0].Sample(DefaultSampler, In.vTexcoord * 10.f);
+    vector vSourDiffuse = g_DiffuseTexture[0].Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 50.f);
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -77,7 +79,7 @@ PS_OUT PS_MAIN(PS_IN In)
     const float fTexelSize = 512.f;
     vMaskUV.x = In.vWorldPos.x / fTexelSize;
     vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
-    float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
+    float fMaskValue = g_MaskTexture.SampleLevel(AnisoTropy_BLUR_Sampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
     
     if (fMaskValue > 0.01f)
         Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
@@ -88,11 +90,13 @@ PS_OUT PS_MAIN(PS_IN In)
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    return Out;   
+    Out.vORM = g_ORMTexture.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord);
+    
+    return Out;
 }
 
 technique11 DefaultTechnique
-{ 
+{
     pass Terrain
     {
         SetRasterizerState(RS_Default);
