@@ -38,8 +38,7 @@ public:
 private:
 	struct Player_Desc		m_PlayerDesc = {};
 	CCollider*				m_pColliderCom = { nullptr };
-
-	class CPlayerFSM* m_pFSM = { nullptr };
+	class CPlayerFSM*		m_pFSM = { nullptr };
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 
 	//

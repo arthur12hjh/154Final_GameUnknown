@@ -35,6 +35,8 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	{
 		if (false == SelectPattern())
 			return NODE_STATE::FAIL;
+
+		m_bIsAttackStartLerp = true;
 	}
 
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
@@ -47,6 +49,9 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		m_pBlackBoard->SetAttackData(nullptr);
 		return NODE_STATE::FAIL;
 	}
+
+	if (m_bIsAttackStartLerp)
+		LookAtPoint(fTimeDelta);
 
 	// 일단 여기서 고릴라 공격에대한 이동 처리
 	AttackMoveAction(fTimeDelta);
@@ -414,6 +419,28 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 {
 	// 거리기반으로 속도 조절해보자
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_fAttackMoveDir), m_fMoveSpeed);
+}
+
+void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
+{
+	_vector vOwnerPos{}, vTempOwnerPos{};
+	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
+	auto pTarget = m_pBlackBoard->GetTarget();
+	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+
+	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
+
+	if (m_vLerpTime.x > m_vLerpTime.y)
+	{
+		m_bIsAttackStartLerp = false;
+		m_vLerpTime.x = 0.f;
+	}
+	else
+		m_vLerpTime.x += fTimeDelta;
 }
 
 CTask_GorillaAttack* CTask_GorillaAttack::Create(CBehaviorTree* pOwnerTree)

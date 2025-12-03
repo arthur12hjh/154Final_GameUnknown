@@ -83,6 +83,9 @@ void CPlayerFSM::Update(_float fTimeDelta)
 
 CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 {
+	if (false == Check_CanStateEnter(tDesc))
+		return nullptr;
+
 	switch (tDesc.eNextState)
 	{
 	case PLAYER_STATE::IDLE:
@@ -189,8 +192,7 @@ void CPlayerFSM::Handle_Transition(PLAYER_TRANSITION_DESC& Desc)
 	// 모드 전환 + 상태 전환
 	if (Desc.isChangeMode)
 	{
-
-		if (!m_pCurrentState->isTransferAble(Desc.eMode, Desc.eNextState))
+		if (false == m_pCurrentState->isTransferAble(Desc.eMode, Desc.eNextState))
 			return;
 
 		// 모드 변경
@@ -199,9 +201,9 @@ void CPlayerFSM::Handle_Transition(PLAYER_TRANSITION_DESC& Desc)
 		// 상태도 같이 바꾸고 싶으면
 		if (Desc.eNextState != PLAYER_STATE::STATE_END)
 		{
-			CPlayerState* pNext = Create_State(Desc);
-			if (nullptr != pNext)
-				Change_State(pNext);
+			CPlayerState* pNextState = Create_State(Desc);
+			if (nullptr != pNextState)
+				Change_State(pNextState);
 		}
 
 		// 여기서 끝. 모드만 바꾸고 상태 유지했다면 그냥 return
@@ -211,9 +213,9 @@ void CPlayerFSM::Handle_Transition(PLAYER_TRANSITION_DESC& Desc)
 	// 모드는 그대로 상태만 전환하는 경우
 	if (Desc.eNextState != PLAYER_STATE::STATE_END)
 	{
-		CPlayerState* pNext = Create_State(Desc);
-		if (pNext)
-			Change_State(pNext);
+		CPlayerState* pNextState = Create_State(Desc);
+		if (nullptr != pNextState)
+			Change_State(pNextState);
 	}
 }
 
@@ -295,6 +297,21 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 
 		m_pPlayerDesc->isRequestLockonToggle = false;
 	}
+}
+
+_bool CPlayerFSM::Check_CanStateEnter(PLAYER_TRANSITION_DESC& Desc)
+{
+	switch (Desc.eNextState)
+	{
+	case PLAYER_STATE::BETA_CHARGINGSLASH:
+		return CPlayer_BetaChargingSlahsState::CanEnter(m_pPlayer, m_pPlayerDesc);
+		break;
+
+	default:
+		return true;
+	}
+
+	return true;
 }
 
 HRESULT CPlayerFSM::Ready_State()
