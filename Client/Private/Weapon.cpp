@@ -82,12 +82,12 @@ void CWeapon::Update(_float fTimeDelta)
 		desc.fRotationPerSec = 1.f;
 		desc.fSpeedPerSec = 1.f;
 		desc.pRootMatrix = &m_CombinedWorldMatrix;
-		desc.vPos = XMVectorSet(0.06f, 0.f, 0, 1);
+		desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
 		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 10.f;
+		desc.fSize = 0.3f;
 
-		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"), &desc));
-		m_pCharge->Play();
+		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
+		m_pCharge->Play(4.f);
 	}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;

@@ -305,6 +305,18 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
 
 void CEffect::Update(_float fTimeDelta)
 {
+    if (0 <= m_fStopTime) {
+        m_fStopTime -= fTimeDelta;
+    }
+    else if(-10 < m_fStopTime){
+        m_fStopTime = -10;
+        for (auto pParticle : m_pPointParticles) {
+            pParticle->End();
+        }
+        for (auto pSpriteParticle : m_pSpriteParticles) {
+            pSpriteParticle->End();
+        }
+    }
     for (auto pMeshEffect : m_pMeshEffects) {
         pMeshEffect->Update(fTimeDelta);
     }
