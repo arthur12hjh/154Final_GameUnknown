@@ -32,14 +32,15 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 
 	if (false == m_Desc->pPlayerController->Get_Gravity())
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
+		if ((m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
 			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
+			m_Desc->ePlayerMode != PLAYER_MODE::IDLE)
 		{
 			m_NextStateDesc.isLand = true;
 			m_tNextState.pArg = &m_NextStateDesc;

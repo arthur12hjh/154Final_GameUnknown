@@ -126,6 +126,14 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		}
 		break;
 
+	case PLAYER_STATE::LANDING:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE:   return CPlayer_IdleLandingState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_BattleLandingState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_BattleLandingState::Create(tDesc.pArg);
+		}
+		break;
 	case PLAYER_STATE::EVADE:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
@@ -178,14 +186,18 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		break;
 
 	case PLAYER_STATE::BETA_CHARGINGSLASH:
-		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE)
+		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE ||
+			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_CHARGINGSLASH || 
+			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_TRIPLET)
 			return nullptr;
 
 		return CPlayer_BetaChargingSlashState::Create(tDesc.pArg);
 		break;
 
 	case PLAYER_STATE::BETA_TRIPLET:
-		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE)
+		if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE ||
+			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_CHARGINGSLASH ||
+			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_TRIPLET)
 			return nullptr;
 
 		return CPlayer_BetaTripletState::Create(tDesc.pArg);
