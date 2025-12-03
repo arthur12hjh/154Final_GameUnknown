@@ -1010,6 +1010,56 @@
                         "szUITag": "SkillSlot_3"
                     },
                     {
+                        "Children": [
+                            {
+                                "Shader": {
+                                    "bUseGlow": true,
+                                    "fGlowIntensity": 0.0,
+                                    "fGlowSpread": 0.0
+                                },
+                                "TextureDesc": {
+                                    "iPass": 3,
+                                    "iTextureIndex": 0,
+                                    "szProtoTag": "Prototype_Component_UI_Texture_Skill_On_Fx",
+                                    "szTextureComTag": "Com_Texture_UI_Skill_On_Fx"
+                                },
+                                "fAlpha": 1.0,
+                                "fOffsetX": 0.0,
+                                "fOffsetY": 0.0,
+                                "fRotation": 0.0,
+                                "fSizeX": 1.0,
+                                "fSizeY": 1.0,
+                                "fX": 1490.0,
+                                "fY": 708.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szAnimTags": [
+                                    {
+                                        "szAnimTag": "Rush_ActiveOn",
+                                        "szPrefabTag": "Glow_Wave_0"
+                                    }
+                                ],
+                                "szEvents": {
+                                    "RushFX_ActiveOn_Effect": [
+                                        {
+                                            "szActionTag": "Rush_ActiveOn",
+                                            "szArg": "Rush_ActiveOn",
+                                            "szSubscribeEventTags": [
+                                                "Rush_ActiveOn"
+                                            ],
+                                            "szTypeTag": "PlayAnimEvent"
+                                        }
+                                    ]
+                                },
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_Image",
+                                "szUIID": "Rush_Fx_Image_3-3",
+                                "szUITag": "Rush_Fx"
+                            }
+                        ],
                         "Shader": {
                             "bUseGlow": true,
                             "bUseTintColor": true,
@@ -1042,7 +1092,11 @@
                             },
                             {
                                 "szAnimTag": "Rush_ActiveOn",
-                                "szPrefabTag": "Glow_0_3_Reverse"
+                                "szPrefabTag": "Glow_0_5_Reverse"
+                            },
+                            {
+                                "szAnimTag": "Rush_Use",
+                                "szPrefabTag": "FadeOut_0_5"
                             }
                         ],
                         "szEvents": {
@@ -1062,6 +1116,16 @@
                                     "szArg": "Rush_Active",
                                     "szSubscribeEventTags": [
                                         "Rush_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "Rush_Use_Effect": [
+                                {
+                                    "szActionTag": "Rush_Use",
+                                    "szArg": "Rush_Use",
+                                    "szSubscribeEventTags": [
+                                        "Rush_Use"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -1249,6 +1313,13 @@
                         {
                             "szActionTag": "Rush_Active",
                             "szArg": "Rush_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rush_Use": [
+                        {
+                            "szActionTag": "Rush_Use",
+                            "szArg": "Rush_Use",
                             "szTypeTag": "ActionEvent"
                         }
                     ],

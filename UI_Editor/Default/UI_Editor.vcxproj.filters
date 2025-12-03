@@ -292,9 +292,6 @@
     <ClCompile Include="..\..\Client\Private\Character.cpp">
       <Filter>999. CPP From Client\03. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Player_AerialAttack.cpp">
-      <Filter>999. CPP From Client\03. Player\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\Player_BattleEvadeState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
@@ -346,9 +343,6 @@
     <ClCompile Include="..\..\Client\Private\Player_VendingInteractionState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\PlayerBattleFSM.cpp">
-      <Filter>999. CPP From Client\03. Player\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\PlayerBehaviorCallback.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
@@ -356,12 +350,6 @@
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\PlayerFSM.cpp">
-      <Filter>999. CPP From Client\03. Player\FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\PlayerIdleFSM.cpp">
-      <Filter>999. CPP From Client\03. Player\FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\PlayerLockonFSM.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\PlayerState.cpp">

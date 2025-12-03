@@ -88,7 +88,7 @@ public:
 
 	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
 
-	void Set_TargetPos(const _vector& pPos) { m_pTargetPos = pPos; }
+	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
 
 #ifdef _DEBUG
 	void Render_Debug_Rect();
@@ -109,7 +109,7 @@ protected:
 	_bool					m_bFollowParent{ true };
 	_bool					m_bPlayingAnim{ false };
 
-	_vector					m_pTargetPos{0.f};
+	const _float3*					m_pTargetPos{nullptr};
 
 private:
 	HRESULT Ready_Texture();

@@ -82,6 +82,7 @@ namespace Client
 
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
+		//bool							eBetaSkillState[4];
 		SKILL_STATE						eBetaSkillState[4];
 		//_bool							eBetaSkillState[4];			// 사용중인 스킬 상태 여부
 		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개

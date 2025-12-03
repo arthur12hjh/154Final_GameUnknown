@@ -41,7 +41,7 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent))
+	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NaytibaDesc() && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
 	{
 		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
 
