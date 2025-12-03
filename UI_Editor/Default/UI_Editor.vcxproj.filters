@@ -394,6 +394,9 @@
     <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossName.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

@@ -52,6 +52,8 @@ private:
 	_float						m_fCurrentMinDist	  = { FLT_MAX };
 	_bool						m_isLock			  = { false };
 	class CUIBase*				m_pLockonUI				= { nullptr };
+
+	class CUIBase*				m_pMonsterVitalUI				= { nullptr }; // 테스트 용
 public:
 	static CLockonManager* Create();
 	virtual void Free() override;
