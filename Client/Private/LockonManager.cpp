@@ -122,6 +122,9 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
             m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
 
+            // 몬스터 체력
+            m_pMonsterVitalUI = pUIHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
+
             Safe_Release(pUIHUD);
         }
 
@@ -136,6 +139,8 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             pUIHUD->Return_WorldUI(m_pLockonUI);
+            // 몬스터 체력
+            pUIHUD->Return_WorldUI(m_pMonsterVitalUI);
 
             Safe_Release(pUIHUD);
         }

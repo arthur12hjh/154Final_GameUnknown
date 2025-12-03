@@ -521,7 +521,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 		{
 			for (const auto& pChild : pUIObject["Children"])
 			{
-				Load_Hierarchy(pCreatedObj, pChild);
+ 				Load_Hierarchy(pCreatedObj, pChild);
 			}
 		}
 		else
@@ -730,7 +730,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	if (!pCreatedObj)
 		return;
 
-	if (Desc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN))
+	//if (Desc.iDrawType == ENUM_CLASS(CUIObject::DRAW_TYPE::SCREEN))
 	{
 		pCreatedObj->SetParent(pUIParent);
 		pUIParent->Add_Child(pCreatedObj);
@@ -806,27 +806,36 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	if (pObj->second == nullptr)
 		return E_FAIL;
 
-	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
+ 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
 
 	if (!pUIBase)
 		return E_FAIL;
 
 	auto& pool = m_WorldUIs[szPoolTag];
-	pool.reserve(pool.size() + count);
+   	pool.reserve(pool.size() + count);
 
 	for (_uint i = 0; i < count; ++i) {
-		UIBASE_DESC desc{ pUIBase->Get_UIBase_Desc() };
+		//UIBASE_DESC desc{ pUIBase->Get_UIBase_Desc() };
 
-		desc.szUITag = szUITag + TEXT("_Pooled_") + to_wstring(i);
+		//desc.szUITag = szUITag + TEXT("_Pooled_") + to_wstring(i);
 
-		CGameObject* pObj = nullptr;
-		if (FAILED(Add_UserInterface(level, desc.szProtoTag.c_str(),
-			desc.szLayerTag.c_str(), desc.szUITag.c_str(),
-			&pObj, &desc)))
+ 		CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase)->Clone_UI(this, i);
+		
+		if (!pUI)
 			return E_FAIL;
 
-		auto* pUI = dynamic_cast<CUIBase*>(pObj);
-		if (!pUI) return E_FAIL;
+		/*CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase->Clone_UI());
+		
+		pUI->Set_UIBase_OriginDesc(desc);
+
+		auto pLayer = m_pLayers[desc.szLayerTag];
+			
+		auto pUIs = *pLayer->Get_UserInterfaces();
+
+		pUIs.emplace(desc.szUITag, pUI);*/
+
+		/*auto* pUI = dynamic_cast<CUIBase*>(pObj);
+		if (!pUI) return E_FAIL;*/
 
 		// 풀에 잠시 대기: 비활성/가시성 숨김/애니 정지
 		Reset_WorldUI_State(pUI);

@@ -646,6 +646,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot\UIRushSlotFX">
       <UniqueIdentifier>{a6ed4823-6d2d-4a75-8c2e-c4f8e0ba481c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
+      <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1314,6 +1317,9 @@
     <ClInclude Include="..\Public\Hairpin_Player.h">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIBossName.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1951,6 +1957,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Hairpin_Player.cpp">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hairpin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossName.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
