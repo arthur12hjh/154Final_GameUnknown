@@ -81,7 +81,7 @@ void CTask_GorillaAttack::SelectRandomPattern()
 	if(50 >= m_pGameInstance->Random(0.f, 100.f))
 		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
 	else
-		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));*/
+		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
 
 	SelectAttack();
 }
