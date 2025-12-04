@@ -137,9 +137,16 @@ void CPointParticle::Update(_float fTimeDelta)
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
 
 	if (m_tData.bisSpectrum) {
-		float fLengt = XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) * 5;
-		m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + fLengt;
-		m_CBData.fTimeDelta.z = fLengt;
+		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / m_tData.fSphereSize;
+		m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
+		if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
+		}
+		else if (1 < m_fLength) {
+			_int iLength = (_int)m_fLength;
+			m_fLength -= iLength;
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+		}
 	}
 	m_CombinedWorldMatrix = CombinedWorldMatrix;
 	Spread(fTimeDelta);
@@ -169,11 +176,17 @@ HRESULT CPointParticle::Render()
 
 void CPointParticle::Stop() {
 	m_bisStop = true;
+	if (!m_tData.bisSpectrum) {
+		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
+	}
 }
 
 void CPointParticle::Play()
 {
 	m_bisStop = false;
+	if (m_tData.bisSpectrum) {
+		m_CBData.iLoopAndCount.x = 2;
+	}
 }
 
 void CPointParticle::End()
@@ -363,7 +376,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 
 void CPointParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 5 : m_tData.bisLoop ? m_tData.bisSpectrum ? (4 > m_CBData.iLoopAndCount.x) ? m_CBData.iLoopAndCount.x + 1 : 4 : 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

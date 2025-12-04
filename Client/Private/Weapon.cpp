@@ -11,6 +11,8 @@
 #include "TrailEffect.h"
 #include "Effect.h"
 
+
+
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPlayer_Parts{ pDevice, pContext }
 {
@@ -86,8 +88,10 @@ void CWeapon::Update(_float fTimeDelta)
 		desc.fRot = _float3(0, 0, 0);
 		desc.fSize = 0.3f;
 
-		m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
-		m_pCharge->Play(4.f);
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_ChargeAttack_AfterSword"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Effect_Layer"), &desc)))
+			return;
 	}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;

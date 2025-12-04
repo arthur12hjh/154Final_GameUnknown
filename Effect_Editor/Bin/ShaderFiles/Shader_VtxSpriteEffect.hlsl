@@ -161,29 +161,48 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+
+float hole[16] =
+{
+    0, 8, 2, 10,
+    12, 4, 14, 6,
+     3, 11, 1, 9,
+    15, 7, 13, 5
+};
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
-PS_NORMAL_OUT PS_NORMAL_MASK_MAIN(PS_IN In)
+PS_NORMAL_OUT PS_NORMAL_MASK_MAIN(PS_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_NORMAL_OUT Out;
     int iU = (g_fTime / g_fFPS);
     int iV = g_fTime / g_fFPS / g_iUV.x;
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
-    Out.vDiffuse = g_MaskTexture.Sample(DefaultSampler, fTexcoord);
-    if (Out.vDiffuse.r <= 0.25f)
-        discard;
-    Out.vDiffuse *= g_vColor;
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a = g_MaskTexture.Sample(DefaultSampler, fTexcoord).a;
+    //if (Out.vDiffuse.r <= 0.25f)
+    //    discard;
     
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    
+    float threshold = hole[index] / 32.0;
+    if (0 >= Out.vDiffuse.a - threshold)
+        discard;
     
     float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
     float3 normal;
     normal.xy = rg;
-    normal.z = sqrt(saturate(1.0 - dot(rg, rg))); // Z 재계산
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg)));
     normal = normalize(normal);
     
     float3 N = normal;
     float3 T = normalize(In.vTangent.xyz);
     float3 B = normalize(In.vBitangent.xyz);
     float3 G = normalize(In.vNormal.xyz);
+    if (!isFrontFace)
+    {
+        //T *= -1;
+        //B *= -1;
+        G *= -1;
+    }
     
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));

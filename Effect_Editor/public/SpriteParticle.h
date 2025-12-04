@@ -116,6 +116,7 @@ private:
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
+	_float			m_fLength = {};
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};

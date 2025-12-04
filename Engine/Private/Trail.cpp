@@ -16,7 +16,7 @@ CTrail::CTrail(const CTrail& Prototype)
 
 HRESULT CTrail::Initialize_Prototype()
 {
-	m_iNumVertices = 200;
+	m_iNumVertices = 250;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
