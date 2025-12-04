@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CIron_Floor::CIron_Floor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CIron_Floor::CIron_Floor(const CIron_Floor& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -122,7 +122,7 @@ CIron_Floor* CIron_Floor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CDesertObject* CIron_Floor::Clone(void* pArg)
+CGameObject* CIron_Floor::Clone(void* pArg)
 {
 	CIron_Floor* pInstance = new CIron_Floor(*this);
 

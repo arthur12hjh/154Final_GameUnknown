@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CCanyon::CCanyon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CCanyon::CCanyon(const CCanyon& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -119,7 +119,7 @@ CCanyon* CCanyon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CDesertObject* CCanyon::Clone(void* pArg)
+CGameObject* CCanyon::Clone(void* pArg)
 {
 	CCanyon* pInstance = new CCanyon(*this);
 

@@ -22,12 +22,11 @@
 525,M_StatueA_StanbyToAttack_01,None,None,15,4,"1,1,2",4,4,9
 526,M_StatueA_GrabSuccess,Hit_StatueA_Grab,SC_LinkTarget,15,4,"1,1,2",4,0,9
 531,M_StatueB_GroundExplosion,None,None,14,4,"1,1,2",4,0,11
-532,M_StatueB_RushSlash2,None,None,15,4,"1,1,2",4,0,9
-533,M_StatueB_Slash,None,None,15,4,"1,1,2",4,0,1
-534,M_StatueB_RushSlash,None,None,15,4,"1,1,2",4,0,9
-535,M_StatueB_SlashDouble,None,None,16,4,"1,1,2",4,0,9
-536,M_StatueB_SlashTriple,None,None,17,4,"1,1,2",4,0,9
-537,M_StatueB_StanbyToAttack_01,None,None,18,4,"1,1,2",4,4,9
+532,M_StatueB_Slash,None,None,15,4,"1,1,2",4,0,1
+533,M_StatueB_RushSlash,None,None,15,4,"1,1,2",4,0,9
+534,M_StatueB_SlashDouble,None,None,16,4,"1,1,2",4,0,9
+535,M_StatueB_SlashTriple,None,None,17,4,"1,1,2",4,0,9
+536,M_StatueB_StanbyToAttack_01,None,None,18,4,"1,1,2",4,4,9
 541,M_BarnacleA_PunchAttack,None,None,15,3,"1,1,2",4,0,1
 542,M_BarnacleA_GrabAttack,Hit_BarnacleA_Beta_GrabAttack1,R_Hand_ex_01,15,3,"1,1,2",4,0,10
 543,M_BarnacleA_ComboAttack,None,None,16,3,"1,1,2",4,0,9
