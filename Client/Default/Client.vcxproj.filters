@@ -1306,9 +1306,6 @@
     <ClInclude Include="..\Public\Terrain_Desert.h">
       <Filter>02.GameObjects\Map\Desert\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DesertObject.h">
-      <Filter>02.GameObjects\Map\Desert</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Canyon.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>
     </ClInclude>
@@ -1977,9 +1974,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Terrain_Desert.cpp">
       <Filter>02.GameObjects\Map\Desert\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DesertObject.cpp">
-      <Filter>02.GameObjects\Map\Desert</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Canyon.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Canyon</Filter>

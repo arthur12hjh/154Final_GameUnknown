@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CBuilding_Ruin::CBuilding_Ruin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CBuilding_Ruin::CBuilding_Ruin(const CBuilding_Ruin& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -122,7 +122,7 @@ CBuilding_Ruin* CBuilding_Ruin::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CDesertObject* CBuilding_Ruin::Clone(void* pArg)
+CGameObject* CBuilding_Ruin::Clone(void* pArg)
 {
 	CBuilding_Ruin* pInstance = new CBuilding_Ruin(*this);
 

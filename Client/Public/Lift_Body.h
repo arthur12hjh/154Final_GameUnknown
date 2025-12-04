@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "DesertObject.h"
 #include "ClientStruct.h"
+
+#include "Actor.h"
 
 NS_BEGIN(Engine)
 class CModel;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CLift_Body final : public CDesertObject
+class CLift_Body final : public CActor
 {
 private:
 	CLift_Body(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,13 +26,16 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private :
+	CModel* m_pModelCom = { nullptr };
+
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
 
 public:
 	static CLift_Body* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CDesertObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

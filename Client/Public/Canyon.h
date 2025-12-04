@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "DesertObject.h"
 #include "ClientStruct.h"
+
+#include "Actor.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Instance_Model;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CCanyon final : public CDesertObject
+class CCanyon final : public CActor
 {
 private:
 	CCanyon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,13 +26,16 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private :
+	CVIBuffer_Instance_Model* m_pInstanceModelCom = { nullptr };
+
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
 
 public:
 	static CCanyon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CDesertObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

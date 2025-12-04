@@ -31,6 +31,10 @@ public:
 	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
 	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 
+
+	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
+
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -72,6 +76,9 @@ private:
 	void Update_FSM(_float fTimeDelta);
 	void Update_RushSkill(_float fTimeDelta);
 	void Update_BetaSkill();
+
+	void							CreateHitBox(const AnimNotify* pNotify);
+
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
