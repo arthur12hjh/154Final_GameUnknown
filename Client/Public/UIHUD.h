@@ -37,8 +37,9 @@ public:
 
 	CUIAnimManager* Get_AnimMgr() { return m_pUIAnimMgr; }
 
-	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag, _float fDelay = 0.f);
 	void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
+	_bool Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
 
 	// World UI
 	HRESULT Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag,
@@ -53,6 +54,7 @@ public:
 	void Return_WorldUI(CUIBase*& pUI);
 
 	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
+	CUIBase* Get_UIObject(_wstring szLayerTag, _wstring szUITag);
 
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);

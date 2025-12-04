@@ -24,11 +24,11 @@ private:
 	_bool				m_bIsProtoTypes = { false };
 
 	class CLoader*		m_pLoader = { nullptr };
+	_bool				m_bLevelTransitioning = { false };  // 레벨 전환 중 체크
 
 private:
+	HRESULT Ready_Prototypes();
 	HRESULT Ready_Layer_BackGround();
-
-
 
 public:
 	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID, LEVEL eNextLevelID, _bool bIsResetProtoTypes = true);

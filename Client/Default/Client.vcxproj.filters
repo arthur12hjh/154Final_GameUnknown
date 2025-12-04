@@ -664,6 +664,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
       <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlur">
+      <UniqueIdentifier>{2b245e28-cdc2-44e3-87df-efa606e89652}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Deco">
       <UniqueIdentifier>{75c96b6f-14a0-4fcf-8735-302970638a73}</UniqueIdentifier>
     </Filter>
@@ -1360,6 +1363,9 @@
     <ClInclude Include="..\Public\Lift_Platform.h">
       <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UILoadingBlur.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2019,6 +2025,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UILoadingBlur.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
