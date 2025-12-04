@@ -11,6 +11,7 @@
 #include "Camera.h"
 
 #include "UIBossVitalWrapper.h"
+#include "UIWorldWrapper.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -97,12 +98,10 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc)
 {
 	auto pLayer = m_pLayers.find(TEXT("Layer_Boss"));
-
 	if (pLayer == m_pLayers.end())
 		return;
 
 	auto pUIObjects = pLayer->second->Get_UserInterfaces();
-
 	auto pUI = pUIObjects->find(TEXT("Boss_Vital_Wrapper"));
 
 	CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(pUI->second);
@@ -110,9 +109,9 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 		return;
 
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
-
-	for(auto& pChild : *pVitalWrapper->Get_Children())
+	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
+	
 }
 
 CUIBase* CUIHUD::Get_UIObject(_wstring szLayerTag, _wstring szUITag)

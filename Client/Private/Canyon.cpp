@@ -39,8 +39,8 @@ void CCanyon::Update(_float fTimeDelta)
 
 void CCanyon::Late_Update(_float fTimeDelta)
 {
-
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if(m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CCanyon::Render()

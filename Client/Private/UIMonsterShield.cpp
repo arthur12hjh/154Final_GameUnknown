@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
+#include "Nayitba.h"
+
 #ifdef _DEBUG
 #include "../../UI_Editor/Public/UI_Camera.h"
 #endif // DEBUG
@@ -64,16 +66,26 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-#ifdef _DEBUG
-	//테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+//#ifdef _DEBUG
+//	//테스트 용
+//	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+//	{
+//		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
+//			m_fTargetFill -= 0.1f;
+//		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
+//			m_fTargetFill += 0.1f;
+//	}
+//#endif
+
+
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	if (pMonster)
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-			m_fTargetFill -= 0.1f;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-			m_fTargetFill += 0.1f;
+		auto StaticDesc = pMonster->GetStaticMonsterData();
+		auto CurDesc = pMonster->GetMonsterData();
+
+		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
 	}
-#endif
 
 	/*if (m_iCurrentShield)
 		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/
