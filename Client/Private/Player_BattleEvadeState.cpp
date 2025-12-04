@@ -13,10 +13,10 @@ void CPlayer_BattleEvadeState::Start(void* pArg)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
-	if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode || PLAYER_MODE::LOCKON == m_Desc->ePlayerMode)
-		m_fMaxRatio = 0.35f;
-	else
-		m_fMaxRatio = 0.7f;
+	//if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode)
+	//	m_fMaxRatio = 0.35f;
+	//else
+	m_fMaxRatio = 0.45f;
 
 	/* 방향 */
 	/* 1. 아무것도 안눌렀으면 백스텝 */
@@ -27,7 +27,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
 	{
-		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Backward", false);
+		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Backward", false, 1.2f);
 		m_isBackStep = true;
 	}
 	else
@@ -50,7 +50,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg)
 		vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
 
 		m_Desc->pPlayerTransform->Change_Look(vCameraLook);
-		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Forward", false);
+		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Forward", false, 1.2f);
 	}
 }
 

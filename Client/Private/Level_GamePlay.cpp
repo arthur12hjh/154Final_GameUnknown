@@ -96,20 +96,20 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-	//LIGHT_DESC			LightDesc{};
+	LIGHT_DESC			LightDesc{};
 
-	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
-	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	Load_Light_Data();
+	//Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 

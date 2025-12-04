@@ -85,6 +85,9 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
+	if (m_pController == nullptr)
+		return;
+
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
 
@@ -248,7 +251,10 @@ void CCharacterController::Free()
 		m_pMaterial->release();
 
 	if (nullptr != m_pController)
+	{
 		m_pController->release();
+		m_pController = nullptr;
+	}
 
 	if (nullptr != m_pPxPhysics)
 		m_pPxPhysics = nullptr;

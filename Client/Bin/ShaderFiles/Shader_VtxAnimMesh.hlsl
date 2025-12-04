@@ -6,7 +6,7 @@ matrix g_PreWorldMatrix, g_PreViewMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
-Texture2D g_EmissiveTexture;
+Texture2D g_EmissiveTexture; 
 Texture2D g_ORMTexture;
 
 //림라이트용 변수
