@@ -153,7 +153,7 @@ HRESULT CUIMonsterShield::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vUV{};
-	vUV.x = 4.f;
+	vUV.x = 12.f;
 	vUV.y = 1.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
