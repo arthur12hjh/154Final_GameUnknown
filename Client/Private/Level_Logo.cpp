@@ -59,7 +59,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 		m_bLevelTransitioning = true;
 	}
 
-	if (m_bLevelTransitioning && m_bChangeLevel
+	if ((m_bLevelTransitioning || m_bChangeLevel)
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro")))
 	{
 		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
@@ -71,8 +71,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 				pUIObjs.second->SetVisibility(VISIBILITY::VISIBLE);
 			}
 		}
-
-		// 레벨 전환 시 Outro 재생하고 끝나면 전환
 
 		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))

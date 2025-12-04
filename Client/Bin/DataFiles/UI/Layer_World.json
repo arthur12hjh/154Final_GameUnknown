@@ -148,7 +148,7 @@
         ],
         "fAlpha": 1.0,
         "fOffsetX": 0.0,
-        "fOffsetY": 0.0,
+        "fOffsetY": -50.0,
         "fRotation": 0.0,
         "fSizeX": 176.0,
         "fSizeY": 24.0,
