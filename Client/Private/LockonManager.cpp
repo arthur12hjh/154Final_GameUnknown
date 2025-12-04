@@ -113,6 +113,14 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (!m_pTarget)
         return;
 
+    // 타겟이 바뀌면 풀한테 돌려주기
+    if (m_pLockonUI && m_pTarget != m_pLockonUI->GetParent())
+    {
+        CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+        pUIHUD->Return_WorldUI(m_pLockonUI);
+        Safe_Release(pUIHUD);
+    }
+
     if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         Get_LockOnPoint();
