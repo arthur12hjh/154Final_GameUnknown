@@ -178,6 +178,24 @@
     <Filter Include="02.GameObjects\Maps\Desert\Instance">
       <UniqueIdentifier>{9dc96bdb-027a-4abe-961c-bf0006a10baf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Deco">
+      <UniqueIdentifier>{c8c84e38-7931-473a-aba0-5b58be4e9e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Lift">
+      <UniqueIdentifier>{6ce3a408-5256-4be6-a2cb-cd096ecc4ca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Body">
+      <UniqueIdentifier>{23d3e7f8-e5e4-45fd-9373-5c3ffe137a11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Controller">
+      <UniqueIdentifier>{327db89e-e9d2-46a7-a968-b7177b62c2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Platform">
+      <UniqueIdentifier>{6c797e52-f4dd-4f06-9aa0-0dbaf09f1158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Building\Iron_Floor">
+      <UniqueIdentifier>{3d1e688a-bd2a-4756-8902-59d2381af6ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -452,6 +470,21 @@
     <ClInclude Include="..\public\InstanceModel.h">
       <Filter>02.GameObjects\Maps\Scarlet</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Deco.h">
+      <Filter>02.GameObjects\Maps\Desert\Deco</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lift_Body.h">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lift_Controller.h">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lift_Platform.h">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Iron_Floor.h">
+      <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -709,6 +742,21 @@
     </ClCompile>
     <ClCompile Include="..\private\InstanceModel.cpp">
       <Filter>02.GameObjects\Maps\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Deco.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Deco</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lift_Body.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lift_Controller.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Iron_Floor.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

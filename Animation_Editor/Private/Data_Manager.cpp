@@ -21,39 +21,34 @@ HRESULT CData_Manager::Initalize()
 
 HRESULT CData_Manager::Save_Data()
 {
-    Json jAnimNotifies;
-
     if (m_AnimationNotifyDatas.size() == 0)
-		return S_OK;
+        return S_OK;
 
     for (auto& pData : m_AnimationNotifyDatas)
     {
-        Json jData;
-        _char szText[MAX_PATH];
+        Json jArray = Json::array();   
+        Json jData;                    
 
-        CStringHelper::ConvertWideToUTF(pData.first.c_str(), szText);
-        jData["szAnimationTag"] = szText;
+        _char szAnimTag[MAX_PATH];
+        CStringHelper::ConvertWideToUTF(pData.first.c_str(), szAnimTag);
+        jData["szAnimationTag"] = szAnimTag;
+
+        jData["AnimationNotifies"] = Json::array();
 
         for (auto& pMember : pData.second)
         {
-            ///  -> string szNotifyTag
-            ///  -> string szNotifyArg01
-            ///  -> string szNotifyArg02
-            ///  -> string szSocketTag
-            ///  -> _float3 vNotifyPosition
-            ///  -> _float3 vNotifyRotation
-            ///  -> _uint  iNotifyKeyFrame
             Json jMember;
-            jMember["szNotifyTag"] = pMember.szNotifyTag.c_str();
-            jMember["szNotifyArg01"] = pMember.szNotifyArg01.c_str();
-            jMember["szNotifyArg02"] = pMember.szNotifyArg02.c_str();
-            jMember["szNotifyArg03"] = pMember.szNotifyArg03.c_str();
-            jMember["szNotifyArg04"] = pMember.szNotifyArg04.c_str();
-            jMember["szNotifyArg05"] = pMember.szNotifyArg05.c_str();
-            jMember["szNotifyArg06"] = pMember.szNotifyArg06.c_str();
-            jMember["szNotifyArg07"] = pMember.szNotifyArg07.c_str();
-            jMember["szNotifyArg08"] = pMember.szNotifyArg08.c_str();
-            
+
+            jMember["szNotifyTag"] = pMember.szNotifyTag;
+            jMember["szNotifyArg01"] = pMember.szNotifyArg01;
+            jMember["szNotifyArg02"] = pMember.szNotifyArg02;
+            jMember["szNotifyArg03"] = pMember.szNotifyArg03;
+            jMember["szNotifyArg04"] = pMember.szNotifyArg04;
+            jMember["szNotifyArg05"] = pMember.szNotifyArg05;
+            jMember["szNotifyArg06"] = pMember.szNotifyArg06;
+            jMember["szNotifyArg07"] = pMember.szNotifyArg07;
+            jMember["szNotifyArg08"] = pMember.szNotifyArg08;
+
             jMember["iNumData01"] = pMember.iNumData01;
             jMember["iNumData02"] = pMember.iNumData02;
             jMember["iNumData03"] = pMember.iNumData03;
@@ -68,40 +63,28 @@ HRESULT CData_Manager::Save_Data()
             jMember["fNumData03"] = pMember.fNumData03;
             jMember["fNumData04"] = pMember.fNumData04;
 
-            jMember["szSocketTag"] = pMember.szSocketTag.c_str();
+            jMember["szSocketTag"] = pMember.szSocketTag;
 
-            jMember["vNotifyScale"] = {
-               pMember.vNotifyScale.x,
-               pMember.vNotifyScale.y,
-               pMember.vNotifyScale.z
-            };
-
-            jMember["vNotifyPosition"] = {
-                pMember.vNotifyPosition.x,
-                pMember.vNotifyPosition.y,
-                pMember.vNotifyPosition.z
-			};
-            jMember["vNotifyRotation"] = {
-                pMember.vNotifyRotation.x,
-                pMember.vNotifyRotation.y,
-                pMember.vNotifyRotation.z
-			};
+            jMember["vNotifyScale"] = { pMember.vNotifyScale.x, pMember.vNotifyScale.y, pMember.vNotifyScale.z };
+            jMember["vNotifyPosition"] = { pMember.vNotifyPosition.x, pMember.vNotifyPosition.y, pMember.vNotifyPosition.z };
+            jMember["vNotifyRotation"] = { pMember.vNotifyRotation.x, pMember.vNotifyRotation.y, pMember.vNotifyRotation.z };
 
             jMember["iNotifyKeyFrame"] = pMember.iNotifyKeyFrame;
 
             jData["AnimationNotifies"].push_back(jMember);
         }
 
-        jAnimNotifies.push_back(jData);
+        jArray.push_back(jData);
+
+        _wstring szFilePath = TEXT("../Bin/DataFiles/Animation/");
+        szFilePath += pData.first;
+        szFilePath += TEXT(".json");
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+        CJsonParser::SaveJsonData(szPath, jArray);
     }
-
-	_wstring szFilePath{};
-    szFilePath = TEXT("../Bin/DataFiles/Animation/AnimationNotifyData.json");
-
-	_char szPath[MAX_PATH]{};
-    CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
-
-    CJsonParser::SaveJsonData(szPath, jAnimNotifies);
 
     return S_OK;
 }
@@ -120,77 +103,108 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
     //	- 모든 애니메이션 관련 이벤트를 담당하는 ANIM_NOTIFY
     //  - 를 담고 있는 vector<ANIM_NOTIFY>
     //  - 들을 애니메이션 태그(_char*)로 구분짓는 map
-        
-    Json jAnim;
 
-    wstring szFilePath{};
-	szFilePath = TEXT("../Bin/DataFiles/Animation/AnimationNotifyData.json");
+    // _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
+    _finddatai64_t  fd;
 
-	_char szPath[MAX_PATH]{};
-	CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+    // _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
+    // json도 되려나 이거..
+    intptr_t handle = _findfirst64("../Bin/DataFiles/Animation/*.json*", &fd);
 
-	CJsonParser::ReadJsonData(szPath, jAnim);
+    if (handle == -1)
+        return S_OK;
 
-    for(auto& pAnim : jAnim)
+    int iResult = 0;
+
+    _wstring szFrontPath = TEXT("../Bin/DataFiles/Animation/");
+
+    while (iResult != -1)
     {
-        WCHAR szText[MAX_PATH];
-        _wstring szAnimTag;
+        int iLength = strlen(fd.name) + 1;
+        WCHAR* pFileName = new WCHAR[iLength];
+        ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        vector<ANIM_NOTIFY> AnimationNotifyList;
-        CStringHelper::ConvertUTFToWide(pAnim["szAnimationTag"].get<string>().c_str(), szText);
-        szAnimTag = szText;
+        // 아스키 코드 문자열을 유니코드 문자열로 변환시켜주는 함수
+        MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
-        for (auto& pAnimNotify : pAnim["AnimationNotifies"])
+        _wstring szFullPath = szFrontPath + pFileName;
+        _wstring szFilePath = pFileName;
+
+
+        Json jAnim;
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFullPath.c_str(), szPath);
+
+        CJsonParser::ReadJsonData(szPath, jAnim);
+
+        for (auto& pAnim : jAnim)
         {
-            ANIM_NOTIFY AnimNotify = {};
-            AnimNotify.szNotifyTag = pAnimNotify["szNotifyTag"].get<string>();
-            AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
-            AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
-            AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
-            AnimNotify.szNotifyArg04 = pAnimNotify["szNotifyArg04"].get<string>();
-            AnimNotify.szNotifyArg05 = pAnimNotify["szNotifyArg05"].get<string>();
-            AnimNotify.szNotifyArg06 = pAnimNotify["szNotifyArg06"].get<string>();
-            AnimNotify.szNotifyArg07 = pAnimNotify["szNotifyArg07"].get<string>();
-            AnimNotify.szNotifyArg08 = pAnimNotify["szNotifyArg08"].get<string>();
+            WCHAR szText[MAX_PATH];
+            _wstring szAnimTag;
 
-            AnimNotify.iNumData01 = pAnimNotify["iNumData01"].get<_int>();
-            AnimNotify.iNumData02 = pAnimNotify["iNumData02"].get<_int>();
-            AnimNotify.iNumData03 = pAnimNotify["iNumData03"].get<_int>();
-            AnimNotify.iNumData04 = pAnimNotify["iNumData04"].get<_int>();
-            AnimNotify.iNumData05 = pAnimNotify["iNumData05"].get<_int>();
-            AnimNotify.iNumData06 = pAnimNotify["iNumData06"].get<_int>();
-            AnimNotify.iNumData07 = pAnimNotify["iNumData07"].get<_int>();
-            AnimNotify.iNumData08 = pAnimNotify["iNumData08"].get<_int>();
+            vector<ANIM_NOTIFY> AnimationNotifyList;
+            CStringHelper::ConvertUTFToWide(pAnim["szAnimationTag"].get<string>().c_str(), szText);
+            szAnimTag = szText;
 
-            AnimNotify.fNumData01 = pAnimNotify["fNumData01"].get<_float>();
-            AnimNotify.fNumData02 = pAnimNotify["fNumData02"].get<_float>();
-            AnimNotify.fNumData03 = pAnimNotify["fNumData03"].get<_float>();
-            AnimNotify.fNumData04 = pAnimNotify["fNumData04"].get<_float>();
+            for (auto& pAnimNotify : pAnim["AnimationNotifies"])
+            {
+                ANIM_NOTIFY AnimNotify = {};
+                AnimNotify.szNotifyTag = pAnimNotify["szNotifyTag"].get<string>();
+                AnimNotify.szNotifyArg01 = pAnimNotify["szNotifyArg01"].get<string>();
+                AnimNotify.szNotifyArg02 = pAnimNotify["szNotifyArg02"].get<string>();
+                AnimNotify.szNotifyArg03 = pAnimNotify["szNotifyArg03"].get<string>();
+                AnimNotify.szNotifyArg04 = pAnimNotify["szNotifyArg04"].get<string>();
+                AnimNotify.szNotifyArg05 = pAnimNotify["szNotifyArg05"].get<string>();
+                AnimNotify.szNotifyArg06 = pAnimNotify["szNotifyArg06"].get<string>();
+                AnimNotify.szNotifyArg07 = pAnimNotify["szNotifyArg07"].get<string>();
+                AnimNotify.szNotifyArg08 = pAnimNotify["szNotifyArg08"].get<string>();
 
-            AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
+                AnimNotify.iNumData01 = pAnimNotify["iNumData01"].get<_int>();
+                AnimNotify.iNumData02 = pAnimNotify["iNumData02"].get<_int>();
+                AnimNotify.iNumData03 = pAnimNotify["iNumData03"].get<_int>();
+                AnimNotify.iNumData04 = pAnimNotify["iNumData04"].get<_int>();
+                AnimNotify.iNumData05 = pAnimNotify["iNumData05"].get<_int>();
+                AnimNotify.iNumData06 = pAnimNotify["iNumData06"].get<_int>();
+                AnimNotify.iNumData07 = pAnimNotify["iNumData07"].get<_int>();
+                AnimNotify.iNumData08 = pAnimNotify["iNumData08"].get<_int>();
 
-            AnimNotify.vNotifyScale = {
-               pAnimNotify["vNotifyScale"][0].get<_float>(),
-               pAnimNotify["vNotifyScale"][1].get<_float>(),
-               pAnimNotify["vNotifyScale"][2].get<_float>()
-            };
+                AnimNotify.fNumData01 = pAnimNotify["fNumData01"].get<_float>();
+                AnimNotify.fNumData02 = pAnimNotify["fNumData02"].get<_float>();
+                AnimNotify.fNumData03 = pAnimNotify["fNumData03"].get<_float>();
+                AnimNotify.fNumData04 = pAnimNotify["fNumData04"].get<_float>();
 
-            AnimNotify.vNotifyPosition = {
-                pAnimNotify["vNotifyPosition"][0].get<_float>(),
-                pAnimNotify["vNotifyPosition"][1].get<_float>(),
-                pAnimNotify["vNotifyPosition"][2].get<_float>()
-            };
-            AnimNotify.vNotifyRotation = {
-                pAnimNotify["vNotifyRotation"][0].get<_float>(),
-                pAnimNotify["vNotifyRotation"][1].get<_float>(),
-                pAnimNotify["vNotifyRotation"][2].get<_float>()
-            };
-            AnimNotify.iNotifyKeyFrame = pAnimNotify["iNotifyKeyFrame"].get<_uint>();
-            AnimationNotifyList.push_back(AnimNotify);
+                AnimNotify.szSocketTag = pAnimNotify["szSocketTag"].get<string>();
+
+                AnimNotify.vNotifyScale = {
+                   pAnimNotify["vNotifyScale"][0].get<_float>(),
+                   pAnimNotify["vNotifyScale"][1].get<_float>(),
+                   pAnimNotify["vNotifyScale"][2].get<_float>()
+                };
+
+                AnimNotify.vNotifyPosition = {
+                    pAnimNotify["vNotifyPosition"][0].get<_float>(),
+                    pAnimNotify["vNotifyPosition"][1].get<_float>(),
+                    pAnimNotify["vNotifyPosition"][2].get<_float>()
+                };
+                AnimNotify.vNotifyRotation = {
+                    pAnimNotify["vNotifyRotation"][0].get<_float>(),
+                    pAnimNotify["vNotifyRotation"][1].get<_float>(),
+                    pAnimNotify["vNotifyRotation"][2].get<_float>()
+                };
+                AnimNotify.iNotifyKeyFrame = pAnimNotify["iNotifyKeyFrame"].get<_uint>();
+                AnimationNotifyList.push_back(AnimNotify);
+            }
+
+            m_AnimationNotifyDatas.emplace(szAnimTag, AnimationNotifyList);
         }
 
-        m_AnimationNotifyDatas.emplace(szAnimTag, AnimationNotifyList);
-	}
+
+        //_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
+        iResult = _findnext64(handle, &fd);
+        Safe_Delete_Array(pFileName);
+    }
+
     
 
     return S_OK;

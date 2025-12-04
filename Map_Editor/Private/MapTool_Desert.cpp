@@ -29,17 +29,17 @@ HRESULT CMapTool_Desert::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	if (pTerrainList != nullptr && !pTerrainList->empty())
 		m_pTerrain = dynamic_cast<CTerrain_Desert*>(pTerrainList->back());
 	else
-		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
+		m_pTerrain = nullptr; 
 
 	if (pCameraList != nullptr && !pCameraList->empty())
 		m_pCamera = dynamic_cast<CCamera_Free*>(pCameraList->back());
 	else
-		m_pCamera = nullptr; // 안전하게 nullptr로 설정
+		m_pCamera = nullptr;
 
 	if (pPlayerList != nullptr && !pPlayerList->empty())
 		m_pPlayer = dynamic_cast<CPlayer_Test*>(pPlayerList->back());
 	else
-		m_pPlayer = nullptr; // 안전하게 nullptr로 설정
+		m_pPlayer = nullptr;
 
 	m_pCameraTransform = m_pCamera->GetTransform();
 	m_pPlayerTransform = m_pPlayer->GetTransform();
@@ -505,6 +505,66 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_133B");
 				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_BODY)
+				{
+					protoTag = TEXT("Prototype_GameObject_Lift_Body"); layerTag = TEXT("Layer_Lift_Body");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Body");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_CONTROLLER)
+				{
+					protoTag = TEXT("Prototype_GameObject_Lift_Controller"); layerTag = TEXT("Layer_Lift_Controller");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_PLATFORM)
+				{
+					protoTag = TEXT("Prototype_GameObject_Lift_Platform"); layerTag = TEXT("Layer_Lift_Platform");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Platform");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_B)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_B");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_C)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_C");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_D)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_D");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_E)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_E");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_F)
+				{
+					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_F");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LAMP_47A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lamp_47A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::VendingMachine_6A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_6A");
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::VendingMachine_7A)
+				{
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
+				}
 
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT)
 				{
@@ -895,11 +955,9 @@ HRESULT CMapTool_Desert::Render()
 
 	ImGui::Text("Registered Models");
 
-	// ----------------------------------------------------
-	// 1. 메인 테마/레벨 선택 드롭다운 (콤보 박스 사용 권장)
-	// ----------------------------------------------------
+	// 1. 메인 테마/레벨 선택 드롭다운 
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON"};
+	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco"};
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -1162,6 +1220,96 @@ HRESULT CMapTool_Desert::Render()
 					else if (nSelectedStone == 10) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_59A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
 					else if (nSelectedStone == 11) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_123A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
 					else if (nSelectedStone == 12) { m_eCurrentObject = DESESRT_RUIN_OBJECT::CANYON_131A; m_CurrentLayerName = TEXT("Layer_Canyon"); }
+				}
+			}
+		}
+	}
+
+	else if (m_eCurrentMap == DESERT_THEME::ARCHI)
+	{
+		ImGui::Text("Architecture Objects");
+		_int nSelectedModel = -1;
+
+		const _char* modelNames[] = { "LIFT_BODY", "LIFT_CONTROLLER", "LIFT_PLATFORM", "FLOOR7_A", "FLOOR7_B", "FLOOR7_C", "FLOOR7_D", "FLOOR7_E", "FLOOR7_F" };
+
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_BODY;
+					m_CurrentLayerName = TEXT("Layer_Lift_Body");
+				}
+				else if (nSelectedModel == 1) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_CONTROLLER;
+					m_CurrentLayerName = TEXT("Layer_Lift_Controller");
+				}
+				else if (nSelectedModel == 2) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_PLATFORM;
+					m_CurrentLayerName = TEXT("Layer_Lift_Platform");
+				}
+				else if (nSelectedModel == 3) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_A;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				else if (nSelectedModel == 4) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_B;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				else if (nSelectedModel == 5) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_C;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				else if (nSelectedModel == 6) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_D;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				else if (nSelectedModel == 7) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_E;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				else if (nSelectedModel == 8) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_F;
+					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
+				}
+				
+			}
+		}
+	}
+	else if (m_eCurrentMap == DESERT_THEME::DECO)
+	{
+		ImGui::Text("Deco Objects");
+		_int nSelectedModel = -1;
+
+		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A" };
+
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LAMP_47A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_6A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_7A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
 		}
@@ -1493,8 +1641,12 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Building_Ruin")))) return S_OK;
-	//if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Body")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Iron_Floor")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Deco")))) return S_OK; 
 
 	ofs.close();
 
@@ -1545,6 +1697,11 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
 	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
 	ifs.close();
 
 	return S_OK;
@@ -1602,7 +1759,6 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 
 HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag)
 {
-	// 1. 저장된 Layer_Canyon 오브젝트의 개수를 읽습니다.
 	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
@@ -1629,10 +1785,8 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		XMStoreFloat4(&InstanceData.vLook, matFinalWorld.r[2]);
 		XMStoreFloat4(&InstanceData.vTranslation, matFinalWorld.r[3]);
 
-		// Component Tag(예: "Prototype_Component_Model_Canyon_100A")를 Key로 사용합니다.
 		std::wstring strTag = info.szComponentTag;
 
-		// 2. 변환된 wstring을 Key로 사용하여 그룹화
 		groupedInstanceData[strTag].push_back(InstanceData);
 	}
 
@@ -1647,7 +1801,7 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT),
 			TEXT("Prototype_GameObject_Instance_Desert"),
-			ENUM_CLASS(LEVEL::DESERT), pLayerTag, // 원본 레이어 태그 "Layer_Canyon" 사용
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, 
 			&FinalLoadDesc);
 
 		if (FAILED(hr))
