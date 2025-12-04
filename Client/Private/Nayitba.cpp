@@ -93,10 +93,13 @@ void CNayitba::Update(_float fTimeDelta)
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
 	
-	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
+		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	}
+	
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -108,14 +111,15 @@ void CNayitba::Update(_float fTimeDelta)
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
-
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState )
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		__super::Late_Update(fTimeDelta);
+
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -152,6 +156,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 		}
 		if (0 >= m_MonsterInfo.iCurrentHealth)
 		{
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			// 몬스터 체력
