@@ -33,13 +33,13 @@ void CPlayer_LockonWalkState::Start(void* pArg)
 		m_isRunStart = false;
 
 		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), false, 1.f, 0.35f);
 	}
 }
 

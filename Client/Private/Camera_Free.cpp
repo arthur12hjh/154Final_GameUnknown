@@ -66,6 +66,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_RIGHTARROW))
 					m_pTransformCom->Go_Right(fTimeDelta * m_fCameraSpeed);
 
+
 				if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 				{
 					auto pInterraction = m_pGameInstance->GetNearInteraction();

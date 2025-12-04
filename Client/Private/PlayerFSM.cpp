@@ -318,6 +318,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 
 			PLAYER_TRANSITION_DESC t{};
 			t.eNextState = m_pCurrentState->Get_State();
+			//t.eNextState = PLAYER_STATE::IDLE;
 
 			CPlayerState* pNext = Create_State(t);
 			if (nullptr != pNext)

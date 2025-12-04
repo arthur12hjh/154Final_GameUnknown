@@ -1,0 +1,54 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "Size",
+            "vEndParam": [
+                20.0,
+                20.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "TintColor",
+            "vEndParam": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "vStartParam": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ]
+        }
+    ],
+    "fDuration": 2.0,
+    "isBeapBeap": true,
+    "isInfluenceChildren": true,
+    "isLoop": true,
+    "szAnimTag": "Loading_BeapBeap"
+}

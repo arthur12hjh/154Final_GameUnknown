@@ -13,15 +13,6 @@
 #include "UIBossVitalWrapper.h"
 #include "UIWorldWrapper.h"
 
-/*
-이벤트, 애니메이션 매니저 만들기(싱글톤일 필요X)
-	데이터를 읽고 소유
-
-UIBaseDesc에 이 UI가 실행할 이벤트, 애니메이션 목록 추가하기
-
-모든 UI들은 HUD를 통해 이벤트, 애니메이션 수행
-*/
-
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
 {
@@ -121,6 +112,20 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
 	
+}
+
+CUIBase* CUIHUD::Get_UIObject(_wstring szLayerTag, _wstring szUITag)
+{
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return nullptr;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	return pUI;
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
@@ -286,6 +291,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 		Json TextDesc;
 
 		TextDesc["szText"] = WStringToUTF8(pDesc.Get_UI_Text_Desc()->szText.c_str());
+		TextDesc["fScale"] = pDesc.Get_UI_Text_Desc()->fScale;
 		TextDesc["vColor"] = {
 			pDesc.Get_UI_Text_Desc()->vColor.x,
 			pDesc.Get_UI_Text_Desc()->vColor.y,
@@ -499,6 +505,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
 			//TextDesc.szText = szText;
 			TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
+			TextDesc.fScale = jDesc["fScale"].get<_float>();
 			TextDesc.vColor = {
 				jDesc["vColor"][0].get<_float>(),
 				jDesc["vColor"][1].get<_float>(),
@@ -712,6 +719,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
+		TextDesc.fScale = jDesc["fScale"].get<_float>();
 		TextDesc.vColor = {
 			jDesc["vColor"][0].get<_float>(),
 			jDesc["vColor"][1].get<_float>(),
@@ -759,7 +767,7 @@ void CUIHUD::Reset_WorldUI_State(CUIBase* pUI)
 	m_pUIAnimMgr->Anim_Stop(pUI);
 }
 
-void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag, _float fDelay)
 {
 	auto pLayer = m_pLayers.find(szLayerTag);
 
@@ -778,7 +786,7 @@ void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag
 	if (AnimTag == pUI->Get_UIBase_Desc().m_AnimTags.end())
 		return;
 
-	m_pUIAnimMgr->Anim_Play(pUI, AnimTag->second);
+	m_pUIAnimMgr->Anim_Play(pUI, AnimTag->second, fDelay);
 }
 
 void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
@@ -796,6 +804,31 @@ void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
 		return;
 
 	m_pUIAnimMgr->Anim_Stop(pUI);
+}
+
+_bool CUIHUD::Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag)
+ {
+	auto pLayer = m_pLayers.find(szLayerTag);
+
+	if (pLayer == m_pLayers.end())
+		return false;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szUITag);
+
+	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
+
+	if (pUI == nullptr)
+		return false;
+
+	auto AnimTag = pUI->Get_UIBase_Desc().m_AnimTags.find(szAnimTag);
+
+	if (AnimTag == pUI->Get_UIBase_Desc().m_AnimTags.end())
+		return false;
+
+	if(!m_pUIAnimMgr->Get_TargetAnim())
+		m_pUIAnimMgr->Set_TargetAnim(pUI, AnimTag->second);
+
+	return m_pUIAnimMgr->Check_Anim_Finish(pUI, AnimTag->second);
 }
 
 HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag, _uint count, _uint level, const _wstring& layerTag)
@@ -817,36 +850,15 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
    	pool.reserve(pool.size() + count);
 
 	for (_uint i = 0; i < count; ++i) {
-		//UIBASE_DESC desc{ pUIBase->Get_UIBase_Desc() };
-
-		//desc.szUITag = szUITag + TEXT("_Pooled_") + to_wstring(i);
-
  		CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase)->Clone_UI(this, i);
 		
 		if (!pUI)
 			return E_FAIL;
 
-		/*CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase->Clone_UI());
-		
-		pUI->Set_UIBase_OriginDesc(desc);
-
-		auto pLayer = m_pLayers[desc.szLayerTag];
-			
-		auto pUIs = *pLayer->Get_UserInterfaces();
-
-		pUIs.emplace(desc.szUITag, pUI);*/
-
-		/*auto* pUI = dynamic_cast<CUIBase*>(pObj);
-		if (!pUI) return E_FAIL;*/
-
-		// 풀에 잠시 대기: 비활성/가시성 숨김/애니 정지
 		Reset_WorldUI_State(pUI);
 		pUI->SetVisibility(VISIBILITY::HIDDEN);
-		//pUI->Set_Active(false);
-		// Parent 없음 (빌릴 때 붙임)
 
 		pool.push_back(pUI);
-		// World_Layer의 객체 컨테이너에는 이미 Add_UserInterface로 등록됨
 	}
 	return S_OK;
 }
@@ -866,15 +878,9 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 	pUI->SetVisibility(VISIBILITY::VISIBLE);
 
 	if (pParent) {
-		pUI->SetParent(pParent);     // ← 엔진에서 WORLD Parent 따라가도록 구현되어 있음
-		
-		/*_vector vPos = XMVectorSetW(XMLoadFloat3(&vTargetPos), 1.f);
-		if (vTargetPos.x == 0.f && vTargetPos.y == 0.f && vTargetPos.z == 0.f)
-			vPos = pParent->GetTransform()->Get_State(STATE::POSITION);*/
-
+		pUI->SetParent(pParent);
 		pUI->Set_TargetPos(&vTargetPos);
 	}
-	//pUI->Set_Billboard(bBillboard);   // 엔진에 맞는 API로 교체
 
 	return pUI;
 }
@@ -890,14 +896,10 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	for (auto& pChild : *pUI->Get_Children())
 		pUI->Update_Children(pChild);
 
-	//pUI->Set_Active(false);
 	pUI->SetParent(nullptr);
 	pUI->Set_TargetPos(nullptr );
-	//pUI->Set_Offset(0, 0, 0);
 
-	// 어떤 풀로 돌아갈지 키가 필요하다면:
-	//  - pUI->Get_UIBase_Desc().szProtoTag 또는 커스텀 PoolKey를 Desc에 저장
-	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag; // 간단 방식
+	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag;
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
 	pUI = nullptr;

@@ -7,11 +7,12 @@ CUIAnimInstance::CUIAnimInstance()
 {
 }
 
-HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc)
+HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc, _float fDelay)
 {
 	m_pTargetUI = pUI;
 	m_pTargetUI->Set_Anim_Playing(true);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
+	m_fDelayTime = fDelay;
 
 	return S_OK;
 }
@@ -32,43 +33,15 @@ _bool CUIAnimInstance::Update(_float fTimeDelta)
 	return true;
 }
 
-//void CUIAnimInstance::Play(_wstring szAnimTag)
-//{
-//	/*if (!m_pOwner)
-//		return;*/
-//
-//	auto TrackDescs = m_tUIAnimDesc.Get_UI_Track_Descs();
-//	
-//	for (auto& pTrackDesc : TrackDescs)
-//	{
-//		//Play_Anim(&m_tUIAnimDesc, pTrackDesc.second);
-//	}
-//}
-//
-//void CUIAnimInstance::Pause()
-//{
-//	m_fDeltaTime = 0.f;
-//}
-//
-//void CUIAnimInstance::Stop()
-//{
-//	m_fDeltaTime = m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime"));
-//	m_pOwner->Set_Position(m_pOwner->Get_UIBase_OriginDesc().fOffsetX, m_pOwner->Get_UIBase_OriginDesc().fOffsetY);
-//	m_pOwner->Set_Size(m_pOwner->Get_UIBase_OriginDesc().fSizeX, m_pOwner->Get_UIBase_OriginDesc().fSizeY);
-//	m_pOwner->Set_Alpha(m_pOwner->Get_UIBase_OriginDesc().fAlpha);
-//	m_fTimeStack = 0.f;
-//}
-//
-//void CUIAnimInstance::Tick(_float fTimeDelta)
-//{
-//}
-//
 _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pTrackDesc, _float fTimeDelta)
 {
 	UI_ANIM_DESC AnimDesc = *pAnimDesc;
 	UI_ANIM_TRACK_DESC TrackDesc = *pTrackDesc;
 
-	m_fTimeStack += fTimeDelta;
+	if (m_fDelayTime > 0.f)
+		m_fDelayTime -= fTimeDelta;
+	else
+		m_fTimeStack += fTimeDelta;
 	
 	_vector vStartParam{ XMLoadFloat4((m_isReverse ? &TrackDesc.vEndParam : &TrackDesc.vStartParam)) };
 
@@ -242,11 +215,11 @@ void CUIAnimInstance::Stop_Anim()
 	m_fTimeStack = 0.f;
 }
 
-CUIAnimInstance* CUIAnimInstance::Create(CUIBase* pUI, void* Desc)
+CUIAnimInstance* CUIAnimInstance::Create(CUIBase* pUI, void* Desc, _float fDelay)
 {
 	CUIAnimInstance* pInstance = new CUIAnimInstance();
 
-	if (FAILED(pInstance->Initialize(pUI, Desc)))
+	if (FAILED(pInstance->Initialize(pUI, Desc, fDelay)))
 	{
 		MSG_BOX("Failed to Created : CUIAnimInstance");
 		Safe_Release(pInstance);
