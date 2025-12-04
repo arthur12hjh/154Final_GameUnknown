@@ -8,6 +8,7 @@ class CModel;
 class CShader;
 class CCollider;
 class CBone;
+class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -49,6 +50,9 @@ public:
 
 private:
 	CModel* m_pBodyModelCom = { nullptr };
+	// 아래 둘은 테스트용 텍스쳐입니다 혹시 치우고 싶으시면 말씀좀
+	CTexture* m_pSpecDetailTextureCom = { nullptr };
+	CTexture* m_pSSSAOCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();

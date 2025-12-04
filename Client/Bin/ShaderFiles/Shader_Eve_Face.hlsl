@@ -10,6 +10,8 @@ Texture2D g_OpacityTexture;
 Texture2D g_EmissiveTexture;
 Texture2D g_ORMTexture;
 Texture2D g_ORSSTexture;
+Texture2D g_SpecDetailTexture;
+Texture2D g_SSSAOTexture;
 
 //림라이트용 변수
 vector g_vCamPosition;
@@ -263,15 +265,16 @@ PS_OUT PS_MAIN_MI_EVE_Head_V02(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
-    //vector vMtrlORSS = g_ORSSTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMtrlORSS = g_ORSSTexture.Sample(DefaultSampler, In.vTexcoord);
     //vMtrlORSS.a = 2.f;
     
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDiffuse = vMtrlDiffuse;  // float4(1.05f, 1.02f, 1.04f, 1.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal) * 0.3f;
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
-    //Out.vORM = vMtrlORSS;
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    //Out.vSSSAO = g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord);
+    //Out.vSpecDetail = g_SpecDetailTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }
