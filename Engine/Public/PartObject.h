@@ -32,6 +32,9 @@ public:
 	const	_float4x4*		Get_BoneMatrixPtr(const _char* pBoneName) const;
 	const	_float4x4*		Get_CombinedMatrixPtr() const;
 
+	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) {};
+	virtual void			Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef) {};
+
 protected:	
 	class CModel*			m_pModelCom = { nullptr };
 	class CShader*			m_pShaderCom = { nullptr };

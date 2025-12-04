@@ -95,14 +95,14 @@ _vector CLockonManager::Get_LockOnPoint()
 {
 #ifdef _DEBUG
     WCHAR Debug[MAX_PATH] = {};
-    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().fLockOnPoint.x,
-                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.y,
-                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.z);
+    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().vLockOnPoint.x,
+                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.y,
+                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.z);
 
     OutputDebugStringW(Debug);
 #endif // _DEBUG
    
-    return XMLoadFloat3(&m_pTarget->GetMonsterData().fLockOnPoint);
+    return XMLoadFloat3(&m_pTarget->GetMonsterData().vLockOnPoint);
 }
 
 void CLockonManager::Lockon(_float fTimeDelta)
@@ -113,18 +113,20 @@ void CLockonManager::Lockon(_float fTimeDelta)
     if (!m_pTarget)
         return;
 
-    // 만약 존재한다면, 락온 처리.
-    if (true == m_isLock)
+    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         Get_LockOnPoint();
 
         if (!m_pLockonUI)
         {
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
-
+            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().vLockOnPoint);
             Safe_Release(pUIHUD);
         }
+
+        if(false == m_pPlayerDesc->isLookFixed)
+            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
+                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
     else
     {
@@ -133,16 +135,8 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             pUIHUD->Return_WorldUI(m_pLockonUI);
-
             Safe_Release(pUIHUD);
         }
-    }
-
-    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
-    {
-        if(false == m_pPlayerDesc->isLookFixed)
-            m_pPlayerDesc->pPlayerTransform->LookAt_Lerp(
-                XMVectorSetY(m_pTarget->GetTransform()->Get_State(STATE::POSITION), XMVectorGetY(m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION))), 0.15f, 1.f);
     }
 }
 

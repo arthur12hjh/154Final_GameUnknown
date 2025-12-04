@@ -46,16 +46,14 @@ private:
 	HRESULT Ready_Layer_Effect(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
 
-	HRESULT Load_Map_Data();
-	HRESULT Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
-	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
-
 	HRESULT Load_Map_Desert_Data(const _char* szFilePath);
 	HRESULT Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 
 
 	HRESULT Load_Light_Data();
 	_float	m_fTime = 10;
+	_bool m_bChangeLevel{ false };
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

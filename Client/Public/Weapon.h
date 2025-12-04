@@ -34,11 +34,13 @@ public:
 	virtual HRESULT				Render() override;
 	virtual HRESULT				Render_Shadow() override;
 
-	void						Enable_HitCollider(_bool bIsFlag);
+	virtual void				Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+	virtual void				Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
+
+	void						EnableCollider(_bool bIsEnable);
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	_bool						m_bIsHitCollider = { true };
 
 	class CTrailEffect*			m_pTrail = { nullptr };
 	class CEffect*				m_pSpark = { nullptr };
@@ -47,6 +49,12 @@ private:
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;
 	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
+
+	_float						m_fTrailTime = -10.f;
+	_float						m_fChargeTime = -10.f;
+	_bool						m_bIsTrail = FALSE;
+
+	_bool						m_bIsEnableCollider = { false };
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };

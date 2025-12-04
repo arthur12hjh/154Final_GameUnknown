@@ -32,6 +32,7 @@ public:
 protected:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CVIBuffer_Instance_Model* m_pInstanceModelCom = { nullptr };
 
 	_tchar m_ComponentTag[256] = {};
 

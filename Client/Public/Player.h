@@ -9,6 +9,7 @@ class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
+class CWeapon;
 
 class CPlayer final : public CCharacter
 {
@@ -26,6 +27,10 @@ public:
 	_bool Use_BetaSkill(_uint iSkillID);
 	_bool Use_RushSkill();
 
+
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -34,6 +39,9 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Damaged(void* pArg) override;
+
+	void			SetSillDataID(_uint iSkillID);
+	_int			GetSillDataID();
 
 public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
@@ -44,11 +52,14 @@ public:
 private:
 	struct Player_Desc		m_PlayerDesc = {};
 	CCollider*				m_pColliderCom = { nullptr };
+	CWeapon*				m_pWeapon = { nullptr };
+
 	class CPlayerFSM*		m_pFSM = { nullptr };
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 
 	//
 	_float					m_fTime = { 0.f };
+	_int					m_iSkillID = {};
 
 private:
 	HRESULT Ready_Components();

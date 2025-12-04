@@ -26,6 +26,7 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 		return E_FAIL;
 
 	HIT_BOX_DESC* pHit_BoxDesc = static_cast<HIT_BOX_DESC*>(pArg);
+	m_pTransformCom->Set_Scale({ 1.f, 1.f, 1.f });
 	m_pAttacker = pHit_BoxDesc->pAttacker;
 	m_pData = pHit_BoxDesc->pData;
 
@@ -112,7 +113,7 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 		/* Com_Collider_AABB */
 		CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
 		AABBDesc.vSize = pDesc.vScale;
-		AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+		AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y, 0.f);
 
 		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 			TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
@@ -124,7 +125,7 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 		/* Com_Collider_AABB */
 		COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 		OBBDesc.vSize = pDesc.vScale;
-		OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y * 0.5f, 0.f);
+		OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y , 0.f);
 
 		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 			TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
@@ -136,7 +137,7 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 		/* Com_Collider_Sphere */
 		CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 		SphereDesc.fRadius = pDesc.vScale.x;
-		SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
+		SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
 
 		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
@@ -157,28 +158,28 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 	m_pColliderCom->ADD_IgnoreObject(pDesc.eHitBoxType);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision(_float3(0.f, pDesc.vScale.y * 0.5f, 0.f), {}, pDesc.vScale);
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision(_float3(0.f, pDesc.vScale.y, 0.f), {}, pDesc.vScale);
 	return S_OK;
 }
 
 void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-	if (nullptr == pCharacter)
-		return;
+	//auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	//if (nullptr == pCharacter)
+	//	return;
 
-	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
-	DEFAULT_DAMAGE_DESC pDamageDesc = {};
+	//auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
+	//DEFAULT_DAMAGE_DESC pDamageDesc = {};
 
-	pDamageDesc.pAttacker = m_pAttacker;
-	pDamageDesc.vHitDir = vHitDir;
-	pDamageDesc.vImpactDir = m_vImpactDir;
-	pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
-	pDamageDesc.fImpactForce = m_fImpactForce;
-	pDamageDesc.vHitPoint = vHitPoint;
-	pDamageDesc.pSkillData = pDesc;
+	//pDamageDesc.pAttacker = m_pAttacker;
+	//pDamageDesc.vHitDir = vHitDir;
+	//pDamageDesc.vImpactDir = m_vImpactDir;
+	//pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	//pDamageDesc.fImpactForce = m_fImpactForce;
+	//pDamageDesc.vHitPoint = vHitPoint;
+	//pDamageDesc.pSkillData = pDesc;
 
-	pCharacter->Damaged(&pDamageDesc);
+	//pCharacter->Damaged(&pDamageDesc);
 #ifdef _DEBUG
 	m_vDelayDead = { 0.f, 3.f };
 	m_bIsDelayDead = true;

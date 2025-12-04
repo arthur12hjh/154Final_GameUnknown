@@ -19,6 +19,7 @@ public:
 	_int Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta, _float fEndTrackPosition = -1.f);
 	_bool Update_CurrentKeyFrameIndices();
 
+	// 이거 안씀. 애니메이션 프레임 알고싶으면 아래에 있는 Get_TrackPosition 사용할 것.
 	_uint Get_AnimationKeyFrameIndex(_uint iIndex = 0) { return m_CurrentKeyFrameIndices[iIndex]; }
 	_float Get_Duration() { return m_fDuration; }
 

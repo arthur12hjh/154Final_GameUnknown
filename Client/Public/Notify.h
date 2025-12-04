@@ -12,7 +12,7 @@ NS_BEGIN(Client)
 class CNotify final : public CComponent
 {
 public:
-    enum NOTIFY_TYPE { PLAY_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, ACTIVE_PARTOBJECT_COLLISION, UNDEFINED, END };
+    enum NOTIFY_TYPE { PLAY_SFX, ACTIVE_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, ACTIVE_PARTOBJECT_COLLISION, UNDEFINED, END };
 
     typedef struct tagNotifyDesc
     {
@@ -22,7 +22,6 @@ private:
 	CNotify(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CNotify(const CNotify& Prototype);
 	virtual ~CNotify() = default;
-
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -45,6 +44,7 @@ private:
     CNotify::NOTIFY_TYPE ClassificationNotify(const string& szNotifyTag);
 
     HRESULT Notify_Play_SFX(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Active_SFX(ANIM_NOTIFY AnimNotify);
     HRESULT Notify_Play_Sound(ANIM_NOTIFY AnimNotify);
     //기존 Collision을 활성화하는 Notify.
     HRESULT Notify_Active_Collision(ANIM_NOTIFY AnimNotify);
@@ -67,25 +67,30 @@ public:
 NS_END
 
 /*
-    - Bip001-R-Hand에 테스트해보기
-
-*/
-
-/*
     애니메이션 노티파이 Args
     **Play_SFX (이펙트)**
     - szNotifyArg01   : 프로토타입 태그 (ex : "Prototype_Component_Effect_Slash")
-    - szNotifyArg02   : 없음
-    - szSocketTag     : 이펙트 부착 시, 부착시킬 소켓매트릭스 태그 (현재 CEffect 로직 문제 때문에 제대로 안나옴)
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
+    - szNotifyArg08   : 파트 모델명 (없을 시 Body에 자동 부착)
+    - szSocketTag     : 이펙트 부착 시, 부착시킬 소켓매트릭스 태그 None : 안붙이고, 안따라감. Transform : 안붙이고, 따라감. 나머지 : 붙이고, 따라감
     - vNotifyPosition : 보정된 생성 위치 ( y += 0.1 해줘야함 )
     - vNotifyRotation : 보정된 추가 회전값
+    - vNotifyScale    : 보정된 추가 크기값
+
+    **Active_SFX (이펙트)** :: 모델에 Clone되어있는 객체 활성화하는 함수. 
+    - szNotifyArg01   : 매핑되어있는 문자열 태그. (무조건 그 객체에서도 매핑해줘야하고, 오버라이딩해줘야한다.)
+    - szNotifyArg08   : 파트 모델명 (없을 시 Body에서 탐색)
+    - fNumData01      : 활성 지속시간
+    - szSocketTag     : 이펙트 부착 시, 부착시킬 소켓매트릭스 태그 None : 안붙이고, 안따라감. Transform : 안붙이고, 따라감. 나머지 : 붙이고, 따라감
+    - vNotifyPosition : 보정된 생성 위치
+    - vNotifyRotation : 보정된 추가 회전값
+    - vNotifyScale    : 보정된 추가 크기값
 
     **Play_Sound**
     - szNotifyArg01   : 사운드 태그
-    - szNotifyArg02   : 볼륨
+    - szNotifyArg08   : 파트 모델명 (없을 시 Body에서 탐색)
+    - fNumData01      : 볼륨
+    - iNumData01      : 채널 (0 : EFFECT, 1 : BGM) << 나중에 바뀔수도
     - szSocketTag     : 방향성 사운드 구현 시 재생할 위치
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotation을 로컬 상으로 조정해줄지, 월드 상으로 조정해줄 지
     - vNotifyPosition : 보정된 생성 위치
     - vNotifyRotation : 보정된 추가 회전값
 
@@ -108,6 +113,20 @@ NS_END
 	// vNotifyScale		=> Hit Box Size
 	// vNotifyPosition	=> Hit Box Relative Position
 	// vNotifyRotation	=> Hit Box Rotation
+
+    **Active_Collision ( 전투 로직용 )**
+    // 콜리전을 생성 Or 콜리전 On
+	// ANIM_NOTIFY
+	- szNotifyTag		=> Notify Event Type
+	
+	// Create Notify
+	-  szNotifyArg01	=> ProtoType Name
+	-  szNotifyArg02	=> Layer Name
+
+	-  iNumData1		=>	Skill ID
+	-  iNumData2		=>	Col Type            (AABB, OBB, SPHERE)
+	-  iNumData3		=>	Hit Box Type        (ALL, OBJECT, STATIC, PLAYER, MONSTER, SENCE, INTERACTION)
+	-  iNumData4		=>	Hit Object Type     (ALL, OBJECT, STATIC, PLAYER, MONSTER, SENCE, INTERACTION)
 
     **Set_Transform**
     - szNotifyArg01   : 없음

@@ -11,14 +11,12 @@
 #include "TrailEffect.h"
 #include "Effect.h"
 
-
-
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPlayer_Parts{ pDevice, pContext }
 {
 }
 
-CWeapon::CWeapon(const CWeapon& Prototype) 
+CWeapon::CWeapon(const CWeapon& Prototype)
 	: CPlayer_Parts{ Prototype }
 {
 }
@@ -29,7 +27,7 @@ HRESULT CWeapon::Initialize_Prototype()
 }
 
 HRESULT CWeapon::Initialize(void* pArg)
-{	
+{
 	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
 
 	m_pSocketMatrix = pDesc->pSocketMatrix;
@@ -40,6 +38,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_bIsTrail = FALSE;
 	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
 
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
@@ -59,40 +58,47 @@ HRESULT CWeapon::Initialize(void* pArg)
 
 void CWeapon::Priority_Update(_float fTimeDelta)
 {
-	
+
 }
 
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
-		m_pSpark->Stop();
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
-		m_pSpark->Play();
-	if (nullptr != m_pCharge) {
-		m_pCharge->Update(fTimeDelta);
-		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->Play();
-		if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-			m_pCharge->End();
-		if (m_pCharge->isDead())
-			Safe_Release(m_pCharge);
-	}
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
-		CEffect::EFFECT_TRANSFORM_DESC desc;
-		desc.fRotationPerSec = 1.f;
-		desc.fSpeedPerSec = 1.f;
-		desc.pRootMatrix = &m_CombinedWorldMatrix;
-		desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
-		desc.fRot = _float3(0, 0, 0);
-		desc.fSize = 0.3f;
+	m_pCharge->Update(fTimeDelta);
 
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_ChargeAttack_AfterSword"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Effect_Layer"), &desc)))
-			return;
-	}
+	//ANIM_NOTIFY GaraNotify;
+	//GaraNotify.fNumData01 = 1.f;
+	//
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+	//	Active_SFX(TEXT("Trail"), GaraNotify);
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+	//	Active_SFX(TEXT("Spark"), GaraNotify);
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
+	//	Active_SFX(TEXT("Charge"), GaraNotify);
+
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_pSpark->Stop();
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_pSpark->Play();
+	//if (nullptr != m_pCharge) {
+	//	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	//		m_pCharge->Play();
+	//	if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	//		m_pCharge->End();
+	//}
+	//else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON))) {
+	//	CEffect::EFFECT_TRANSFORM_DESC desc;
+	//	desc.fRotationPerSec = 1.f;
+	//	desc.fSpeedPerSec = 1.f;
+	//	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	//	desc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
+	//	desc.fRot = _float3(0, 0, 0);
+	//	desc.fSize = 0.3f;
+	//
+	//	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
+	//	m_pCharge->Play(4.f);
+	//}
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
@@ -125,31 +131,50 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	if (m_bIsHitCollider)
+	if (m_bIsEnableCollider)
 	{
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
-	}                      
 
-
+#ifdef _DEBUG
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
+	}
 
 	//=============== RENDERING LOGIC =================//
 	if (false == isVisible())
 		return;
 
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
-	m_pSpark->Late_Update(fTimeDelta);
-	if (nullptr != m_pCharge) {
-		m_pCharge->Late_Update(fTimeDelta);
+	if (m_fTrailTime > 0.f)
+	{
+		m_fTrailTime -= fTimeDelta;
+		if (m_fTrailTime <= 0.f)
+		{
+			m_bIsTrail = FALSE;
+			m_pSpark->Stop();
+		}
 	}
+
+
+	if (m_fChargeTime > 0.f)
+	{
+		m_fChargeTime -= fTimeDelta;
+		if (m_fChargeTime <= 0.f)
+		{
+			m_pCharge->Stop();
+		}
+	}
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
+	m_pSpark->Late_Update(fTimeDelta);
+	m_pCharge->Late_Update(fTimeDelta);
+
 
 
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-#endif
+
 }
 
 HRESULT CWeapon::Render()
@@ -165,7 +190,7 @@ HRESULT CWeapon::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;		
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -200,9 +225,45 @@ HRESULT CWeapon::Render_Shadow()
 	return S_OK;
 }
 
-void CWeapon::Enable_HitCollider(_bool bIsFlag)
+void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
 {
-	m_bIsHitCollider = bIsFlag;
+	// 어떤 방식으로 짜야하지?
+	// 1) strPartTag가 empty일 경우, Player에서 탐색 (V)
+	//    strPartTag가 있을 경우, strPartTag로 모델을 탐색 (V)
+	// 2) strObjectTag라는 매핑된 값을 문자열 탐색해서 찾고, Play() 함수를 실행함
+	// 3) 그 모델들은 시간이 지난 후 알아서 Stop()
+
+	if (strObjectTag == TEXT("Trail"))
+	{
+		m_fTrailTime = NotifyReference.fNumData01;
+		m_bIsTrail = TRUE;
+	}
+	else if (strObjectTag == TEXT("Spark"))
+	{
+		m_pSpark->Play();
+	}
+	else if (strObjectTag == TEXT("Charge"))
+	{
+		m_pCharge->Play();
+		m_fChargeTime = NotifyReference.fNumData01;
+	}
+
+}
+
+void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pComponents = Find_Component(strColliderTag);
+	if (nullptr == pComponents)
+		return;
+
+	m_bIsEnableCollider = NotifyRef.iNumData01;
+	if (false == m_bIsEnableCollider)
+		static_cast<CCollider*>(pComponents)->ResetCollision();
+}
+
+void CWeapon::EnableCollider(_bool bIsEnable)
+{
+	m_bIsEnableCollider = bIsEnable;
 }
 
 HRESULT CWeapon::Ready_Components()
@@ -211,7 +272,7 @@ HRESULT CWeapon::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Weapon"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-	
+
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -219,10 +280,10 @@ HRESULT CWeapon::Ready_Components()
 
 	/* Com_Collider_OBB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-	
+
 	OBBDesc.vSize = _float3(0.5f, 2.f, 0.5f);
 	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
-	OBBDesc.vAngles = _float3(0.f,  0.f/*XMConvertToRadians(45.0f)*/, 0.f);
+	OBBDesc.vAngles = _float3(0.f, 0.f/*XMConvertToRadians(45.0f)*/, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
@@ -249,6 +310,20 @@ HRESULT CWeapon::Ready_Components()
 
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
+	m_pSpark->Stop();
+
+	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
+	ChargeDesc.fRotationPerSec = 1.f;
+	ChargeDesc.fSpeedPerSec = 1.f;
+	ChargeDesc.pRootMatrix = &m_CombinedWorldMatrix;
+	ChargeDesc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
+	ChargeDesc.fRot = _float3(0, 0, 0);
+	ChargeDesc.fSize = 0.3f;
+
+	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
+	m_pCharge->Play();
+	m_pCharge->Stop();
+
 	return S_OK;
 }
 
@@ -258,7 +333,7 @@ HRESULT CWeapon::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
-		return E_FAIL;	
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -277,9 +352,7 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		CHARACTER_SKILL_DESC SkillDesc = {};
-		SkillDesc.iSkillDamage = 50.f;
-		pDamageDesc.pSkillData = &SkillDesc;
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSillDataID());
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

@@ -184,7 +184,8 @@
     <ClCompile Include="..\..\Client\Private\Player_BattleLandingState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleWalkState.cpp" />
-    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlahsState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlashState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_BetaTripletState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_HitState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_IdleLandingState.cpp" />
@@ -212,6 +213,7 @@
     <ClCompile Include="..\..\Client\Private\UIBeta.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossHPBarFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIBossName.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />

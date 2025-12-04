@@ -28,7 +28,7 @@ HRESULT CReed::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTerrain = static_cast<CTerrain*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Terrain"))->back());
+	m_pTerrain = static_cast<CTerrain*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Layer_Terrain"))->back());
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource{};
 
@@ -109,17 +109,17 @@ HRESULT CReed::Render()
 HRESULT CReed::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Reed"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Model_Reed"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
 	/* Com_Texture_Mask */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Reed_Mask"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Texture_Reed_Mask"),
 		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
 		return E_FAIL;
 

@@ -307,9 +307,6 @@
     <ClCompile Include="..\..\Client\Private\Player_BattleWalkState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlahsState.cpp">
-      <Filter>999. CPP From Client\03. Player\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\Player_HitState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
@@ -392,6 +389,15 @@
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIBossName.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlashState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BetaTripletState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
     </ClCompile>
   </ItemGroup>

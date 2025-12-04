@@ -60,7 +60,9 @@ void CUIMonsterHPFX::Update(_float fTimeDelta)
 		1.f
 	);
 
-	m_pTransformCom->Set_State(STATE::POSITION, vGlowPos);
+	//m_pTransformCom->Set_State(STATE::POSITION, vGlowPos);
+	m_tUIDesc.fX = XMVectorGetX(vParentPos);
+	m_tUIDesc.fOffsetX = posX;
 }
 
 void CUIMonsterHPFX::Late_Update(_float fTimeDelta)

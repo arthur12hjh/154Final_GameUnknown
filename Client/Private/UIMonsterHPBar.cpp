@@ -41,14 +41,24 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NaytibaDesc() && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
+	// 테스트 용
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
+	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
+			m_fTargetFill -= 0.1f;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
+			m_fTargetFill += 0.1f;
+	}
+
+	/*if (dynamic_cast<CUIWorldUIWrapper*>(m_pParent)->Get_NaytibaDesc() && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
 	{
 		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
 
 		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentHealth) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxHealth);
 
-		m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
-	}
+	}*/
+		
+	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }
 
 void CUIMonsterHPBar::Late_Update(_float fTimeDelta)
