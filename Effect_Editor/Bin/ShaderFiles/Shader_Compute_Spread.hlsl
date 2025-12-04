@@ -809,7 +809,7 @@ void Spectrum(uint3 Gid : SV_GroupID,
            uint GI : SV_GroupIndex)
 {
     float2 fSpectrum = float2(0, 0);
-    float4 vDir = mul(normalize(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0)), Input[DTid.x].WorldMat);
+    float4 vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), Input[DTid.x].WorldMat));
     if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
     {
         vDir.xyzw = 0;

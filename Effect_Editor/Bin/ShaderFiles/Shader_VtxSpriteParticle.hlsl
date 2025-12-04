@@ -946,7 +946,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    //Out.vOrm = float4(0, 0, 0, 0);
+    Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
 }
@@ -1000,7 +1000,7 @@ PS_NORMAL_OUT PS_STONE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    //Out.vOrm = float4(0, 0, 0, 0);
+    Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
 }

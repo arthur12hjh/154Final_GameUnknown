@@ -1,4 +1,4 @@
-#include "Client_Shader_Utils.hlsli"
+#include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 
@@ -151,6 +151,7 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = Out[3].vPosition;
+        
         Out[0].vNormal = float4(0, 0, 0, 0);
         Out[1].vNormal = float4(0, 0, 0, 0);
         Out[2].vNormal = float4(0, 0, 0, 0);
@@ -215,7 +216,6 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = Out[3].vPosition;
-        
         Out[0].vNormal = float4(0, 0, 0, 0);
         Out[1].vNormal = float4(0, 0, 0, 0);
         Out[2].vNormal = float4(0, 0, 0, 0);
