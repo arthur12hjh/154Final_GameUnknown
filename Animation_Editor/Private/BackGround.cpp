@@ -34,12 +34,20 @@ HRESULT CBackGround::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_iTextureIndex = 0;
+	m_fDeltaTime = 0.f;
+
 	return S_OK;
 }
 
 void CBackGround::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+	m_fDeltaTime += fTimeDelta;
+	if (m_fDeltaTime > 10.f)
+	{
+		m_iTextureIndex = m_iTextureIndex == 0 ? 1 : 0;
+		m_fDeltaTime = 0.f;
+	}
 }
 
 void CBackGround::Update(_float fTimeDelta)
@@ -99,7 +107,7 @@ HRESULT CBackGround::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;

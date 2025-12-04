@@ -113,7 +113,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BackGround.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BackGround%d.png"), 2))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_BackGround"),
