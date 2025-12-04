@@ -11,6 +11,7 @@
 #include "Camera.h"
 
 #include "UIBossVitalWrapper.h"
+#include "UIWorldWrapper.h"
 
 /*
 이벤트, 애니메이션 매니저 만들기(싱글톤일 필요X)
@@ -106,12 +107,10 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc)
 {
 	auto pLayer = m_pLayers.find(TEXT("Layer_Boss"));
-
 	if (pLayer == m_pLayers.end())
 		return;
 
 	auto pUIObjects = pLayer->second->Get_UserInterfaces();
-
 	auto pUI = pUIObjects->find(TEXT("Boss_Vital_Wrapper"));
 
 	CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(pUI->second);
@@ -119,9 +118,9 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 		return;
 
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
-
-	for(auto& pChild : *pVitalWrapper->Get_Children())
+	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
+	
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
@@ -859,7 +858,7 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 
 	// 맨 뒤에서 꺼내기
 	CUIBase* pUI = it->second.back();
-	//it->second.pop_back();
+	it->second.pop_back();
 
 	// 상태 초기화 후 사용할 준비
 	Reset_WorldUI_State(pUI);
