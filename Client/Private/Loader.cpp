@@ -311,14 +311,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
-	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
-	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.png",
-	//	"g_ORSSTexture", TRUE);
-	//
-	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve")))->Import_Texture(3, TEXTURE_TYPE::ORSS,
-	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/CH_P_EVE_Head_ORSS.png",
-	//	"g_ORSSTexture", TRUE);
-
+	
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
 	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
@@ -342,6 +335,30 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
 	//	return E_FAIL;
+
+	/// < 모델의 특정 본 이름 바꿔주는 함수 >
+	///
+	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
+	/// -> const _char* szAfterBoneTag = 바꿀 본 이름
+	/// -> vector<string> szTargetTagList = 찾아서 변경해버릴 본 이름들
+	/// 
+	/// 단, szAfterBoneTag 이름을 가진 본이 이미 있을 경우 이 요청사항은 무시된다.
+	/// 또한 szTargetTagList에 있는 본들 중 가장 첫 번째로 탐색된 본만 이름이 변경된다.
+	/// 
+	/// < /End >
+
+	// ** 예시 코드 **
+	// 
+	// _wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
+	// 
+	// vector<string> szTargetTagList;
+	// szTargetTagList.push_back("sunho");
+	// szTargetTagList.push_back("jindol");
+	// szTargetTagList.push_back("Chanbin");
+	// szTargetTagList.push_back("minseok");
+	// szTargetTagList.push_back("jeonghwan");
+	// 
+	// dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Change_BoneTag("Bip001-Head", szTargetTagList);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),

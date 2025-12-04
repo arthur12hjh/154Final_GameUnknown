@@ -28,6 +28,8 @@ public:
 
 	_char* Get_Name() { return m_szName; }
 
+	void Set_Name(const _char* szName) { strcpy_s(m_szName, szName); }
+
 	_int Get_ParentBoneIndex() { return m_iParentBoneIndex; }
 
 public:
