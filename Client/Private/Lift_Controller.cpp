@@ -43,8 +43,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		return E_FAIL;
 
 	ResetAction(true);
-	
-	
+	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 
 	return S_OK;
 }
@@ -58,10 +57,8 @@ void CLift_Controller::Update(_float fTimeDelta)
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 
 	m_pCullingCollider->UpdateColiision(WorldMat);
+	m_pInteractionCom->Update_Com();
 	m_pRigidBody->Update_PxTransform(WorldMat);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-		Excute_CallBack(nullptr);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();

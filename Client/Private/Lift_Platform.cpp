@@ -46,7 +46,7 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 void CLift_Platform::Update(_float fTimeDelta)
 {
-	if (m_fMoveDistance)
+	if (m_bIsPaltformMove)
 	{
 		LerpTargetPoint(fTimeDelta);
 
@@ -98,6 +98,9 @@ HRESULT CLift_Platform::Render()
 
 _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 {
+	if (m_bIsPaltformMove)
+		return false;
+
 	_vector vPlatformPos = m_pTransformCom->Get_State(STATE::POSITION);
 	_vector vDir = {};
 
@@ -109,6 +112,8 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 		if (m_vRootPos.y + m_fMoveDistance > vPlatformPos.m128_f32[1])
 		{
 			vDir = m_pTransformCom->Get_State(STATE::UP);
+			XMStoreFloat3(&m_vTargetPoint, vPlatformPos + vDir * m_fMoveDistance);
+			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
 		}
 		else
@@ -120,19 +125,14 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 		if (m_vRootPos.y < vPlatformPos.m128_f32[1])
 		{
 			vDir = -1 * m_pTransformCom->Get_State(STATE::UP);
+			XMStoreFloat3(&m_vTargetPoint, vPlatformPos + vDir * m_fMoveDistance);
+			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
 		}
 		else
 			XMStoreFloat3(&m_vTargetPoint, vPlatformPos);
 	}
 		break;
-	}
-
-	if (m_bIsPaltformMove)
-	{
-		XMStoreFloat3(&m_vTargetPoint, vPlatformPos + vDir * m_fMoveDistance);
-		m_ePlatform_State = eState;
-		return true;
 	}
 	
 	return false;
@@ -144,10 +144,11 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 	_vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
 
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
-	if (fDistance < 0.3f)
+	if (fDistance < 0.1f)
 		m_bIsPaltformMove = false;
 
-	m_pTransformCom->Chase_Lerp(vTargetPos, fTimeDelta * m_vLerpSpeed);
+	_vector vLerpPos = XMVectorLerp(vPlatformPos, vTargetPos, fTimeDelta * m_vLerpSpeed);
+	m_pTransformCom->Set_State(STATE::POSITION, vLerpPos);
 }
 
 HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)

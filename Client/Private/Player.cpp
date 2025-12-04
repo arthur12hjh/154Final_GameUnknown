@@ -169,7 +169,13 @@ void CPlayer::Update(_float fTimeDelta)
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
 		Use_RushSkill();
-	
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteraction = m_pGameInstance->GetNearInteraction();
+		pInteraction->Action_InteractionEvent(this);
+	}
+
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
