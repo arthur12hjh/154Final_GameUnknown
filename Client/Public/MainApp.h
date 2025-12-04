@@ -33,12 +33,16 @@ private:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
+	_bool					m_bIsMouseLock = { false };
+
 private:
 	HRESULT					Ready_Default_Setting();
 	HRESULT					Ready_Manager_Setting();
 	HRESULT					Start_Level(LEVEL eLevelID);
 	HRESULT					Ready_Prototypes();
 	HRESULT					Ready_Mouse();
+
+	void					MouseLock();
 
 public:
 	static CMainApp*		Create();

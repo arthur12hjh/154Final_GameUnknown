@@ -5,7 +5,7 @@
 #include "ClientStruct.h"
 
 NS_BEGIN(Engine)
-class CModel;
+class CVIBuffer_Instance_Model;
 class CShader;
 NS_END
 

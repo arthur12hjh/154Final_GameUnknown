@@ -70,12 +70,12 @@ HRESULT CRock5::Render()
 HRESULT CRock5::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Rock5"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Model_Rock5"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

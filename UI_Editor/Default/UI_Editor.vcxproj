@@ -184,7 +184,8 @@
     <ClCompile Include="..\..\Client\Private\Player_BattleLandingState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_BattleWalkState.cpp" />
-    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlahsState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_BetaChargingSlashState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_BetaTripletState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_HitState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_IdleLandingState.cpp" />

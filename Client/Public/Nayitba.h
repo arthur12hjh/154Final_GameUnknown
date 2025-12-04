@@ -34,10 +34,10 @@ public:
 	 
 	virtual HRESULT					Damaged(void* pArg) override;
 	virtual HRESULT					ActionSuccess(void* pArg) override;
+	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
 	_uint							GetMonsterID();
 	_float							GetRootMotionRatio() { return m_fMotionRatio; }
-	void							ComputeDamageLogic(const long long& iDamage);
 
 	const list<CGameObject*>*		GetTargetList();
 
@@ -86,6 +86,7 @@ private :
 	HRESULT							ADD_PartObjects();
 
 	void							BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
+	void							CreateHitBox(const AnimNotify* pNotify);
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

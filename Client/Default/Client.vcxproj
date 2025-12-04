@@ -160,6 +160,7 @@
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
+    <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
     <ClInclude Include="..\Public\BackGround.h" />
@@ -173,6 +174,12 @@
     <ClInclude Include="..\public\Deco_FindTarget.h" />
     <ClInclude Include="..\Public\DesertObject.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
+    <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\Public\Iron_Floor.h" />
+    <ClInclude Include="..\public\Level_Scarlet.h" />
+    <ClInclude Include="..\Public\Lift_Body.h" />
+    <ClInclude Include="..\Public\Lift_Controller.h" />
+    <ClInclude Include="..\Public\Lift_Platform.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
@@ -380,6 +387,7 @@
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
+    <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
@@ -393,6 +401,12 @@
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
     <ClCompile Include="..\Private\DesertObject.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
+    <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\Private\Iron_Floor.cpp" />
+    <ClCompile Include="..\private\Level_Scarlet.cpp" />
+    <ClCompile Include="..\Private\Lift_Body.cpp" />
+    <ClCompile Include="..\Private\Lift_Controller.cpp" />
+    <ClCompile Include="..\Private\Lift_Platform.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />

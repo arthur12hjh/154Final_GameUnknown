@@ -23,7 +23,6 @@ private:
 	CNotify(const CNotify& Prototype);
 	virtual ~CNotify() = default;
 
-
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
