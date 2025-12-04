@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "Lift_Controller.h"
+
 #include "GameInstance.h"
+#include "Interaction_Component.h"
+#include "Lift_Platform.h"
+
+#include "UIBase.h"
+#include "UIHUD.h"
 
 CLift_Controller::CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProb_Interaction{ pDevice, pContext }
@@ -37,7 +43,8 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		return E_FAIL;
 
 	ResetAction(true);
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	
+	
 
 	return S_OK;
 }
@@ -48,6 +55,14 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 
 void CLift_Controller::Update(_float fTimeDelta)
 {
+	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	m_pCullingCollider->UpdateColiision(WorldMat);
+	m_pRigidBody->Update_PxTransform(WorldMat);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+		Excute_CallBack(nullptr);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
 }
@@ -59,8 +74,8 @@ void CLift_Controller::Late_Update(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 	}
 }
@@ -96,6 +111,11 @@ HRESULT CLift_Controller::Render()
 	return S_OK;
 }
 
+void CLift_Controller::SetControllPlatform(CLift_Platform* pControllPlatform)
+{
+
+}
+
 HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
@@ -108,15 +128,54 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+	/* Com_Interaction */
+	CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.vSize = {2.f, 2.f, 2.f};
+	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
+	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
+	InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
 
-	SphereDesc.fRadius = 2.f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
+	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+	m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
+
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("KIMETIC_Actor2");
+
+	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	// 콜라이더 모양
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+
+	// 충돌처리를 할지말지 
+	// DYNAMIC : 충돌 
+	// KINEMATIC : 충돌 X
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+
+	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	RigidBodyDesc.tUserData = tUserData;
+	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	RigidBodyDesc.vSize = {1.f, 1.3f, 1.f};
+	RigidBodyDesc.fMass = { 0.3f };
+
+	/* Com_RigidBody */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+
+	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
+	// 없으면 충돌 안됨
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
+
+	auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
+	if (pPlatformList)
+	{
+		if (false == pPlatformList->empty())
+			m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
+	}
 
 	return S_OK;
 }
@@ -135,10 +194,61 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CLift_Controller::Begin_OverlapCallBack()
+{
+	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	m_bIsInteractionAble = true;
+
+	return S_OK;
+}
+
+HRESULT CLift_Controller::End_OverlapCallBack()
+{
+	if (m_pInteractionUI)
+		m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
+
+	m_bIsInteractionAble = false;
+
+	return S_OK;
+}
+
+void CLift_Controller::Excute_CallBack(CGameObject* pActionObject)
+{
+	if (LIFT_ANIM_STATE::LIFT_ANIM_PUSH == m_eCurState)
+	{
+		if (m_pLiftPlatform)
+		{
+			if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
+			{
+				m_pModelCom->Set_AnimationIndex(1, false);
+				m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
+				m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
+			}
+
+			if (m_bIsControllLift)
+			{
+				if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+					m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+				else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+					m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+			}
+		}
+		else
+		{
+			auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
+			if (pPlatformList)
+			{
+				if (false == pPlatformList->empty())
+					m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
+			}
+		}
+	}
+}
+
 void CLift_Controller::ResetAction(_bool bIsForce)
 {
 	_bool bIsAction = false;
-	if (LIFT_STATE::LIFT_PULL == m_eCurState)
+	if (LIFT_ANIM_STATE::LIFT_ANIM_PULL == m_eCurState)
 	{
 		if (m_pModelCom->IsAnimationFinished())
 			bIsAction = true;
@@ -146,10 +256,9 @@ void CLift_Controller::ResetAction(_bool bIsForce)
 
 	if (bIsAction || bIsForce)
 	{
-		m_eCurState = LIFT_STATE::LIFT_PUSH;
+		m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PUSH;
 		m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false, 1.f, 0.12f, false, 34.f, 34.f);
 	}
-		
 }
 
 CLift_Controller* CLift_Controller::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -182,7 +291,6 @@ void CLift_Controller::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pLiftPlatform);
 }

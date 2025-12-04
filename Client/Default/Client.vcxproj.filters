@@ -616,9 +616,6 @@
     <Filter Include="02.GameObjects\Map\Desert\Instance">
       <UniqueIdentifier>{feb07ccf-2b93-4640-8e0d-0b5098c71ff1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Deco">
-      <UniqueIdentifier>{75c96b6f-14a0-4fcf-8735-302970638a73}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Lift">
       <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
     </Filter>
@@ -669,6 +666,9 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
       <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Deco">
+      <UniqueIdentifier>{75c96b6f-14a0-4fcf-8735-302970638a73}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
