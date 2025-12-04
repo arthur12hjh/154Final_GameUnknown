@@ -160,32 +160,45 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     float NdotL = saturate(dot(vNormal, vFromLight));
     float NdotV = saturate(dot(vNormal, vFromView));
     
-    float fAlpha = max(fRoughness * fRoughness, 0.5f);
-    float k = ((fRoughness + 1.f) * (fRoughness + 1.f)) / 8.f;
+    float fAlpha = max(fRoughness * fRoughness, 0.1f);
     
+    float k = ((fRoughness + 0.5f) * (fRoughness + 0.5f)) / 8.f;
+
     float D = NDF_ggxtr(vNormal, vHalfVector, fAlpha);
     float G = Geometry_Smith(vNormal, vFromView, vFromLight, k);
     float3 F = Fresnel_Schlick(saturate(dot(vHalfVector, vFromView)), vFO);
-    
+
     float3 vNumerator = D * G * F;
     float fDenom = max(4.f * NdotL * NdotV, 1e-7);
     float3 specularBRDF = vNumerator / fDenom;
-    
+
+    float3 vF0Metal = lerp(vFO, float3(0.9f, 0.9f, 0.9f), fMetallic);
+    F = Fresnel_Schlick(saturate(dot(vHalfVector, vFromView)), vF0Metal);
+    float3 specularBoost = lerp(1.0f.xxx, float3(1.5f, 1.5f, 1.5f), fMetallic);
+    specularBRDF *= specularBoost;
+
     float3 kS = F;
     float3 kD = (1.f - kS) * (1.f - fMetallic);
-    
-    // 직접광 연산
+
+    // 비금속 디퓨즈는 약간 부스트 (하이라이트 대비 밸런스용)
+    kD *= lerp(1.1f, 1.0f, fMetallic);
+
+    // 직접광
     Out.vShade = float4((kD * vAlbedo) * (NdotL * fAttenuation) * vLightColor, 1.f);
-    // 환경광 연산
+
+    // 환경광 (SSAO 기반)
     float3 vDiffuseAmbient = vAlbedo * lerp(0.08f, 0.35f, 1 - fRoughness);
     vDiffuseAmbient *= (1 - fMetallic) * fSSAO;
     Out.vShade.xyz += vDiffuseAmbient;
-    
+
+    // 스페큘러 강화 + 금속 반사 강조
     Out.vSpecular = float4(specularBRDF * vLightColor * fAttenuation * NdotL, 1.f);
-    F = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vFO);
-    float3 vAmbientSpec = F * 0.02f * (1 - fRoughness * fRoughness);
-    Out.vSpecular.xyz += vAmbientSpec;
     
+    // 앰비언트 스페큘러
+    float3 F_amb = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vF0Metal);
+    float3 vAmbientSpec = F_amb * lerp(0.02f, 0.08f, fMetallic) * (1 - fRoughness * fRoughness);
+    Out.vSpecular.xyz += vAmbientSpec;
+
     return Out;
 }
 
