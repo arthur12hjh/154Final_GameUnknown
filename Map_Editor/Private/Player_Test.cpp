@@ -35,6 +35,18 @@ void CPlayer_Test::Priority_Update(_float fTimeDelta)
 void CPlayer_Test::Update(_float fTimeDelta)
 {
 	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	const _float4x4* pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+
+	XMMATRIX WorldMatrix = XMLoadFloat4x4(pWorldMatrix);
+
+	XMVECTOR Position = WorldMatrix.r[3];
+
+	_float3 vPos;
+	XMStoreFloat3(&vPos, Position);
+
+	char szDebugString[256];
+	sprintf_s(szDebugString, "Player Position: X=%.2f, Y=%.2f, Z=%.2f\n", vPos.x, vPos.y, vPos.z);
+	OutputDebugStringA(szDebugString);
 }
 
 void CPlayer_Test::Late_Update(_float fTimeDelta)

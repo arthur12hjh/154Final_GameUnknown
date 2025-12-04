@@ -79,6 +79,9 @@ HRESULT CInstance_Desert::Render()
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", TEXTURE_TYPE::NORMAL, 0)))
 			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_ORMTexture", TEXTURE_TYPE::ORM, 0)))
+			return E_FAIL;
+
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 

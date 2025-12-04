@@ -26,7 +26,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
 	}
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)
@@ -37,6 +37,9 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+	m_eCurState = LIFT_PULL;
+	m_pModelCom->Set_AnimationIndex(m_eCurState);
+
 	return S_OK;
 }
 
@@ -45,13 +48,36 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 }
 
 void CLift_Controller::Update(_float fTimeDelta)
-{
+{	
+	if (m_eCurState != m_ePrevState)
+	{
+
+		switch (m_eCurState)
+		{
+		case LIFT_PULL:
+			m_pModelCom->Set_AnimationIndex(LIFT_PULL, false, 0.f);
+			break;
+		case LIFT_PUSH:
+			m_pModelCom->Set_AnimationIndex(LIFT_PUSH, true, 0.f);
+			break;
+		}
+
+		m_ePrevState = m_eCurState;
+	}
+
+	m_pModelCom->Play_Animation(fTimeDelta);
+
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+
+#endif
 }
 
 HRESULT CLift_Controller::Render()
@@ -63,8 +89,8 @@ HRESULT CLift_Controller::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		/*if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-			return E_FAIL;*/
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
@@ -72,11 +98,12 @@ HRESULT CLift_Controller::Render()
 		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;*/
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
+		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;*/
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
@@ -92,8 +119,18 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 2.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -143,6 +180,7 @@ void CLift_Controller::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }
