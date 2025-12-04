@@ -137,7 +137,10 @@ void CMonsterMimesisController::Damage(void* pArg)
 		}
 
 		if (bIsHitAble)
-			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+		{
+			if (m_vAttackTime.y <= m_vAttackTime.x)
+				m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+		}
 	}
 }
 

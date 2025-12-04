@@ -234,18 +234,13 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 			fSpeed = m_fMoveSpeed;
 			bMoveAction = true;
 		}
-		// 100 ~ 130 프레임 이동
-		else if(0.25f >= fAnimPlayRatio)
-		{
-			_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-			_vector vLerpLook = LerpRotation(fTimeDelta);
-
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
-		}
 	}
 
 	if (bMoveAction)
 		LerpMoveAction(fTimeDelta, fSpeed);
+
+	if (0.25f >= fAnimPlayRatio)
+		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta * 3.f));
 }
 
 void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
@@ -334,16 +329,8 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 	{
 		// 기습 공격
 		// 55 ~ 65 회전
-		if (0.25f < fAnimPlayRatio && 0.3f >= fAnimPlayRatio )
-		{
-			
-			// 지수 제곱
-			// 지수 상수 값 * Time을해서 제곱을 구함 
-			_vector vLerpLook = LerpRotation(fTimeDelta);
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
-		}
 		// 125 ~ 170
-		else if (0.3f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
+		if (0.3f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
 		{
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
@@ -355,6 +342,8 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		LerpMoveAction(fTimeDelta, fSpeed);
 	}
 		
+	if (0.25f >= fAnimPlayRatio)
+		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta * 3.f));
 }
 
 void CMonsterAttackState::SearchTargetDistance()
@@ -383,7 +372,7 @@ _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
 	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
 
 	vLook.m128_f32[1] = vDir.m128_f32[1] = 0.f;
-	return XMVectorLerp(vLook, vDir, fRatio);
+	return vOwnerPos + XMVectorLerp(vLook, vDir, fRatio);
 }
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)

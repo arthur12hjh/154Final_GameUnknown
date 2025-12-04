@@ -137,8 +137,12 @@ void CMonsterController::Damage(void* pDesc)
 			}
 		}
 
-		if(bIsHitAble)
-			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
+		if (bIsHitAble)
+		{
+			if (m_vAttackTime.y <= m_vAttackTime.x)
+				m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
+		}
+			
 	}
 }
 

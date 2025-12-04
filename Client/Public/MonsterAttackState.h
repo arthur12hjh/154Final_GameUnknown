@@ -55,6 +55,7 @@ private :
 	void										StatueBPattern(_float fTimeDelta);
 
 	void										SearchTargetDistance();
+
 	void										LerpMoveAction(_float fTimeDelta, _float fSpeed);
 	_vector										LerpRotation(_float fRatio, _float fSpeed = 1.f);
 
