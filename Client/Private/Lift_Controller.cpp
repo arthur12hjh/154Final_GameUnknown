@@ -25,21 +25,11 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = static_cast<RuinComponentDesc*>(pArg);
-	}
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	ResetAction(true);

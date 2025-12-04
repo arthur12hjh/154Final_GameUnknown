@@ -19,22 +19,16 @@ HRESULT CLift_Platform::Initialize_Prototype()
 
 HRESULT CLift_Platform::Initialize(void* pArg)
 {
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
-
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
+
+	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(WorldMat);
+	m_pRigidBody->Update_PxTransform(WorldMat);
 
 	XMStoreFloat3(&m_vRootPos, m_pTransformCom->Get_State(STATE::POSITION));
 	return S_OK;
@@ -58,12 +52,13 @@ void CLift_Platform::Update(_float fTimeDelta)
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
 {
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	
 		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 	}
@@ -108,11 +103,14 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 	{
 	case CLift_Platform::LIFT_PLATFORM_STATE::UPPER:
 	{
+		vDir = m_pTransformCom->Get_State(STATE::UP);
+		_vector vTargetPos = XMLoadFloat3(&m_vRootPos) + vDir * m_fMoveDistance;
+		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
+		
 		// 여기서 위인지 아래인지
-		if (m_vRootPos.y + m_fMoveDistance > vPlatformPos.m128_f32[1])
+		if (fDistance > 0.1f)
 		{
-			vDir = m_pTransformCom->Get_State(STATE::UP);
-			XMStoreFloat3(&m_vTargetPoint, vPlatformPos + vDir * m_fMoveDistance);
+			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
 		}
@@ -122,10 +120,13 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 		break;
 	case CLift_Platform::LIFT_PLATFORM_STATE::DWON:
 	{
-		if (m_vRootPos.y < vPlatformPos.m128_f32[1])
+		_vector vTargetPos = XMLoadFloat3(&m_vRootPos);
+		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
+
+		// 여기서 위인지 아래인지
+		if (fDistance > 0.1f)
 		{
-			vDir = -1 * m_pTransformCom->Get_State(STATE::UP);
-			XMStoreFloat3(&m_vTargetPoint, vPlatformPos + vDir * m_fMoveDistance);
+			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
 		}

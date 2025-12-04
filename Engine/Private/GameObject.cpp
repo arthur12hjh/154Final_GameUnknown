@@ -54,7 +54,7 @@ HRESULT CGameObject::Initialize(void* pArg)
 		if (pDesc->bIsApplyTransform)
 		{
 			m_pTransformCom->Set_Scale(XMLoadFloat3(&pDesc->vScale));
-			m_pTransformCom->Set_Rotation(XMLoadFloat3(&pDesc->vRotation));
+			m_pTransformCom->Set_Rotation(XMLoadFloat4(&pDesc->vRotation), pDesc->bIsQuaternion);
 			m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&pDesc->vPosition));
 		}
 	}

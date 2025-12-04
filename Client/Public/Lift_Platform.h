@@ -35,7 +35,7 @@ private :
 	LIFT_PLATFORM_STATE				m_ePlatform_State = { LIFT_PLATFORM_STATE::END };
 	CModel*							m_pModelCom = { nullptr };
 
-	_bool							m_bIsPaltformMove = {};
+	_bool							m_bIsPaltformMove = { false };
 
 	_float3							m_vTargetPoint = {};
 	_float							m_vLerpSpeed = { 1.f };

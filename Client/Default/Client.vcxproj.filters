@@ -13,9 +13,6 @@
     <Filter Include="01.Levels\Logo">
       <UniqueIdentifier>{b684fa80-8a44-48d3-8763-79acbba3a849}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Levels\GamePlay">
-      <UniqueIdentifier>{490444ba-eab1-44cf-9259-6b16f02e8e25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects">
       <UniqueIdentifier>{6822825a-d704-42c1-aab4-274a2e135da0}</UniqueIdentifier>
     </Filter>
@@ -669,6 +666,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Deco">
       <UniqueIdentifier>{75c96b6f-14a0-4fcf-8735-302970638a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\GamePlay">
+      <UniqueIdentifier>{490444ba-eab1-44cf-9259-6b16f02e8e25}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

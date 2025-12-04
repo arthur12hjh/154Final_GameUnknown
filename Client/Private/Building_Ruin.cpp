@@ -19,22 +19,11 @@ HRESULT CBuilding_Ruin::Initialize_Prototype()
 
 HRESULT CBuilding_Ruin::Initialize(void* pArg)
 {
-
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
-
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-	
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	return S_OK;
