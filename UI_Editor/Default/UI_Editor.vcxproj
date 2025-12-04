@@ -171,8 +171,11 @@
     <ClCompile Include="..\..\Client\Private\CanBox.cpp" />
     <ClCompile Include="..\..\Client\Private\Character.cpp" />
     <ClCompile Include="..\..\Client\Private\DataManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\Effect.cpp" />
     <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
     <ClCompile Include="..\..\Client\Private\LockonManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\MeshEffect.cpp" />
+    <ClCompile Include="..\..\Client\Private\Nayitba.cpp" />
     <ClCompile Include="..\..\Client\Private\Notify.cpp" />
     <ClCompile Include="..\..\Client\Private\Player.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerBehaviorCallback.cpp" />
@@ -200,12 +203,18 @@
     <ClCompile Include="..\..\Client\Private\Player_Parts.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_VendingInteractionState.cpp" />
+    <ClCompile Include="..\..\Client\Private\PointParticle.cpp" />
     <ClCompile Include="..\..\Client\Private\Prob_Interaction.cpp" />
     <ClCompile Include="..\..\Client\Private\Quest.cpp" />
     <ClCompile Include="..\..\Client\Private\QuestManager.cpp" />
     <ClCompile Include="..\..\Client\Private\RewordEvent.cpp" />
     <ClCompile Include="..\..\Client\Private\Sky.cpp" />
+    <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp" />
+    <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp" />
+    <ClCompile Include="..\..\Client\Private\SpriteUVEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\TestQuest.cpp" />
+    <ClCompile Include="..\..\Client\Private\TrailData.cpp" />
+    <ClCompile Include="..\..\Client\Private\TrailEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\..\Client\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\..\Client\Private\UIAnimManager.cpp" />
@@ -221,6 +230,7 @@
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
     <ClCompile Include="..\..\Client\Private\UIImage.cpp" />
+    <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterShield.cpp" />
@@ -238,6 +248,7 @@
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\..\Client\Private\Weapon.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />
     <ClCompile Include="..\ImgUI\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

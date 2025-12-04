@@ -87,6 +87,7 @@ public:
 	void Set_Follow_Parent(_bool bFollow) { m_bFollowParent = bFollow; }
 
 	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
+	_bool Get_Anim_Playing() { return m_bPlayingAnim; }
 
 	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
 

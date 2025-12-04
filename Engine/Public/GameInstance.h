@@ -147,7 +147,7 @@ public:
 
 #pragma region FONT_MANAGER
 	HRESULT						Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
-	HRESULT						Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f ,1.f));
+	HRESULT						Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f ,1.f), _float fScale = 1.f);
 	_float2						Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace = true, float fScale = 1.f);
 #pragma endregion
 

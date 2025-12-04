@@ -63,6 +63,12 @@
     <Filter Include="999. CPP From Client\03. Player\FSM">
       <UniqueIdentifier>{1222751c-453f-4423-96d4-4facdcf7964c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="999. CPP From Client\03. Player\Effect">
+      <UniqueIdentifier>{5a1398d5-4f32-4ad5-a49e-ae8e9e2157b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\04. Naytiba">
+      <UniqueIdentifier>{f1450dc2-e8fd-427d-aaca-be0ff3d2a6fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -399,6 +405,39 @@
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\Player_BetaTripletState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Weapon.cpp">
+      <Filter>999. CPP From Client\03. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Effect.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\SpriteUVEffect.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\PointParticle.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TrailData.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TrailEffect.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\MeshEffect.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Nayitba.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
