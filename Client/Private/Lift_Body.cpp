@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLift_Body::CLift_Body(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CLift_Body::CLift_Body(const CLift_Body& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -124,7 +124,7 @@ CLift_Body* CLift_Body::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CDesertObject* CLift_Body::Clone(void* pArg)
+CGameObject* CLift_Body::Clone(void* pArg)
 {
 	CLift_Body* pInstance = new CLift_Body(*this);
 

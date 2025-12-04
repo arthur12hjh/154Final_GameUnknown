@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLift_Controller::CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CProb_Interaction{ pDevice, pContext }
 {
 }
 
 CLift_Controller::CLift_Controller(const CLift_Controller& Prototype)
-	: CDesertObject{ Prototype }
+	: CProb_Interaction{ Prototype }
 {
 }
 
@@ -19,14 +19,13 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-
 	RuinComponentDesc* pDesc = nullptr;
 	if (pArg != nullptr)
 	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
+		pDesc = static_cast<RuinComponentDesc*>(pArg);
 	}
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)
@@ -37,6 +36,9 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+	ResetAction(true);
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
 	return S_OK;
 }
 
@@ -46,12 +48,21 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 
 void CLift_Controller::Update(_float fTimeDelta)
 {
+	m_pModelCom->Play_Animation(fTimeDelta);
+	ResetAction();
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+#ifdef _DEBUG
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
+	}
 }
 
 HRESULT CLift_Controller::Render()
@@ -63,8 +74,8 @@ HRESULT CLift_Controller::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		/*if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-			return E_FAIL;*/
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
@@ -72,11 +83,12 @@ HRESULT CLift_Controller::Render()
 		/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;*/
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
+			/*if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+				return E_FAIL;*/
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
@@ -92,8 +104,18 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* Com_Collider_Sphere */
+	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+
+	SphereDesc.fRadius = 2.f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -113,6 +135,23 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 	return S_OK;
 }
 
+void CLift_Controller::ResetAction(_bool bIsForce)
+{
+	_bool bIsAction = false;
+	if (LIFT_STATE::LIFT_PULL == m_eCurState)
+	{
+		if (m_pModelCom->IsAnimationFinished())
+			bIsAction = true;
+	}
+
+	if (bIsAction || bIsForce)
+	{
+		m_eCurState = LIFT_STATE::LIFT_PUSH;
+		m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false, 1.f, 0.12f, false, 34.f, 34.f);
+	}
+		
+}
+
 CLift_Controller* CLift_Controller::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CLift_Controller* pInstance = new CLift_Controller(pDevice, pContext);
@@ -126,7 +165,7 @@ CLift_Controller* CLift_Controller::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CDesertObject* CLift_Controller::Clone(void* pArg)
+CGameObject* CLift_Controller::Clone(void* pArg)
 {
 	CLift_Controller* pInstance = new CLift_Controller(*this);
 
@@ -143,6 +182,7 @@ void CLift_Controller::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }
