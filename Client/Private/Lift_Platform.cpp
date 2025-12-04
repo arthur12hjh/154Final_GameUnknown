@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLift_Platform::CLift_Platform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CLift_Platform::CLift_Platform(const CLift_Platform& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -124,7 +124,7 @@ CLift_Platform* CLift_Platform::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CDesertObject* CLift_Platform::Clone(void* pArg)
+CGameObject* CLift_Platform::Clone(void* pArg)
 {
 	CLift_Platform* pInstance = new CLift_Platform(*this);
 

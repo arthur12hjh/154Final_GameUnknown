@@ -172,7 +172,6 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
-    <ClInclude Include="..\Public\DesertObject.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
@@ -399,7 +398,6 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
-    <ClCompile Include="..\Private\DesertObject.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />

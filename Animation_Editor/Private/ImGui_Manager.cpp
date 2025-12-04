@@ -286,7 +286,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
 		if (ImGui::Selectable("StatueA")) { iCurrentIndex = 4; }
 		if (ImGui::Selectable("StatueB")) { iCurrentIndex = 5; }
-
+		if (ImGui::Selectable("Banacle")) { iCurrentIndex = 6; }
 		ImGui::EndPopup();
 	}
 
@@ -314,6 +314,9 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 5:
 			Create_Extra(TEXT("Prototype_Component_Model_StatueB"));
+			break;
+		case 6:
+			Create_Extra(TEXT("Prototype_Component_Model_Banacle"));
 			break;
 		}
 

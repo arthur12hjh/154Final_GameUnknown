@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CDeco::CDeco(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CDeco::CDeco(const CDeco& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -124,7 +124,7 @@ CDeco* CDeco::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CDesertObject* CDeco::Clone(void* pArg)
+CGameObject* CDeco::Clone(void* pArg)
 {
 	CDeco* pInstance = new CDeco(*this);
 
