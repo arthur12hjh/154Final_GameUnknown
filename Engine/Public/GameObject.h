@@ -13,9 +13,10 @@ public:
 	{
 		CGameObject*		pParent = nullptr;
 		_bool				bIsApplyTransform;
+		_bool				bIsQuaternion = false;
 
 		_float3				vScale;
-		_float3				vRotation;
+		_float4				vRotation;
 		_float3				vPosition;
 	}GAMEOBJECT_DESC;
 
