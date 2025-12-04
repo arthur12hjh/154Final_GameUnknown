@@ -312,17 +312,7 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark->Play();
 	m_pSpark->Stop();
 
-	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
-	ChargeDesc.fRotationPerSec = 1.f;
-	ChargeDesc.fSpeedPerSec = 1.f;
-	ChargeDesc.pRootMatrix = &m_CombinedWorldMatrix;
-	ChargeDesc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
-	ChargeDesc.fRot = _float3(0, 0, 0);
-	ChargeDesc.fSize = 0.3f;
-
-	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
-	m_pCharge->Play();
-	m_pCharge->Stop();
+	//m_pCharge->Stop();
 
 	return S_OK;
 }

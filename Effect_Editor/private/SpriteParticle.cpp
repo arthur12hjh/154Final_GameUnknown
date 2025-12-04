@@ -38,7 +38,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_bisLoop = false;
-	}if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+	}if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
 	}
 
@@ -66,7 +66,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
-	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
@@ -111,6 +111,7 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
 	m_bisLoop = tData.bisLoop;
+	m_fLength = 0.f;
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szNormalTexture.c_str());

@@ -73,18 +73,18 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	if (m_fTime < 0.015f)
 		return;
 	if (false == bMakeTrail) {
-		if (2 < m_iNumPresent) {
-			_uint index = m_fTime / 0.015f;
-			m_fTime -= index * 0.015f;
-			_int i = m_iNumPresent - 2 * index;
-			m_iNumPresent = max(i, 0);
-			memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2 * index, sizeof(VTXPOSTEX) * m_iNumPresent);
-		}
-		else {
-			_uint index = m_fTime / 0.015f;
-			m_fTime -= index * 0.015f;
-			m_iNumPresent = 0;
-			memset(m_pVTXPOSTEXs, 0, 0);
+		_int index = m_fTime / 0.015f;
+		m_fTime -= index * 0.015f;
+		for (_int i = 0; i < index * 4; ++i) {
+			if (2 < m_iNumPresent) {
+
+				m_iNumPresent -= 2;
+				memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+			}
+			else {
+				m_iNumPresent = 0;
+				memset(m_pVTXPOSTEXs, 0, 0);
+			}
 		}
 		if (0 != m_iNumPresent) {
 			D3D11_MAPPED_SUBRESOURCE SubResource{};
