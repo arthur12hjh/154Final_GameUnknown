@@ -124,7 +124,7 @@ HRESULT CBloom::Ready_RenderTargets()
             
             // ´Ù¿î »ùÇÃ
             /* Target_BloomDownSample4x4. */
-            if (FAILED(m_pGameInstance->Add_RenderTarget(strRenderTargetTag, m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+            if (FAILED(m_pGameInstance->Add_RenderTarget(strRenderTargetTag, m_vOriginScreenSize.x / pow(m_iSampleLevel,(i + 1)), m_vOriginScreenSize.y / pow(m_iSampleLevel, (i + 1)), DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
                 return E_FAIL;
             if (FAILED(m_pGameInstance->Add_MRT(strMRTTag, strRenderTargetTag)))
                 return E_FAIL;
@@ -170,8 +170,8 @@ HRESULT CBloom::Ready_DSVs()
 
     for (_uint i = 0; i < m_iBloomLevel; ++i)
     {
-        TextureDesc.Width = vScreenSize.x / (m_iSampleLevel * (i + 1));
-        TextureDesc.Height = vScreenSize.y / (m_iSampleLevel * (i + 1));
+        TextureDesc.Width = vScreenSize.x / pow(m_iSampleLevel, (i + 1));
+        TextureDesc.Height = vScreenSize.y / pow(m_iSampleLevel, (i + 1));
 
         if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
             return E_FAIL;
@@ -200,7 +200,7 @@ HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRende
         if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[i])))
             return E_FAIL;
 
-        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * (i + 1)), m_vOriginScreenSize.y / (m_iSampleLevel * (i + 1)));
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, (i + 1)), m_vOriginScreenSize.y / pow(m_iSampleLevel, (i + 1)));
 
         /* Ä¸ÃÄµÈ È­¸éÀ» ¹ÙÀÎµù. */
         if (0 == i)
@@ -246,9 +246,9 @@ HRESULT CBloom::MiddleBlur(CVIBuffer* pVIBuffer)
     if (FAILED(m_pGameInstance->Begin_MRT(strBlurXMRTTag, m_pDSVs[m_iBloomLevel - 1])))
         return E_FAIL;
 
-    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
-
-    _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, m_iBloomLevel), m_vOriginScreenSize.y / pow(m_iSampleLevel, m_iBloomLevel));
+    _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / pow(m_iSampleLevel, m_iBloomLevel), m_vOriginScreenSize.y / pow(m_iSampleLevel, m_iBloomLevel));
+    
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
         return E_FAIL;
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
@@ -267,9 +267,9 @@ HRESULT CBloom::MiddleBlur(CVIBuffer* pVIBuffer)
     if (FAILED(m_pGameInstance->Begin_MRT(strBlurYMRTTag, m_pDSVs[m_iBloomLevel - 1])))
         return E_FAIL;
 
-    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, m_iBloomLevel), m_vOriginScreenSize.y / pow(m_iSampleLevel, m_iBloomLevel));
 
-    vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iBloomLevel * m_iSampleLevel), m_vOriginScreenSize.y / (m_iBloomLevel * m_iSampleLevel));
+    vNewScreenSize = _uint2(m_vOriginScreenSize.x / pow(m_iSampleLevel, m_iBloomLevel), m_vOriginScreenSize.y / pow(m_iSampleLevel, m_iBloomLevel));
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
         return E_FAIL;
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
@@ -319,7 +319,7 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV ÀÎµ¦½ºµµ currentSampleLevelMultiplier¿¡ ¸ÂÃç Á¶Á¤
             return E_FAIL;
 
-        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
 
         m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
 
@@ -333,9 +333,9 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         if (FAILED(m_pGameInstance->Begin_MRT(strBlurXMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV ÀÎµ¦½º Á¶Á¤
             return E_FAIL;
 
-        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
+        _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
 
-        _uint2 vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
             return E_FAIL;
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
@@ -359,9 +359,9 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         if (FAILED(m_pGameInstance->Begin_MRT(strBlurYMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV ÀÎµ¦½º Á¶Á¤
             return E_FAIL;
 
-        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
+        vNewScreenSize = _uint2(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
 
-        vNewScreenSize = _uint2(m_vOriginScreenSize.x / (m_iSampleLevel * iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / (m_iSampleLevel * iCurrentSampleLevelMultiplier));
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
             return E_FAIL;
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))

@@ -107,6 +107,7 @@ private:
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
 	_float			m_fTime = {};
+	_float			m_fLength = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;
 	_bool			m_bisStop = { false };

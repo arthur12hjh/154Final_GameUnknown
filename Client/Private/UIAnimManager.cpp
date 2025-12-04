@@ -35,6 +35,9 @@ void CUIAnimManager::Update(_float fTimeDelta)
 
 		if (pAnimInstance->Update(fTimeDelta))
 		{
+			if (pAnimInstance == m_pTargetAnim)
+				m_bTargetAnimFinish = true;
+
 			Safe_Release(pAnimInstance);
 			iter = m_AnimInstances.erase(iter);
 		}
@@ -210,14 +213,14 @@ HRESULT CUIAnimManager::Delete_Prefab(_wstring szAnimTag)
 	return S_OK;
 }
 
-void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag)
+void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag, _float fDelay)
 {
 	auto AnimDesc = m_AnimDatas.find(szAnimTag);
 
 	if (AnimDesc == m_AnimDatas.end())
 		return;
 
-	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second);
+	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second, fDelay);
 	m_AnimInstances.push_back(pAnimInstance);
 }
 
@@ -235,6 +238,28 @@ void CUIAnimManager::Anim_Stop(CUIBase* pUI)
 		}
 		else
 			++iter;
+	}
+}
+
+_bool CUIAnimManager::Check_Anim_Finish(CUIBase* pUI, _wstring szAnimTag)
+{
+	if(m_bTargetAnimFinish)
+		Safe_Release(m_pTargetAnim);
+	
+	return m_bTargetAnimFinish;
+}
+
+void CUIAnimManager::Set_TargetAnim(CUIBase* pUI, _wstring szAnimTag)
+{
+	for (auto& pAnimInstance : m_AnimInstances)
+	{
+		if (pAnimInstance->Get_TargetUI() == pUI
+			&& pAnimInstance->Get_UI_Anim_Desc()->szAnimTag == szAnimTag)
+		{
+			m_pTargetAnim = pAnimInstance;
+			m_bTargetAnimFinish = false;
+			Safe_AddRef(m_pTargetAnim);
+		}
 	}
 }
 
@@ -263,5 +288,7 @@ void CUIAnimManager::Free()
 	__super::Free();
 
 	Clear_AnimInstances();
+
+	Safe_Release(m_pTargetAnim);
 }
 

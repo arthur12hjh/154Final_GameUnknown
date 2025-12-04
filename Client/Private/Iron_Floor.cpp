@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CIron_Floor::CIron_Floor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CIron_Floor::CIron_Floor(const CIron_Floor& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -19,22 +19,11 @@ HRESULT CIron_Floor::Initialize_Prototype()
 
 HRESULT CIron_Floor::Initialize(void* pArg)
 {
-
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
-
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	return S_OK;
@@ -125,7 +114,7 @@ CIron_Floor* CIron_Floor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CDesertObject* CIron_Floor::Clone(void* pArg)
+CGameObject* CIron_Floor::Clone(void* pArg)
 {
 	CIron_Floor* pInstance = new CIron_Floor(*this);
 

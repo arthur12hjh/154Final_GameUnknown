@@ -96,20 +96,20 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
-	//LIGHT_DESC			LightDesc{};
+	LIGHT_DESC			LightDesc{};
 
-	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
-	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	Load_Light_Data();
+	//Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 
@@ -291,23 +291,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-
 	//Desc.iMonsterID = 3;
 	//Desc.vPosition = { 15.f, 1.f, 15.f };
 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	/*Desc.iMonsterID = 4;
+	Desc.iMonsterID = 4;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
+
 	Desc.iMonsterID = 5;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
@@ -361,7 +361,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 50, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 
@@ -400,41 +400,53 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		RuinComponentDesc Desc = {};
-		Desc.pComponentTag = info.szComponentTag;
+		CActor::ACTOR_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+
+		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 
-		if (SUCCEEDED(hr))
-		{
-			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
-			if (pObjs && !pObjs->empty())
-			{
-				CGameObject* pObj = pObjs->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-				if (pTransform)
-				{
-					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+		//if (SUCCEEDED(hr))
+		//{
+		//	list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
+		//	if (pObjs && !pObjs->empty())
+		//	{
+		//		CGameObject* pObj = pObjs->back();
+		//		CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
+		//		if (pTransform)
+		//		{
+		//			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
 
-					_vector vScale = {};
-					_vector vRotation = {};
-					_vector vPosition = {};
-					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+		//			_vector vScale = {};
+		//			_vector vRotation = {};
+		//			_vector vPosition = {};
+		//			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
 
-					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+		//			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+		//			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+		//			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
 
-					// 순서: Scale * Rotation * Translation (SRT 순서)
-					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+		//			// 순서: Scale * Rotation * Translation (SRT 순서)
+		//			_matrix matFinalWorld = matScale * matRotation * matTranslation;
 
-					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
+		//			_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+		//			XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
 
-				}
-			}
-		}
+		//		}
+		//	}
+		//}
 	}
 
 	return S_OK;

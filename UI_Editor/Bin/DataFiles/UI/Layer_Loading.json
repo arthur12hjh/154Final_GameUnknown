@@ -1,0 +1,314 @@
+[
+    {
+        "Children": [
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_StellaSymbol",
+                    "szTextureComTag": "Com_Texture_UI_StellaSymbol"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": -100.0,
+                "fRotation": 0.0,
+                "fSizeX": 100.0,
+                "fSizeY": 100.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 3,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Image_1-1",
+                "szUITag": "Stella_Symbol"
+            },
+            {
+                "TextDesc": {
+                    "szText": "로딩 텍스트",
+                    "fScale": 0.8,
+                    "vColor": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 500.0,
+                "fSizeY": 50.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 3,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_Text",
+                "szUIID": "Logo_Panel_Loading_Text_1-2",
+                "szUITag": "Loading_Text"
+            },
+            {
+                "Shader": {
+                    "bUseGlow": true,
+                    "fGlowIntensity": 0.05166143551468849,
+                    "fGlowSpread": 0.0
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Loading_FX",
+                        "szPrefabTag": "BeapBeap_4"
+                    }
+                ],
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_LoadingBlur",
+                "szUIID": "Logo_Panel_LoadingBlur_1-3",
+                "szUITag": "LoadingBlur"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+                    "szTextureComTag": "Com_Texture_UI_LoadingBG"
+                },
+                "fAlpha": 0.8,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Loading_Dim_1-4",
+                "szUITag": "Loading_Dim"
+            },
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseTintColor": true,
+                            "vTintColor": [
+                                0.5,
+                                0.5,
+                                0.5,
+                                1.0
+                            ]
+                        },
+                        "TextureDesc": {
+                            "iPass": 0,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_LoadingBlock",
+                            "szTextureComTag": "Com_Texture_UI_LoadingBlock"
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": -23.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 1.0,
+                        "fSizeY": 1.0,
+                        "fX": 1500.0,
+                        "fY": 850.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 1,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Loading_BeapBeap",
+                                "szPrefabTag": "Loading_BeapBeap"
+                            }
+                        ],
+                        "szLayerTag": "Layer_Loading",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "LoadingBlocks_Image_2-1",
+                        "szUITag": "Loading_Block_0"
+                    },
+                    {
+                        "Shader": {
+                            "bUseTintColor": true,
+                            "vTintColor": [
+                                0.5,
+                                0.5,
+                                0.5,
+                                1.0
+                            ]
+                        },
+                        "TextureDesc": {
+                            "iPass": 0,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_LoadingBlock",
+                            "szTextureComTag": "Com_Texture_UI_LoadingBlock"
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 1.0,
+                        "fSizeY": 1.0,
+                        "fX": 1500.0,
+                        "fY": 850.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 1,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Loading_BeapBeap",
+                                "szPrefabTag": "Loading_BeapBeap"
+                            }
+                        ],
+                        "szLayerTag": "Layer_Loading",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "LoadingBlocks_Image_2-2",
+                        "szUITag": "Loading_Block_1"
+                    },
+                    {
+                        "Shader": {
+                            "bUseTintColor": true,
+                            "vTintColor": [
+                                0.5,
+                                0.5,
+                                0.5,
+                                1.0
+                            ]
+                        },
+                        "TextureDesc": {
+                            "iPass": 0,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_LoadingBlock",
+                            "szTextureComTag": "Com_Texture_UI_LoadingBlock"
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 23.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 1.0,
+                        "fSizeY": 1.0,
+                        "fX": 1500.0,
+                        "fY": 850.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 1,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Loading_BeapBeap",
+                                "szPrefabTag": "Loading_BeapBeap"
+                            }
+                        ],
+                        "szLayerTag": "Layer_Loading",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "LoadingBlocks_Image_2-3",
+                        "szUITag": "Loading_Block_2"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": 700.0,
+                "fOffsetY": 400.0,
+                "fRotation": 0.0,
+                "fSizeX": 66.0,
+                "fSizeY": 20.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_Wrapper",
+                "szUIID": "Loading_Panel_Wrapper_1-5",
+                "szUITag": "LoadingBlocks"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+                    "szTextureComTag": "Com_Texture_UI_LoadingBG"
+                },
+                "fAlpha": 0.800000011920929,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 99,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Intro",
+                        "szPrefabTag": "FadeOut_3"
+                    },
+                    {
+                        "szAnimTag": "Outro",
+                        "szPrefabTag": "FadeIn_3"
+                    }
+                ],
+                "szLayerTag": "Layer_Loading",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Loading_Overlay_1-6",
+                "szUITag": "Loading_Overlay"
+            }
+        ],
+        "TextureDesc": {
+            "iPass": 0,
+            "iTextureIndex": 0,
+            "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+            "szTextureComTag": "Com_Texture_UI_LoadingBG"
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 0,
+        "iDrawType": 1,
+        "iLevel": 1,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_Loading",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_Loading_Panel_0",
+        "szUITag": "Loading_Panel"
+    }
+]

@@ -216,13 +216,14 @@ namespace Client
 	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
-	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
+	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, DEAD, END };
 	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
 
-		_float3				fLockOnPoint;
+		_float3				vLockOnPoint;
+		_float3				vStatusBarPoint;
 
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;

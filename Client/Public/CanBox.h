@@ -36,9 +36,9 @@ private:
 	HRESULT							ADD_Components(const ACTOR_DESC& Desc);
 	HRESULT							Bind_ShaderResources();
 
-	HRESULT							Begin_OverlapCallBack();
-	void							Excute_CallBack(CGameObject* pActionObject);
-	HRESULT							End_OverlapCallBack();
+	virtual HRESULT					Begin_OverlapCallBack() override;
+	virtual HRESULT					End_OverlapCallBack() override;
+	virtual void					Excute_CallBack(CGameObject* pActionObject) override;
 
 public:
 	static		CCanBox*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

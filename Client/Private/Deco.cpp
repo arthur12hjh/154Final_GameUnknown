@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CDeco::CDeco(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CDeco::CDeco(const CDeco& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -19,22 +19,11 @@ HRESULT CDeco::Initialize_Prototype()
 
 HRESULT CDeco::Initialize(void* pArg)
 {
-
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
-
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	return S_OK;
@@ -126,7 +115,7 @@ CDeco* CDeco::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CDesertObject* CDeco::Clone(void* pArg)
+CGameObject* CDeco::Clone(void* pArg)
 {
 	CDeco* pInstance = new CDeco(*this);
 

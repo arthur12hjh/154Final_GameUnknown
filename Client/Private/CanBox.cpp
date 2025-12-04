@@ -53,10 +53,6 @@ void CCanBox::Update(_float fTimeDelta)
         m_pModelCom->Play_Animation(0.f);
         break;
     }
-
-	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-	m_pCullingCollider->UpdateColiision(WorldMat);
-	m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
 void CCanBox::Late_Update(_float fTimeDelta)
@@ -94,8 +90,8 @@ HRESULT CCanBox::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
             return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-            return E_FAIL;
+        //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+        //    return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
@@ -137,7 +133,6 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         return E_FAIL;
 
     PxUserData tUserData;
-    // 밀려야하는 애들은 이키워드로 세팅
     tUserData.szActorTag = TEXT("KIMETIC_Actor2");
 
     //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
@@ -190,16 +185,9 @@ HRESULT CCanBox::Bind_ShaderResources()
 
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
-    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-    m_pInteractionUI = pUIHUD->Rent_WorldUI(TEXT("Pool_Test"), this);
-    
-    Safe_Release(pUIHUD);
-
-    if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
-
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
     m_bIsInteractionAble = true;
+
     return S_OK;
 }
 
@@ -222,12 +210,6 @@ HRESULT CCanBox::End_OverlapCallBack()
         m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
 
     m_bIsInteractionAble = false;
-
-    CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-    
-    pUIHUD->Return_WorldUI(m_pInteractionUI);
-    
-    Safe_Release(pUIHUD);
 
     return S_OK;
 }

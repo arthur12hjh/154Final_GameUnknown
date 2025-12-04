@@ -33,6 +33,7 @@ protected:
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
 
+
 public:
 	static CUIWorldWrapper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
@@ -40,7 +41,3 @@ public:
 };
 
 NS_END
-
-/*
-여기서 스킬 4개, Rush 컨트롤
-*/

@@ -172,7 +172,6 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
-    <ClInclude Include="..\Public\DesertObject.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
@@ -352,6 +351,7 @@
     <ClInclude Include="..\Public\UIBossName.h" />
     <ClInclude Include="..\Public\UIBossShield.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
+    <ClInclude Include="..\Public\UILoadingBlur.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
     <ClInclude Include="..\Public\UIMonsterHPFX.h" />
     <ClInclude Include="..\Public\UIMonsterShield.h" />
@@ -399,7 +399,6 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
-    <ClCompile Include="..\Private\DesertObject.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
@@ -595,6 +594,7 @@
     <ClCompile Include="..\Private\UIBossName.cpp" />
     <ClCompile Include="..\Private\UIBossShield.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
+    <ClCompile Include="..\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />

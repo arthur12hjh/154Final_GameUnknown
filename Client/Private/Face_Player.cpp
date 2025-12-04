@@ -116,7 +116,7 @@ HRESULT CFace_Player::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::OPACITY, "g_OpacityTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
-	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
 
@@ -153,15 +153,11 @@ HRESULT CFace_Player::Render()
 	//Shader_Eve_Face
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		//if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_EVE_Eyeshadow_Occlusion") == 0)
-		//{
-		//	//if (FAILED(m_pShaderCom->Begin()))
-		//	//	return E_FAIL;
+		if (FAILED(m_pSpecDetailTextureCom->Bind_ShaderResource(m_pShaderCom, "g_SpecDetailTexture", 0)))
+			return E_FAIL;
 
-		//	//if (FAILED(m_pModelCom->Render(i)))
-		//	//	return E_FAIL;
-		//	continue;
-		//}
+		if (FAILED(m_pSSSAOCom->Bind_ShaderResource(m_pShaderCom, "g_SSSAOTexture", 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
@@ -225,6 +221,17 @@ HRESULT CFace_Player::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_SpecDetail */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SSSAO"),
+		TEXT("Com_SpecDetail"), reinterpret_cast<CComponent**>(&m_pSSSAOCom))))
+		return E_FAIL;
+
+	/* Com_SSSAO */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
+		TEXT("Com_SSSAO"), reinterpret_cast<CComponent**>(&m_pSpecDetailTextureCom))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -283,4 +290,6 @@ void CFace_Player::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pSpecDetailTextureCom);
+	Safe_Release(m_pSSSAOCom);
 }

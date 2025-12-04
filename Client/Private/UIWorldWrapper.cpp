@@ -4,11 +4,6 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#include "Player.h"
-#ifdef _DEBUG
-#include "../../UI_Editor/Public/UI_Camera.h"
-#endif // DEBUG
-
 CUIWorldWrapper::CUIWorldWrapper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -31,43 +26,6 @@ HRESULT CUIWorldWrapper::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	/*auto pCharactor{ CGameManager::GetInstance()->GetGameCharacter() };
-
-	if (pCharactor)
-	{
-		for (size_t i = 0; i < 4; ++i)
-		{
-			m_eSkillState[i] = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState[i]);
-			m_ePrevSkillState[i] = *m_eSkillState[i];
-		}
-
-		m_eRushState = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eRushState);
-		m_ePrevRushState = *m_eRushState;
-		m_fMaxRushCoolTime = const_cast<_float*>(&CGameManager::GetInstance()->Get_PlayerDesc()->fMaxRushCoolTime);
-		m_fCurrentRushCoolTime = const_cast<_float*>(&CGameManager::GetInstance()->Get_PlayerDesc()->fCurrentRushCoolTime);
-	}
-#ifdef _DEBUG
-	else
-	{
-		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
-
-		for (size_t i = 0; i < 4; ++i)
-		{
-			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
-			m_ePrevSkillState[i] = *m_eSkillState[i];
-		}
-
-		m_eRushState = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eRushState);
-		m_ePrevRushState = *m_eRushState;
-		m_fMaxRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);
-		m_fCurrentRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fCurrentRushCoolTime);
-		
-		Safe_Release(pGaraPlayer);
-	}
-#endif
-
-	Safe_Release(pCharactor);*/
 
 	return S_OK;
 }
@@ -114,22 +72,22 @@ HRESULT CUIWorldWrapper::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBaseBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
+	///* Com_VIBaseBuffer */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+	//	TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+	//	return E_FAIL;
 
-	/* Com_Texture_HP */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	///* Com_Texture_HP */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
+	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CUIWorldWrapper::Bind_ShaderResources()
 {
-	if (FAILED(__super::Bind_ShaderResources()))
+	/*if (FAILED(__super::Bind_ShaderResources()))
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -139,7 +97,7 @@ HRESULT CUIWorldWrapper::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }

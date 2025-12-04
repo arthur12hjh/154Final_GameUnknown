@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLift_Body::CLift_Body(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CActor{ pDevice, pContext }
 {
 }
 
 CLift_Body::CLift_Body(const CLift_Body& Prototype)
-	: CDesertObject{ Prototype }
+	: CActor{ Prototype }
 {
 }
 
@@ -19,22 +19,11 @@ HRESULT CLift_Body::Initialize_Prototype()
 
 HRESULT CLift_Body::Initialize(void* pArg)
 {
-
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
-
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	return S_OK;
@@ -125,7 +114,7 @@ CLift_Body* CLift_Body::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CDesertObject* CLift_Body::Clone(void* pArg)
+CGameObject* CLift_Body::Clone(void* pArg)
 {
 	CLift_Body* pInstance = new CLift_Body(*this);
 

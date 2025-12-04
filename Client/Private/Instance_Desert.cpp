@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CInstance_Desert::CInstance_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	CDesertObject(pDevice, pContext)
+	CActor(pDevice, pContext)
 {
 }
 
 CInstance_Desert::CInstance_Desert(const CInstance_Desert& Prototype) :
-	CDesertObject(Prototype)
+	CActor(Prototype)
 {
 }
 
@@ -147,7 +147,7 @@ CInstance_Desert* CInstance_Desert::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance_Desert;
 }
 
-CDesertObject* CInstance_Desert::Clone(void* pArg)
+CGameObject* CInstance_Desert::Clone(void* pArg)
 {
 	CInstance_Desert* pInstance_Desert = new CInstance_Desert(*this);
 	if (FAILED(pInstance_Desert->Initialize(pArg)))

@@ -19,7 +19,7 @@ private:
 	virtual ~CUIAnimInstance() = default;
 
 public:	
-	HRESULT Initialize(CUIBase* pUI, void* Desc);
+	HRESULT Initialize(CUIBase* pUI, void* Desc, _float fDelay = 0.f);
 	_bool Update(_float fTimeDelta);
 
 	void Set_UI_Anim_Desc(const UI_ANIM_DESC& Desc)
@@ -39,6 +39,7 @@ public:
 
 private:
 	_float m_fTimeStack = 0.f;
+	_float m_fDelayTime = 0.f;
 
 	_bool m_isAnimFinish = false;
 	_bool m_isReverse = false;
@@ -53,7 +54,7 @@ private:
 	_uint m_iTrackLength{0};
 
 public:
-	static CUIAnimInstance* Create(CUIBase* pUI, void* Desc);
+	static CUIAnimInstance* Create(CUIBase* pUI, void* Desc, _float fDelay = 0.f);
 	virtual void Free() override;
 };
 

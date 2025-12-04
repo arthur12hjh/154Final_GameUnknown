@@ -20,6 +20,7 @@
 #include "PlayerBehaviorCallback.h"
 
 #include "UIHUD.h"
+#include "UIBase.h"
 
 CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
@@ -60,7 +61,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
-	m_RootBoneMat = m_pBodyModelCom->Get_BoneMatrixPtr("Root");
+	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
 
@@ -77,42 +78,48 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 
 void CNayitba::Update(_float fTimeDelta)
 {
-	
-
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
 		{
 			BattleEvent(nullptr, NAYTIBA_STATE::DEFAULT);
 		}
+
+		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+			VisibleStatusUI(fTimeDelta);
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
 	
-	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
+		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	}
+	
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
-		_matrix vCombined = XMLoadFloat4x4(m_pLockOnMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		XMStoreFloat3(&m_MonsterInfo.fLockOnPoint, vCombined.r[3]);
+		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+		XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
+		XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
 	}
 	__super::Update(fTimeDelta);
 }
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
-
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState )
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		__super::Late_Update(fTimeDelta);
+
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -137,7 +144,28 @@ HRESULT CNayitba::Damaged(void* pArg)
 	m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
+	m_vHitVisibleDuration.x = 0.f;
 
+	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		if (nullptr == m_pStatusUI)
+		{
+			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, m_MonsterInfo.vStatusBarPoint);
+			Safe_Release(pCurHUD);
+		}
+		if (0 >= m_MonsterInfo.iCurrentHealth)
+		{
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+			// 몬스터 체력
+			pCurHUD->Return_WorldUI(m_pStatusUI);
+			m_pStatusUI = nullptr;
+			Safe_Release(pCurHUD);
+		}
+	}
+	
 	// 이제 진짜라고 합니다.
 	m_pGameManager->Start_Lockon();
 	return S_OK;
@@ -221,20 +249,6 @@ CAIController* CNayitba::GetController()
 const list<CGameObject*>* CNayitba::GetTraceObejectList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
-}
-
-_vector CNayitba::CalculateRootMotion()
-{
-	_matrix RootMatrix = XMLoadFloat4x4(m_RootBoneMat);
-	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
-
-	_vector vRootPos = RootMatrix.r[3];
-	_vector vSpinePos = SpineMatrix.r[3];
-
-	vRootPos.m128_f32[1] = vSpinePos.m128_f32[1] = 0.f;
-
-	_vector vLocalCal = vSpinePos - vRootPos;
-	return XMVector3TransformCoord(RootMatrix.r[3] + vLocalCal, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 HRESULT CNayitba::Ready_CharacterData()
@@ -406,6 +420,22 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 		pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
 		Safe_Release(pUIHUD);
+	}
+}
+
+void CNayitba::VisibleStatusUI(_float fTimeDelta)
+{
+	if (m_bIsTimeVisible)
+	{
+		if (m_vHitVisibleDuration.x <= m_vHitVisibleDuration.y)
+		{
+			if(VISIBILITY::HIDDEN == m_pStatusUI->GetVisibility())
+				m_pStatusUI->SetVisibility(VISIBILITY::VISIBLE);
+
+			m_vHitVisibleDuration.x += fTimeDelta;
+		}
+		else
+			m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
 	}
 }
 

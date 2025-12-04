@@ -143,6 +143,10 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 450.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SSSAO"), 750.0f, 150.0f, 300.f, 300.f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SpecDetail"), 750.0f, 450.0f, 300.f, 300.f)))
+		return E_FAIL;
 
 	if (FAILED(m_pGlow->Ready_Debug(m_vScreenSize.x - 450.f, 150.f, 300.f, 300.f)))
 		return E_FAIL;
@@ -206,7 +210,7 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Screen"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	
-	/* MRT_GameObjects. 이미시브 + 모션블러 들어갈거 생각하면 최소 6개. */
+	/* MRT_GameObjects. 들어갈거 생각하면 최소 6개. */
 	/* Target_Diffuse */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -217,11 +221,18 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 	/* Target_ORM */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ORM"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ORM"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	/* Target_Emissive */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	/* Target_SSSAO */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSSAO"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	/* Target_SpecDetail */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SpecDetail"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
 
 	/* MRT_LightAcc */
 	/* Target_Shade */
@@ -274,7 +285,10 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
 		return E_FAIL;
-
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_SSSAO"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_SpecDetail"))))
+		return E_FAIL;
 	/* MRT_LightAcc */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -501,6 +515,12 @@ void CRenderer::Render_LightAcc()
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ORM"), m_pShader, "g_ORMTexture")))
 		return;
 
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_SSSAO"), m_pShader, "g_SSSAOTexture")))
+		return;
+
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_SpecDetail"), m_pShader, "g_SpecDetailTexture")))
+	//	return;
+
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return;
 
@@ -566,6 +586,7 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Volumetric"), m_pShader, "g_VolumetricTexture")))
 		return; 
+
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
@@ -752,10 +773,10 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-		return;
+	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
+	//x	return;
 
 }
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)

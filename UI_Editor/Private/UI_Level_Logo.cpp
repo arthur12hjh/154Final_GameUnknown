@@ -16,15 +16,8 @@ CUI_Level_Logo::CUI_Level_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CUI_Level_Logo::Initialize()
 {
-	//m_pGuiManager = CGUIManager::GetInstance();
-
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
-
-	//if (FAILED(Ready_Textures()))
-	//	return E_FAIL;
-
-	//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 1.f);
 
 	return S_OK;
 }
@@ -33,8 +26,16 @@ void CUI_Level_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (GetKeyState(VK_F3) & 0x8000)
+	if (!m_bLevelTransitioning && m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F3))
 	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
+		m_bLevelTransitioning = true;
+	}
+
+	if (m_bLevelTransitioning
+		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro")))
+	{
+		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}
@@ -56,13 +57,10 @@ HRESULT CUI_Level_Logo::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	//if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
-	//	return E_FAIL;
-
 	if(FAILED(pUIHUD->Load_Data(TEXT("Layer_Logo"))))
 		return E_FAIL;
 	
-	//pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Panel"), TEXT("Intro"));
+	pUIHUD->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Intro"));
 
 	return S_OK;
 }

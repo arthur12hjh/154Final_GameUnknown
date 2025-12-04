@@ -32,9 +32,13 @@ public:
 
 	virtual HRESULT				Render() override;
 
+	const _tchar*				Get_ComponentTag() const { return m_ComponentTag; }
+
+
 protected :
 	CShader*					m_pShaderCom = { nullptr };
 	CRigidBody*					m_pRigidBody = { nullptr };
+	_tchar						m_ComponentTag[256] = {};
 
 public:
 	virtual CGameObject*		Clone(void* pArg) override;

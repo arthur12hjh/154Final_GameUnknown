@@ -38,7 +38,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_bisLoop = false;
-	}if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+	}if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
 	}
 
@@ -46,9 +46,18 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 
-	float fLengt = XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) * 5;
-	m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + fLengt;
-	m_CBData.fTimeDelta.z = fLengt;
+	if (m_tData.bisSpectrum) {
+		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
+		m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
+		if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
+		}
+		else if(1 < m_fLength){
+			_int iLength = (_int)m_fLength;
+			m_fLength -= iLength;
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+		}
+	}
 	m_CombinedWorldMatrix = CombinedWorldMatrix;
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix,
 	//	XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
@@ -57,7 +66,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 void CSpriteParticle::Late_Update(_float fTimeDelta)
 {
-	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 0.5f <= m_fTime) {
+	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
@@ -102,9 +111,14 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
 	m_bisLoop = tData.bisLoop;
+	m_fLength = 0.f;
 	Set_Texture(0, m_tData.szMaskTexture.c_str());
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szNormalTexture.c_str());
+
+	if (m_tData.bisSpectrum) {
+		m_CBData.iLoopAndCount.x = 2;
+	}
 
 	switch (m_tData.iSelectRender)
 	{
@@ -241,12 +255,17 @@ HRESULT CSpriteParticle::Set_Texture(_int iIndex, const char* szPrototype)
 
 void CSpriteParticle::Stop() {
 	m_bisStop = true;
-	m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
+	if (!m_tData.bisSpectrum) {
+		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
+	}
 }
 
 void CSpriteParticle::Play()
 {
 	m_bisStop = false;
+	if (m_tData.bisSpectrum) {
+		m_CBData.iLoopAndCount.x = 2;
+	}
 }
 
 HRESULT CSpriteParticle::Ready_Components()
@@ -349,7 +368,9 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 5 : m_bisLoop ? m_tData.bisSpectrum ? (4 > m_CBData.iLoopAndCount.x) ? m_CBData.iLoopAndCount.x++ : 4 : 1 : 0;
+
+
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fEndTime;
 	m_CBData.fTimeDelta.w = 0;
@@ -412,7 +433,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 
 void CSpriteParticle::Spread(_float fTimeDelta)
 {
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 5 : m_bisLoop ? m_tData.bisSpectrum ? (4 > m_CBData.iLoopAndCount.x) ? m_CBData.iLoopAndCount.x + 1 : 4 : 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
 	m_CBData.fTimeDelta.y += fTimeDelta * m_tData.fCircleSpeed;
 	m_CBData.matWorld = m_CombinedWorldMatrix;

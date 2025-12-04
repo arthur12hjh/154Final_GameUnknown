@@ -270,6 +270,161 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
 }
 
 [maxvertexcount(6)]
+void GS_NORMAL_STONE(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> OutStream)
+{
+    GS_NORMAL_OUT Out[4];
+    
+    if (g_bisBillboard)
+    {
+        float3 vRight = -normalize(g_CamMatrix._11_12_13);
+        float3 vUp = normalize(g_CamMatrix._21_22_23);
+        
+        matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+        
+        float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+        
+        
+        
+        float3 localUp = normalize(float3(
+    In[0].TransformMatrix._31,
+    In[0].TransformMatrix._32,
+    In[0].TransformMatrix._33));
+        
+        float projRight = dot(localUp, vRight);
+        float projUp = dot(localUp, vUp);
+        
+        
+        
+        float3 up = normalize(mul(float3(In[0].TransformMatrix._31, In[0].TransformMatrix._32, In[0].TransformMatrix._33), g_CamMatrix._31_32_33));
+        float angle = atan2(projUp, projRight) + radians(g_fAngle);
+    
+        float s = sin(angle);
+        float c = cos(angle);
+    
+        float3 vRightRot = vRight * c + vUp * s;
+        float3 vUpRot = vUp * c - vRight * s;
+    
+        float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+        float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
+        
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = Out[0].vPosition;
+        
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = Out[1].vPosition;
+     
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = Out[2].vPosition;
+     
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = Out[3].vPosition;
+    
+        Out[0].vNormal = float4(0, 0, 0, 0);
+        Out[1].vNormal = float4(0, 0, 0, 0);
+        Out[2].vNormal = float4(0, 0, 0, 0);
+        Out[3].vNormal = float4(0, 0, 0, 0);
+    
+        for (int i = 0; i < 4; ++i)
+        {
+            Out[i].vNormal = -float4(normalize(g_CamMatrix._31_32_33), 0);
+            Out[i].vTangent = -float4(normalize(vRightRot), 0);
+            Out[i].vBitangent = -float4(normalize(vUpRot), 0);
+        }
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+    else
+    {
+        float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+        
+        float3 vRight = normalize(In[0].TransformMatrix._11_12_13);
+        vRight = normalize(float4(cross(normalize(g_CamMatrix._31_32_33), vLook), 0));
+        float3 vUp = normalize(cross(vLook, vRight));
+        matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+        
+        float angle = radians(g_fAngle);
+    
+        float s = sin(angle);
+        float c = cos(angle);
+    
+        float3 vRightRot = vRight * c + vLook * s;
+        float3 vUpRot = vLook * c - vRight * s;
+        if (!g_bisSpectrum)
+        {
+            vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+            vUpRot = normalize(mul(float4(vUpRot, 0), g_WorldMatrix)).xyz;
+        }
+    
+        float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+        float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
+        vLook *= g_fSize.x * In[0].fSize;
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = Out[0].vPosition;
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = Out[1].vPosition;
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = Out[2].vPosition;
+    
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = Out[3].vPosition;
+    
+        vector vSourDir, vDestDir, vNormal;
+        vSourDir = float4(In[0].vPosition.xyz - vR + vU, 1.f) - float4(In[0].vPosition.xyz + vR + vU, 1.f);
+        vDestDir = float4(In[0].vPosition.xyz - vR - vU, 1.f) - float4(In[0].vPosition.xyz - vR + vU, 1.f);
+        vNormal = normalize(float4(cross(vSourDir.xyz, vDestDir.xyz), 0));
+        for (int i = 0; i < 4; ++i)
+        {
+            Out[i].vNormal = float4(normalize(vNormal.xyz), 0);
+            Out[i].vTangent = -float4(normalize(vRightRot), 0);
+            Out[i].vBitangent = -float4(normalize(vUpRot), 0);
+        }
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+}
+
+[maxvertexcount(6)]
 void GS_NORMAL_START(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> OutStream)
 {
     GS_NORMAL_OUT Out[4];
@@ -760,6 +915,111 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.rgb *= fmod(frac(sin(In.vSeed * 0.01) * 123456.789012), 0.6) + 0.4;
+    Out.vDiffuse *= g_MaskTexture.Sample(DefaultSampler, fTexcoord).r * saturate((In.vLifeTime.y - In.vLifeTime.x) * 20);
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    
+    float threshold = hole[index] / 32.0;
+    if (0 >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+        discard;
+    float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
+    float3 normal;
+    normal.xy = rg;
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg)));
+    normal = normalize(normal);
+    
+    float3 N = normal;
+    float3 T = normalize(In.vTangent.xyz);
+    float3 B = normalize(In.vBitangent.xyz);
+    float3 G = normalize(In.vNormal.xyz);
+    
+    if (!isFrontFace)
+    {
+        //T *= -1;
+        //B *= -1;
+        G *= -1;
+    }
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vOrm = float4(0, 0, 0, 0);
+    
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NORMAL_OUT PS_STONE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
+{
+    PS_NORMAL_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    int i = In.vSeed % (g_iUV.x * g_iUV.y);
+    int iU = i % g_iUV.x;
+    int iV = i / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord);
+    if (0.5 > Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse *= g_vColor;
+    Out.vDiffuse.rgb *= fmod(frac(sin(In.vSeed * 0.01) * 123456.789012), 0.6) + 0.4;
+    Out.vDiffuse.a *= saturate((In.vLifeTime.y - In.vLifeTime.x) * 20);
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    
+    float threshold = hole[index] / 32.0;
+    if (0 >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+        discard;
+    float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
+    float3 normal;
+    normal.xy = rg;
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg)));
+    normal = normalize(normal);
+    
+    float3 N = normal;
+    float3 T = normalize(In.vTangent.xyz);
+    float3 B = normalize(In.vBitangent.xyz);
+    float3 G = normalize(In.vNormal.xyz);
+    
+    if (!isFrontFace)
+    {
+        //T *= -1;
+        //B *= -1;
+        G *= -1;
+    }
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vOrm = float4(0, 0, 0, 0);
+    
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NORMAL_OUT PS_BLOOD(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
+{
+    PS_NORMAL_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    int i = In.vSeed % (g_iUV.x * g_iUV.y);
+    int iU = i % g_iUV.x;
+    int iV = i / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
     float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.01;
     
     float2 uvDistorted = fTexcoord + distort * (1 - (fTexcoord.y - 1.0 / g_iUV.y * iV) / (1.0 / g_iUV.y));
@@ -794,7 +1054,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    //Out.vOrm = float4(1, 0.8, 0, 0);
+    Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
 }
@@ -1233,6 +1493,16 @@ technique11 DefaultTechnique
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NORMAL_START();
-        PixelShader = compile ps_5_0 PS_NORMAL();
+        PixelShader = compile ps_5_0 PS_BLOOD();
+    }
+    // idx 13
+    pass NonBlendStone
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NORMAL_STONE();
+        PixelShader = compile ps_5_0 PS_STONE();
     }
 }

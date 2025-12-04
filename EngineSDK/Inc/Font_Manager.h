@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
-	HRESULT Render(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor);
+	HRESULT Render(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale);
 
 	_float2 Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace = true, float fScale = 1.f);
 
