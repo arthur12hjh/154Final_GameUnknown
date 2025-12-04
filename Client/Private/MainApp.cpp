@@ -68,6 +68,12 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
+		m_bIsMouseLock = !m_bIsMouseLock;
+
+	if (m_bIsMouseLock)
+		MouseLock();
+
 	m_pGameInstance->Update_Engine(fTimeDelta);
 
 #ifdef _DEBUG
@@ -221,6 +227,22 @@ HRESULT CMainApp::Ready_Mouse()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CMainApp::MouseLock()
+{
+	// 내 윈도우 핸들 hWnd 기준
+	POINT center = {};
+	RECT rc;
+
+	// 내 윈도우 핸들 hWnd 기준
+	GetClientRect(g_hWnd, &rc);  // 클라이언트 크기 가져오기
+
+	center.x = (rc.right - rc.left) / 2;  // 가로 중심
+	center.y = (rc.bottom - rc.top) / 2;  // 세로 중심
+
+	ClientToScreen(g_hWnd, &center);        // 화면 좌표로 변환 (마우스 세팅용)
+	SetCursorPos(center.x, center.y);
 }
 
 CMainApp* CMainApp::Create()

@@ -251,25 +251,6 @@ HRESULT CUIRushSlot::Bind_ShaderResources()
 
 HRESULT CUIRushSlot::Execute(const UI_EVENT_DESC& EventDesc)
 {
-	const _wstring& Type = EventDesc.szTypeTag;
-	const _wstring& Arg = EventDesc.szArg;
-	const _wstring& ActionTag = EventDesc.szActionTag;
-
-	// 애니메이션
-	if (Type == TEXT("PlayAnimEvent"))
-	{
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		auto AnimTag = m_tUIDesc.m_AnimTags.find(ActionTag);
-
-		if (AnimTag != m_tUIDesc.m_AnimTags.end())
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-		Safe_Release(pHUD);
-	}
-	if (Type == TEXT("ActionEvent"))
-	{
-	}
-
 	return S_OK;
 }
 
@@ -281,21 +262,6 @@ void CUIRushSlot::CallbackEvent(void* pArg)
 	auto* state = static_cast<UI_SKILL_INFO_DESC*>(arg->pData);
 	
 	m_tRushInfo = *state;
-
-	/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	
-	if (*state == SKILL_STATE::DEFAULT)
-	{
-		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-		Safe_Release(pHUD);
-		return;
-	}
-
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	Safe_Release(pHUD);*/
 }
 
 HRESULT CUIRushSlot::Render_Glow()
@@ -323,17 +289,6 @@ HRESULT CUIRushSlot::Bind_GlowShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	
-	/*if(m_eRushState == SKILL_STATE::ACTIVE_ON)
-		if (FAILED(m_pGlowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
-			return E_FAIL;
-	if (m_eRushState == SKILL_STATE::ACTIVE)
-	{
-		if (FAILED(m_pGlowTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
-			return E_FAIL;
-		if (FAILED(m_pShadowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
-			return E_FAIL;
-	}*/
 
 	if (FAILED(m_pGlowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 		return E_FAIL;
@@ -352,8 +307,6 @@ HRESULT CUIRushSlot::Bind_GlowShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
 		return E_FAIL;
-	/*if (FAILED(m_pGlowTextureCom2->Bind_ShaderResource(m_pGlowShaderCom, "g_GlowTexture2", 0)))
-		return E_FAIL;*/
 
 	return S_OK;
 }

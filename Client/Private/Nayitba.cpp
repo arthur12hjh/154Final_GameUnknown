@@ -12,7 +12,9 @@
 #include "MonsterHitState.h"
 
 #include "Notify.h"
+#include "AttackHitBox.h"
 #include "GameManager.h"
+
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
@@ -132,7 +134,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-	ComputeDamageLogic(pSkillDesc->iSkillDamage);
+	m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 
@@ -148,28 +150,21 @@ HRESULT CNayitba::ActionSuccess(void* pArg)
 	return S_OK;
 }
 
+HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
+{
+	CNotify::NOTIFY_TYPE NotiType = CNotify::NOTIFY_TYPE(iNotiType);
+	if (CNotify::NOTIFY_TYPE::ACTIVE_COLLISION == NotiType)
+	{
+		CreateHitBox(pNotify);
+	}
+
+
+	return S_OK;
+}
+
 _uint CNayitba::GetMonsterID()
 {
 	return m_iMonsterID;
-}
-
-void CNayitba::ComputeDamageLogic(const long long& iDamage)
-{
-	long long AttackDamage = iDamage * 0.3f;
-	long long GuardDamage = iDamage * 0.7f;
-	long long OverDamage = GuardDamage - m_MonsterInfo.iCurrentShield;
-
-	if (0 < OverDamage)
-	{
-		AttackDamage += OverDamage;
-		m_MonsterInfo.iCurrentShield = 0.f;
-	}
-	else
-		m_MonsterInfo.iCurrentShield -= GuardDamage;
-
-	m_MonsterInfo.iCurrentHealth -= AttackDamage;
-	if (0 >= m_MonsterInfo.iCurrentHealth)
-		m_MonsterInfo.iCurrentHealth = 0.f;
 }
 
 const list<CGameObject*>* CNayitba::GetTargetList()
@@ -412,6 +407,38 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 
 		Safe_Release(pUIHUD);
 	}
+}
+
+void CNayitba::CreateHitBox(const AnimNotify* pNotify)
+{
+	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
+	HitBoxDesc.pAttacker = this;
+
+	_uint iGameLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
+	_wstring szProtoType(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
+	_wstring szLayerName(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
+
+	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
+	auto pSkillData = m_pGameManager->Find_SkillData(pNotify->iNumData01);
+	pHitBoxDesc.pData = pSkillData;
+
+	pHitBoxDesc.eColType = COLLIDER(pNotify->iNumData02);
+	pHitBoxDesc.eHitBoxType = HIT_TYPE(pNotify->iNumData03);
+	pHitBoxDesc.eHitObjectType = HIT_TYPE(pNotify->iNumData04);
+	pHitBoxDesc.bIsApplyTransform = true;
+	pHitBoxDesc.pAttacker = this;
+
+	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+	pHitBoxDesc.fImpactForce = m_fImpactForce;
+
+	_vector vCharacterPos = GetTransform()->Get_State(STATE::POSITION);
+	_vector vCharacterLook = GetTransform()->Get_State(STATE::LOOK);
+	vCharacterPos += vCharacterLook * pSkillData->fRange;
+	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
+		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
+		return;
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

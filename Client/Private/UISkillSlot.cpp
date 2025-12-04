@@ -63,52 +63,6 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	/*if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
-		|| m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE))
-	{
-		if (m_bPlayingAnim == false)
-		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Skill_") + to_wstring(m_tSkillInfo.iSkillIndex) + TEXT("_Active"));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-			Safe_Release(pHUD);
-		}
-	}
-	*/
-	/*if(m_tSkillInfo.bSkillState == true)
-	{
-		if (m_bPlayingAnim == false)
-		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Skill_") + to_wstring(m_tSkillInfo.iSkillIndex) + TEXT("_Active"));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-			Safe_Release(pHUD);
-		}
-	}
-
-	if (m_tSkillInfo.bSkillState == false)
-	{
-		if (m_bPlayingAnim == false)
-		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-			Safe_Release(pHUD);
-		}
-	}*/
-
-	/*if (m_tSkillInfo.bPrevSkillState == false && m_tSkillInfo.bSkillState == false && m_bPlayingAnim == false)
-	{
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-		Safe_Release(pHUD);
-	}*/
-
 	if (m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
 		&& m_bPlayingAnim == false)
@@ -129,7 +83,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+	else if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+			|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_bPlayingAnim == false)
 	{
@@ -261,15 +216,36 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 	_bool bUseCoverTexture = false;
 
 	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
+	{
 		bUseTintColor = true;
+		bUseCoverTexture = false;
+		if (FAILED(m_pShaderCom->Bind_SRV("g_Texture3", nullptr)))
+			return E_FAIL;
+	}
 
-	if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
+	/*if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+		&& m_bPlayingAnim == false)*/
+	if ((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+		|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
+		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+		&& m_bPlayingAnim == false)
+	{
+		bUseCoverTexture = false;
+		if (FAILED(m_pShaderCom->Bind_SRV("g_Texture3", nullptr)))
+			return E_FAIL;
+	}
+
+	//if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
+	if (m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
+		&& m_bPlayingAnim == true)
 	{
 		bUseCoverTexture = true;
 
 		if (FAILED(m_pCoverTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture3", 0)))
 			return E_FAIL;
 	}
+
 	
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;

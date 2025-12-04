@@ -41,6 +41,7 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	// 테스트 용
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)

@@ -23,6 +23,7 @@ void CPlayer_LightAttackState::Start(void* pArg)
 
     m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
+    m_pPlayer->SetSillDataID(1000);
     m_fLimitProgress = 0.10f;
 }
 
@@ -37,11 +38,18 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
         fAnimationRatio >= m_fLimitProgress * 1.75f)
+    {
+        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::WALK;
+    }
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
         fAnimationRatio >= m_fLimitProgress)
+    {
+        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
+    }
+        
 
     if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))  &&
         fAnimationRatio >= m_fLimitProgress))
@@ -53,6 +61,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         case COMBO::LIGHT_ATTACK1:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_02_Root", false, 1.75f);
+            m_pPlayer->SetSillDataID(1001);
             m_eCombo = COMBO::LIGHT_ATTACK2;
             m_fLimitProgress = 0.15f;
             break;
@@ -60,6 +69,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         case COMBO::LIGHT_ATTACK2:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_03_Root", false, 1.2f);
+            m_pPlayer->SetSillDataID(1002);
             m_eCombo = COMBO::LIGHT_ATTACK3;
             m_fLimitProgress = 0.135f;
             break;
@@ -67,6 +77,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         case COMBO::LIGHT_ATTACK3:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_04_Root", false, 1.2f);
+            m_pPlayer->SetSillDataID(1003);
             m_eCombo = COMBO::LIGHT_ATTACK4;
             m_fLimitProgress = 0.35f;
             break;
@@ -74,6 +85,8 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         case COMBO::LIGHT_ATTACK4:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
+           
+            m_pPlayer->SetSillDataID(1000);
             m_eCombo = COMBO::LIGHT_ATTACK1;
             m_fLimitProgress = 0.10f;
             break;
@@ -85,10 +98,17 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
     //예외없이 애니메이션 끝났으면 idle로
     if (true == isAnimFinished)
+    {
+        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
+    }
+    
 
     if (COMBO::LIGHT_ATTACK5 == m_eCombo && fAnimationRatio <= 0.2f)
+    {
         m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 3.f * (0.3f - fAnimationRatio));
+        //m_pPlayer->SetSillDataID(1003);
+    }
 
     return m_tNextState;
 }

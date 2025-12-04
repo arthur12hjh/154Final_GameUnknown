@@ -62,14 +62,12 @@ void CUIBase::Update(_float fTimeDelta)
 		//부모 따라가기
 		if (dynamic_cast<CUIBase*>(m_pParent))
 		{
-			m_eVisibility = m_pParent->GetVisibility();
 		
 			m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 			m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
+			//m_eVisibility = VISIBILITY(dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity);
 			//m_tUIDesc.iVisiblity = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().iVisiblity;
-
-			m_eVisibility = m_pParent->GetVisibility();
 
 			/*if (dynamic_cast<CUIWorldWrapper*>(m_pParent) && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
 			{
@@ -297,16 +295,6 @@ HRESULT CUIBase::Ready_Texture()
 	return S_OK;
 }
 
-#ifdef _DEBUG
-HRESULT CUIBase::Ready_Components_For_Debug()
-{
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
-		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 {
 	UIBASE_DESC Desc = m_tOriginUIDesc;
@@ -349,9 +337,18 @@ void CUIBase::Update_Children(CUIBase* pObj)
 
 	for (auto& pChild : *pObj->Get_Children())
 	{
-		//if(pChild->Get_UIBase_Desc().szUITag != TEXT("MonsterHp_Fx"))
 		pObj->Update_Children(pChild);
 	}
+}
+
+#ifdef _DEBUG
+HRESULT CUIBase::Ready_Components_For_Debug()
+{
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CUIBase::Render_Debug_Rect()
