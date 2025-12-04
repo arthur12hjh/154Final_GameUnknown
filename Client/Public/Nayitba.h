@@ -7,6 +7,8 @@ class CAIController;
 NS_END
 
 NS_BEGIN(Client)
+class CUIBase;
+
 struct Character_Skill_Desc;
 
 class CNayitba final : public CCharacter
@@ -56,13 +58,10 @@ public:
 	CAIController*					GetController();
 	const list<CGameObject*>*		GetTraceObejectList();
 
-	_vector							CalculateRootMotion();
-
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
-
-	const _float4x4*				m_pLockOnMatrix = { nullptr };
+	
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
 
@@ -70,7 +69,12 @@ private:
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
-	const _float4x4*				m_RootBoneMat = { nullptr };
+	_float2							m_vHitVisibleDuration = { 0, 5.f };
+	_bool							m_bIsTimeVisible = { false };
+	CUIBase*						m_pStatusUI = { nullptr };
+
+	const _float4x4*				m_pLockOnMatrix = { nullptr };
+	const _float4x4*				m_pHeadBoneMatrix = { nullptr };
 
 	string									m_szEntryAnim = {};
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
@@ -87,6 +91,8 @@ private :
 
 	void							BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 	void							CreateHitBox(const AnimNotify* pNotify);
+
+	void							VisibleStatusUI(_float fTimeDelta);
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

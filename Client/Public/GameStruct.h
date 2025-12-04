@@ -222,7 +222,8 @@ namespace Client
 	{
 		unsigned int		iCurrentPhase;
 
-		_float3				fLockOnPoint;
+		_float3				vLockOnPoint;
+		_float3				vStatusBarPoint;
 
 		_float2				fAttackCoolTime;
 		_float				fAttackRange;
