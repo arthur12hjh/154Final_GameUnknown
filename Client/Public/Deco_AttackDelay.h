@@ -20,7 +20,7 @@ public:
 private :
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
-	_float								m_fAttackDelay = {};
+	_float								m_fAccAttackTime = {};
 
 public:
 	static	CDeco_AttackDelay*			Create(CBehaviorTree* pOwnerTree);

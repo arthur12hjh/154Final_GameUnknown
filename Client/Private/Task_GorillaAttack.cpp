@@ -25,7 +25,7 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 5.5f;
+	m_fMaxDelayTime = 3.5f;
 	return S_OK;
 }
 
@@ -411,7 +411,7 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 
 _bool CTask_GorillaAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
-	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(3.5f, m_fMaxDelayTime));
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(2.5f, m_fMaxDelayTime));
 	return true;
 }
 
