@@ -1095,6 +1095,48 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Sand_Hit */
+	// 모래 내려찍었을때 나오는 이펙트
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sand_Hit");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SandHit.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Gorilla_Jump_Attack */
+	// 고릴라가 점프해서 내려찍는 공격 이펙트
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gorilla_Jump_Attack");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/GorillaMarioAttack.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Stone_Shrowing */
+	// 고릴라가 던지는 돌에 붙이는 이펙트
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Stone_Shrowing");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Stone_Shrowing.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_TakeIn */
+	// 검 집어 넣었을때 나오는 파티클
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_TakeIn");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordTakeIn.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_TakeOut */
+	// 검 꺼냈을때 검에 붙는 전기
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_TakeOut");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordTakeOut.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Blood */
+	// 방향 상관없는 피
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blood");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Slash_Blood */
+	// 검으로 벴을때 검 방향으로 넣어야하는 피
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Blood");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashBlood.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 
 	/* For.Prototype_Component_TrailEffect_Test */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
