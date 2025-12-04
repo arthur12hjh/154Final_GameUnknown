@@ -8,6 +8,7 @@
 CMonsterAttackState::CMonsterAttackState() :
 	CState()
 {
+	m_iStateID = 1;
 }
 
 HRESULT CMonsterAttackState::Initialize(void* pArg)
@@ -198,11 +199,7 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 		// Rush Slash 공격
 		// 30 ~ 80 프레임
 		if (0.15f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
-		{
-			_vector vLerpLook = LerpRotation(fTimeDelta);
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vLerpLook);
 			bMoveAction = true;
-		}
 	}
 	else if (524 == m_pSkillData->iSkillID)
 	{
@@ -365,13 +362,15 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 
 _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
 {
-	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-	_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+	_vector vOwnerPos{}, vTempPos{}, vTargetPos{};
+	vOwnerPos = vTempPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+	vTempPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
 	_vector vLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
 	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
-
 	vLook.m128_f32[1] = vDir.m128_f32[1] = 0.f;
+
 	return vOwnerPos + XMVectorLerp(vLook, vDir, fRatio);
 }
 

@@ -8,6 +8,7 @@
 CMonsterHitState::CMonsterHitState() :
     CState()
 {
+    m_iStateID = 2;
 }
 
 HRESULT CMonsterHitState::Initialize(void* pArg)

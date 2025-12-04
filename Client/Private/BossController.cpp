@@ -53,6 +53,7 @@ void CBossController::Update(_float fTimeDelta)
     if(!pTargetList->empty())
         pBossBlackBoard->SetTarget(pTargetList->front());
 
+    pBossBlackBoard->AccAttackDelay(fTimeDelta);
     Safe_Release(pBossBlackBoard);
 
     m_pBehaviorTree->Update(fTimeDelta);
@@ -99,7 +100,11 @@ void CBossController::Damage(void* pArg)
         }
 
         if (bIsHitAble)
+        {
             pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
+            pBossBlackBoard->SetHitData(pDamageDesc);
+        }
+            
     }
     Safe_Release(pBossBlackBoard);
 }

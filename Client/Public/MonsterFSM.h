@@ -5,6 +5,9 @@
 NS_BEGIN(Client)
 class CMonsterFSM final : public CStateMachine
 {
+public :
+	enum class MONSTER_STATE { IDLE, ATTACK, HIT, MOVE, MIMESIS, DEAD, END };
+
 private :
 	CMonsterFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CMonsterFSM() = default;
@@ -17,8 +20,10 @@ public:
 	virtual		HRESULT							Change_State(const WCHAR* LayerTag, void* pArg = nullptr, _bool bIsForce = false) override;
 	virtual		HRESULT							Add_State(const WCHAR* StateTag, CState* pNewState) override;
 
+	const MONSTER_STATE&						GetMonsterState() { return m_eMonsterState; }
+
 private :
-	HRESULT										Ready_State();
+	MONSTER_STATE								m_eMonsterState = { MONSTER_STATE::END };
 
 public:
 	static	CMonsterFSM*						Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

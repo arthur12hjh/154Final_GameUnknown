@@ -10,6 +10,7 @@
 CMonsterMoveState::CMonsterMoveState() :
     CState()
 {
+    m_iStateID = 3;
 }
 
 HRESULT CMonsterMoveState::Initialize(void* pArg)

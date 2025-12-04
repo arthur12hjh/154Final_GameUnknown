@@ -138,10 +138,7 @@ void CMonsterController::Damage(void* pDesc)
 		}
 
 		if (bIsHitAble)
-		{
-			if (m_vAttackTime.y <= m_vAttackTime.x)
-				m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
-		}
+			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
 			
 	}
 }
@@ -181,7 +178,7 @@ HRESULT CMonsterController::Ready_FSM()
 	if (nullptr == pClone)
 		return E_FAIL;
 
-	m_pFSM = static_cast<CStateMachine*>(pClone);
+	m_pFSM = static_cast<CMonsterFSM*>(pClone);
 
 	// 여기서 상태를 넣자
 	// 특정몬스터가 상태를 가져야한다면 여기서 상태를 추가해줄수잇음
@@ -234,7 +231,12 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 				AttackStateDesc.pTarget = pTarget;
 				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+
+				CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
+				if(CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
+				else
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}
 			else
 				MoveAction(true);

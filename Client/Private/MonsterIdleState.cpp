@@ -9,6 +9,7 @@
 
 CMonsterIdleState::CMonsterIdleState()
 {
+    m_iStateID = 0;
 }
 
 HRESULT CMonsterIdleState::Initialize(void* pArg)

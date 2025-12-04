@@ -73,9 +73,27 @@ const Default_Damage_Desc* CBossBlackBoard::GetHitData()
     return nullptr;
 }
 
+void CBossBlackBoard::AccAttackDelay(_float fTimeDelta)
+{
+    m_fAttackDelay.x += fTimeDelta;
+}
+
+void CBossBlackBoard::ClearAttackTimer()
+{
+    m_fAttackDelay.x = 0.f;
+}
+
 void CBossBlackBoard::SetAttackDelay(_float fDelay)
 {
-    m_fAttackDelay = fDelay;
+    m_fAttackDelay.y = fDelay;
+}
+
+_bool CBossBlackBoard::IsAttackEnable()
+{
+    if (m_fAttackDelay.x > m_fAttackDelay.y)
+        return true;
+        
+    return false;
 }
 
 void CBossBlackBoard::SetAttackData(const Character_Skill_Desc* pAttack_Data)

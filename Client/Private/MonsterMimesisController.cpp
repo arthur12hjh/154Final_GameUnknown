@@ -52,7 +52,8 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
-	m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
+	AttackCompleted(0.f);
+	m_bIsMimesis = true;
 
 	return S_OK;
 }
@@ -138,9 +139,11 @@ void CMonsterMimesisController::Damage(void* pArg)
 
 		if (bIsHitAble)
 		{
-			if (m_vAttackTime.y <= m_vAttackTime.x)
-				m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+			if(m_bIsMimesis)
+				m_bIsMimesis = false;
+			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
 		}
+			
 	}
 }
 
@@ -175,7 +178,7 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 	if (nullptr == pClone)
 		return E_FAIL;
 
-	m_pFSM = static_cast<CStateMachine*>(pClone);
+	m_pFSM = static_cast<CMonsterFSM*>(pClone);
 
 	// 여기서 상태를 넣자
 	// 특정몬스터가 상태를 가져야한다면 여기서 상태를 추가해줄수잇음
@@ -243,7 +246,12 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 					CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 					AttackStateDesc.pTarget = pTarget;
 					AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+
+					CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
+					if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
+					else
+						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 				}
 			}
 			else
@@ -251,18 +259,6 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 				MoveAction(true);
 			}
 		}
-		/*else if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
-		{
-			CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
-			M_TranslationState.szTranslationAnimName = "_BattleStart";
-			M_TranslationState.szNextStateName = TEXT("Idle");
-			M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
-				{
-					m_pFSM->Change_State(szNextStateName, pArg);
-				};
-			M_TranslationState.pArg = nullptr;
-			m_pFSM->Change_State(TEXT("Translation"), &M_TranslationState);
-		}*/
 	}
 }
 
@@ -282,8 +278,9 @@ void CMonsterMimesisController::AttackCompleted(_float fDelayTime)
 {
 	if(m_bIsMimesis)
 		m_bIsMimesis = false;
+
 	m_vAttackTime.x = 0.f;
-	m_vAttackTime.y = m_pGameInstance->Random(2.f, m_fAttackDelay);
+	m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
 }
 
 void CMonsterMimesisController::DelayAction(_float fDelayTime)
