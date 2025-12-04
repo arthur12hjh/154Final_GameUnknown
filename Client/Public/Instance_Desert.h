@@ -1,15 +1,15 @@
 #pragma once 
 #include "Client_Defines.h"
-#include "DesertObject.h"
 #include "ClientStruct.h"
+
+#include "Actor.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Instance_Model;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
-class CInstance_Desert : public CDesertObject
+class CInstance_Desert : public CActor
 {
 private:
 	CInstance_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -40,7 +40,7 @@ private:
 
 public:
 	static CInstance_Desert* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CDesertObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void				Free() override;
 };
 NS_END

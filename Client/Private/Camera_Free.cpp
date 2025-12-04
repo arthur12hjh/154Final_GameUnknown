@@ -55,16 +55,16 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 			if (false == m_bIsLock[0])
 			{
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-					m_pTransformCom->Go_Straight(fTimeDelta);
+					m_pTransformCom->Go_Straight(fTimeDelta * m_fCameraSpeed);
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-					m_pTransformCom->Go_Backward(fTimeDelta);
+					m_pTransformCom->Go_Backward(fTimeDelta * m_fCameraSpeed);
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-					m_pTransformCom->Go_Left(fTimeDelta);
+					m_pTransformCom->Go_Left(fTimeDelta * m_fCameraSpeed);
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-					m_pTransformCom->Go_Right(fTimeDelta);
+					m_pTransformCom->Go_Right(fTimeDelta * m_fCameraSpeed);
 
 				if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 				{
@@ -156,6 +156,11 @@ void CCamera_Free::GetCameraLock(_bool (&pOut)[2])
 {
 	pOut[0] = m_bIsLock[0];
 	pOut[1] = m_bIsLock[1];
+}
+
+void CCamera_Free::SetCameraSpeed(_float fCameraSpeed)
+{
+	m_fCameraSpeed = fCameraSpeed;
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -24,32 +24,30 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
+	_float fAttackDelay = m_pBlackBoard->GetAttackDelay();
 
 	auto pState = m_pBlackBoard->GetCurState();
 	if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
 	{
-		if (m_fAttackDelay <= m_pBlackBoard->GetAttackDelay())
+		if (m_fAccAttackTime <= fAttackDelay)
 		{
-			if (fDistance > fATKRange * 1.2f)
-			{
-				m_fAttackDelay += fTimeDelta;
-				return NODE_STATE::FAIL;
-			}
+			m_fAccAttackTime += fTimeDelta;
+			return NODE_STATE::FAIL;
 		}
 		else if (fDistance > fATKRange * 1.6f)
 		{
-			if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
+			if (m_fAccAttackTime > fAttackDelay)
 			{
-				if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
-					m_fAttackDelay = 0.f;
+				if (m_fAccAttackTime > fAttackDelay)
+					m_fAccAttackTime = 0.f;
 
 				return NODE_STATE::COMPLETE;
 			}
 		}
 	}
 	
-	if (m_fAttackDelay > m_pBlackBoard->GetAttackDelay())
-		m_fAttackDelay = 0.f;
+	if (m_fAccAttackTime > fAttackDelay)
+		m_fAccAttackTime = 0.f;
 
 	return NODE_STATE::COMPLETE;
 }

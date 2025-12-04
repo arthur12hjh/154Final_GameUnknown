@@ -108,6 +108,7 @@ private:
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
+	_float			m_fLength = {};
 	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;

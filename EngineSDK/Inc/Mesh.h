@@ -22,6 +22,32 @@ public:
 
 	const vector<_float4x4>& Get_OffsetMatrices() const { return m_OffsetMatrices; }
 	const vector<_int>& Get_BoneIndices() const { return m_BoneIndices; }
+	const _float4x4* Get_BoneMatrices() { return m_pBoneMatrices; }
+
+	const _float3* Get_VertexPositionList() { return m_pVertexPositions; }
+
+	const _float3* Get_VertexPosition(_int iIndex) const
+	{
+		if (!m_pVertexPositions)
+			return nullptr;
+
+		if (iIndex < 0 || iIndex >= m_iNumVertices)
+			return nullptr;
+
+		return &m_pVertexPositions[iIndex];
+	}
+
+	_uint Get_NumIndices() const { return m_iNumIndices; }
+	_uint Get_IndexStride() const { return m_iIndexStride; }
+
+	_uint Get_NumVectices() const { return m_iNumVertices; }
+	_uint Get_VertexStride() const { return m_iVertexStride; }
+
+	_uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
+
+	DXGI_FORMAT Get_IndexFormat() const { return m_eIndexFormat; }
+	D3D11_PRIMITIVE_TOPOLOGY Get_Topology() const { return m_ePrimitive; }
+
 
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix);

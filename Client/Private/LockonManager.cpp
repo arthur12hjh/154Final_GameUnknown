@@ -95,14 +95,14 @@ _vector CLockonManager::Get_LockOnPoint()
 {
 #ifdef _DEBUG
     WCHAR Debug[MAX_PATH] = {};
-    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().fLockOnPoint.x,
-                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.y,
-                                                                (_int)m_pTarget->GetMonsterData().fLockOnPoint.z);
+    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().vLockOnPoint.x,
+                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.y,
+                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.z);
 
     OutputDebugStringW(Debug);
 #endif // _DEBUG
    
-    return XMLoadFloat3(&m_pTarget->GetMonsterData().fLockOnPoint);
+    return XMLoadFloat3(&m_pTarget->GetMonsterData().vLockOnPoint);
 }
 
 void CLockonManager::Lockon(_float fTimeDelta)
@@ -120,11 +120,7 @@ void CLockonManager::Lockon(_float fTimeDelta)
         if (!m_pLockonUI)
         {
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
-
-            // 몬스터 체력
-            m_pMonsterVitalUI = pUIHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), m_pTarget, m_pTarget->GetMonsterData().fLockOnPoint);
-
+            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().vLockOnPoint);
             Safe_Release(pUIHUD);
         }
 
@@ -139,9 +135,6 @@ void CLockonManager::Lockon(_float fTimeDelta)
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             pUIHUD->Return_WorldUI(m_pLockonUI);
-            // 몬스터 체력
-            pUIHUD->Return_WorldUI(m_pMonsterVitalUI);
-
             Safe_Release(pUIHUD);
         }
     }

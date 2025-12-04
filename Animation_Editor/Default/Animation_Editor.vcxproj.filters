@@ -92,12 +92,6 @@
     <Filter Include="02.GameObjects\Entity\Dororong\Body_Dororong">
       <UniqueIdentifier>{8f34aa76-baef-4133-920f-d400e08569d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Entity\Gigas">
-      <UniqueIdentifier>{e915b3e1-7722-40d9-8a5e-f834ad33695a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Entity\Gigas\Body_Gigas">
-      <UniqueIdentifier>{5917bbec-4e89-4c88-bf2d-71a508aba4d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Manager\Data_Manager">
       <UniqueIdentifier>{00f62eba-dd45-4845-8af0-b57e15d81e25}</UniqueIdentifier>
     </Filter>
@@ -112,6 +106,12 @@
     </Filter>
     <Filter Include="02.GameObjects\BackGround\Grid">
       <UniqueIdentifier>{0f9f936d-5440-49d5-99b2-44c1e458b613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Gigas">
+      <UniqueIdentifier>{e915b3e1-7722-40d9-8a5e-f834ad33695a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Gigas\Body_Gigas">
+      <UniqueIdentifier>{5917bbec-4e89-4c88-bf2d-71a508aba4d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

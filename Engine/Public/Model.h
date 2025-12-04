@@ -62,24 +62,31 @@ private:
 	virtual ~CModel() = default;
 
 public:
+	// <Mesh 정보 받는 함수들>
 	_uint Get_Mesh_MaterialIndex(_uint iIdx) const;
 	const _char* Get_MeshName(_uint iIdx) const;
+	const _uint Get_NumMeshes() const { return m_iNumMeshes; }
+	vector<class CMesh*>* Get_MeshList() { return &m_Meshes; }
+	class CMesh* Get_Mesh(_int iMeshIndex = 0) { return m_Meshes[iMeshIndex]; }
+	// </end>
+
+	// <머티리얼 정보 받는 함수들>
+	vector<class CMaterial*>* Get_Materials();
 	const _char* Get_MaterialName(_uint iIdx) const;
 	const _uint Get_NumMaterials() const { return m_Materials.size(); }
-	_uint Get_NumMeshes() const {
-		return m_iNumMeshes;
-	}
+	// </end>
 
-	_int Get_BoneIndex(const _char* pBoneName) const;
-
+	// <Bone 정보 받는 함수들>
 	vector<class CBone*>* Get_Bones();
-	vector<class CMaterial*>* Get_Materials();
+	_int Get_BoneIndex(const _char* pBoneName) const;
+	// </end>
 
 
 	_uint Get_AnimationKeyFrameIndex() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
 
+	// 더 이상 쓰지 않음.
 	void Attach_CombinedTransformationMatrix();
 
 	// GPU 스키닝을 위한 ID3D11Buffer 전달함수
@@ -92,9 +99,11 @@ public:
 	DXGI_FORMAT			Get_MeshIndexFormat(_uint iMeshNum);
 	_float				Get_AnimationRatio() { return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition(); }
 
+	// binModel 구조체로 받는 함수. 만들긴 했는데 쓸모는 없을듯
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
 public:
+	// <애니메이션 관련 함수들. 인덱스, wstring, string. 자세한 정보는 디코 자료탭 존난애강 참고>
 	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
 
 	void Set_Animation(const _wstring& strAnimationTag,
@@ -106,14 +115,18 @@ public:
 		_float fStartTrackPosition = 0.f,
 		_bool isResetTrackPosition = TRUE);
 	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
+	// </end>
+
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
+	// <모델의 기존 값들을 변경하는 함수들>
+	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
-
 	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
+	HRESULT Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList);
+	// </end>
 
-	HRESULT Mapping_OffsetMatrix();
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, CModel* pSkeletonModel);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -122,6 +135,9 @@ public:
 	HRESULT Bind_Material(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 	HRESULT Bind_AllMaterials(_uint iMeshIndex, class CShader* pShader, _uint iTextureIndex);
 	_bool Play_Animation(_float fTimeDelta, CTransform* pTransform = nullptr, _float fRootMotionMagnification = 0.f);
+
+	// 애니메이션이 GPU단에서 처리됨에 따라, 각 Mesh에 별개로 있는 오프셋 매트릭스를 Bone처럼 한 곳에 묶어 인덱스 매핑해주는 초기화 함수
+	HRESULT Mapping_OffsetMatrix();
 
 	HRESULT Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag);
 	HRESULT Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName);

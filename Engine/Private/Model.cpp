@@ -421,6 +421,56 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
     return S_OK;
 }
 
+HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList)
+{
+    unordered_map<string, int> BoneNameMap;
+
+    _uint iBoneIndex = 0;
+    for (auto& pBone : m_Bones)
+    {
+        BoneNameMap.emplace(pBone->Get_Name(), iBoneIndex);;
+        ++iBoneIndex;
+    }
+
+    auto iter = BoneNameMap.find(szAfterBoneTag);
+
+    if (iter != BoneNameMap.end())
+        return E_FAIL;
+
+
+    _char szNodeName[MAX_PATH] = {};
+    _bool bIsTagFound = FALSE;
+    for (auto szTargetTag : szTargetTagList)
+    {
+        auto iterTarget = BoneNameMap.find(szTargetTag);
+        if (iterTarget != BoneNameMap.end())
+        {
+            bIsTagFound = TRUE;
+            strcpy_s(szNodeName, (*iterTarget).first.c_str());
+            m_Bones[(*iterTarget).second]->Set_Name(szAfterBoneTag);
+            
+            break;
+        }
+    }
+
+    if (FALSE == bIsTagFound)
+        return E_FAIL;
+
+    for (auto& pNode : m_pModel->vNodes)
+    {
+        if (strcmp(pNode.szName, szNodeName) == 0)
+        {
+            strcpy_s(pNode.szName, szAfterBoneTag);
+            break;
+        }
+    }
+
+
+    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+
+    return S_OK;
+}
+
 HRESULT CModel::Mapping_OffsetMatrix()
 {
     _uint iNumBones = (_uint)m_Bones.size();

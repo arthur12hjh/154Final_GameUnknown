@@ -53,6 +53,8 @@ HRESULT CWeapon::Initialize(void* pArg)
 
 	m_pPlayerDesc = m_pGameManager->Get_PlayerDesc();
 
+	m_pCharge = nullptr;
+
 	return S_OK;
 }
 
@@ -64,7 +66,8 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
-	m_pCharge->Update(fTimeDelta);
+	if(nullptr != m_pCharge)
+		m_pCharge->Update(fTimeDelta);
 
 
 	//ANIM_NOTIFY GaraNotify;
@@ -161,13 +164,15 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_fChargeTime -= fTimeDelta;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->Stop();
+			m_pCharge->End();
+			Safe_Release(m_pCharge);
 		}
 	}
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
 	m_pSpark->Late_Update(fTimeDelta);
-	m_pCharge->Late_Update(fTimeDelta);
+	if(nullptr != m_pCharge)
+		m_pCharge->Late_Update(fTimeDelta);
 
 
 
@@ -244,7 +249,19 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
-		m_pCharge->Play();
+		if (nullptr == m_pCharge)
+		{
+			CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
+			ChargeDesc.fRotationPerSec = 1.f;
+			ChargeDesc.fSpeedPerSec = 1.f;
+			ChargeDesc.pRootMatrix = &m_CombinedWorldMatrix;
+			ChargeDesc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
+			ChargeDesc.fRot = _float3(0, 0, 0);
+			ChargeDesc.fSize = 0.3f;
+
+			m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
+			m_pCharge->Play();
+		}
 		m_fChargeTime = NotifyReference.fNumData01;
 	}
 
@@ -311,18 +328,6 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
 	m_pSpark->Stop();
-
-	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
-	ChargeDesc.fRotationPerSec = 1.f;
-	ChargeDesc.fSpeedPerSec = 1.f;
-	ChargeDesc.pRootMatrix = &m_CombinedWorldMatrix;
-	ChargeDesc.vPos = XMVectorSet(-0.06f, -0.2f, 0, 1);
-	ChargeDesc.fRot = _float3(0, 0, 0);
-	ChargeDesc.fSize = 0.3f;
-
-	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
-	m_pCharge->Play();
-	m_pCharge->Stop();
 
 	return S_OK;
 }

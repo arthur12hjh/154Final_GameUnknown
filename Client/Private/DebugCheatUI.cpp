@@ -121,7 +121,6 @@ void CDebugCheatUI::DrawObjectDebug()
 void CDebugCheatUI::DrawCameraDebug()
 {
 #ifdef _DEBUG
-
     ImGui::Text("Camera Debug");
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
 
@@ -143,13 +142,25 @@ void CDebugCheatUI::DrawCameraDebug()
                     m_pSelectCamera = m_pGameInstance->GetMainCamera();
                 }
 
-                auto pFree_Camera = static_cast<CCamera_Free*>(m_pSelectCamera);
-                pFree_Camera->GetCameraLock(m_bIsCameraLock);
-                pFree_Camera->SetCameraAnimation(&PrePosMatrix, m_pSelectCamera->GetTransform()->Get_WorldMatrixPtr(), m_bIsCamLerp);
+                auto pFree_Camera = dynamic_cast<CCamera_Free*>(m_pSelectCamera);
+                if (pFree_Camera)
+                {
+                    pFree_Camera->GetCameraLock(m_bIsCameraLock);
+                    pFree_Camera->SetCameraAnimation(&PrePosMatrix, m_pSelectCamera->GetTransform()->Get_WorldMatrixPtr(), m_bIsCamLerp);
+                    m_bIsFreeCamera = true;
+                }
+                else
+                    m_bIsFreeCamera = false;
             }
         }
 
         ImGui::EndCombo();
+    }
+
+    if (m_bIsFreeCamera)
+    {
+        if (ImGui::InputFloat("FreeCam Speed", &m_fFreeCamSpeed))
+            static_cast<CCamera_Free*>(m_pSelectCamera)->SetCameraSpeed(m_fFreeCamSpeed);
     }
 
     if (ImGui::Checkbox("KeyBoard Lock", &m_bIsCameraLock[0]))

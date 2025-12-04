@@ -35,6 +35,11 @@ protected:
 	// UI Ç¥½Ã 
 	CUIBase*						m_pInteractionUI = { nullptr };
 
+protected :
+	virtual HRESULT					Begin_OverlapCallBack() = 0;
+	virtual HRESULT					End_OverlapCallBack() = 0;
+	virtual void					Excute_CallBack(CGameObject* pActionObject) = 0;
+
 public:
 	virtual		CGameObject*		Clone(void* pArg) override;
 	virtual		void				Free() override;
