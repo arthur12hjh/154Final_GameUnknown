@@ -38,6 +38,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_bIsTrail = FALSE;
 	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
 
 	//m_pTransformCom->Set_Scale(1.f, 1.f, 1.f);
@@ -144,11 +145,25 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	
 	if (m_fTrailTime > 0.f)
 	{
-		m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, true);
 		m_fTrailTime -= fTimeDelta;
 		if (m_fTrailTime <= 0.f)
+		{
+			m_bIsTrail = FALSE;
 			m_pSpark->Stop();
+		}
 	}
+	
+	
+	if (m_fChargeTime > 0.f)
+	{
+		m_fChargeTime -= fTimeDelta;
+		if (m_fChargeTime <= 0.f)
+		{
+			m_pCharge->Stop();
+		}
+	}
+	
+	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
 	m_pSpark->Late_Update(fTimeDelta);
 	m_pCharge->Late_Update(fTimeDelta);
 
@@ -226,6 +241,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	if (strObjectTag == TEXT("Trail"))
 	{
 		m_fTrailTime = NotifyReference.fNumData01;
+		m_bIsTrail = TRUE;
 	}
 	else if (strObjectTag == TEXT("Spark"))
 	{
@@ -233,7 +249,8 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
-		m_pCharge->Play(NotifyReference.fNumData01);
+		m_pCharge->Play();
+		m_fChargeTime = NotifyReference.fNumData01;
 	}
 
 }

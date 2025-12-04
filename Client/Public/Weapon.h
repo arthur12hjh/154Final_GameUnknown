@@ -51,6 +51,8 @@ private:
 	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
 
 	_float						m_fTrailTime = -10.f;
+	_float						m_fChargeTime = -10.f;
+	_bool						m_bIsTrail = FALSE;
 
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };
