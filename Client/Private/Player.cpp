@@ -14,6 +14,7 @@
 #include "Interaction_Component.h"
 #include "Effect.h"
 #include "Notify.h"
+#include "AttackHitBox.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
@@ -81,7 +82,7 @@ void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTa
 	// 1) strPartTag가 empty일 경우, Player에서 탐색
 	//    strPartTag가 있을 경우, strPartTag로 모델을 탐색
 	// 2) strObjectTag라는 매핑된 값을 문자열 탐색해서 찾고, Play() 함수를 실행함
-	// 3) 그 모델들은 시간이 지난 후 알아서 Stop() << 시발아 이거 어케만드노
+	// 3) 그 모델들은 시간이 지난 후 알아서 Stop()
 
 	if (strPartTag.empty())
 	{
@@ -101,6 +102,18 @@ void CPlayer::Activate_PartObject_Collider(const _wstring& strPartTag, const _ws
 		return;
 
 	pPartObject->Activate_PartObject_Collider(strColliderTag, NotifyRef);
+}
+
+HRESULT CPlayer::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
+{
+	CNotify::NOTIFY_TYPE NotiType = CNotify::NOTIFY_TYPE(iNotiType);
+	if (CNotify::NOTIFY_TYPE::ACTIVE_COLLISION == NotiType)
+	{
+		CreateHitBox(pNotify);
+	}
+
+
+	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -449,6 +462,45 @@ void CPlayer::Update_BetaSkill()
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
 	}
+}
+
+void CPlayer::CreateHitBox(const AnimNotify* pNotify)
+{
+	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
+	// 공격자. 싱글톤 매니저에 연산할 때 넘겨야함
+	HitBoxDesc.pAttacker = this;
+
+	// 현재 레벨
+	_uint iGameLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
+	// 프로토타입명, 레이어명
+	_wstring szProtoType(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
+	_wstring szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
+
+	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
+	// SkillData 엑셀파일에 있는 첫 번째값. SKill ID
+	auto pSkillData = m_pGameManager->Find_SkillData(pNotify->iNumData01);
+	pHitBoxDesc.pData = pSkillData;
+
+	// 충돌 타입, 공격타입. SKILL_DESC에 있는 애랑 별개로 세팅해줘야하는 애임
+	pHitBoxDesc.eColType = COLLIDER(pNotify->iNumData02);
+	pHitBoxDesc.eHitBoxType = HIT_TYPE(pNotify->iNumData03);
+	pHitBoxDesc.eHitObjectType = HIT_TYPE(pNotify->iNumData04);
+	pHitBoxDesc.bIsApplyTransform = true;
+	pHitBoxDesc.pAttacker = this;
+
+	// 얘는 여기 종속돼있네? 옹히려좋아
+	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+	pHitBoxDesc.fImpactForce = m_fImpactForce;
+
+	// 이건 여기서 알아해주는거같으니까 상관 안해도 되겟다
+	_vector vCharacterPos = GetTransform()->Get_State(STATE::POSITION);
+	_vector vCharacterLook = GetTransform()->Get_State(STATE::LOOK);
+	vCharacterPos += vCharacterLook * pSkillData->fRange;
+	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
+		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
+		return;
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

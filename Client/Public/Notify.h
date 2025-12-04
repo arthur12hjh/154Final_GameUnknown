@@ -128,6 +128,15 @@ NS_END
 	-  iNumData3		=>	Hit Box Type        (ALL, OBJECT, STATIC, PLAYER, MONSTER, SENCE, INTERACTION)
 	-  iNumData4		=>	Hit Object Type     (ALL, OBJECT, STATIC, PLAYER, MONSTER, SENCE, INTERACTION)
 
+    P_Eve_Sword_SlotNormal_ChainStab, P_Eve_Sword_Beta_ChargeSlash1_Ex
+
+    Active_Collision
+    Prototype_GameObject_AttackHitBox
+    Hit_Box_Layer
+    1006, 1007
+    1
+    3
+
     **Set_Transform**
     - szNotifyArg01   : 없음
     - szNotifyArg02   : 없음

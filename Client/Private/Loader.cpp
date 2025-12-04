@@ -471,6 +471,13 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
+	/* For.Prototype_GameObject_Attack_Hit_Box */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_AttackHitBox");
+	pProtoDesc.pPrototype = CAttackHitBox::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Shader_Eve_Face */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Eve_Face");
 	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Eve_Face.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);
@@ -1686,13 +1693,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_GameObject_Stone4 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone4");
 	pProtoDesc.pPrototype = CStone4::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Attack_Hit_Box */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_AttackHitBox");
-	pProtoDesc.pPrototype = CAttackHitBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
