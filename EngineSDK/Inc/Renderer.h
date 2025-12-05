@@ -68,7 +68,7 @@ private:
 	_bool								m_isFog = { false };
 	HDR_DESC							m_HDRDesc = {};
 	_bool								m_isHDR = { true };
-	_float								m_fHDRExposure = { 0.5f };
+	_float								m_fHDRExposure = { 1.24f };
 	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };
