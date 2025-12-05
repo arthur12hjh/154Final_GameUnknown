@@ -1,6 +1,7 @@
 #include "RigidBody.h"
 
 #include "GameInstance.h"
+#include "Mesh.h"
 
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent{ pDevice, pContext }
@@ -75,11 +76,83 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 	case RIGIDBODY_SHAPE::PLANE:
 		m_pShape = m_pPxPhysics->createShape(PxPlaneGeometry(), *m_pMaterial);
 		break;
+	/* 충돌용 메시 전용 로직 */
+	case RIGIDBODY_SHAPE::TRIANGLE:
+	{
+		if (pDesc->pColModel == nullptr)
+			return E_FAIL;
 
-	//로직 많이 달라서 일단 E_FAIL 처리함.
-	case RIGIDBODY_SHAPE::CONVEX:
-		return E_FAIL;
+		_uint iMeshNum = pDesc->pColModel->Get_NumMeshes();
 
+		// TriangleMesh는 여러 개일 수 있으므로 Shape 리스트 유지
+		// (CRigidBody::m_pShape 를 첫 번째 shape 로 사용)
+		vector<PxShape*> triangleShapes;
+		triangleShapes.reserve(iMeshNum);
+
+		for (_uint i = 0; i < iMeshNum; ++i)
+		{
+			CMesh* pMesh = pDesc->pColModel->Get_Mesh(i);
+
+			const _float3* pVertexPositions = pMesh->Get_VertexPositionList();
+			const _uint*   pIndices = pMesh->Get_Indices();
+			_uint    iNumVertices = pMesh->Get_NumVectices();
+			_uint    iNumIndices = pMesh->Get_NumIndices();
+			_uint    iNumPrimitives = iNumIndices / 3;
+
+			if (iNumVertices == 0 || iNumIndices == 0)
+				continue;
+
+			vector<PxVec3> Vertices;
+			Vertices.reserve(iNumVertices);
+
+
+			for (_uint v = 0; v < iNumVertices; ++v)
+			{
+				_vector vLocal = XMLoadFloat3(&pVertexPositions[v]);
+
+				Vertices.push_back(PxVec3(
+					XMVectorGetX(vLocal),
+					XMVectorGetY(vLocal),
+					XMVectorGetZ(vLocal)));
+			}
+
+			vector<PxU32> Indices;
+			Indices.reserve(iNumIndices);
+			for (_uint idx = 0; idx < iNumIndices; ++idx)
+				Indices.push_back(pIndices[idx]);
+
+			// TriangleMeshDesc 생성
+			PxTriangleMeshDesc meshDesc;
+			meshDesc.points.count = iNumVertices;
+			meshDesc.points.stride = sizeof(PxVec3);
+			meshDesc.points.data = Vertices.data();
+
+			meshDesc.triangles.count = iNumPrimitives;
+			meshDesc.triangles.stride = sizeof(PxU32) * 3;
+			meshDesc.triangles.data = Indices.data();
+
+			// 즉석 Cooking API
+			PxTriangleMesh* pTriangleMesh =
+				PxCreateTriangleMesh(PxCookingParams(PxTolerancesScale(1.0f)), meshDesc);
+
+			if (pTriangleMesh == nullptr)
+				continue;
+
+			PxTriangleMeshGeometry geom(pTriangleMesh);
+
+			// Shape 생성
+			PxShape* pShape = m_pPxPhysics->createShape(geom, *m_pMaterial);
+			if (nullptr != pShape)
+				m_TriangleShapes.push_back(pShape);
+
+			Vertices.clear();
+			Indices.clear();
+		}
+
+		triangleShapes.clear();
+
+		break;
+	}
 	default:
 		return E_FAIL;
 	}
@@ -93,6 +166,8 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 {
 	/* 리지드 바디 생성 */
 	m_eType = pDesc->eRigidBodyType;
+	/* 질량 세팅 */
+	m_fMass = pDesc->fMass;
 
 	PxTransform Transform = PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(XMLoadFloat4x4(&pDesc->StartWorldMatrix)));
 
@@ -100,29 +175,35 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 	{
 	case RIGIDBODY_TYPE::DYNAMIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidDynamic(Transform);
+		physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidDynamic*>(m_pPxRigidBody), m_fMass);
 		break;
 
 	case RIGIDBODY_TYPE::KINEMATIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidDynamic(Transform);
 		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		// Kinematic은 질량, 관성 업데이트 하지 않음
 		break;
 
 	case RIGIDBODY_TYPE::STATIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidStatic(Transform);
+		// Static은 질량, 관성 없음
 		break;
-
-	default:
-		return E_FAIL;
 	}
-	/* 질량 세팅 */
-	m_fMass = pDesc->fMass;
-	physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(m_pPxRigidBody), m_fMass);
+
+	//트라이앵글은 예외처리 해준다.
+	if (m_eShape == RIGIDBODY_SHAPE::TRIANGLE)
+	{
+		for (auto& pShape : m_TriangleShapes)
+		{
+			m_pPxRigidBody->attachShape(*pShape);
+		}
+	}
+	/* Shape 붙이기 */
+	else
+		m_pPxRigidBody->attachShape(*m_pShape);
 
 	/* 유저 데이터 세팅 */
 	m_pPxRigidBody->userData = &m_tUserData;
-
-	/* Shape 붙이기 */
-	m_pPxRigidBody->attachShape(*m_pShape);
 
 	return S_OK;
 }
@@ -168,4 +249,8 @@ void CRigidBody::Free()
 
 	if (nullptr != m_pPxPhysics)
 		m_pPxPhysics = nullptr;
+
+	for (auto& pMesh : m_TriangleShapes)
+		pMesh->release();
+	m_TriangleShapes.clear();
 }

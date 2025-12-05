@@ -102,6 +102,7 @@ public:
 	void*  Get_SSAO_Desc();
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
+	void*  Get_HDR_Desc();
 #endif
 
 #pragma endregion

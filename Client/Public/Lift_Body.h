@@ -7,6 +7,7 @@
 
 NS_BEGIN(Engine)
 class CModel;
+class CRigidBody;
 NS_END
 
 NS_BEGIN(Client)

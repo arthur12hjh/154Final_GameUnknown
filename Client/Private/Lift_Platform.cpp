@@ -56,11 +56,8 @@ void CLift_Platform::Late_Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-#ifdef _DEBUG
-	
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
-#endif
+		// 얜 움직이니까 업데이트 해줘야합니다
+		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
 }
 
@@ -73,7 +70,6 @@ HRESULT CLift_Platform::Render()
 
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -83,7 +79,6 @@ HRESULT CLift_Platform::Render()
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
@@ -164,24 +159,51 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	PxUserData tUserData;
-	tUserData.szActorTag = TEXT("KIMETIC_Actor2");
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
 
-	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	/* Com_Model_COL */
+	_wstring strComponentTag = pComponentTag;
+	strComponentTag += TEXT("_COL");
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), strComponentTag,
+		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
+		return E_FAIL;
+
+	// 충돌용 메시 피직스 세팅 조건
+	// 1. 충돌용 메시 생성 이후에 RigidBody를 세팅해주셔야합니다.
+	// 2. 해당 객체의 위치가 설정된 뒤에 RigidBody를 세팅해주셔야 합니다.
+
+	// 세팅 방법 보고도 잘 이해 안되면 물어봐주세요 키네마틱, 다이나믹, 스태틱 세팅 중요해요
+	PxUserData tUserData;
+	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
+	tUserData.szActorTag = TEXT("Elavator_Actor");
+
+	// 리지드 바디 Desc 세팅. 
+	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
-	// 콜라이더 모양
-	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+	// 콜라이더 모양.
+	// ->> 메시는 TRIANGLE, 박스나 캡슐은 BOX, CAPSULE 다 따로 있으니까
+	// F12 타고 들어가서 한번 확인해보세요.
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::TRIANGLE;
 
 	// 충돌처리를 할지말지 
 	// DYNAMIC : 충돌 
 	// KINEMATIC : 충돌 X
+	// STATIC : 충돌 O, 대신 고정되어 있음.
+	// ->> 엘레베이터는 몸체 제외하고 고정되어있으니까 STATIC으로 세팅 해주는거에요.
+	// -> 얜 플랫폼이라 키네마틱으로 세팅해줘요.
+
 	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
 	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-	RigidBodyDesc.vSize = { 2.f, 1.f, 2.f };
+	RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
 	RigidBodyDesc.fMass = { 0.3f };
+	// TRIANGLE로 세팅하고 충돌용 메시 작업하는거니까, 충돌용 메시 넣어줘야돼요 
+	// TRIANGLE 타입이 아닌 (충돌용 메시가 아닌) 녀석들은 굳이 안넣어줘도 됩니다.
+	RigidBodyDesc.pColModel = m_pColModelCom;
 
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -191,7 +213,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
+
 	return S_OK;
 }
 
