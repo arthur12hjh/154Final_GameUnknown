@@ -441,8 +441,8 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 	auto pTarget = m_pBlackBoard->GetTarget();
 	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
-	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
-	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
 
