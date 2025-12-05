@@ -60,7 +60,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
-
+	 
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
@@ -441,36 +441,6 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
-
-		//if (SUCCEEDED(hr))
-		//{
-		//	list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
-		//	if (pObjs && !pObjs->empty())
-		//	{
-		//		CGameObject* pObj = pObjs->back();
-		//		CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-		//		if (pTransform)
-		//		{
-		//			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-
-		//			_vector vScale = {};
-		//			_vector vRotation = {};
-		//			_vector vPosition = {};
-		//			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-
-		//			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		//			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		//			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-
-		//			// 순서: Scale * Rotation * Translation (SRT 순서)
-		//			_matrix matFinalWorld = matScale * matRotation * matTranslation;
-
-		//			_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-		//			XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
-
-		//		}
-		//	}
-		//}
 	}
 
 	return S_OK;

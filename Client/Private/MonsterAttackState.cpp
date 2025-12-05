@@ -59,7 +59,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
-	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);
+	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 2.4f);
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false, fAttackSpeed);
 }
 
@@ -341,8 +341,8 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		LerpMoveAction(fTimeDelta, fSpeed);
 	}
 		
-	if (0.25f >= fAnimPlayRatio)
-		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta * 3.f));
+	/*if (0.25f >= fAnimPlayRatio)
+		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta * 3.f));*/
 }
 
 void CMonsterAttackState::SearchTargetDistance()
@@ -358,7 +358,11 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 {
 	if (m_StaticMonsterData->fAttackRange - m_pSkillData->fRange >= m_fDistance)
 		return;
+	
+	fSpeed = m_fDistance - m_StaticMonsterData->fMoveSpeed;
+	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 
+	LerpRotation(fTimeDelta, 3.f);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
 }
 
