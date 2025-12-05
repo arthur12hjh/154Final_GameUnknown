@@ -133,6 +133,7 @@ void CDebugHierarchy::UpdateTransform(_float3 vPosition)
 {
     for (auto& iter : m_pSelectList)
     {
+        vPosition.y += 0.2f;
         iter->GetTransform()->Set_State(STATE::POSITION, XMLoadFloat3(&vPosition));
         static_cast<CCharacterController*>(iter->Find_Component(TEXT("Com_CCT")))->Set_Position(iter->GetTransform()->Get_State(STATE::POSITION));
     }
