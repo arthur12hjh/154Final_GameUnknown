@@ -57,11 +57,11 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
     case NAYTIBA_STATE::BATTLE:
     {
         _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-        _float  fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
+        _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+        _float  fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
         if (m_pOwnerInfo->fAttackRange < fDistance)
         {
-            _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
             string AnimationName = pOwner->GetStaticMonsterData()->szAnimationName;
             
             m_iSectionIndex = 0;
@@ -211,40 +211,30 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     {
         _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
         
-        vTargetPos.m128_f32[1] = vOwnerPos.m128_f32[1] = 0.f;
         vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
-
-       /* if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
+        if (1 == m_iSectionIndex)
         {
-            m_iSectionIndex = 0;
-            m_bIsCaution = true;
+            AnimationName += "_Run_L";
+            // 전투 상태라면 이거 Target을 향해서 뛰어간다.
+            LerpLookAt(fTimeDelta, 2.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
+
+            if (m_pOwnerInfo->fAttackRange * 0.7f >= fDistance)
+                m_iSectionIndex++;
+        }
+
+        if (2 == m_iSectionIndex)
+        {
+            AnimationName += "_Run_E";
+            m_bIsEnableChange = true;
+            bIsAnimLoop = false;
         }
         else
-        {*/
-            if (1 == m_iSectionIndex)
-            {
-                AnimationName += "_Run_L";
-                // 전투 상태라면 이거 Target을 향해서 뛰어간다.
-                LerpLookAt(fTimeDelta, 2.f);
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
-
-                if (m_pOwnerInfo->fAttackRange * 0.7f >= fDistance)
-                    m_iSectionIndex++;
-            }
-
-            if (2 == m_iSectionIndex)
-            {
-                AnimationName += "_Run_E";
-                m_bIsEnableChange = true;
-                bIsAnimLoop = false;
-            }
-            else
-            {
-                LerpLookAt(fTimeDelta, 4.f);
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
-            }
-       // }
+        {
+            LerpLookAt(fTimeDelta, 4.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
+        }
     }
     else
     {

@@ -67,6 +67,10 @@ void CAttackHitBox::Update(_float fTimeDelta)
 
 		m_pCullingCollider->UpdateColiision(worldMatrix);
 		m_pColliderCom->UpdateColiision(worldMatrix);
+
+		m_vAliveTime.x += fTimeDelta;
+		if (m_vAliveTime.x > m_vAliveTime.y)
+			m_bIsDelayDead = true;
 	}
 	else
 	{
@@ -79,6 +83,10 @@ void CAttackHitBox::Update(_float fTimeDelta)
 
 	m_pCullingCollider->UpdateColiision(worldMatrix);
 	m_pColliderCom->UpdateColiision(worldMatrix);
+
+	m_vAliveTime.x += fTimeDelta;
+	if (m_vAliveTime.x > m_vAliveTime.y)
+		Set_Dead(true);
 #endif
 }
 
