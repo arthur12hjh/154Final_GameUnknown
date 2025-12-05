@@ -8,6 +8,7 @@
 CMonsterStateMimesis::CMonsterStateMimesis() :
 	CState()
 {
+	m_iStateID = 1;
 }
 
 HRESULT CMonsterStateMimesis::Initialize(void* pArg)

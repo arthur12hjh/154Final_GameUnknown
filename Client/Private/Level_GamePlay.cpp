@@ -54,13 +54,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
+	Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
-
+	 
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
@@ -293,12 +293,19 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	//Desc.iMonsterID = 3;
-	//Desc.vPosition = { 15.f, 1.f, 15.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	Desc.iMonsterID = 3;
+	{
+		for (_uint i = 0; i < 10; ++i)
+		{
+			Desc.vPosition = { 15.f * i, 1.f, 105.f};
+			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+				return E_FAIL;
+		}
+		
 
+	}
+	
 	Desc.iMonsterID = 4;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
@@ -386,6 +393,7 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
+	
 	ifs.close();
 
 
@@ -434,36 +442,6 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
-
-		//if (SUCCEEDED(hr))
-		//{
-		//	list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
-		//	if (pObjs && !pObjs->empty())
-		//	{
-		//		CGameObject* pObj = pObjs->back();
-		//		CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-		//		if (pTransform)
-		//		{
-		//			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-
-		//			_vector vScale = {};
-		//			_vector vRotation = {};
-		//			_vector vPosition = {};
-		//			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-
-		//			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		//			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		//			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-
-		//			// 순서: Scale * Rotation * Translation (SRT 순서)
-		//			_matrix matFinalWorld = matScale * matRotation * matTranslation;
-
-		//			_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-		//			XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
-
-		//		}
-		//	}
-		//}
 	}
 
 	return S_OK;

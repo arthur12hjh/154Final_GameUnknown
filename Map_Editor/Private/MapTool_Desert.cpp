@@ -567,6 +567,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
 				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::GORILLA)
+				{
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 1;
+				}
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SPAWN_BOX4)
 				{
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
@@ -1081,7 +1086,7 @@ HRESULT CMapTool_Desert::Render()
 		_int nSelectedRock = -1;
 		_int nSelectedStone = -1;
 
-		const _char* characterNames[] = { "Player", "Monster4", "Monster5" };
+		const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5" };
 		
 		const _char* veryBigCanyonNames[] = { "CANYON_127A","CANYON_127B", "CANYON_127C", "CANYON_127D", "CANYON_127E", "CANYON_128A", "CANYON_128B","CANYON_128C",
 												"CANYON_132A", "CANYON_132B", "CANYON_132C", "CANYON_133B" };
@@ -1110,10 +1115,15 @@ HRESULT CMapTool_Desert::Render()
 				}
 				else if (nSelectedCharacter == 1)
 				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::GORILLA;
 					m_CurrentLayerName = TEXT("Layer_Monster");
 				}
 				else if (nSelectedCharacter == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
+					m_CurrentLayerName = TEXT("Layer_Monster");
+				}
+				else if (nSelectedCharacter == 3)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
 					m_CurrentLayerName = TEXT("Layer_Monster");

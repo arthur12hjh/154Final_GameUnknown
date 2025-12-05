@@ -135,7 +135,7 @@ _bool CGameManager::Get_Lockon()
 #pragma endregion
 
 #pragma region Damage Logic
-void CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
+_bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
 {
     long long AttackDamage = iDamage * (1.f - fPercent);
     long long GuardDamage = iDamage * fPercent;
@@ -152,6 +152,8 @@ void CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iD
     pInfo->iCurrentHealth -= AttackDamage;
     if (0 >= pInfo->iCurrentHealth)
         pInfo->iCurrentHealth = 0.f;
+
+    return true;
 }
 #pragma endregion
 

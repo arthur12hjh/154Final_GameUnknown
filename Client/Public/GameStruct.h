@@ -144,6 +144,7 @@ namespace Client
 		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
 		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION		= 0b00010000, // 16 <- 처형
+		GUARD			= 0b00100000, // 32 <- 가드
 		END
 	};
 
@@ -256,6 +257,7 @@ namespace Client
 		
 		_float3				vImpactDir;
 		_float				fImpactForce;
+		_bool				bIsHitMotion;
 
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;

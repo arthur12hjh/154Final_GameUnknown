@@ -10,6 +10,14 @@ struct BoneTransformMatrix
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
+sampler NormalSampler = sampler_state
+{
+    Filter = ANISOTROPIC; // 또는 MIN_MAG_ANISOTROPIC_MIP_LINEAR 등
+    MaxAnisotropy = 4; // 4~8 정도부터 테스트
+    AddressU = wrap;
+    AddressV = wrap;
+};
+
 sampler AnisoTropy_BLUR_Sampler = sampler_state // 밉맵이 있어야 의미가 있음
 {
     Filter = AnisoTropic;

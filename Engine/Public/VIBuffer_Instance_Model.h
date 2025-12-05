@@ -27,7 +27,7 @@ public:
 	virtual HRESULT						Initialize(void* pArg) override;
 	virtual HRESULT						Render(_uint iIndex);
 
-	HRESULT								Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, TEXTURE_TYPE eTextureType, _uint TextureIndex);
+	HRESULT								Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, aiTextureType eTextureType, _uint TextureIndex);
 	_uint								GetModelNumMeshes();
 	_uint								Get_NumInstance() const { return m_iNumInstance; }
 	VTX_INSTANCE_MODEL*					Get_InstanceVertices() const { return m_pInstanceVertices; }

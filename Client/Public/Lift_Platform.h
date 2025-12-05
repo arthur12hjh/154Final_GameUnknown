@@ -41,7 +41,7 @@ private :
 	_float							m_vLerpSpeed = { 1.f };
 	
 	_float3							m_vRootPos = {};
-	_float							m_fMoveDistance = { 55.f };
+	_float							m_fMoveDistance = { 45.f };
 
 private :
 	void							LerpTargetPoint(_float fTimeDelta);

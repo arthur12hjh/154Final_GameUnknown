@@ -26,20 +26,23 @@ public:
 	ID3D11Buffer*					GetIBBuffer();
 
 	_uint							GetVertexStride();
+	//이거 Get_NumIndices여야 되는거 아님?해명좀 그리고 mesh안에 또있음
 	_uint							GetIndices();
 	DXGI_FORMAT						GetIndexFormat();
 
+	_uint*					Get_Indices(); 
 protected:
 	ID3D11Buffer*					m_pVB = { nullptr };
 	ID3D11Buffer*					m_pIB = { nullptr };	
 
 	_float3*						m_pVertexPositions = {};
-
+	_uint*							m_pIndices = {};
 	_uint							m_iNumVertices = {};
 	_uint							m_iVertexStride = {};
 
 	_uint							m_iNumIndices = {};
 	_uint							m_iIndexStride = {};
+
 
 	_uint							m_iNumVertexBuffers = {};
 	DXGI_FORMAT						m_eIndexFormat = {};

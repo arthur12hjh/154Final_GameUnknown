@@ -15,10 +15,10 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CRigidBody final : public CComponent
 {
 public:
-	//kinetic은 DYNAMIC의 flag로서 설정됨. 키네마틱 어중간하게 쓸거면 캐릭터 컨트롤러 쓰세요.
+	//kinetic은 DYNAMIC의 flag로서 설정됨. 
 	enum class RIGIDBODY_TYPE	{ DYNAMIC, KINEMATIC, STATIC, END };
 	// 볼록다각형은 로직이 많이 달라서 일단 보류.
-	enum class RIGIDBODY_SHAPE	{ BOX, SPHERE, CAPSULE, PLANE, CONVEX, END };
+	enum class RIGIDBODY_SHAPE	{ BOX, SPHERE, CAPSULE, PLANE, TRIANGLE, END };
 public:
 	typedef struct tagRigidBodyDesc
 	{
@@ -33,6 +33,7 @@ public:
 		_float4x4		StartWorldMatrix = {};
 		/* 질량 */
 		_float			fMass = {};
+		class CModel* pColModel = { nullptr };
 		/* 현재는 식별용 문자열만 넣을 수 있습니다. */
 		PxUserData		tUserData = {};
 	} RIGIDBODY_DESC;
@@ -47,6 +48,9 @@ public:
 	const PxTransform& Get_PxTransform() { m_PxTransform = m_pPxRigidBody->getGlobalPose(); return m_PxTransform; }
 
 	PxShape* Get_PxShape() { return m_pShape; }
+	RIGIDBODY_TYPE Get_Type() { return m_eType; }
+	RIGIDBODY_SHAPE Get_Shape() { return m_eShape; }
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -62,6 +66,8 @@ private:
 	PxRigidActor*	m_pPxRigidBody = { nullptr };
 	PxMaterial*		m_pMaterial = { nullptr };
 	PxShape*		m_pShape = { nullptr };
+	//Triangle Mesh 전용
+	vector<PxShape*> m_TriangleShapes = { };
 	PxTransform		m_PxTransform = { };
 
 	RIGIDBODY_TYPE	m_eType = {};

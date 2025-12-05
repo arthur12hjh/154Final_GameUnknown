@@ -2,12 +2,10 @@
 #include "Client_Defines.h"
 #include "AIController.h"
 
-NS_BEGIN(Engine)
-class CStateMachine;
-NS_END
-
 NS_BEGIN(Client)
+class CMonsterFSM;
 class CTargetComponent;
+
 struct Character_Skill_Desc;
 struct Naytiba_Desc;
 
@@ -35,9 +33,10 @@ public:
 
 private :
 	CTargetComponent*				m_pTargetCom = { nullptr };
-	CStateMachine*					m_pFSM = { nullptr };
+	CMonsterFSM*					m_pFSM = { nullptr };
 
 	const		Naytiba_Desc*		m_pOwnerData = { nullptr };
+
 
 	_float							m_fAttackDelay = {};
 	_float2							m_vAttackTime = {};

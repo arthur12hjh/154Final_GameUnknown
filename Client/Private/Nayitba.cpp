@@ -141,7 +141,17 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-	m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	switch (m_pInitMonsterInfo->eAI_Type)
+	{
+	case AI_TYPE::DEFENSIVE : // 방어형
+		pDesc->bIsHitMotion = DefenseTypeDamage(pDesc);
+		break;
+	case AI_TYPE::AGGRESSIVE :
+	case AI_TYPE::PASSIVE :  // 공격형
+		pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+		break;
+	}
+	
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 	m_vHitVisibleDuration.x = 0.f;
@@ -240,6 +250,11 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 	return pSkill;
 }
 
+void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
+{
+	m_pAttack_Data = pATKDesc;
+}
+
 CAIController* CNayitba::GetController()
 {
 	Safe_AddRef(m_pAIController);
@@ -249,6 +264,17 @@ CAIController* CNayitba::GetController()
 const list<CGameObject*>* CNayitba::GetTraceObejectList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
+}
+
+void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	if (strPartTag.empty())
+	{
+	}
+	else
+	{
+		Find_PartObject(strPartTag)->Active_SFX(strObjectTag, NotifyReference);
+	}
 }
 
 HRESULT CNayitba::Ready_CharacterData()
@@ -437,6 +463,54 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 		else
 			m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
 	}
+}
+
+_bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
+{
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+	_bool bIsCheckDefenceLogic = false;
+	if (m_pAttack_Data)
+	{
+		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))
+		{
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+		}
+		else
+			bIsCheckDefenceLogic = true;
+	}
+	else
+		bIsCheckDefenceLogic = true;
+
+	if (bIsCheckDefenceLogic)
+	{
+		_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{}, vDir{};
+		vOwnerPos = vTempOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
+		vTargetPos = pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
+
+		vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+		vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+
+		_vector vOwnerLook = m_pTransformCom->Get_State(STATE::LOOK);
+
+		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
+		fScalar = Clamp<_float>(fScalar, -1.0f, 1.0f);   // NaN 방지
+
+		_float fRadian = acosf(fScalar);
+		// 앞
+		if (0 < fScalar)
+		{
+			if (fRadian < m_pAISenceCom->GetSenceRadiusRadian())
+			{
+				long long iFrontDamage = pSkillDesc->iSkillDamage * fDamageReductionRate;
+				m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iFrontDamage);
+				return false;
+			}
+		}
+		else
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	}
+	
+	return true;
 }
 
 void CNayitba::CreateHitBox(const AnimNotify* pNotify)

@@ -22,6 +22,7 @@ HRESULT CShaderDebugger::Initialize()
     m_pDoFDesc = static_cast<DOF_DESC*>(m_pGameInstance->Get_DoF_Desc());
     m_pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
     m_pVolumetricDesc = static_cast<VOLUMETRIC_DESC*>(m_pGameInstance->Get_Volumetric_Desc());
+    m_pHDRDesc = static_cast<HDR_DESC*>(m_pGameInstance->Get_HDR_Desc());
 #endif
 
     return S_OK;
@@ -77,6 +78,14 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     ImGui::DragFloat("VM StepSize", m_pVolumetricDesc->fStepSize, 0.001f, 0.f, 2.f);
     ImGui::DragFloat("VM G", m_pVolumetricDesc->fVolumetricG, 0.001f, -1.f, 1.f);
     ImGui::Separator();
+
+    ImGui::Text("HDR Info");
+
+    ImGui::Checkbox("HDR Activate", m_pHDRDesc->isHDR);
+    ImGui::DragFloat("HDR Desc", m_pHDRDesc->fHDRExposure, 0.001f, 0.f, 2.f);
+
+    ImGui::Separator();
+
 
     ImGui::Text("Bloom INFO (CANNOT EDIT. JUST SHOW)");
     
