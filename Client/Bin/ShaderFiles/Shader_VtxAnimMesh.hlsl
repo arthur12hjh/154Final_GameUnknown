@@ -44,7 +44,11 @@ VS_OUT VS_MAIN(VS_IN In)
     
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
-    vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
+    float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
+
+// 월드 변환
     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     
@@ -54,9 +58,9 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vPosition = mul(vPosition, matWVP);
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */   
-    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
-    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vNormal = float4(normalize(mul(float4(vSkinnedNormal, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vTangent = float4(normalize(mul(float4(vSkinnedTangent, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vBinormal = float4(normalize(mul(float4(vSkinnedBinorm, 0.f), g_WorldMatrix).xyz), 0.f);
     Out.vTexcoord = In.vTexcoord;
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
