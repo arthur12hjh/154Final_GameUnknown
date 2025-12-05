@@ -500,6 +500,11 @@ void* CGameInstance::Get_Volumetric_Desc()
 	return m_pRenderer->Get_Volumetric_Desc();
 }
 
+void* CGameInstance::Get_HDR_Desc()
+{
+	return m_pRenderer->Get_HDR_Desc();
+}
+
 #endif
 
 #pragma endregion

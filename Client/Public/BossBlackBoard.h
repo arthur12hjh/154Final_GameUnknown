@@ -49,8 +49,15 @@ public:
 	void								SetHitData(const Default_Damage_Desc* pSkill);
 	const Default_Damage_Desc*			GetHitData();
 
+	void								AccAttackDelay(_float fTimeDelta);
+	void								ClearAttackTimer();
+
 	void								SetAttackDelay(_float fDelay);
-	_float								GetAttackDelay() { return m_fAttackDelay; }
+	_float								GetAttackDelay() { return m_fAttackDelay.y; }
+
+	// 이걸로 공격 가능체크하고
+	// 가능하면 True를 반환.
+	_bool								IsAttackEnable();
 
 	void								SetAttackData(const Character_Skill_Desc* pAttack_Data);
 	const Character_Skill_Desc*			GetAttackData();
@@ -67,7 +74,7 @@ protected :
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
 	_float								m_fTargetDistance = {};
-	_float								m_fAttackDelay = {};
+	_float2								m_fAttackDelay = {};
 
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };

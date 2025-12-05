@@ -22,9 +22,6 @@ HRESULT CMonsterFSM::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_State()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -67,6 +64,7 @@ HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg, _bool bIsFo
 		m_pCurrentState->End();
 
 	m_pCurrentState = iter->second;
+	m_eMonsterState = MONSTER_STATE(m_pCurrentState->GetStateID());
 
 	return S_OK;
 }
@@ -79,30 +77,6 @@ HRESULT CMonsterFSM::Add_State(const WCHAR* StateTag, CState* pNewState)
 		m_pStates.emplace(StateTag, pNewState);
 	}
 
-	return S_OK;
-}
-
-HRESULT CMonsterFSM::Ready_State()
-{
-	//CState::STATE_DESC Desc = {};
-	//Desc.pOwner = m_pOwner;
-
-	//if(FAILED(Add_State(TEXT("Idle"), CMonsterIdleState::Create(&Desc))))
-	//	return E_FAIL;
-
-	//if (FAILED(Add_State(TEXT("Attack"), CMonsterAttackState::Create(&Desc))))
-	//	return E_FAIL;
-
-	//if (FAILED(Add_State(TEXT("Move"), CMonsterMoveState::Create(&Desc))))
-	//	return E_FAIL;
-
-	//if (FAILED(Add_State(TEXT("Dead"), CMonsterDeadState::Create(&Desc))))
-	//	return E_FAIL;
-
-	//if (FAILED(Add_State(TEXT("Hit"), CMonsterHitState::Create(&Desc))))
-	//	return E_FAIL;
-
-	//Change_State(TEXT("Idle"));
 	return S_OK;
 }
 

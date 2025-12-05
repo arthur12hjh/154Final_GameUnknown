@@ -475,6 +475,11 @@ namespace Engine
 		float* fStepSize;
 		float* fVolumetricG;
 	} VOLUMETRIC_DESC;
+
+	typedef struct tagHDRInfo {
+		float* fHDRExposure;
+		bool* isHDR;
+	} HDR_DESC;
 #pragma endregion
 }
 

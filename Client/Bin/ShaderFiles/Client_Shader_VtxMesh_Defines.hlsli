@@ -45,7 +45,6 @@ struct PS_OUT
     float4 vDepth    : SV_TARGET2;
     float4 vORM      : SV_Target3;
     float4 vEmissive : SV_TARGET4;
-    float4 vSSSAO    : SV_TARGET5;
 };
 
 struct PS_IN_SHADOW

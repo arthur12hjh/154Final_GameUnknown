@@ -32,11 +32,13 @@ public :
 	_bool										Is_EnableChange() { return m_bIsEnableChange; }
 
 	const char*									GetAnimationName();
+	_uint										GetStateID() { return m_iStateID; }
 
 protected :
 	CGameObject*								m_pOwner = { nullptr };
 	CGameInstance*				               	m_pGameInstance = { nullptr };
 
+	_uint										m_iStateID = {};
 	string										m_szAnimationName = {};
 	_uint										m_iSectionIndex = {};
 	

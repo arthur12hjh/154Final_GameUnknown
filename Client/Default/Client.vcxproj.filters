@@ -331,9 +331,6 @@
     <Filter Include="02.GameObjects\AttackHitBox">
       <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character">
       <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
@@ -349,71 +346,8 @@
     <Filter Include="02.GameObjects\Character\Player\01. FSM\Base">
       <UniqueIdentifier>{4642f57f-bd5b-40b0-8187-b409ac58061f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba">
-      <UniqueIdentifier>{ff0e426b-3116-4f02-a27b-acc4715b278c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster">
-      <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM">
-      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State">
-      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead">
-      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit">
-      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle">
-      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
-      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Move">
-      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
       <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation">
-      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
-      <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
-      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
-      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
-      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
-      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\PartBody">
-      <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller">
-      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Boss">
-      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
-      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
-      <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
-      <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\CCTHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
@@ -423,9 +357,6 @@
     </Filter>
     <Filter Include="97.ShaderFiles\00. Util">
       <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
-      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
@@ -523,45 +454,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
       <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
-      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard">
-      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Service">
-      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
-      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
-      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
-      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move">
-      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait">
-      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
-      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
-      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
-      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Lockon">
       <UniqueIdentifier>{6f1a2b1f-7aec-47a6-89ec-1c3a7dc44792}</UniqueIdentifier>
     </Filter>
@@ -652,9 +544,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX">
       <UniqueIdentifier>{37c3e0f8-291d-458e-9fa8-a175d8da52b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
-      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
       <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
     </Filter>
@@ -672,6 +561,117 @@
     </Filter>
     <Filter Include="01.Levels\GamePlay">
       <UniqueIdentifier>{490444ba-eab1-44cf-9259-6b16f02e8e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba">
+      <UniqueIdentifier>{ff0e426b-3116-4f02-a27b-acc4715b278c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster">
+      <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM">
+      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State">
+      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead">
+      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit">
+      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle">
+      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Move">
+      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation">
+      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
+      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
+      <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
+      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
+      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
+      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
+      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
+      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
+      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
+      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard">
+      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Service">
+      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
+      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
+      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move">
+      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait">
+      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\PartBody">
+      <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller">
+      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Boss">
+      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
+      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
+      <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
+      <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

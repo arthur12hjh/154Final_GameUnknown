@@ -58,6 +58,7 @@ HRESULT CGorillaBehaviorTree::Initialize(void* pArg)
 
 void CGorillaBehaviorTree::Update(_float fTimeDelta)
 {
+
 	__super::Update(fTimeDelta);
 }
 
