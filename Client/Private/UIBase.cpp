@@ -104,6 +104,8 @@ void CUIBase::Update(_float fTimeDelta)
 			
 		if(m_pTargetPos)
 			vView = XMVector3Transform(XMVectorSetW(XMLoadFloat3(m_pTargetPos), 1.f), view);
+		/*else
+			vView = XMVector3Transform(m_pParent->GetTransform()->Get_State(STATE::POSITION), view);*/
 
 		// 카메라 뒤에 있으면 표시 불가
 		if (XMVectorGetZ(vView) < 0.1f)
@@ -172,6 +174,11 @@ void CUIBase::Set_Position(_float fX, _float fY)
 void CUIBase::Set_Rotation(_float fRotation)
 {
 	m_tUIDesc.fRotation = fRotation;
+}
+
+void CUIBase::Set_Texture_Scale(_float fScale)
+{
+	m_tUIDesc.m_tUIShaderDesc.fScale = fScale;
 }
 
 void CUIBase::Set_Size(_float fSizeX, _float fSizeY) {
@@ -533,6 +540,10 @@ HRESULT CUIBase::Initialize_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &g_GlowSpread, sizeof(_float))))
 		return E_FAIL;
 
+	_float fScale{ 1.f };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &fScale, sizeof(_float))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -632,6 +643,12 @@ HRESULT CUIBase::Bind_ShaderResources()
 				return E_FAIL;
 
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseSpeed", &m_tUIDesc.m_tUIShaderDesc.fPulseSpeed, sizeof(_float))))
+				return E_FAIL;
+		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseScale)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_tUIDesc.m_tUIShaderDesc.fScale, sizeof(_float))))
 				return E_FAIL;
 		}
 	}

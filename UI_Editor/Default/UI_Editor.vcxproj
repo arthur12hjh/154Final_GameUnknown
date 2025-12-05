@@ -230,6 +230,7 @@
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
     <ClCompile Include="..\..\Client\Private\UIImage.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPFX.cpp" />
@@ -241,6 +242,7 @@
     <ClCompile Include="..\..\Client\Private\UIPotionStack.cpp" />
     <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UIShield.cpp" />
+    <ClCompile Include="..\..\Client\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapperLineFX.cpp" />

@@ -94,6 +94,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			m_pTargetUI->Set_GlowIntensity(XMVectorGetX(vLerped));
 		if (TrackDesc.szTrackTag == TEXT("Rotation"))
 			m_pTargetUI->Set_Rotation(XMVectorGetX(vLerped));
+		if (TrackDesc.szTrackTag == TEXT("Scale"))
+			m_pTargetUI->Set_Texture_Scale(XMVectorGetX(vLerped));
 	}
 	else
 	{
@@ -150,6 +152,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 				m_pTargetUI->Set_GlowIntensity(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fGlowIntensity);
 			if (TrackDesc.szTrackTag == TEXT("Rotation"))
 				m_pTargetUI->Set_Rotation(m_pTargetUI->Get_UIBase_OriginDesc().fRotation);
+			if (TrackDesc.szTrackTag == TEXT("Scale"))
+				m_pTargetUI->Set_Texture_Scale(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fScale);
 
 			m_fTimeStack = 0.f;
 		}
@@ -190,6 +194,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 				m_pTargetUI->Set_Texture_Index(static_cast<_uint>(XMVectorGetX(vEndParam)));
 			if (TrackDesc.szTrackTag == TEXT("Rotation"))
 				m_pTargetUI->Set_Rotation(XMVectorGetX(vEndParam));
+			if (TrackDesc.szTrackTag == TEXT("Scale"))
+				m_pTargetUI->Set_Texture_Scale(XMVectorGetX(vEndParam));
 
 			m_pTargetUI->Set_Anim_Playing(false);
 

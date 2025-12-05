@@ -59,6 +59,8 @@ public:
 	CAIController*					GetController();
 	const list<CGameObject*>*		GetTraceObejectList();
 
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };

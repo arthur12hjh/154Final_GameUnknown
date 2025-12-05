@@ -208,6 +208,17 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 HRESULT CLift_Controller::Begin_OverlapCallBack()
 {
 	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+
+	if (!m_pInteractionUI)
+	{
+		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		//_float3 vTargetPos = {};
+		//XMStoreFloat3(&vTargetPos, m_pTransformCom->Get_State(STATE::POSITION));
+		m_pInteractionUI = pUIHUD->Rent_WorldUI(TEXT("Pool_Simple_Interaction"),
+			this, &m_pInteractionCom->Get_CenterPos());
+		Safe_Release(pUIHUD);
+	}
+
 	m_bIsInteractionAble = true;
 
 	return S_OK;
@@ -216,7 +227,13 @@ HRESULT CLift_Controller::Begin_OverlapCallBack()
 HRESULT CLift_Controller::End_OverlapCallBack()
 {
 	if (m_pInteractionUI)
+	{
 		m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
+		/*CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		pUIHUD->Return_WorldUI(m_pInteractionUI);
+		Safe_Release(pUIHUD);*/
+	}
 
 	m_bIsInteractionAble = false;
 

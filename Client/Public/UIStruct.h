@@ -9,7 +9,7 @@ namespace Client
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
 		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
 		SKILL_SLOT_GLOW, RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE, SKILL_WRAPPER_ON_FX,
-		LOADING_BLUR
+		LOADING_BLUR, SIMPLE_KEY, INTERACTION_FX, INTERACTION_FX_GLOW
 	};
 
 	typedef struct tagSkillInfoDesc
@@ -47,6 +47,9 @@ namespace Client
 		XMFLOAT4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
 
 		bool bDiscardBlack{ false };
+
+		bool bUseScale{ false };
+		float fScale{ 1.f };
 
 		bool bUseGlow{ false };
 		bool bUsePulseEffect{ false };

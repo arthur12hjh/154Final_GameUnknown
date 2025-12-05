@@ -147,6 +147,8 @@
 #include "UIBossHPBarFX.h"
 #include "UIBossShield.h"
 #include "UIBossName.h"
+#include "UISimpleKey.h"
+#include "UIInteractionFX.h"
 
 #pragma region Map_Desert
 #include "Canyon.h"
@@ -3747,6 +3749,21 @@ HRESULT CLoader::Loading_UI_For_World()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_UI_Texture_Interaction_Key */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Interaction_Shadow */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Shadow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_Interaction_FX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.png"), 3))))
+		return E_FAIL;
+
 	/*=====================================================================================================*/
 
 	/* For.Prototype_GameObject_UI_WorldWrapper */
@@ -3767,6 +3784,16 @@ HRESULT CLoader::Loading_UI_For_World()
 	/* For.Prototype_GameObject_UI_Monster_Shield */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_Shield"),
 		CUIMonsterShield::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_SimpleKey */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SimpleKey"),
+		CUISimpleKey::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_InteractionFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_InteractionFX"),
+		CUIInteractionFX::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -39,31 +39,6 @@ void CUIImage::Priority_Update(_float fTimeDelta)
 
 void CUIImage::Update(_float fTimeDelta)
 {
-	//m_pGameInstance->Bind_Observer(TEXT("UI_Button_Action"), m_pEventHandle);
-
-	//if (dynamic_cast<CUIButton*>(m_pParent))
-	//{
-	//	CUIButton::BTN_STATE eBtnState = dynamic_cast<CUIButton*>(m_pParent)->Get_ButtonState();
-	//
-	//	if (eBtnState == CUIButton::BTN_STATE::HOVER)
-	//	{
-	//		__super::Trigger_Event(TEXT("Hover"), nullptr);
-	//		//m_pGameInstance->Bind_Observer(TEXT("UI_Button_Hover"), m_pEventHandle);
-	//		/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	//
-	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
-	//
-	//		if (AnimTag == m_tUIDesc.m_AnimTags.end())
-	//			return;
-	//
-	//		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-	//		Safe_Release(pHUD);*/
-	//	}
-	//	else
-	//		__super::Trigger_Event(TEXT("Default"), nullptr);
-	//		//m_pGameInstance->UnBind_Observer(TEXT("UI_Button_Hover"), m_pEventHandle);
-	//}
-
  	__super::Update(fTimeDelta);
 }
 
@@ -107,51 +82,12 @@ HRESULT CUIImage::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	// m_Events 돌면서 분기쳐서 이벤트 핸들 세팅해주기??
-	/*m_pEventHandle = CUIPlayAnimEvent::Create([&](void* pArg) {
-		CUIButton::BTN_STATE eState = *static_cast<CUIButton::BTN_STATE*>(pArg);
-
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		if (eState == CUIButton::BTN_STATE::HOVER)
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
-
-			if (AnimTag == m_tUIDesc.m_AnimTags.end())
-				return;
-
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
-		else if(eState == CUIButton::BTN_STATE::DEFAULT)
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Default"));
-
-			if (AnimTag == m_tUIDesc.m_AnimTags.end())
-				return;
-
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
-
-		Safe_Release(pHUD);
-	});
-
-	if (nullptr == m_pEventHandle)
-		return E_FAIL;
-
-	m_pGameInstance->Add_Event(TEXT("UI_Button_Action_Reaction"), m_pEventHandle);
-
-	Bind_Event();*/
-
 	return S_OK;
 }
 
 HRESULT CUIImage::Bind_ShaderResources()
 {
 	__super::Bind_ShaderResources();
-
-	/*if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-		return E_FAIL;*/
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -185,11 +121,6 @@ HRESULT CUIImage::Execute(const UI_EVENT_DESC& EventDesc)
 	return S_OK;
 }
 
-//HRESULT CUIImage::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
-//{
-//	return S_OK;
-//}
-
 void CUIImage::CallbackEvent(void* pArg)
 {
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
@@ -202,82 +133,7 @@ void CUIImage::CallbackEvent(void* pArg)
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 	
 	Safe_Release(pHUD);
-
-	//switch (arg->Type)
-	//{
-	//case UI_EVENT_ARG_DESC::BTN_STATE:
-	//{
-	//	auto* state = static_cast<CUIButton::BTN_STATE*>(arg->pData);
-	//	if (!state) break;
-
-	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	//	if (*state == CUIButton::BTN_STATE::HOVER)
-	//	{
-	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	//		if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-	//	}
-	//	else // DEFAULT/CLICK/SELECT → 필요에 맞게 매핑
-	//	{
-	//		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	//		if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-	//	}
-
-	//	Safe_Release(pHUD);
-	//	break;
-	//}
-
-	//case UI_EVENT_ARG_DESC::INT:
-	//	// int value = *static_cast<int*>(arg->pData);
-	//	break;
-
-	//case UI_EVENT_ARG_DESC::FLOAT:
-	//	// float v = *static_cast<float*>(arg->pData);
-	//	break;
-
-	//case UI_EVENT_ARG_DESC::WSTRING:
-	//	 //auto* ws = static_cast<_wstring*>(arg->pData);
-	//	break;
-
-	//default:
-	//	break;
-	//}
-
-	/*UI_EVENT_ARG_DESC* pEventArg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
-
-	_uint a = pEventArg->Type;
-
-	if (pEventArg->Type == UI_EVENT_ARG_DESC::BTN_STATE)
-	{
-		CUIButton::BTN_STATE eState = *static_cast<CUIButton::BTN_STATE*>(pEventArg->pData);
-
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		if (eState == CUIButton::BTN_STATE::HOVER)
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hover"));
-
-			if (AnimTag == m_tUIDesc.m_AnimTags.end())
-				return;
-
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
-		else if (eState == CUIButton::BTN_STATE::DEFAULT)
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Default"));
-
-			if (AnimTag == m_tUIDesc.m_AnimTags.end())
-				return;
-
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-		}
-
-		Safe_Release(pHUD);
-	}*/
 }
-
-
 
 CUIImage* CUIImage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
