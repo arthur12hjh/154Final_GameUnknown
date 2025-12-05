@@ -103,12 +103,12 @@ HRESULT CVIBuffer_Instance_Model::Render(_uint iIndex)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Instance_Model::Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, TEXTURE_TYPE eTextureType, _uint TextureIndex)
+HRESULT CVIBuffer_Instance_Model::Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, aiTextureType eTextureType, _uint TextureIndex)
 {
 	if (nullptr == m_pModel)
 		return E_FAIL;
 
-	return m_pModel->Bind_Material(iMeshIndex, pShader, pConstantName, aiTextureType(ENUM_CLASS(eTextureType)), TextureIndex);
+	return m_pModel->Bind_Material(iMeshIndex, pShader, pConstantName, eTextureType, TextureIndex);
 }
 
 _uint CVIBuffer_Instance_Model::GetModelNumMeshes()

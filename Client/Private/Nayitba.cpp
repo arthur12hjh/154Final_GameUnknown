@@ -93,10 +93,13 @@ void CNayitba::Update(_float fTimeDelta)
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
 	
-	m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 	m_pAIController->Update(fTimeDelta);
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
+		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	}
+	
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -108,14 +111,15 @@ void CNayitba::Update(_float fTimeDelta)
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
-
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState )
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		__super::Late_Update(fTimeDelta);
+
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -137,7 +141,17 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-	m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	switch (m_pInitMonsterInfo->eAI_Type)
+	{
+	case AI_TYPE::DEFENSIVE : // 방어형
+		pDesc->bIsHitMotion = DefenseTypeDamage(pDesc);
+		break;
+	case AI_TYPE::AGGRESSIVE :
+	case AI_TYPE::PASSIVE :  // 공격형
+		pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+		break;
+	}
+	
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
 	m_vHitVisibleDuration.x = 0.f;
@@ -147,11 +161,12 @@ HRESULT CNayitba::Damaged(void* pArg)
 		if (nullptr == m_pStatusUI)
 		{
 			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, m_MonsterInfo.vStatusBarPoint);
+			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, m_MonsterInfo.vStatusBarPoint);
 			Safe_Release(pCurHUD);
 		}
 		if (0 >= m_MonsterInfo.iCurrentHealth)
 		{
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			// 몬스터 체력
@@ -233,6 +248,11 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 	}
 
 	return pSkill;
+}
+
+void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
+{
+	m_pAttack_Data = pATKDesc;
 }
 
 CAIController* CNayitba::GetController()
@@ -443,6 +463,54 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 		else
 			m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
 	}
+}
+
+_bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
+{
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+	_bool bIsCheckDefenceLogic = false;
+	if (m_pAttack_Data)
+	{
+		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))
+		{
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+		}
+		else
+			bIsCheckDefenceLogic = true;
+	}
+	else
+		bIsCheckDefenceLogic = true;
+
+	if (bIsCheckDefenceLogic)
+	{
+		_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{}, vDir{};
+		vOwnerPos = vTempOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
+		vTargetPos = pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
+
+		vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+		vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+
+		_vector vOwnerLook = m_pTransformCom->Get_State(STATE::LOOK);
+
+		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
+		fScalar = Clamp<_float>(fScalar, -1.0f, 1.0f);   // NaN 방지
+
+		_float fRadian = acosf(fScalar);
+		// 앞
+		if (0 < fScalar)
+		{
+			if (fRadian < m_pAISenceCom->GetSenceRadiusRadian())
+			{
+				long long iFrontDamage = pSkillDesc->iSkillDamage * fDamageReductionRate;
+				m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iFrontDamage);
+				return false;
+			}
+		}
+		else
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	}
+	
+	return true;
 }
 
 void CNayitba::CreateHitBox(const AnimNotify* pNotify)

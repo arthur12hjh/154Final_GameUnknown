@@ -8,6 +8,7 @@
 CMonsterTranslationState::CMonsterTranslationState() : 
     CState()
 {
+    m_iStateID = 6;
 }
 
 HRESULT CMonsterTranslationState::Initialize(void* pArg)

@@ -500,6 +500,11 @@ void* CGameInstance::Get_Volumetric_Desc()
 	return m_pRenderer->Get_Volumetric_Desc();
 }
 
+void* CGameInstance::Get_HDR_Desc()
+{
+	return m_pRenderer->Get_HDR_Desc();
+}
+
 #endif
 
 #pragma endregion
@@ -639,9 +644,9 @@ HRESULT CGameInstance::Add_Font(const _wstring& strFontTag, const _tchar* pFontF
 	return m_pFont_Manager->Add_Font(strFontTag, pFontFilePath);
 }
 
-HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor)
+HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale)
 {
-	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor);
+	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor, fScale);
 }
 
 _float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace, float fScale)

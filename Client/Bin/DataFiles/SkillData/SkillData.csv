@@ -30,7 +30,7 @@
 541,M_BarnacleA_PunchAttack,None,None,15,3,"1,1,2",4,0,1
 542,M_BarnacleA_GrabAttack,Hit_BarnacleA_Beta_GrabAttack1,R_Hand_ex_01,15,3,"1,1,2",4,0,10
 543,M_BarnacleA_ComboAttack,None,None,16,3,"1,1,2",4,0,9
-544,M_BarnacleA_Shield,None,None,17,3,"1,1,2",4,0,0
+544,M_BarnacleA_Shield,None,None,17,3,"1,1,2",4,0,32
 1000,Player_Light_Attack_Root1,None,None,10,3,"2,2,2",0,0,0
 1001,Player_Light_Attack_Root2,None,None,10,3,"2,2,2",1,0,0
 1002,Player_Light_Attack_Root3,None,None,20,3,"2,2,2",1,0,0

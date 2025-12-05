@@ -34,9 +34,13 @@ public:
 	HRESULT Create_Prefab(_wstring szAnimTag);
 	HRESULT Delete_Prefab(_wstring szAnimTag);
 
-	void Anim_Play(CUIBase* pUI, _wstring szAnimTag);
+	void Anim_Play(CUIBase* pUI, _wstring szAnimTag, _float fDelay = 0.f);
 	void Anim_Stop(CUIBase* pUI);
+	_bool Check_Anim_Finish(CUIBase* pUI, _wstring szAnimTag);
 	void Clear_AnimInstances();
+
+	void Set_TargetAnim(CUIBase* pUI, _wstring szAnimTag);
+	CUIAnimInstance* Get_TargetAnim() { return m_pTargetAnim; }
 
 	//void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
 	////void Anim_Pause(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
@@ -46,6 +50,9 @@ public:
 private:
 	vector<CUIAnimInstance*> m_AnimInstances{};
 	map<_wstring, UI_ANIM_DESC> m_AnimDatas{};
+
+	CUIAnimInstance* m_pTargetAnim{ nullptr };
+	_bool m_bTargetAnimFinish{ false };
 
 public:
 	static CUIAnimManager* Create();

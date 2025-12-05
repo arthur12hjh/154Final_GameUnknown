@@ -112,6 +112,7 @@
                     {
                         "TextDesc": {
                             "szText": "새 게임 시작",
+                            "fScale": 1.0,
                             "vColor": [
                                 0.4954545497894287,
                                 0.4954545497894287,
@@ -294,6 +295,41 @@
                 "szProtoTag": "Prototype_GameObject_UI_Button",
                 "szUIID": "Logo_Panel_Button_1-2",
                 "szUITag": "StartButton"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Overlay",
+                    "szTextureComTag": "Com_Texture_UI_Overlay"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 99,
+                "iDrawType": 1,
+                "iLevel": 2,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Intro",
+                        "szPrefabTag": "FadeOut_3"
+                    },
+                    {
+                        "szAnimTag": "Outro",
+                        "szPrefabTag": "FadeIn_3"
+                    }
+                ],
+                "szLayerTag": "Layer_Logo",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "UI_Layer_Logo_Overlay_1-3",
+                "szUITag": "Logo_Overlay"
             }
         ],
         "TextureDesc": {
@@ -315,12 +351,6 @@
         "iLevel": 2,
         "iRenderGroup": 9,
         "iVisibility": 0,
-        "szAnimTags": [
-            {
-                "szAnimTag": "Intro",
-                "szPrefabTag": "FadeIn_1_5"
-            }
-        ],
         "szLayerTag": "Layer_Logo",
         "szProtoTag": "Prototype_GameObject_UI_Panel",
         "szUIID": "UI_Layer_Logo_Panel_0",

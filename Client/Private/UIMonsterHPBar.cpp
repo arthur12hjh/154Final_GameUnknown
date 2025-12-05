@@ -4,7 +4,8 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#include "UIBossVitalWrapper.h"
+#include "UIWorldWrapper.h"
+#include "Nayitba.h"
 
 CUIMonsterHPBar::CUIMonsterHPBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -41,22 +42,14 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	// 테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	if (pMonster)
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-			m_fTargetFill -= 0.1f;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-			m_fTargetFill += 0.1f;
+		auto StaticDesc = pMonster->GetStaticMonsterData();
+		auto CurDesc = pMonster->GetMonsterData();
+
+		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
 	}
-
-	/*if (dynamic_cast<CUIWorldUIWrapper*>(m_pParent)->Get_NaytibaDesc() && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
-	{
-		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
-
-		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentHealth) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxHealth);
-
-	}*/
 		
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }

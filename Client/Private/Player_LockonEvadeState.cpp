@@ -47,24 +47,24 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 	switch (m_eDirection)
 	{
 	case EVADE_DIR::STRAIGHT:
-		if (fAnimationRatio <= 0.275f)
-			m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.3f);
+		if (fAnimationRatio <= 0.3f)
+			m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.5f);
 		break;
 	case EVADE_DIR::LEFT:
-		if (fAnimationRatio <= 0.275f)
-			m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 1.3f);
+		if (fAnimationRatio <= 0.3f)
+			m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 1.5f);
 		break;
 	case EVADE_DIR::RIGHT:
-		if (fAnimationRatio <= 0.275f)
-			m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 1.3f);
+		if (fAnimationRatio <= 0.3f)
+			m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 1.5f);
 		break;
 	case EVADE_DIR::BACKWARD:
-		if (fAnimationRatio <= 0.275f)
-			m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.3f);
+		if (fAnimationRatio <= 0.3f)
+			m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.5f);
 		break;
 	}
 
-	if (fAnimationRatio > 0.35f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+	if (fAnimationRatio > 0.45f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))

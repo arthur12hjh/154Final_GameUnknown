@@ -6,10 +6,10 @@
 namespace Client
 {
 	enum class UI_SHADER_PASS {
-		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE, POTION,
-		SHIELD, BETA, BETA_FX, SKILL_SLOT, SKILL_SLOT_GLOW,
-		RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE,
-		SKILL_WRAPPER_ON_FX
+		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
+		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
+		SKILL_SLOT_GLOW, RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE, SKILL_WRAPPER_ON_FX,
+		LOADING_BLUR
 	};
 
 	typedef struct tagSkillInfoDesc
@@ -119,6 +119,7 @@ namespace Client
 	typedef struct tagUITextDesc
 	{
 		wstring szText{};
+		float	fScale{ 1.f };
 		XMFLOAT4 vColor{ 1.f, 1.f, 1.f, 1.f };
 
 	}UI_TEXT_DESC;

@@ -144,6 +144,7 @@ namespace Client
 		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
 		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION		= 0b00010000, // 16 <- 처형
+		GUARD			= 0b00100000, // 32 <- 가드
 		END
 	};
 
@@ -216,7 +217,7 @@ namespace Client
 	}NAYTIBA_NETWORK_DESC;
 
 	// 인게임용
-	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, END };
+	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, DEAD, END };
 	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
@@ -256,6 +257,7 @@ namespace Client
 		
 		_float3				vImpactDir;
 		_float				fImpactForce;
+		_bool				bIsHitMotion;
 
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;

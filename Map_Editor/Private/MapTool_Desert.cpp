@@ -8,6 +8,7 @@
 #include "Camera_Free.h"
 #include "DesertObject.h"
 #include "Player_Test.h"
+#include "SpawnBox.h"
 #include "Instance_Desert.h"
 
 CMapTool_Desert::CMapTool_Desert()
@@ -99,6 +100,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				_wstring layerTag = L"";
 				_wstring protoTag = L"";
 				RuinComponentDesc pDesc = {};
+				Nayitba_Desc MonsterDesc = {};
 
 				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::DOOR_A)
 				{
@@ -565,6 +567,16 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
 				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SPAWN_BOX4)
+				{
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 4;
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SPAWN_BOX5)
+				{
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 5;
+				}
 
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT)
 				{
@@ -590,7 +602,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				}
 
 				if (pDesc.pComponentTag == nullptr)
-					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag);
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &MonsterDesc);
 				else
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
 
@@ -1069,7 +1081,7 @@ HRESULT CMapTool_Desert::Render()
 		_int nSelectedRock = -1;
 		_int nSelectedStone = -1;
 
-		const _char* characterNames[] = { "Player" };
+		const _char* characterNames[] = { "Player", "Monster4", "Monster5" };
 		
 		const _char* veryBigCanyonNames[] = { "CANYON_127A","CANYON_127B", "CANYON_127C", "CANYON_127D", "CANYON_127E", "CANYON_128A", "CANYON_128B","CANYON_128C",
 												"CANYON_132A", "CANYON_132B", "CANYON_132C", "CANYON_133B" };
@@ -1095,6 +1107,16 @@ HRESULT CMapTool_Desert::Render()
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
 					m_CurrentLayerName = TEXT("Layer_Player_Test");
+				}
+				else if (nSelectedCharacter == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
+					m_CurrentLayerName = TEXT("Layer_Monster");
+				}
+				else if (nSelectedCharacter == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
+					m_CurrentLayerName = TEXT("Layer_Monster");
 				}
 
 			}
@@ -1610,6 +1632,50 @@ HRESULT CMapTool_Desert::Render()
 		}
 	}
 
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szSaveMonsterFilePath[256] = "../Bin/DataFiles/MonsterData_Desert.bin";
+	ImGui::InputText("Monster Save File Path", szSaveMonsterFilePath, sizeof(szSaveMonsterFilePath));
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	// 에디터 세이브 / 로드
+	if (ImGui::Button("Save_Monster"))
+	{
+		// 맵 오브젝트 저장
+		if (FAILED(Save_Monster_Objects(szSaveMonsterFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"몬스터 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"몬스터 저장 성공.", L"알림", MB_OK);
+		}
+	}
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szLoadMonsterFilePath[256] = "../Bin/DataFiles/MonsterData_Desert.bin";
+	ImGui::InputText("Monster Load File Path", szLoadMonsterFilePath, sizeof(szLoadMonsterFilePath));
+
+	if (ImGui::Button("Load_Monster"))
+	{
+		if (FAILED(Load_Monster_Objects(szLoadMonsterFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"몬스터 로드 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"몬스터 로드 성공.", L"알림", MB_OK);
+		}
+	}
+
 	ImGui::End();
 
 	return S_OK;
@@ -1653,6 +1719,24 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Monster_Objects(const _char* szFilePath)
+{
+	// 맵 데이터 파일 열기
+	std::ofstream ofs(szFilePath, std::ios::binary);
+	if (!ofs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Save_Monsters_By_Layer(ofs, TEXT("Layer_Monster")))) return S_OK;
+
+	ofs.close();
+
+	return S_OK;
+}
+
+
 HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag)
 {
 	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
@@ -1685,6 +1769,38 @@ HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar*
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CSpawnBox* pSpawnBox = dynamic_cast<CSpawnBox*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pSpawnBox))
+			{
+				SAVEDMONSTERINFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _uint pId = pSpawnBox->Get_MonsterID();
+				info.iMonsterId = pId;
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDMONSTERINFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 {
 	std::ifstream ifs(szFilePath, std::ios::binary);
@@ -1696,12 +1812,26 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Canyon")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Monster_Objects(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Monsters_By_Layer(ifs, TEXT("Prototype_GameObject_SpawnBox"), TEXT("Layer_Monster")))) return S_OK;
 	ifs.close();
 
 	return S_OK;
@@ -1719,6 +1849,56 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 
 		RuinComponentDesc Desc = {};
 		Desc.pComponentTag = info.szComponentTag;
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+
+		if (SUCCEEDED(hr))
+		{
+			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+			if (pObjs && !pObjs->empty())
+			{
+				CGameObject* pObj = pObjs->back();
+				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
+				if (pTransform)
+				{
+					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+
+					_vector vScale = {};
+					_vector vRotation = {};
+					_vector vPosition = {};
+					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+
+					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
+					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
+					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+
+					// 순서: Scale * Rotation * Translation (SRT 순서)
+					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+
+					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
+					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
+
+				}
+			}
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDMONSTERINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDMONSTERINFO));
+
+		NAYITBA_DESC Desc = {};
+		Desc.iMonsterID = info.iMonsterId;
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
 			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);

@@ -85,6 +85,9 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
+	if (m_pController == nullptr)
+		return;
+
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
 
@@ -145,8 +148,8 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-	CCTDesc.contactOffset = 0.05f;                // 충돌 감지 오프셋
-	CCTDesc.stepOffset = 0.35f;                // 계단 올라갈 수 있는 높이
+	CCTDesc.contactOffset = 0.5f;                // 충돌 감지 오프셋
+	CCTDesc.stepOffset = 0.95f;                // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;
 	CCTDesc.scaleCoeff = 0.9f;
@@ -248,7 +251,10 @@ void CCharacterController::Free()
 		m_pMaterial->release();
 
 	if (nullptr != m_pController)
+	{
 		m_pController->release();
+		m_pController = nullptr;
+	}
 
 	if (nullptr != m_pPxPhysics)
 		m_pPxPhysics = nullptr;

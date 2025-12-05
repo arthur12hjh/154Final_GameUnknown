@@ -39,6 +39,8 @@ public:
 	void								ADD_SenceIgnoreTraceObject(HIT_TYPE eHitType);
 	void								ADD_SenceOnlyTraceObject(HIT_TYPE eHitType);
 
+	_float								GetSenceRadiusDegree() { return XMConvertToDegrees(m_fAiSearchRadius); }
+	_float								GetSenceRadiusRadian() { return m_fAiSearchRadius; }
 #ifdef _DEBUG
 	void								Update_Debuge();
 #endif

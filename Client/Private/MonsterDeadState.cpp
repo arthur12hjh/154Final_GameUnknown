@@ -8,6 +8,7 @@
 CMonsterDeadState::CMonsterDeadState() :
 	CState()
 {
+	m_iStateID = 5;
 }
 
 HRESULT CMonsterDeadState::Initialize(void* pArg)

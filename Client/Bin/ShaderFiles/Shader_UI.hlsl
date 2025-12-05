@@ -891,6 +891,62 @@ PS_OUT PS_SKILL_WRAPPER_ON_FX(PS_IN In)
 
 /*------------------[E_SKILL_WRAPPER_ON_FX]----------------*/
 
+/*------------------[S_LOADING_BLUR]----------------*/
+
+PS_OUT PS_LOADING_BLUR(PS_IN In)
+{
+    PS_OUT Out;
+  
+    float2 uv = In.vTexcoord;
+    
+    float2 texel = float2(0.002, 0.002) * 2.f; // Blur 강도 조절
+
+    float4 sum = 0;
+
+    // 9탭 Gaussian Blur
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, -1)) * 0.05;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, -1)) * 0.09;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, -1)) * 0.12;
+
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, 0)) * 0.15;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, 0)) * 0.18;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, 0)) * 0.15;
+
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, 1)) * 0.12;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, 1)) * 0.09;
+    //sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, 1)) * 0.05;
+    
+    // 1px 주변
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, 0)) * 0.15;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, 0)) * 0.15;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, 1)) * 0.15;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, -1)) * 0.15;
+
+// 대각선 1px
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, 1)) * 0.10;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, 1)) * 0.10;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(1, -1)) * 0.10;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-1, -1)) * 0.10;
+
+// 2px 주변
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(2, 0)) * 0.03;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(-2, 0)) * 0.03;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, 2)) * 0.03;
+    sum += g_Texture0.Sample(DefaultSampler, uv + texel * float2(0, -2)) * 0.03;
+  
+    Out.vColor = sum;
+    
+    if(g_bUseGlow)
+    {
+        Out.vColor.a *= 0.2f;
+        Out.vColor.rgb += sum.rgb * g_GlowIntensity;
+    }
+    
+    return Out;
+}
+
+/*------------------[E_LOADING_BLUR]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1045,7 +1101,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_SKILL_WRAPPER_ON_LINE();
     }
 
-    pass SKILL_WRAPPER_ON_FX // 13
+    pass SKILL_WRAPPER_ON_FX // 14
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
@@ -1053,5 +1109,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SKILL_WRAPPER_ON_FX();
+    }
+
+    pass LOADING_BLUR // 15
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LOADING_BLUR();
     }
 }
