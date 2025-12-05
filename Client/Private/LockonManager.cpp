@@ -128,7 +128,7 @@ void CLockonManager::Lockon(_float fTimeDelta)
         if (!m_pLockonUI)
         {
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, m_pTarget->GetMonsterData().vLockOnPoint);
+            m_pLockonUI = pUIHUD->Rent_WorldUI(TEXT("Pool_LockOnMark"), m_pTarget, &m_pTarget->GetMonsterData().vLockOnPoint);
             Safe_Release(pUIHUD);
         }
 

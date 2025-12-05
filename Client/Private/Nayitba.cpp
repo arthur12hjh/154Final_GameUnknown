@@ -161,7 +161,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 		if (nullptr == m_pStatusUI)
 		{
 			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, m_MonsterInfo.vStatusBarPoint);
+			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
 			Safe_Release(pCurHUD);
 		}
 		if (0 >= m_MonsterInfo.iCurrentHealth)

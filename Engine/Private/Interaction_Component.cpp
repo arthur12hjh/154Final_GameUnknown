@@ -70,6 +70,11 @@ void CInteraction_Component::ADD_InteractionOnlyHitObject(HIT_TYPE typeID)
     m_pOBBColiider->ADD_OnlyHitObject(typeID);
 }
 
+const _float3& CInteraction_Component::Get_CenterPos()
+{
+    return m_pOBBColiider->GetBounding().Center;
+}
+
 #ifdef _DEBUG
 HRESULT CInteraction_Component::Render()
 {

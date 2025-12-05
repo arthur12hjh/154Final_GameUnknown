@@ -51,6 +51,9 @@ bool g_UseCover = false;
 
 bool g_bRushActiveOn = false;
 
+bool g_bUseScale = false;
+float g_fScale = { 1.f };
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -947,6 +950,111 @@ PS_OUT PS_LOADING_BLUR(PS_IN In)
 
 /*------------------[E_LOADING_BLUR]----------------*/
 
+/*------------------[S_SIMPLE_KEY]----------------*/
+
+PS_OUT PS_SIMPLE_KEY(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    float2 KeyUv = In.vTexcoord;
+    float baseScale = 0.25f;
+    
+    float4 Color = float4(1.f, 1.f, 1.f, 1.f);
+    
+    uv -= float2(0.5f, 0.5f);
+    uv /= baseScale;
+    uv += float2(0.5f, 0.5f);
+    
+    float base = g_Texture0.Sample(ClampSampler, uv).r;
+    
+    base *= 1.f - g_fScale;
+    Color.a *= base;
+    
+    if(g_bUseScale)
+    {
+        KeyUv -= float2(0.5f, 0.5f);
+        KeyUv /= g_fScale;
+        KeyUv += float2(0.5f, 0.5f);
+    }
+    
+    float4 key = g_Texture1.Sample(ClampSampler, KeyUv);
+    
+    key.a *= g_Alpha;
+    
+    //float4 result = base;
+    Color = lerp(Color, key, key.a);
+    
+    Out.vColor = Color;
+    
+    return Out;
+}
+
+/*------------------[E_SIMPLE_KEY]----------------*/
+
+/*------------------[S_INTERACTION_FX]----------------*/
+
+PS_OUT PS_INTERACTION_FX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+
+    float4 base = g_Texture.Sample(DefaultSampler, uv);
+    float mask = g_Texture0.Sample(DefaultSampler, uv).r;
+    float4 glow = g_Texture0.Sample(DefaultSampler, uv);
+    
+    float alpha = mask;
+
+    base.rgb *= alpha; // Additive 유지하면서 투명하게 만들기
+    base.a = alpha;
+    
+    float4 result = base;
+    //result = lerp(result, mask, mask.a);
+    result = lerp(result, glow, glow.a);
+    
+    Out.vColor = base * g_Alpha;
+    
+    //float4 result = base;
+    //result = lerp(result, mask, mask.a);
+    
+    //Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_INTERACTION_FX]----------------*/
+
+/*------------------[S_INTERACTION_FX_GLOW]----------------*/
+
+PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+    float2 uv = In.vTexcoord;
+
+    // GlowMask
+    float4 glow = g_Texture0.Sample(DefaultSampler, uv);
+    // LightFX
+    float4 flare = g_Texture1.Sample(DefaultSampler, uv);
+
+    // --- Additive 합성 ---
+    // Additive = rgb끼리 더하고 alpha는 필요 없음
+    float3 result = float3(0, 0, 0);
+
+    // GlowMask의 "빛나는 부분"만 add
+    glow.a *= g_Alpha * 0.5f;
+    result += glow.rgb * glow.a * (g_GlowIntensity * 0.5f);
+    
+    // LightFX의 "빛나는 부분" 추가
+    flare.a *= g_Alpha;
+    result += flare.rgb * flare.a * g_GlowIntensity;
+    
+    Out.vColor = float4(result, 1.f); // additive는 보통 알파 1로 출력
+    return Out;
+}
+
+/*------------------[E_INTERACTION_FX_GLOW]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1119,5 +1227,35 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LOADING_BLUR();
+    }
+
+    pass SIMPLE_KEY // 16
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SIMPLE_KEY();
+    }
+
+    pass INTERACTION_FX // 17
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_INTERACTION_FX();
+    }
+
+    pass INTERACTION_FX_GLOW // 18
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_INTERACTION_FX_GLOW();
     }
 }
