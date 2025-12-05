@@ -253,6 +253,10 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 					else
 						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 				}
+				else
+				{
+					MoveAction(true);
+				}
 			}
 			else
 			{

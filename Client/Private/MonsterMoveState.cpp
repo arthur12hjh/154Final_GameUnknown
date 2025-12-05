@@ -98,7 +98,7 @@ void CMonsterMoveState::Update(_float fTimeDelta)
 
         // 여기서 범위가 딱 걸쳐있을때 계속
         // 애니메이션이 변경되어 이상하게 나오는거
-        if (m_pOwnerInfo->fAttackRange >= fDistance && m_bIsCaution)
+        if (m_bIsCaution)
         {
             bIsMove = false;
             Update_Caution(fTimeDelta);
@@ -134,16 +134,15 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
         if (DIRECTION::BACK != m_vMoveDirection)
         {
             m_bIsFinished = true;
+            m_bIsEnableChange = true;
             return;
         }
     }
-    else
+    else if(m_pOwnerInfo->fAttackRange * 2.f <= fDistance)
     {
-        if (DIRECTION::BACK == m_vMoveDirection)
-        {
-            m_bIsFinished = true;
-            return;
-        }
+        m_bIsFinished = true;
+        m_bIsEnableChange = true;
+        return;
     }
 
     AnimationName += "_Caution";
@@ -216,8 +215,13 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
-        if (m_pOwnerInfo->fAttackRange < fDistance || 0 < m_iSectionIndex)
+       /* if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
         {
+            m_iSectionIndex = 0;
+            m_bIsCaution = true;
+        }
+        else
+        {*/
             if (1 == m_iSectionIndex)
             {
                 AnimationName += "_Run_L";
@@ -225,12 +229,11 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
                 LerpLookAt(fTimeDelta, 2.f);
                 m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
 
-                if (m_pOwnerInfo->fAttackRange * 0.65f > fDistance)
-                {
+                if (m_pOwnerInfo->fAttackRange * 0.7f >= fDistance)
                     m_iSectionIndex++;
-                }
             }
-            else if (2 == m_iSectionIndex)
+
+            if (2 == m_iSectionIndex)
             {
                 AnimationName += "_Run_E";
                 m_bIsEnableChange = true;
@@ -238,15 +241,10 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             }
             else
             {
-                LerpLookAt(fTimeDelta, 8.f);
+                LerpLookAt(fTimeDelta, 4.f);
                 m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
             }
-        }
-        else if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
-        {
-            m_iSectionIndex = 0;
-            m_bIsCaution = true;
-        }
+       // }
     }
     else
     {
@@ -270,7 +268,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         }
     }
 
-    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop);
+    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, 0.08f);
     pEntity->Play_Animation(fTimeDelta);
 
     if (pEntity->IsAnmiationFinished())

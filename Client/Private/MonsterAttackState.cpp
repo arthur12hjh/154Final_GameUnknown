@@ -237,9 +237,6 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 
 	if (bMoveAction)
 		LerpMoveAction(fTimeDelta, fSpeed);
-
-	if (0.25f >= fAnimPlayRatio)
-		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta * 3.f));
 }
 
 void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
@@ -356,13 +353,12 @@ void CMonsterAttackState::SearchTargetDistance()
 
 void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 {
+	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
 	if (1.f >= m_fDistance - m_pSkillData->fRange)
 		return;
 	
 	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange);
 	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
-
-	LerpRotation(fTimeDelta, 5.f);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
@@ -374,10 +370,9 @@ _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
 	vTempPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
 	_vector vLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
-	vLook.m128_f32[1] = vDir.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vTargetPos - vTempPos);
 
-	return vOwnerPos + XMVectorLerp(vLook, vDir, fRatio);
+	return vOwnerPos + XMVectorLerp(vLook, vDir, fRatio * fSpeed);
 }
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)
