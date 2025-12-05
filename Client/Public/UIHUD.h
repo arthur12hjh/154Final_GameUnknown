@@ -48,7 +48,7 @@ public:
 
 	CUIBase* Rent_WorldUI(const _wstring& szPoolTag,
 							CGameObject* pParent,
-							const _float3& vTargetPos = { 0,0,0 },
+							const _float3* vTargetPos = nullptr,
 							_bool bBillboard = true);
 
 	void Return_WorldUI(CUIBase*& pUI);
