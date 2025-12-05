@@ -18,6 +18,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
 	, m_iNumVertexBuffers{ Prototype.m_iNumVertexBuffers }
 	, m_eIndexFormat{ Prototype.m_eIndexFormat }
 	, m_ePrimitive{ Prototype.m_ePrimitive }
+	, m_pIndices { Prototype.m_pIndices }
 {
 
 
@@ -120,6 +121,11 @@ _uint CVIBuffer::GetIndices()
 DXGI_FORMAT CVIBuffer::GetIndexFormat()
 {
 	return m_eIndexFormat;
+}
+
+_uint* CVIBuffer::Get_Indices()
+{
+	return m_pIndices;
 }
 
 void CVIBuffer::Free()

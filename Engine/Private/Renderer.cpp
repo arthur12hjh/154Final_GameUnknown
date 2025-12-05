@@ -285,10 +285,7 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_SSSAO"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_SpecDetail"))))
-		return E_FAIL;
+
 	/* MRT_LightAcc */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -415,6 +412,14 @@ void* CRenderer::Get_Volumetric_Desc()
 	return &m_VolumetricDesc;
 }
 
+void* CRenderer::Get_HDR_Desc()
+{
+	m_HDRDesc.fHDRExposure = &m_fHDRExposure;
+	m_HDRDesc.isHDR = &m_isHDR;
+
+	return &m_HDRDesc;
+}
+
 void CRenderer::Render_Priority()
 {
 	/* Diffuse + Normal */
@@ -514,12 +519,6 @@ void CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ORM"), m_pShader, "g_ORMTexture")))
 		return;
-
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_SSSAO"), m_pShader, "g_SSSAOTexture")))
-		return;
-
-	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_SpecDetail"), m_pShader, "g_SpecDetailTexture")))
-	//	return;
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return;
@@ -701,6 +700,9 @@ void CRenderer::ToneMapping()
 		return;
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Screen"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fHDRExposure", &m_fHDRExposure, sizeof(_float))))
 		return;
 
 	if(true == m_isHDR)
