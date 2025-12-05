@@ -356,14 +356,14 @@ void CMonsterAttackState::SearchTargetDistance()
 
 void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 {
-	if (m_StaticMonsterData->fAttackRange - m_pSkillData->fRange >= m_fDistance)
+	if (1.f >= m_fDistance - m_pSkillData->fRange)
 		return;
 	
-	fSpeed = m_fDistance - m_StaticMonsterData->fMoveSpeed;
+	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange);
 	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 
-	LerpRotation(fTimeDelta, 3.f);
-	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), fSpeed);
+	LerpRotation(fTimeDelta, 5.f);
+	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
 _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)

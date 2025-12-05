@@ -222,8 +222,8 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             {
                 AnimationName += "_Run_L";
                 // 전투 상태라면 이거 Target을 향해서 뛰어간다.
-                LerpLookAt(fTimeDelta, 3.f);
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
+                LerpLookAt(fTimeDelta, 2.f);
+                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
 
                 if (m_pOwnerInfo->fAttackRange * 0.65f > fDistance)
                 {
