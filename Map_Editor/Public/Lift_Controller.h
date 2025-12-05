@@ -6,12 +6,19 @@
 NS_BEGIN(Engine)
 class CModel;
 class CShader;
+class CCollider;
 NS_END
 
 NS_BEGIN(Tool_Map)
 
 class CLift_Controller final : public CDesertObject
 {
+public:
+	enum LIFT_STATE
+	{
+		LIFT_PULL, LIFT_PUSH, LIFT_END
+	};
+
 private:
 	CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CLift_Controller(const CLift_Controller& Prototype);
@@ -24,6 +31,11 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+private:
+	LIFT_STATE m_eCurState = { LIFT_STATE::LIFT_END };
+	LIFT_STATE m_ePrevState = { LIFT_STATE::LIFT_END };
+	CCollider* m_pColliderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

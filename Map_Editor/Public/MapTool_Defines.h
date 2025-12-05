@@ -61,6 +61,10 @@ namespace Tool_Map
 		LAMP_47A, VendingMachine_6A, VendingMachine_7A,
 #pragma endregion
 
+#pragma region Spawner
+		SPAWN_BOX4, SPAWN_BOX5,
+#pragma endregion
+
 		TERRAIN_INCREASE_RECT, TERRAIN_DECREASE_RECT, TERRAIN_FLAT, TERRAIN_UP, TERRAIN_DOWN, TERRAIN_HILL, MASK_BLACK, MASK_WHITE, 
 		
 		XION_BUILDING,
