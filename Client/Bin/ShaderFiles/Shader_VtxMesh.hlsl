@@ -68,7 +68,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }

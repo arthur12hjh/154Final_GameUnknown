@@ -3,13 +3,35 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
-float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord, float3 vNormal, float3 vTangent, float3 vBinormal)
+
+float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
+                   float3 vNormal, float3 vTangent, float3 vBinormal)
 {
-    vector vNormalDesc = NormalTexture.Sample(MirrorSampler, vTexcoord);
-    float3x3 WorldMatrix = float3x3(vTangent, vBinormal * -1.f, vNormal);
-    float3 vResultNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
- 
-    return float4(vResultNormal * 0.5f + 0.5f, 0.f);
+    // XY only normal map
+    float2 xy = NormalTexture.Sample(NormalSampler, vTexcoord).rg * 2.f - 1.f;
+
+    // Z º¹¿ø
+    float z = sqrt(saturate(1.f - dot(xy, xy)));
+
+    float3 normalTS = float3(xy, z); // tangent-space normal
+
+    float3x3 WorldMatrix = float3x3(vTangent,vBinormal * -1.f, vNormal);
+
+    float3 vResultNormal = mul(normalTS, WorldMatrix);
+
+    return float4(normalize(vResultNormal) * 0.5f + 0.5f, 0.f);
+}
+
+vector Calc_ORSS(texture2D ORSSTexture, float2 vTexcoord)
+{
+    vector vORSS = ORSSTexture.Sample(DefaultSampler, vTexcoord);
+    return float4(vORSS.r, vORSS.g, vORSS.b, vORSS.a);
+}
+
+vector Calc_ORM(texture2D ORMTexture, float2 vTexcoord)
+{
+    vector vORM = ORMTexture.Sample(DefaultSampler, vTexcoord);
+    return float4(vORM.r, vORM.g, vORM.b, 0.f);
 }
 
 vector Calc_Emissive(texture2D EmissiveMask, vector vDiffuse, float2 vTexCoord)
