@@ -43,65 +43,53 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
     m_bIsEnableChange = false;
-    if (0 == strcmp("None", pSkillData->szHitAnimationName))
+    if (pDesc->bIsHitMotion)
     {
-        _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
-        _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
-        if (0 <= fScalar)
+        if (0 == strcmp("None", pSkillData->szHitAnimationName))
         {
-            szAnimationName += "_Fw";
+            _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
+            _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
+            if (0 <= fScalar)
+            {
+                szAnimationName += "_Fw";
 
-            // Right 백터랑 맞은 방향이랑 내적하면 스칼라가 나오고
-            // 그걸 acos해서 라디안으로 바꾸자
-           /* _float fRadian = atan2f(pDesc->vHitDir.y, pDesc->vHitDir.x);
-            
-            fRadian = XMConvertToDegrees(fRadian);
-            if (45.f <= fRadian && 135.f > fRadian)
-            {
-                szAnimationName += "_Fw_Uw";
+                switch (pSkillData->eATK_Direction)
+                {
+                case ATTACK_DIRECTION::ATK_LEFT:
+                    szAnimationName += "_Lw";
+                    break;
+                case ATTACK_DIRECTION::ATK_RIGHT:
+                    szAnimationName += "_Rw";
+                    break;
+                }
             }
-            else if (135.f <= fRadian && 225.f > fRadian)
+            else
+                szAnimationName += "_Bw";
+
+            if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
             {
-                szAnimationName += "_Lw";
-            }
-            else if (225.f <= fRadian && 315.f > fRadian)
-            {
-                szAnimationName += "_Fw_Dw";
+                XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
             }
             else
             {
-                szAnimationName += "_Rw";
-            }*/
-
-            switch (pSkillData->eATK_Direction)
-            {
-            case ATTACK_DIRECTION::ATK_LEFT :
-                szAnimationName += "_Lw";
-                break;
-            case ATTACK_DIRECTION::ATK_RIGHT:
-                szAnimationName += "_Rw";
-                break;
+                m_vImpactDir = pDesc->vImpactDir;
             }
-        }
-        else
-            szAnimationName += "_Bw";
-
-        if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
-        {
-            XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+            m_fImpactForce = pDesc->fImpactForce;
         }
         else
         {
-            m_vImpactDir = pDesc->vImpactDir;
+            szAnimationName = pSkillData->szHitAnimationName;
         }
-        m_fImpactForce = pDesc->fImpactForce;
+        pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f, 0.12f, true);
     }
     else
     {
-        szAnimationName = pSkillData->szHitAnimationName;
+        szAnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
+        szAnimationName += "_ShieldParry";
+        pEntity->Set_Animation(szAnimationName.c_str(), false, 0.3f, 0.08f, true, 4.f, 0.f);
     }
+    
 
-    pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f, 0.12f, true);
 }
 
 void CMonsterHitState::Update(_float fTimeDelta)

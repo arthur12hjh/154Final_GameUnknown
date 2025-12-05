@@ -33,6 +33,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		return E_FAIL;
 
 	ResetAction(true);
+	m_bIsControllLift = true;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 
 	return S_OK;

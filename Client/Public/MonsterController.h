@@ -37,6 +37,7 @@ private :
 
 	const		Naytiba_Desc*		m_pOwnerData = { nullptr };
 
+
 	_float							m_fAttackDelay = {};
 	_float2							m_vAttackTime = {};
 

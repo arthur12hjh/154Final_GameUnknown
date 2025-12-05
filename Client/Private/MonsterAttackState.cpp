@@ -56,6 +56,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	}
 
 	ReadySetting();
+	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
 	_float fAttackSpeed = m_pGameInstance->Random(1.f, 1.7f);
@@ -95,7 +96,8 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 
 void CMonsterAttackState::End()
 {
-
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	pEntity->SetAttackData(nullptr);
 }
 
 void CMonsterAttackState::ReadySetting()

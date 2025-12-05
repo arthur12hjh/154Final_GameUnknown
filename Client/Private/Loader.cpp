@@ -674,6 +674,15 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	vector<string> szTargetTagList;
+	szTargetTagList.push_back("Haed001_end");
+
+	auto pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
+	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
+
+
+
+
 	/* For.Prototype_Component_Model_CM_Rock2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock2");
