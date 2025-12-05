@@ -144,7 +144,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001_PH_L-Wrist-Target",
+                "szSocketTag": "Bip001-L-Hand",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -184,7 +184,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001_PH_R-Wrist-Target",
+                "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
