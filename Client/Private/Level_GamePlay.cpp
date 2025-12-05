@@ -54,7 +54,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
+	Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
