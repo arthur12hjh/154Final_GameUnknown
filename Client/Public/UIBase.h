@@ -68,6 +68,7 @@ public:
 
 	void Set_Position(_float fX, _float fY);
 	void Set_Rotation(_float fRotation);
+	void Set_Texture_Scale(_float fScale);
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);
@@ -118,7 +119,6 @@ protected:
 private:
 	HRESULT Ready_Texture();
 	HRESULT Ready_Events();
-	HRESULT Initialize_ShaderResources();
 
 	// ★ 중앙 브로드캐스트: 파생형에서 더 이상 오버라이드 필요 없음
 	virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg);
@@ -136,6 +136,8 @@ private:
 protected:
 	virtual HRESULT Ready_Components();
 	virtual HRESULT Bind_ShaderResources();
+	virtual HRESULT Initialize_ShaderResources();
+
 	//virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE; // 이벤트 동작 수행
 	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) PURE; // 어떤 데이터를 감지할지
 	//virtual void CallbackEvent(void* pArg) PURE; // 콜백 함수

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "NayitbaPartBody.h"
+#include "StringHelper.h"
+#include "Effect.h"
 
 #include "GameInstance.h"
 
@@ -113,6 +115,68 @@ HRESULT CNayitbaPartBody::Render_Shadow()
             return E_FAIL;
     }
     return S_OK;
+}
+
+void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+    if (strObjectTag == TEXT("Play_Effect"))
+    {
+        CEffect* pEffect = nullptr;
+        for (auto Effect : m_pEffects)
+        {
+            if (Effect.second == NotifyReference.iNumData01) {
+                pEffect = Effect.first;
+                break;
+            }
+        }
+        
+        if (nullptr == pEffect) {
+            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            EffectDesc.fRotationPerSec = 1.f;
+            EffectDesc.fSpeedPerSec = 1.f;
+
+            if (NotifyReference.szSocketTag.compare("None") == 0)
+            {
+                EffectDesc.pRootMatrix = nullptr;
+                EffectDesc.pWorldMatrix = nullptr;
+            }
+            else if (NotifyReference.szSocketTag.compare("Transform") == 0)
+            {
+                EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+                EffectDesc.pWorldMatrix = nullptr;
+            }
+            else
+            {
+                EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
+                EffectDesc.pWorldMatrix = &m_CombinedWorldMatrix;
+            }
+
+            EffectDesc.vPos = XMVectorSet(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 1);
+            EffectDesc.fRot = _float3(XMConvertToRadians(NotifyReference.vNotifyRotation.x), XMConvertToRadians(NotifyReference.vNotifyRotation.y), XMConvertToRadians(NotifyReference.vNotifyRotation.z));
+            EffectDesc.fSize = NotifyReference.vNotifyScale.x;
+
+            _TCHAR szEffectTag[MAX_PATH];
+            CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
+
+            pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+            m_pEffects.push_back({ pEffect, NotifyReference.iNumData01 });
+        }
+        pEffect->Play();
+    }
+    else if (strObjectTag == TEXT("Stop_Effect"))
+    {
+        CEffect* pEffect = nullptr;
+        for (auto Effect : m_pEffects)
+        {
+            if (Effect.second == NotifyReference.iNumData01) {
+                pEffect = Effect.first;
+                break;
+            }
+        }
+        if (nullptr != pEffect)
+            pEffect->Stop();
+    }
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)

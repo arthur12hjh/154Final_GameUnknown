@@ -51,26 +51,24 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 	IBDesc.MiscFlags = 0;
 
 
-	_uint* pIndices = new _uint[m_iNumIndices];
-	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
+	m_pIndices = new _uint[m_iNumIndices];
+	ZeroMemory(m_pIndices, sizeof(_uint) * m_iNumIndices);
 
 	_uint	iNumIndices = {};
 
 	for (size_t i = 0; i < pBinMesh->iNumFaces; i++)
 	{		
-		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[0];
-		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[1];
-		pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[2];
+		m_pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[0];
+		m_pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[1];
+		m_pIndices[iNumIndices++] = pBinMesh->vFaces[i].vIndices[2];
 	}
 
 
 	D3D11_SUBRESOURCE_DATA	InitialIBData{};
-	InitialIBData.pSysMem = pIndices;
+	InitialIBData.pSysMem = m_pIndices;
 
 	if (FAILED(m_pDevice->CreateBuffer(&IBDesc, &InitialIBData, &m_pIB)))
 		return E_FAIL;
-
-	Safe_Delete_Array(pIndices);
 
 #pragma endregion
 	
@@ -155,6 +153,7 @@ HRESULT CMesh::Ready_VertexBuffer_For_NonAnim(const binMesh* pBinMesh, _fmatrix 
 	{
 		memcpy(&pVertices[i].vPosition, &pBinMesh->vPositions[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PreTransformMatrix));
+		memcpy(&m_pVertexPositions[i], &pVertices[i].vPosition, sizeof(_float3));
 
 		memcpy(&pVertices[i].vNormal, &pBinMesh->vNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PreTransformMatrix)));
@@ -324,5 +323,7 @@ void CMesh::Free()
 
 	Safe_Delete_Array(m_pBoneMatrices);
 
+	if(false == m_isCloned)
+		Safe_Delete_Array(m_pIndices);
 
 }

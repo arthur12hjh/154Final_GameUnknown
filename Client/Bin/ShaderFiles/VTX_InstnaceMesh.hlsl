@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
+Texture2D g_ORMTexture;
 Texture2D g_MaskTexture;
 
 float g_CamFar;
@@ -158,6 +159,10 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
+    float4 vSSSAO : SV_TARGET5;
+    float4 vSpecDetail : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -175,6 +180,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); 
+    
     return Out;
 }
 

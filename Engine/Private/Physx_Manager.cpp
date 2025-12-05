@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "GameInstance.h"
+#include "RigidBody.h"
 
 CPhysx_Manager::CPhysx_Manager()
 {

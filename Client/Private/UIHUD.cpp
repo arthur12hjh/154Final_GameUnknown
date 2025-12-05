@@ -211,6 +211,11 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			jShader["fPulseTime"] = pDesc.m_tUIShaderDesc.fPulseTime;
 			jShader["fPulseSpeed"] = pDesc.m_tUIShaderDesc.fPulseSpeed;
 		}
+		if (pDesc.m_tUIShaderDesc.bUseScale)
+		{
+			jShader["bUseScale"] = pDesc.m_tUIShaderDesc.bUseScale;
+			jShader["fScale"] = pDesc.m_tUIShaderDesc.fScale;
+		}
 
 		jObj["Shader"] = jShader;
 	}
@@ -404,6 +409,12 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 				ShaderDesc.bUseGlow = jShader["bUseGlow"].get<_bool>();
 				ShaderDesc.fGlowIntensity = jShader["fGlowIntensity"].get<_float>();
 				ShaderDesc.fGlowSpread = jShader["fGlowSpread"].get<_float>();
+			}
+
+			if (jShader.contains("bUseScale"))
+			{
+				ShaderDesc.bUseScale = jShader["bUseScale"].get<_bool>();
+				ShaderDesc.fScale = jShader["fScale"].get<_float>();
 			}
 
 			if (jShader.contains("bUsePulseEffect"))
@@ -614,6 +625,12 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		if (jShader.contains("bDiscardBlack"))
 		{
 			ShaderDesc.bDiscardBlack = jShader["bDiscardBlack"].get<_bool>();
+		}
+
+		if (jShader.contains("bUseScale"))
+		{
+			ShaderDesc.bUseScale = jShader["bUseScale"].get<_bool>();
+			ShaderDesc.fScale = jShader["fScale"].get<_float>();
 		}
 
 		if (jShader.contains("bUseGlow"))
@@ -863,7 +880,7 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	return S_OK;
 }
 
-CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3& vTargetPos, _bool bBillboard)
+CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3* vTargetPos, _bool bBillboard)
 {
 	auto it = m_WorldUIs.find(poolKey);
 	if (it == m_WorldUIs.end() || it->second.empty()) return nullptr;
@@ -879,7 +896,7 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 
 	if (pParent) {
 		pUI->SetParent(pParent);
-		pUI->Set_TargetPos(&vTargetPos);
+		pUI->Set_TargetPos(vTargetPos);
 	}
 
 	return pUI;

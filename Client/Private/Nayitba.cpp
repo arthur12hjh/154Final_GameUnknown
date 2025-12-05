@@ -161,7 +161,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 		if (nullptr == m_pStatusUI)
 		{
 			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, m_MonsterInfo.vStatusBarPoint);
+			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
 			Safe_Release(pCurHUD);
 		}
 		if (0 >= m_MonsterInfo.iCurrentHealth)
@@ -264,6 +264,17 @@ CAIController* CNayitba::GetController()
 const list<CGameObject*>* CNayitba::GetTraceObejectList()
 {
 	return m_pAISenceCom->GetSearchAllObject();
+}
+
+void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	if (strPartTag.empty())
+	{
+	}
+	else
+	{
+		Find_PartObject(strPartTag)->Active_SFX(strObjectTag, NotifyReference);
+	}
 }
 
 HRESULT CNayitba::Ready_CharacterData()

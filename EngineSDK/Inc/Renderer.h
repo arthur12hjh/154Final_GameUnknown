@@ -24,6 +24,7 @@ public:
 	void*   Get_SSAO_Desc();
 	void*	Get_MotionBlur_Desc();
 	void*   Get_Volumetric_Desc();
+	void*	Get_HDR_Desc();
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
@@ -65,7 +66,9 @@ private:
 	
 	_bool								m_isBloom = { false };
 	_bool								m_isFog = { false };
+	HDR_DESC							m_HDRDesc = {};
 	_bool								m_isHDR = { true };
+	_float								m_fHDRExposure = { 0.5f };
 	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };

@@ -66,8 +66,11 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
-	if(nullptr != m_pCharge)
+	if (nullptr != m_pCharge) {
 		m_pCharge->Update(fTimeDelta);
+		if(m_pCharge->isDead())
+			Safe_Release(m_pCharge);
+	}
 
 
 	//ANIM_NOTIFY GaraNotify;
@@ -165,7 +168,6 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		if (m_fChargeTime <= 0.f)
 		{
 			m_pCharge->End();
-			Safe_Release(m_pCharge);
 		}
 	}
 
@@ -263,6 +265,14 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 			m_pCharge->Play();
 		}
 		m_fChargeTime = NotifyReference.fNumData01;
+	}
+	else if (strObjectTag == TEXT("Charge_Time"))
+	{
+		m_fChargeTime = NotifyReference.fNumData01;
+		if (m_fChargeTime <= 0.f)
+		{
+			m_pCharge->End();
+		}
 	}
 
 }

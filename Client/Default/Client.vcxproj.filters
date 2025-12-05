@@ -673,6 +673,15 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
       <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction">
+      <UniqueIdentifier>{9f3b1d4f-cabc-4503-a50e-a491952ed13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey">
+      <UniqueIdentifier>{0d498df9-81b7-4e01-b3ec-855731bc09a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX">
+      <UniqueIdentifier>{711f2d7d-b11b-4829-bb26-9e4ada82edcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1366,6 +1375,12 @@
     <ClInclude Include="..\Public\UILoadingBlur.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UISimpleKey.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIInteractionFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2028,6 +2043,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UILoadingBlur.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UISimpleKey.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIInteractionFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

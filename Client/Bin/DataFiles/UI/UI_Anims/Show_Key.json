@@ -1,0 +1,39 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.5,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "Scale",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.5,
+    "isBeapBeap": false,
+    "isInfluenceChildren": true,
+    "isLoop": false,
+    "szAnimTag": "Show_Key"
+}

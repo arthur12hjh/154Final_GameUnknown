@@ -14,6 +14,7 @@ vector g_vCamPosition;
 float g_fDensity;
 float g_fStepSize;
 float g_fVolumetricG;
+float g_fHDRExposure; 
 
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
@@ -77,17 +78,25 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
 
-    // ====== 텍스처 샘플링 ======
-    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); // ORSS/ORM 통합맵
+    // ===== 텍스처 샘플링 =====
+    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); // ORM + ORSS 통합
     float4 vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
 
-    float3 N = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    // 기본 노멀
+    float3 N;
+    {
+        float3 n = vNormalDesc.xyz * 2.f - 1.f;
+        // 과한 디테일 억제용 강도 조절(원하면 1.0f로)
+        float normalStrength = 0.35f;
+        n.xy *= normalStrength;
+        N = normalize(n);
+    }
 
+    // ===== 뎁스에서 위치 복원 =====
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float viewZ = vDepthDesc.y * 500.f;
 
-    // ====== Position reconstruct ======
     float4 pos;
     pos.x = In.vTexcoord.x * 2.f - 1.f;
     pos.y = In.vTexcoord.y * -2.f + 1.f;
@@ -101,25 +110,30 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 V = normalize((pos - g_vCamPosition).xyz);
     float3 L = normalize(g_vLightDir.xyz) * -1.f;
 
-    // ====== ORSS / ORM 통합 파라미터 ======
+    // ===== 공통 파라미터 =====
     float AO = vORMDesc.r;
     float Rough = vORMDesc.g;
-    float Metal_Raw = vORMDesc.b;
+    float MetalSrc = vORMDesc.b;
     float A = vORMDesc.a;
 
     float Metallic = 0.f;
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
 
-    bool isFallback = (AO == 0 && Rough == 0 && Metal_Raw == 0 && A == 0);
-    bool isORSS = (A > 0.f && A < 1.f);
-    bool isORM = (A == 1.f);
-    bool isSpec = (A == 2.f);
+    // 어떤 데이터라도 들어 있으면 "packed" 라고 판단
+    bool hasPacked = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
 
-    // Phong 
-    if (isFallback)
+    // ORSS(피부) : A > 0
+    bool isORSS = hasPacked && (A > 0.f);
+    // ORM(일반 재질) : A == 0 && RGB 중 하나라도 있음
+    bool isORM = hasPacked && (A == 0.f);
+
+    // ===== 1) Fallback : 전혀 데이터 없으면 Phong =====
+    if (!hasPacked)
     {
+        float NdotL = saturate(dot(N, L));
+
         float3 diff = vAlbedo.rgb * g_vLightDiffuse.rgb *
-            saturate(max(dot(L, N), 0.f) + (g_vLightAmbient.rgb * g_vMtrlAmbient.rgb));
+                      saturate(NdotL + (g_vLightAmbient.rgb * g_vMtrlAmbient.rgb));
 
         float3 refl = reflect(-L, N);
         float3 spec = (g_vLightSpecular.rgb * g_vMtrlSpecular.rgb) *
@@ -130,41 +144,33 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         return Out;
     }
 
-    // SPEC 전용 
-    if (isSpec)
+    // ===== 2) ORSS : 피부 (Specular Workflow + SSS) =====
+    if (isORSS)
     {
+        // ORSS 정의: R=AO, G=Roughness, B=Specular(F0 Scale), A=SSSMask
         AO = vORMDesc.r;
         Rough = max(vORMDesc.g, 0.05f);
 
-        // 변환
-        float specFactor = vORMDesc.b;
-        float baseF0 = 0.04f;
-        float oneMinusF0 = 1.f - baseF0;
+        float specFactor = saturate(vORMDesc.b); // 0~1
+        Metallic = 0.f;
 
-        Metallic = saturate((specFactor - baseF0) / oneMinusF0);
-
-        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
+        // 피부용 F0 (기본 0.028 근처 + SpecFactor 보정)
+        float3 baseF0 = float3(0.028f, 0.028f, 0.028f);
+        F0 = baseF0 + specFactor * 0.12f; // 최대 ~0.15 근처
     }
-    // 일반 ORM 
+    // ===== 3) ORM : 일반 재질 (Metallic Workflow) =====
     else if (isORM)
     {
+        // ORM 정의: R=AO, G=Roughness, B=Metallic
         AO = vORMDesc.r;
         Rough = max(vORMDesc.g, 0.05f);
-        Metallic = vORMDesc.b;
+        Metallic = saturate(vORMDesc.b);
 
-        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
-    }
-    // ORSS 피부 SSS 가능 
-    else if (isORSS)
-    {
-        AO = vORMDesc.r;
-        Rough = max(vORMDesc.g, 0.05f);
-        Metallic = vORMDesc.b;
-
+        // 표준 금속/비금속 F0
         F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
 
-    // PBR 계싼
+    // ===== PBR 라이트 계산 =====
     float AOStr = lerp(1.3f, 2.f, AO);
 
     Out = PBR_Light(
@@ -182,34 +188,33 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     Out.vShade.rgb *= AOStr;
 
-    //  SSS 적용 : 오직 ORSS(피부, 0<A<1) 에만 적용됨
+    // ===== SSS : 오직 ORSS(피부)만 적용 =====
     if (isORSS)
     {
-        float3 SSSProfile = g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord).rgb;
+        float3 base = Out.vShade.rgb;
 
-        // 3-Layer SSS 모델
-        float wEpi = 0.55f;
-        float wSub = 1.00f;
-        float wDeep = 0.25f;
+    // 1) 기본 밝기(루마) 계산 ? 이건 유지
+        float luma = dot(base, float3(0.299f, 0.587f, 0.114f));
 
-        float SSSLayer =
-            SSSProfile.r * wEpi +
-            SSSProfile.g * wSub +
-            SSSProfile.b * wDeep;
+    // 2) 타겟 혈색 톤 (강하게 붉은 피부톤)
+        float3 bloodHue = float3(1.30f, 0.55f, 0.50f); // 세게 주고 싶으면 R 좀 더 올려도 됨
+        bloodHue = normalize(bloodHue);
 
-        SSSLayer = saturate(SSSLayer);
+    // "밝기는 base와 같고, 색만 혈색 쪽으로 도는" 타겟 컬러
+        float3 bloodColor = bloodHue * luma;
 
-        float3 litColor = Out.vShade.rgb;
-        float3 sssTint = float3(1.05, 1.02, 1.02);
-        float power = 0.25f;
+    // 3) 어디에 얼마나 혈색을 줄지 ? SSS + N·L 기준
+        float ndl = saturate(dot(N, L));
+        float edge = pow(1.0f - ndl, 1.2f); // 라이트 에지 쪽 더 강조
+        float sss = saturate(A * g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord).g);
 
-        float3 sssColor = vAlbedo.rgb * sssTint;
+        float bloodStrength = 0.65f; // 전체 혈색 강도 (0.3~0.8 사이에서 조절)
+        float w = saturate(sss * edge * bloodStrength);
 
-        Out.vShade.rgb = lerp(
-            litColor,
-            sssColor,
-            A * SSSLayer * power
-        );
+    // 4) 혈색 적용 ? 밝기는 유지, 색만 강하게 피부/혈색 쪽으로 끌어당김
+        float3 result = lerp(base, bloodColor, w);
+
+        Out.vShade.rgb = result;
     }
 
     return Out;
@@ -523,26 +528,22 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
 
 PS_OUT_BACKBUFFER PS_MAIN_TONE_MAPPING(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
- 
-    //Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    PS_OUT_BACKBUFFER Out; 
+    //Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord); 
+    //Out.vBack Buffer.rgb = Out.vBackBuffer.rgb / (Out.vBackBuffer.rgb + 1); 
+    //Out.vBackBuffer.a = 1.f; 
+    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord); 
+    Out.vBackBuffer.rgb = pow(Out.vBackBuffer.rgb, 2.2f); 
+    Out.vBackBuffer *= g_fHDRExposure;
     
-    //Out.vBack Buffer.rgb = Out.vBackBuffer.rgb / (Out.vBackBuffer.rgb + 1);
-
-    //Out.vBackBuffer.a = 1.f;
-    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    float a = 2.51f; 
+    float b = 0.03f; 
+    float c = 2.43f; 
+    float d = 0.59f; 
+    float e = 0.14f; 
     
-    Out.vBackBuffer.rgb = pow(Out.vBackBuffer.rgb, 2.2f);
-    
-    float a = 2.51f;
-    float b = 0.03f;
-    float c = 2.43f;
-    float d = 0.59f;
-    float e = 0.14f;
-    
-    
-    Out.vBackBuffer.rgb = saturate((Out.vBackBuffer.rgb * (a * Out.vBackBuffer.rgb + b)) / (Out.vBackBuffer.rgb * (c * Out.vBackBuffer.rgb + d) + e));
-    Out.vBackBuffer.rgb = pow(Out.vBackBuffer.rgb, 1.0f / 2.2f);
+    Out.vBackBuffer.rgb = saturate((Out.vBackBuffer.rgb * (a * Out.vBackBuffer.rgb + b)) / (Out.vBackBuffer.rgb * (c * Out.vBackBuffer.rgb + d) + e)); 
+    Out.vBackBuffer.rgb = pow(Out.vBackBuffer.rgb, 1.0f / 2.2f); 
     return Out;
 }
 

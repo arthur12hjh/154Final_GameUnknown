@@ -70,10 +70,10 @@ HRESULT CInstanceModel::Render()
 	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", TEXTURE_TYPE::DIFFUSE, 0)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", TEXTURE_TYPE::NORMAL, 0)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))

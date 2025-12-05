@@ -55,4 +55,5 @@ void CActor::Free()
 
     Safe_Release(m_pShaderCom);
     Safe_Release(m_pRigidBody);
+    Safe_Release(m_pRigidBody);
 }

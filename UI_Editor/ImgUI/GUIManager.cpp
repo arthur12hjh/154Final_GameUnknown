@@ -73,6 +73,7 @@ HRESULT CGUIManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_AnimTrackTags.push_back(TEXT("TintColor"));
     m_AnimTrackTags.push_back(TEXT("GlowIntensity"));
     m_AnimTrackTags.push_back(TEXT("SpriteAction"));
+    m_AnimTrackTags.push_back(TEXT("Scale"));
 
     return S_OK;
 }
@@ -589,16 +590,7 @@ void CGUIManager::Draw_Hierarchy(Client::CUIBase* pObj)
 
             m_bVisible = m_pTargetUI->Get_UIBase_Desc().iVisiblity == ENUM_CLASS(VISIBILITY::VISIBLE) ? true : false;
             m_pTargetUI->Set_Follow_Parent(false);
-           /* m_vOldPos.x = m_pTargetUI->Get_UIBase_Desc().fOffsetX;
-            m_vOldPos.y = m_pTargetUI->Get_UIBase_Desc().fOffsetY;
-            m_vEditedPos = m_vOldPos;
-
-            m_vOldSize.x = m_pTargetUI->Get_UIBase_Desc().fSizeX;
-            m_vOldSize.y = m_pTargetUI->Get_UIBase_Desc().fSizeY;
-            m_vEditedSize = m_vOldSize;
-            
-            */
-
+         
             if (m_pTargetUI->Get_UIBase_Desc().Get_UI_Text_Desc())
             {
                 _char szInputText[MAX_PATH]{};
@@ -708,7 +700,7 @@ void CGUIManager::View_Options()
             }
         }
 
-        if (dynamic_cast<Client::CUIText*>(m_pTargetUI) || dynamic_cast<Client::CUIImage*>(m_pTargetUI))
+        //if (dynamic_cast<Client::CUIText*>(m_pTargetUI) || dynamic_cast<Client::CUIImage*>(m_pTargetUI))
         {
             if (GUI::BeginTabItem("Shader"))
             {
@@ -1492,6 +1484,26 @@ void CGUIManager::Set_AnimTrack(_wstring szAnimTag, _wstring szTrackTag)
             GUI::TreePop();
         }
     }
+
+    if (szTrackTag == TEXT("Scale"))
+    {
+        if (GUI::TreeNode("StartPram"))
+        {
+            GUI::DragFloat("Scale", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x, 0.1f, 0.f, 999.f, "%.2f");
+
+            m_pTargetUI->Set_Texture_Scale(m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vStartParam.x);
+
+            GUI::TreePop();
+        }
+        if (GUI::TreeNode("EndPram"))
+        {
+            GUI::DragFloat("Scale", &m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x, 0.1f, 0.f, 999.f, "%.2f");
+
+            m_pTargetUI->Set_Texture_Scale(m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Get_UI_Track_Desc(szTrackTag)->vEndParam.x);
+
+            GUI::TreePop();
+        }
+    }
 }
 
 void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
@@ -1562,6 +1574,11 @@ void CGUIManager::Add_AnimTrack(_wstring szAnimTag)
         {
             TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fGlowIntensity;
             TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fGlowIntensity;
+        }
+        if (TrackDesc.szTrackTag == TEXT("Scale"))
+        {
+            TrackDesc.vStartParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fScale;
+            TrackDesc.vEndParam.x = m_pTargetUI->Get_UIBase_Desc().m_tUIShaderDesc.fScale;
         }
 
         m_pUIHUD->Get_AnimMgr()->Get_AnimData(szAnimTag)->Add_UI_Track_Desc(szTrackTag, TrackDesc);
@@ -1810,6 +1827,21 @@ void CGUIManager::Set_Shader_Params()
         {
             GUI::DragFloat("GlowIntensity", &Desc.m_tUIShaderDesc.fGlowIntensity, 0.01f, 0.f, 10.f, "%.2f");
             GUI::DragFloat("GlowSpread", &Desc.m_tUIShaderDesc.fGlowSpread, 0.01f, 0.f, 100.f, "%.2f");
+        }
+
+        GUI::TreePop();
+    }
+
+    if (GUI::TreeNode("Scale"))
+    {
+        GUI::Checkbox("Use Scale", &Desc.m_tUIShaderDesc.bUseScale);
+        if (Desc.m_tUIShaderDesc.bUseScale)
+        {
+            GUI::DragFloat("Texture Scale", &Desc.m_tUIShaderDesc.fScale, 0.01f, 0.f, 999.f, "%.2f");
+            if (GUI::Button("Reset UV")) {
+                Desc.m_tUIShaderDesc.bUseScale = false;
+                Desc.m_tUIShaderDesc.fScale = m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fScale;
+            }
         }
 
         GUI::TreePop();
