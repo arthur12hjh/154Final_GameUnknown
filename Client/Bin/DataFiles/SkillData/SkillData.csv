@@ -12,6 +12,7 @@
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,2,11
 12,M_Gorilla_S10_SawSpinAttack,None,None,18,0,"9,8,9",4,1,11
 13,M_GorillaB_S18_ThrowStone2,None,None,18,5,"2,2,2",5,1,11
+14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,1,0
 511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",4,0,11
 512,M_Beholder_Swing,None,None,12,5,"1,1,2",4,0,1
 513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",4,0,9
