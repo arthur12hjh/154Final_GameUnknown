@@ -42,7 +42,9 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 		// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
 		// 확인하고 EFail;
 		m_pHit_Data = nullptr;
-		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+
+		if(CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
+			m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		return NODE_STATE::FAIL;
 	}
 	
