@@ -162,7 +162,12 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 void CTask_GorillaAttack::CrushPattern()
 {
 	m_pSkillData.push(m_pGameManager->Find_SkillData(2));
-	m_pSkillData.push(m_pGameManager->Find_SkillData(12));
+
+	if (30.f <= m_pGameInstance->Random(0.f, 100.f))
+		m_pSkillData.push(m_pGameManager->Find_SkillData(14));
+	else
+		m_pSkillData.push(m_pGameManager->Find_SkillData(12));
+
 	SelectAttack();
 }
 

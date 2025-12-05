@@ -153,7 +153,11 @@ HRESULT CNayitba::Damaged(void* pArg)
 	}
 	
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
+
 	m_pAIController->Damage(pArg);
+
+		
+
 	m_vHitVisibleDuration.x = 0.f;
 
 	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
