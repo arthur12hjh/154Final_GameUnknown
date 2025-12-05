@@ -28,10 +28,12 @@ public:
 
 	void					SetSpawnPrototypeName(const WCHAR* szPrototypeName);
 	const WCHAR*			GetSpawnObjectName();
+	const _uint				Get_MonsterID() { return m_iMonsterID; }
 
 private:
 	const WCHAR*			m_szPrototypeName = {};
 	class CCollider*		m_pCollider = { nullptr };
+	_uint 					m_iMonsterID = {};
 
 private:
 	HRESULT					Ready_Components();
