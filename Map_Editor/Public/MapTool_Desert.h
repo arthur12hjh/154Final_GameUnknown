@@ -3,6 +3,7 @@
 #include "MapTool_Defines.h"
 #include "Base.h"
 #include "VIBuffer_Instance_Model.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
 //class CVIBuffer_Instance_Model;
@@ -19,6 +20,7 @@ NS_BEGIN(Tool_Map)
 
 class CMapTool_Desert final : public CBase
 {
+public:
 #pragma pack(push, 1)
 	typedef struct SavedObjectInfo
 	{
@@ -28,6 +30,12 @@ class CMapTool_Desert final : public CBase
 
 #pragma pack(pop)
 
+	typedef struct SavedMonsterInfo
+	{
+		_float4x4	    worldMatrix;
+		_uint			iMonsterId = 0;
+	}SAVEDMONSTERINFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -35,6 +43,11 @@ class CMapTool_Desert final : public CBase
 		CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC InstanceDesc;
 
 	}MODEL_INSTANCE_LOAD_DESC;
+
+	typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
+	{
+		_uint						iMonsterID = {};
+	}NAYITBA_DESC;
 
 public:
 	CMapTool_Desert();
@@ -49,11 +62,16 @@ public:
 
 	void Update_Rotation();
 	HRESULT Save_Map_Objects(const _char* szFilePath);
+	HRESULT Save_Monster_Objects(const _char* szFilePath);
+
 	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
+	HRESULT Load_Monster_Objects(const _char* szFilePath);
+
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
-	//HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
