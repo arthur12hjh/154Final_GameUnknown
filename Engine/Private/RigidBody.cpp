@@ -147,6 +147,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 
 			Vertices.clear();
 			Indices.clear();
+			pTriangleMesh->release();
 		}
 
 		triangleShapes.clear();
