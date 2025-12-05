@@ -246,6 +246,17 @@ const list<CGameObject*>* CNayitba::GetTraceObejectList()
 	return m_pAISenceCom->GetSearchAllObject();
 }
 
+void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	if (strPartTag.empty())
+	{
+	}
+	else
+	{
+		Find_PartObject(strPartTag)->Active_SFX(strObjectTag, NotifyReference);
+	}
+}
+
 HRESULT CNayitba::Ready_CharacterData()
 {
 	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);

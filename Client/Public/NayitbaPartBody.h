@@ -3,6 +3,7 @@
 #include "PartObject.h"
 
 NS_BEGIN(Client)
+class CEffect;
 class CNayitbaPartBody final : public CPartObject
 {
 public :
@@ -27,8 +28,11 @@ public:
 	virtual HRESULT					Render() override;
 	virtual HRESULT					Render_Shadow() override;
 
+	virtual void					Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+
 private:
 	CCollider*						m_pColliderCom = { nullptr };
+	vector<pair<CEffect*, _int>>			m_pEffects = {};
 	_bool							m_isAnimFinish = { false };
 
 private:
