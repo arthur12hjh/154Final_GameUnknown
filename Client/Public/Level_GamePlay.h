@@ -16,6 +16,12 @@ public:
 		_tchar			szComponentTag[256];
 	}SAVEDOBJECTINFO;
 
+	typedef struct SavedMonsterInfo
+	{
+		_float4x4	    worldMatrix;
+		_uint			iMonsterId = 0;
+	}SAVEDMONSTERINFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -47,7 +53,9 @@ private:
 	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
 
 	HRESULT Load_Map_Desert_Data(const _char* szFilePath);
+	HRESULT Load_Monster_Desert_Data(const _char* szFilePath);
 	HRESULT Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Monster_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 
 

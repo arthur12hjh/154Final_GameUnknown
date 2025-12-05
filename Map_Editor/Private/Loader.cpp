@@ -77,6 +77,7 @@
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
 #include "Iron_Floor.h"
+#include "SpawnBox.h"
 #pragma endregion
 
 
@@ -1025,6 +1026,13 @@ HRESULT CLoader::Loading_For_Desert_Canyon2(void* pArg)
 	/* For.Prototype_GameObject_Instance_Desert */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Instance_Desert");
 	pProtoDesc.pPrototype = CInstance_Desert::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_SpawnBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SpawnBox");
+	pProtoDesc.pPrototype = CSpawnBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
