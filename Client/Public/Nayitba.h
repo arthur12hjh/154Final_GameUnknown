@@ -50,6 +50,7 @@ public:
 	
 	const CHARACTER_SKILL_DESC*		FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*		GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
+	void							SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE					GetMonsterPreState() { return m_MonsterPreState; }
@@ -61,9 +62,10 @@ public:
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
-	
+
 	_uint							m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*		m_pInitMonsterInfo = {};
+	const CHARACTER_SKILL_DESC*		m_pAttack_Data = { nullptr };
 
 	_float							m_fMotionRatio = { 1.f };
 	NAYTIBA_DESC					m_MonsterInfo = {};
@@ -93,6 +95,10 @@ private :
 	void							CreateHitBox(const AnimNotify* pNotify);
 
 	void							VisibleStatusUI(_float fTimeDelta);
+
+	// 방어 타입에 대한 데미지 연산
+	_bool							DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate = 0.1f);
+
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

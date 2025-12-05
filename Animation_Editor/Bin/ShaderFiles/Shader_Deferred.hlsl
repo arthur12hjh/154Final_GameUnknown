@@ -23,6 +23,7 @@ texture2D g_SpecularTexture;
 texture2D g_ORMTexture;
 texture2D g_ShadowTexture;
 texture2D g_SSAOTexture;
+texture2D g_SSSAOTexture;
 
 texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
@@ -75,75 +76,142 @@ PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
-    
-    vector vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 vNormal = normalize(vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f));
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
-    vector vPosition;
 
-    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
-    vPosition.x = In.vTexcoord.x * 2.f - 1.f;
-    vPosition.y = In.vTexcoord.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
-    /* 로컬위치 * 월드 * 뷰 * 투영  */
-    vPosition = vPosition * fViewZ;
-    /* 로컬위치 * 월드 * 뷰  */
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-    
-    /* 로컬위치 * 월드   */
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-    
-    vector vLook = vPosition - g_vCamPosition;
-    vector vReflect = reflect(normalize(g_vLightDir), vNormal);
-    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float fMetallic, fRoughness, fOcclusion, fAttenuation;
-    float3 vF0;
-    
-    //ORM 마스크 없으면 그냥 Phong Shading 처리.
-    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    // ====== 텍스처 샘플링 ======
+    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); // ORSS/ORM 통합맵
+    float4 vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 N = normalize(vNormalDesc.xyz * 2.f - 1.f);
+
+    float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float viewZ = vDepthDesc.y * 500.f;
+
+    // ====== Position reconstruct ======
+    float4 pos;
+    pos.x = In.vTexcoord.x * 2.f - 1.f;
+    pos.y = In.vTexcoord.y * -2.f + 1.f;
+    pos.z = vDepthDesc.x;
+    pos.w = 1.f;
+
+    pos *= viewZ;
+    pos = mul(pos, g_ProjMatrixInv);
+    pos = mul(pos, g_ViewMatrixInv);
+
+    float3 V = normalize((pos - g_vCamPosition).xyz);
+    float3 L = normalize(g_vLightDir.xyz) * -1.f;
+
+    // ====== ORSS / ORM 통합 파라미터 ======
+    float AO = vORMDesc.r;
+    float Rough = vORMDesc.g;
+    float Metal_Raw = vORMDesc.b;
+    float A = vORMDesc.a;
+
+    float Metallic = 0.f;
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
+
+    bool isFallback = (AO == 0 && Rough == 0 && Metal_Raw == 0 && A == 0);
+    bool isORSS = (A > 0.f && A < 1.f);
+    bool isORM = (A == 1.f);
+    bool isSpec = (A == 2.f);
+
+    // Phong 
+    if (isFallback)
     {
-        Out.vShade = vAlbedo * g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
-        Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f);
-        
+        float3 diff = vAlbedo.rgb * g_vLightDiffuse.rgb *
+            saturate(max(dot(L, N), 0.f) + (g_vLightAmbient.rgb * g_vMtrlAmbient.rgb));
+
+        float3 refl = reflect(-L, N);
+        float3 spec = (g_vLightSpecular.rgb * g_vMtrlSpecular.rgb) *
+                      pow(max(dot(-V, normalize(refl)), 0.f), 50.f);
+
+        Out.vShade = float4(diff, 1);
+        Out.vSpecular = float4(spec, 1);
         return Out;
     }
-    //Specular Map은 따로 Shade 처리해서 
-    else if(vORMDesc.a == 2.f)
-    {        
-        fOcclusion = vORMDesc.r;
-        fRoughness = vORMDesc.g;
-        fMetallic = 0.f;
-        vF0 = float3(0.04, 0.04, 0.04);
-        float specFactor = vORMDesc.b;
-        
-        float3 dielectricF0 = float3(0.04f, 0.04f, 0.04f);
-        float baseF0 = 0.04f;
-        float oneMinusBaseF0 = 1.0f - baseF0;
 
-        fMetallic = saturate((specFactor - baseF0) / oneMinusBaseF0);
-
-        vF0 = lerp(dielectricF0, vAlbedo.xyz, fMetallic);
-    }
-    //ORM 처리.
-    else
+    // SPEC 전용 
+    if (isSpec)
     {
-        fOcclusion = vORMDesc.r;
-        fRoughness = vORMDesc.g;
-        fMetallic = vORMDesc.b;
-        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
+        AO = vORMDesc.r;
+        Rough = max(vORMDesc.g, 0.05f);
+
+        // 변환
+        float specFactor = vORMDesc.b;
+        float baseF0 = 0.04f;
+        float oneMinusF0 = 1.f - baseF0;
+
+        Metallic = saturate((specFactor - baseF0) / oneMinusF0);
+
+        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
-    
-    fAttenuation = 1.f;
-    
-    float fDiffuseAOStrength = lerp(1.3f, 2.f, fOcclusion);
-    
-    Out = PBR_Light(normalize(vNormal.xyz), normalize(-vLook.xyz), normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, 1.f);
-    Out.vShade *= fDiffuseAOStrength;
-    
+    // 일반 ORM 
+    else if (isORM)
+    {
+        AO = vORMDesc.r;
+        Rough = max(vORMDesc.g, 0.05f);
+        Metallic = vORMDesc.b;
+
+        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
+    }
+    // ORSS 피부 SSS 가능 
+    else if (isORSS)
+    {
+        AO = vORMDesc.r;
+        Rough = max(vORMDesc.g, 0.05f);
+        Metallic = vORMDesc.b;
+
+        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
+    }
+
+    // PBR 계싼
+    float AOStr = lerp(1.3f, 2.f, AO);
+
+    Out = PBR_Light(
+        N,
+        -V,
+        L,
+        vAlbedo.rgb,
+        Metallic,
+        Rough,
+        g_vLightDiffuse.xyz,
+        1.f,
+        F0,
+        1.f
+    );
+
+    Out.vShade.rgb *= AOStr;
+
+    //  SSS 적용 : 오직 ORSS(피부, 0<A<1) 에만 적용됨
+    if (isORSS)
+    {
+        float3 SSSProfile = g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord).rgb;
+
+        // 3-Layer SSS 모델
+        float wEpi = 0.55f;
+        float wSub = 1.00f;
+        float wDeep = 0.25f;
+
+        float SSSLayer =
+            SSSProfile.r * wEpi +
+            SSSProfile.g * wSub +
+            SSSProfile.b * wDeep;
+
+        SSSLayer = saturate(SSSLayer);
+
+        float3 litColor = Out.vShade.rgb;
+        float3 sssTint = float3(1.05, 1.02, 1.02);
+        float power = 0.25f;
+
+        float3 sssColor = vAlbedo.rgb * sssTint;
+
+        Out.vShade.rgb = lerp(
+            litColor,
+            sssColor,
+            A * SSSLayer * power
+        );
+    }
+
     return Out;
 }
 
