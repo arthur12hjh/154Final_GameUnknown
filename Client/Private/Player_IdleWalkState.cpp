@@ -12,7 +12,7 @@ CPlayer_IdleWalkState::CPlayer_IdleWalkState(_bool isLanding, _bool isEvade)
 {
 }
 
-void CPlayer_IdleWalkState::Start(void* pArg)
+void CPlayer_IdleWalkState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK;
     m_isRunStart = true;
@@ -112,8 +112,9 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_IdleWalkState::End()
+_float CPlayer_IdleWalkState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_IdleWalkState* CPlayer_IdleWalkState::Create(void* pArg)

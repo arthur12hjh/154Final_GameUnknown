@@ -776,9 +776,9 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
-void CGameInstance::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance)
+void CGameInstance::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance, _uint* iNumCullCount)
 {
-	m_pFrustum->isIn_WorldFrustum(pInstanceBuffer, ppOut, fDistance);
+	m_pFrustum->isIn_WorldFrustum(pInstanceBuffer, pOut, iNumInstance, fDistance, iNumCullCount);
 }
 
 #ifdef _DEBUG

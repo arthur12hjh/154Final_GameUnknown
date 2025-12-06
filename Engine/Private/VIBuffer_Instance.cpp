@@ -32,8 +32,7 @@ HRESULT CVIBuffer_Instance::Bind_Resources()
 {
 	ID3D11Buffer* VertexBuffers[] = {
 		   m_pVB,
-		   m_pVBInstance, 
-
+		   m_pVBCullInstances,
 	};
 
 	_uint		VertexStrides[] = {
@@ -55,7 +54,7 @@ HRESULT CVIBuffer_Instance::Bind_Resources()
 
 HRESULT CVIBuffer_Instance::Render()
 {
-	m_pContext->DrawIndexedInstanced(m_iNumIndexPerInstance, m_iNumInstance, 0, 0, 0);
+	m_pContext->DrawIndexedInstanced(m_iNumIndexPerInstance, m_iNumCullInstance, 0, 0, 0);
 
 	return S_OK;
 }
@@ -78,6 +77,11 @@ void CVIBuffer_Instance::CopyResource(ID3D11Buffer* pResource)
 void CVIBuffer_Instance::PasteResource(ID3D11Buffer* pResource)
 {
 	m_pContext->CopyResource(m_pVBInstance, pResource);
+}
+
+void CVIBuffer_Instance::SetNumCullingIndex(_uint iNumIndex)
+{
+	m_iNumCullInstance = iNumIndex;
 }
 
 void CVIBuffer_Instance::StopEffect()

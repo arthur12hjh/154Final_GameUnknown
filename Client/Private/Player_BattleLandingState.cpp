@@ -8,7 +8,7 @@ CPlayer_BattleLandingState::CPlayer_BattleLandingState()
 {
 }
 
-void CPlayer_BattleLandingState::Start(void* pArg)
+void CPlayer_BattleLandingState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::LANDING;
 
@@ -33,8 +33,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleLandingState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_BattleLandingState::End()
+_float CPlayer_BattleLandingState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_BattleLandingState* CPlayer_BattleLandingState::Create(void* pArg)

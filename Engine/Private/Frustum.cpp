@@ -32,8 +32,8 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
 	m_OrizinBoundingFrustom = new BoundingFrustum();
 
-	if (FAILED(Ready_ComputeShader()))
-		return E_FAIL;
+	//if (FAILED(Ready_ComputeShader()))
+	//	return E_FAIL;
 
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
@@ -74,7 +74,8 @@ void CFrustum::Update()
 
 		m_OrizinBoundingFrustom->Transform(m_BoundingFrustom, m_pGameInstance->GetMainCameraWorldMatrix());
 	}
-	Make_Planes(m_vWorldPoints, m_vWorldPlanes);
+
+	Make_Planes(m_vWorldPoints);
 	Safe_Release(pMainCamera);
 }
 
@@ -126,7 +127,7 @@ _bool CFrustum::isIn_WorldFrustum(_fvector vWorldPos, _float fRange)
 {
 	for (size_t i = 0; i < 6; i++)
 	{
-		if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), vWorldPos)))
+		if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_FrustomConstantDesc.vFrustomPlane[i]), vWorldPos)))
 			return false;	
 	}
 
@@ -161,20 +162,32 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
-void CFrustum::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance)
+void CFrustum::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance, _uint* iNumCullCount)
 {
+	_uint iIndex = {};
+	m_FrustomConstantDesc.iNumInstance = iNumInstance;
+	m_FrustomConstantDesc.fDistance = fDistance;
+	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_FrustomConstantDesc);
 	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 0, pInstanceBuffer);
-	m_pComputeShader->Update_Shader({1024, 1, 1});
+	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, &iIndex);
 
-	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, *ppOut);
+	m_pComputeShader->Bind_ConstBuffer(0, 0);
+	m_pComputeShader->Bind_InputBuffer(0, 0);
 
-	m_pContext->CopyResource(m_pOutBuffer, *ppOut);
+	_uint iOutGroup[2] = {0, 1};
+	m_pComputeShader->Bind_OutputBuffer(2, iOutGroup);
 
-	D3D11_MAPPED_SUBRESOURCE pSubResource = {};
-	m_pContext->Map(m_pOutBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &pSubResource);
-	auto pList = static_cast<VTX_INSTANCE_MODEL*>(pSubResource.pData);
-	int a = 10;
-	m_pContext->Unmap(m_pOutBuffer, 0);
+	m_pComputeShader->Update_Shader({ 1024, 1, 1 });
+	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, pOut);
+	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pCountBuffer);
+	if (iNumCullCount)
+	{
+		D3D11_MAPPED_SUBRESOURCE pSubResource = {};
+		m_pContext->Map(m_pCountBuffer, 0, D3D11_MAP_READ, 0, &pSubResource);
+		if(pSubResource.pData)
+			*iNumCullCount = *static_cast<_uint*>(pSubResource.pData);
+		m_pContext->Unmap(m_pCountBuffer, 0);
+	}
 }
 
 HRESULT CFrustum::Ready_ComputeShader()
@@ -217,25 +230,42 @@ HRESULT CFrustum::Ready_ComputeShader()
 	m_pComputeShader->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer);
 #pragma endregion
 
-#pragma region Read Buffer
-	D3D11_BUFFER_DESC ReadBufferDesc = {};
-	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(VTX_INSTANCE_MODEL) * m_iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(VTX_INSTANCE_MODEL);
-	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pOutBuffer)))
-		return E_FAIL;
-#pragma endregion
-
 #pragma region UAV Buffer
 	if (FAILED(m_pDevice->CreateBuffer(&InitBufferDesc, nullptr, &pBuffer)))
 		return E_FAIL;
 
-	m_pComputeShader->ADD_OutBuffer(pBuffer);
+	m_pComputeShader->ADD_AppendOutBuffer(pBuffer);
+#pragma endregion
+
+#pragma region Count Buffer
+	InitBufferDesc.ByteWidth = sizeof(_uint);
+	InitBufferDesc.StructureByteStride = sizeof(_uint);
+	if (FAILED(m_pDevice->CreateBuffer(&InitBufferDesc, nullptr, &pBuffer)))
+		return E_FAIL;
+
+	m_pComputeShader->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, pBuffer, 1);
+
+	InitBufferDesc = {};
+	InitBufferDesc.Usage = D3D11_USAGE_STAGING;
+	InitBufferDesc.ByteWidth = sizeof(_uint);
+	InitBufferDesc.StructureByteStride = sizeof(_uint);
+	InitBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	if (FAILED(m_pDevice->CreateBuffer(&InitBufferDesc, nullptr, &m_pCountBuffer)))
+		return E_FAIL;
 #pragma endregion
 
 	return S_OK;
+}
+
+void CFrustum::Make_Planes(const _float4* pPoints)
+{
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[0], XMPlaneFromPoints(XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[5]), XMLoadFloat4(&pPoints[6])));
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[1], XMPlaneFromPoints(XMLoadFloat4(&pPoints[4]), XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[3])));
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[2], XMPlaneFromPoints(XMLoadFloat4(&pPoints[4]), XMLoadFloat4(&pPoints[5]), XMLoadFloat4(&pPoints[1])));
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[3], XMPlaneFromPoints(XMLoadFloat4(&pPoints[3]), XMLoadFloat4(&pPoints[2]), XMLoadFloat4(&pPoints[6])));
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[4], XMPlaneFromPoints(XMLoadFloat4(&pPoints[5]), XMLoadFloat4(&pPoints[4]), XMLoadFloat4(&pPoints[7])));
+	XMStoreFloat4(&m_FrustomConstantDesc.vFrustomPlane[5], XMPlaneFromPoints(XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[2])));
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
@@ -267,6 +297,8 @@ void CFrustum::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+
+	Safe_Release(m_pCountBuffer);
 	Safe_Release(m_pComputeShader);
 
 #ifdef _DEBUG

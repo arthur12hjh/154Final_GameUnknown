@@ -27,6 +27,11 @@
 #include "Player_HitState.h"
 #include "Player_DrawHairpin.h"
 #include "Player_SheatheHairpin.h"
+//패링 관련 모션들은 상태 자세히 분리.
+#include "Player_ParryEndState.h"
+#include "Player_ParryState.h"
+#include "Player_ParrySuccessState.h"
+#include "Player_ParryGuardState.h"
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -56,12 +61,12 @@ void CPlayerFSM::Change_State(CPlayerState* pNext)
 {
 	if (!pNext) return;
 
-	m_pCurrentState->End();
+	_float fBlendRatio =  m_pCurrentState->End();
 
 	Safe_Release(m_pCurrentState);
 	m_pCurrentState = pNext;
 
-	m_pCurrentState->Start();
+	m_pCurrentState->Start(nullptr, fBlendRatio);
 }
 
 HRESULT CPlayerFSM::Initialize(void* pArg)
@@ -199,8 +204,46 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_CHARGINGSLASH ||
 			m_pCurrentState->Get_State() == PLAYER_STATE::BETA_TRIPLET)
 			return nullptr;
-
 		return CPlayer_BetaTripletState::Create(tDesc.pArg);
+		break;
+	// 패리 자세
+	case PLAYER_STATE::PARRY:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_ParryState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ParryState::Create(tDesc.pArg);
+		}
+		break;
+	// 패리 성공
+	case PLAYER_STATE::PARRY_SUCCESS:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_ParrySuccessState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ParrySuccessState::Create(tDesc.pArg);
+		}
+		break;
+	// 패리 끝
+	case PLAYER_STATE::PARRY_END:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_ParryEndState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ParryEndState::Create(tDesc.pArg);
+		}
+		break;
+	// 일반 패리
+	case PLAYER_STATE::PARRY_GUARD:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_ParryGuardState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ParryGuardState::Create(tDesc.pArg);
+		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -359,7 +402,7 @@ HRESULT CPlayerFSM::Ready_State()
 	if (!pState)
 		return E_FAIL;
 
-	pState->Start();
+	pState->Start(nullptr, 1.2f);
 	m_pCurrentState = pState;
 
 	return S_OK;

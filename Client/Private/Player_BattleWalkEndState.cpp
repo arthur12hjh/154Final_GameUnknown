@@ -9,7 +9,7 @@ CPlayer_BattleWalkEndState::CPlayer_BattleWalkEndState()
 {
 }
 
-void CPlayer_BattleWalkEndState::Start(void* pArg)
+void CPlayer_BattleWalkEndState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK_END;
 
@@ -52,8 +52,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BattleWalkEndState::End()
+_float CPlayer_BattleWalkEndState::End()
 {
+    return 0.12f;
 }
 
 CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)
