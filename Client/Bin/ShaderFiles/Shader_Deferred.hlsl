@@ -66,7 +66,7 @@ VS_OUT VS_MAIN(VS_IN In)
 }
 
 PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
-{
+{                                                                                                                                                                                                                                                                      
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
@@ -96,19 +96,25 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     // 위치 복원 그대로 ---------------------------------------------------
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float viewZ = vDepthDesc.y * 500.f;
+    float  fViewZ = vDepthDesc.y * 500.f;
 
-    float4 pos;
-    pos.x = In.vTexcoord.x * 2.f - 1.f;
-    pos.y = In.vTexcoord.y * -2.f + 1.f;
-    pos.z = vDepthDesc.x;
-    pos.w = 1.f;
+    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vector vPosition;
+    vPosition.x = In.vTexcoord.x * 2.f - 1.f;
+    vPosition.y = In.vTexcoord.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    
+    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    vPosition = vPosition * fViewZ;
+    
+    /* 로컬위치 * 월드 * 뷰  */
+    vPosition = mul(vPosition, g_ProjMatrixInv);
+    
+    /* 로컬위치 * 월드   */
+    vPosition = mul(vPosition, g_ViewMatrixInv);
 
-    pos *= viewZ;
-    pos = mul(pos, g_ProjMatrixInv);
-    pos = mul(pos, g_ViewMatrixInv);
-
-    float3 V = normalize((pos - g_vCamPosition).xyz);
+    float3 V = normalize((vPosition - g_vCamPosition).xyz);
     float3 L = normalize(g_vLightDir.xyz) * -1.f;
 
     float AO = vORMDesc.r;

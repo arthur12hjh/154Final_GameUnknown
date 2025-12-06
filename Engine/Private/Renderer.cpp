@@ -465,10 +465,8 @@ void CRenderer::Render_Shadow()
 
 void CRenderer::Render_MotionBlur()
 {
-	m_pMotionBlur->Render_CamMotionBlur(m_pVIBuffer);
-
 	// 모션블러 pass로는 클라이언트에서 처리
-	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Velocity"))))
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Velocity"))))
 		return;
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::MOTIONBLUR)])
@@ -775,8 +773,8 @@ void CRenderer::Render_Debug()
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
 
-	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-	//	return;
+	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+		return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
 	//x	return;
 

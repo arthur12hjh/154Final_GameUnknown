@@ -1,4 +1,4 @@
-#include "Engine_Shader_Defines.hlsli"
+#include "Client_Shader_Utils.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
@@ -180,7 +180,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
-    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); 
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     
     return Out;
 }

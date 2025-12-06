@@ -465,9 +465,9 @@ HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>
         }
     }
 
-
+#ifdef _DEBUG
     m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
-
+#endif
     return S_OK;
 }
 

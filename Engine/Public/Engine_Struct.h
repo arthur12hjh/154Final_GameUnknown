@@ -465,6 +465,7 @@ namespace Engine
 	} SSAO_DESC;
 
 	typedef struct tagMotionBlurInfo {
+		float*			fObjectBlurScale;
 		float*			fCamBlurScale;
 		float*			fBias;
 		unsigned int*   iSampleCount;
