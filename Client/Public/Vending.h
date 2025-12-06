@@ -9,7 +9,7 @@ NS_BEGIN(Client)
 class CVending final : public CProb_Interaction
 {
 public :
-	enum class VENDING_STATE { ACTIVE, UNACTIVE, DISABLE, END };
+	enum class VENDING_STATE { ACTIVE, UNACTIVE, LOCK, END };
 
 private:
 	CVending(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

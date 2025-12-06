@@ -697,6 +697,9 @@
     <Filter Include="97.ShaderFiles\ComputeShader\Cull">
       <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Chair">
+      <UniqueIdentifier>{b2317c82-9933-4815-9908-935a62cd0a35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1408,6 +1411,9 @@
     <ClInclude Include="..\Public\Player_ParryGuardState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Chair.h">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1820,9 +1826,6 @@
     <ClCompile Include="..\Private\MonsterIdleState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Nayitba.cpp">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\NayitbaPartBody.cpp">
       <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
     </ClCompile>
@@ -2088,6 +2091,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_ParryGuardState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Nayitba.cpp">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chair.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

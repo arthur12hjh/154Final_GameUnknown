@@ -147,10 +147,6 @@ HRESULT CVIBuffer_Rect_Instance::Initialize(void* pArg)
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBCullInstances)))
-		return E_FAIL;
-
-	m_iNumCullInstance = m_iNumInstance;
 	return S_OK;
 }
 

@@ -776,10 +776,12 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
-void CGameInstance::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance, _uint* iNumCullCount)
+_bool CGameInstance::isIn_DistanceFrustum(_float3 vPoint, _float fDistance)
 {
-	m_pFrustum->isIn_WorldFrustum(pInstanceBuffer, pOut, iNumInstance, fDistance, iNumCullCount);
+	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
 }
+
+
 
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()
