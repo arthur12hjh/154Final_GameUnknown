@@ -7,6 +7,8 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CCamera abstract : public CGameObject
 {
 public:
+	enum class CAMERA_STATE { NONE, CINEMATIC, TRANSFORM, FOLLOW, END };
+
 	typedef struct tagCameraDesc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_float3		vEye{}, vAt{};
@@ -38,6 +40,8 @@ public:
 
 protected:
 	CAMERA_INFO					m_pCameraInfo = {};
+
+	CAMERA_STATE				m_eCameraState = { CAMERA_STATE::NONE };
 
 protected:
 	HRESULT Bind_Matrices();

@@ -700,6 +700,9 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Chair">
       <UniqueIdentifier>{b2317c82-9933-4815-9908-935a62cd0a35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\04. CameraBone">
+      <UniqueIdentifier>{20f1c4c4-22e5-4aa5-832a-aa9113d3ec3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1414,6 +1417,9 @@
     <ClInclude Include="..\public\Chair.h">
       <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CameraBone_Player.h">
+      <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2097,6 +2103,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Chair.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraBone_Player.cpp">
+      <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
