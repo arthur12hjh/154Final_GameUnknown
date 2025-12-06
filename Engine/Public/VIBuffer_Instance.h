@@ -31,30 +31,38 @@ protected:
 	virtual ~CVIBuffer_Instance() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const INSTANCE_DESC* pDesc);
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Bind_Resources() override;
-	virtual HRESULT Render() override;
+	virtual HRESULT			Initialize_Prototype(const INSTANCE_DESC* pDesc);
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual HRESULT			Bind_Resources() override;
+	virtual HRESULT			Render() override;
 
-	void			Lock(D3D11_MAP eLockType, D3D11_MAPPED_SUBRESOURCE* pOutData);
-	void			UnLock();
+	void					Lock(D3D11_MAP eLockType, D3D11_MAPPED_SUBRESOURCE* pOutData);
+	void					UnLock();
 
-	void			CopyResource(ID3D11Buffer* pResource);
-	void			PasteResource(ID3D11Buffer* pResource);
-	ID3D11Buffer*	GetBufferResource() { return m_pVBInstance; }
+	void					CopyResource(ID3D11Buffer* pResource);
+	void					PasteResource(ID3D11Buffer* pResource);
 
-	_bool			IsLoop() { return m_bIsLoop; }
+	ID3D11Buffer*			GetBufferResource() { return m_pVBInstance; }
+	ID3D11Buffer*			GetCullBufferResource() { return m_pVBCullInstances; }
+	void					SetNumCullingIndex(_uint iNumIndex);
+
+	_bool					IsLoop() { return m_bIsLoop; }
 
 public:
-	virtual void	Drop(_float fTimeDelta) {}
-	void			StopEffect();
+	virtual void			Drop(_float fTimeDelta) {}
+	void					StopEffect();
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };
+	ID3D11Buffer*			m_pVBCullInstances = { nullptr };
+
 	D3D11_BUFFER_DESC		m_InstanceBufferDesc = {};
 	D3D11_SUBRESOURCE_DATA	m_InstanceInitialDesc = {};
 	_uint					m_iInstanceStride = {};
+
 	_uint					m_iNumInstance = {};
+	_uint					m_iNumCullInstance = {};
+
 	_uint					m_iNumIndexPerInstance = {};
 	_bool					m_bIsLoop = { false };
 
