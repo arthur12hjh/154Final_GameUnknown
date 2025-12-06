@@ -76,8 +76,8 @@ private:
 	void Update_FSM(_float fTimeDelta);
 	void Update_RushSkill(_float fTimeDelta);
 	void Update_BetaSkill();
-
-	void							CreateHitBox(const AnimNotify* pNotify);
+	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	void CreateHitBox(const AnimNotify* pNotify);
 
 
 public:

@@ -10,7 +10,7 @@ CPlayer_LockonWalkState::CPlayer_LockonWalkState(_bool isRunning)
 {
 }
 
-void CPlayer_LockonWalkState::Start(void* pArg)
+void CPlayer_LockonWalkState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::WALK;
 
@@ -94,13 +94,16 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+	else
+		m_tNextState.eNextState = PLAYER_STATE::IDLE;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
-
-	else
-		m_tNextState.eNextState = PLAYER_STATE::IDLE;
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
 
 	_bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
@@ -112,8 +115,9 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_LockonWalkState::End()
+_float CPlayer_LockonWalkState::End()
 {
+	return 0.12f;
 }
 
 CPlayer_LockonWalkState* CPlayer_LockonWalkState::Create(void* pArg)

@@ -10,7 +10,7 @@ CPlayer_SheatheHairpin::CPlayer_SheatheHairpin()
 {
 }
 
-void CPlayer_SheatheHairpin::Start(void* pArg)
+void CPlayer_SheatheHairpin::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::SHEATHE_HAIRPIN;
 	m_pPlayer->Set_Animation("Eve_Weapon_Stop_End", false, 1.2f, 0.f); 
@@ -39,8 +39,9 @@ PLAYER_TRANSITION_DESC CPlayer_SheatheHairpin::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_SheatheHairpin::End()
+_float CPlayer_SheatheHairpin::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_SheatheHairpin* CPlayer_SheatheHairpin::Create(void* pArg)

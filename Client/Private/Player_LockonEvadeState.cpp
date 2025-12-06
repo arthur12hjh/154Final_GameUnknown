@@ -9,7 +9,7 @@ CPlayer_LockonEvadeState::CPlayer_LockonEvadeState()
 {
 }
 
-void CPlayer_LockonEvadeState::Start(void* pArg)
+void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
@@ -80,8 +80,9 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_LockonEvadeState::End()
+_float CPlayer_LockonEvadeState::End()
 {
+	return 0.12f;
 }
 
 CPlayer_LockonEvadeState* CPlayer_LockonEvadeState::Create(void* pArg)

@@ -17,7 +17,7 @@ _bool CPlayer_LightAttackState::isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_S
     return true;
 }
 
-void CPlayer_LightAttackState::Start(void* pArg)
+void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;
 
@@ -113,8 +113,9 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_LightAttackState::End()
+_float CPlayer_LightAttackState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_LightAttackState* CPlayer_LightAttackState::Create(void* pArg)
