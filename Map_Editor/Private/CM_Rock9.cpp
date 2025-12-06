@@ -42,10 +42,10 @@ void CCM_Rock9::Update(_float fTimeDelta)
 void CCM_Rock9::Late_Update(_float fTimeDelta)
 {
 
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	/*if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+	}*/
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
 }
 
 HRESULT CCM_Rock9::Render()

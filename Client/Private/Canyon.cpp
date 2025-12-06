@@ -35,12 +35,19 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 
 void CCanyon::Update(_float fTimeDelta)
 {
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	m_pColliderCom->UpdateColiision(worldMatrix);
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)
 {
 	if(m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CCanyon::Render()
@@ -81,6 +88,8 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+
+	
 
 	return S_OK;
 }
@@ -128,6 +137,7 @@ void CCanyon::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pInstanceModelCom);
 	Safe_Release(m_pShaderCom);
 }
