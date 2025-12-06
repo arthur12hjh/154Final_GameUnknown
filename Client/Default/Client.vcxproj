@@ -213,6 +213,10 @@
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
+    <ClInclude Include="..\Public\Player_ParryEndState.h" />
+    <ClInclude Include="..\Public\Player_ParryGuardState.h" />
+    <ClInclude Include="..\Public\Player_ParryState.h" />
+    <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
@@ -443,6 +447,10 @@
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryEndState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryGuardState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryState.cpp" />
+    <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
@@ -638,6 +646,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />

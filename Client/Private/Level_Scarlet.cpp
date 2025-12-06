@@ -60,7 +60,10 @@ HRESULT CLevel_Scarlet::Initialize()
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);*/
 
+#ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
+#endif // _DEBUG
+
 	return S_OK;
 }
 

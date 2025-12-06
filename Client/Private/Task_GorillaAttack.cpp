@@ -162,7 +162,12 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 void CTask_GorillaAttack::CrushPattern()
 {
 	m_pSkillData.push(m_pGameManager->Find_SkillData(2));
-	m_pSkillData.push(m_pGameManager->Find_SkillData(12));
+
+	if (30.f <= m_pGameInstance->Random(0.f, 100.f))
+		m_pSkillData.push(m_pGameManager->Find_SkillData(14));
+	else
+		m_pSkillData.push(m_pGameManager->Find_SkillData(12));
+
 	SelectAttack();
 }
 
@@ -441,8 +446,8 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 	auto pTarget = m_pBlackBoard->GetTarget();
 	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
-	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
-	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
 

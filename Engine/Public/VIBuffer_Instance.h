@@ -41,6 +41,7 @@ public:
 
 	void			CopyResource(ID3D11Buffer* pResource);
 	void			PasteResource(ID3D11Buffer* pResource);
+	ID3D11Buffer*	GetBufferResource() { return m_pVBInstance; }
 
 	_bool			IsLoop() { return m_bIsLoop; }
 

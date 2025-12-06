@@ -184,6 +184,7 @@ public:
 	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+	void				isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance = 0.f);
 
 #ifdef _DEBUG
 	void				FrustomRender();
@@ -306,7 +307,6 @@ public:
 
 	HRESULT												SaveCinemaSceneData(const WCHAR* szFilePath);
 	HRESULT												LoadCinemaSceneData(const WCHAR* szFilePath);
-
 #pragma endregion
 
 
@@ -318,20 +318,22 @@ public:
 	HRESULT									UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
 #pragma endregion
 
-	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
-	_bool							IsGamePasue() { return m_bIsPause; }
+	void									SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 
-	_float							GetGameSpeedfRatio();
-	void							ResetGameSpeed();
+	void									GamePauseDurationTime(_float fTime, _float fTimeRatio, _float fReturnSpeed);
+	_bool									IsGamePasue() { return m_bIsPause; }
+
+	_float									GetGameSpeedfRatio();
+	void									ResetGameSpeed();
 
 	// 델타 타임에 대해 곱셈 연산을 수행해서 느려지게 만들거나 빠르게 만들수있습니다.
-	void							SetGameSpeed(_float fRatio);
+	void									SetGameSpeed(_float fRatio);
 	// 스크린 전체 사이즈
-	const _uint2&					GetScreenSize();
+	const _uint2&							GetScreenSize();
 
 	// 스크린 반절 사이즈
-	const _uint2&					GetHalfScreenSize();
-	const WCHAR*					GetFrameText();
+	const _uint2&							GetHalfScreenSize();
+	const WCHAR*							GetFrameText();
 
 #ifdef _DEBUG
 	_float							GetLoopDurationTime(GAMELOOP_TYPE eType);
@@ -372,6 +374,11 @@ private:
 	_uint2							m_vHalfScreenSize = {};
 
 	_uint							m_iDrawCnt = {};
+
+	_bool							m_bIsHitStopDurationTime;
+	_float							m_fHitStopReturnSpeed = {};
+	_float2							m_fHitStopTime = {};
+
 	_float							m_fTimeAcc = {};
 	_tchar							m_szFPS[MAX_PATH] = {};
 

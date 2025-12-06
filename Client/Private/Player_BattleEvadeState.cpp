@@ -9,7 +9,7 @@ CPlayer_BattleEvadeState::CPlayer_BattleEvadeState()
 {
 }
 
-void CPlayer_BattleEvadeState::Start(void* pArg)
+void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
@@ -81,8 +81,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_BattleEvadeState::End()
+_float CPlayer_BattleEvadeState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_BattleEvadeState* CPlayer_BattleEvadeState::Create(void* pArg)

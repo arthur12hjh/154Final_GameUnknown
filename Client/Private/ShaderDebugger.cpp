@@ -66,6 +66,7 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     _uint iMax = 16, iMin = 1;
 
+    ImGui::DragFloat("MB ObjectBlur Scale", m_pMotioBlurDesc->fObjectBlurScale, 0.001f, -2.f, 2.0f);
     ImGui::DragFloat("MB CamBlur Scale", m_pMotioBlurDesc->fCamBlurScale, 0.001f, -2.f, 2.0f);
     ImGui::DragFloat("MB Bias", m_pMotioBlurDesc->fBias, 0.001f, -2.f, 2.f);
     ImGui::DragScalar("MB Sample Count", ImGuiDataType_U32, m_pMotioBlurDesc->iSampleCount, 1.0f, &iMin, &iMax, "%u", 1);

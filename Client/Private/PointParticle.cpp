@@ -81,7 +81,7 @@ HRESULT CPointParticle::Initialize(void* pArg)
 	//m_pVIBufferCom->Initialize(nullptr);
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
+	
 
 	ID3D11Buffer* pBuffer = nullptr;
 	D3D11_BUFFER_DESC BufferDesc = {};

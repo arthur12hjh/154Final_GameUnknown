@@ -155,6 +155,20 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
+
+	if (m_bIsHitStopDurationTime)
+	{
+		m_fHitStopTime.x += fTimeDelta;
+
+		if (m_fHitStopTime.x > m_fHitStopTime.y)
+		{
+			_float fRatio = Clamp<_float>(fTimeDelta * m_fHitStopReturnSpeed, 0.f, 1.f);
+			m_fTimeRatio = Lerp<_float>(m_fTimeRatio, 1.f, fRatio);
+			if (1 <= m_fTimeRatio)
+				m_bIsHitStopDurationTime = false;
+		}
+	}
+
 	if (false == m_bIsPause)
 	{
 		m_pInput_Device->UpdateKeyFrame();
@@ -217,6 +231,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 	m_pPhysx_Manager->Update(fGameSpeed); // isdead 체크해서 뺴고
+
 	m_pRenderer->Update(fTimeDelta);
 
 	m_pObject_Manager->Clear_DeadObj(); // -> 죽은 객체 빠지고
@@ -761,6 +776,11 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
+void CGameInstance::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance)
+{
+	m_pFrustum->isIn_WorldFrustum(pInstanceBuffer, ppOut, fDistance);
+}
+
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()
 {
@@ -1072,6 +1092,15 @@ HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pE
 }
 #pragma endregion
 
+
+void CGameInstance::GamePauseDurationTime(_float fTime, _float fTimeRatio, _float fReturnSpeed)
+{
+	m_bIsHitStopDurationTime = true;
+	m_fHitStopReturnSpeed = fReturnSpeed;
+	m_fTimeRatio = fTimeRatio;
+	m_fHitStopTime.x = 0.f;
+	m_fHitStopTime.y = fTime;
+}
 
 _float CGameInstance::GetGameSpeedfRatio()
 {

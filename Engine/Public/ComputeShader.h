@@ -31,6 +31,8 @@ public:
 
 public:
 	HRESULT									ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffer);
+	HRESULT									ADD_OutBuffer(ID3D11Buffer* pBuffer);
+
 	HRESULT									Update_BufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, void* pData);
 	HRESULT									Update_BufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pBuffer);
 

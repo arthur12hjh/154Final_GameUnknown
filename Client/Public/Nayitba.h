@@ -17,6 +17,7 @@ public :
 	typedef struct Nayitba_Desc : GAMEOBJECT_DESC
 	{
 		_uint						iMonsterID = {};
+		_bool						bIsSuperMonster = { false };
 	}NAYITBA_DESC;
 
 private :
@@ -73,6 +74,7 @@ private:
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
+	_bool							m_bIsSuperMonster = { false };
 	_float2							m_vHitVisibleDuration = { 0, 5.f };
 	_bool							m_bIsTimeVisible = { false };
 	CUIBase*						m_pStatusUI = { nullptr };

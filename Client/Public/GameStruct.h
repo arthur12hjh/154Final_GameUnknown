@@ -47,6 +47,8 @@ namespace Client
 		HIT, 
 		BETA_CHARGINGSLASH, BETA_TRIPLET,
 		
+		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
+
 		AERIAL_ATTACK, //미구현
 		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
@@ -109,6 +111,13 @@ namespace Client
 		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
 		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
 		bool   isWeaponVisible = { false };
+
+		// 패링 판정이 가능한지 체크하는 변수.
+		// 만약 패링이 가능하다면 true, 불가능하다면 False
+		bool   isParryable = { false };
+		// 저스트 패링 판정이 가능한지 체크하는 변수.
+		// 만약 저스트 패링이 가능하다면 true, 불가능하다면 false
+		bool   isJustParryable = { false };
 
 	}PLAYER_DESC;
 

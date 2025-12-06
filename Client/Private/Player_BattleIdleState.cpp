@@ -9,10 +9,10 @@ CPlayer_BattleIdleState::CPlayer_BattleIdleState()
 {
 }
 
-void CPlayer_BattleIdleState::Start(void* pArg)
+void CPlayer_BattleIdleState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::IDLE;
-    m_pPlayer->Set_Animation("Proto_Battle_Idle", true, 1.f);
+    m_pPlayer->Set_Animation("Proto_Battle_Idle", true, 1.f, fBlendRatio);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
@@ -21,6 +21,11 @@ PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
+
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) || 
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
@@ -43,8 +48,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BattleIdleState::End()
+_float CPlayer_BattleIdleState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BattleIdleState* CPlayer_BattleIdleState::Create(void* pArg)

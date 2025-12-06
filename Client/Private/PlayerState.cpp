@@ -27,7 +27,7 @@ _bool CPlayerState::isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_STATE ePlayer
 	return true;
 }
 
-void CPlayerState::Start(void* pArg)
+void CPlayerState::Start(void* pArg, _float fBlendRatio)
 {
 }
 
@@ -36,8 +36,9 @@ PLAYER_TRANSITION_DESC CPlayerState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayerState::End()
+_float CPlayerState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 void CPlayerState::Free()

@@ -867,7 +867,7 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
    	pool.reserve(pool.size() + count);
 
 	for (_uint i = 0; i < count; ++i) {
- 		CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase)->Clone_UI(this, i);
+ 		CUIBase* pUI = pUIBase->Clone_UI(this, i);
 		
 		if (!pUI)
 			return E_FAIL;
@@ -960,11 +960,11 @@ void CUIHUD::Free()
 	__super::Free();
 
 	Safe_Release(m_pUIAnimMgr);
-	
-	for (auto& pPools : m_WorldUIs)
-	{
-		for(auto& pPool : pPools.second)
-			Safe_Release(pPool);
-	}
+
+	//for (auto& pPools : m_WorldUIs)
+	//{
+	//	for (auto& pPool : pPools.second)
+	//		Safe_Release(pPool);
+	//}
 }
 
