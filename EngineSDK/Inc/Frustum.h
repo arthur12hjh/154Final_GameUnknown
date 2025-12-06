@@ -35,23 +35,18 @@ public:
 	_bool						isIn_WorldFrustum(class CCollider* pCollider);
 
 	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
-	void						isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance = 0.f, _uint* iNumCullCount = nullptr);
+	_bool						isIn_DistanceFrustum(_float3 vPoint, _float fDistance);
 
 private:
 	_float4						m_vOriginalPoints[8] = {};
 	_float4						m_vWorldPoints[8] = {};
-	
+
+	_float4						m_vWorldPlanes[6] = {};
 	_float4						m_vLocalPlanes[6] = {};
+	_float3						m_vCamPos = {};
 
 	BoundingFrustum*			m_OrizinBoundingFrustom = {};
 	BoundingFrustum				m_BoundingFrustom = {};
-
-	CComputeShader*				m_pComputeShader = { nullptr };
-	CONSTANT_BUFFER_FRUSTOM		m_FrustomConstantDesc = {};
-
-	_uint						m_iNumData = { 1024 };
-
-	ID3D11Buffer*				m_pCountBuffer = { nullptr };
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -65,9 +60,8 @@ private:
 #endif // _DEBUG
 
 private:
-	HRESULT				Ready_ComputeShader();
-	void				Make_Planes(const _float4* pPoints);
 	void				Make_Planes(const _float4* pPoints, _float4* pPlanes);
+
 public:
 	static CFrustum*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void		Free() override;

@@ -263,6 +263,7 @@ namespace Engine
 	{
 		const wchar_t* pPrototypeTag = nullptr;   // 컴포넌트 태그
 		unsigned int iNumInstance = 0;
+		unsigned int iObjectID = 0;
 		vector<VTX_INSTANCE_MODEL>* pInstancingData;
 	}MODEL_INSTANCE_LOAD_DESC;
 

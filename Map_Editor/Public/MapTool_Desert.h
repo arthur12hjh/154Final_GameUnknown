@@ -14,6 +14,7 @@ class CNavigation;
 class CCell;
 class CModel;
 class CLight;
+class CComponent;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -21,14 +22,20 @@ NS_BEGIN(Tool_Map)
 class CMapTool_Desert final : public CBase
 {
 public:
-#pragma pack(push, 1)
 	typedef struct SavedObjectInfo
 	{
 		_float4x4	    worldMatrix;
 		_tchar			szComponentTag[256];
+		_uint			iObjectID = 0;	
 	}SAVEDOBJECTINFO;
 
-#pragma pack(pop)
+	typedef struct LoadObjectInfo
+	{
+		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
+		//_uint			iObjectID = 0;	
+	}LOADOBJECTINFO;
+
 
 	typedef struct SavedMonsterInfo
 	{
@@ -73,6 +80,9 @@ public:
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
+	
+	_uint Object_Number(const _tchar* pComponentTag);
+	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
 	HRESULT Save_Terrain_HeightMap(const _char* szHeightMapFilePath);
@@ -87,6 +97,7 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
+	CComponent* m_pSelectComponent = { nullptr };
 
 public:
 	ID3D11ShaderResourceView* Get_MaskSRV() { return m_pMaskSRV; }

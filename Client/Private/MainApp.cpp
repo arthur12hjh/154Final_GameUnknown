@@ -79,6 +79,8 @@ void CMainApp::Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pImGuiDebug->Update(fTimeDelta);
 #endif
+
+
 }
 
 HRESULT CMainApp::Render()
