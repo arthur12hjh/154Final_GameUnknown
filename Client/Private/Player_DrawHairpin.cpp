@@ -10,7 +10,7 @@ CPlayer_DrawHairpin::CPlayer_DrawHairpin()
 {
 }
 
-void CPlayer_DrawHairpin::Start(void* pArg)
+void CPlayer_DrawHairpin::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::DRAW_HAIRPIN;
 	m_pPlayer->Set_Animation("Eve_Weapon_Start_Anim", false, 1.2f);
@@ -39,8 +39,9 @@ PLAYER_TRANSITION_DESC CPlayer_DrawHairpin::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_DrawHairpin::End()
+_float CPlayer_DrawHairpin::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_DrawHairpin* CPlayer_DrawHairpin::Create(void* pArg)

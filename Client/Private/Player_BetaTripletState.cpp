@@ -20,7 +20,7 @@ _bool CPlayer_BetaTripletState::CanEnter(CPlayer* pPlayer, PLAYER_DESC* pPlayerD
     return false;
 }
 
-void CPlayer_BetaTripletState::Start(void* pArg)
+void CPlayer_BetaTripletState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::BETA_TRIPLET;
 
@@ -56,8 +56,9 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BetaTripletState::End()
+_float CPlayer_BetaTripletState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BetaTripletState* CPlayer_BetaTripletState::Create(void* pArg)

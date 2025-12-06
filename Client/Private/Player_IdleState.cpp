@@ -10,7 +10,7 @@ CPlayer_IdleState::CPlayer_IdleState()
 {
 }
 
-void CPlayer_IdleState::Start(void* pArg)
+void CPlayer_IdleState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::IDLE;
     m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
@@ -53,8 +53,9 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_IdleState::End()
+_float CPlayer_IdleState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_IdleState* CPlayer_IdleState::Create(void* pArg)

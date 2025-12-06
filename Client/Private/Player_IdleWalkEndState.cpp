@@ -10,7 +10,7 @@ CPlayer_IdleWalkEndState::CPlayer_IdleWalkEndState()
 {
 }
 
-void CPlayer_IdleWalkEndState::Start(void* pArg)
+void CPlayer_IdleWalkEndState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK_END;
 
@@ -56,8 +56,9 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkEndState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_IdleWalkEndState::End()
+_float CPlayer_IdleWalkEndState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_IdleWalkEndState* CPlayer_IdleWalkEndState::Create(void* pArg)
