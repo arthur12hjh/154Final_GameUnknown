@@ -884,6 +884,7 @@ struct PS_NORMAL_OUT
 struct PS_NONLIGHT_OUT
 {
     float4 vDiffuse : SV_TARGET0;
+    float4 vBloom : SV_TARGET1;
 };
 
 struct PS_WEIGHT_OUT
@@ -1075,11 +1076,11 @@ PS_NONLIGHT_OUT PS_MASK(PS_NONLIGHT_IN In)
     
 
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
-    
+
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
-    if(Out.vDiffuse.a < 0.1)
-        discard;
+    Out.vDiffuse *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    //if(Out.vDiffuse.a < 0.1)
+    //    discard;
     return Out;
 }
 
@@ -1363,6 +1364,19 @@ PS_NONLIGHT_OUT PS_DISTORTION(PS_NONLIGHT_IN In)
     return Out;
 }
 
+
+
+/* One, One, Add 모드로 블렌드 켜기.*/
+BlendState BS_Min_Blend
+{
+    BlendEnable[0] = true;
+    BlendEnable[1] = true;
+
+    SrcBlend = one;
+    DestBlend = one;
+    BlendOp = max;
+};
+
 technique11 DefaultTechnique
 {
     // idx 0
@@ -1376,7 +1390,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_NORMAL();
     }
     // idx 1
-    pass NonLight
+    pass Bloom
     {
         SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_DepthNonWrite, 0);
@@ -1504,5 +1518,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NORMAL_STONE();
         PixelShader = compile ps_5_0 PS_STONE();
+    }
+    // idx 14
+    pass MinBlur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Min_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_WEIGHT();
     }
 }

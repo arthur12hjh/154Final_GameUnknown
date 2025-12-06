@@ -487,15 +487,19 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     
     
-    vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
+    //vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    //vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
     //fBlurAlpha.r = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
     //fBlurAlpha.g = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).g + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).g);
     vector fBlur;
-    fBlur.rgb = fBlurColor.rgb / (fBlurAlpha.r);
-    fBlur.a = saturate(fBlurAlpha.r);
+    fBlur.rgb = Calc_Blur(g_BlurFinalTexture, In.vTexcoord).rgb / (Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
+    fBlur.a = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
+    vector fGlow;
+    fGlow.rgb = Calc_Glow(g_GlowFinalTexture, In.vTexcoord).rgb / (Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
+    fGlow.a = saturate(Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
     
     Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fGlow.a) + saturate(fGlow.rgb) * fGlow.a;
     
     return Out;
 }
