@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
+    <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\public\Chair.h" />
@@ -392,6 +393,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
+    <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\private\Chair.cpp" />

@@ -111,6 +111,8 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
             return false;
         });
 
+    if (m_Bones.end() == iter)
+        return nullptr;
 
     return (*iter)->Get_CombinedTransformationMatrixPtr();
 }
