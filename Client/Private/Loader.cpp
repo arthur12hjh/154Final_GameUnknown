@@ -50,10 +50,11 @@
 #pragma endregion
 
 #pragma region Prob
-#include "Prob_Box.h"
+#include "Prob_Static.h"
+#include "Prob_Destory.h"
 
 #pragma region Interaction
-#include "Vending.h"
+#include "StaticInteraction.h"
 #include "CanBox.h"
 #pragma endregion
 #pragma endregion
@@ -780,6 +781,22 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Interaction_Vending7A */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/VendingMachine/VendingMachine_7A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Interaction_Chair117 */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/Chair/Chair117_C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_CM_Rock9 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock9");
@@ -1214,16 +1231,23 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* Prob. Box */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Box");
-	pProtoDesc.pPrototype = CProb_Box::Create(m_pDevice, m_pContext);
+	/* Prototype_GameObject_Prob_Destory */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Destory");
+	pProtoDesc.pPrototype = CProb_Destory::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* Prob. Vending */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Vending");
-	pProtoDesc.pPrototype = CVending::Create(m_pDevice, m_pContext);
+	/* Prototype_GameObject_Prob_Static */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Static");
+	pProtoDesc.pPrototype = CProb_Static::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* Prototype_GameObject_Static_Interaction */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Static_Interaction");
+	pProtoDesc.pPrototype = CStaticInteraction::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1360,6 +1384,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+
 
 	/* For.Prototype_Component_Model_Stone2 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2089,6 +2115,22 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_2A");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_2A.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Pallet02 */
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Pallet02");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Pallet/Pallet02.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster02 */
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster02");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Poster/Poster02.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -1,24 +1,24 @@
 #include "pch.h"
-#include "Prob_Box.h"
+#include "Prob_Destory.h"
 
 #include "GameInstance.h"
 
-CProb_Box::CProb_Box(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CProb_Destory::CProb_Destory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CActor(pDevice, pContext)
 {
 }
 
-CProb_Box::CProb_Box(const CProb_Box& Prototype) :
+CProb_Destory::CProb_Destory(const CProb_Destory& Prototype) :
 	CActor(Prototype)
 {
 }
 
-HRESULT CProb_Box::Initialize_Prototype()
+HRESULT CProb_Destory::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CProb_Box::Initialize(void* pArg)
+HRESULT CProb_Destory::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -30,18 +30,18 @@ HRESULT CProb_Box::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CProb_Box::Priority_Update(_float fTimeDelta)
+void CProb_Destory::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CProb_Box::Update(_float fTimeDelta)
+void CProb_Destory::Update(_float fTimeDelta)
 {
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
-void CProb_Box::Late_Update(_float fTimeDelta)
+void CProb_Destory::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
@@ -54,7 +54,7 @@ void CProb_Box::Late_Update(_float fTimeDelta)
 	}
 }
 
-HRESULT CProb_Box::Render()
+HRESULT CProb_Destory::Render()
 {
 	// Å¸Å° 21¹ø
 	if (FAILED(Bind_ShaderResources()))
@@ -78,7 +78,7 @@ HRESULT CProb_Box::Render()
 	return S_OK;
 }
 
-HRESULT CProb_Box::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CProb_Destory::ADD_Components(const ACTOR_DESC& Desc)
 {
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
@@ -122,7 +122,7 @@ HRESULT CProb_Box::ADD_Components(const ACTOR_DESC& Desc)
 	return S_OK;
 }
 
-HRESULT CProb_Box::Bind_ShaderResources()
+HRESULT CProb_Destory::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -135,9 +135,9 @@ HRESULT CProb_Box::Bind_ShaderResources()
 }
 
 
-CProb_Box* CProb_Box::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CProb_Destory* CProb_Destory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CProb_Box* pBoxActor = new CProb_Box(pDevice, pContext);
+	CProb_Destory* pBoxActor = new CProb_Destory(pDevice, pContext);
 	if (FAILED(pBoxActor->Initialize_Prototype()))
 	{
 		Safe_Release(pBoxActor);
@@ -146,9 +146,9 @@ CProb_Box* CProb_Box::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pBoxActor;
 }
 
-CGameObject* CProb_Box::Clone(void* pArg)
+CGameObject* CProb_Destory::Clone(void* pArg)
 {
-	CProb_Box* pBoxActor = new CProb_Box(*this);
+	CProb_Destory* pBoxActor = new CProb_Destory(*this);
 	if (FAILED(pBoxActor->Initialize(pArg)))
 	{
 		Safe_Release(pBoxActor);
@@ -157,7 +157,7 @@ CGameObject* CProb_Box::Clone(void* pArg)
 	return pBoxActor;
 }
 
-void CProb_Box::Free()
+void CProb_Destory::Free()
 {
 	__super::Free();
 

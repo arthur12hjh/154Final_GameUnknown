@@ -1,26 +1,26 @@
 #include "pch.h"
-#include "Vending.h"
+#include "StaticInteraction.h"
 
 #include "GameInstance.h"
 #include "UIBase.h"
 #include "Interaction_Component.h"
 
-CVending::CVending(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CStaticInteraction::CStaticInteraction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CProb_Interaction(pDevice, pContext)
 {
 }
 
-CVending::CVending(const CVending& Prototype) :
+CStaticInteraction::CStaticInteraction(const CStaticInteraction& Prototype) :
     CProb_Interaction(Prototype)
 {
 }
 
-HRESULT CVending::Initialize_Prototype()
+HRESULT CStaticInteraction::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CVending::Initialize(void* pArg)
+HRESULT CStaticInteraction::Initialize(void* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -29,21 +29,23 @@ HRESULT CVending::Initialize(void* pArg)
     if (FAILED(ADD_Components(*pDesc)))
         return E_FAIL;
 
-    return S_OK;
-}
-
-void CVending::Priority_Update(_float fTimeDelta)
-{
-}
-
-void CVending::Update(_float fTimeDelta)
-{
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
     m_pRigidBody->Update_PxTransform(WorldMat);
+
+    return S_OK;
 }
 
-void CVending::Late_Update(_float fTimeDelta)
+void CStaticInteraction::Priority_Update(_float fTimeDelta)
+{
+}
+
+void CStaticInteraction::Update(_float fTimeDelta)
+{
+
+}
+
+void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
@@ -57,7 +59,7 @@ void CVending::Late_Update(_float fTimeDelta)
     }
 }
 
-HRESULT CVending::Render()
+HRESULT CStaticInteraction::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
@@ -80,7 +82,7 @@ HRESULT CVending::Render()
     return S_OK;
 }
 
-HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
 
@@ -107,7 +109,7 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
 
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
-    tUserData.szActorTag = TEXT("Prop_Actor");
+    tUserData.szActorTag = TEXT("Static_Interaction");
 
     //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
     CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -118,7 +120,7 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     // STATIC : 충돌하는데 가만히 있는 녀석
     // DYNAMIC : 충돌 
     // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
+    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
@@ -138,7 +140,7 @@ HRESULT CVending::ADD_Components(const ACTOR_DESC& Desc)
     return S_OK;
 }
 
-HRESULT CVending::Bind_ShaderResources()
+HRESULT CStaticInteraction::Bind_ShaderResources()
 {
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
         return E_FAIL;
@@ -150,52 +152,57 @@ HRESULT CVending::Bind_ShaderResources()
     return S_OK;
 }
 
-HRESULT CVending::Begin_OverlapCallBack()
+HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
 
+    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
     m_bIsInteractionAble = true;
     return S_OK;
 }
 
-void CVending::Excute_CallBack(CGameObject* pActionObject)
+void CStaticInteraction::Excute_CallBack(CGameObject* pActionObject)
 {
-
+    if (INTERACTION_STATE::UNLOCK == m_eInterState)
+    {
+        m_eInterState = INTERACTION_STATE::ACTIVE;
+    }
 }
 
-HRESULT CVending::End_OverlapCallBack()
+HRESULT CStaticInteraction::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::END);
 
+    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
     m_bIsInteractionAble = false;
     return S_OK;
 }
 
-CVending* CVending::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CStaticInteraction* CStaticInteraction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CVending* pVending = new CVending(pDevice, pContext);
-    if (FAILED(pVending->Initialize_Prototype()))
+    CStaticInteraction* pStaticInteraction = new CStaticInteraction(pDevice, pContext);
+    if (FAILED(pStaticInteraction->Initialize_Prototype()))
     {
-        Safe_Release(pVending);
-        MSG_BOX("Create Fail : Vending");
+        Safe_Release(pStaticInteraction);
+        MSG_BOX("Create Fail : Static Interaction");
     }
-    return pVending;
+    return pStaticInteraction;
 }
 
-CGameObject* CVending::Clone(void* pArg)
+CGameObject* CStaticInteraction::Clone(void* pArg)
 {
-    CVending* pVending = new CVending(*this);
-    if (FAILED(pVending->Initialize(pArg)))
+    CStaticInteraction* pStaticInteraction = new CStaticInteraction(*this);
+    if (FAILED(pStaticInteraction->Initialize(pArg)))
     {
-        Safe_Release(pVending);
-        MSG_BOX("Clone Fail : Vending");
+        Safe_Release(pStaticInteraction);
+        MSG_BOX("Clone Fail : Static Interaction");
     }
-    return pVending;
+    return pStaticInteraction;
 }
 
-void CVending::Free()
+void CStaticInteraction::Free()
 {
     __super::Free();
 

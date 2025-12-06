@@ -9,9 +9,6 @@ NS_END
 NS_BEGIN(Client)
 class CCanBox final : public CProb_Interaction
 {
-public:
-	enum class BOX_STATE { LOCK, UNLCOK, OPEN, END };
-
 private:
 	CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCanBox(const CCanBox& Prototype);
@@ -30,7 +27,6 @@ public:
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CEventHandle*					m_pEventHandle = { nullptr };
-	BOX_STATE						m_eState = { BOX_STATE::LOCK };
 
 private:
 	HRESULT							ADD_Components(const ACTOR_DESC& Desc);
