@@ -147,6 +147,23 @@ HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffe
     return S_OK;
 }
 
+HRESULT CComputeShader::ADD_OutBuffer(ID3D11Buffer* pBuffer)
+{
+    ID3D11UnorderedAccessView* pUAV = nullptr;
+    D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc = {};
+    UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+    UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+    UAVDesc.Buffer.NumElements = m_iNumData;
+    UAVDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
+
+    if (FAILED(m_pDevice->CreateUnorderedAccessView(pBuffer, &UAVDesc, &pUAV)))
+        return E_FAIL;
+
+    m_pOutputBuffer.push_back(pBuffer);
+    m_pUAVs.push_back(pUAV);
+    return E_NOTIMPL;
+}
+
 HRESULT CComputeShader::Update_BufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, void* pData)
 {
     switch (eBufferType)

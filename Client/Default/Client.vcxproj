@@ -638,6 +638,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />

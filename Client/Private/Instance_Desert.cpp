@@ -65,11 +65,8 @@ void CInstance_Desert::Update(_float fTimeDelta)
 
 void CInstance_Desert::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-#endif
+	//if(m_pGameInstance->isIn_WorldFrustum(m_pModelCom->GetBufferResource(), , 1.f ))
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CInstance_Desert::Render()
