@@ -32,7 +32,6 @@ public:
 	virtual HRESULT				Render() override;
 
 private:
-	CVIBuffer_Instance_Model*	m_pModelCom = { nullptr };
 	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
 

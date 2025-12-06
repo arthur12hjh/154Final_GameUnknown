@@ -1864,6 +1864,7 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 
 		RuinComponentDesc Desc = {};
 		Desc.pComponentTag = info.szComponentTag;
+		Desc.iObjectId = info.iObjectID;
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
 			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
 

@@ -75,6 +75,7 @@ namespace Tool_Map
 	typedef struct RuinComponentDesc
 	{
 		const wchar_t* pComponentTag;
+		unsigned int	iObjectId = 0;
 
 	}RuinComponentDesc;
 }

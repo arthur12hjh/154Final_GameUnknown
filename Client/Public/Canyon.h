@@ -6,7 +6,7 @@
 #include "Actor.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Instance_Model;
+class CModel;
 class CCollider;
 NS_END
 
@@ -28,7 +28,7 @@ public:
 	virtual HRESULT Render() override;
 
 private :
-	CVIBuffer_Instance_Model* m_pInstanceModelCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
