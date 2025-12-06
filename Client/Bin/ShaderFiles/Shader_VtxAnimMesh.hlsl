@@ -44,7 +44,11 @@ VS_OUT VS_MAIN(VS_IN In)
     
     /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
-    vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
+    float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
+
+// 월드 변환
     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     
@@ -54,9 +58,9 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vPosition = mul(vPosition, matWVP);
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */   
-    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
-    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vNormal = float4(normalize(mul(float4(vSkinnedNormal, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vTangent = float4(normalize(mul(float4(vSkinnedTangent, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vBinormal = float4(normalize(mul(float4(vSkinnedBinorm, 0.f), g_WorldMatrix).xyz), 0.f);
     Out.vTexcoord = In.vTexcoord;
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
@@ -136,13 +140,25 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     matOldWVP = mul(matOldWV, g_ProjMatrix);
     vector vOldPos = mul(vPrePosition, matOldWVP);
     
-    float3 vDir = vOldPos.xyz - vNewPos.xyz;
-    vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
+    float4 curVS = mul(vCurrentPosition, matWV);
+    float4 preVS = mul(vPrePosition, matOldWV);
+
+    float3 vDirVS = curVS.xyz - preVS.xyz;
+    float3 vNormalVS = normalize(mul(float4(In.vNormal, 0.f), matWV).xyz);
+
+    float a = dot(normalize(vDirVS), vNormalVS);
     
-    float2 fVelocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
-    
-    Out.vDirection.xy = fVelocity * 0.5f;
+    if(a < 0.f)
+        Out.vPosition = vOldPos;
+    else
+        Out.vPosition = vNewPos;
+   
+    float2 vVelocity = vNewPos.xy / vNewPos.w - vOldPos.xy / vOldPos.w;
+    Out.vDirection.xy = vVelocity * 0.5f;
     Out.vDirection.y *= -1.f;
+   
+    Out.vDirection.z = Out.vPosition.z / Out.vPosition.w;
+    Out.vDirection.w = 0.f;
     
     return Out;
 }
@@ -218,9 +234,7 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 {
     //노말맵은 안..쓰지.
     PS_OUT_MOTIONBLUR Out;
-    Out.vDirection.xy = In.vDirection.xy;
-    Out.vDirection.z = 0.f;
-    Out.vDirection.w = 1.f;
+    Out.vDirection = In.vDirection;
     
     return Out;
 }

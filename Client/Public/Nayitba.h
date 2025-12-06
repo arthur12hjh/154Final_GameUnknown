@@ -17,6 +17,7 @@ public :
 	typedef struct Nayitba_Desc : GAMEOBJECT_DESC
 	{
 		_uint						iMonsterID = {};
+		_bool						bIsSuperMonster = { false };
 	}NAYITBA_DESC;
 
 private :
@@ -59,6 +60,8 @@ public:
 	CAIController*					GetController();
 	const list<CGameObject*>*		GetTraceObejectList();
 
+	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+
 private:
 	CAISenceComponent*				m_pAISenceCom = { nullptr };
 	CAIController*					m_pAIController = { nullptr };
@@ -71,6 +74,7 @@ private:
 	NAYTIBA_DESC					m_MonsterInfo = {};
 	NAYTIBA_STATE					m_MonsterPreState = {};
 
+	_bool							m_bIsSuperMonster = { false };
 	_float2							m_vHitVisibleDuration = { 0, 5.f };
 	_bool							m_bIsTimeVisible = { false };
 	CUIBase*						m_pStatusUI = { nullptr };

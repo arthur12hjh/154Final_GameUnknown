@@ -57,11 +57,11 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
     case NAYTIBA_STATE::BATTLE:
     {
         _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-        _float  fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
+        _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+        _float  fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
         if (m_pOwnerInfo->fAttackRange < fDistance)
         {
-            _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
             string AnimationName = pOwner->GetStaticMonsterData()->szAnimationName;
             
             m_iSectionIndex = 0;
@@ -98,7 +98,7 @@ void CMonsterMoveState::Update(_float fTimeDelta)
 
         // 여기서 범위가 딱 걸쳐있을때 계속
         // 애니메이션이 변경되어 이상하게 나오는거
-        if (m_pOwnerInfo->fAttackRange >= fDistance && m_bIsCaution)
+        if (m_bIsCaution)
         {
             bIsMove = false;
             Update_Caution(fTimeDelta);
@@ -134,16 +134,15 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
         if (DIRECTION::BACK != m_vMoveDirection)
         {
             m_bIsFinished = true;
+            m_bIsEnableChange = true;
             return;
         }
     }
-    else
+    else if(m_pOwnerInfo->fAttackRange * 2.f <= fDistance)
     {
-        if (DIRECTION::BACK == m_vMoveDirection)
-        {
-            m_bIsFinished = true;
-            return;
-        }
+        m_bIsFinished = true;
+        m_bIsEnableChange = true;
+        return;
     }
 
     AnimationName += "_Caution";
@@ -212,40 +211,29 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     {
         _vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
         
-        vTargetPos.m128_f32[1] = vOwnerPos.m128_f32[1] = 0.f;
         vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
-
-        if (m_pOwnerInfo->fAttackRange < fDistance || 0 < m_iSectionIndex)
+        if (1 == m_iSectionIndex)
         {
-            if (1 == m_iSectionIndex)
-            {
-                AnimationName += "_Run_L";
-                // 전투 상태라면 이거 Target을 향해서 뛰어간다.
-                LerpLookAt(fTimeDelta, 3.f);
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
+            AnimationName += "_Run_L";
+            // 전투 상태라면 이거 Target을 향해서 뛰어간다.
+            LerpLookAt(fTimeDelta, 2.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
 
-                if (m_pOwnerInfo->fAttackRange * 0.65f > fDistance)
-                {
-                    m_iSectionIndex++;
-                }
-            }
-            else if (2 == m_iSectionIndex)
-            {
-                AnimationName += "_Run_E";
-                m_bIsEnableChange = true;
-                bIsAnimLoop = false;
-            }
-            else
-            {
-                LerpLookAt(fTimeDelta, 8.f);
-                m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
-            }
+            if (m_pOwnerInfo->fAttackRange * 0.7f >= fDistance)
+                m_iSectionIndex++;
         }
-        else if(m_pOwnerInfo->fAttackRange > fDistance && 0 != m_iSectionIndex)
+
+        if (2 == m_iSectionIndex)
         {
-            m_iSectionIndex = 0;
-            m_bIsCaution = true;
+            AnimationName += "_Run_E";
+            m_bIsEnableChange = true;
+            bIsAnimLoop = false;
+        }
+        else
+        {
+            LerpLookAt(fTimeDelta, 4.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
         }
     }
     else
@@ -270,7 +258,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         }
     }
 
-    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop);
+    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, 0.08f);
     pEntity->Play_Animation(fTimeDelta);
 
     if (pEntity->IsAnmiationFinished())

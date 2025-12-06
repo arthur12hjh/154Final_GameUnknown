@@ -38,6 +38,8 @@ public:
 	void										ADD_InteractionIgnoreObject(HIT_TYPE eHitType);
 	void										ADD_InteractionOnlyHitObject(HIT_TYPE eHitType);
 
+	const _float3&								Get_CenterPos();
+
 #ifdef _DEBUG
 	virtual HRESULT								Render() override;
 #endif

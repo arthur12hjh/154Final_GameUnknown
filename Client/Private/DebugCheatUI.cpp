@@ -111,6 +111,9 @@ void CDebugCheatUI::DrawObjectDebug()
     if (ImGui::Button("Player Teleport Button"))
     {
         auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
         pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(m_vTeleportPoint[0], m_vTeleportPoint[1], m_vTeleportPoint[2], 1.f));
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
         Safe_Release(pPlayer);

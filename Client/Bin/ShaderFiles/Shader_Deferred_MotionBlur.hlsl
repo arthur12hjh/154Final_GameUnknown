@@ -8,17 +8,23 @@ float g_fTimeAcc;
 float g_fLifeTime;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_PreViewMatrix, g_PreProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
+matrix g_PreViewMatrixInv, g_PreProjMatrixInv; 
 
 texture2D g_SceneTexture;
 //Velocity Texture가 기록되었다고 가정. 
 texture2D g_VelocityTexture;
+texture2D g_CamVelocityTexture;
+
 //깊이 맵은 가져다 쓰자..
 texture2D g_DepthTexture;
 
 float2 g_vCamVelocity;
 
 float g_fCamBlurScale;
+float g_fObjectBlurScale; 
+
 float g_fBias;
 unsigned int   g_iSampleCount; 
 
@@ -40,10 +46,6 @@ VS_OUT VS_MAIN(VS_IN In)
 PS_OUT_BACKBUFFER PS_MAIN_CAM_MOTIONBLUR(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
-
-    //z가 1이라면 카메라 모션블러임
-    Out.vBackBuffer = float4(g_vCamVelocity.x, g_vCamVelocity.y, 0.f, 0.f);
-    
     return Out;
 }
 
@@ -53,53 +55,46 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
 
-    float4 vBaseColor = g_SceneTexture.Sample(ClampSampler, In.vTexcoord);
-    float4 vAccum = vBaseColor;
+    float4 baseColor = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
 
-    unsigned int iSampleCount = g_iSampleCount;
+    // 분리된 velocity 읽기
+    float4 vObjVelocity = g_VelocityTexture.Sample(ClampSampler, In.vTexcoord);
 
-    float4 vVelocity = g_VelocityTexture.Sample(ClampSampler, In.vTexcoord);
-    
-    Out.vBackBuffer = vBaseColor;
-   
-    if (length(vVelocity.xy) < 0.0001f)
-        return Out;
-    
-    vVelocity.xy /= (float) iSampleCount;
-   
+    // 최종 velocity = object + camera
+    float2 vVelocity = vObjVelocity.xy;
+
+    float2 vSampledVelocity = vVelocity / g_iSampleCount;
+
     float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).g * 500.f;
-    int iCnt = 1;
-    
-    [unroll(16)]
-    for (int i = iCnt; i < iSampleCount; i++)
-    {
-        float2 offset;
-        
-        if(vVelocity.w != 0.f)
-            offset = In.vTexcoord + vVelocity.xy * (float) i;
-        else
-            offset = In.vTexcoord + vVelocity.xy * (float) (iSampleCount / 2 - i) * g_fCamBlurScale;
-        
-        if(offset.x < 0.f || offset.x > 1.f ||
-            offset.y < 0.f || offset.y > 1.f)
-            continue;
-        
-        float4 vColor = g_SceneTexture.Sample(ClampSampler, offset);
-        float fSampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
 
-        
-        if (fCurrentDepth >= fSampleDepth + g_fBias)
+    float4 accum = baseColor;
+    float count = 1.0f;
+
+    float2 vStepVelocity = vObjVelocity / g_iSampleCount * g_fObjectBlurScale;
+
+    [loop]
+    for (int i = 1; i < g_iSampleCount; ++i)
+    {
+        float2 offset = In.vTexcoord + vStepVelocity * i;
+        if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1)
+            continue;
+
+        float sampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
+
+        if (fCurrentDepth >= sampleDepth + g_fBias)
         {
-            vColor.a = 0.6f; // 가중치 조절
-            vAccum += vColor;
-            iCnt++;
+            float4 sampleColor = g_SceneTexture.Sample(ClampSampler, offset);
+            float w = 1.0f - (float) i / g_iSampleCount;
+
+            accum += sampleColor * w;
+            count += w;
         }
     }
-
-    Out.vBackBuffer = vAccum / iCnt;
-
+    
+    Out.vBackBuffer = accum / count;
     return Out;
 }
+
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINE(PS_IN In)
 {

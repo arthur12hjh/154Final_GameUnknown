@@ -40,6 +40,7 @@ private:
     _bool                               m_bIsControllLift = { false };
     CLift_Platform*                     m_pLiftPlatform = { nullptr };
     CModel*                             m_pModelCom = { nullptr };
+
 private:
     HRESULT                             Ready_Components(const _tchar* pComponentTag);
     HRESULT                             Bind_ShaderResources();
