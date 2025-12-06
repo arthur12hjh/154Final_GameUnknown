@@ -14,6 +14,7 @@ public:
 	{
 		_float4x4	    worldMatrix;
 		_tchar			szComponentTag[256];
+		_uint			iObjectID = 0;
 	}SAVEDOBJECTINFO;
 
 	typedef struct SavedMonsterInfo

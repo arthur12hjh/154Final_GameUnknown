@@ -58,11 +58,18 @@ void CInstance_Desert::Priority_Update(_float fTimeDelta)
 
 void CInstance_Desert::Update(_float fTimeDelta)
 {
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	m_pColliderCom->UpdateColiision(worldMatrix);
 }
 
 void CInstance_Desert::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CInstance_Desert::Render()
@@ -102,6 +109,15 @@ HRESULT CInstance_Desert::Ready_Components(const _tchar* PrototypeTag)
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* Com_Collider_OBB */
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -164,4 +180,5 @@ void CInstance_Desert::Free()
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 }
