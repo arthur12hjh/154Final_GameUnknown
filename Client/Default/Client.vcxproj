@@ -160,6 +160,7 @@
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
+    <ClInclude Include="..\public\Chair.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -213,6 +214,10 @@
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
+    <ClInclude Include="..\Public\Player_ParryEndState.h" />
+    <ClInclude Include="..\Public\Player_ParryGuardState.h" />
+    <ClInclude Include="..\Public\Player_ParryState.h" />
+    <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
@@ -389,6 +394,7 @@
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
+    <ClCompile Include="..\private\Chair.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -443,6 +449,10 @@
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryEndState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryGuardState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryState.cpp" />
+    <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
@@ -638,6 +648,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />

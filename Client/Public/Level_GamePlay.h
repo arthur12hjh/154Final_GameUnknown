@@ -14,6 +14,7 @@ public:
 	{
 		_float4x4	    worldMatrix;
 		_tchar			szComponentTag[256];
+		_uint			iObjectID = 0;
 	}SAVEDOBJECTINFO;
 
 	typedef struct SavedMonsterInfo
@@ -49,7 +50,6 @@ private:
 	HRESULT Ready_Layer_Camera(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Player(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Monster(const _wstring& strLayerTag);
-	HRESULT Ready_Layer_Effect(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
 
 	HRESULT Load_Map_Desert_Data(const _char* szFilePath);

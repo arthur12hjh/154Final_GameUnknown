@@ -45,6 +45,7 @@ public:
 
 private :
 	CCollider*					m_pColliderCom = { nullptr };
+	_float2						m_vAliveTime = {0.f, 0.3f};
 
 	CGameObject*				m_pAttacker = { nullptr };
 	const void*					m_pData = { nullptr };

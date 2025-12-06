@@ -11,7 +11,7 @@ CPlayer_JumpState::CPlayer_JumpState()
 {
 }
 
-void CPlayer_JumpState::Start(void* pArg)
+void CPlayer_JumpState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::JUMP;
 
@@ -56,8 +56,9 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_JumpState::End()
+_float CPlayer_JumpState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_JumpState* CPlayer_JumpState::Create(void* pArg)

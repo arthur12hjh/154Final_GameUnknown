@@ -11,7 +11,7 @@ CPlayer_BattleWalkState::CPlayer_BattleWalkState(_bool isLanding, _bool isEvadin
 {
 }
 
-void CPlayer_BattleWalkState::Start(void* pArg)
+void CPlayer_BattleWalkState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK;
 
@@ -132,8 +132,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BattleWalkState::End()
+_float CPlayer_BattleWalkState::End()
 {
+    return 0.12f;
 }
 
 CPlayer_BattleWalkState* CPlayer_BattleWalkState::Create(void* pArg)

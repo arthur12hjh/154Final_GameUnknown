@@ -20,7 +20,7 @@ _bool CPlayer_BetaChargingSlashState::CanEnter(class CPlayer* pPlayer, PLAYER_DE
     return false;
 }
 
-void CPlayer_BetaChargingSlashState::Start(void* pArg)
+void CPlayer_BetaChargingSlashState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
     m_Desc->isLookFixed = true;
@@ -72,9 +72,11 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BetaChargingSlashState::End()
+_float CPlayer_BetaChargingSlashState::End()
 {
     m_Desc->isLookFixed = false;
+
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BetaChargingSlashState* CPlayer_BetaChargingSlashState::Create(void* pArg)

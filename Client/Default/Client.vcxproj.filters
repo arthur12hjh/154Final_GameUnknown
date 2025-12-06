@@ -682,6 +682,24 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX">
       <UniqueIdentifier>{711f2d7d-b11b-4829-bb26-9e4ada82edcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry">
+      <UniqueIdentifier>{c6aeef3f-f870-4109-af74-6cd14f729c9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End">
+      <UniqueIdentifier>{9267c26b-1679-4e76-9703-790ea17fd768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success">
+      <UniqueIdentifier>{c4d0df81-c37f-4e2c-8c85-cf9b3183ab79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard">
+      <UniqueIdentifier>{132802e6-6b05-484a-8b47-291aa6dea9e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Cull">
+      <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Chair">
+      <UniqueIdentifier>{b2317c82-9933-4815-9908-935a62cd0a35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1146,9 +1164,6 @@
     <ClInclude Include="..\Public\Player_Parts.h">
       <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Player.h">
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
     </ClInclude>
@@ -1380,6 +1395,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIInteractionFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParrySuccessState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerState.h">
+      <Filter>02.GameObjects\Character\Player\00. State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryGuardState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Chair.h">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1793,9 +1826,6 @@
     <ClCompile Include="..\Private\MonsterIdleState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Nayitba.cpp">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\NayitbaPartBody.cpp">
       <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
     </ClCompile>
@@ -1822,9 +1852,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_Parts.cpp">
       <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Character\Player</Filter>
@@ -2050,11 +2077,29 @@
     <ClCompile Include="..\Private\UIInteractionFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParrySuccessState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryGuardState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Nayitba.cpp">
+      <Filter>02.GameObjects\Character\Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chair.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -2100,6 +2145,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Cull</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

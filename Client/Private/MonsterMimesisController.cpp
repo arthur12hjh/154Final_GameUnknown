@@ -141,7 +141,9 @@ void CMonsterMimesisController::Damage(void* pArg)
 		{
 			if(m_bIsMimesis)
 				m_bIsMimesis = false;
+
 			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+			m_pGameInstance->GamePauseDurationTime(0.3f, 0.8f, 5.f);
 		}
 			
 	}

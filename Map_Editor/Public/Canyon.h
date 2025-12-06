@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CModel;
 class CShader;
+class CCollider;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -24,6 +25,9 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+private:
+	CCollider* m_pColliderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

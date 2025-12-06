@@ -52,7 +52,9 @@ void CLift_Platform::Update(_float fTimeDelta)
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif // _DEBUG
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
