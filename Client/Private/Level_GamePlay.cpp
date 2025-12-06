@@ -51,8 +51,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
-	//Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Map_Desert_Data("../Bin/DataFiles/Test.bin");
+	//Load_Map_Desert_Data("../Bin/DataFiles/MapData_Desert5.bin");
+	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -349,7 +350,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_Simple_Interaction"), TEXT("UI_Simple_Interaction"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	//pUIHUD->Register_WorldUI(TEXT("Pool_Simple_Interaction"), TEXT("UI_Simple_Interaction"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 

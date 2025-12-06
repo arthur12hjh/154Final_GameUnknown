@@ -999,26 +999,11 @@ PS_OUT PS_INTERACTION_FX(PS_IN In)
     PS_OUT Out;
 
     float2 uv = In.vTexcoord;
-
-    float4 base = g_Texture.Sample(DefaultSampler, uv);
-    float mask = g_Texture0.Sample(DefaultSampler, uv).r;
-    float4 glow = g_Texture0.Sample(DefaultSampler, uv);
     
-    float alpha = mask;
-
-    base.rgb *= alpha; // Additive 유지하면서 투명하게 만들기
-    base.a = alpha;
+    float4 base = g_Texture0.Sample(ClampSampler, uv);
+    base.a *= g_Alpha * 0.5f;
     
-    float4 result = base;
-    //result = lerp(result, mask, mask.a);
-    result = lerp(result, glow, glow.a);
-    
-    Out.vColor = base * g_Alpha;
-    
-    //float4 result = base;
-    //result = lerp(result, mask, mask.a);
-    
-    //Out.vColor = result;
+    Out.vColor = base;
     
     return Out;
 }
@@ -1031,9 +1016,14 @@ PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
 {
     PS_OUT Out;
     float2 uv = In.vTexcoord;
+    float2 ScaleUV = In.vTexcoord;
 
+    ScaleUV -= float2(0.5f, 0.5f);
+    ScaleUV /= g_fScale;
+    ScaleUV += float2(0.5f, 0.5f);
+    
     // GlowMask
-    float4 glow = g_Texture0.Sample(DefaultSampler, uv);
+    float4 glow = g_Texture0.Sample(ClampSampler, ScaleUV);
     // LightFX
     float4 flare = g_Texture1.Sample(DefaultSampler, uv);
 
@@ -1044,6 +1034,8 @@ PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
     // GlowMask의 "빛나는 부분"만 add
     glow.a *= g_Alpha * 0.5f;
     result += glow.rgb * glow.a * (g_GlowIntensity * 0.5f);
+    
+    float4 Color = float4(1.f, 1.f, 1.f, 1.f);
     
     // LightFX의 "빛나는 부분" 추가
     flare.a *= g_Alpha;

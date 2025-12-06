@@ -8,6 +8,7 @@
 #include "UIActionEvent.h"
 
 #include "UIWorldWrapper.h"
+#include "UIText.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -120,7 +121,7 @@ void CUIBase::Update(_float fTimeDelta)
 		XMStoreFloat3(&ndc, vClip / w); // (-1~1)
 
 		// 4) NDC → Screen
-		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
+ 		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
 
 		if (m_pTargetPos)
 		{
@@ -305,7 +306,7 @@ HRESULT CUIBase::Ready_Texture()
 CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 {
 	UIBASE_DESC Desc = m_tOriginUIDesc;
-	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Pooled_") + to_wstring(iIdx);
+	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Cloned_") + to_wstring(iIdx);
 
 	CGameObject* pObj = nullptr;
 	if (FAILED(pHUD->Add_UserInterface(Desc.iLevel, Desc.szProtoTag.c_str(),
@@ -330,7 +331,7 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 	}
 
 	return pUIBase;
-}
+} 
 
 void CUIBase::Update_Children(CUIBase* pObj)
 {
@@ -340,7 +341,8 @@ void CUIBase::Update_Children(CUIBase* pObj)
 	pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
 
 	pObj->GetTransform()->Set_State(STATE::POSITION,
-		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX, pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX,
+			pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
 
 	for (auto& pChild : *pObj->Get_Children())
 	{

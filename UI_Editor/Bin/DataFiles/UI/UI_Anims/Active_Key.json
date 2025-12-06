@@ -3,7 +3,7 @@
         {
             "szTrackTag": "Alpha",
             "vEndParam": [
-                0.7,
+                0.0,
                 0.0,
                 0.0,
                 0.0
@@ -16,16 +16,16 @@
             ]
         },
         {
-            "szTrackTag": "Size",
+            "szTrackTag": "Scale",
             "vEndParam": [
-                200.0,
-                200.0,
+                1.0,
+                0.0,
                 0.0,
                 0.0
             ],
             "vStartParam": [
-                1.0,
-                1.0,
+                0.0,
+                0.0,
                 0.0,
                 0.0
             ]
@@ -33,20 +33,20 @@
         {
             "szTrackTag": "GlowIntensity",
             "vEndParam": [
-                0.7,
+                0.5,
                 0.0,
                 0.0,
                 0.0
             ],
             "vStartParam": [
-                1.5,
+                2.25,
                 0.0,
                 0.0,
                 0.0
             ]
         }
     ],
-    "fDuration": 0.5,
+    "fDuration": 1.0,
     "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": true,

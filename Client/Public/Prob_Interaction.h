@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CInteraction_Component;
@@ -26,6 +27,8 @@ public:
 
 	virtual HRESULT					Render() override;
 
+	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
+
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
 
@@ -34,6 +37,10 @@ protected:
 
 	// UI Ç¥½Ã 
 	CUIBase*						m_pInteractionUI = { nullptr };
+
+	INTERACTION_STATE				m_eInterState{ INTERACTION_STATE::DEFAULT };
+	_float							m_fMaxUnlockDuration{ 0.f };
+	_float							m_fUnlockDuration{ 0.f };
 
 protected :
 	virtual HRESULT					Begin_OverlapCallBack() = 0;
