@@ -165,8 +165,10 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 void CFrustum::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance, _uint* iNumCullCount)
 {
 	_uint iIndex = {};
+	auto pCamera = m_pGameInstance->GetMainCamera();
 	m_FrustomConstantDesc.iNumInstance = iNumInstance;
 	m_FrustomConstantDesc.fDistance = fDistance;
+	XMStoreFloat3(&m_FrustomConstantDesc.vCamPos, pCamera->GetTransform()->Get_State(STATE::POSITION));
 	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_FrustomConstantDesc);
 	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 0, pInstanceBuffer);
 	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, &iIndex);
@@ -180,14 +182,7 @@ void CFrustum::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pO
 	m_pComputeShader->Update_Shader({ 1024, 1, 1 });
 	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, pOut);
 	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pCountBuffer);
-	if (iNumCullCount)
-	{
-		D3D11_MAPPED_SUBRESOURCE pSubResource = {};
-		m_pContext->Map(m_pCountBuffer, 0, D3D11_MAP_READ, 0, &pSubResource);
-		if(pSubResource.pData)
-			*iNumCullCount = *static_cast<_uint*>(pSubResource.pData);
-		m_pContext->Unmap(m_pCountBuffer, 0);
-	}
+ 
 }
 
 HRESULT CFrustum::Ready_ComputeShader()

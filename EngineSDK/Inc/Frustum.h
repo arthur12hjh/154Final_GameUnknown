@@ -8,10 +8,11 @@ class CComputeShader;
 typedef struct ConstantBuffer_Frustom
 {
 	_float4		vFrustomPlane[6];
+	_float3		vCamPos;
 	_float		fDistance;
+
 	_int		iNumInstance;
-	_int		iPadding;
-	_int		iPadding2;
+	_float3		vPadding;
 }CONSTANT_BUFFER_FRUSTOM;
 
 class CFrustum final : public CBase
