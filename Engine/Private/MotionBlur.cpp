@@ -14,6 +14,7 @@ CMotionBlur::CMotionBlur(const CMotionBlur& rhs)
 
 void* CMotionBlur::Get_Desc()
 {
+    m_Desc.fObjectBlurScale = &m_fObjectBlurScale;
     m_Desc.fBias = &m_fBias;
     m_Desc.fCamBlurScale = &m_fCamBlurScale;
     m_Desc.iSampleCount = &m_iSampleCount;
@@ -44,29 +45,15 @@ HRESULT CMotionBlur::Initialize()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_MotionBlur"), TEXT("Target_MotionBlur"))))
 		return E_FAIL;
 
+    /* Target_CamMotionBlur. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_CamVelocity"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+
+    /* MRT_CamMotionBlur */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_CamVelocity"), TEXT("Target_CamVelocity"))))
+        return E_FAIL;
+
 	return S_OK;
-}
-
-HRESULT CMotionBlur::Render_CamMotionBlur(CVIBuffer_Rect* pVIBuffer)
-{
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Velocity"))))
-        return E_FAIL;
-
-    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
-    _float2 vCamVelocity = Calc_CamVelocity();
-    m_pShader->Bind_RawValue("g_vCamVelocity", &vCamVelocity, sizeof(_float2));
-
-    m_pShader->Begin(0);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    return S_OK;
 }
 
 HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRTTag, const _wstring& strReturnRTTag)
@@ -78,7 +65,8 @@ HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneR
     m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
     m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
     m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-
+    
+    m_pShader->Bind_RawValue("g_fObjectBlurScale", &m_fObjectBlurScale, sizeof(_float));
     m_pShader->Bind_RawValue("g_fCamBlurScale", &m_fCamBlurScale, sizeof(_float));
     m_pShader->Bind_RawValue("g_iSampleCount", &m_iSampleCount, sizeof(_uint));
     m_pShader->Bind_RawValue("g_fBias", &m_fBias, sizeof(_float));
