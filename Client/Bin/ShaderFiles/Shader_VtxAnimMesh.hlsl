@@ -140,13 +140,25 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     matOldWVP = mul(matOldWV, g_ProjMatrix);
     vector vOldPos = mul(vPrePosition, matOldWVP);
     
-    float3 vDir = vOldPos.xyz - vNewPos.xyz;
-    vector vNormal = normalize(mul(vector(In.vNormal, 0.f), matWV));
+    float4 curVS = mul(vCurrentPosition, matWV);
+    float4 preVS = mul(vPrePosition, matOldWV);
+
+    float3 vDirVS = curVS.xyz - preVS.xyz;
+    float3 vNormalVS = normalize(mul(float4(In.vNormal, 0.f), matWV).xyz);
+
+    float a = dot(normalize(vDirVS), vNormalVS);
     
-    float2 fVelocity = (vNewPos.xy / vNewPos.w) - (vOldPos.xy / vOldPos.w);
-    
-    Out.vDirection.xy = fVelocity * 0.5f;
+    if(a < 0.f)
+        Out.vPosition = vOldPos;
+    else
+        Out.vPosition = vNewPos;
+   
+    float2 vVelocity = vNewPos.xy / vNewPos.w - vOldPos.xy / vOldPos.w;
+    Out.vDirection.xy = vVelocity * 0.5f;
     Out.vDirection.y *= -1.f;
+   
+    Out.vDirection.z = Out.vPosition.z / Out.vPosition.w;
+    Out.vDirection.w = 0.f;
     
     return Out;
 }
@@ -222,9 +234,7 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 {
     //노말맵은 안..쓰지.
     PS_OUT_MOTIONBLUR Out;
-    Out.vDirection.xy = In.vDirection.xy;
-    Out.vDirection.z = 0.f;
-    Out.vDirection.w = 1.f;
+    Out.vDirection = In.vDirection;
     
     return Out;
 }
