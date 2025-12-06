@@ -682,6 +682,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX">
       <UniqueIdentifier>{711f2d7d-b11b-4829-bb26-9e4ada82edcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Cull">
+      <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2052,9 +2055,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -2100,6 +2100,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Cull</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

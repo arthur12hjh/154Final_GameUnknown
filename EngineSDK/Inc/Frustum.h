@@ -3,17 +3,18 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class CComputeShader;
+
+typedef struct ConstantBuffer_Frustom
+{
+	_float4		vFrustomPlane[6];
+	_float4		fDistance;
+}CONSTANT_BUFFER_FRUSTOM;
 
 class CFrustum final : public CBase
 {
 private:
-#ifdef _DEBUG
 	CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext*	pContext);
-#else
-	CFrustum();
-#endif // _DEBUG
-
-
 	virtual ~CFrustum() = default;
 
 public:
@@ -21,50 +22,51 @@ public:
 	void Update();
 
 #ifdef _DEBUG
-	void				FrustomRender();
+	void						FrustomRender();
 #endif
 
 public:
-	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
-	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
-	_bool				isIn_WorldFrustum(class CCollider* pCollider);
+	void						Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
+	_bool						isIn_WorldFrustum(_fvector vWorldPos, _float fRange);
+	_bool						isIn_WorldFrustum(class CCollider* pCollider);
 
-	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
+	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
+	void						isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance = 0.f);
 
 private:
-	_float4				m_vOriginalPoints[8] = {};
-	_float4				m_vWorldPoints[8] = {};
+	_float4						m_vOriginalPoints[8] = {};
+	_float4						m_vWorldPoints[8] = {};
 	
-	_float4				m_vWorldPlanes[6] = {};
-	_float4				m_vLocalPlanes[6] = {};
+	_float4						m_vWorldPlanes[6] = {};
+	_float4						m_vLocalPlanes[6] = {};
 
-	BoundingFrustum*	m_OrizinBoundingFrustom = {};
-	BoundingFrustum		m_BoundingFrustom = {};
+	BoundingFrustum*			m_OrizinBoundingFrustom = {};
+	BoundingFrustum				m_BoundingFrustom = {};
+
+	CComputeShader*				m_pComputeShader = { nullptr };
+	CONSTANT_BUFFER_FRUSTOM		m_FrustomConstantDesc = {};
+
+	_uint						m_iNumData = { 1024 };
+	ID3D11Buffer*				m_pOutBuffer = { nullptr };
 
 private:
-	class CGameInstance* m_pGameInstance = { nullptr };
+	ID3D11Device*				m_pDevice = { nullptr };
+	ID3D11DeviceContext*		m_pContext = { nullptr };
+	class CGameInstance*		m_pGameInstance = { nullptr };
 
 #ifdef _DEBUG
-	ID3D11Device*									m_pDevice = { nullptr };
-	ID3D11DeviceContext*							m_pContext = { nullptr };
-
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = { nullptr };
 	BasicEffect*									m_pEffect = { nullptr };
 	ID3D11InputLayout*								m_pInputLayout = { nullptr };
 #endif // _DEBUG
 
 private:
-	void Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	HRESULT				Ready_ComputeShader();
+	void				Make_Planes(const _float4* pPoints, _float4* pPlanes);
 
 public:
-#ifdef _DEBUG
-	static CFrustum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-#else
-	static CFrustum* Create();
-#endif // _DEBUG
-
-
-	virtual void Free() override;
+	static CFrustum*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual void		Free() override;
 };
 
 NS_END

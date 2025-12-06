@@ -6,6 +6,7 @@
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
+#endif // _DEBUG
 
 CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
@@ -16,13 +17,6 @@ CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
 }
-#else
-CFrustum::CFrustum()
-	: m_pGameInstance { CGameInstance::GetInstance() }
-{
-	Safe_AddRef(m_pGameInstance);
-}
-#endif // _DEBUG
 
 HRESULT CFrustum::Initialize()
 {
@@ -167,9 +161,81 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
+void CFrustum::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance)
+{
+	m_pComputeShader->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 0, pInstanceBuffer);
+	m_pComputeShader->Update_Shader({1024, 1, 1});
+
+	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, *ppOut);
+
+	m_pContext->CopyResource(m_pOutBuffer, *ppOut);
+
+	D3D11_MAPPED_SUBRESOURCE pSubResource = {};
+	m_pContext->Map(m_pOutBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &pSubResource);
+	auto pList = static_cast<VTX_INSTANCE_MODEL*>(pSubResource.pData);
+	int a = 10;
+	m_pContext->Unmap(m_pOutBuffer, 0);
+}
+
 HRESULT CFrustum::Ready_ComputeShader()
 {
-	return E_NOTIMPL;
+	// 컴퓨트 셰이더 만들자
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Instance_Cuilling.hlsl"), "CS_Main", m_iNumData);
+	if (nullptr == m_pComputeShader)
+		return E_FAIL;
+
+	// Input버퍼는 받아올거니까 받아오고
+	// 상수 버퍼랑 Out 버퍼 정의해서 뽑아내주면 될거같다.
+
+	ID3D11Buffer* pBuffer = nullptr;
+#pragma region ConstantBuffer
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_FRUSTOM);
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = &m_FrustomConstantDesc;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return E_FAIL;
+	m_pComputeShader->ADD_Buffer(CComputeShader::BUFFER_TYPE::CONSTATNT, pBuffer);
+#pragma endregion
+
+#pragma region Input & Output Base Buffer
+	D3D11_BUFFER_DESC InitBufferDesc = {};
+	InitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	InitBufferDesc.ByteWidth = sizeof(VTX_INSTANCE_MODEL) * m_iNumData;
+	InitBufferDesc.StructureByteStride = sizeof(VTX_INSTANCE_MODEL);
+	InitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	InitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+#pragma region SRV Buffer
+	if (FAILED(m_pDevice->CreateBuffer(&InitBufferDesc, nullptr, &pBuffer)))
+		return E_FAIL;
+
+	m_pComputeShader->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer);
+#pragma endregion
+
+#pragma region Read Buffer
+	D3D11_BUFFER_DESC ReadBufferDesc = {};
+	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+	ReadBufferDesc.ByteWidth = sizeof(VTX_INSTANCE_MODEL) * m_iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(VTX_INSTANCE_MODEL);
+	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pOutBuffer)))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region UAV Buffer
+	if (FAILED(m_pDevice->CreateBuffer(&InitBufferDesc, nullptr, &pBuffer)))
+		return E_FAIL;
+
+	m_pComputeShader->ADD_OutBuffer(pBuffer);
+#pragma endregion
+
+	return S_OK;
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
@@ -182,7 +248,6 @@ void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 	XMStoreFloat4(&pPlanes[5], XMPlaneFromPoints(XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[2])));
 }
 
-#ifdef _DEBUG
 CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CFrustum* pInstance = new CFrustum(pDevice, pContext);
@@ -195,29 +260,16 @@ CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	return pInstance;
 }
-#else
-CFrustum* CFrustum::Create()
-{
-	CFrustum* pInstance = new CFrustum();
-
-	if (FAILED(pInstance->Initialize()))
-	{
-		MSG_BOX("Failed to Created : CFrustum");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-#endif // _DEBUG
 
 void CFrustum::Free()
 {
 	__super::Free();
 
-#ifdef _DEBUG
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pComputeShader);
 
+#ifdef _DEBUG
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
 	Safe_Release(m_pInputLayout);
