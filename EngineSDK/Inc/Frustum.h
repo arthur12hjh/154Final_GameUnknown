@@ -8,7 +8,11 @@ class CComputeShader;
 typedef struct ConstantBuffer_Frustom
 {
 	_float4		vFrustomPlane[6];
-	_float4		fDistance;
+	_float3		vCamPos;
+	_float		fDistance;
+
+	_int		iNumInstance;
+	_float3		vPadding;
 }CONSTANT_BUFFER_FRUSTOM;
 
 class CFrustum final : public CBase
@@ -31,13 +35,12 @@ public:
 	_bool						isIn_WorldFrustum(class CCollider* pCollider);
 
 	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
-	void						isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer** ppOut, _float fDistance = 0.f);
+	void						isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance = 0.f, _uint* iNumCullCount = nullptr);
 
 private:
 	_float4						m_vOriginalPoints[8] = {};
 	_float4						m_vWorldPoints[8] = {};
 	
-	_float4						m_vWorldPlanes[6] = {};
 	_float4						m_vLocalPlanes[6] = {};
 
 	BoundingFrustum*			m_OrizinBoundingFrustom = {};
@@ -47,7 +50,8 @@ private:
 	CONSTANT_BUFFER_FRUSTOM		m_FrustomConstantDesc = {};
 
 	_uint						m_iNumData = { 1024 };
-	ID3D11Buffer*				m_pOutBuffer = { nullptr };
+
+	ID3D11Buffer*				m_pCountBuffer = { nullptr };
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -62,8 +66,8 @@ private:
 
 private:
 	HRESULT				Ready_ComputeShader();
+	void				Make_Planes(const _float4* pPoints);
 	void				Make_Planes(const _float4* pPoints, _float4* pPlanes);
-
 public:
 	static CFrustum*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void		Free() override;

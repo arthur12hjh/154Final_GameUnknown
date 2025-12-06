@@ -62,7 +62,10 @@ void CInstance_Desert::Update(_float fTimeDelta)
 
 void CInstance_Desert::Late_Update(_float fTimeDelta)
 {
-	//if(m_pGameInstance->isIn_WorldFrustum(m_pModelCom->GetBufferResource(), , 1.f ))
+	_uint iNumCullCount = {};
+	m_pGameInstance->isIn_WorldFrustum(m_pModelCom->GetBufferResource(), m_pModelCom->GetCullBufferResource(), m_pModelCom->Get_NumInstance(), 30.f, &iNumCullCount);
+
+	if(0 < iNumCullCount)
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
