@@ -3,6 +3,7 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+class CComputeShader;
 
 class CFrustum final : public CBase
 {
@@ -41,6 +42,10 @@ private:
 	BoundingFrustum*	m_OrizinBoundingFrustom = {};
 	BoundingFrustum		m_BoundingFrustom = {};
 
+	CComputeShader*		m_pComputeShader = { nullptr };
+	ID3D11Buffer*		m_pConstantBuffer = { nullptr };
+	ID3D11Buffer*		m_pOutBuffer = { nullptr };
+
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 
@@ -54,7 +59,8 @@ private:
 #endif // _DEBUG
 
 private:
-	void Make_Planes(const _float4* pPoints, _float4* pPlanes);
+	HRESULT				Ready_ComputeShader();
+	void				Make_Planes(const _float4* pPoints, _float4* pPlanes);
 
 public:
 #ifdef _DEBUG

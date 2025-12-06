@@ -36,8 +36,10 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[5] = _float4(1.f, 1.f, 1.f, 1.f);
 	m_vOriginalPoints[6] = _float4(1.f, -1.f, 1.f, 1.f);
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
-
 	m_OrizinBoundingFrustom = new BoundingFrustum();
+
+	if (FAILED(Ready_ComputeShader()))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
@@ -163,6 +165,11 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	}
 
 	return true;
+}
+
+HRESULT CFrustum::Ready_ComputeShader()
+{
+	return E_NOTIMPL;
 }
 
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
