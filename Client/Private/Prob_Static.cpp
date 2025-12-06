@@ -1,49 +1,48 @@
 #include "pch.h"
-#include "Prob_Vehicle.h"
+#include "Prob_Static.h"
 
 #include "GameInstance.h"
 
-CProb_Vehicle::CProb_Vehicle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CProb_Static::CProb_Static(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CActor(pDevice, pContext)
 {
 }
 
-CProb_Vehicle::CProb_Vehicle(const CProb_Vehicle& Prototype) :
+CProb_Static::CProb_Static(const CProb_Static& Prototype) :
     CActor(Prototype)
 {
 }
 
-HRESULT CProb_Vehicle::Initialize_Prototype()
+HRESULT CProb_Static::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CProb_Vehicle::Initialize(void* pArg)
+HRESULT CProb_Static::Initialize(void* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
     ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
-
     if (FAILED(ADD_Components(*pDesc)))
         return E_FAIL;
 
-    return S_OK;
-}
-
-void CProb_Vehicle::Priority_Update(_float fTimeDelta)
-{
-
-}
-
-void CProb_Vehicle::Update(_float fTimeDelta)
-{
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
     m_pRigidBody->Update_PxTransform(WorldMat);
+    return S_OK;
 }
 
-void CProb_Vehicle::Late_Update(_float fTimeDelta)
+void CProb_Static::Priority_Update(_float fTimeDelta)
+{
+}
+
+void CProb_Static::Update(_float fTimeDelta)
+{
+ 
+}
+
+void CProb_Static::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
@@ -56,7 +55,7 @@ void CProb_Vehicle::Late_Update(_float fTimeDelta)
     }
 }
 
-HRESULT CProb_Vehicle::Render()
+HRESULT CProb_Static::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
@@ -79,7 +78,7 @@ HRESULT CProb_Vehicle::Render()
     return S_OK;
 }
 
-HRESULT CProb_Vehicle::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CProb_Static::ADD_Components(const ACTOR_DESC& Desc)
 {
     /* Com_Model */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
@@ -93,7 +92,7 @@ HRESULT CProb_Vehicle::ADD_Components(const ACTOR_DESC& Desc)
 
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
-    tUserData.szActorTag = TEXT("Prop_Actor");
+    tUserData.szActorTag = TEXT("Prop_StaticActor");
 
     //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
     CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -103,7 +102,7 @@ HRESULT CProb_Vehicle::ADD_Components(const ACTOR_DESC& Desc)
     // 충돌처리를 할지말지 
     // DYNAMIC : 충돌 
     // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
@@ -123,7 +122,7 @@ HRESULT CProb_Vehicle::ADD_Components(const ACTOR_DESC& Desc)
     return S_OK;
 }
 
-HRESULT CProb_Vehicle::Bind_ShaderResources()
+HRESULT CProb_Static::Bind_ShaderResources()
 {
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
         return E_FAIL;
@@ -135,29 +134,29 @@ HRESULT CProb_Vehicle::Bind_ShaderResources()
     return S_OK;
 }
 
-CProb_Vehicle* CProb_Vehicle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CProb_Static* CProb_Static::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CProb_Vehicle* pProb_Vehicle = new CProb_Vehicle(pDevice, pContext);
-    if (FAILED(pProb_Vehicle->Initialize_Prototype()))
+    CProb_Static* pProb_Building = new CProb_Static(pDevice, pContext);
+    if (FAILED(pProb_Building->Initialize_Prototype()))
     {
-        Safe_Release(pProb_Vehicle);
-        MSG_BOX("Create Fail : Prob_Vehicle");
+        Safe_Release(pProb_Building);
+        MSG_BOX("Create Fail : Prob Static");
     }
-    return pProb_Vehicle;
+    return pProb_Building;
 }
 
-CGameObject* CProb_Vehicle::Clone(void* pArg)
+CGameObject* CProb_Static::Clone(void* pArg)
 {
-    CProb_Vehicle* pProb_Vehicle = new CProb_Vehicle(*this);
-    if (FAILED(pProb_Vehicle->Initialize(pArg)))
+    CProb_Static* pProb_Building = new CProb_Static(*this);
+    if (FAILED(pProb_Building->Initialize(pArg)))
     {
-        Safe_Release(pProb_Vehicle);
-        MSG_BOX("Clone Fail : Prob_Vehicle");
+        Safe_Release(pProb_Building);
+        MSG_BOX("Clone Fail : Prob Static");
     }
-    return pProb_Vehicle;
+    return pProb_Building;
 }
 
-void CProb_Vehicle::Free()
+void CProb_Static::Free()
 {
     __super::Free();
 

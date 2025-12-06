@@ -35,12 +35,9 @@ protected:
 	CInteraction_Component*			m_pInteractionCom = { nullptr };
 	_bool							m_bIsInteractionAble = { false };
 
-	// UI Ç¥½Ã 
 	CUIBase*						m_pInteractionUI = { nullptr };
-
-	INTERACTION_STATE				m_eInterState{ INTERACTION_STATE::DEFAULT };
-	_float							m_fMaxUnlockDuration{ 0.f };
-	_float							m_fUnlockDuration{ 0.f };
+	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
+	_float2							m_fInteractionDuration = {};
 
 protected :
 	virtual HRESULT					Begin_OverlapCallBack() = 0;

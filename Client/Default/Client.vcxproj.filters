@@ -154,26 +154,17 @@
     <Filter Include="02.GameObjects\Map\Terrain">
       <UniqueIdentifier>{efe302ec-f3ed-4deb-8411-e6749a4cb37e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\Vending">
-      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\InstanceModel">
       <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\ProbActor">
       <UniqueIdentifier>{e2fc6e3d-c95e-480a-82f6-a6097b896672}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Box">
-      <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager\CharacterDataManager">
       <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
       <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
-      <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\TestProp">
       <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
@@ -189,15 +180,6 @@
     </Filter>
     <Filter Include="30.ImGui\ShaderDebugger">
       <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Vehicle">
-      <UniqueIdentifier>{1b8ff2da-fd61-4c35-a2d1-574e112582fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Building">
-      <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Construction">
-      <UniqueIdentifier>{fe6b4f7e-6183-4e3f-a56a-477fd6dc08f2}</UniqueIdentifier>
     </Filter>
     <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
@@ -505,20 +487,8 @@
     <Filter Include="02.GameObjects\Map\Desert\Instance">
       <UniqueIdentifier>{feb07ccf-2b93-4640-8e0d-0b5098c71ff1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift">
-      <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Iron_Floor">
       <UniqueIdentifier>{e0b6f843-a98c-4464-8bee-422c2ad226f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Body">
-      <UniqueIdentifier>{db40156a-341f-48f3-9c2a-148808dd66a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Platform">
-      <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Controller">
-      <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI">
       <UniqueIdentifier>{d20edc83-b322-478f-9486-c23a95911687}</UniqueIdentifier>
@@ -697,8 +667,26 @@
     <Filter Include="97.ShaderFiles\ComputeShader\Cull">
       <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\Chair">
-      <UniqueIdentifier>{b2317c82-9933-4815-9908-935a62cd0a35}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift">
+      <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Body">
+      <UniqueIdentifier>{db40156a-341f-48f3-9c2a-148808dd66a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Controller">
+      <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Platform">
+      <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\DestoryProb">
+      <UniqueIdentifier>{1368fba2-a5fa-4ea8-8b05-d446457d47fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Static_Prob">
+      <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -894,17 +882,11 @@
     <ClInclude Include="..\public\Actor.h">
       <Filter>02.GameObjects\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Prob_Box.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Vending.h">
-      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    <ClInclude Include="..\public\StaticInteraction.h">
+      <Filter>02.GameObjects\Actor\Interaction\StaticInteraction</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Prob_Interaction.h">
       <Filter>02.GameObjects\Actor\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ItemBox.h">
-      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CanBox.h">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
@@ -1143,11 +1125,8 @@
     <ClInclude Include="..\Public\TargetComponent.h">
       <Filter>05.Component\TargetComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Prob_Building.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Prob_Vehicle.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    <ClInclude Include="..\Public\Prob_Static.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Static_Prob</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
       <Filter>02.GameObjects\Character</Filter>
@@ -1379,13 +1358,13 @@
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Body.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Controller.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Platform.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UILoadingBlur.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
@@ -1411,8 +1390,8 @@
     <ClInclude Include="..\Public\Player_ParryGuardState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Chair.h">
-      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    <ClInclude Include="..\public\Prob_Destory.h">
+      <Filter>02.GameObjects\Actor\ProbActor\DestoryProb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1592,17 +1571,11 @@
     <ClCompile Include="..\private\Actor.cpp">
       <Filter>02.GameObjects\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Prob_Box.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Vending.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    <ClCompile Include="..\private\StaticInteraction.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\StaticInteraction</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Prob_Interaction.cpp">
       <Filter>02.GameObjects\Actor\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ItemBox.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CanBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
@@ -1832,11 +1805,8 @@
     <ClCompile Include="..\Private\TargetComponent.cpp">
       <Filter>05.Component\TargetComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Prob_Building.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Prob_Vehicle.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    <ClCompile Include="..\Private\Prob_Static.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Static_Prob</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BossController.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
@@ -2054,16 +2024,16 @@
       <Filter>02.GameObjects\Map\Desert\Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Body.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Iron_Floor.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Iron_Floor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Controller.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
@@ -2095,8 +2065,8 @@
     <ClCompile Include="..\Private\Nayitba.cpp">
       <Filter>02.GameObjects\Character\Naytiba</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Chair.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    <ClCompile Include="..\private\Prob_Destory.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\DestoryProb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

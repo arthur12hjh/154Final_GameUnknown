@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Actor.h"
 
 NS_BEGIN(Engine)
@@ -7,12 +6,12 @@ class CModel;
 NS_END
 
 NS_BEGIN(Client)
-class CProb_Vehicle final : public CActor
+class CProb_Static final : public CActor
 {
 private:
-	CProb_Vehicle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CProb_Vehicle(const CProb_Vehicle& Prototype);
-	virtual ~CProb_Vehicle() = default;
+	CProb_Static(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CProb_Static(const CProb_Static& Prototype);
+	virtual ~CProb_Static() = default;
 
 public:
 	virtual HRESULT					Initialize_Prototype() override;
@@ -32,8 +31,9 @@ private:
 	HRESULT							Bind_ShaderResources();
 
 public:
-	static		CProb_Vehicle*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static		CProb_Static*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual		CGameObject*		Clone(void* pArg) override;
 	virtual		void				Free() override;
+
 };
 NS_END
