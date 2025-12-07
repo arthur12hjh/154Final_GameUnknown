@@ -61,9 +61,10 @@ void CUIHUD::Update(_float fTimeDelta)
 		for (_int i = 0; i < abs(count); ++i)
 		{
 			if (count < 0)
-				Add_InteractionUI(m_InteractionUIs.size());
+				Add_InteractionUI(m_pGameInstance->GetAllInteraction()->size());
 			else
 				m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]->SetVisibility(VISIBILITY::HIDDEN);
+				//Remove_InteractionUI(m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]);
 		}
 	}
 
@@ -948,8 +949,8 @@ void CUIHUD::Remove_InteractionUI(CUIBase* pUI)
 	auto iter = find(m_InteractionUIs.begin(), m_InteractionUIs.end(), pUI);
 	if (iter != m_InteractionUIs.end())
 	{
-		m_InteractionUIs.erase(iter);
 		pUI->SetVisibility(VISIBILITY::HIDDEN);
+		m_InteractionUIs.erase(iter);
 	}
 }
 

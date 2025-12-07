@@ -82,7 +82,6 @@ private:
 	_float								m_fRootMagnification = 0.f;
 	_float								m_fTimeRate = 1.f;
 
-	_bool								m_byas = FALSE;
 
 public:
 	static CImGui_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
