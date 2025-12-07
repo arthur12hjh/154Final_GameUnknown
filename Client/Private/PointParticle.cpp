@@ -55,6 +55,10 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pPointParticleData->iNumInstance;
