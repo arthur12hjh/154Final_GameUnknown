@@ -887,21 +887,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon2(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	
-	/* For.Prototype_Component_Model_Moon */
-	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Moon */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
-	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_100A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
