@@ -68,6 +68,7 @@ private:
 
 	HRESULT Loading_For_Desert_Deco(void* pArg);
 	HRESULT Loading_For_Desert_Archi(void* pArg);
+	HRESULT Loading_For_Desert_Archi_Col(void* pArg);
 
 //#pragma region Level_Scarlet
 //	HRESULT Loading_For_Scarlet_Mesh(void* pArg);

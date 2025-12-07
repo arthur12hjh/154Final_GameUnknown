@@ -46,6 +46,18 @@ CModel::CModel(const CModel& Prototype)
     for (auto& pMaterial : m_Materials)
         Safe_AddRef(pMaterial);
 
+    for (auto* pChannelBuffer : Prototype.m_pChannelBufferList)
+    {
+        Safe_AddRef(pChannelBuffer);
+        m_pChannelBufferList.push_back(pChannelBuffer);
+    }
+
+    for (auto* pKeyFrameBuffer : Prototype.m_pKeyFrameBufferList)
+    {
+        Safe_AddRef(pKeyFrameBuffer);
+        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+    }
+
     for (auto& pPrototypeAnim : Prototype.m_Animations)
         m_Animations.push_back(pPrototypeAnim->Clone());
 
@@ -345,6 +357,182 @@ HRESULT CModel::Initialize_AnimationIndexMap()
     return S_OK;
 }
 
+HRESULT CModel::Initialize_AnimationBufferResource()
+{
+    // 1) 다 밀어주기
+    for (auto& pChannelBuffer : m_pChannelBufferList)
+        Safe_Release(pChannelBuffer);
+    m_pChannelBufferList.clear();
+    
+    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
+        Safe_Release(pKeyFrameBuffer);
+    m_pKeyFrameBufferList.clear();
+
+    // 키프레임 수
+    _uint iMaxNumKeyFrames = 0;
+
+    for (auto& pAnim : m_Animations)
+    {
+        auto pChannels = pAnim->Get_vChannels();
+        if (pChannels == nullptr)
+            continue;
+
+        _uint iTotal = 0;
+        for (auto& pChannel : *pChannels)
+            iTotal += pChannel->Get_NumKeyFrames();
+
+        if (iTotal > iMaxNumKeyFrames)
+            iMaxNumKeyFrames = iTotal;
+    }
+
+    // 채널 수
+    _uint iNumData = (_uint)m_Bones.size();
+    iNumData = max(iNumData, iMaxNumKeyFrames);
+    if (iNumData == 0)
+        return S_OK;
+
+
+    // 컴퓨트 셰이더 최종 최적화 초식.. 버퍼로 보관하기
+    // 메모리 손해 아니냐고? 프레임이 이난리인데 메모리가 중하냐!
+    for (_uint iCurrentAnimationIndex = 0; iCurrentAnimationIndex < m_Animations.size(); ++iCurrentAnimationIndex)
+    {
+        vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
+        vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
+        vKeyFrameInfos.reserve(iNumData);
+
+        auto pChannels = m_Animations[iCurrentAnimationIndex]->Get_vChannels();
+        auto& BoneToChannelMappingList = m_Animations[iCurrentAnimationIndex]->Get_BoneToChannelMappingLists();
+
+        _uint iKeyFrameOffset = 0;
+
+        for (_uint i = 0; i < iNumData; ++i)
+        {
+            if (i >= m_Bones.size())
+            {
+                // 여기는 “padding 영역” – 유효한 본 없음
+                vChannelInfos[i].iBoneIndex = 0;
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            vChannelInfos[i].iBoneIndex = i;
+
+            _int iChannelIndex = BoneToChannelMappingList[i];
+
+            // 매핑된 채널이 없는 본
+            if (iChannelIndex < 0)
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            // 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
+            if (iChannelIndex >= (_int)pChannels->size())
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            CChannel* pChannel = (*pChannels)[iChannelIndex];
+
+            // 안전 장치 – pChannel이 null일 경우
+            if (pChannel == nullptr)
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            // 이 본이 가진 키프레임 개수
+            _uint iNumKeyFrames = pChannel->Get_NumKeyFrames();
+            vChannelInfos[i].iNumKeyFrames = iNumKeyFrames;
+
+            // 현재 키프레임 인덱스(CAnimation이 관리하는 것)
+            vChannelInfos[i].iCurrentKeyFrameIndex =
+                m_Animations[iCurrentAnimationIndex]->Get_AnimationKeyFrameIndex(iChannelIndex);
+
+            // KeyFrame 버퍼 안에서 이 본의 키 시작 위치
+            vChannelInfos[i].iKeyFrameOffset = iKeyFrameOffset;
+
+            // 키프레임 데이터 밀어넣기
+            for (_uint j = 0; j < iNumKeyFrames; ++j)
+            {
+                const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
+
+                COMPUTE_KEYFRAMEINFO OutKF = {};
+                OutKF.vScale = KF.vScale;
+                OutKF.padding01 = 0.f;
+                OutKF.vRotation = KF.vRotation;
+                OutKF.vTranslation = KF.vTranslation;
+                OutKF.fTrackPosition = KF.fTrackPosition;
+
+                vKeyFrameInfos.push_back(OutKF);
+            }
+
+            iKeyFrameOffset += iNumKeyFrames;
+        }
+
+        if (vKeyFrameInfos.size() < iNumData)
+        {
+            COMPUTE_KEYFRAMEINFO pad{};
+            pad.vScale = { 1.f, 1.f, 1.f };
+            pad.padding01 = 0.f;
+            pad.vRotation = _float4(0.f, 0.f, 0.f, 1.f); // 단위 쿼터니언
+            pad.vTranslation = { 0.f, 0.f, 0.f };
+            pad.fTrackPosition = 0.f;
+
+            vKeyFrameInfos.resize(iNumData, pad);
+        }
+
+        ID3D11Buffer* pChannelBuffer = nullptr;
+        ID3D11Buffer* pKeyFrameBuffer = nullptr;
+
+        D3D11_BUFFER_DESC ChannelBufferDesc = {};
+        ChannelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        ChannelBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+        ChannelBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        ChannelBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        ChannelBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+
+        D3D11_SUBRESOURCE_DATA ChannelSubResource{};
+        ChannelSubResource.pSysMem = vChannelInfos.data();
+
+
+        if (FAILED(m_pDevice->CreateBuffer(&ChannelBufferDesc, &ChannelSubResource, &pChannelBuffer)))
+            return E_FAIL;
+
+        m_pChannelBufferList.push_back(pChannelBuffer);
+
+        D3D11_BUFFER_DESC KeyFrameBufferDesc = {};
+        KeyFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        KeyFrameBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+        KeyFrameBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        KeyFrameBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        KeyFrameBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+
+        D3D11_SUBRESOURCE_DATA KeyFrameSubResource{};
+        KeyFrameSubResource.pSysMem = vKeyFrameInfos.empty() ? nullptr : vKeyFrameInfos.data();
+
+        if (FAILED(m_pDevice->CreateBuffer(
+            &KeyFrameBufferDesc,
+            vKeyFrameInfos.empty() ? nullptr : &KeyFrameSubResource,
+            &pKeyFrameBuffer)))
+            return E_FAIL;
+
+        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+    }        
+
+
+    return S_OK;
+}
+
 HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
 {
     if (nullptr == pAnimations)
@@ -626,7 +814,12 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
     strcpy_s(m_ModelFilePath, szBinModelFilePath);
 #endif
 
-    Initialize_AnimationIndexMap();
+    if (m_eType == MODEL_TYPE::ANIM)
+    {
+        Initialize_AnimationIndexMap();
+
+        Initialize_AnimationBufferResource();
+    }
 
     return S_OK;
 }
@@ -753,30 +946,30 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    // CPU CBone 전체 동기화
-    if (m_pOutReadBack)
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-        D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
-        {
-            COMPUTE_BONEMATRIX_OUT* pOut =
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-
-            // 무조건 최적화
-            for (_uint i = 0; i < m_Bones.size(); ++i)
-            {
-                m_Bones[i]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-
-                m_Bones[i]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
-            }
-
-            m_pContext->Unmap(m_pOutReadBack, 0);
-        }
-    }
+    //// CPU CBone 전체 동기화
+    //if (m_pOutReadBack)
+    //{
+    //    m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+    //
+    //    D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
+    //    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+    //    {
+    //        COMPUTE_BONEMATRIX_OUT* pOut =
+    //            reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
+    //
+    //        // 무조건 최적화
+    //        for (_uint i = 0; i < m_Bones.size(); ++i)
+    //        {
+    //            m_Bones[i]->Set_TransformationMatrix(
+    //                XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
+    //
+    //            m_Bones[i]->Set_CombinedTransformationMatrix(
+    //                XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
+    //        }
+    //
+    //        m_pContext->Unmap(m_pOutReadBack, 0);
+    //    }
+    //}
 
     // 루트모션 적용
     if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
@@ -1078,7 +1271,7 @@ HRESULT CModel::Ready_ComputeShader()
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
+    
         vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
         for (_uint i = 0; i < iNumData; ++i)
         {
@@ -1087,24 +1280,24 @@ HRESULT CModel::Ready_ComputeShader()
             vChannelInfos[i].iNumKeyFrames = 0;
             vChannelInfos[i].iKeyFrameOffset = 0;
         }
-
+    
         SubResource.pSysMem = vChannelInfos.data();
-
+    
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
-
+    
         if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
-
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pChannelSource)))
-            return E_FAIL;
+    
+        //// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+        //D3D11_BUFFER_DESC ReadBufferDesc = {};
+        //ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+        //ReadBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+        //ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+        //ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        //
+        //if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pChannelSource)))
+        //    return E_FAIL;
     }
     // 세 번째로, 키프레임을 넣어주자
     {
@@ -1113,7 +1306,7 @@ HRESULT CModel::Ready_ComputeShader()
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
+    
         vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos(iNumData);
         for (_uint i = 0; i < iNumData; ++i)
         {
@@ -1123,24 +1316,24 @@ HRESULT CModel::Ready_ComputeShader()
             vKeyFrameInfos[i].vTranslation = { 1.f, 1.f, 1.f };
             vKeyFrameInfos[i].fTrackPosition = 0.f;
         }
-
+    
         SubResource.pSysMem = vKeyFrameInfos.data();
-
+    
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
-
+    
         if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
-
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pKeyFrameSource)))
-            return E_FAIL;
+    
+        //// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+        //D3D11_BUFFER_DESC ReadBufferDesc = {};
+        //ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+        //ReadBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+        //ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+        //ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        //
+        //if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pKeyFrameSource)))
+        //    return E_FAIL;
     }
     // 끝난줄 알았지? 본 초기화를 위한 로컬 본 행렬도 넣어주자
     {
@@ -1534,125 +1727,16 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 
 HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
 {
+    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
 
-    _uint iNumData = m_Bones.size();
-
-    // 구조체가 3개라는건.. 귀찮다는 뜻이다.
-    // 각자 별개의 방식으로 바인딩 해줘야한다는 뜻이다.
-
-
-    // 2) Channel이랑 KeyFrame은, uint iKeyFrameOffset 때문에 같이 바인딩 해주는걸 권한다.
-    {
-        vector<COMPUTE_CHANNELINFO> vChannelInfos(m_Bones.size());
-        vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
-
-        auto pChannels = m_Animations[m_iCurrentAnimIndex]->Get_vChannels();
-        auto& BoneToChannelMappingList = m_Animations[m_iCurrentAnimIndex]->Get_BoneToChannelMappingLists();
-
-        _uint iKeyFrameOffset = 0;
-
-        for (_uint i = 0; i < m_Bones.size(); ++i)
-        {
-            vChannelInfos[i].iBoneIndex = i;
-
-            _int iChannelIndex = BoneToChannelMappingList[i];
-
-            // 매핑된 채널이 없는 본
-            if (iChannelIndex < 0)
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            // 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
-            if (iChannelIndex >= (_int)pChannels->size())
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            CChannel* pChannel = (*pChannels)[iChannelIndex];
-
-            // 안전 장치 – pChannel이 null일 경우
-            if (pChannel == nullptr)
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            // 이 본이 가진 키프레임 개수
-            _uint iNumKeyFrames = pChannel->Get_NumKeyFrames();
-            vChannelInfos[i].iNumKeyFrames = iNumKeyFrames;
-
-            // 현재 키프레임 인덱스(CAnimation이 관리하는 것)
-            vChannelInfos[i].iCurrentKeyFrameIndex =
-                m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex(iChannelIndex);
-
-            // KeyFrame 버퍼 안에서 이 본의 키 시작 위치
-            vChannelInfos[i].iKeyFrameOffset = iKeyFrameOffset;
-
-            // 키프레임 데이터 밀어넣기
-            for (_uint j = 0; j < iNumKeyFrames; ++j)
-            {
-                const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
-
-                COMPUTE_KEYFRAMEINFO OutKF = {};
-                OutKF.vScale = KF.vScale;
-                OutKF.padding01 = 0.f;
-                OutKF.vRotation = KF.vRotation;
-                OutKF.vTranslation = KF.vTranslation;
-                OutKF.fTrackPosition = KF.fTrackPosition;
-
-                vKeyFrameInfos.push_back(OutKF);
-            }
-
-            iKeyFrameOffset += iNumKeyFrames;
-        }
-
-        // ChannelInfo 업로드
-        if (m_pChannelSource)
-        {
-            D3D11_MAPPED_SUBRESOURCE SubResource{};
-            if (SUCCEEDED(m_pContext->Map(m_pChannelSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
-            {
-                memcpy(SubResource.pData, vChannelInfos.data(),
-                    sizeof(COMPUTE_CHANNELINFO) * m_Bones.size());
-                m_pContext->Unmap(m_pChannelSource, 0);
-            }
-            m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelSource);
-        }
-
-        // KeyFrameInfo 업로드
-        if (m_pKeyFrameSource)
-        {
-            D3D11_MAPPED_SUBRESOURCE SubResource{};
-            if (SUCCEEDED(m_pContext->Map(m_pKeyFrameSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
-            {
-                if (!vKeyFrameInfos.empty())
-                {
-                    memcpy(SubResource.pData, vKeyFrameInfos.data(),
-                        sizeof(COMPUTE_KEYFRAMEINFO) * static_cast<size_t>(vKeyFrameInfos.size()));
-                }
-                m_pContext->Unmap(m_pKeyFrameSource, 0);
-            }
-            m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameSource);
-        }
-    }
-
+    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
+        
     return S_OK;
 }
 
 HRESULT CModel::Update_BoneMatrices()
 {
     m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-
 
     return S_OK;
 }
@@ -1756,7 +1840,15 @@ void CModel::Free()
     if (m_isCloned == FALSE)
         Safe_Delete(m_pModel);
 
+    for (auto& pChannelBuffer : m_pChannelBufferList)
+        Safe_Release(pChannelBuffer);
+    m_pChannelBufferList.clear();
 
+    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
+        Safe_Release(pKeyFrameBuffer);
+    m_pKeyFrameBufferList.clear();
+
+     
     for (auto& pAnimation : m_Animations)
         Safe_Release(pAnimation);
     m_Animations.clear();
