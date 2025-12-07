@@ -165,6 +165,7 @@ namespace Client
 		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION		= 0b00010000, // 16 <- 처형
 		GUARD			= 0b00100000, // 32 <- 가드
+		PARRY			= 0b01000000, // 64 <- 가드
 		END
 	};
 

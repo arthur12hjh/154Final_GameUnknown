@@ -164,7 +164,7 @@ HRESULT CStaticInteraction::Begin_OverlapCallBack()
 
 void CStaticInteraction::Excute_CallBack(CGameObject* pActionObject)
 {
-    if (INTERACTION_STATE::UNLOCK == m_eInterState)
+    if (INTERACTION_STATE::DEFAULT == m_eInterState)
     {
         m_eInterState = INTERACTION_STATE::ACTIVE;
     }

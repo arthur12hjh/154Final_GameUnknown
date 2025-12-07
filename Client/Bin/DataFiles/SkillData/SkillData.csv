@@ -40,3 +40,4 @@
 1005,Player_Beta_Skill,None,None,10,3,"1,1,2",4,2,0
 1006,P_Eve_Sword_SlotNormal_ChainStab,None,None,20,7,"3,3,5",4,2,0
 1007,P_Eve_Sword_Beta_ChargeSlash1_Ex,None,None,30,7,"8,6,8",4,2,0
+1008,Player_Parry,Result_Hit_JustParry,None,1,7,"8,6,8",4,0,64

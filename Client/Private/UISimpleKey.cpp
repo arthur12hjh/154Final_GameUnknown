@@ -56,8 +56,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 			m_eInterState = INTERACTION_STATE::CONTACT;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
 			m_eInterState = INTERACTION_STATE::ACTIVE;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			m_eInterState = INTERACTION_STATE::HIDE;
 	}
 
 	
@@ -95,10 +93,6 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 			__super::Trigger_Event(TEXT("Show_Key"), &Arg);
 			break;
 		}
-		case INTERACTION_STATE::UNLOCK:
-		{
-			break;
-		}
 		case INTERACTION_STATE::ACTIVE:
 		{
 			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key"));
@@ -112,19 +106,6 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 			Arg.pData = &bActive;
 			__super::Trigger_Event(TEXT("Interaction_Active"), &Arg);
 
-			break;
-		}
-		case INTERACTION_STATE::HIDE:
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key"));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			__super::Trigger_Event(TEXT("Hide_Key"), &Arg);
-			break;
-		}
-		case INTERACTION_STATE::RELEASE:
-		{
-			//Set_Dead(true);
 			break;
 		}
 		}

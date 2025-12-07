@@ -32,7 +32,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-    m_eInterState = INTERACTION_STATE::UNLOCK;
+    m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(1, false);
 
     return S_OK;
@@ -193,7 +193,7 @@ HRESULT CCanBox::Begin_OverlapCallBack()
 
 void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 {
-    if (INTERACTION_STATE::UNLOCK == m_eInterState)
+    if (INTERACTION_STATE::DEFAULT == m_eInterState)
     {
         m_pModelCom->Set_AnimationIndex(1, false);
 
