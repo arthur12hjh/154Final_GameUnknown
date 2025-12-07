@@ -200,6 +200,10 @@
     <ClCompile Include="..\..\Client\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_LockonWalkState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ParryEndState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ParryGuardState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ParryState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_Parts.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_VendingInteractionState.cpp" />
@@ -224,6 +228,8 @@
     <ClCompile Include="..\..\Client\Private\UIBossHPBarFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossName.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossShield.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIBossStamina.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIBossStaminaFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPBar.cpp" />
@@ -235,6 +241,8 @@
     <ClCompile Include="..\..\Client\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterShield.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIMonsterStamina.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotion.cpp" />

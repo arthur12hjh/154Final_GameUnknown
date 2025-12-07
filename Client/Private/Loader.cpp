@@ -144,10 +144,14 @@
 #include "UIMonsterHPBar.h"
 #include "UIMonsterHPFX.h"
 #include "UIMonsterShield.h"
+#include "UIMonsterStamina.h"
+#include "UIMonsterStaminaFX.h"
 #include "UIBossVitalWrapper.h"
 #include "UIBossHPBar.h"
 #include "UIBossHPBarFX.h"
 #include "UIBossShield.h"
+#include "UIBossStamina.h"
+#include "UIBossStaminaFX.h"
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
@@ -589,11 +593,11 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Texture_Terrain_Mask */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Mask");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Mask");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
@@ -603,18 +607,18 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Texture_Snow */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Snow");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Snow");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Texture_Sky */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Model_Moon */
 	_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -632,18 +636,18 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Texture_Explosion*/
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Texture_Explosion_Test*/
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion_Test");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion_Test");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
@@ -887,25 +891,25 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_Snow */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Snow");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Snow");
 	pProtoDesc.pPrototype = CSnow::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_Explosion */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Explosion");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Explosion");
 	pProtoDesc.pPrototype = CExplosion::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_Sprite_Explosion */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sprite_Explosion");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sprite_Explosion");
 	pProtoDesc.pPrototype = CSpriteEffect::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Test_InstanceModel");
@@ -915,11 +919,11 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_ForkLift */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ForkLift");
+	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ForkLift");
 	pProtoDesc.pPrototype = CForkLift::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_PxTestProp */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_PxTestProp");
@@ -3085,11 +3089,6 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_UI_Texture_Default */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1))))
@@ -3195,6 +3194,20 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Boss_Stamina */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Boss_Stamina");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.png"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Boss_StaminaFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Boss_StaminaFX");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_UI_BossVitalWrapper */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossVitalWrapper");
 	pProtoDesc.pPrototype = CUIBossVitalWrapper::Create(m_pDevice, m_pContext);
@@ -3226,6 +3239,20 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	/* For.Prototype_GameObject_UI_BossName */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossName");
 	pProtoDesc.pPrototype = CUIBossName::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_BossStamina */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossStamina");
+	pProtoDesc.pPrototype = CUIBossStamina::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_BossStamina */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossStaminaFX");
+	pProtoDesc.pPrototype = CUIBossStaminaFX::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3549,6 +3576,20 @@ HRESULT CLoader::Loading_UI_For_World(void* pArg)
 	/* For.Prototype_GameObject_UI_Monster_Shield */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_Shield");
 	pProtoDesc.pPrototype = CUIMonsterShield::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_Monster_Stamina */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_Stamina");
+	pProtoDesc.pPrototype = CUIMonsterStamina::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Monster_StaminaFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_StaminaFX");
+	pProtoDesc.pPrototype = CUIMonsterStaminaFX::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -23,11 +23,15 @@
 #include "UIMonsterHPBar.h"
 #include "UIMonsterHPFX.h"
 #include "UIMonsterShield.h"
+#include "UIMonsterStamina.h"
+#include "UIMonsterStaminaFX.h"
 #include "UIBossVitalWrapper.h"
 #include "UIBossHPBar.h"
 #include "UIBossHPBarFX.h"
 #include "UIBossShield.h"
 #include "UIBossName.h"
+#include "UIBossStamina.h"
+#include "UIBossStaminaFX.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
 
@@ -164,14 +168,6 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Overlay"),
 		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
 
-	/* For.Prototype_Component_UI_Texture_Default */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1))))
-		return E_FAIL;
-
-	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Default"),
-		TEXT("Com_Texture_UI_Default"), TEXT("../../Client/Bin/Resources/Textures/Default0.png"), 1);
-
 	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1))))
@@ -275,6 +271,24 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
 		TEXT("Com_Texture_UI_Boss_Name"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1);
 
+	/* For.Prototype_Component_UI_Texture_Boss_Stamina */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Stamina"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.png"), 3))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Stamina"),
+		TEXT("Com_Texture_UI_Boss_Stamina"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.png"), 3);
+
+	/* For.Prototype_Component_UI_Texture_Boss_StaminaFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_StaminaFX"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.png"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_StaminaFX"),
+		TEXT("Com_Texture_UI_Boss_Stamina_FX"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.png"), 2);
+
+	/*=========================================================================================================================*/
+
 	/* For.Prototype_GameObject_UI_WorldWrapper */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossVitalWrapper"),
 		CUIBossVitalWrapper::Create(m_pDevice, m_pContext))))
@@ -298,6 +312,16 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_GameObject_UI_BossName */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossName"),
 		CUIBossName::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_BossStamina */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossStamina"),
+		CUIBossStamina::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_BossStaminaFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossStaminaFX"),
+		CUIBossStaminaFX::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
@@ -642,6 +666,16 @@ HRESULT CUI_Loader::Loading_UI_For_World()
 	/* For.Prototype_GameObject_UI_Monster_Shield */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_Shield"),
 		CUIMonsterShield::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Monster_Stamina */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_Stamina"),
+		CUIMonsterStamina::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Monster_StaminaFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_StaminaFX"),
+		CUIMonsterStaminaFX::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_UI_SimpleKey */

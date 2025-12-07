@@ -49,9 +49,9 @@ void CUIBossHPBar::Update(_float fTimeDelta)
 		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
 
 		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentHealth) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxHealth);
-
-		m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 	}
+	
+	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }
 
 void CUIBossHPBar::Late_Update(_float fTimeDelta)

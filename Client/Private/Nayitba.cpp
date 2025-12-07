@@ -191,11 +191,11 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 	case RECOVERY_TYPE::RECOVERY_STEMINA:
 	{
 		if (0 == iCost)
-			m_MonsterInfo.iCurrentStemina = m_pInitMonsterInfo->iMaxStemina;
+			m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 		else
 		{
-			m_MonsterInfo.iCurrentStemina += iCost;
-			m_MonsterInfo.iCurrentStemina = Clamp<long long>(m_MonsterInfo.iCurrentStemina, 0, m_pInitMonsterInfo->iMaxStemina);
+			m_MonsterInfo.iCurrentStamina += iCost;
+			m_MonsterInfo.iCurrentStamina = Clamp<long long>(m_MonsterInfo.iCurrentStamina, 0, m_pInitMonsterInfo->iMaxStamina);
 		}
 	}
 	break;
@@ -306,7 +306,7 @@ HRESULT CNayitba::Ready_CharacterData()
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
-		m_MonsterInfo.iCurrentStemina = m_pInitMonsterInfo->iMaxStemina;
+		m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
@@ -512,8 +512,8 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
 	{
-		if (0 < m_MonsterInfo.iCurrentStemina)
-			m_MonsterInfo.iCurrentStemina--;
+		if (0 < m_MonsterInfo.iCurrentStamina)
+			m_MonsterInfo.iCurrentStamina--;
 	}
 	else
 	{
