@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include "ClientStruct.h"
@@ -12,6 +12,9 @@ NS_BEGIN(Client)
 class CLift_Platform final : public CActor
 {
 public :
+	// 플렛폼이 위로 올라가있는지
+	// 아래로 내려와 있는지를 판단하는 상태값입니다.
+	// 이거 진성햄이 바꿔서 써도됨
 	enum class LIFT_PLATFORM_STATE { UPPER, DWON, END };
 
 private:
@@ -41,6 +44,9 @@ private :
 	_float							m_vLerpSpeed = { 1.f };
 	
 	_float3							m_vRootPos = {};
+
+	// 이거는 리프트가 올라가는 거리입니다.
+	// 이거도 형이 툴에서 수정해서 같이 넘겨서 받으면될거같음
 	_float							m_fMoveDistance = { 45.f };
 
 private :

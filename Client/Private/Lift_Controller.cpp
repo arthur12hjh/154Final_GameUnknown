@@ -210,7 +210,7 @@ HRESULT CLift_Controller::Begin_OverlapCallBack()
 {
 	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
 
-	m_eInterState = INTERACTION_STATE::CONTACT;
+	m_eInterState = INTERACTION_STATE::DEFAULT;
 
 	m_bIsInteractionAble = true;
 
@@ -221,7 +221,7 @@ HRESULT CLift_Controller::End_OverlapCallBack()
 {
 	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 
-	m_eInterState = INTERACTION_STATE::HIDE;
+	m_eInterState = INTERACTION_STATE::DEFAULT;
 
 	m_bIsInteractionAble = false;
 

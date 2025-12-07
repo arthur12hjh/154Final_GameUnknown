@@ -691,6 +691,9 @@
     <Filter Include="02.GameObjects\Character\Player\04. CameraBone">
       <UniqueIdentifier>{20f1c4c4-22e5-4aa5-832a-aa9113d3ec3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy">
+      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1399,6 +1402,9 @@
     <ClInclude Include="..\Public\CameraBone_Player.h">
       <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MonsterGroggyState.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2076,6 +2082,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CameraBone_Player.cpp">
       <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterGroggyState.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

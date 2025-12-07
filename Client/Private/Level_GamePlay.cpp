@@ -21,6 +21,9 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
+	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -42,15 +45,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
-	//	{
-	//		Ready_Layer_Effect(TEXT("Layer_Effect"));
-	//	});
-
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
+	//Load_Map_Desert_Data("../Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
@@ -157,6 +156,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+
 	CActor::ACTOR_DESC ProbDesc = {};
 	ProbDesc.bIsApplyTransform = true;
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
@@ -262,7 +262,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
-	//m_pGameInstance->SetMainCamera(TEXT("FreeCamera"));
 
 	CameraDesc.fSpeedPerSec = 15.f;
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
@@ -356,7 +355,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	Desc.iMonsterID = 5;
+	Desc.iMonsterID = 4;
 	Desc.bIsSuperMonster = true;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),

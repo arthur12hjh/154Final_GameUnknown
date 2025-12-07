@@ -390,7 +390,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain_Desert"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/009_A_TD.dds"), 1))))
 		return E_FAIL;
-
+	
 	/* For.Prototype_Component_Texture_Terrain_ORM */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/002_A_TAoRM.dds"), 1))))
@@ -1913,7 +1913,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain_Desert");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/Height2.bmp"));
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Desert/Terrain/Height2.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
