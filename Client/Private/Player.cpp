@@ -224,12 +224,12 @@ HRESULT CPlayer::Damaged(void* pArg)
 	return S_OK;
 }
 
-void CPlayer::SetSillDataID(_uint iSkillID)
+void CPlayer::SetSkillDataID(_uint iSkillID)
 {
 	m_iSkillID = iSkillID;
 }
 
-_int CPlayer::GetSillDataID()
+_int CPlayer::GetSkillDataID()
 {
 	return m_iSkillID;
 }

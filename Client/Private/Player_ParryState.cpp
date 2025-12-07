@@ -13,6 +13,7 @@ CPlayer_ParryState::CPlayer_ParryState(_bool isImmediate)
 void CPlayer_ParryState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::PARRY;
+	m_Desc->isLookFixed = true;
 
 	if (true == m_isImmediate)
 	{
@@ -46,7 +47,7 @@ PLAYER_TRANSITION_DESC CPlayer_ParryState::Update(_float fTimeDelta)
 
 	// 패링 스타트하고 패링 올리는 애니메이션이 얼마 남지  않은 상태부턴,
 	// 패링 판정이 가능해진다.
-	if (true == m_isParryStart && fAnimationRatio >= 0.5f)
+	if (true == m_isParryStart && fAnimationRatio >= 0.4f)
 	{
 		m_Desc->isParryable = true;
 		m_Desc->isJustParryable = true;
@@ -67,6 +68,7 @@ _float CPlayer_ParryState::End()
 {
 	m_Desc->isParryable = false;
 	m_Desc->isJustParryable = false;
+	m_Desc->isLookFixed = false;
 
 	return m_fNextBlendRatio;
 }

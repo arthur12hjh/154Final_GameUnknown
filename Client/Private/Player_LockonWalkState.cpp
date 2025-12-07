@@ -49,7 +49,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f, 0.12f, FALSE, -1.f, 2.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward_Start"), false, 1.f, 0.12f);
 
@@ -61,7 +61,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f, 0.12f, FALSE, -1.f, 13.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward_Start"), false, 1.f, 0.12f);
 
@@ -73,7 +73,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f, 0.12f, FALSE, -1.f, 2.5f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left_Start"), false, 1.f, 0.12f);
 
@@ -85,7 +85,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f, FALSE, -1.f, 14.f, TRUE);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f, FALSE, -1.f, 13.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.12f);
 

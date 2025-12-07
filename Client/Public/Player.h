@@ -44,8 +44,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Damaged(void* pArg) override;
 
-	void			SetSillDataID(_uint iSkillID);
-	_int			GetSillDataID();
+	void			SetSkillDataID(_uint iSkillID);
+	_int			GetSkillDataID();
 
 public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
