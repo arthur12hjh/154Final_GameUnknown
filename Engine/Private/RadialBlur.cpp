@@ -8,8 +8,10 @@ CRadialBlur::CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
-void CRadialBlur::Set_Active(_float fLifeTime)
+void CRadialBlur::Set_Active(_uint iSampleCount, _float fSamplePower, _float fLifeTime)
 {
+    m_iSampleCount = iSampleCount;
+    m_fSamplePower = fSamplePower;
     m_fLifeTime = fLifeTime;
     m_fTimeAcc = 0.f;
     m_isActive = true;
@@ -73,6 +75,9 @@ HRESULT CRadialBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTag,
 
     m_pShader->Bind_RawValue("g_fLifeTime", &m_fLifeTime, sizeof(_float));
     m_pShader->Bind_RawValue("g_fTimeAcc", &m_fTimeAcc, sizeof(_float));
+    m_pShader->Bind_RawValue("g_iSampleCount", &m_iSampleCount, sizeof(_float));
+    m_pShader->Bind_RawValue("g_fSamplePower", &m_fSamplePower, sizeof(_float));
+
 
     m_pShader->Begin(0);
     pVIBuffer->Bind_Resources();
