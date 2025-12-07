@@ -185,10 +185,10 @@
                         "fX": 0.0,
                         "fY": 0.0,
                         "iDepth": 2,
-                        "iDrawType": 2,
+                        "iDrawType": 1,
                         "iLevel": 3,
                         "iRenderGroup": 9,
-                        "iVisibility": 1,
+                        "iVisibility": 0,
                         "szAnimTags": [
                             {
                                 "szAnimTag": "Show_Key",
@@ -246,10 +246,10 @@
                         "fX": 0.0,
                         "fY": 0.0,
                         "iDepth": 2,
-                        "iDrawType": 2,
+                        "iDrawType": 1,
                         "iLevel": 3,
                         "iRenderGroup": 9,
-                        "iVisibility": 1,
+                        "iVisibility": 0,
                         "szAnimTags": [
                             {
                                 "szAnimTag": "Show_Key",
@@ -290,22 +290,24 @@
                     {
                         "Shader": {
                             "bUseGlow": true,
-                            "fGlowIntensity": 1.5,
-                            "fGlowSpread": 0.0
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
                         },
                         "fAlpha": 0.0,
                         "fOffsetX": 0.0,
                         "fOffsetY": 0.0,
                         "fRotation": 0.0,
-                        "fSizeX": 1.0,
-                        "fSizeY": 1.0,
+                        "fSizeX": 200.0,
+                        "fSizeY": 200.0,
                         "fX": 0.0,
                         "fY": 0.0,
                         "iDepth": 4,
-                        "iDrawType": 2,
+                        "iDrawType": 1,
                         "iLevel": 3,
                         "iRenderGroup": 9,
-                        "iVisibility": 1,
+                        "iVisibility": 0,
                         "szAnimTags": [
                             {
                                 "szAnimTag": "Interaction_Active",
@@ -343,10 +345,10 @@
                 "fX": 0.0,
                 "fY": 0.0,
                 "iDepth": 5,
-                "iDrawType": 2,
+                "iDrawType": 1,
                 "iLevel": 3,
                 "iRenderGroup": 9,
-                "iVisibility": 1,
+                "iVisibility": 0,
                 "szAnimTags": [
                     {
                         "szAnimTag": "Show_Key",
@@ -386,25 +388,19 @@
                 "szUITag": "SimpleKey"
             }
         ],
-        "TextureDesc": {
-            "iPass": 0,
-            "iTextureIndex": 0,
-            "szProtoTag": "Prototype_Component_UI_Texture_Interaction_Shadow",
-            "szTextureComTag": "Com_Texture_UI_Interaction_Shadow"
-        },
         "fAlpha": 1.0,
-        "fOffsetX": 0.0,
-        "fOffsetY": -100.0,
+        "fOffsetX": 500.0,
+        "fOffsetY": 500.0,
         "fRotation": 0.0,
         "fSizeX": 40.0,
         "fSizeY": 40.0,
         "fX": 0.0,
         "fY": 0.0,
         "iDepth": 1,
-        "iDrawType": 2,
+        "iDrawType": 1,
         "iLevel": 3,
         "iRenderGroup": 9,
-        "iVisibility": 1,
+        "iVisibility": 0,
         "szLayerTag": "Layer_World",
         "szPoolTag": "Pool_Simple_Interaction",
         "szProtoTag": "Prototype_GameObject_UI_WorldWrapper",

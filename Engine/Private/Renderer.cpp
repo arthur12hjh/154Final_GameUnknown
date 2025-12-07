@@ -177,8 +177,6 @@ void CRenderer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F2))
 		m_isDebugVisible = !m_isDebugVisible;
 #endif
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F4))
-		m_pRadialBlur->Set_Active(2.f);
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F5))
 		m_isBloom = !m_isBloom;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
@@ -309,6 +307,11 @@ HRESULT CRenderer::Ready_MRTs()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CRenderer::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
+{
+	m_pRadialBlur->Set_Active(iSampleCount, fSamplePower, fLifeTime);
 }
 
 HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObject)

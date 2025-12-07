@@ -51,8 +51,13 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
     _float fMinDist = FLT_MAX;
     CNayitba* pBest = nullptr;
 
-    for (auto& pTarget : *pTargets)
+    for (auto& pObject : *pTargets)
     {
+        CNayitba* pTarget =  dynamic_cast<CNayitba*>(pObject);
+
+        if (nullptr == pTarget || 0.f >= pTarget->GetMonsterData().iCurrentHealth)
+            continue; 
+        
         CTransform* pTargetTransform = pTarget->GetTransform();
         _float fDist = XMVectorGetX(XMVector3Length(
             m_pPlayerDesc->pPlayerTransform->Get_State(STATE::POSITION) -

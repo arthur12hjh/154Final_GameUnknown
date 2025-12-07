@@ -55,12 +55,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pPhysx_Manager)
 		return E_FAIL;
 
+	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
-	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #else
 	m_pLight_Manager = CLight_Manager::Create();
-	m_pFrustum = CFrustum::Create();
 #endif // DEBUG
 	if (nullptr == m_pLight_Manager || nullptr == m_pFrustum)
 		return E_FAIL;
@@ -464,6 +463,11 @@ HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 	return m_pRenderer->Set_ScreenSize(iSizeX, iSizeY);
 }
 
+void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
+{
+	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
@@ -775,6 +779,13 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 {
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
+
+_bool CGameInstance::isIn_DistanceFrustum(_float3 vPoint, _float fDistance)
+{
+	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
+}
+
+
 
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()

@@ -81,7 +81,7 @@ HRESULT CPointParticle::Initialize(void* pArg)
 	//m_pVIBufferCom->Initialize(nullptr);
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
+	
 
 	ID3D11Buffer* pBuffer = nullptr;
 	D3D11_BUFFER_DESC BufferDesc = {};
@@ -419,7 +419,7 @@ void CPointParticle::Spread(_float fTimeDelta)
 	// 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
 	m_pComputeShader->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pReadSource);
 
-	// 이건 붙여넣기임
+	// 이건 붙여넣기임 
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 

@@ -4,6 +4,9 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
+#include "Interaction_Component.h"
+#include "Prob_Interaction.h"
+#include "UIWorldWrapper.h"
 
 /*
 테스트(Lift_Controller) 위치
@@ -45,16 +48,19 @@ void CUISimpleKey::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
-			m_eKeyState = SKILL_STATE::DEFAULT;
+			m_eInterState = INTERACTION_STATE::DEFAULT;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
-			m_eKeyState = SKILL_STATE::ACTIVE_ON;
+			m_eInterState = INTERACTION_STATE::CONTACT;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			m_eKeyState = SKILL_STATE::ACTIVE;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			m_eKeyState = SKILL_STATE::USE;
+			m_eInterState = INTERACTION_STATE::ACTIVE;
+	}*/
+
+	if (dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
+	{
+		m_eInterState = dynamic_cast<CProb_Interaction*>(dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom()->GetOwner())->Get_InterState();
 	}
 }
 
@@ -62,55 +68,51 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	if (m_eKeyState != m_ePrevKeyState)
+	if (m_eInterState != m_ePrevInterState)
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 		UI_EVENT_ARG_DESC Arg{};
-		Arg.Type = UI_EVENT_ARG_DESC::SKILL_STATE;
-		Arg.pData = &m_eKeyState;
+		Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
+		Arg.pData = &m_eInterState;
 
-		switch (m_eKeyState)
+		switch (m_eInterState)
 		{
-		case SKILL_STATE::DEFAULT:
+		case INTERACTION_STATE::DEFAULT:
 		{
 			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 			break;
 		}
-		case SKILL_STATE::ACTIVE_ON:
+		case INTERACTION_STATE::CONTACT:
 		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key"));
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key_") + to_wstring(m_iCloneIdx));
 			if (AnimTag != m_tUIDesc.m_AnimTags.end())
 				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			__super::Trigger_Event(TEXT("Show_Key"), &Arg);
+			__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
 			break;
 		}
-		case SKILL_STATE::ACTIVE:
+		case INTERACTION_STATE::LOCK:
 		{
+			break;
+		}
+		case INTERACTION_STATE::ACTIVE:
+		{
+			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx));
+			if (AnimTag != m_tUIDesc.m_AnimTags.end())
+				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+			__super::Trigger_Event(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx), &Arg);
+			
 			_bool bActive = true;
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
 			Arg.pData = &bActive;
-			__super::Trigger_Event(TEXT("Interaction_Active"), &Arg);
+			__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
 
-			m_eKeyState = SKILL_STATE::USE;
-
-			/*auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key"));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);*/
-			//break;
-		}
-		case SKILL_STATE::USE:
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key"));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			__super::Trigger_Event(TEXT("Hide_Key"), &Arg);
 			break;
 		}
 		}
 		
-		m_ePrevKeyState = m_eKeyState;
+		m_ePrevInterState = m_eInterState;
 		Safe_Release(pHUD);
 	}
 }

@@ -27,9 +27,9 @@ public:
 	virtual	ContainmentType			Contains(_vector vPoint) override;
 	void							SetCollision(_float3 vCenter, _float3 vExtents);
 
-#ifdef _DEBUG
 	const 	BoundingBox&			GetOrizinBounding() { return *m_OriginBounding; }
 
+#ifdef _DEBUG
 	virtual HRESULT					Render() override;
 	virtual HRESULT					Render(_float4 vColor) override;
 #endif // _DBUG

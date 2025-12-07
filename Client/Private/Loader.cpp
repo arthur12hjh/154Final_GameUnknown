@@ -26,6 +26,7 @@
 #include "Face_Player.h"
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
+#include "CameraBone_Player.h"
 #pragma endregion
 
 #pragma region Monster
@@ -49,10 +50,11 @@
 #pragma endregion
 
 #pragma region Prob
-#include "Prob_Box.h"
+#include "Prob_Static.h"
+#include "Prob_Destory.h"
 
 #pragma region Interaction
-#include "Vending.h"
+#include "StaticInteraction.h"
 #include "CanBox.h"
 #pragma endregion
 #pragma endregion
@@ -239,6 +241,12 @@ HRESULT CLoader::Loading()
 		m_strMessage = TEXT("인스턴싱중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
+
+		m_strMessage = TEXT("UI 로딩중.");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
@@ -462,8 +470,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CPlayer::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	if (FAILED(Loading_UI_For_GamePlay_Level()))
-		return E_FAIL;
+	/*if (FAILED(Loading_UI_For_GamePlay_Level()))
+		return E_FAIL;*/
 
 	while (m_pGameInstance->IsWorkThread());
 	m_strMessage = TEXT("완료 되었습니다..");
@@ -607,6 +615,21 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Moon */
+	_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_Moon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
+	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Texture_Explosion*/
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90);
@@ -622,9 +645,17 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Weapon */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_CameraBone */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CameraBone");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Camera/CameraBone.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -750,6 +781,22 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Interaction_Vending7A */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/VendingMachine/VendingMachine_7A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Interaction_Chair117 */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/Chair/Chair117_C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_CM_Rock9 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock9");
@@ -820,6 +867,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_Weapon */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Weapon");
 	pProtoDesc.pPrototype = CWeapon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CameraBone_Player */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CameraBone_Player");
+	pProtoDesc.pPrototype = CCameraBone_Player::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1183,16 +1237,23 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* Prob. Box */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Box");
-	pProtoDesc.pPrototype = CProb_Box::Create(m_pDevice, m_pContext);
+	/* Prototype_GameObject_Prob_Destory */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Destory");
+	pProtoDesc.pPrototype = CProb_Destory::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* Prob. Vending */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Vending");
-	pProtoDesc.pPrototype = CVending::Create(m_pDevice, m_pContext);
+	/* Prototype_GameObject_Prob_Static */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Prob_Static");
+	pProtoDesc.pPrototype = CProb_Static::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* Prototype_GameObject_Static_Interaction */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Static_Interaction");
+	pProtoDesc.pPrototype = CStaticInteraction::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1329,6 +1390,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+
 
 	/* For.Prototype_Component_Model_Stone2 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -1922,14 +1985,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Model_Eve */
-	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Eve");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/CH_P_EVE_09_body_idleTest.bin", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
 	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
 	ModelDesc.iNumInstance = 100;
@@ -2052,245 +2107,147 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
-
-	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	/* For.Prototype_Component_Model_Moon */
-	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Moon */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
-	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Canyon_1A */
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_1A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_1A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_1A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_2A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_2A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_2A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_2A.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Pallet02 */
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Pallet02");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Pallet/Pallet02.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster02 */
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster02");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Poster/Poster02.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_3A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_3A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_3A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_3A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_4A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_4A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_4A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_4A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_5A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_5A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_5A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_5A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_6A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_6A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_6A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_6A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_12A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_12A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_12A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_12A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_14A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_14A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_14A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_14A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_14B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_14B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_14B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_14B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_15A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_15A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_15A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_15A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_16A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_16A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_16A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_16A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_16B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_16B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_16B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_16B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_17A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_17A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_17A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_17A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_17B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_17B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_17B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_17B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_18A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_18A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_18A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_18A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Model_Canyon_50A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_50A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_50A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_50A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2308,155 +2265,90 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertB(void* pArg)
 
 	/* For.Prototype_Component_Model_Canyon_52A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_52A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_52A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_52A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_55A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_55A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_55A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_55A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_58A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_58A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_58A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_58A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_59A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_59A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_59A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_59A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 
 	/* For.Prototype_Component_Model_Canyon_60A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_60A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_60A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_60A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
 	/* For.Prototype_Component_Model_Canyon_61A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_61A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_61A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_61A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_65A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_65A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_65A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_65A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_66A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_66A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_66A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_66A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_67A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_67A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_67A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_67A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_69A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_69A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_69A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_69A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_71A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_71A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_71A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_71A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2474,172 +2366,100 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertC(void* pArg)
 
 	/* For.Prototype_Component_Model_Canyon_20A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_20A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_20A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_20A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_21A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_21A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_21A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_21A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_22A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_22A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_22A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_22A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_23A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_23A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_23A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_23A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_24A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_24A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_24A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_24A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_35A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_35A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_35A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_35A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_39A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_39A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_39C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39C.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_39C");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_39D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39D.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_39D");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_39D.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_43A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_43A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_43A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_43A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_44A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_44A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_44A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_44A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_46A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_46A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_46A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_46A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 
 	return S_OK;
 }
@@ -2654,225 +2474,128 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertD(void* pArg)
 
 	/* For.Prototype_Component_Model_Canyon_100A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_100A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_100A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_100A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_101A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_101A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_101A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_101A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_103A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_103A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_103A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_103A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_104A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_104A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_104A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_104A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_105A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_105A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_105A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_105A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_106A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_106A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_106A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_106A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_108A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_108A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_108A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_108A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_109A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_109A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_109A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_109A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_110A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_110A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_110A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_110A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_111A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_111A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_111A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_111A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_112A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_112A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_112A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_112A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_113A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_113A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_113A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_113A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_115A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_115A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_115A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_115A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_116A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_116A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_116A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_116A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_117A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_117A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_117A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_117A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_121A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_121A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_121A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_121A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2890,6 +2613,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertD(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 	return S_OK;
 }
 
@@ -2903,187 +2627,107 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertE(void* pArg)
 
 	/* For.Prototype_Component_Model_Canyon_127A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_127A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_127B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_127B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_127C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127C.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_127C");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_127D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127D.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_127D");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127D.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_127E */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127E.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_127E");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_127E.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_128A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_128A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_128B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_128B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_128C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128C.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_128C");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_128C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_131A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_131A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_131A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_131A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_132A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_132A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_132B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_132B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_132C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132C.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_132C");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_132C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_133B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_133B.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_133B");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_133B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
 
 	return S_OK;
 }
@@ -3093,163 +2737,96 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertF(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
-
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* For.Prototype_Component_Model_Canyon_80A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_80A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_80A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_80A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_81A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_81A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_81A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_81A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_93A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_93A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_93A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_93A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_95A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_95A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_95A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_95A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_96A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_96A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_96A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_96A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_97A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_97A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_97A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_97A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_98A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_98A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_98A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_98A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_122A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_122A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_122A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_122A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_123A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_123A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_123A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_123A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_125A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_125A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_125A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_125A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_126A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	ModelDesc.iNumInstance = 1;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_126A.binx";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_126A");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon_Png/Canyon_126A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 
 	return S_OK;
 }
@@ -3321,7 +2898,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Lift_Controller_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Lift_Controller_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Controller_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Controller_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3337,7 +2914,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Lift_Body_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Lift_Body_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Body_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Body_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3353,7 +2930,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Lift_Platform_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Lift_Platform_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Platform_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Platform_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3490,317 +3067,448 @@ HRESULT CLoader::Loading_UI_For_Logo_Level()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_UI_For_GamePlay_Level()
+HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 {
-	m_strMessage = TEXT("UI 로딩중 입니다..");
-
-	if (FAILED(Loading_UI_For_Combat_HUD_Vitals()))
-		return E_FAIL;
-
-	if (FAILED(Loading_UI_For_Combat_HUD_Skills()))
-		return E_FAIL;
-
-	if (FAILED(Loading_UI_For_World()))
-		return E_FAIL;
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
 	/* For.Prototype_Component_UI_Texture_Center_Pivot */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Center_Pivot");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Number */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Number/Number_%d.png"), 10))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Number");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.png"), 10);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Panel */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Panel");
+	pProtoDesc.pPrototype = CUIPanel::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Wrapper */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Wrapper");
+	pProtoDesc.pPrototype = CUIWrapper::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Button */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Button");
+	pProtoDesc.pPrototype = CUIButton::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Text */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Text");
+	pProtoDesc.pPrototype = CUIText::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Image */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Image");
+	pProtoDesc.pPrototype = CUIImage::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// 보스 체력바
 
 	/* For.Prototype_Component_UI_Texture_Boss_Vital_Shadow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Boss_Name */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Boss_Name");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	// 객체 원형
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Panel"),
-		CUIPanel::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_BossVitalWrapper */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossVitalWrapper");
+	pProtoDesc.pPrototype = CUIBossVitalWrapper::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Wrapper"),
-		CUIWrapper::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Button"),
-		CUIButton::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Text"),
-		CUIText::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Image"),
-		CUIImage::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_UI_WorldWrapper */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossVitalWrapper"),
-		CUIBossVitalWrapper::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Boss_HPBar */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_HPBar"),
-		CUIBossHPBar::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Boss_HPBar");
+	pProtoDesc.pPrototype = CUIBossHPBar::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Boss_HPFX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_HPFX"),
-		CUIBossHPBarFX::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Boss_HPFX");
+	pProtoDesc.pPrototype = CUIBossHPBarFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Boss_Shield */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Boss_Shield"),
-		CUIBossShield::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Boss_Shield");
+	pProtoDesc.pPrototype = CUIBossShield::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_BossName */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossName"),
-		CUIBossName::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossName");
+	pProtoDesc.pPrototype = CUIBossName::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	//m_strMessage = TEXT("UI 로딩중 입니다..");
 
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals()
+HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals(void* pArg)
 {
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
 	/* For.Prototype_Component_UI_Texture_Vital */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Vital"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.png"), 3))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Vital");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.png"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Player_Hp */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.png"), 2))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Hp");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Player_Hp_FX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp_FX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Hp_FX");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Player_Beta */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Beta"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 6))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Beta");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 6);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Potion */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Potion");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Potion_Stack */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion_Stack"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Potion_Stack");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Btn_Empty */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Btn_Empty");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_HPBar"),
-		CUIHPBar::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_HPBar */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_HPBar");
+	pProtoDesc.pPrototype = CUIHPBar::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_HP_FX"),
-		CUIHPFX::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_HP_FX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_HP_FX");
+	pProtoDesc.pPrototype = CUIHPFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Potion"),
-		CUIPotion::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_Potion */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Potion");
+	pProtoDesc.pPrototype = CUIPotion::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_PotionCount"),
-		CUIPotionCount::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_PotionCount */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_PotionCount");
+	pProtoDesc.pPrototype = CUIPotionCount::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_PotionStack"),
-		CUIPotionStack::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_PotionStack */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_PotionStack");
+	pProtoDesc.pPrototype = CUIPotionStack::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Shield"),
-		CUIShield::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_Shield */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Shield");
+	pProtoDesc.pPrototype = CUIShield::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Beta"),
-		CUIBeta::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_UI_Beta */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Beta");
+	pProtoDesc.pPrototype = CUIBeta::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills()
+HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills(void* pArg)
 {
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
 	/* For.Prototype_Component_UI_Texture_SkillFrame */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_SkillFrame");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_SkillFrame_Shadow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Skill_Focus_Glow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Skill_On_Fx */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_On_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Skill_On_Fx");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_SkillWrapper_On_Fx */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillWrapper_On_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.png"), 2))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_SkillWrapper_On_Fx");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Skill_Line_Fx */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Line_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.png"), 2))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Skill_Line_Fx");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Skills */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skills"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.png"), 4))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Skills");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.png"), 4);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Rush */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rush");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Rush_Frame */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rush_Frame");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Rush_CoolTime */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_CoolTime"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rush_CoolTime");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Rush_Glow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_%d.png"), 2))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rush_Glow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Rush_Frame_Glow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_On_Ring */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_On_Ring");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Skill_Slot_Covor */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Slot_Covor"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Skill_Slot_Covor");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_On_BetaText */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_BetaText"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_On_BetaText");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-
-	/*====================================================================================================================*/
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_SkillWrapper */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SkillWrapper"),
-		CUISkillWrapper::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_SkillWrapper");
+	pProtoDesc.pPrototype = CUISkillWrapper::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_SkillWrapperLineFX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SkillWrapperLineFX"),
-		CUISkillWrapperLineFX::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_SkillWrapperLineFX");
+	pProtoDesc.pPrototype = CUISkillWrapperLineFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_SkillWrapperOnFX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SkillWrapperOnFX"),
-		CUISkillWrapperOnFX::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_SkillWrapperOnFX");
+	pProtoDesc.pPrototype = CUISkillWrapperOnFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_SkillSlot */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SkillSlot"),
-		CUISkillSlot::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_SkillSlot");
+	pProtoDesc.pPrototype = CUISkillSlot::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_RushSlot */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_RushSlot"),
-		CUIRushSlot::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_RushSlot");
+	pProtoDesc.pPrototype = CUIRushSlot::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_UI_For_World()
+HRESULT CLoader::Loading_UI_For_World(void* pArg)
 {
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
 	/* For.Prototype_Component_UI_Texture_LockOn */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_LockOn");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Interaction_Key */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Key");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Interaction_Shadow */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.png"), 1))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Shadow");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Interaction_FX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.png"), 3))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_FX");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.png"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-
-	/*=====================================================================================================*/
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_WorldWrapper */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_WorldWrapper"),
-		CUIWorldWrapper::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_WorldWrapper");
+	pProtoDesc.pPrototype = CUIWorldWrapper::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Monster_HPBar */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_HPBar"),
-		CUIMonsterHPBar::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_HPBar");
+	pProtoDesc.pPrototype = CUIMonsterHPBar::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Monster_HPFX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_HPFX"),
-		CUIMonsterHPFX::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_HPFX");
+	pProtoDesc.pPrototype = CUIMonsterHPFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_Monster_Shield */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Monster_Shield"),
-		CUIMonsterShield::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Monster_Shield");
+	pProtoDesc.pPrototype = CUIMonsterShield::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_SimpleKey */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SimpleKey"),
-		CUISimpleKey::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_SimpleKey");
+	pProtoDesc.pPrototype = CUISimpleKey::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_UI_InteractionFX */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_InteractionFX"),
-		CUIInteractionFX::Create(m_pDevice, m_pContext))))
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_InteractionFX");
+	pProtoDesc.pPrototype = CUIInteractionFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }

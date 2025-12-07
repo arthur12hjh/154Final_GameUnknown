@@ -9,7 +9,7 @@ CPlayer_BattleWalkEndState::CPlayer_BattleWalkEndState()
 {
 }
 
-void CPlayer_BattleWalkEndState::Start(void* pArg)
+void CPlayer_BattleWalkEndState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK_END;
 
@@ -29,16 +29,13 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
     }
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)) &&
-        fAnimationRatio >= 0.1f)
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1) &&
-        fAnimationRatio >= 0.1f)
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
         m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2) &&
-        fAnimationRatio >= 0.1f)
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
@@ -52,8 +49,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BattleWalkEndState::End()
+_float CPlayer_BattleWalkEndState::End()
 {
+    return 0.12f;
 }
 
 CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)

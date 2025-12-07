@@ -44,6 +44,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 	NAYITBA_DESC* pDesc = static_cast<NAYITBA_DESC*>(pArg);
 	m_iMonsterID = pDesc->iMonsterID;
+	m_bIsSuperMonster = pDesc->bIsSuperMonster;
 
 	m_SkillCandidates.reserve(30);
 	if (FAILED(Ready_CharacterData()))
@@ -148,15 +149,17 @@ HRESULT CNayitba::Damaged(void* pArg)
 		break;
 	case AI_TYPE::AGGRESSIVE :
 	case AI_TYPE::PASSIVE :  // 공격형
-		pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	{
+		if (m_bIsSuperMonster)
+			pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, 0);
+		else
+			pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+	}
 		break;
 	}
 	
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
-
 	m_pAIController->Damage(pArg);
-
-		
 
 	m_vHitVisibleDuration.x = 0.f;
 
@@ -472,12 +475,17 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
 {
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	long long iDamage = pSkillDesc->iSkillDamage;
+	if (m_bIsSuperMonster)
+		iDamage = 0;
+
 	_bool bIsCheckDefenceLogic = false;
 	if (m_pAttack_Data)
 	{
 		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))
 		{
-			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iDamage);
 		}
 		else
 			bIsCheckDefenceLogic = true;
@@ -498,20 +506,20 @@ _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 
 		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
 		fScalar = Clamp<_float>(fScalar, -1.0f, 1.0f);   // NaN 방지
-
 		_float fRadian = acosf(fScalar);
+
 		// 앞
 		if (0 < fScalar)
 		{
 			if (fRadian < m_pAISenceCom->GetSenceRadiusRadian())
 			{
-				long long iFrontDamage = pSkillDesc->iSkillDamage * fDamageReductionRate;
+				long long iFrontDamage = iDamage * fDamageReductionRate;
 				m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iFrontDamage);
 				return false;
 			}
 		}
 		else
-			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iDamage);
 	}
 	
 	return true;
@@ -576,7 +584,7 @@ void CNayitba::Free()
 	__super::Free();
 
 
-
+	//Safe_Release(m_pStatusUI);
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
 }

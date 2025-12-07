@@ -9,7 +9,7 @@ CPlayer_LockonEvadeState::CPlayer_LockonEvadeState()
 {
 }
 
-void CPlayer_LockonEvadeState::Start(void* pArg)
+void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
@@ -73,6 +73,25 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 		m_tNextStateDesc.isEvade = true;
 		m_tNextState.pArg = &m_tNextStateDesc;
 	}
+	else if (fAnimationRatio > 0.45f && m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+		m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
+	else if (fAnimationRatio > 0.45f && m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
+	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+		m_tNextState.eNextState = PLAYER_STATE::EVADE;
+
+	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
+		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
+		m_tNextState.eNextState = PLAYER_STATE::WALK;
+	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
+
+	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
+		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
 	if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
@@ -80,8 +99,9 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_LockonEvadeState::End()
+_float CPlayer_LockonEvadeState::End()
 {
+	return 0.12f;
 }
 
 CPlayer_LockonEvadeState* CPlayer_LockonEvadeState::Create(void* pArg)

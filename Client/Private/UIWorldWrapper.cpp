@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "Interaction_Component.h"
 
 CUIWorldWrapper::CUIWorldWrapper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -140,4 +141,6 @@ CGameObject* CUIWorldWrapper::Clone(void* pArg)
 void CUIWorldWrapper::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pInteractionCom);
 }

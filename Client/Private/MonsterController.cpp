@@ -128,11 +128,19 @@ void CMonsterController::Damage(void* pDesc)
 		{
 			// 나중에 여러 속성 추가할 예정
 			const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
-			if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
+
+			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
-				if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+				AttackCompleted(1.5f);
+			}
+			else
+			{
+				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
-					bIsHitAble = false;
+					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+					{
+						bIsHitAble = false;
+					}
 				}
 			}
 		}

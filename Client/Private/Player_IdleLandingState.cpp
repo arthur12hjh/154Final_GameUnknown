@@ -10,7 +10,7 @@ CPlayer_IdleLandingState::CPlayer_IdleLandingState()
 {
 }
 
-void CPlayer_IdleLandingState::Start(void* pArg)
+void CPlayer_IdleLandingState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LANDING;
     m_pPlayer->Set_Animation("Proto_Jump_End", false, 1.2f);
@@ -33,8 +33,9 @@ PLAYER_TRANSITION_DESC CPlayer_IdleLandingState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_IdleLandingState::End()
+_float CPlayer_IdleLandingState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_IdleLandingState* CPlayer_IdleLandingState::Create(void* pArg)

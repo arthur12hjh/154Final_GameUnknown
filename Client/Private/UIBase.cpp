@@ -8,6 +8,7 @@
 #include "UIActionEvent.h"
 
 #include "UIWorldWrapper.h"
+#include "UIText.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -120,7 +121,7 @@ void CUIBase::Update(_float fTimeDelta)
 		XMStoreFloat3(&ndc, vClip / w); // (-1~1)
 
 		// 4) NDC → Screen
-		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
+ 		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
 
 		if (m_pTargetPos)
 		{
@@ -305,7 +306,43 @@ HRESULT CUIBase::Ready_Texture()
 CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 {
 	UIBASE_DESC Desc = m_tOriginUIDesc;
-	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Pooled_") + to_wstring(iIdx);
+	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Cloned_") + to_wstring(iIdx);
+
+	map<_wstring, vector<UI_EVENT_DESC>> rebuiltEvents;
+
+	for (auto& it : Desc.m_Events)
+	{
+		vector<UI_EVENT_DESC>& eventList = it.second;
+
+		// (1) 내부 값 재정의
+		for (auto& ev : eventList)
+		{
+			ev.szActionTag += TEXT("_") + to_wstring(iIdx);
+			ev.szArg += TEXT("_") + to_wstring(iIdx);
+			ev.szTypeTag = ev.szTypeTag;
+
+			for (auto& sub : ev.szSubscribeEventTags)
+				sub += TEXT("_") + to_wstring(iIdx);
+		}
+
+		_wstring newKey = it.first + TEXT("_") + to_wstring(iIdx);
+		rebuiltEvents.emplace(newKey, eventList);
+	}
+
+	Desc.m_Events = rebuiltEvents;
+
+	map<_wstring, _wstring> rebuiltAnims;
+
+	for (auto& it : Desc.m_AnimTags)
+	{
+		const wstring& oldKey = it.first;     // 기존 key
+
+		wstring newKey = oldKey + TEXT("_") + to_wstring(iIdx);
+
+		rebuiltAnims.emplace(newKey, it.second);
+	}
+
+	Desc.m_AnimTags = rebuiltAnims;
 
 	CGameObject* pObj = nullptr;
 	if (FAILED(pHUD->Add_UserInterface(Desc.iLevel, Desc.szProtoTag.c_str(),
@@ -318,6 +355,8 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 	if (!pUIBase)
 		return nullptr;
 
+	pUIBase->Set_CloneIdx(iIdx);
+
 	// 3) Children deep clone
 	//pUIBase->m_Children.clear(); // 기존 children 포인터 복사된 것 제거
 
@@ -325,12 +364,11 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 	{
 		CUIBase* pClonedChild = pChild->Clone_UI(pHUD, iIdx);
 		pClonedChild->SetParent(pUIBase);
-
 		pUIBase->Add_Child(pClonedChild);
 	}
 
 	return pUIBase;
-}
+} 
 
 void CUIBase::Update_Children(CUIBase* pObj)
 {
@@ -340,7 +378,8 @@ void CUIBase::Update_Children(CUIBase* pObj)
 	pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
 
 	pObj->GetTransform()->Set_State(STATE::POSITION,
-		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX, pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX,
+			pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
 
 	for (auto& pChild : *pObj->Get_Children())
 	{

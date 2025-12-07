@@ -9,7 +9,7 @@ CPlayer_BattleEvadeState::CPlayer_BattleEvadeState()
 {
 }
 
-void CPlayer_BattleEvadeState::Start(void* pArg)
+void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
@@ -75,14 +75,37 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 		m_tNextState.pArg = &m_NextStateDesc;
 	}
 
+	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+		fAnimationRatio >= m_fMaxRatio)
+	{
+		m_tNextState.eNextState = PLAYER_STATE::EVADE;
+	}
+
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1)
+		&& fAnimationRatio >= m_fMaxRatio)
+	{
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
+		m_tNextState.isChangeMode = true;
+		m_tNextState.eMode = PLAYER_MODE::BATTLE;
+	}
+
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2)
+		&& fAnimationRatio >= m_fMaxRatio)
+	{
+		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
+		m_tNextState.isChangeMode = true;
+		m_tNextState.eMode = PLAYER_MODE::BATTLE;
+	}
+
 	else if (fAnimationRatio >= m_fMaxRatio + 0.1f)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
 	return m_tNextState;
 }
 
-void CPlayer_BattleEvadeState::End()
+_float CPlayer_BattleEvadeState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_BattleEvadeState* CPlayer_BattleEvadeState::Create(void* pArg)

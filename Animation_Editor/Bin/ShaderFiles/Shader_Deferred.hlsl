@@ -66,7 +66,7 @@ VS_OUT VS_MAIN(VS_IN In)
 }
 
 PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
-{
+{                                                                                                                                                                                                                                                                      
     PS_OUT_BACKBUFFER Out;
     
     Out.vBackBuffer = g_Texture.Sample(DefaultSampler, In.vTexcoord);
@@ -74,43 +74,49 @@ PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
     return Out;   
 }
 
+//---------------------------------------------------
+// MAIN
+//---------------------------------------------------
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
 
-    // ===== 텍스처 샘플링 =====
-    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord); // ORM + ORSS 통합
+    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
 
-    // 기본 노멀
+    // Normal Strength 증가 --------------------------------------------
     float3 N;
     {
         float3 n = vNormalDesc.xyz * 2.f - 1.f;
-        // 과한 디테일 억제용 강도 조절(원하면 1.0f로)
-        float normalStrength = 0.35f;
+        float normalStrength = 0.8f; // 기존 0.35 -> 최소 수정
         n.xy *= normalStrength;
         N = normalize(n);
     }
 
-    // ===== 뎁스에서 위치 복원 =====
+    // 위치 복원 그대로 ---------------------------------------------------
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float viewZ = vDepthDesc.y * 500.f;
+    float  fViewZ = vDepthDesc.y * 500.f;
 
-    float4 pos;
-    pos.x = In.vTexcoord.x * 2.f - 1.f;
-    pos.y = In.vTexcoord.y * -2.f + 1.f;
-    pos.z = vDepthDesc.x;
-    pos.w = 1.f;
+    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vector vPosition;
+    vPosition.x = In.vTexcoord.x * 2.f - 1.f;
+    vPosition.y = In.vTexcoord.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    
+    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    vPosition = vPosition * fViewZ;
+    
+    /* 로컬위치 * 월드 * 뷰  */
+    vPosition = mul(vPosition, g_ProjMatrixInv);
+    
+    /* 로컬위치 * 월드   */
+    vPosition = mul(vPosition, g_ViewMatrixInv);
 
-    pos *= viewZ;
-    pos = mul(pos, g_ProjMatrixInv);
-    pos = mul(pos, g_ViewMatrixInv);
-
-    float3 V = normalize((pos - g_vCamPosition).xyz);
+    float3 V = normalize((vPosition - g_vCamPosition).xyz);
     float3 L = normalize(g_vLightDir.xyz) * -1.f;
 
-    // ===== 공통 파라미터 =====
     float AO = vORMDesc.r;
     float Rough = vORMDesc.g;
     float MetalSrc = vORMDesc.b;
@@ -119,15 +125,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float Metallic = 0.f;
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
 
-    // 어떤 데이터라도 들어 있으면 "packed" 라고 판단
     bool hasPacked = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
-
-    // ORSS(피부) : A > 0
     bool isORSS = hasPacked && (A > 0.f);
-    // ORM(일반 재질) : A == 0 && RGB 중 하나라도 있음
     bool isORM = hasPacked && (A == 0.f);
 
-    // ===== 1) Fallback : 전혀 데이터 없으면 Phong =====
+    // Fallback ---------------------------------------------------------
     if (!hasPacked)
     {
         float NdotL = saturate(dot(N, L));
@@ -144,77 +146,55 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         return Out;
     }
 
-    // ===== 2) ORSS : 피부 (Specular Workflow + SSS) =====
+    // ORSS(피부)
     if (isORSS)
     {
-        // ORSS 정의: R=AO, G=Roughness, B=Specular(F0 Scale), A=SSSMask
         AO = vORMDesc.r;
         Rough = max(vORMDesc.g, 0.05f);
-
-        float specFactor = saturate(vORMDesc.b); // 0~1
+        float specFactor = saturate(vORMDesc.b);
         Metallic = 0.f;
 
-        // 피부용 F0 (기본 0.028 근처 + SpecFactor 보정)
         float3 baseF0 = float3(0.028f, 0.028f, 0.028f);
-        F0 = baseF0 + specFactor * 0.12f; // 최대 ~0.15 근처
+        F0 = baseF0 + specFactor * 0.05f;
     }
-    // ===== 3) ORM : 일반 재질 (Metallic Workflow) =====
     else if (isORM)
     {
-        // ORM 정의: R=AO, G=Roughness, B=Metallic
         AO = vORMDesc.r;
         Rough = max(vORMDesc.g, 0.05f);
         Metallic = saturate(vORMDesc.b);
-
-        // 표준 금속/비금속 F0
         F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
 
-    // ===== PBR 라이트 계산 =====
-    float AOStr = lerp(1.3f, 2.f, AO);
-
-    Out = PBR_Light(
-        N,
-        -V,
-        L,
-        vAlbedo.rgb,
-        Metallic,
-        Rough,
-        g_vLightDiffuse.xyz,
-        1.f,
-        F0,
-        1.f
-    );
-
+    // AO 증폭 완화 ------------------------------------------------------
+    float AOStr = lerp(1.0f, 1.2f, AO); // 기존 1.3~2.0 → 최소 수정
+    Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     Out.vShade.rgb *= AOStr;
 
-    // ===== SSS : 오직 ORSS(피부)만 적용 =====
+    //-------------------------------------------------------
+    // SSS Back-scattering 추가 (역광 문제 해결)
+    //-------------------------------------------------------
     if (isORSS)
     {
         float3 base = Out.vShade.rgb;
 
-    // 1) 기본 밝기(루마) 계산 ? 이건 유지
         float luma = dot(base, float3(0.299f, 0.587f, 0.114f));
-
-    // 2) 타겟 혈색 톤 (강하게 붉은 피부톤)
-        float3 bloodHue = float3(1.30f, 0.55f, 0.50f); // 세게 주고 싶으면 R 좀 더 올려도 됨
-        bloodHue = normalize(bloodHue);
-
-    // "밝기는 base와 같고, 색만 혈색 쪽으로 도는" 타겟 컬러
+        float3 bloodHue = float3(1.0f, 0.45f, 0.45f);
         float3 bloodColor = bloodHue * luma;
 
-    // 3) 어디에 얼마나 혈색을 줄지 ? SSS + N·L 기준
         float ndl = saturate(dot(N, L));
-        float edge = pow(1.0f - ndl, 1.2f); // 라이트 에지 쪽 더 강조
+        float edge = pow(1.0f - ndl, 1.2f);
         float sss = saturate(A * g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord).g);
+        float w = saturate(sss * edge * 0.35f);
 
-        float bloodStrength = 0.65f; // 전체 혈색 강도 (0.3~0.8 사이에서 조절)
-        float w = saturate(sss * edge * bloodStrength);
-
-    // 4) 혈색 적용 ? 밝기는 유지, 색만 강하게 피부/혈색 쪽으로 끌어당김
         float3 result = lerp(base, bloodColor, w);
-
         Out.vShade.rgb = result;
+
+        // 역광 SSS BackScatter ----------------------------------------
+        float back = saturate(dot(-N, L));
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.3f, 0.25f)
+                         * pow(back, 1.1f) * 0.35f;
+
+        Out.vShade.rgb += backSSS;
     }
 
     return Out;

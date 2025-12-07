@@ -9,7 +9,7 @@ CPlayer_VendingInteractionState::CPlayer_VendingInteractionState()
 {
 }
 
-void CPlayer_VendingInteractionState::Start(void* pArg)
+void CPlayer_VendingInteractionState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::VENDING_INTERACTION;
 
@@ -28,8 +28,9 @@ PLAYER_TRANSITION_DESC CPlayer_VendingInteractionState::Update(_float fTimeDelta
     return m_tNextState;
 }
 
-void CPlayer_VendingInteractionState::End()
+_float CPlayer_VendingInteractionState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_VendingInteractionState* CPlayer_VendingInteractionState::Create(void* pArg)

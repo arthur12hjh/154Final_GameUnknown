@@ -20,11 +20,11 @@ _bool CPlayer_BetaTripletState::CanEnter(CPlayer* pPlayer, PLAYER_DESC* pPlayerD
     return false;
 }
 
-void CPlayer_BetaTripletState::Start(void* pArg)
+void CPlayer_BetaTripletState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::BETA_TRIPLET;
 
-    m_pPlayer->Set_Animation("P_Eve_Sword_SlotNormal_ChainStab", false, 2.f);
+    m_pPlayer->Set_Animation("P_Eve_Sword_SlotNormal_ChainStab", false, 2.5f);
     m_pPlayer->Set_ImpactForce(2.f);
 }
 
@@ -41,10 +41,32 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
     }
 
 
-    if (0.65f <= fAnimationRatio)
+    if (0.47f <= fAnimationRatio)
     {
-        if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+        if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+        {
+            m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
+            m_tNextState.isChangeMode = true;
+            m_tNextState.eMode = PLAYER_MODE::BATTLE;
+        }
+
+        else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
             m_tNextState.eNextState = PLAYER_STATE::EVADE;
+        else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+            m_tNextState.eNextState = PLAYER_STATE::EVADE;
+
+        else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+            m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+        else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
+        {
+            m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
+            m_tNextState.isChangeMode = true;
+            m_tNextState.eMode = PLAYER_MODE::BATTLE;
+        }
     }
 
     if (true == isAnimFinished)
@@ -56,8 +78,9 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-void CPlayer_BetaTripletState::End()
+_float CPlayer_BetaTripletState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BetaTripletState* CPlayer_BetaTripletState::Create(void* pArg)

@@ -44,8 +44,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Damaged(void* pArg) override;
 
-	void			SetSillDataID(_uint iSkillID);
-	_int			GetSillDataID();
+	void			SetSkillDataID(_uint iSkillID);
+	_int			GetSkillDataID();
 
 public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
@@ -76,8 +76,8 @@ private:
 	void Update_FSM(_float fTimeDelta);
 	void Update_RushSkill(_float fTimeDelta);
 	void Update_BetaSkill();
-
-	void							CreateHitBox(const AnimNotify* pNotify);
+	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	void CreateHitBox(const AnimNotify* pNotify);
 
 
 public:

@@ -32,7 +32,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-    m_eState = BOX_STATE::UNLCOK;
+    m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(1, false);
 
     return S_OK;
@@ -44,9 +44,9 @@ void CCanBox::Priority_Update(_float fTimeDelta)
 
 void CCanBox::Update(_float fTimeDelta)
 {
-    switch (m_eState)
+    switch (m_eInterState)
     {
-    case BOX_STATE::OPEN:
+    case INTERACTION_STATE::ACTIVE:
         m_pModelCom->Play_Animation(fTimeDelta);
         break;
     default :
@@ -59,7 +59,7 @@ void CCanBox::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-        if(BOX_STATE::OPEN != m_eState)
+        if(INTERACTION_STATE::ACTIVE != m_eInterState)
 		    m_pInteractionCom->Update_Com();
 
 #ifdef _DEBUG
@@ -193,13 +193,13 @@ HRESULT CCanBox::Begin_OverlapCallBack()
 
 void CCanBox::Excute_CallBack(CGameObject* pActionObject)
 {
-    if (BOX_STATE::UNLCOK == m_eState)
+    if (INTERACTION_STATE::DEFAULT == m_eInterState)
     {
         m_pModelCom->Set_AnimationIndex(1, false);
 
         if (m_pEventHandle)
             m_pEventHandle->Notify(nullptr);
-        m_eState = BOX_STATE::OPEN;
+        m_eInterState = INTERACTION_STATE::ACTIVE;
         m_pGameInstance->Remove_Interaction(m_pInteractionCom);
     }
 }

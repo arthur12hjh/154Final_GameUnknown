@@ -1,10 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "Engine_Defines.h"
 #include "UIObject.h"
 #include <vector>
 
 namespace Client
 {
+
 	enum class UI_SHADER_PASS {
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
 		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
@@ -25,6 +26,7 @@ namespace Client
 			BTN_STATE,
 			SKILL_STATE,
 			SKILL_INFO,
+			INTERACTION_STATE,
 			INT,
 			FLOAT,
 			WSTRING,
@@ -66,12 +68,12 @@ namespace Client
 	typedef struct tagUIEventDesc
 	{
 		wstring szActionTag{};
-		vector<wstring> szSubscribeEventTags{}; // ±¸µ¶ ÇÒ ÀÌº¥Æ®µé
+		vector<wstring> szSubscribeEventTags{}; // êµ¬ë… í•  ì´ë²¤íŠ¸ë“¤
 		wstring szTypeTag{};
-		wstring szArg{}; // ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌ¸§, ¾×¼Ç ÀÌ¸§, »ç¿îµå ÀÌ¸§, ÀÌÆåÆ® ÀÌ¸§ ...
+		wstring szArg{}; // ì• ë‹ˆë©”ì´ì…˜ ì´ë¦„, ì•¡ì…˜ ì´ë¦„, ì‚¬ìš´ë“œ ì´ë¦„, ì´í™íŠ¸ ì´ë¦„ ...
 	}UI_EVENT_DESC;
 
-	// UI Animation ±¸Á¶Ã¼
+	// UI Animation êµ¬ì¡°ì²´
 	typedef struct tagUIAnimTrackDesc
 	{
 		wstring szTrackTag{};
@@ -160,11 +162,11 @@ namespace Client
 		bool m_isHasShaderDesc{ false };
 		UI_SHADER_DESC m_tUIShaderDesc{};
 
-		map<wstring, wstring> m_AnimTags{}; // ¾Ö´Ï¸ŞÀÌ¼Ç ÅÂ±×, ÇÁ¸®ÆÕ ÀÌ¸§
-		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // ÀÌº¥Æ® ÅÂ±×, ÀÌº¥Æ® ±¸Á¶Ã¼
+		map<wstring, wstring> m_AnimTags{}; // ì• ë‹ˆë©”ì´ì…˜ íƒœê·¸, í”„ë¦¬íŒ¹ ì´ë¦„
+		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // ì´ë²¤íŠ¸ íƒœê·¸, ì´ë²¤íŠ¸ êµ¬ì¡°ì²´
 
 	public:
-		// ÅØ½ºÆ®
+		// í…ìŠ¤íŠ¸
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
 			m_isHasTextDesc = true;
 			m_tUITextDesc = Desc;
@@ -174,7 +176,7 @@ namespace Client
 			return m_isHasTextDesc ? &m_tUITextDesc : nullptr;
 		}
 
-		// ÅØ½ºÃÄ
+		// í…ìŠ¤ì³
 		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
 			m_isHasTextureDesc = true;
 			m_tUITextureDesc = Desc;
@@ -184,7 +186,7 @@ namespace Client
 			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
 		}
 
-		// ÀÌº¥Æ®
+		// ì´ë²¤íŠ¸
 		map<wstring, vector<UI_EVENT_DESC>>* Get_Events() {
 			return &m_Events;
 		}
@@ -199,7 +201,7 @@ namespace Client
 			m_Events.erase(szEventTag);
 		}
 
-		// Åø¿¡¼­ ¾²´Â°Å
+		// íˆ´ì—ì„œ ì“°ëŠ”ê±°
 		void Add_UI_Anim(wstring szAnimTag, wstring szAnimFileName) {
 			auto Anim = m_AnimTags.find(szAnimTag);
 
@@ -225,7 +227,7 @@ namespace Client
 
 		map<wstring, wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
 
-		// ½¦ÀÌ´õ
+		// ì‰ì´ë”
 		UI_SHADER_DESC* Get_ShaderDesc() {
 			return m_isHasShaderDesc ? &m_tUIShaderDesc : nullptr;
 		}

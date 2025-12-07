@@ -4,6 +4,7 @@
 
 #include "JsonParser.h"
 #include "StringHelper.h"
+#include "Interaction_Component.h"
 
 #include "UIBase.h"
 #include "UIAnimManager.h"
@@ -12,6 +13,7 @@
 
 #include "UIBossVitalWrapper.h"
 #include "UIWorldWrapper.h"
+#include "UISimpleKey.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -50,6 +52,38 @@ void CUIHUD::Update(_float fTimeDelta)
 				pUIBase->Late_Update(fTimeDelta);
 			}
 		}
+	}
+
+	if (m_InteractionUIs.size() != m_pGameInstance->GetAllInteraction()->size())
+	{
+		_int count = m_InteractionUIs.size() - m_pGameInstance->GetAllInteraction()->size();
+
+		for (_int i = 0; i < abs(count); ++i)
+		{
+			if (count < 0)
+				Add_InteractionUI(m_pGameInstance->GetAllInteraction()->size());
+			else
+				m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]->SetVisibility(VISIBILITY::HIDDEN);
+				//Remove_InteractionUI(m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]);
+		}
+	}
+
+	_int count = 0;
+
+	for (auto& pInteractionCom : *m_pGameInstance->GetAllInteraction())
+	{
+		dynamic_cast<CUIWorldWrapper*>(m_InteractionUIs[count])->Set_InteractionCom(pInteractionCom); 
+		dynamic_cast<CUIWorldWrapper*>(m_InteractionUIs[count])->SetParent(pInteractionCom->GetOwner());
+		m_InteractionUIs[count]->Set_TargetPos(&pInteractionCom->Get_CenterPos());
+		m_InteractionUIs[count]->SetVisibility(VISIBILITY::VISIBLE);
+		++count;
+	}
+
+	for (auto& pInteractionUI : m_InteractionUIs)
+	{
+		pInteractionUI->Priority_Update(fTimeDelta);
+		pInteractionUI->Update(fTimeDelta);
+		pInteractionUI->Late_Update(fTimeDelta);
 	}
 }
 
@@ -862,6 +896,7 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 
 	if (!pUIBase)
 		return E_FAIL;
+	Safe_AddRef(pUIBase);
 
 	auto& pool = m_WorldUIs[szPoolTag];
    	pool.reserve(pool.size() + count);
@@ -876,8 +911,47 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 		pUI->SetVisibility(VISIBILITY::HIDDEN);
 
 		pool.push_back(pUI);
+		Safe_AddRef(pUI);
 	}
+	Safe_Release(pUIBase);
+
 	return S_OK;
+}
+
+HRESULT CUIHUD::Add_InteractionUI(_int iIdx)
+{
+	auto itLayer = m_pLayers.find(TEXT("Layer_World"));
+	if (itLayer == m_pLayers.end()) return E_FAIL;
+
+	auto pObj = itLayer->second->Get_UserInterfaces()->find(TEXT("UI_Simple_Interaction"));
+
+	if (pObj->second == nullptr)
+		return E_FAIL;
+
+ 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
+
+	if (!pUIBase)
+		return E_FAIL;
+	Safe_AddRef(pUIBase);
+
+	CUIBase* pUI = pUIBase->Clone_UI(this, iIdx);
+	Safe_AddRef(pUI);
+
+	m_InteractionUIs.push_back(pUI);
+
+	Safe_Release(pUIBase);
+
+	return S_OK;
+}
+
+void CUIHUD::Remove_InteractionUI(CUIBase* pUI)
+{
+	auto iter = find(m_InteractionUIs.begin(), m_InteractionUIs.end(), pUI);
+	if (iter != m_InteractionUIs.end())
+	{
+		pUI->SetVisibility(VISIBILITY::HIDDEN);
+		m_InteractionUIs.erase(iter);
+	}
 }
 
 CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3* vTargetPos, _bool bBillboard)
@@ -961,10 +1035,15 @@ void CUIHUD::Free()
 
 	Safe_Release(m_pUIAnimMgr);
 
-	//for (auto& pPools : m_WorldUIs)
-	//{
-	//	for (auto& pPool : pPools.second)
-	//		Safe_Release(pPool);
-	//}
+	for (auto& pPools : m_WorldUIs)
+	{
+		for (auto& pPool : pPools.second)
+			Safe_Release(pPool);
+	}
+
+	for (auto& pUI : m_InteractionUIs)
+	{
+		Safe_Release(pUI);
+	}
 }
 

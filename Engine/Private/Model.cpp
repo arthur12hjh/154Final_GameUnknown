@@ -111,6 +111,8 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
             return false;
         });
 
+    if (m_Bones.end() == iter)
+        return nullptr;
 
     return (*iter)->Get_CombinedTransformationMatrixPtr();
 }
@@ -746,13 +748,13 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
 
         D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource)))
         {
             COMPUTE_BONEMATRIX_OUT* pOut =
                 reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
             // 무조건 최적화
-            for (_uint i = 0; i < iNumBones; ++i)
+            for (_uint i = 0; i < m_Bones.size(); ++i)
             {
                 m_Bones[i]->Set_TransformationMatrix(
                     XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
@@ -1201,8 +1203,6 @@ HRESULT CModel::Ready_ComputeShader()
                 if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
                     return E_FAIL;
             }
-
-
         }
 
     }

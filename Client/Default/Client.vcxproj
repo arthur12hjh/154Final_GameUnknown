@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
+    <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\Public\Deco.h" />
@@ -213,13 +214,16 @@
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
+    <ClInclude Include="..\Public\Player_ParryEndState.h" />
+    <ClInclude Include="..\Public\Player_ParryGuardState.h" />
+    <ClInclude Include="..\Public\Player_ParryState.h" />
+    <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
-    <ClInclude Include="..\Public\Prob_Building.h" />
-    <ClInclude Include="..\Public\Prob_Vehicle.h" />
+    <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -280,7 +284,6 @@
     <ClInclude Include="..\public\Inscription_L.h" />
     <ClInclude Include="..\public\Inscription_R.h" />
     <ClInclude Include="..\public\Instance_Model.h" />
-    <ClInclude Include="..\public\ItemBox.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -291,7 +294,7 @@
     <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\PointParticle.h" />
-    <ClInclude Include="..\public\Prob_Box.h" />
+    <ClInclude Include="..\public\Prob_Destory.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
     <ClInclude Include="..\Public\PlayerCCTHitReporter.h" />
@@ -375,7 +378,7 @@
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\Public\UIWorldWrapper.h" />
-    <ClInclude Include="..\public\Vending.h" />
+    <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
     <ClInclude Include="..\Public\Weapon.h" />
@@ -387,6 +390,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
+    <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
@@ -443,13 +447,16 @@
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryEndState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryGuardState.cpp" />
+    <ClCompile Include="..\Private\Player_ParryState.cpp" />
+    <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
-    <ClCompile Include="..\Private\Prob_Building.cpp" />
-    <ClCompile Include="..\Private\Prob_Vehicle.cpp" />
+    <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
@@ -522,7 +529,6 @@
     <ClCompile Include="..\private\Inscription_L.cpp" />
     <ClCompile Include="..\private\Inscription_R.cpp" />
     <ClCompile Include="..\private\Instance_Model.cpp" />
-    <ClCompile Include="..\private\ItemBox.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
@@ -536,7 +542,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\PointParticle.cpp" />
-    <ClCompile Include="..\private\Prob_Box.cpp" />
+    <ClCompile Include="..\private\Prob_Destory.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />
     <ClCompile Include="..\Private\PlayerCCTHitReporter.cpp" />
@@ -619,7 +625,7 @@
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
-    <ClCompile Include="..\private\Vending.cpp" />
+    <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
@@ -638,6 +644,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />

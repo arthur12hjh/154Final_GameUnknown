@@ -8,6 +8,7 @@
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
 #include "Weapon.h"
+#include "CameraBone_Player.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -19,7 +20,8 @@
 #include "PlayerBehaviorCallback.h"
 
 #include "PlayerFSM.h"
-
+#include "PlayerState.h"
+ 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
 {
@@ -204,36 +206,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
-	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
-	_float4 vAttackerPos{};
-	_float fImpactForce;
-
-	vHitDir = pDamageDesc->vHitDir;
-	vHitPoint = pDamageDesc->vHitPoint;
-	vImpactDir = pDamageDesc->vImpactDir;
-	fImpactForce = pDamageDesc->fImpactForce;
-
-	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
-
-	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-	if (0 >= m_PlayerDesc.iCurrentHealth)
-		m_PlayerDesc.iCurrentHealth = 0.f;
-
-	if (false == m_PlayerDesc.isSuperArmor)
-	{
-		PLAYER_TRANSITION_DESC Desc{};
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::HIT;
-
-		if (m_pWeapon)
-		{
-			m_iSkillID = -1;
-			m_pWeapon->EnableCollider(false);
-		}
-
-		m_pFSM->Handle_Transition(Desc);
-	}
-
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
@@ -242,16 +214,22 @@ HRESULT CPlayer::Damaged(void* pArg)
 		// ㄴ 여기서 아마 상태 추가할거같긴 한데 몬스터 본이랑 몬스터 애니메이션 정보 연동해야 될 듯?
 		pCharacter->ActionSuccess(nullptr);
 	}
+	else
+	{
+		// Interaction 아니라면 따로 뻈음.
+		// 안에서 플레이어 모션 제어 중
+		Handle_Hit(pDamageDesc, pSkillDesc);
+	}
 
 	return S_OK;
 }
 
-void CPlayer::SetSillDataID(_uint iSkillID)
+void CPlayer::SetSkillDataID(_uint iSkillID)
 {
 	m_iSkillID = iSkillID;
 }
 
-_int CPlayer::GetSillDataID()
+_int CPlayer::GetSkillDataID()
 {
 	return m_iSkillID;
 }
@@ -350,6 +328,16 @@ HRESULT CPlayer::Ready_PartObjects()
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
+		return E_FAIL;
+	
+	CCameraBone_Player::CAMERABONE_DESC CameraBoneDesc{};
+	CameraBoneDesc.pParentTransform = m_pTransformCom;
+	CameraBoneDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Root");
+	CameraBoneDesc.pCharacter = this;
+	
+	/* Part_CameraBone */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CameraBone_Player"),
+		TEXT("Part_CameraBone"), &CameraBoneDesc)))
 		return E_FAIL;
 
 	Import_ModelPtr();
@@ -467,6 +455,70 @@ void CPlayer::Update_BetaSkill()
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+	}
+}
+
+void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
+{
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	PLAYER_HIT_DESC HitDesc;
+	memcpy(&HitDesc.fImpact, &pDamageDesc->fImpactForce, sizeof(_float));
+	memcpy(&HitDesc.vHitDir, &pDamageDesc->vHitDir, sizeof(_float3));
+	memcpy(&HitDesc.vHitPoint, &pDamageDesc->vHitPoint, sizeof(_float3));
+	memcpy(&HitDesc.vImpactDir, &pDamageDesc->vImpactDir, sizeof(_float3));
+	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
+
+	// 패리 성공. 만약 몬스터 팅겨나는거 제어하고 싶으면
+	// 이 분기문 안에서 Attacker 정보 있으니까 그걸로 제어하면 될듯
+	if (true == m_PlayerDesc.isJustParryable)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
+		Desc.pArg = &HitDesc;
+
+		m_pFSM->Handle_Transition(Desc);
+
+		Default_Damage_Desc DamageDesc = {};
+		DamageDesc.pAttacker = this;
+		DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+		static_cast<CCharacter*>(pDamageDesc->pAttacker)->Damaged(&DamageDesc);
+	}
+	// 가드만 성공
+	else if (true == m_PlayerDesc.isParryable)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
+		Desc.pArg = &HitDesc;
+
+		m_pFSM->Handle_Transition(Desc);
+	}
+
+	else if (false == m_PlayerDesc.isSuperArmor)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+		Desc.pArg = &HitDesc;
+
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
+		m_pFSM->Handle_Transition(Desc);
 	}
 }
 
