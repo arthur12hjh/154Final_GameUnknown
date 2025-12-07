@@ -42,12 +42,12 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
+    _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
     m_bIsEnableChange = false;
     if (pDesc->bIsHitMotion)
     {
         if (0 == strcmp("None", pSkillData->szHitAnimationName))
         {
-            _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
             _float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
             if (0 <= fScalar)
             {
@@ -65,16 +65,6 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
             }
             else
                 szAnimationName += "_Bw";
-
-            if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
-            {
-                XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
-            }
-            else
-            {
-                m_vImpactDir = pDesc->vImpactDir;
-            }
-            m_fImpactForce = pDesc->fImpactForce;
         }
         else
         {
@@ -89,7 +79,16 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         pEntity->Set_Animation(szAnimationName.c_str(), false, 0.3f, 0.08f, true, 4.f, 0.f);
     }
     
-
+    if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
+    {
+        XMStoreFloat3(&m_vImpactDir, XMVectorZero());
+        m_fImpactForce = 0.f;
+    }
+    else
+    {
+        m_vImpactDir = pDesc->vImpactDir;
+        m_fImpactForce = pDesc->fImpactForce;
+    }
 }
 
 void CMonsterHitState::Update(_float fTimeDelta)

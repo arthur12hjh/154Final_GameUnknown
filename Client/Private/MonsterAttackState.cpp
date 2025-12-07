@@ -59,7 +59,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
-	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 2.4f);
+	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 1.6f);
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false, fAttackSpeed);
 }
 
