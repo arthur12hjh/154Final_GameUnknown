@@ -137,54 +137,10 @@ HRESULT CNayitba::Render()
 HRESULT CNayitba::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
-	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
-		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
-
-	switch (m_pInitMonsterInfo->eAI_Type)
-	{
-	case AI_TYPE::DEFENSIVE : // 방어형
-		pDesc->bIsHitMotion = DefenseTypeDamage(pDesc);
-		break;
-	case AI_TYPE::AGGRESSIVE :
-	case AI_TYPE::PASSIVE :  // 공격형
-	{
-		if (m_bIsSuperMonster)
-			pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, 0);
-		else
-			pDesc->bIsHitMotion = m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
-	}
-		break;
-	}
-	
-	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
+	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
 
-	m_vHitVisibleDuration.x = 0.f;
-
-	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
-	{
-		if (nullptr == m_pStatusUI)
-		{
-			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
-			Safe_Release(pCurHUD);
-		}
-		if (0 >= m_MonsterInfo.iCurrentHealth)
-		{
-			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			// 몬스터 체력
-			pCurHUD->Return_WorldUI(m_pStatusUI);
-			m_pStatusUI = nullptr;
-			Safe_Release(pCurHUD);
-		}
-	}
-	
-	// 이제 진짜라고 합니다.
-	m_pGameManager->Start_Lockon();
 	return S_OK;
 }
 
@@ -203,8 +159,49 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 		CreateHitBox(pNotify);
 	}
 
-
 	return S_OK;
+}
+
+void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
+{
+	switch (eRecoveryType)
+	{
+	case RECOVERY_TYPE::RECOVERY_HP:
+	{
+		if (0 == iCost)
+			m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
+		else
+		{
+			m_MonsterInfo.iCurrentHealth += iCost;
+			m_MonsterInfo.iCurrentHealth = Clamp<long long>(m_MonsterInfo.iCurrentHealth, 0, m_pInitMonsterInfo->iMaxHealth);
+		}
+	}
+	break;
+	case RECOVERY_TYPE::RECOVERY_SHILED:
+	{
+		if (0 == iCost)
+			m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		else
+		{
+			m_MonsterInfo.iCurrentShield += iCost;
+			m_MonsterInfo.iCurrentShield = Clamp<long long>(m_MonsterInfo.iCurrentShield, 0, m_pInitMonsterInfo->iMaxShield);
+		}
+	}
+	break;
+	case RECOVERY_TYPE::RECOVERY_STEMINA:
+	{
+		if (0 == iCost)
+			m_MonsterInfo.iCurrentStemina = m_pInitMonsterInfo->iMaxStemina;
+		else
+		{
+			m_MonsterInfo.iCurrentStemina += iCost;
+			m_MonsterInfo.iCurrentStemina = Clamp<long long>(m_MonsterInfo.iCurrentStemina, 0, m_pInitMonsterInfo->iMaxStemina);
+		}
+	}
+	break;
+	default:
+		return;
+	}
 }
 
 _uint CNayitba::GetMonsterID()
@@ -309,6 +306,7 @@ HRESULT CNayitba::Ready_CharacterData()
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
 		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		m_MonsterInfo.iCurrentStemina = m_pInitMonsterInfo->iMaxStemina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
 		m_MonsterInfo.fAttackRange = m_pInitMonsterInfo->fAttackRange;
@@ -458,18 +456,83 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 
 void CNayitba::VisibleStatusUI(_float fTimeDelta)
 {
-	if (m_bIsTimeVisible)
+	if (nullptr == m_pStatusUI)
 	{
-		if (m_vHitVisibleDuration.x <= m_vHitVisibleDuration.y)
+		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
 		{
-			if(VISIBILITY::HIDDEN == m_pStatusUI->GetVisibility())
-				m_pStatusUI->SetVisibility(VISIBILITY::VISIBLE);
+			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
+			Safe_Release(pCurHUD);
+		}
+	}
+	else
+	{
+		if (0 >= m_MonsterInfo.iCurrentHealth)
+		{
+			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-			m_vHitVisibleDuration.x += fTimeDelta;
+			// 몬스터 체력
+			pCurHUD->Return_WorldUI(m_pStatusUI);
+			m_pStatusUI = nullptr;
+			Safe_Release(pCurHUD);
 		}
 		else
-			m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
+		{
+			if (m_bIsTimeVisible)
+			{
+				if (m_vHitVisibleDuration.x <= m_vHitVisibleDuration.y)
+				{
+					if (VISIBILITY::HIDDEN == m_pStatusUI->GetVisibility())
+						m_pStatusUI->SetVisibility(VISIBILITY::VISIBLE);
+
+					m_vHitVisibleDuration.x += fTimeDelta;
+				}
+				else
+					m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
+			}
+		}
 	}
+}
+
+_bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
+{
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+	m_vHitVisibleDuration.x = 0.f;
+	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
+	{
+		// 이제 진짜라고 합니다.
+		m_pGameManager->Start_Lockon();
+		m_pAISenceCom->Add_SenceTargetObject(pDamageDesc->pAttacker);
+
+		VisibleStatusUI(0.f);
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
+	}
+
+	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
+	{
+		if (0 < m_MonsterInfo.iCurrentStemina)
+			m_MonsterInfo.iCurrentStemina--;
+	}
+	else
+	{
+		switch (m_pInitMonsterInfo->eAI_Type)
+		{
+		case AI_TYPE::DEFENSIVE: // 방어형
+			return DefenseTypeDamage(pDamageDesc);
+		case AI_TYPE::AGGRESSIVE:
+		case AI_TYPE::PASSIVE:  // 공격형
+		{
+			if (m_bIsSuperMonster)
+				return m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, 0);
+			else
+				return m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, pSkillDesc->iSkillDamage);
+		}
+		}
+	}
+	
+	return true;
 }
 
 _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
@@ -583,8 +646,6 @@ void CNayitba::Free()
 {
 	__super::Free();
 
-
-	//Safe_Release(m_pStatusUI);
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
 }

@@ -73,7 +73,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-    for (auto i = 17; i < iMaxSize;)
+    for (auto i = 18; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
@@ -91,6 +91,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
         BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxStemina = atoi(BossDataList[i++].c_str());
         BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
 
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());

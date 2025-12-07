@@ -38,6 +38,7 @@ public:
 	virtual HRESULT					Damaged(void* pArg) override;
 	virtual HRESULT					ActionSuccess(void* pArg) override;
 	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
+	virtual void					RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 
 	_uint							GetMonsterID();
 	_float							GetRootMotionRatio() { return m_fMotionRatio; }
@@ -99,10 +100,12 @@ private :
 	void							CreateHitBox(const AnimNotify* pNotify);
 
 	void							VisibleStatusUI(_float fTimeDelta);
-
+#pragma region Damage Logic
+	// 기본적인 데미지 연산
+	_bool							ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc);
 	// 방어 타입에 대한 데미지 연산
 	_bool							DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate = 0.1f);
-
+#pragma endregion
 
 public:
 	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

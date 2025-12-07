@@ -185,6 +185,7 @@
     <ClInclude Include="..\Public\MonsterController.h" />
     <ClInclude Include="..\Public\MonsterDeadState.h" />
     <ClInclude Include="..\Public\MonsterFSM.h" />
+    <ClInclude Include="..\public\MonsterGroggyState.h" />
     <ClInclude Include="..\Public\MonsterHitState.h" />
     <ClInclude Include="..\Public\MonsterIdleState.h" />
     <ClInclude Include="..\Public\MonsterMimesisController.h" />
@@ -417,6 +418,7 @@
     <ClCompile Include="..\Private\MonsterController.cpp" />
     <ClCompile Include="..\Private\MonsterDeadState.cpp" />
     <ClCompile Include="..\Private\MonsterFSM.cpp" />
+    <ClCompile Include="..\private\MonsterGroggyState.cpp" />
     <ClCompile Include="..\Private\MonsterHitState.cpp" />
     <ClCompile Include="..\Private\MonsterIdleState.cpp" />
     <ClCompile Include="..\Private\MonsterMimesisController.cpp" />

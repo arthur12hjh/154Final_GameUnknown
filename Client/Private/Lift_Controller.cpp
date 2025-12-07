@@ -48,11 +48,11 @@ void CLift_Controller::Update(_float fTimeDelta)
 {
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 
-	m_pCullingCollider->UpdateColiision(WorldMat);
-	m_pInteractionCom->Update_Com();
-	m_pRigidBody->Update_PxTransform(WorldMat);
+	//m_pCullingCollider->UpdateColiision(WorldMat);
+	//m_pInteractionCom->Update_Com();
+	//m_pRigidBody->Update_PxTransform(WorldMat);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
 }
 

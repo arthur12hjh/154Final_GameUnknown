@@ -16,6 +16,7 @@
 #include "MonsterDeadState.h"
 #include "MonsterStateMimesis.h"
 #include "MonsterTranslationState.h"
+#include "MonsterGroggyState.h"
 #include "MonsterSuccessActionState.h"
 #pragma endregion
 
@@ -132,9 +133,20 @@ void CMonsterMimesisController::Damage(void* pArg)
 			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
 				AttackCompleted(1.5f);
+				if (0 >= m_pOwnerData->iCurrentStemina)
+				{
+					// 여기서 그로기 타임 주고 설정
+					// 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
+					// 원작은 뒤로 물러나면서 들어가는거 같음
+					bIsHitAble = false;
+					m_pFSM->Change_State(TEXT("Groggy"), nullptr, true);
+				}
 			}
 			else
 			{
+				if (CMonsterFSM::MONSTER_STATE::GROOGY == m_pFSM->GetMonsterState())
+					bIsHitAble = false;
+
 				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
 					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -216,6 +228,9 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 	if (FAILED(m_pFSM->Add_State(TEXT("ActionSuccess"), CMonsterSuccessActionState::Create(&Desc))))
 		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Groggy"), CMonsterGroggyState::Create(&Desc))))
+		return E_FAIL;
+
 	m_pFSM->Change_State(TEXT("Mimesis"));
 	return S_OK;
 }
@@ -294,7 +309,10 @@ void CMonsterMimesisController::AttackCompleted(_float fDelayTime)
 		m_bIsMimesis = false;
 
 	m_vAttackTime.x = 0.f;
-	m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+	if (0.f == fDelayTime)
+		m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+	else
+		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 3.f, m_fAttackDelay);
 }
 
 void CMonsterMimesisController::DelayAction(_float fDelayTime)

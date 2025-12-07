@@ -224,6 +224,37 @@ HRESULT CPlayer::Damaged(void* pArg)
 	return S_OK;
 }
 
+void CPlayer::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
+{
+	switch (eRecoveryType)
+	{
+	case RECOVERY_TYPE::RECOVERY_HP:
+	{
+		if (0 == iCost)
+			m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
+		else
+		{
+			m_PlayerDesc.iCurrentHealth += iCost;
+			m_PlayerDesc.iCurrentHealth = Clamp<long long>(m_PlayerDesc.iCurrentHealth, 0, m_PlayerDesc.iMaxHealth);
+		}
+	}
+		break;
+	case RECOVERY_TYPE::RECOVERY_SHILED:
+	{
+		if (0 == iCost)
+			m_PlayerDesc.iCurrentShield = m_PlayerDesc.iMaxShield;
+		else
+		{
+			m_PlayerDesc.iCurrentShield += iCost;
+			m_PlayerDesc.iCurrentShield = Clamp<long long>(m_PlayerDesc.iCurrentShield, 0, m_PlayerDesc.iMaxShield);
+		}
+	}
+		break;
+	default :
+		return;
+	}
+}
+
 void CPlayer::SetSkillDataID(_uint iSkillID)
 {
 	m_iSkillID = iSkillID;
