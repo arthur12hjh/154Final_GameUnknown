@@ -90,12 +90,10 @@ void CImGui_Manager::Update(_float fTimeDelta)
 	Update_AnimationList();
 	Update_KeyFrameTool();
 
-	if (nullptr != m_pSelectedObject && m_byas == TRUE)
+	if (nullptr != m_pSelectedObject)
 	{
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
-
-		m_byas = FALSE;
 	}
 
 }
@@ -455,7 +453,6 @@ void CImGui_Manager::Update_AnimationList()
 	{
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
-		m_byas = TRUE;
 	}
 
 	ImGui::EndChild();
