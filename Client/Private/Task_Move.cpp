@@ -27,8 +27,12 @@ HRESULT CTask_Move::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 {
+	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
+	if (CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
+		return NODE_STATE::COMPLETE;
+
 	// 블랙보드에 목표 지점 또는 타겟이 있을때 이동할 녀석
-	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::MOVE);
+	
 	if (m_pBlackBoard->GetCurState() == m_pBlackBoard->GetPreState())
 	{
 		switch (m_eDirection)
@@ -90,6 +94,7 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 	else
 	{
 		Refresh_MovePoint();
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::MOVE);
 	}
 
 	return NODE_STATE::COMPLETE;

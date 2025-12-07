@@ -16,7 +16,7 @@ class CBossBlackBoard abstract : public CBlackBoard
 public:
 	enum class BOSS_STATE
 	{
-		IDLE, ATTACK, HIT, MOVE, GROOGY, DEAD, END
+		IDLE, ATTACK, HIT, MOVE, GROGGY, DEAD, END
 	};
 
 	typedef struct BossBlackBoardDesc
@@ -55,6 +55,10 @@ public:
 	void								SetAttackDelay(_float fDelay);
 	_float								GetAttackDelay() { return m_fAttackDelay.y; }
 
+	void								AccGroggyTime(_float fTimeDelta);
+	void								EnterGroggy();
+	_bool								ExitGroggy();
+
 	// 이걸로 공격 가능체크하고
 	// 가능하면 True를 반환.
 	_bool								IsAttackEnable();
@@ -75,6 +79,7 @@ protected :
 
 	_float								m_fTargetDistance = {};
 	_float2								m_fAttackDelay = {};
+	_float2								m_vGroggyTime = { 0.f, 4.0f };
 
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };

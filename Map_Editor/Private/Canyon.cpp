@@ -35,6 +35,10 @@ HRESULT CCanyon::Initialize(void* pArg)
 
 	m_iObjectID = Object_Number(m_ComponentTag);
 
+	SetCullingCollider(m_iObjectID);
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+
 	return S_OK;
 }
 
@@ -44,9 +48,7 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 
 void CCanyon::Update(_float fTimeDelta)
 {
-    SetCullingCollider(m_iObjectID);
-    _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    m_pCullingCollider->UpdateColiision(worldMatrix);
+
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)

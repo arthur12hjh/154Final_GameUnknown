@@ -151,9 +151,6 @@ void CMonsterMimesisController::Damage(void* pArg)
 			}
 			else
 			{
-				if (CMonsterFSM::MONSTER_STATE::GROOGY == m_pFSM->GetMonsterState())
-					bIsHitAble = false;
-
 				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
 					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -163,6 +160,8 @@ void CMonsterMimesisController::Damage(void* pArg)
 				}
 			}
 		}
+		else if (CMonsterFSM::MONSTER_STATE::GROGGY == m_pFSM->GetMonsterState())
+			bIsHitAble = false;
 
 		if (bIsHitAble)
 		{

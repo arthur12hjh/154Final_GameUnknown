@@ -102,14 +102,8 @@ void CMonsterHitState::Update(_float fTimeDelta)
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
     auto pAnimationRatio = pEntity->Get_AnimationRatio();
 
-    if (0.1 <= fTimeDelta)
-        int a = 10;
-
-    if (0.25f >= pAnimationRatio)
-    {
-        _float fSpeed = m_fImpactForce;
-        m_pOwner->GetTransform()->Move_Direction(fTimeDelta, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
-    }
+    if (0.5f >= pAnimationRatio)
+        m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
 
     if (pEntity->Play_Animation(fTimeDelta))
     {

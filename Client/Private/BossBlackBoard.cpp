@@ -88,6 +88,25 @@ void CBossBlackBoard::SetAttackDelay(_float fDelay)
     m_fAttackDelay.y = fDelay;
 }
 
+void CBossBlackBoard::AccGroggyTime(_float fTimeDelta)
+{
+    m_vGroggyTime.x += fTimeDelta;
+}
+
+void CBossBlackBoard::EnterGroggy()
+{
+    SetCurState(BOSS_STATE::GROGGY);
+    m_vGroggyTime.x = 0.f;
+}
+
+_bool CBossBlackBoard::ExitGroggy()
+{
+    if (m_vGroggyTime.x > m_vGroggyTime.y)
+        return true;
+
+    return false;
+}
+
 _bool CBossBlackBoard::IsAttackEnable()
 {
     if (m_fAttackDelay.x > m_fAttackDelay.y)
@@ -99,6 +118,7 @@ _bool CBossBlackBoard::IsAttackEnable()
 void CBossBlackBoard::SetAttackData(const Character_Skill_Desc* pAttack_Data)
 {
     m_pAttack_Skill = pAttack_Data;
+    static_cast<CNayitba*>(m_pOwner)->SetAttackData(pAttack_Data);
 }
 
 const Character_Skill_Desc* CBossBlackBoard::GetAttackData()

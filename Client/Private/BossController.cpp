@@ -72,6 +72,7 @@ void CBossController::Damage(void* pArg)
 {
     DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
+    auto pNayitba = static_cast<CNayitba*>(m_pParent);
     auto pBossBlackBoard = dynamic_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
     if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentHealth)
     {
@@ -84,7 +85,6 @@ void CBossController::Damage(void* pArg)
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
         _bool bIsHitAble = true;
-
         const Character_Skill_Desc* pAttackData = pBossBlackBoard->GetAttackData();
         if (CBossBlackBoard::BOSS_STATE::ATTACK == pBossBlackBoard->GetCurState())
         {
@@ -94,9 +94,24 @@ void CBossController::Damage(void* pArg)
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
                 pBossBlackBoard->SetAttackDelay(1.5f);
+                if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentStemina)
+                {
+                    // 여기서 그로기 타임 주고 설정
+                    // 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
+                    // 원작은 뒤로 물러나면서 들어가는거 같음
+                    bIsHitAble = false;
+                    pBossBlackBoard->EnterGroggy();
+                }
+                else
+                {
+                    if (false == pNayitba->bIsHitReaction())
+                        bIsHitAble = false;
+                }
             }
             else
             {
+              
+
                 if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
                 {
                     if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -106,6 +121,8 @@ void CBossController::Damage(void* pArg)
                 }
             }
         }
+        else if (CBossBlackBoard::BOSS_STATE::GROGGY == pBossBlackBoard->GetCurState())
+            bIsHitAble = false;
 
         if (bIsHitAble)
         {

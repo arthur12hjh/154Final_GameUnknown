@@ -512,6 +512,9 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 
 _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 {
+	if (nullptr == pDamageDesc || nullptr == pDamageDesc->pSkillData)
+		return false;
+
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
 	m_vHitVisibleDuration.x = 0.f;
