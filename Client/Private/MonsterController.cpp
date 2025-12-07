@@ -14,6 +14,7 @@
 #include "MonsterMoveState.h"
 #include "MonsterHitState.h"
 #include "MonsterDeadState.h"
+#include "MonsterGroggyState.h"
 #include "MonsterTranslationState.h"
 #pragma endregion
 
@@ -132,9 +133,20 @@ void CMonsterController::Damage(void* pDesc)
 			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
 				AttackCompleted(1.5f);
+				if (0 >= m_pOwnerData->iCurrentStemina)
+				{
+					// 여기서 그로기 타임 주고 설정
+					// 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
+					// 원작은 뒤로 물러나면서 들어가는거 같음
+					bIsHitAble = false;
+					m_pFSM->Change_State(TEXT("Groogy"));
+				}
 			}
 			else
 			{
+				if (CMonsterFSM::MONSTER_STATE::GROOGY == m_pFSM->GetMonsterState())
+					bIsHitAble = false;
+
 				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
 					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -211,6 +223,9 @@ HRESULT CMonsterController::Ready_FSM()
 	if (FAILED(m_pFSM->Add_State(TEXT("Translation"), CMonsterTranslationState::Create(&Desc))))
 		return E_FAIL;
 
+	if (FAILED(m_pFSM->Add_State(TEXT("Groggy"), CMonsterGroggyState::Create(&Desc))))
+		return E_FAIL;
+
 	m_pFSM->Change_State(TEXT("Idle"));
 	return S_OK;
 }
@@ -271,8 +286,10 @@ void CMonsterController::Default_Action(_float fTimeDelta)
 void CMonsterController::AttackCompleted(_float fDelayTime)
 {
 	m_vAttackTime.x = 0.f;
-	m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
-	//m_vAttackTime.y = m_pGameInstance->Random(15.f, 20.f);
+	if (0.f == fDelayTime)
+		m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+	else
+		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 3.f, m_fAttackDelay);
 }
 
 void CMonsterController::DelayAction(_float fDelayTime)

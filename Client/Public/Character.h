@@ -34,7 +34,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-
+	virtual void					RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();
