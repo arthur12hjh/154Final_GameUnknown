@@ -911,7 +911,6 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 		pUI->SetVisibility(VISIBILITY::HIDDEN);
 
 		pool.push_back(pUI);
-		Safe_AddRef(pUI);
 	}
 	Safe_Release(pUIBase);
 
@@ -935,7 +934,6 @@ HRESULT CUIHUD::Add_InteractionUI(_int iIdx)
 	Safe_AddRef(pUIBase);
 
 	CUIBase* pUI = pUIBase->Clone_UI(this, iIdx);
-	Safe_AddRef(pUI);
 
 	m_InteractionUIs.push_back(pUI);
 
@@ -1035,7 +1033,7 @@ void CUIHUD::Free()
 
 	Safe_Release(m_pUIAnimMgr);
 
-	for (auto& pPools : m_WorldUIs)
+	/*for (auto& pPools : m_WorldUIs)
 	{
 		for (auto& pPool : pPools.second)
 			Safe_Release(pPool);
@@ -1044,6 +1042,6 @@ void CUIHUD::Free()
 	for (auto& pUI : m_InteractionUIs)
 	{
 		Safe_Release(pUI);
-	}
+	}*/
 }
 
