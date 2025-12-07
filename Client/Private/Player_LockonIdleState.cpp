@@ -12,7 +12,7 @@ CPlayer_LockonIdleState::CPlayer_LockonIdleState()
 void CPlayer_LockonIdleState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::IDLE;
-
+    m_Desc->isLookFixed = true;
     m_pPlayer->Set_Animation("Proto_Lockon_Battle_Idle", true, 1.f, fBlendRatio);
 }
 
@@ -50,6 +50,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonIdleState::Update(_float fTimeDelta)
 
 _float CPlayer_LockonIdleState::End()
 {
+    m_Desc->isLookFixed = false;
+
     return 0.12f;
 }
 

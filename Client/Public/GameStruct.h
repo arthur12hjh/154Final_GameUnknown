@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Engine_Defines.h"
 #include "Transform.h"
 #include "CharacterController.h"
@@ -15,6 +15,14 @@ namespace Engine
 
 namespace Client
 {
+	enum class INTERACTION_STATE {
+		DEFAULT,	// ê·¸ëƒ¥ ì•„ë¬´ê²ƒë„ ì•ˆí•˜ê³  ì•„ë¬´ì¼ë„ ì—†ì„ë•Œ ë‚˜ì˜¬ ë…€ì„
+		CONTACT,	// ì ‘ì´‰í•´ì„œ ì‚¬ìš©ì‘ìš© ê°€ëŠ¥í•œ ë…€ì„
+		LOCK,		// ìƒí˜¸ì‘ìš© í• ìˆ˜ì—†ìŒ
+		ACTIVE,		// ìƒí˜¸ì‘ìš© í•˜ëŠ”ì¤‘
+		END			// ë”ì´ìƒ ì•ìœ¼ë¡œë„ ë„¤ë²„ ìƒí˜¸ì‘ìš© ë¶ˆê°€ëŠ¥
+	};
+
 	typedef struct Default_Status
 	{
 		long long						iCurrentHealth;
@@ -22,8 +30,8 @@ namespace Client
 	}DEFAULT_STATUS;
 
 
-	// ±âº»ÀûÀÎ ¹Û¿¡¼­ ÀúÀåÇÏ°Å³ª ºÒ·¯¿À´Â Ä³¸¯ÅÍ ±¸Á¶Ã¼
-	// ±âº»¼¼ÆÃ ¿ä°Å
+	// ê¸°ë³¸ì ì¸ ë°–ì—ì„œ ì €ì¥í•˜ê±°ë‚˜ ë¶ˆëŸ¬ì˜¤ëŠ” ìºë¦­í„° êµ¬ì¡°ì²´
+	// ê¸°ë³¸ì„¸íŒ… ìš”ê±°
 	typedef struct Character_NetWork_Desc
 	{
 		long long		iMaxHealth;
@@ -39,7 +47,7 @@ namespace Client
 
 	}CHARACTER_NETWORK_DESC;
 
-	// ÀÎ°ÔÀÓ¿¡¼­ ½ÇÁúÀûÀ¸·Î »ç¿ëµÇ´Â Ä³¸¯ÅÍ ±¸Á¶Ã¼
+	// ì¸ê²Œì„ì—ì„œ ì‹¤ì§ˆì ìœ¼ë¡œ ì‚¬ìš©ë˜ëŠ” ìºë¦­í„° êµ¬ì¡°ì²´
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
 	enum class PLAYER_STATE { 
 		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
@@ -49,7 +57,7 @@ namespace Client
 		
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
-		AERIAL_ATTACK, //¹Ì±¸Çö
+		AERIAL_ATTACK, //ë¯¸êµ¬í˜„
 		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
@@ -57,10 +65,10 @@ namespace Client
 	};
 
 	enum class SKILL_STATE {
-		DEFAULT,   // ºñÈ°¼ºÈ­
-		ACTIVE_ON, // µü È°¼ºÈ­ µÆÀ» ¶§
-		ACTIVE,	   // È°¼ºÈ­ »óÅÂ
-		USE,	   // ½ºÅ³ ¾´ ¼ø°£
+		DEFAULT,   // ë¹„í™œì„±í™”
+		ACTIVE_ON, // ë”± í™œì„±í™” ëì„ ë•Œ
+		ACTIVE,	   // í™œì„±í™” ìƒíƒœ
+		USE,	   // ìŠ¤í‚¬ ì“´ ìˆœê°„
 		END,	   //
 	};
 
@@ -68,10 +76,10 @@ namespace Client
 	{
 		long long						iMaxHealth;
 		long long						iMaxShield;
-		//º£Å¸ ¿¡³ÊÁö ÃÖ´ëÄ¡
+		//ë² íƒ€ ì—ë„ˆì§€ ìµœëŒ€ì¹˜
 		long long						iMaxBetaEnergy;
 
-		//ÇöÀç º£Å¸ ¿¡³ÊÁö
+		//í˜„ì¬ ë² íƒ€ ì—ë„ˆì§€
 		long long						iCurrentBetaEnergy;
 
 		long long						iCurrentAttackPoint;
@@ -81,25 +89,28 @@ namespace Client
 		float							fCurrentCTDamage;
 		float							fCurrentLinkApplyDamage;
 
-		int								iCurrentPotions; // ÇöÀç ¼ÒÁöÇÑ Æ÷¼Ç °³¼ö
-		int								iMaxPotions; // ÀüÃ¼ Æ÷¼Ç °³¼ö
+		int								iCurrentPotions; // í˜„ì¬ ì†Œì§€í•œ í¬ì…˜ ê°œìˆ˜
+		int								iMaxPotions; // ì „ì²´ í¬ì…˜ ê°œìˆ˜
 
 		//
-		SKILL_STATE						eRushState;					// ·¯½¬ È°¼ºÈ­ ¿©ºÎ	
-		float							fMaxRushCoolTime;			// ·¯½¬ ÀüÃ¼ ÄğÅ¸ÀÓ
-		float							fCurrentRushCoolTime;		// ·¯½¬ ÇöÀç ÄğÅ¸ÀÓ
+		SKILL_STATE						eRushState;					// ëŸ¬ì‰¬ í™œì„±í™” ì—¬ë¶€	
+		float							fMaxRushCoolTime;			// ëŸ¬ì‰¬ ì „ì²´ ì¿¨íƒ€ì„
+		float							fCurrentRushCoolTime;		// ëŸ¬ì‰¬ í˜„ì¬ ì¿¨íƒ€ì„
 
 		bool							isSuperArmor = { false };
 		bool							isLookFixed = { false };
 
-		// º£Å¸½ºÅ³ »óÅÂµé
-		unsigned int					iBetaSkillId[4];			// »ç¿ëÁßÀÎ ½ºÅ³ID,
-		//bool							eBetaSkillState[4];
+		// í˜¹ì‹œ ëª°ë¼ì„œ í”Œë ˆì´ì–´ ë°ìŠ¤í¬ì— ë–„ë ¤ë°•ì•—ìŠµë‹ˆë‹¤
+		// í”Œë ˆì´ì–´ì˜ ë½ì˜¨ëª¨ë“œ ì „í™˜ ê±°ë¦¬
+		float							fLockOnDistance = { 30.f };
+		// í”Œë ˆì´ì–´ì˜ ë°°í‹€ëª¨ë“œ ì „í™˜ ê±°ë¦¬ 
+		float							fBattleDistance = { 40.f };
+		// ë² íƒ€ìŠ¤í‚¬ ìƒíƒœë“¤
+		unsigned int					iBetaSkillId[4];			// ì‚¬ìš©ì¤‘ì¸ ìŠ¤í‚¬ID,
 		SKILL_STATE						eBetaSkillState[4];
-		//_bool							eBetaSkillState[4];			// »ç¿ëÁßÀÎ ½ºÅ³ »óÅÂ ¿©ºÎ
-		unsigned int					iBetaSkillCount;			// ÇöÀç È°¼ºÈ­µÈ ½ºÅ³ °¹¼ö. ÃÖ´ë 4°³
+		unsigned int					iBetaSkillCount;			// í˜„ì¬ í™œì„±í™”ëœ ìŠ¤í‚¬ ê°¯ìˆ˜. ìµœëŒ€ 4ê°œ
 
-		// ÇÃ·¹ÀÌ¾îÀÇ ÀüÅõ »óÅÂ. battle, idle, lockon
+		// í”Œë ˆì´ì–´ì˜ ì „íˆ¬ ìƒíƒœ. battle, idle, lockon
 		PLAYER_MODE						ePlayerMode = { PLAYER_MODE::IDLE };
 		class CTransform* pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr };
@@ -108,21 +119,21 @@ namespace Client
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
-		// idleÀÏ¶© ´ç¿¬È÷ ¾Èº¸ÀÌ°í, ¹«±â ½º¿Ò ¾Ö´Ï¸ŞÀÌ¼Ç¿¡¼­
-		// ÇØ´ç °ª Á¦¾î ÇØ¼­ ¹«±â°¡ º¸ÀÏÁö, ºñ³à°¡ º¸ÀÏÁö °áÁ¤ÇØÁÙ °Í
+		// idleì¼ë• ë‹¹ì—°íˆ ì•ˆë³´ì´ê³ , ë¬´ê¸° ìŠ¤ì™‘ ì• ë‹ˆë©”ì´ì…˜ì—ì„œ
+		// í•´ë‹¹ ê°’ ì œì–´ í•´ì„œ ë¬´ê¸°ê°€ ë³´ì¼ì§€, ë¹„ë…€ê°€ ë³´ì¼ì§€ ê²°ì •í•´ì¤„ ê²ƒ
 		bool   isWeaponVisible = { false };
 
-		// ÆĞ¸µ ÆÇÁ¤ÀÌ °¡´ÉÇÑÁö Ã¼Å©ÇÏ´Â º¯¼ö.
-		// ¸¸¾à ÆĞ¸µÀÌ °¡´ÉÇÏ´Ù¸é true, ºÒ°¡´ÉÇÏ´Ù¸é False
+		// íŒ¨ë§ íŒì •ì´ ê°€ëŠ¥í•œì§€ ì²´í¬í•˜ëŠ” ë³€ìˆ˜.
+		// ë§Œì•½ íŒ¨ë§ì´ ê°€ëŠ¥í•˜ë‹¤ë©´ true, ë¶ˆê°€ëŠ¥í•˜ë‹¤ë©´ False
 		bool   isParryable = { false };
-		// Àú½ºÆ® ÆĞ¸µ ÆÇÁ¤ÀÌ °¡´ÉÇÑÁö Ã¼Å©ÇÏ´Â º¯¼ö.
-		// ¸¸¾à Àú½ºÆ® ÆĞ¸µÀÌ °¡´ÉÇÏ´Ù¸é true, ºÒ°¡´ÉÇÏ´Ù¸é false
+		// ì €ìŠ¤íŠ¸ íŒ¨ë§ íŒì •ì´ ê°€ëŠ¥í•œì§€ ì²´í¬í•˜ëŠ” ë³€ìˆ˜.
+		// ë§Œì•½ ì €ìŠ¤íŠ¸ íŒ¨ë§ì´ ê°€ëŠ¥í•˜ë‹¤ë©´ true, ë¶ˆê°€ëŠ¥í•˜ë‹¤ë©´ false
 		bool   isJustParryable = { false };
 
 	}PLAYER_DESC;
 
-	// ½ºÅ³ ±¸Á¶Ã¼
-	// ÀÌ°Ç °æ¿ì¿¡ µû¶ó »ç¿ë ÇÒ¼öµµ ÀÖÀ½
+	// ìŠ¤í‚¬ êµ¬ì¡°ì²´
+	// ì´ê±´ ê²½ìš°ì— ë”°ë¼ ì‚¬ìš© í• ìˆ˜ë„ ìˆìŒ
 	enum class ATTACK_DIRECTION
 	{
 		ATK_LEFT,
@@ -142,18 +153,18 @@ namespace Client
 		END
 	};
 	
-	// enum class ºñÆ® ¿¬»ê Áö¿ø¾ÈÇØ¼­ ¹Ù²Ş
+	// enum class ë¹„íŠ¸ ì—°ì‚° ì§€ì›ì•ˆí•´ì„œ ë°”ê¿ˆ
 	enum SKILL_PROPERTY : UINT8
 	{
 		// Bit Mask ex 
 		// All Property : 31
 		// Parry & Eavde : 3
-		PARRYABLE		= 0b00000001, // 1  <- ÆĞ¸µ°¡´É
-		EVADEABLE		= 0b00000010, // 2  <- È¸ÇÇ °¡´É
-		BLINKABLE		= 0b00000100, // 4  <- ºí¸µÅ© °¡´É
-		SUPERARMOR		= 0b00001000, // 8  <- ½´ÆÛ¾Æ¸Ó
-		EXCUTION		= 0b00010000, // 16 <- Ã³Çü
-		GUARD			= 0b00100000, // 32 <- °¡µå
+		PARRYABLE		= 0b00000001, // 1  <- íŒ¨ë§ê°€ëŠ¥
+		EVADEABLE		= 0b00000010, // 2  <- íšŒí”¼ ê°€ëŠ¥
+		BLINKABLE		= 0b00000100, // 4  <- ë¸”ë§í¬ ê°€ëŠ¥
+		SUPERARMOR		= 0b00001000, // 8  <- ìŠˆí¼ì•„ë¨¸
+		EXCUTION		= 0b00010000, // 16 <- ì²˜í˜•
+		GUARD			= 0b00100000, // 32 <- ê°€ë“œ
 		END
 	};
 
@@ -168,35 +179,35 @@ namespace Client
 		char						szLinkBoneName[256];
 
 		// SKill Damage
-		long long					iSkillDamage;				// ½ºÅ³ µ¥¹ÌÁö
+		long long					iSkillDamage;				// ìŠ¤í‚¬ ë°ë¯¸ì§€
 
 		// Skill Range
-		_float						fRange;						// ½ºÅ³ »ç°Å¸®	
+		_float						fRange;						// ìŠ¤í‚¬ ì‚¬ê±°ë¦¬	
 
 		// Skill Hit Box Size
-		_float3						vHitBoxExtents;				// ½ºÅ³ È÷Æ®¹Ú½º Å©±â
+		_float3						vHitBoxExtents;				// ìŠ¤í‚¬ íˆíŠ¸ë°•ìŠ¤ í¬ê¸°
 
 		// Attack Dir
-		ATTACK_DIRECTION			eATK_Direction;				// °ø°İ ¹æÇâ UP DOWN LEFT RIGHT
+		ATTACK_DIRECTION			eATK_Direction;				// ê³µê²© ë°©í–¥ UP DOWN LEFT RIGHT
 
 		// SKILL TYPE
 		// BeatSKill, AlphaSKill... 
-		SKILL_TYPE					eSkillType;					// ½ºÅ³ Å¸ÀÔ
+		SKILL_TYPE					eSkillType;					// ìŠ¤í‚¬ íƒ€ì…
 
 		// Property
 		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
-		SKILL_PROPERTY				eProPerty;					// ½ºÅ³ ¼Ó¼º
+		SKILL_PROPERTY				eProPerty;					// ìŠ¤í‚¬ ì†ì„±
  
 	} CHARACTER_SKILL_DESC;
 
 	typedef struct tagPlayerBetaSkillDesc : public CHARACTER_SKILL_DESC
 	{
-		//¿ä±¸µÇ´Â º£Å¸½ºÅ³ °ÔÀÌÁö ·®
+		//ìš”êµ¬ë˜ëŠ” ë² íƒ€ìŠ¤í‚¬ ê²Œì´ì§€ ëŸ‰
 		_uint iRequiredBetaGauge;
 	} BETA_SKILL_DESC;
 
-	// ¸ó½ºÅÍ ±¸Á¶Ã¼
-	// ÀÎ°ÔÀÓ¿ë
+	// ëª¬ìŠ¤í„° êµ¬ì¡°ì²´
+	// ì¸ê²Œì„ìš©
 	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
 	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc
@@ -221,11 +232,11 @@ namespace Client
 		float				fAttackRange;
 		_float3				fColliderExtents;
 
-		//¿©±â¼­ »ç¿ëÇÏ´Â ½ºÅ³ Á¤º¸
+		//ì—¬ê¸°ì„œ ì‚¬ìš©í•˜ëŠ” ìŠ¤í‚¬ ì •ë³´
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
 
-	// ÀÎ°ÔÀÓ¿ë
+	// ì¸ê²Œì„ìš©
 	enum class NAYTIBA_STATE { DEFAULT, MIMESSIS, BATTLE, DEAD, END };
 	enum class COMBAT_ATTRIBUTE { SUPER_ARMOR, EVASION, END };
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
@@ -244,12 +255,12 @@ namespace Client
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
 	}NAYTIBA_DESC;
 
-	// ¸¸¾à¿¡ °ø°İ Å¸ÀÔ°°Àº°Åµµ ³ª´­°Å¸é ¿©±â¼­ ³ª´²¼­ »ç¿ëÇÏ¼¼¿ä
+	// ë§Œì•½ì— ê³µê²© íƒ€ì…ê°™ì€ê±°ë„ ë‚˜ëˆŒê±°ë©´ ì—¬ê¸°ì„œ ë‚˜ëˆ ì„œ ì‚¬ìš©í•˜ì„¸ìš”
 
 	enum class QUEST_STATE { LOCKED, AVAILABLE, ACTIVE, COMPELETED, END };
 	typedef struct QuestStruct
 	{
-		// ±âº»±¸Á¶Ã¼ ´ëÃæ ¿©±â¼­ Äù½ºÆ® Å¸ÀÔµµ ¸¸µé·Á¸é ¸¸µé±â
+		// ê¸°ë³¸êµ¬ì¡°ì²´ ëŒ€ì¶© ì—¬ê¸°ì„œ í€˜ìŠ¤íŠ¸ íƒ€ì…ë„ ë§Œë“¤ë ¤ë©´ ë§Œë“¤ê¸°
 		QUEST_STATE			QuestState;
 		_uint				iQuestID;
 

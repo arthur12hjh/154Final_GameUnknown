@@ -24,6 +24,7 @@ void CPlayer_BetaChargingSlashState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::BETA_CHARGINGSLASH;
     m_Desc->isLookFixed = true;
+    m_Desc->isSuperArmor = true;
 
     m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false, 1.2f);
     m_isStartCharge = true;
@@ -59,7 +60,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
         (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)  ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S)  ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.55f)
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.5f)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
 
@@ -75,6 +76,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
 _float CPlayer_BetaChargingSlashState::End()
 {
     m_Desc->isLookFixed = false;
+    m_Desc->isSuperArmor = false;
 
     return m_fNextBlendRatio;
 }
