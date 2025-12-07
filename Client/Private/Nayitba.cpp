@@ -142,12 +142,6 @@ HRESULT CNayitba::Damaged(void* pArg)
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 
-
-
-	else
-	{
-
-	}
 	switch (m_pInitMonsterInfo->eAI_Type)
 	{
 	case AI_TYPE::DEFENSIVE : // 방어형
@@ -166,8 +160,6 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	m_pAISenceCom->Add_SenceTargetObject(pDesc->pAttacker);
 	m_pAIController->Damage(pArg);
-
-		
 
 	m_vHitVisibleDuration.x = 0.f;
 
@@ -514,8 +506,8 @@ _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 
 		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
 		fScalar = Clamp<_float>(fScalar, -1.0f, 1.0f);   // NaN 방지
-
 		_float fRadian = acosf(fScalar);
+
 		// 앞
 		if (0 < fScalar)
 		{

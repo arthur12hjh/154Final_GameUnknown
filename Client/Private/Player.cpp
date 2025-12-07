@@ -488,6 +488,9 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		Desc.pArg = &HitDesc;
 
 		m_pFSM->Handle_Transition(Desc);
+
+		auto pSkillData = m_pGameManager->Find_BetaSkillData(1008);
+		static_cast<CCharacter*>(pDamageDesc->pAttacker)->Damaged((void*)pSkillData);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)
