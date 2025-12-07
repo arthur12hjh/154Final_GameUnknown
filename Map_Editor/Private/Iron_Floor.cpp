@@ -20,13 +20,9 @@ HRESULT CIron_Floor::Initialize_Prototype()
 HRESULT CIron_Floor::Initialize(void* pArg)
 {
 
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
+	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)

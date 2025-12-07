@@ -36,7 +36,6 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 
 		if (false == lstrcmp(szEXT, TEXT(".dds")))
 			hr = CreateDDSTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
-
 		else if (false == lstrcmp(szEXT, TEXT(".tga")))
 			hr = E_FAIL;
 		else
