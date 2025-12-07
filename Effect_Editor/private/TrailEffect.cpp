@@ -43,7 +43,7 @@ void CTrailEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
 	m_pTransformCom->Go_Straight(fTimeDelta * m_fSpeed);
-	m_pTransformCom->Turn(XMVectorSet(0, 1, 0, 0), fTimeDelta * m_fSpeed);
+	m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta * m_fSpeed);
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
@@ -68,6 +68,7 @@ void CTrailEffect::Refresh()
 	Safe_Release(m_pShaderCom);
 	m_fTime = 0;
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0, 0, 0, 1));
+	m_pTransformCom->Rotation(XMVectorSet(1, 0, 0, 0), XMConvertToRadians(45.f));
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 }
 

@@ -133,15 +133,17 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 	if (m_tData.bisSpectrum) {
 		if (0 < XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0]))))) {
-			m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
 			m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
 			if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
 				m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
 			}
-			else if (1 < m_fLength) {
-				_int iLength = (_int)m_fLength;
-				m_fLength -= iLength;
-				m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+			else {
+				m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
+				if (1 < m_fLength) {
+					_int iLength = (_int)m_fLength;
+					m_fLength -= iLength;
+					m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+				}
 			}
 		}
 	}

@@ -530,7 +530,7 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     
@@ -578,7 +578,7 @@ PS_WEIGHT_OUT PS_SPHERE(PS_WEIGHT_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;
@@ -641,7 +641,7 @@ PS_WEIGHT_OUT PS_POWER(PS_WEIGHT_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;
@@ -754,7 +754,7 @@ PS_WEIGHT_OUT PS_SHOCK(PS_WEIGHT_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;
