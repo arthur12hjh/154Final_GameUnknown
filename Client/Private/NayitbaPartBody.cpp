@@ -248,4 +248,7 @@ void CNayitbaPartBody::Free()
     __super::Free();
 
     Safe_Release(m_pColliderCom);
+    for (auto pEffect : m_pEffects)
+        Safe_Release(pEffect.first);
+    m_pEffects.clear();
 }

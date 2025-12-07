@@ -923,22 +923,22 @@ void GS_WEIGHT_START(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutS
         float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
         float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
         vLook *= g_fSize.x * In[0].fSize;
-        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR * max(abs(dot(vNormalRight, vRight)), 0.5) + vU * 1.5, 1.f), matVP);
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU * 1.5, 1.f), matVP);
         Out[0].vTexcoord = float2(0.f, 0.f);
         Out[0].vLifeTime = In[0].vLifeTime;
         Out[0].vProjPos = Out[0].vPosition;
     
-        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR * max(abs(dot(vNormalRight, vRight)), 0.5) + vU * 1.5, 1.f), matVP);
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU * 1.5, 1.f), matVP);
         Out[1].vTexcoord = float2(1.f, 0.f);
         Out[1].vLifeTime = In[0].vLifeTime;
         Out[1].vProjPos = Out[1].vPosition;
     
-        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR * abs(dot(vNormalRight, vRight)) - vU * 0.5, 1.f), matVP);
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU * 0.5, 1.f), matVP);
         Out[2].vTexcoord = float2(1.f, 1.f);
         Out[2].vLifeTime = In[0].vLifeTime;
         Out[2].vProjPos = Out[2].vPosition;
     
-        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR * abs(dot(vNormalRight, vRight)) - vU * 0.5, 1.f), matVP);
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU * 0.5, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = Out[3].vPosition;

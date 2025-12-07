@@ -24,14 +24,14 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
                     3.0,
                     0.0
                 ],
                 "vNotifyRotation": [
-                    0.0,
+                    270.0,
                     0.0,
                     0.0
                 ],
@@ -64,14 +64,14 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
                     3.0,
                     0.0
                 ],
                 "vNotifyRotation": [
-                    0.0,
+                    270.0,
                     0.0,
                     0.0
                 ],
@@ -104,7 +104,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
                     3.0,

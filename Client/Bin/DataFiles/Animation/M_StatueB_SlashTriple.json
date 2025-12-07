@@ -126,7 +126,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 108,
+                "iNotifyKeyFrame": 120,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -144,7 +144,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Active_SFX",
-                "szSocketTag": "Bip001-L-Hand",
+                "szSocketTag": "B_L_HandCenter",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -156,9 +156,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.1,
-                    0.1,
-                    0.1
+                    0.15,
+                    0.15,
+                    0.15
                 ]
             },
             {
@@ -184,7 +184,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Active_SFX",
-                "szSocketTag": "Bip001-L-Hand",
+                "szSocketTag": "B_L_HandCenter",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -196,9 +196,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.1,
-                    0.1,
-                    0.1
+                    0.15,
+                    0.15,
+                    0.15
                 ]
             }
         ],

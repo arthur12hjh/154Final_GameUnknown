@@ -66,7 +66,6 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
-	m_pBlood->Update(fTimeDelta);
 	if (nullptr != m_pCharge) {
 		m_pCharge->Update(fTimeDelta);
 		if(m_pCharge->isDead())
@@ -174,7 +173,6 @@ void CWeapon::Late_Update(_float fTimeDelta)
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
 	m_pSpark->Late_Update(fTimeDelta);
-	m_pBlood->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
@@ -340,16 +338,6 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
 	m_pSpark->Stop();
-
-	desc.fRotationPerSec = 1.f;
-	desc.fSpeedPerSec = 1.f;
-	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 0, 4, 1);
-	desc.fRot = _float3(0, 0, 0);
-	desc.fSize = 0.5f;
-
-	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
-	m_pBlood->Play();
 
 	return S_OK;
 }
