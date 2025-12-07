@@ -299,6 +299,7 @@ void CCanyon::SetCullingCollider(_uint iObjectID)
 	case 75:
 		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 6, 1, 6 });
 		break;
+	}
 }
 
 CCanyon* CCanyon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
