@@ -25,6 +25,9 @@ public:
 	void*	Get_MotionBlur_Desc();
 	void*   Get_Volumetric_Desc();
 	void*	Get_HDR_Desc();
+
+public:
+	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 public:
 	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);

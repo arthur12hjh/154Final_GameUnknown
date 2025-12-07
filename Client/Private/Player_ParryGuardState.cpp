@@ -13,6 +13,8 @@ void CPlayer_ParryGuardState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::PARRY_GUARD;
     m_pPlayer->Set_Animation("Proto_Hit_Guard", false, 1.5f, 0.12f);
+
+	m_Desc->isLookFixed = true;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ParryGuardState::Update(_float fTimeDelta)
@@ -49,6 +51,8 @@ PLAYER_TRANSITION_DESC CPlayer_ParryGuardState::Update(_float fTimeDelta)
 
 _float CPlayer_ParryGuardState::End()
 {
+	m_Desc->isLookFixed = false;
+
     return m_fNextBlendRatio;
 }
 

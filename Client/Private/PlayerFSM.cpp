@@ -295,8 +295,9 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 {
 	if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::IDLE)
 	{
+		//Battle Distance보다 가깝다면,
 		if (true == m_pPlayerDesc->HasTarget &&
-			m_pPlayerDesc->fCurrentMinDist < 40.0f)
+			m_pPlayerDesc->fCurrentMinDist < m_pPlayerDesc->fBattleDistance)
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 
@@ -312,7 +313,8 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 	// Battle to Idle 자동 전환 (적 없고 거리 멀어지면 5초 후 Idle)
 	if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::BATTLE)
 	{
-		if ((false == m_pPlayerDesc->HasTarget || m_pPlayerDesc->fCurrentMinDist > 40.0f) && 
+		//Battle Distance보다 멀다면,
+		if ((false == m_pPlayerDesc->HasTarget || m_pPlayerDesc->fCurrentMinDist > m_pPlayerDesc->fBattleDistance) &&
 			 PLAYER_STATE::IDLE == m_pCurrentState->Get_State())
 		{
 			m_pPlayerDesc->fModeTimer += fTimeDelta;
@@ -337,8 +339,9 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 	// Lockon 모드에서 타겟이 사라진 경우, Battle로 되돌리기
 	if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::LOCKON)
 	{
+		// 락온 거리보다 멀다면
 		if (!m_pPlayerDesc->HasTarget ||
-			m_pPlayerDesc->fCurrentMinDist > 30.0f)
+			m_pPlayerDesc->fCurrentMinDist > m_pPlayerDesc->fLockOnDistance)
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 
@@ -354,8 +357,9 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 	// 락온 토글 입력 처리
 	if (m_pPlayerDesc->isRequestLockonToggle)
 	{
+		//락온 거리보다 짧다면
 		if (m_pPlayerDesc->HasTarget && m_pPlayerDesc->ePlayerMode != PLAYER_MODE::LOCKON &&
-			m_pPlayerDesc->fCurrentMinDist < 30.0f)
+			m_pPlayerDesc->fCurrentMinDist < m_pPlayerDesc->fLockOnDistance)
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::LOCKON;
 

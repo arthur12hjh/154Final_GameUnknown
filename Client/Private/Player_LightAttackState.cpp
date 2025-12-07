@@ -23,7 +23,7 @@ void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 
     m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
-    m_pPlayer->SetSillDataID(1000);
+    m_pPlayer->SetSkillDataID(1000);
     m_fLimitProgress = 0.10f;
 }
 
@@ -37,19 +37,32 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
-        fAnimationRatio >= m_fLimitProgress * 1.75f)
+        fAnimationRatio >= m_fLimitProgress * 1.5f)
     {
-        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::WALK;
     }
 
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
         fAnimationRatio >= m_fLimitProgress)
     {
-        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
     }
-        
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1) &&
+        fAnimationRatio >= m_fLimitProgress)
+    {
+        m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
+        m_tNextState.isChangeMode = true;
+        m_tNextState.eMode = PLAYER_MODE::BATTLE;
+    }
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2) &&
+        fAnimationRatio >= m_fLimitProgress)
+    {
+        m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
+        m_tNextState.isChangeMode = true;
+        m_tNextState.eMode = PLAYER_MODE::BATTLE;
+    }
 
     if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))  &&
         fAnimationRatio >= m_fLimitProgress))
@@ -61,32 +74,32 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         case COMBO::LIGHT_ATTACK1:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_02_Root", false, 1.75f);
-            m_pPlayer->SetSillDataID(1001);
+            m_pPlayer->SetSkillDataID(1001);
             m_eCombo = COMBO::LIGHT_ATTACK2;
-            m_fLimitProgress = 0.15f;
+            m_fLimitProgress = 0.13f;
             break;
 
         case COMBO::LIGHT_ATTACK2:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_03_Root", false, 1.2f);
-            m_pPlayer->SetSillDataID(1002);
+            m_pPlayer->SetSkillDataID(1002);
             m_eCombo = COMBO::LIGHT_ATTACK3;
-            m_fLimitProgress = 0.135f;
+            m_fLimitProgress = 0.12f;
             break;
 
         case COMBO::LIGHT_ATTACK3:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_04_Root", false, 1.2f);
-            m_pPlayer->SetSillDataID(1003);
+            m_pPlayer->SetSkillDataID(1003);
             m_eCombo = COMBO::LIGHT_ATTACK4;
-            m_fLimitProgress = 0.35f;
+            m_fLimitProgress = 0.25f;
             break;
 
         case COMBO::LIGHT_ATTACK4:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
            
-            m_pPlayer->SetSillDataID(1000);
+            m_pPlayer->SetSkillDataID(1000);
             m_eCombo = COMBO::LIGHT_ATTACK1;
             m_fLimitProgress = 0.10f;
             break;
@@ -99,7 +112,6 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
     //예외없이 애니메이션 끝났으면 idle로
     if (true == isAnimFinished)
     {
-        m_pPlayer->SetSillDataID(-1);
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
     
@@ -115,6 +127,8 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
 _float CPlayer_LightAttackState::End()
 {
+    m_pPlayer->SetSkillDataID(-1);
+
     return m_fNextBlendRatio;
 }
 

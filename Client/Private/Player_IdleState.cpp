@@ -36,19 +36,6 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
-    {
-        m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
-        m_tNextState.isChangeMode = true;
-        m_tNextState.eMode = PLAYER_MODE::BATTLE;
-    }
-
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
-    {
-        m_tNextState.eNextState = PLAYER_STATE::JUMP;
-        m_tNextState.isChangeMode = true;
-        m_tNextState.eMode = PLAYER_MODE::BATTLE;
-    }
 
     return m_tNextState;
 }

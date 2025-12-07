@@ -463,6 +463,11 @@ HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 	return m_pRenderer->Set_ScreenSize(iSizeX, iSizeY);
 }
 
+void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
+{
+	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)

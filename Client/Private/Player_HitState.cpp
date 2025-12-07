@@ -23,6 +23,7 @@ void CPlayer_HitState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::HIT;
 
+	m_Desc->isLookFixed = true;
 	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f);
 
 	XMStoreFloat3(&m_vDirection, XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION) - XMLoadFloat4(&m_vAttackerPos), 0.f)));
@@ -54,6 +55,8 @@ PLAYER_TRANSITION_DESC CPlayer_HitState::Update(_float fTimeDelta)
 
 _float CPlayer_HitState::End()
 {
+	m_Desc->isLookFixed = false;
+
 	return m_fNextBlendRatio;
 }
 
