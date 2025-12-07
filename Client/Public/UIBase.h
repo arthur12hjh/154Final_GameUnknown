@@ -93,6 +93,7 @@ public:
 	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
 
 	CUIBase* Clone_UI(CUIHUD* pHUD, _uint iIdx);
+	void Set_CloneIdx(_uint iIdx) { m_iCloneIdx = iIdx; }
 	void Update_Children(CUIBase* pChild);
 
 #ifdef _DEBUG
@@ -114,7 +115,9 @@ protected:
 	_bool					m_bFollowParent{ true };
 	_bool					m_bPlayingAnim{ false };
 
-	const _float3*					m_pTargetPos{nullptr};
+	const _float3*			m_pTargetPos{nullptr};
+
+	_uint					m_iCloneIdx{ 0 };
 
 private:
 	HRESULT Ready_Texture();

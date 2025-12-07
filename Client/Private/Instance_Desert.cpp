@@ -31,6 +31,8 @@ HRESULT CInstance_Desert::Initialize_Prototype()
 
 HRESULT CInstance_Desert::Initialize(void* pArg)
 {
+
+
 	MODEL_INSTANCE_LOAD_DESC* pLoadDesc = static_cast<MODEL_INSTANCE_LOAD_DESC*>(pArg);
 	if (nullptr == pLoadDesc)
 		return E_FAIL;

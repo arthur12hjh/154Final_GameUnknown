@@ -21,6 +21,9 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
+	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -51,6 +54,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
@@ -157,6 +161,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+
 	CActor::ACTOR_DESC ProbDesc = {};
 	ProbDesc.bIsApplyTransform = true;
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
@@ -356,7 +361,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	Desc.iMonsterID = 5;
+	Desc.iMonsterID = 4;
 	Desc.bIsSuperMonster = true;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
@@ -411,13 +416,13 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 		return E_FAIL;
 	}
 
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
 	ifs.close();
 
 
