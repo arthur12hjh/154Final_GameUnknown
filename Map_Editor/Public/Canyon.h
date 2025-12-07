@@ -26,12 +26,14 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 private:
-	CCollider* m_pColliderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+	void	SetCullingCollider(_uint iObjectID);
+	_uint	Object_Number(const _tchar* pComponentTag);
 
 public:
 	static CCanyon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
