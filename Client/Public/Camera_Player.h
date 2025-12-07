@@ -32,14 +32,26 @@ public:
 	virtual		void			Late_Update(_float fTimeDelta) override;
 	virtual		HRESULT			Render() override;
 
+	void		Set_Distance(_float fDistance) { m_fDistance = fDistance; }
+
 private:
-	class CGameManager*		m_pGameManager = { nullptr };
-	class CTransform*		m_pPlayerTransform = { nullptr };
-	_float					m_fMouseSensor = { 0.f };
-	_float					m_fRotateX = { 0.f };
-	_float					m_fRotateY = { 0.f };
-	_float					m_fYaw = {};
-	_float					m_fPitch = {};
+	class CGameManager*			m_pGameManager = { nullptr };
+	class CTransform*			m_pPlayerTransform = { nullptr };
+	class CCameraBone_Player*	m_pCameraBone = { nullptr };
+
+	_float4x4					m_CombinedWorldMatrix = {};
+
+	_float						m_fMouseSensor = { 0.f };
+	_float						m_fRotateX = { 0.f };
+	_float						m_fRotateY = { 0.f };
+	_float						m_fYaw = {};
+	_float						m_fPitch = {};
+
+	_float						m_fDistance = { 10.f };
+
+	_float						m_fLookMagnification = { 0.f };
+	_float						m_fUpMagnification = { 0.f };
+
 public:
 	static CCamera_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

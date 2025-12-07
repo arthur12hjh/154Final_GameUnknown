@@ -367,7 +367,7 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSillDataID());
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSkillDataID());
 		pNaytiba->Damaged(&pDamageDesc);
 	}
 }

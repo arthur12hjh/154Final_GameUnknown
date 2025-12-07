@@ -29,10 +29,12 @@ public:
 
 private :
 	CModel* m_pModelCom = { nullptr };
-	CCollider* m_pColliderCom = { nullptr };
+
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+
+	void	SetCullingCollider(_uint iObjectID);
 
 public:
 	static CCanyon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -92,11 +92,14 @@ namespace Client
 		bool							isSuperArmor = { false };
 		bool							isLookFixed = { false };
 
+		// 혹시 몰라서 플레이어 데스크에 떄려박앗습니다
+		// 플레이어의 락온모드 전환 거리
+		float							fLockOnDistance = { 30.f };
+		// 플레이어의 배틀모드 전환 거리 
+		float							fBattleDistance = { 40.f };
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
-		//bool							eBetaSkillState[4];
 		SKILL_STATE						eBetaSkillState[4];
-		//_bool							eBetaSkillState[4];			// 사용중인 스킬 상태 여부
 		unsigned int					iBetaSkillCount;			// 현재 활성화된 스킬 갯수. 최대 4개
 
 		// 플레이어의 전투 상태. battle, idle, lockon

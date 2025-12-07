@@ -9,10 +9,11 @@ struct InstanceVertices
 cbuffer ParticleBuffer : register(b0)
 {
     float4  vFrustomPlane[6];
+    float3  vCamPos;
     float   fDistance;
+    
     int     iNumInstance;
-    int     iPadding;
-    int     iPadding2;
+    float3  vPadding;
 }
 
 StructuredBuffer<InstanceVertices> Input : register(t0);
@@ -28,12 +29,16 @@ void CS_Main(uint3 Gid : SV_GroupID,
     if (iNumInstance <= DTid.x)
         return;
     
-    for (int i = 0; i < 6; ++i)
+    float fLength = length(vCamPos - Input[DTid.x].vTranslation.xyz);
+    if (fDistance > fLength)
     {
-        if (fDistance.x < dot(vFrustomPlane[i], Input[DTid.x].vTranslation))
-            return;
+        g_CountOut[0]++;
+        g_Out.Append(Input[DTid.x]);
     }
     
-    g_CountOut[0]++;
-    g_Out.Append(Input[DTid.x]);
+    //for (int i = 0; i < 6; ++i)
+    //{
+    //    if (fDistance.x < dot(vFrustomPlane[i], Input[DTid.x].vTranslation))
+    //        return;
+    //}
 }

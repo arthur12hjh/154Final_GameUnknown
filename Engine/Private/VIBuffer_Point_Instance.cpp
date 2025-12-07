@@ -102,10 +102,6 @@ HRESULT CVIBuffer_Point_Instance::Initialize(void* pArg)
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBCullInstances)))
-		return E_FAIL;
-
-	m_iNumCullInstance = m_iNumInstance;
 	return S_OK;
 }
 
@@ -113,7 +109,7 @@ HRESULT CVIBuffer_Point_Instance::Bind_Resources()
 {
 	ID3D11Buffer* VertexBuffers[] = {
 		   m_pVB,
-		   m_pVBCullInstances
+		   m_pVBInstance
 	};
 
 	_uint		VertexStrides[] = {
@@ -135,7 +131,7 @@ HRESULT CVIBuffer_Point_Instance::Bind_Resources()
 
 HRESULT CVIBuffer_Point_Instance::Render()
 {
-	m_pContext->DrawInstanced(m_iNumIndexPerInstance, m_iNumCullInstance, 0, 0);
+	m_pContext->DrawInstanced(m_iNumIndexPerInstance, m_iNumInstance, 0, 0);
 
 	return S_OK;
 }

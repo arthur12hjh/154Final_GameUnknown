@@ -11,8 +11,10 @@ CPlayer_ParrySuccessState::CPlayer_ParrySuccessState()
 
 void CPlayer_ParrySuccessState::Start(void* pArg, _float fBlendRatio)
 {
+	m_Desc->isLookFixed = true;
     m_eState = PLAYER_STATE::PARRY_SUCCESS;
     m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.f, 0.12f);
+	m_pGameInstance->Active_RadialBlur(0.5f, 8, 0.2f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ParrySuccessState::Update(_float fTimeDelta)
@@ -58,6 +60,7 @@ PLAYER_TRANSITION_DESC CPlayer_ParrySuccessState::Update(_float fTimeDelta)
 
 _float CPlayer_ParrySuccessState::End()
 {
+	m_Desc->isLookFixed = false;
 	return m_fNextBlendRatio;
 }
 

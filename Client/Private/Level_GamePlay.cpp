@@ -50,8 +50,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
-	//Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
+	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -165,10 +165,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	for (size_t i = 0; i < 5; i++)
 	{
 		ProbDesc.vPosition = { m_pGameInstance->Random(0, 20),
-							   m_pGameInstance->Random(0, 20),
+							  0.3f,
 							   m_pGameInstance->Random(0, 20) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Box"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
 	}
@@ -177,10 +177,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	for (size_t i = 0; i < 5; i++)
 	{
 		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
-							   m_pGameInstance->Random(0, 50),
+							  0.3f,
 							   m_pGameInstance->Random(0, 50) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Box"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
 	}
@@ -197,6 +197,53 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+							   0.f,
+							   m_pGameInstance->Random(0, 50) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Static_Interaction"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
+
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(50, 100),
+							   0.f,
+							   m_pGameInstance->Random(50, 100) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Static_Interaction"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
+
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(150, 200),
+							   0.3f,
+							   m_pGameInstance->Random(150, 200) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
+
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Poster02");
+	for (size_t i = 0; i < 5; i++)
+	{
+		ProbDesc.vPosition = { m_pGameInstance->Random(200, 250),
+							   0.f,
+							   m_pGameInstance->Random(200, 250) };
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Static"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			return E_FAIL;
+	}
 	return S_OK;
 
 }
@@ -348,7 +395,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_Simple_Interaction"), TEXT("UI_Simple_Interaction"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	//pUIHUD->Register_WorldUI(TEXT("Pool_Simple_Interaction"), TEXT("UI_Simple_Interaction"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 

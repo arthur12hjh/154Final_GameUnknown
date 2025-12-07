@@ -13,6 +13,7 @@ void CPlayer_ParryEndState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::PARRY_END;
 	m_pPlayer->Set_Animation("Proto_Guard_End", false, 1.45f, fBlendRatio);
+	m_Desc->isLookFixed = true;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ParryEndState::Update(_float fTimeDelta)
@@ -20,18 +21,22 @@ PLAYER_TRANSITION_DESC CPlayer_ParryEndState::Update(_float fTimeDelta)
 	_bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-	if (0.4f <= fAnimationRatio)
+	if (0.3f <= fAnimationRatio)
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 			m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
+		else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+			m_tNextState.eNextState = PLAYER_STATE::PARRY;
+		
 		else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
-		else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
-			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
-			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||
-			m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 			m_tNextState.eNextState = PLAYER_STATE::WALK;
 	}
 
@@ -43,6 +48,7 @@ PLAYER_TRANSITION_DESC CPlayer_ParryEndState::Update(_float fTimeDelta)
 
 _float CPlayer_ParryEndState::End()
 {
+	m_Desc->isLookFixed = false;
 	return m_fNextBlendRatio;
 }
 
