@@ -88,13 +88,13 @@ HRESULT CSpawnBox::Ready_Components()
     //static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, ObbDesc.vSize);
 
     /* Com_Collider_Sphere */
-    CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+    /* Com_Collider_OBB */
+    COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+    OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
+    OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 
-    SphereDesc.fRadius = 5.f;
-    SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
-
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_Sphere"),
-        TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pCollider), &SphereDesc)))
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_OBB"),
+        TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pCollider), &OBBDesc)))
         return E_FAIL;
 
     return S_OK;

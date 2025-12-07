@@ -15,7 +15,8 @@ class CActor abstract : public CGameObject
 public :
 	typedef struct ActorDesc : public GAMEOBJECT_DESC
 	{
-		const WCHAR* szVIBuffer_PrototypeName;
+		const WCHAR*	szVIBuffer_PrototypeName;
+		_uint			iObjectID = 0;
 	}ACTOR_DESC;
 
 protected :

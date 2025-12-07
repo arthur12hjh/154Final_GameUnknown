@@ -160,7 +160,7 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     float NdotL = saturate(dot(vNormal, vFromLight));
     float NdotV = saturate(dot(vNormal, vFromView));
     
-    float fAlpha = max(fRoughness * fRoughness, 0.1f);
+    float fAlpha = max(fRoughness * fRoughness, 0.2f);
     
     float k = ((fRoughness + 0.5f) * (fRoughness + 0.5f)) / 8.f;
 
@@ -187,7 +187,7 @@ PS_OUT_LIGHT PBR_Light(float3 vNormal, float3 vFromView, float3 vFromLight,
     Out.vShade = float4((kD * vAlbedo) * (NdotL * fAttenuation) * vLightColor, 1.f);
 
     // È¯°æ±¤ (SSAO ±â¹Ý)
-    float3 vDiffuseAmbient = vAlbedo * lerp(0.08f, 0.35f, 1 - fRoughness);
+    float3 vDiffuseAmbient = vAlbedo * lerp(0.2f, 0.5f, 1 - fRoughness);
     vDiffuseAmbient *= (1 - fMetallic) * fSSAO;
     Out.vShade.xyz += vDiffuseAmbient;
 

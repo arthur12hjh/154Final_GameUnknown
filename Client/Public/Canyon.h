@@ -6,7 +6,8 @@
 #include "Actor.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Instance_Model;
+class CModel;
+class CCollider;
 NS_END
 
 NS_BEGIN(Client)
@@ -27,11 +28,13 @@ public:
 	virtual HRESULT Render() override;
 
 private :
-	CVIBuffer_Instance_Model* m_pInstanceModelCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+
+	void	SetCullingCollider(_uint iObjectID);
 
 public:
 	static CCanyon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

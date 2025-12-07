@@ -28,7 +28,6 @@ public:
 
 private :
 	CModel* m_pModelCom = { nullptr };
-	CRigidBody* m_pRigidBodyCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

@@ -55,12 +55,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pPhysx_Manager)
 		return E_FAIL;
 
+	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
-	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
 #else
 	m_pLight_Manager = CLight_Manager::Create();
-	m_pFrustum = CFrustum::Create();
 #endif // DEBUG
 	if (nullptr == m_pLight_Manager || nullptr == m_pFrustum)
 		return E_FAIL;
@@ -776,10 +775,12 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
-void CGameInstance::isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance, _uint* iNumCullCount)
+_bool CGameInstance::isIn_DistanceFrustum(_float3 vPoint, _float fDistance)
 {
-	m_pFrustum->isIn_WorldFrustum(pInstanceBuffer, pOut, iNumInstance, fDistance, iNumCullCount);
+	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
 }
+
+
 
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()

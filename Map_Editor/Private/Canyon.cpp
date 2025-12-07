@@ -95,6 +95,16 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Collider_OBB */
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

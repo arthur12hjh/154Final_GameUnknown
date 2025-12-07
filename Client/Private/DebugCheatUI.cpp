@@ -9,6 +9,7 @@
 
 #include "Player.h"
 #include "Camera_Free.h"
+#include "Camera_Player.h"
 
 #include "StringHelper.h"
 #include "GameManager.h"
@@ -164,6 +165,11 @@ void CDebugCheatUI::DrawCameraDebug()
     {
         if (ImGui::InputFloat("FreeCam Speed", &m_fFreeCamSpeed))
             static_cast<CCamera_Free*>(m_pSelectCamera)->SetCameraSpeed(m_fFreeCamSpeed);
+    }
+    else
+    {
+        if (ImGui::DragFloat("PlayerCam Distance", &m_fCamDistance, 0.01f, 2.f, 50.f))
+            static_cast<CCamera_Player*>(m_pSelectCamera)->Set_Distance(m_fCamDistance);
     }
 
     if (ImGui::Checkbox("KeyBoard Lock", &m_bIsCameraLock[0]))

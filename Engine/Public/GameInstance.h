@@ -184,7 +184,8 @@ public:
 	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
-	void						isIn_WorldFrustum(ID3D11Buffer* pInstanceBuffer, ID3D11Buffer* pOut, _uint iNumInstance, _float fDistance = 0.f, _uint* iNumCullCount = nullptr);
+	_bool				isIn_DistanceFrustum(_float3 vPoint, _float fDistance);
+
 
 #ifdef _DEBUG
 	void				FrustomRender();

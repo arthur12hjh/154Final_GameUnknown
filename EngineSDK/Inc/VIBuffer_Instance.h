@@ -43,8 +43,6 @@ public:
 	void					PasteResource(ID3D11Buffer* pResource);
 
 	ID3D11Buffer*			GetBufferResource() { return m_pVBInstance; }
-	ID3D11Buffer*			GetCullBufferResource() { return m_pVBCullInstances; }
-	void					SetNumCullingIndex(_uint iNumIndex);
 
 	_bool					IsLoop() { return m_bIsLoop; }
 
@@ -54,14 +52,12 @@ public:
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };
-	ID3D11Buffer*			m_pVBCullInstances = { nullptr };
 
 	D3D11_BUFFER_DESC		m_InstanceBufferDesc = {};
 	D3D11_SUBRESOURCE_DATA	m_InstanceInitialDesc = {};
 	_uint					m_iInstanceStride = {};
 
 	_uint					m_iNumInstance = {};
-	_uint					m_iNumCullInstance = {};
 
 	_uint					m_iNumIndexPerInstance = {};
 	_bool					m_bIsLoop = { false };

@@ -134,7 +134,7 @@ HRESULT CLoader::Loading()
 	case LEVEL::DESERT:
 	{
 		m_strMessage = TEXT("집 가고싶다.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
 
 		m_strMessage = TEXT("맵 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Canyon1(pArg); });

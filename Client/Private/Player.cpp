@@ -8,6 +8,7 @@
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
 #include "Weapon.h"
+#include "CameraBone_Player.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -327,6 +328,16 @@ HRESULT CPlayer::Ready_PartObjects()
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
+		return E_FAIL;
+	
+	CCameraBone_Player::CAMERABONE_DESC CameraBoneDesc{};
+	CameraBoneDesc.pParentTransform = m_pTransformCom;
+	CameraBoneDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Root");
+	CameraBoneDesc.pCharacter = this;
+	
+	/* Part_CameraBone */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CameraBone_Player"),
+		TEXT("Part_CameraBone"), &CameraBoneDesc)))
 		return E_FAIL;
 
 	Import_ModelPtr();
