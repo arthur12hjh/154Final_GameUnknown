@@ -112,6 +112,8 @@ HRESULT CMonsterMimesisController::Render()
 void CMonsterMimesisController::Damage(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	auto pAttackState = dynamic_cast<CMonsterAttackState*>(m_pFSM->GetCurrentState());
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
@@ -140,6 +142,11 @@ void CMonsterMimesisController::Damage(void* pArg)
 					// 원작은 뒤로 물러나면서 들어가는거 같음
 					bIsHitAble = false;
 					m_pFSM->Change_State(TEXT("Groggy"), nullptr, true);
+				}
+				else
+				{
+					if (false == pNayitba->bIsHitReaction())
+						bIsHitAble = false;
 				}
 			}
 			else

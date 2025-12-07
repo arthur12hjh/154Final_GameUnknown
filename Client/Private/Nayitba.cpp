@@ -94,7 +94,8 @@ void CNayitba::Update(_float fTimeDelta)
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
 	
-	m_pAIController->Update(fTimeDelta);
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
+		m_pAIController->Update(fTimeDelta);
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
 		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
@@ -154,9 +155,12 @@ HRESULT CNayitba::ActionSuccess(void* pArg)
 HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 {
 	CNotify::NOTIFY_TYPE NotiType = CNotify::NOTIFY_TYPE(iNotiType);
-	if (CNotify::NOTIFY_TYPE::ACTIVE_COLLISION == NotiType)
+
+	switch (NotiType)
 	{
+	case CNotify::ACTIVE_COLLISION:
 		CreateHitBox(pNotify);
+		break;
 	}
 
 	return S_OK;
@@ -257,6 +261,18 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
+	m_iComboCount = 0;
+}
+
+_bool CNayitba::bIsHitReaction()
+{
+	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxComboCount)
+		return false;
+
+	if (0 == m_pAttack_Data->iMaxComboCount - m_iComboCount)
+		return true;
+
+	return false;
 }
 
 CAIController* CNayitba::GetController()
@@ -440,7 +456,6 @@ HRESULT CNayitba::ADD_PartObjects()
 void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
-	m_szEntryAnim = m_pInitMonsterInfo->szAnimationName;
 
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
@@ -500,10 +515,11 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
 	m_vHitVisibleDuration.x = 0.f;
+	m_pGameManager->Start_Lockon();
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 	{
 		// 이제 진짜라고 합니다.
-		m_pGameManager->Start_Lockon();
+	
 		m_pAISenceCom->Add_SenceTargetObject(pDamageDesc->pAttacker);
 
 		VisibleStatusUI(0.f);
@@ -618,6 +634,7 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
 		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
 		return;
+	m_iComboCount++;
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

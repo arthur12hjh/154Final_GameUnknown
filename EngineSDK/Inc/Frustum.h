@@ -35,7 +35,7 @@ public:
 	_bool						isIn_WorldFrustum(class CCollider* pCollider);
 
 	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
-	_bool						isIn_DistanceFrustum(_float3 vPoint, _float fDistance);
+	_bool						isIn_DistanceFrustum(_vector vPoint, _float fDistance);
 
 private:
 	_float4						m_vOriginalPoints[8] = {};
