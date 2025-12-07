@@ -152,7 +152,7 @@ HRESULT CUIBeta::Ready_Components()
 		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBuffer))))
 		return E_FAIL;
 
-	/* Com_Texture_HP */
+	/* Com_Texture_Beta */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
 		TEXT("Com_Texture_Beta"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;

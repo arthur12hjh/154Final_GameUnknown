@@ -28,8 +28,6 @@ public:
 
 
 private:
-
-private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
 	void	SetCullingCollider(_uint iObjectID);

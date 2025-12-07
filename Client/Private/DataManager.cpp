@@ -91,7 +91,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
         BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
-        BossDesc.iMaxStemina = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxStamina = atoi(BossDataList[i++].c_str());
         BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
 
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());

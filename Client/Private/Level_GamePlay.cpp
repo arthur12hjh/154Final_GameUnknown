@@ -49,7 +49,6 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
-	//Load_Map_Desert_Data("../Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
