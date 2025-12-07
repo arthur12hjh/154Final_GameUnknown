@@ -9,6 +9,7 @@
 #include "DesertObject.h"
 #include "Player_Test.h"
 #include "SpawnBox.h"
+
 #include "Instance_Desert.h"
 
 CMapTool_Desert::CMapTool_Desert()
@@ -99,13 +100,14 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				HRESULT hr = E_FAIL;
 				_wstring layerTag = L"";
 				_wstring protoTag = L"";
-				RuinComponentDesc pDesc = {};
+				CDesertObject::DesertObjectDesc pDesc = {};
 				Nayitba_Desc MonsterDesc = {};
 
 				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::DOOR_A)
 				{
 					protoTag = TEXT("Prototype_GameObject_Building_Ruin"); layerTag = TEXT("Layer_Building_Ruin");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_A");
+					
 				}
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::DOOR_B)
 				{
@@ -1773,7 +1775,7 @@ HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar*
 				const _tchar* pTag = pDesertObject->Get_ComponentTag();
 				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
 
-				const _uint pId = Object_Number(pTag);
+				const _uint pId = pDesertObject->Get_ObjectID();
 				info.iObjectID = pId;
 
 				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDOBJECTINFO));
@@ -1862,41 +1864,23 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		RuinComponentDesc Desc = {};
-		Desc.pComponentTag = info.szComponentTag;
+		CDesertObject::DESERT_OBJECT_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
 		Desc.iObjectId = info.iObjectID;
+		Desc.pComponentTag = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
 			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
-
-		if (SUCCEEDED(hr))
-		{
-			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
-			if (pObjs && !pObjs->empty())
-			{
-				CGameObject* pObj = pObjs->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-				if (pTransform)
-				{
-					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-
-					_vector vScale = {};
-					_vector vRotation = {};
-					_vector vPosition = {};
-					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-
-					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-
-					// 순서: Scale * Rotation * Translation (SRT 순서)
-					_matrix matFinalWorld = matScale * matRotation * matTranslation;
-
-					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
-
-				}
-			}
-		}
 	}
 
 	return S_OK;
@@ -2010,182 +1994,6 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 	return S_OK;
 }
 
-_uint CMapTool_Desert::Object_Number(const _tchar* pComponentTag)
-{
-	if (pComponentTag == nullptr)
-		return 0;
-
-	const _tchar* pLastUnderscore = wcsrchr(pComponentTag, L'_');
-
-	if (pLastUnderscore == nullptr || *(pLastUnderscore + 1) == L'\0')
-		return 0;
-
-	const _tchar* pSuffix = pLastUnderscore + 1;
-
-	// 2. 요청 목록 기반 조건문 (총 87개 항목)
-
-	if (wcscmp(pSuffix, TEXT("1A")) == 0)
-		return 1;
-	else if (wcscmp(pSuffix, TEXT("2A")) == 0)
-		return 2;
-	else if (wcscmp(pSuffix, TEXT("3A")) == 0)
-		return 3;
-	else if (wcscmp(pSuffix, TEXT("4A")) == 0)
-		return 4;
-	else if (wcscmp(pSuffix, TEXT("5A")) == 0)
-		return 5;
-	else if (wcscmp(pSuffix, TEXT("6A")) == 0)
-		return 6;
-	else if (wcscmp(pSuffix, TEXT("12A")) == 0)
-		return 7;
-	else if (wcscmp(pSuffix, TEXT("14A")) == 0)
-		return 8;
-	else if (wcscmp(pSuffix, TEXT("14B")) == 0)
-		return 9;
-	else if (wcscmp(pSuffix, TEXT("15A")) == 0)
-		return 10;
-	else if (wcscmp(pSuffix, TEXT("16A")) == 0)
-		return 11;
-	else if (wcscmp(pSuffix, TEXT("16B")) == 0)
-		return 12;
-	else if (wcscmp(pSuffix, TEXT("17A")) == 0)
-		return 13;
-	else if (wcscmp(pSuffix, TEXT("17B")) == 0)
-		return 14;
-	else if (wcscmp(pSuffix, TEXT("18A")) == 0)
-		return 15;
-	else if (wcscmp(pSuffix, TEXT("20A")) == 0)
-		return 16;
-	else if (wcscmp(pSuffix, TEXT("21A")) == 0)
-		return 17;
-	else if (wcscmp(pSuffix, TEXT("22A")) == 0)
-		return 18;
-	else if (wcscmp(pSuffix, TEXT("23A")) == 0)
-		return 19;
-	else if (wcscmp(pSuffix, TEXT("24A")) == 0)
-		return 20;
-	else if (wcscmp(pSuffix, TEXT("35A")) == 0)
-		return 21;
-	else if (wcscmp(pSuffix, TEXT("39A")) == 0)
-		return 22;
-	else if (wcscmp(pSuffix, TEXT("39C")) == 0)
-		return 23;
-	else if (wcscmp(pSuffix, TEXT("39D")) == 0)
-		return 24;
-	else if (wcscmp(pSuffix, TEXT("43A")) == 0)
-		return 25;
-	else if (wcscmp(pSuffix, TEXT("44A")) == 0)
-		return 26;
-	else if (wcscmp(pSuffix, TEXT("46A")) == 0)
-		return 27;
-	else if (wcscmp(pSuffix, TEXT("50A")) == 0)
-		return 28;
-	else if (wcscmp(pSuffix, TEXT("52A")) == 0)
-		return 29;
-	else if (wcscmp(pSuffix, TEXT("55A")) == 0)
-		return 30;
-	else if (wcscmp(pSuffix, TEXT("58A")) == 0)
-		return 31;
-	else if (wcscmp(pSuffix, TEXT("59A")) == 0)
-		return 32;
-	else if (wcscmp(pSuffix, TEXT("60A")) == 0)
-		return 33;
-	else if (wcscmp(pSuffix, TEXT("61A")) == 0)
-		return 34;
-	else if (wcscmp(pSuffix, TEXT("65A")) == 0)
-		return 35;
-	else if (wcscmp(pSuffix, TEXT("66A")) == 0)
-		return 36;
-	else if (wcscmp(pSuffix, TEXT("67A")) == 0)
-		return 37;
-	else if (wcscmp(pSuffix, TEXT("69A")) == 0)
-		return 38;
-	else if (wcscmp(pSuffix, TEXT("71A")) == 0)
-		return 39;
-	else if (wcscmp(pSuffix, TEXT("80A")) == 0)
-		return 40;
-	else if (wcscmp(pSuffix, TEXT("81A")) == 0)
-		return 41;
-	else if (wcscmp(pSuffix, TEXT("93A")) == 0)
-		return 42;
-	else if (wcscmp(pSuffix, TEXT("95A")) == 0)
-		return 43;
-	else if (wcscmp(pSuffix, TEXT("96A")) == 0)
-		return 44;
-	else if (wcscmp(pSuffix, TEXT("97A")) == 0)
-		return 45;
-	else if (wcscmp(pSuffix, TEXT("98A")) == 0)
-		return 46;
-	else if (wcscmp(pSuffix, TEXT("100A")) == 0)
-		return 47;
-	else if (wcscmp(pSuffix, TEXT("101A")) == 0)
-		return 48;
-	else if (wcscmp(pSuffix, TEXT("103A")) == 0)
-		return 49;
-	else if (wcscmp(pSuffix, TEXT("104A")) == 0)
-		return 50;
-	else if (wcscmp(pSuffix, TEXT("105A")) == 0)
-		return 51;
-	else if (wcscmp(pSuffix, TEXT("106A")) == 0)
-		return 52;
-	else if (wcscmp(pSuffix, TEXT("108A")) == 0)
-		return 53;
-	else if (wcscmp(pSuffix, TEXT("109A")) == 0)
-		return 54;
-	else if (wcscmp(pSuffix, TEXT("110A")) == 0)
-		return 55;
-	else if (wcscmp(pSuffix, TEXT("111A")) == 0)
-		return 56;
-	else if (wcscmp(pSuffix, TEXT("112A")) == 0)
-		return 57;
-	else if (wcscmp(pSuffix, TEXT("113A")) == 0)
-		return 58;
-	else if (wcscmp(pSuffix, TEXT("115A")) == 0)
-		return 59;
-	else if (wcscmp(pSuffix, TEXT("116A")) == 0)
-		return 60;
-	else if (wcscmp(pSuffix, TEXT("117A")) == 0)
-		return 61;
-	else if (wcscmp(pSuffix, TEXT("121A")) == 0)
-		return 62;
-	else if (wcscmp(pSuffix, TEXT("122A")) == 0)
-		return 63;
-	else if (wcscmp(pSuffix, TEXT("123A")) == 0)
-		return 64;
-	else if (wcscmp(pSuffix, TEXT("125A")) == 0)
-		return 65;
-	else if (wcscmp(pSuffix, TEXT("126A")) == 0)
-		return 66;
-	else if (wcscmp(pSuffix, TEXT("127A")) == 0)
-		return 67;
-	else if (wcscmp(pSuffix, TEXT("127B")) == 0)
-		return 68;
-	else if (wcscmp(pSuffix, TEXT("127C")) == 0)
-		return 69;
-	else if (wcscmp(pSuffix, TEXT("127D")) == 0)
-		return 70;
-	else if (wcscmp(pSuffix, TEXT("127E")) == 0)
-		return 71;
-	else if (wcscmp(pSuffix, TEXT("128A")) == 0)
-		return 72;
-	else if (wcscmp(pSuffix, TEXT("128B")) == 0)
-		return 73;
-	else if (wcscmp(pSuffix, TEXT("128C")) == 0)
-		return 74;
-	else if (wcscmp(pSuffix, TEXT("131A")) == 0)
-		return 75;
-	else if (wcscmp(pSuffix, TEXT("132A")) == 0)
-		return 76;
-	else if (wcscmp(pSuffix, TEXT("132B")) == 0)
-		return 77;
-	else if (wcscmp(pSuffix, TEXT("132C")) == 0)
-		return 78;
-	else if (wcscmp(pSuffix, TEXT("133B")) == 0)
-		return 79;
-
-
-	return 0;
-}
 
 void CMapTool_Desert::Delete_All_Before_Load(const _tchar* pLayerTag)
 {

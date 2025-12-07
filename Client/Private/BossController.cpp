@@ -89,12 +89,20 @@ void CBossController::Damage(void* pArg)
         if (CBossBlackBoard::BOSS_STATE::ATTACK == pBossBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정
-            const CHARACTER_SKILL_DESC* pSkillData = pBossBlackBoard->GetAttackData();
-            if (SKILL_PROPERTY::SUPERARMOR & pSkillData->eProPerty)
+            const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+
+            if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
-                if (SKILL_TYPE::BETA_SKILL != pSkillData->eSkillType)
+                pBossBlackBoard->SetAttackDelay(1.5f);
+            }
+            else
+            {
+                if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
                 {
-                    bIsHitAble = false;
+                    if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                    {
+                        bIsHitAble = false;
+                    }
                 }
             }
         }

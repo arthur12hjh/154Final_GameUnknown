@@ -64,19 +64,15 @@ HRESULT CCanyon::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

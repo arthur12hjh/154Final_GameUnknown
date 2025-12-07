@@ -141,6 +141,33 @@ PS_OUT PS_MOON(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_CANYON(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.r < 0.001f && vMtrlDiffuse.g < 0.001f && vMtrlDiffuse.b < 0.001f)
+        discard;
+    
+    float3 vNormal = normalize(In.vNormal);
+    float3 vLightDir = normalize(float3(0.f, 0.f, 1.f));
+    
+    float fLightDot = dot(vNormal, -vLightDir);
+    float fDiffuse = fLightDot * 0.5f + 0.5f;
+    
+    float3 vAmbientColor = float3(0.5f, 0.5f, 0.5f);
+    float3 vLightColor = float3(1.f, 1.f, 1.f);
+    
+    float3 finalDiffuseColor = vMtrlDiffuse.rgb * (vAmbientColor + fDiffuse * vLightColor);
+    
+    Out.vDiffuse.rgb = finalDiffuseColor;
+    Out.vDiffuse.a = vMtrlDiffuse.a;
+    Out.vNormal = float4(vNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+
+    return Out;
+}
+
 PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
 {
     PS_OUT Out;
@@ -236,4 +263,13 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MOON();
     }
     
+    pass CANYON
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_CANYON();
+    }
 }

@@ -59,7 +59,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
-	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 2.4f);
+	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 1.6f);
 	pEntity->Set_Animation(m_szAnimationName.c_str(), false, fAttackSpeed);
 }
 
@@ -143,21 +143,29 @@ void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 	if (512 == m_pSkillData->iSkillID)
 	{
 		if (0.1f <= fAnimPlayRatio && 0.3 >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.3f;
 			bMoveAction = true;
+		}
 	}
 	else if (513 == m_pSkillData->iSkillID)
 	{
 		if (0.05f <= fAnimPlayRatio && 0.45f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.45f;
 			bMoveAction = true;
+		}
 	}
 	else if(511 == m_pSkillData->iSkillID)
 	{
 		if (0.25f <= fAnimPlayRatio && 0.46f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.45f;
 			bMoveAction = true;
 		}
 		else if (0.46f <= fAnimPlayRatio && 0.6f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.6f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
@@ -183,25 +191,37 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 	{
 		//잡기 공격
 		if (0.1f <= fAnimPlayRatio && 0.3 >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.3f;
 			bMoveAction = true;
+		}
 	}
 	else if (522 == m_pSkillData->iSkillID)
 	{
 		// Slash 공격
 		// 0 ~ 40 프레임
 		if (0.0f <= fAnimPlayRatio && 0.24f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.24f;
 			bMoveAction = true;
+		}
 
 		// 40 ~ 60 프레임
 		if (0.24f <= fAnimPlayRatio && 0.36f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.36f;
 			bMoveAction = true;
+		}
 	}
 	else if (523 == m_pSkillData->iSkillID)
 	{
 		// Rush Slash 공격
 		// 30 ~ 80 프레임
 		if (0.15f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.4f;
 			bMoveAction = true;
+		}
 	}
 	else if (524 == m_pSkillData->iSkillID)
 	{
@@ -209,18 +229,21 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 		// 20 ~ 42 프레임
 		if (0.07f <= fAnimPlayRatio && 0.15f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.15f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
 		// 44 ~ 90 프레임
 		else if (0.16f <= fAnimPlayRatio && 0.32f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.32f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
 		// 109 ~ 140 프레임
 		else if (0.4f <= fAnimPlayRatio && 0.51f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.51f;
 			//m_fRootMotionRatio = 1.f;
 		}
 	}
@@ -230,6 +253,7 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 		// 6 ~ 20 프레임 회전
 		if (0.38f <= fAnimPlayRatio && 0.5f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.5f;
 			fSpeed = m_fMoveSpeed;
 			bMoveAction = true;
 		}
@@ -253,18 +277,27 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		// Explosion
 		// 10 ~ 30 프레임
 		if (0.05f <= fAnimPlayRatio && 0.12 >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.12f;
 			bMoveAction = true;
+		}
 
 		// 40 ~ 70 프레임
 		if (0.15f <= fAnimPlayRatio && 0.27 >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.27f;
 			bMoveAction = true;
+		}
 	}
 	else if (532 == m_pSkillData->iSkillID)
 	{
 		// Rush Slash
 		// 60 ~ 110 프레임
 		if (0.26f <= fAnimPlayRatio && 0.48f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.48f;
 			bMoveAction = true;
+		}
 	}
 	else if (533 == m_pSkillData->iSkillID)
 	{
@@ -272,11 +305,13 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		// 20 ~ 40
 		if (0.13f <= fAnimPlayRatio && 0.24f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.24f;
 			bMoveAction = true;
 		}
 		// 40 ~ 55
 		else if (0.24f <= fAnimPlayRatio && 0.34f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.34f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
@@ -287,6 +322,7 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		// 30 ~ 80
 		if (0.15f <= fAnimPlayRatio && 0.4f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.4f;
 			bMoveAction = true;
 		}
 	}
@@ -296,11 +332,13 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		// 65 ~ 120
 		if (0.22f <= fAnimPlayRatio && 0.44f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.44f;
 			bMoveAction = true;
 		}
 		// 125 ~ 170
 		else if (0.46f <= fAnimPlayRatio && 0.62f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.62f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
@@ -312,6 +350,7 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		// 125 ~ 170
 		if (0.3f <= fAnimPlayRatio && 0.35f >= fAnimPlayRatio)
 		{
+			m_fMoveAnimMaxRatio = 0.35f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}
@@ -332,11 +371,14 @@ void CMonsterAttackState::SearchTargetDistance()
 
 void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 {
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+
 	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
 	if (1.f >= m_fDistance - m_pSkillData->fRange)
 		return;
 	
-	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange);
+	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange) * m_fMoveAnimMaxRatio / fAnimPlayRatio;
 	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
