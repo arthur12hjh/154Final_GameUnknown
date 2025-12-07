@@ -1,11 +1,17 @@
-#pragma once
+﻿#pragma once
 #include "Engine_Defines.h"
 #include "UIObject.h"
 #include <vector>
 
 namespace Client
 {
-	enum class INTERACTION_STATE { DEFAULT, CONTACT, UNLOCK, ACTIVE, HIDE, RELEASE, END };
+	enum class INTERACTION_STATE {
+		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
+		CONTACT,	// 접촉해서 사용작용 가능한 녀석
+		LOCK,		// 상호작용 할수없음
+		ACTIVE,		// 상호작용 하는중
+		END			// 더이상 앞으로도 네버 상호작용 불가능
+	};
 
 	enum class UI_SHADER_PASS {
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
@@ -69,12 +75,12 @@ namespace Client
 	typedef struct tagUIEventDesc
 	{
 		wstring szActionTag{};
-		vector<wstring> szSubscribeEventTags{}; // ���� �� �̺�Ʈ��
+		vector<wstring> szSubscribeEventTags{}; // 구독 할 이벤트들
 		wstring szTypeTag{};
-		wstring szArg{}; // �ִϸ��̼� �̸�, �׼� �̸�, ���� �̸�, ����Ʈ �̸� ...
+		wstring szArg{}; // 애니메이션 이름, 액션 이름, 사운드 이름, 이펙트 이름 ...
 	}UI_EVENT_DESC;
 
-	// UI Animation ����ü
+	// UI Animation 구조체
 	typedef struct tagUIAnimTrackDesc
 	{
 		wstring szTrackTag{};
@@ -163,11 +169,11 @@ namespace Client
 		bool m_isHasShaderDesc{ false };
 		UI_SHADER_DESC m_tUIShaderDesc{};
 
-		map<wstring, wstring> m_AnimTags{}; // �ִϸ��̼� �±�, ������ �̸�
-		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // �̺�Ʈ �±�, �̺�Ʈ ����ü
+		map<wstring, wstring> m_AnimTags{}; // 애니메이션 태그, 프리팹 이름
+		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // 이벤트 태그, 이벤트 구조체
 
 	public:
-		// �ؽ�Ʈ
+		// 텍스트
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
 			m_isHasTextDesc = true;
 			m_tUITextDesc = Desc;
@@ -177,7 +183,7 @@ namespace Client
 			return m_isHasTextDesc ? &m_tUITextDesc : nullptr;
 		}
 
-		// �ؽ���
+		// 텍스쳐
 		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
 			m_isHasTextureDesc = true;
 			m_tUITextureDesc = Desc;
@@ -187,7 +193,7 @@ namespace Client
 			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
 		}
 
-		// �̺�Ʈ
+		// 이벤트
 		map<wstring, vector<UI_EVENT_DESC>>* Get_Events() {
 			return &m_Events;
 		}
@@ -202,7 +208,7 @@ namespace Client
 			m_Events.erase(szEventTag);
 		}
 
-		// ������ ���°�
+		// 툴에서 쓰는거
 		void Add_UI_Anim(wstring szAnimTag, wstring szAnimFileName) {
 			auto Anim = m_AnimTags.find(szAnimTag);
 
@@ -228,7 +234,7 @@ namespace Client
 
 		map<wstring, wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
 
-		// ���̴�
+		// 쉐이더
 		UI_SHADER_DESC* Get_ShaderDesc() {
 			return m_isHasShaderDesc ? &m_tUIShaderDesc : nullptr;
 		}
