@@ -5,13 +5,6 @@
 
 namespace Client
 {
-	enum class INTERACTION_STATE {
-		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
-		CONTACT,	// 접촉해서 사용작용 가능한 녀석
-		LOCK,		// 상호작용 할수없음
-		ACTIVE,		// 상호작용 하는중
-		END			// 더이상 앞으로도 네버 상호작용 불가능
-	};
 
 	enum class UI_SHADER_PASS {
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
