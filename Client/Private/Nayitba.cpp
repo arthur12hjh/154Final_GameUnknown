@@ -584,7 +584,7 @@ void CNayitba::Free()
 	__super::Free();
 
 
-
+	//Safe_Release(m_pStatusUI);
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
 }

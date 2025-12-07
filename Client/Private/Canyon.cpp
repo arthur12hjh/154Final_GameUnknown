@@ -31,7 +31,7 @@ HRESULT CCanyon::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-    m_pRigidBody->Update_PxTransform(worldMatrix);
+    //m_pRigidBody->Update_PxTransform(worldMatrix);
 	return S_OK;
 }
 
@@ -54,7 +54,7 @@ void CCanyon::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-        m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
+        //m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
     }
 }
@@ -105,33 +105,33 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	
-    PxUserData tUserData;
-    tUserData.szActorTag = TEXT("KIMETIC_Actor");
+    //PxUserData tUserData;
+    //tUserData.szActorTag = TEXT("KIMETIC_Actor");
 
-    //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
-    CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
-    // 콜라이더 모양
-    RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+    ////리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+    //CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+    //// 콜라이더 모양
+    //RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
 
-    // 충돌처리를 할지말지 
-    // DYNAMIC : 충돌 
-    // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+    //// 충돌처리를 할지말지 
+    //// DYNAMIC : 충돌 
+    //// KINEMATIC : 충돌 X
+    //RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
-    RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
-    RigidBodyDesc.tUserData = tUserData;
-    RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-    RigidBodyDesc.vSize = { vColliderSize.x * 2.f,  vColliderSize.y * 2.f, vColliderSize.z * 2.f };
-    RigidBodyDesc.fMass = { 0.3f };
+    //RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+    //RigidBodyDesc.tUserData = tUserData;
+    //RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+    //RigidBodyDesc.vSize = { vColliderSize.x * 2.f,  vColliderSize.y * 2.f, vColliderSize.z * 2.f };
+    //RigidBodyDesc.fMass = { 0.3f };
 
-    /* Com_RigidBody */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
-        TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-        return E_FAIL;
+    ///* Com_RigidBody */
+    //if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+    //    TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+    //    return E_FAIL;
 
-    // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
-    // 없으면 충돌 안됨
-    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+    //// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
+    //// 없으면 충돌 안됨
+    //m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 	return S_OK;
 }
 
