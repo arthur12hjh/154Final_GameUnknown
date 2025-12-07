@@ -120,6 +120,8 @@ public:
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
+	HRESULT Initialize_AnimationIndexMap();
+
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
@@ -160,6 +162,7 @@ private:
 
 	binModel* m_pModel;
 	class CComputeShader* m_pComputeShaderCom = { nullptr };
+	class CComputeShader* m_pCombinedMatrixComputeShaderCom = { nullptr };
 
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
@@ -175,6 +178,8 @@ private:
 	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pLerpBoneMatricesSRV = { nullptr };
+
+	unordered_map<string, int>	m_AnimationIndexMap;
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
@@ -231,7 +236,7 @@ private:
 
 	HRESULT Update_BoneMatrices();
 
-
+	_int Find_Animation(const _char* szAnimationTag);
 
 
 public:

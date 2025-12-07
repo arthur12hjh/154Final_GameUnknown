@@ -110,6 +110,8 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	}
 
+	pModel->Initialize_AnimationIndexMap();
+
 	_findclose(handle);
 
 	return S_OK;
