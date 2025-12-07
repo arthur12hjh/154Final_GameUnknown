@@ -44,10 +44,10 @@ HRESULT CLevel_Desert::Initialize()
 
 void CLevel_Desert::Update(_float fTimeDelta)
 {
-	if (GetKeyState(VK_F12) & 0x8000)
+	/*if (GetKeyState(VK_F12) & 0x8000)
 	{
 		m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::VILLAGE));
-	}
+	}*/
 
 	CImgui_Manager::GetInstance()->Update(fTimeDelta);
 

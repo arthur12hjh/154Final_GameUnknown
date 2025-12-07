@@ -33,6 +33,7 @@ public:
 	_uint*					Get_Indices(); 
 protected:
 	ID3D11Buffer*					m_pVB = { nullptr };
+	ID3D11Buffer*					m_pVB_Staging = { nullptr };
 	ID3D11Buffer*					m_pIB = { nullptr };	
 
 	_float3*						m_pVertexPositions = {};
