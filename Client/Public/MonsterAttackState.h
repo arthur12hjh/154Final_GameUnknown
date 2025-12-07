@@ -43,6 +43,8 @@ private :
 
 	_float3										m_vMoveDir = {};
 	_float										m_fDistance = {};
+	_float										m_fMoveAnimMaxRatio = {};
+
 	_float										m_fMoveSpeed = {};
 
 	function<void(_float)>						m_AttackCompletedFunc;

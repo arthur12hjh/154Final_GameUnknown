@@ -21,6 +21,9 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
+	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -158,6 +161,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
+
 	CActor::ACTOR_DESC ProbDesc = {};
 	ProbDesc.bIsApplyTransform = true;
 	ProbDesc.vScale = { 1.f, 1.f, 1.f };
@@ -357,7 +361,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	Desc.iMonsterID = 5;
+	Desc.iMonsterID = 4;
 	Desc.bIsSuperMonster = true;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),

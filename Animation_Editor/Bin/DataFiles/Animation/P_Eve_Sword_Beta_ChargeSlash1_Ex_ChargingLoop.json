@@ -2,7 +2,7 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 5.0,
+                "fNumData01": 0.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -15,7 +15,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Charge_Time",
+                "szNotifyArg01": "Charge",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
