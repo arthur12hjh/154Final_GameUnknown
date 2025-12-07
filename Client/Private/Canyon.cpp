@@ -64,19 +64,15 @@ HRESULT CCanyon::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -151,159 +147,158 @@ HRESULT CCanyon::Bind_ShaderResources()
 void CCanyon::SetCullingCollider(_uint iObjectID)
 {
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
-    switch (iObjectID)
-    {
-    case 1:
-        pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 3, 3, 32 }); // 3 / 2 = 1.5
-        break;
-    case 2: case 9: case 10: case 13: case 14: case 16:
-    case 30: case 62: case 63:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 3, 2, 2 }); // 2 / 2 = 1
-        break;
-    case 3:
-        pCullingCollider->SetCollision({ 0.f, 6.5f, 0.f }, {}, { 13, 13, 3 }); // 13 / 2 = 6.5
-        break;
-    case 4: case 8: case 11: case 15: case 25:
-    case 28: case 31: case 32: case 64:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 2, 2, 2 }); // 2 / 2 = 1
-        break;
-    case 5:
-        pCullingCollider->SetCollision({ 0.f, 2.5f, 0.f }, {}, { 10, 5, 4 }); // 5 / 2 = 2.5
-        break;
-    case 6: case 44:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 4, 2, 1 }); // 2 / 2 = 1
-        break;
-    case 7:
-        pCullingCollider->SetCollision({ 0.f, 32.5f, 0.f }, {}, { 18, 65, 18 }); // 65 / 2 = 32.5
-        break;
-    case 12:
-        pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 4, 3, 4 }); // 3 / 2 = 1.5
-        break;
-    case 17:
-        pCullingCollider->SetCollision({ 0.f, 3.5f, 0.f }, {}, { 15, 7, 7 }); // 7 / 2 = 3.5
-        break;
-    case 18:
-        pCullingCollider->SetCollision({ 0.f, 7.f, 0.f }, {}, { 11, 14, 11 }); // 14 / 2 = 7
-        break;
-    case 19:
-        pCullingCollider->SetCollision({ 0.f, 6.5f, 0.f }, {}, { 13, 13, 5 }); // 13 / 2 = 6.5
-        break;
-    case 20:
-        pCullingCollider->SetCollision({ 0.f, 2.5f, 0.f }, {}, { 14, 5, 4 }); // 5 / 2 = 2.5
-        break;
-    case 21:
-        pCullingCollider->SetCollision({ 0.f, 2.f, 0.f }, {}, { 18, 4, 8 }); // 4 / 2 = 2
-        break;
-    case 22:
-        pCullingCollider->SetCollision({ 0.f, 17.5f, 0.f }, {}, { 12, 35, 9 }); // 35 / 2 = 17.5
-        break;
-    case 23:
-        pCullingCollider->SetCollision({ 0.f, 12.5f, 0.f }, {}, { 22, 25, 10 }); // 25 / 2 = 12.5
-        break;
-    case 24:
-        pCullingCollider->SetCollision({ 0.f, 11.5f, 0.f }, {}, { 35, 23, 10 }); // 23 / 2 = 11.5
-        break;
-    case 26: case 27:
-        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 4, 1, 4 }); // 1 / 2 = 0.5
-        break;
-    case 29:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 3, 2, 3 }); // 2 / 2 = 1
-        break;
-    case 33:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 4, 2, 3 }); // 2 / 2 = 1
-        break;
-    case 34:
-        pCullingCollider->SetCollision({ 0.f, 2.f, 0.f }, {}, { 5, 4, 5 }); // 4 / 2 = 2
-        break;
-    case 35: case 47:
-        pCullingCollider->SetCollision({ 0.f, 10.f, 0.f }, {}, { 55, 20, 30 }); // 20 / 2 = 10
-        break;
-    case 36:
-        pCullingCollider->SetCollision({ 0.f, 9.f, 0.f }, {}, { 62, 18, 30 }); // 18 / 2 = 9
-        break;
-    case 37:
-        pCullingCollider->SetCollision({ 0.f, 15.5f, 0.f }, {}, { 58, 31, 15 }); // 31 / 2 = 15.5
-        break;
-    case 38:
-        pCullingCollider->SetCollision({ 0.f, 9.f, 0.f }, {}, { 15, 18, 8 }); // 18 / 2 = 9
-        break;
-    case 39:
-        pCullingCollider->SetCollision({ 0.f, 17.f, 0.f }, {}, { 50, 34, 40 }); // 34 / 2 = 17
-        break;
-    case 40:
-        pCullingCollider->SetCollision({ 0.f, 4.f, 0.f }, {}, { 15, 8, 10 }); // 8 / 2 = 4
-        break;
-    case 41:
-        pCullingCollider->SetCollision({ 0.f, 20.f, 0.f }, {}, { 25, 40, 40 }); // 40 / 2 = 20
-        break;
-    case 42:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 2, 2, 1 }); // 2 / 2 = 1
-        break;
-    case 43:
-        pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 5, 3, 2 }); // 3 / 2 = 1.5
-        break;
-    case 45:
-        pCullingCollider->SetCollision({ 0.f, 9.f, 0.f }, {}, { 60, 18, 25 }); // 18 / 2 = 9
-        break;
-    case 46:
-        pCullingCollider->SetCollision({ 0.f, 2.5f, 0.f }, {}, { 18, 5, 23 }); // 5 / 2 = 2.5
-        break;
-    case 48:
-        pCullingCollider->SetCollision({ 0.f, 7.5f, 0.f }, {}, { 15, 15, 10 }); // 15 / 2 = 7.5
-        break;
-    case 49:
-        pCullingCollider->SetCollision({ 0.f, 10.f, 0.f }, {}, { 20, 20, 13 }); // 20 / 2 = 10
-        break;
-    case 50:
-        pCullingCollider->SetCollision({ 0.f, 7.5f, 0.f }, {}, { 30, 15, 18 }); // 15 / 2 = 7.5
-        break;
-    case 51:
-        pCullingCollider->SetCollision({ 0.f, 12.5f, 0.f }, {}, { 35, 25, 15 }); // 25 / 2 = 12.5
-        break;
-    case 52:
-        pCullingCollider->SetCollision({ 0.f, 14.f, 0.f }, {}, { 28, 28, 17 }); // 28 / 2 = 14
-        break;
-    case 53:
-        pCullingCollider->SetCollision({ 0.f, 6.f, 0.f }, {}, { 105, 12, 45 }); // 12 / 2 = 6
-        break;
-    case 54:
-        pCullingCollider->SetCollision({ 0.f, 4.f, 0.f }, {}, { 20, 8, 10 }); // 8 / 2 = 4
-        break;
-    case 55:
-        pCullingCollider->SetCollision({ 0.f, 3.f, 0.f }, {}, { 28, 6, 10 }); // 6 / 2 = 3
-        break;
-    case 56:
-        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 25, 2, 7 }); // 2 / 2 = 1
-        break;
-    case 57:
-        pCullingCollider->SetCollision({ 0.f, 2.f, 0.f }, {}, { 22, 4, 7 }); // 4 / 2 = 2
-        break;
-    case 58:
-        pCullingCollider->SetCollision({ 0.f, 2.f, 0.f }, {}, { 25, 4, 10 }); // 4 / 2 = 2
-        break;
-    case 59:
-        pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 15, 3, 8 }); // 3 / 2 = 1.5
-        break;
-    case 60:
-        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 4, 1, 1 }); // 1 / 2 = 0.5
-        break;
-    case 61:
-        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 3, 1, 1 }); // 1 / 2 = 0.5
-        break;
-    case 65:
-        pCullingCollider->SetCollision({ 0.f, 6.f, 0.f }, {}, { 8, 12, 8 }); // 12 / 2 = 6
-        break;
-    case 66:
-        pCullingCollider->SetCollision({ 0.f, 6.5f, 0.f }, {}, { 15, 13, 6 }); // 13 / 2 = 6.5
-        break;
-    case 67: case 68: case 69: case 70: case 71: case 72:
-    case 73: case 74: case 76: case 77: case 78: case 79:
-        pCullingCollider->SetCollision({ 0.f, 250.f, 0.f }, {}, { 1000, 500, 1000 }); // 500 / 2 = 250
-        break;
-    case 75:
-        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 6, 1, 6 }); // 1 / 2 = 0.5
-        break;
-    }
+	switch (iObjectID)
+	{
+	case 1:
+		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 3, 3, 32 });
+		break;
+	case 2: case 9: case 10: case 13: case 14: case 16:
+	case 30: case 62: case 63:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 3, 2, 2 });
+		break;
+	case 3:
+		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 13, 13, 3 });
+		break;
+	case 4: case 8: case 11: case 15: case 25:
+	case 28: case 31: case 32: case 64:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 2, 2, 2 });
+		break;
+	case 5:
+		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 10, 5, 4 });
+		break;
+	case 6: case 44:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 4, 2, 1 });
+		break;
+	case 7:
+		pCullingCollider->SetCollision({ 0.f, 43.33f, 0.f }, {}, { 18, 65, 18 });
+		break;
+	case 12:
+		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 4, 3, 4 });
+		break;
+	case 17:
+		pCullingCollider->SetCollision({ 0.f, 4.67f, 0.f }, {}, { 15, 7, 7 });
+		break;
+	case 18:
+		pCullingCollider->SetCollision({ 0.f, 9.33f, 0.f }, {}, { 11, 14, 11 });
+		break;
+	case 19:
+		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 13, 13, 5 });
+		break;
+	case 20:
+		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 14, 5, 4 });
+		break;
+	case 21:
+		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 18, 4, 8 });
+		break;
+	case 22:
+		pCullingCollider->SetCollision({ 0.f, 23.33f, 0.f }, {}, { 12, 35, 9 });
+		break;
+	case 23:
+		pCullingCollider->SetCollision({ 0.f, 16.67f, 0.f }, {}, { 22, 25, 10 });
+		break;
+	case 24:
+		pCullingCollider->SetCollision({ 0.f, 15.33f, 0.f }, {}, { 35, 23, 10 });
+		break;
+	case 26: case 27:
+		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 4, 1, 4 });
+		break;
+	case 29:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 3, 2, 3 });
+		break;
+	case 33:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 4, 2, 3 });
+		break;
+	case 34:
+		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 5, 4, 5 });
+		break;
+	case 35: case 47:
+		pCullingCollider->SetCollision({ 0.f, 13.33f, 0.f }, {}, { 55, 20, 30 });
+		break;
+	case 36:
+		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 62, 18, 30 });
+		break;
+	case 37:
+		pCullingCollider->SetCollision({ 0.f, 20.67f, 0.f }, {}, { 58, 31, 15 });
+		break;
+	case 38:
+		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 15, 18, 8 });
+		break;
+	case 39:
+		pCullingCollider->SetCollision({ 0.f, 22.67f, 0.f }, {}, { 50, 34, 40 });
+		break;
+	case 40:
+		pCullingCollider->SetCollision({ 0.f, 5.33f, 0.f }, {}, { 15, 8, 10 });
+		break;
+	case 41:
+		pCullingCollider->SetCollision({ 0.f, 26.67f, 0.f }, {}, { 25, 40, 40 });
+		break;
+	case 42:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 2, 2, 1 });
+		break;
+	case 43:
+		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 5, 3, 2 });
+		break;
+	case 45:
+		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 60, 18, 25 });
+		break;
+	case 46:
+		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 18, 5, 23 });
+		break;
+	case 48:
+		pCullingCollider->SetCollision({ 0.f, 10.0f, 0.f }, {}, { 15, 15, 10 });
+		break;
+	case 49:
+		pCullingCollider->SetCollision({ 0.f, 13.33f, 0.f }, {}, { 20, 20, 13 });
+		break;
+	case 50:
+		pCullingCollider->SetCollision({ 0.f, 10.0f, 0.f }, {}, { 30, 15, 18 });
+		break;
+	case 51:
+		pCullingCollider->SetCollision({ 0.f, 16.67f, 0.f }, {}, { 35, 25, 15 });
+		break;
+	case 52:
+		pCullingCollider->SetCollision({ 0.f, 18.67f, 0.f }, {}, { 28, 28, 17 });
+		break;
+	case 53:
+		pCullingCollider->SetCollision({ 0.f, 8.0f, 0.f }, {}, { 105, 12, 45 });
+		break;
+	case 54:
+		pCullingCollider->SetCollision({ 0.f, 5.33f, 0.f }, {}, { 20, 8, 10 });
+		break;
+	case 55:
+		pCullingCollider->SetCollision({ 0.f, 4.0f, 0.f }, {}, { 28, 6, 10 });
+		break;
+	case 56:
+		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 25, 2, 7 });
+		break;
+	case 57:
+		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 22, 4, 7 });
+		break;
+	case 58:
+		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 25, 4, 10 });
+		break;
+	case 59:
+		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 15, 3, 8 });
+		break;
+	case 60:
+		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 4, 1, 1 });
+		break;
+	case 61:
+		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 3, 1, 1 });
+		break;
+	case 65:
+		pCullingCollider->SetCollision({ 0.f, 8.0f, 0.f }, {}, { 8, 12, 8 });
+		break;
+	case 66:
+		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 15, 13, 6 });
+		break;
+	case 67: case 68: case 69: case 70: case 71: case 72:
+	case 73: case 74: case 76: case 77: case 78: case 79:
+		pCullingCollider->SetCollision({ 0.f, 333.33f, 0.f }, {}, { 1000, 500, 1000 });
+		break;
+	case 75:
+		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 6, 1, 6 });
+		break;
 }
 
 CCanyon* CCanyon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

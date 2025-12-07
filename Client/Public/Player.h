@@ -43,6 +43,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Damaged(void* pArg) override;
+	virtual void	RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
+
 
 	void			SetSkillDataID(_uint iSkillID);
 	_int			GetSkillDataID();

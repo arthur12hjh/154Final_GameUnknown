@@ -12,9 +12,16 @@ namespace Engine
 	class CCharacterController;
 }
 
-
 namespace Client
 {
+	enum class RECOVERY_TYPE
+	{
+		RECOVERY_HP,		// HP 회복
+		RECOVERY_SHILED,	// SHILED 회복
+		RECOVERY_STEMINA,	// STEMINA 회복
+		RECOVERY_END
+	};
+
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
 		CONTACT,	// 접촉해서 사용작용 가능한 녀석
@@ -227,6 +234,7 @@ namespace Client
 
 		long long			iMaxHealth;
 		long long			iMaxShield;
+		_uint				iMaxStemina;
 		float				fMoveSpeed;
 
 		float				fAttackCoolTime;
@@ -243,6 +251,7 @@ namespace Client
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
+		_uint				iCurrentStemina;
 
 		_float3				vLockOnPoint;
 		_float3				vStatusBarPoint;
