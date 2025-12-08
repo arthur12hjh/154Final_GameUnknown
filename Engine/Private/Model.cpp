@@ -945,30 +945,30 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    //// CPU CBone 전체 동기화
-    //if (m_pOutReadBack)
-    //{
-    //    m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-    //
-    //    D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    //    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
-    //    {
-    //        COMPUTE_BONEMATRIX_OUT* pOut =
-    //            reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-    //
-    //        // 무조건 최적화
-    //        for (_uint i = 0; i < m_Bones.size(); ++i)
-    //        {
-    //            m_Bones[i]->Set_TransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-    //
-    //            m_Bones[i]->Set_CombinedTransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
-    //        }
-    //
-    //        m_pContext->Unmap(m_pOutReadBack, 0);
-    //    }
-    //}
+    // CPU CBone 전체 동기화
+    if (m_pOutReadBack)
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+    
+        D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
+    
+            // 무조건 최적화
+            for (_uint i = 0; i < m_Bones.size(); ++i)
+            {
+                m_Bones[i]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
+    
+                m_Bones[i]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
+            }
+    
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
 
     // 루트모션 적용
     if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)

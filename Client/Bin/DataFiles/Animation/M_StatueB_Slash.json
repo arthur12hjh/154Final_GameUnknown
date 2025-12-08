@@ -47,7 +47,7 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 52,
-                "iNumData01": 0,
+                "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -67,7 +67,7 @@
                 "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    1.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -77,7 +77,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.2,
+                    5.0,
                     0.0
                 ]
             },
@@ -87,7 +87,7 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 69,
-                "iNumData01": 0,
+                "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -107,7 +107,7 @@
                 "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    1.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -117,7 +117,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.2,
+                    5.0,
                     0.0
                 ]
             }

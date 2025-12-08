@@ -47,11 +47,9 @@ void CBossController::Priority_Update(_float fTimeDelta)
 void CBossController::Update(_float fTimeDelta)
 {
     auto pNayitba = static_cast<CNayitba*>(m_pParent);
-    auto pTargetList = pNayitba->GetTraceObejectList();
 
     auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    if(!pTargetList->empty())
-        pBossBlackBoard->SetTarget(pTargetList->front());
+    pBossBlackBoard->SetTarget(pNayitba->GetTarget());
 
     pBossBlackBoard->AccAttackDelay(fTimeDelta);
     Safe_Release(pBossBlackBoard);
