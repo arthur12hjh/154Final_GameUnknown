@@ -154,6 +154,10 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
 	}
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
@@ -226,6 +230,10 @@ void CSpriteParticle::Update(SPRITE_PARTICLE_DATA tData)
 	case 7:
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 

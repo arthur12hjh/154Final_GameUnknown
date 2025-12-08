@@ -2,6 +2,8 @@
 #include "NayitbaPartBody.h"
 #include "StringHelper.h"
 #include "Effect.h"
+#include "Trail.h"
+#include "TrailEffect.h"
 
 #include "GameInstance.h"
 
@@ -46,6 +48,15 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        if (nullptr == TrailEffect.first->pRootMatrix) {
+            TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
+        }
+        else {
+            TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
+        }
+    }
     m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -154,7 +165,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             EffectDesc.vPos = XMVectorSet(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 1);
             EffectDesc.fRot = _float3(XMConvertToRadians(NotifyReference.vNotifyRotation.x), XMConvertToRadians(NotifyReference.vNotifyRotation.y), XMConvertToRadians(NotifyReference.vNotifyRotation.z));
             EffectDesc.fSize = NotifyReference.vNotifyScale.x;
-
+            EffectDesc.bisFloor = 1 == NotifyReference.iNumData02 ? true : false;
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
 
@@ -176,6 +187,50 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         }
         if (nullptr != pEffect)
             pEffect->Stop();
+    }
+    else if (strObjectTag == TEXT("Play_Trail"))
+    {
+        CTrailEffect* pTrailEffect = nullptr;
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            if (TrailEffect.second == NotifyReference.iNumData01) {
+                TrailEffect.first->bisPlay = true;
+                return;
+            }
+        }
+
+        if (nullptr == pTrailEffect) {
+
+            NAYITBA_TRAIL_DESC* ptrailDesc = new NAYITBA_TRAIL_DESC;
+
+            if (NotifyReference.szSocketTag.compare("Transform") != 0)
+            {
+                ptrailDesc->pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
+            }
+            ptrailDesc->bisPlay = true;
+
+            CTrail::TRAILHIGHLOW Traildesc{};
+            Traildesc.vHigh = _float4(NotifyReference.vNotifyScale.x, NotifyReference.vNotifyScale.y, NotifyReference.vNotifyScale.z, 0.f);
+            Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
+
+            _TCHAR szEffectTag[MAX_PATH];
+            CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
+
+            pTrailEffect = static_cast<CTrailEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &Traildesc));
+            ptrailDesc->pTrailEffect = pTrailEffect;
+            m_pTrailEffects.push_back({ ptrailDesc, NotifyReference.iNumData01 });
+        }
+    }
+    else if (strObjectTag == TEXT("Stop_Trail"))
+    {
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            if (TrailEffect.second == NotifyReference.iNumData01) {
+                TrailEffect.first->bisPlay = false;
+                return;
+            }
+        }
     }
 }
 
@@ -248,4 +303,10 @@ void CNayitbaPartBody::Free()
     __super::Free();
 
     Safe_Release(m_pColliderCom);
+    for (auto pEffect : m_pEffects)
+        Safe_Release(pEffect.first);
+    m_pEffects.clear();
+    for (auto pTrailEffect : m_pTrailEffects)
+        Safe_Release(pTrailEffect.first->pTrailEffect);
+    m_pTrailEffects.clear();
 }

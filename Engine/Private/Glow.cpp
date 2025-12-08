@@ -105,8 +105,6 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
             Safe_Release(pRenderObject);
         }
 
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].clear();
-
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
 
@@ -171,8 +169,6 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
             Safe_Release(pRenderObject);
         }
 
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].clear();
-
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
 
@@ -227,8 +223,6 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
             Safe_Release(pRenderObject);
         }
 
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::NEUTRAL)].clear();
-
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
 
@@ -249,6 +243,9 @@ HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
     }
+    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].clear();
+    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].clear();
+    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::NEUTRAL)].clear();
 
     m_bisWeight = false;
     return S_OK;
