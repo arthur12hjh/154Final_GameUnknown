@@ -103,511 +103,499 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				CDesertObject::DesertObjectDesc pDesc = {};
 				Nayitba_Desc MonsterDesc = {};
 
-				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::DOOR_A)
+				switch (m_eCurrentObject)
 				{
+				case DESESRT_RUIN_OBJECT::DOOR_A:
 					protoTag = TEXT("Prototype_GameObject_Building_Ruin"); layerTag = TEXT("Layer_Building_Ruin");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_A");
-					
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::DOOR_B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::DOOR_B:
 					protoTag = TEXT("Prototype_GameObject_Building_Ruin"); layerTag = TEXT("Layer_Building_Ruin");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_1A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_1A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_1A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_2A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_2A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_2A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_3A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_3A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_3A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_4A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_4A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_4A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_5A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_5A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_5A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_6A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_6A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_6A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_12A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_12A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_12A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_14A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_14A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_14A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_14B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_14B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_14B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_15A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_15A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_15A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_16A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_16A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_16A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_16B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_16B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_16B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_17A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_17A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_17A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_17B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_17B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_17B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_18A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_18A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_18A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_20A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_20A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_20A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_21A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_21A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_21A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_22A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_22A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_22A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_23A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_23A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_23A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_24A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_24A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_24A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_35A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_35A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_35A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_39A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39C)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_39C:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39C");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_39D)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_39D:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_39D");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_43A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_43A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_43A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_44A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_44A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_44A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_46A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_46A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_46A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_50A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_50A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_50A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_52A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_52A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_52A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_55A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_55A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_55A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_58A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_58A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_58A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_59A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_59A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_59A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_60A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_60A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_60A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_61A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_61A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_61A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_65A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_65A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_65A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_66A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_66A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_66A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_67A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_67A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_67A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_69A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_69A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_69A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_71A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_71A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_71A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_80A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_80A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_80A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_81A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_81A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_81A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_93A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_93A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_93A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_95A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_95A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_95A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_96A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_96A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_96A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_97A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_97A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_97A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_98A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_98A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_98A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_100A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_100A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_100A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_101A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_101A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_101A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_103A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_103A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_103A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_104A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_104A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_104A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_105A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_105A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_105A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_106A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_106A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_106A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_108A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_108A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_108A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_109A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_109A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_109A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_110A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_110A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_110A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_111A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_111A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_111A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_112A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_112A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_112A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_113A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_113A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_113A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_115A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_115A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_115A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_116A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_116A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_116A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_117A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_117A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_117A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_121A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_121A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_121A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_122A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_122A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_122A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_123A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_123A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_123A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_125A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_125A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_125A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_126A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_126A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_126A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_127A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_127B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127C)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_127C:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127C");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127D)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_127D:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127D");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_127E)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_127E:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_127E");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_128A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_128B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_128C)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_128C:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_128C");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_131A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_131A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_131A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132A)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_132A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_132B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_132C)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_132C:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_132C");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CANYON_133B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::CANYON_133B:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_133B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_BODY)
-				{
+					break;
+
+					// 2. Lift Objects
+				case DESESRT_RUIN_OBJECT::LIFT_BODY:
 					protoTag = TEXT("Prototype_GameObject_Lift_Body"); layerTag = TEXT("Layer_Lift_Body");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Body");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_CONTROLLER)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::LIFT_CONTROLLER:
 					protoTag = TEXT("Prototype_GameObject_Lift_Controller"); layerTag = TEXT("Layer_Lift_Controller");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_PLATFORM)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::LIFT_PLATFORM:
 					protoTag = TEXT("Prototype_GameObject_Lift_Platform"); layerTag = TEXT("Layer_Lift_Platform");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Platform");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_A)
-				{
+					break;
+
+					// 3. Floor Objects
+				case DESESRT_RUIN_OBJECT::FLOOR7_A:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_B)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::FLOOR7_B:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_B");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_C)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::FLOOR7_C:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_C");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_D)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::FLOOR7_D:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_D");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_E)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::FLOOR7_E:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_E");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::FLOOR7_F)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::FLOOR7_F:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_F");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LAMP_47A)
-				{
+					break;
+
+					// 4. Deco/Camp/Misc Objects
+				case DESESRT_RUIN_OBJECT::LAMP_47A:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lamp_47A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::VendingMachine_6A)
-				{
-					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					break;
+				case DESESRT_RUIN_OBJECT::VendingMachine_6A:
+					protoTag = TEXT("Prototype_GameObject_VendingMachine"); layerTag = TEXT("Layer_VendingMachine");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_6A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::VendingMachine_7A)
-				{
-					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					break;
+				case DESESRT_RUIN_OBJECT::VendingMachine_7A:
+					protoTag = TEXT("Prototype_GameObject_VendingMachine"); layerTag = TEXT("Layer_VendingMachine");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::GORILLA)
-				{
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 1;
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SPAWN_BOX4)
-				{
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 4;
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SPAWN_BOX5)
-				{
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag == nullptr; MonsterDesc.iMonsterID = 5;
-				}
+					break;
+				case DESESRT_RUIN_OBJECT::POSTER_4D:
+					// 참고: POSTER_4D가 두 번 정의되어 있어 한 번만 포함했습니다.
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Poster_4D");
+					break;
+				case DESESRT_RUIN_OBJECT::BASE_1A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Base_1A");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1B");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1D:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1D");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1E:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1E");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1F:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1F");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1G:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1G");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1H:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1H");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1I:
+					protoTag = TEXT("Prototype_GameObject_Chair"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1I");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1J:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Chair"); // Layer_Chair는 CAMP_1J만 다릅니다.
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1J");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1K:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1K");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1L:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1L");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1M:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1M");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1N:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1N");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1R:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1R");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1S:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1S");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1T:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1T");
+					break;
+				case DESESRT_RUIN_OBJECT::CAMP_1W:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CAMP_1W");
+					break;
+				case DESESRT_RUIN_OBJECT::REPAIRCONSOLE:
+					protoTag = TEXT("Prototype_GameObject_RepairConsole"); layerTag = TEXT("Layer_RepairConsole");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_RepairConsole");
+					break;
+				case DESESRT_RUIN_OBJECT::TOP_ROOF:
+					protoTag = TEXT("Prototype_GameObject_Top_Roof"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Top_Roof");
+					break;
 
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT)
-				{
+					// 5. Monster Spawn Boxes
+				case DESESRT_RUIN_OBJECT::GORILLA:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 1; // ==를 =로 수정
+					break;
+				case DESESRT_RUIN_OBJECT::SPAWN_BOX4:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 4; // ==를 =로 수정
+					break;
+				case DESESRT_RUIN_OBJECT::SPAWN_BOX5:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 5; // ==를 =로 수정
+					break;
+
+				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
 					if (fHeight > 0)
 						fHeight *= -1.f;
-
 					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_INCREASE_RECT)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::TERRAIN_INCREASE_RECT:
 					if (fHeight < 0)
 						fHeight;
-
 					m_pTerrain->Change_Height_Rect(vPickPoint, fHeight, m_fRadius);
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_FLAT)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::TERRAIN_FLAT:
 					m_pTerrain->Change_Height_Flat(vPickPoint, fHeight, m_fRadius);
-				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PLAYER)
-				{
+					break;
+				case DESESRT_RUIN_OBJECT::PLAYER:
 					m_pPlayerTransform->Set_State(STATE::POSITION, vPickPoint);
+					break;
 				}
-
 				if (pDesc.pComponentTag == nullptr)
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &MonsterDesc);
 				else
@@ -634,6 +622,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 			}
 		}
 
+#pragma region Another_Function
 		if (m_bIsDeplayMode)
 		{
 			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
@@ -743,7 +732,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 
 			}
 		}
-
+#pragma endregion
 
 	}
 
@@ -988,6 +977,37 @@ HRESULT CMapTool_Desert::Render()
 		m_eCurrentMap = (DESERT_THEME)nSelectedTheme;
 	}
 
+	_int nSelectedCharacter = -1;
+	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5" };
+
+	if (ImGui::CollapsingHeader("Character"))
+	{
+		if (ImGui::ListBox("##Character", &nSelectedCharacter, characterNames, IM_ARRAYSIZE(characterNames), 7))
+		{
+			if (nSelectedCharacter == 0)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
+				m_CurrentLayerName = TEXT("Layer_Player_Test");
+			}
+			else if (nSelectedCharacter == 1)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::GORILLA;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 2)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 3)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+
+		}
+	}
+
 	if (m_eCurrentMap == DESERT_THEME::BUILDING_RUIN)
 	{
 		ImGui::Text("Desert Map Objects");
@@ -1055,23 +1075,287 @@ HRESULT CMapTool_Desert::Render()
 		// 2. 모델 배치 / 삭제메뉴
 		_int nSelectedModel = -1;
 		_int nSelectedBuilding = -1;
-		_int nSelectedEnvironment = -1;
+		_int nSelectedDesertTree = -1;
 
 		const _char* modelNames[] = { "" };
 
 		const _char* buildingNames[] = { "" };
 
-		const _char* environmentNames[] = { "CM_Rock1" };
+		const _char* desertTreeNames[] = { "TREE_1A", "TREE_2A", "TREE_3A", "TREE_4A", "TREE_5B", "TREE_5C", "TREE_6A", "TREE_6B", "TREE_7A", "TREE_7B", 
+			"TREE_8A", "TREE_8Aa", "TREE_8B", "TREE_8Ba", "TREE_10A", "TREE_11B", "TREE_15A", "TREE_15B", "TREE_16A", "TREE_17A", "TREE_18A", "TREE_19A", 
+			"TREE_20A", "TREE_21A", "TREE_23A", "TREE_25A", "TREE_26A", "TREE_27A", "TREE_29A", "TREE_30A", "TREE_31A", "TREE_32A", "TREE_33A", "TREE_34A", 
+			"TREE_40B", "TREE_40C", "TREE_40D", "TREE_40E", "TREE_40F", "TREE_40G", "TREE_40H", "TREE_40I", "TREE_40J", 
+			"TREE_42A", "TREE_43A", "TREE_43B", "TREE_44A", "TREE_44B", "TREE_44D", "TREE_44F", "TREE_45A", "TREE_45B", "TREE_45C" };
 
-		if (ImGui::CollapsingHeader("Environments"))
+		if (ImGui::CollapsingHeader("Desert_Trees"))
 		{
-			if (ImGui::ListBox("##Environments", &nSelectedEnvironment, environmentNames, IM_ARRAYSIZE(environmentNames), 7))
+			if (ImGui::ListBox("##Desert_Trees", &nSelectedDesertTree, desertTreeNames, IM_ARRAYSIZE(desertTreeNames), 7))
 			{
-				/*if (nSelectedEnvironment == 0)
+				if (nSelectedDesertTree == 0)
 				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::CM_ROCK1;
-					m_CurrentLayerName = TEXT("Layer_CM_Rock1");
-				}*/
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_1A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_2A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_3A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_4A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_5B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_5C;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_6A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_6B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 8)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_7A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 9)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_7B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 10)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_8A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 11)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_8Aa;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 12)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_8B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 13)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_8Ba;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 14)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_10A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 15)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_11B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 16)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_15A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 17)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_15B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 18)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_16A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 19)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_17A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 20)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_18A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 21)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_19A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 22)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_20A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 23)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_21A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 24)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_23A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 25)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_25A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 26)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_26A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 27)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_27A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 28)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_29A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 29)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_30A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 30)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_31A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 31)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_32A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 32)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_33A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 33)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_34A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 34)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 35)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40C;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 36)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40D;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 37)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40E;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 38)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40F;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 39)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40G;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 40)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40H;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 41)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40I;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 42)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_40J;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 43)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_42A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 44)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_43A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 45)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_43B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 46)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_44A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 47)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_44B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 48)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_44D;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 49)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_44F;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 50)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_45A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 51)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_45B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
+				else if (nSelectedDesertTree == 52)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TREE_45C;
+					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
+				}
 
 			}
 		}
@@ -1082,15 +1366,13 @@ HRESULT CMapTool_Desert::Render()
 		ImGui::Text("Desert Common Objects");
 		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
 		// 2. 모델 배치 / 삭제메뉴
-		_int nSelectedCharacter = -1;
+		
 		_int nSelectedVeryBigCanyon = -1;
 		_int nSelectedBigCanyon = -1;
 		_int nSelectedMiddleCanyon = -1;
 		_int nSelectedSmallCanyon = -1;
 		_int nSelectedRock = -1;
 		_int nSelectedStone = -1;
-
-		const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5" };
 		
 		const _char* veryBigCanyonNames[] = { "CANYON_127A","CANYON_127B", "CANYON_127C", "CANYON_127D", "CANYON_127E", "CANYON_128A", "CANYON_128B","CANYON_128C",
 												"CANYON_132A", "CANYON_132B", "CANYON_132C", "CANYON_133B" };
@@ -1108,33 +1390,7 @@ HRESULT CMapTool_Desert::Render()
 		const _char* stoneNames[] = { "CANYON_4A", "CANYON_14A", "CANYON_16A", "CANYON_16B", "CANYON_18A", "CANYON_43A", "CANYON_44A", "CANYON_46A", "CANYON_50A", 
 									"CANYON_58A", "CANYON_59A", "CANYON_123A", "CANYON_131A" };
 
-		if (ImGui::CollapsingHeader("Character"))
-		{
-			if (ImGui::ListBox("##Character", &nSelectedCharacter, characterNames, IM_ARRAYSIZE(characterNames), 7))
-			{
-				if (nSelectedCharacter == 0)
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::PLAYER;
-					m_CurrentLayerName = TEXT("Layer_Player_Test");
-				}
-				else if (nSelectedCharacter == 1)
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::GORILLA;
-					m_CurrentLayerName = TEXT("Layer_Monster");
-				}
-				else if (nSelectedCharacter == 2)
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
-					m_CurrentLayerName = TEXT("Layer_Monster");
-				}
-				else if (nSelectedCharacter == 3)
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
-					m_CurrentLayerName = TEXT("Layer_Monster");
-				}
-
-			}
-		}
+		
 
 		if (ImGui::CollapsingHeader("Canyon"))
 		{
@@ -1325,8 +1581,11 @@ HRESULT CMapTool_Desert::Render()
 	{
 		ImGui::Text("Deco Objects");
 		_int nSelectedModel = -1;
+		_int nSelectedCamp = -1;
 
-		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A" };
+		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A", "Poster_4D"};
+		const _char* campNames[] = { "BASE_1A", "CAMP_1B", "CAMP_1D", "CAMP_1E", "CAMP_1F", "CAMP_1G", "CAMP_1H", "CAMP_1J", "CAMP_1K", "CAMP_1L", 
+									"CAMP_1M", "CAMP_1N", "CAMP_1R", "CAMP_1S", "CAMP_1T", "CAMP_1W", "REPAIRCONSOLE", "TOP_ROOF", "CAMP_1I"};
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -1340,12 +1599,118 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedModel == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_6A;
-					m_CurrentLayerName = TEXT("Layer_Deco");
+					m_CurrentLayerName = TEXT("Layer_VendingMachine");
 				}
 				else if (nSelectedModel == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_7A;
+					m_CurrentLayerName = TEXT("Layer_VendingMachine");
+				}
+				else if (nSelectedModel == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::POSTER_4D;
 					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Camps"))
+		{
+			if (ImGui::ListBox("##Camps", &nSelectedCamp, campNames, IM_ARRAYSIZE(campNames), 7))
+			{
+				if (nSelectedCamp == 0) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BASE_1A; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 1) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1B; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 2) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1D; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 3) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1E; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 4) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1F; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 5) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1G; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 6) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1H; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 7) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1J; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 8) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1K; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 9) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1L; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 10) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1M; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 11) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1N; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 12) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1R; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 13) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1S; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 14) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1T; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 15) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1W; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 16) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::REPAIRCONSOLE; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 17) 
+				{ 
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TOP_ROOF; 
+					m_CurrentLayerName = TEXT("Layer_Deco"); 
+				}
+				else if (nSelectedCamp == 18)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1I;
+					m_CurrentLayerName = TEXT("Layer_Chair");
 				}
 			}
 		}
@@ -1727,6 +2092,9 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Iron_Floor")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Deco")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Chair")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_VendingMachine")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Desert_Tree")))) return S_OK; 
 
 	ofs.close();
 

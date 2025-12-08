@@ -168,8 +168,6 @@ private:
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
 	ID3D11Buffer* m_pBoneSource = { nullptr };
-	ID3D11Buffer* m_pChannelSource = { nullptr };
-	ID3D11Buffer* m_pKeyFrameSource = { nullptr };
 	ID3D11Buffer* m_pOutSource = { nullptr };
 	ID3D11Buffer* m_pRootSource = { nullptr };
 	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };

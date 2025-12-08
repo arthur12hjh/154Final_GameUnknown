@@ -91,6 +91,9 @@ void CBossController::Damage(void* pArg)
             // 나중에 여러 속성 추가할 예정
             const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
+            if (nullptr == pDamageSKillDesc)
+                return;
+
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
                 pBossBlackBoard->SetAttackDelay(1.5f);

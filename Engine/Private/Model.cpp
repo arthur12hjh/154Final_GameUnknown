@@ -27,8 +27,6 @@ CModel::CModel(const CModel& Prototype)
     , m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
     , m_AnimationIndexMap{ Prototype.m_AnimationIndexMap }
     , m_pBoneSource{ nullptr }
-    , m_pChannelSource{ nullptr }
-    , m_pKeyFrameSource{ nullptr }
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
@@ -1604,7 +1602,7 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
         _uint iInputIndices[1] = { 0 };
         m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);
     }
-
+    
     _uint iGroupCount = (m_Bones.size() + 127) / 128;
 
     m_pComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
@@ -1868,10 +1866,9 @@ void CModel::Free()
     m_GlobalOffsetMatrices.clear();
 
     Safe_Release(m_pBoneSource);
-    Safe_Release(m_pChannelSource);
-    Safe_Release(m_pKeyFrameSource);
     Safe_Release(m_pOutReadBack);
     //Safe_Release(m_pOutSource);
+    //Safe_Release(m_pRootSource);
     Safe_Release(m_pPreBoneMatrices);
     Safe_Release(m_pLerpBoneMatrices);
 
