@@ -233,6 +233,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Player_Test.h" />
     <ClInclude Include="..\Public\Reed.h" />
+    <ClInclude Include="..\public\RepairConsole.h" />
     <ClInclude Include="..\public\Rock.h" />
     <ClInclude Include="..\Public\Rock1.h" />
     <ClInclude Include="..\Public\Rock2.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="..\Public\TombStone.h" />
     <ClInclude Include="..\Public\TombStoneBase1.h" />
     <ClInclude Include="..\Public\TombStoneBase2.h" />
+    <ClInclude Include="..\public\Top_Roof.h" />
     <ClInclude Include="..\public\VendingMachine.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Map_Editor.h" />
@@ -354,6 +356,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Player_Test.cpp" />
     <ClCompile Include="..\Private\Reed.cpp" />
+    <ClCompile Include="..\private\RepairConsole.cpp" />
     <ClCompile Include="..\private\Rock.cpp" />
     <ClCompile Include="..\Private\Rock1.cpp" />
     <ClCompile Include="..\Private\Rock2.cpp" />
@@ -381,6 +384,7 @@
     <ClCompile Include="..\Private\TombStone.cpp" />
     <ClCompile Include="..\Private\TombStoneBase1.cpp" />
     <ClCompile Include="..\Private\TombStoneBase2.cpp" />
+    <ClCompile Include="..\private\Top_Roof.cpp" />
     <ClCompile Include="..\private\VendingMachine.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
   </ItemGroup>

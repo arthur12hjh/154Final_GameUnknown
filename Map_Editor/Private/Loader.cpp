@@ -81,6 +81,8 @@
 #include "Desert_Tree.h"
 #include "Chair.h"
 #include "VendingMachine.h"
+#include "RepairConsole.h"
+#include "Top_Roof.h"
 #pragma endregion
 
 
@@ -1288,7 +1290,7 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 	/* For.Prototype_Component_Model_Poster_4D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Poster/Poster_4D.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Poster/Poster_4D.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1338,109 +1340,142 @@ HRESULT CLoader::Loading_For_Desert_Deco_Camp(void* pArg)
 	// --- CAMP_1B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1B");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1B.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1D
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1D.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1D.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1E
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1E.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1E.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1F
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1F.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1F.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1G
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1G");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1G.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1G.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1H
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1H");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1H.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1H.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1I
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1I");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1I.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1I.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1J
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1J");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1J.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1J.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1K
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1K");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1K.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1K.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1L
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1L");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1L.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1L.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1M
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1M");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1M.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1N
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1N");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1N.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1R
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1R");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1R.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1S
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1S");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1S.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1T
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1T");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1T.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- Camp_1W
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Camp_1W");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Camp_1W.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- REPAIRCONSOLE
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_RepairConsole");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/RepairConsole.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TOP_ROOF
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Top_Roof");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Maps/Desert/Deco/Camp/Top_Roof.fbx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	if (nullptr == pProtoDesc.pPrototype) 
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	/* For.Prototype_GameObject_RepairConsole */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_RepairConsole");
+	pProtoDesc.pPrototype = CRepairConsole::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Top_Roof */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Top_Roof");
+	pProtoDesc.pPrototype = CTop_Roof::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
@@ -1513,7 +1548,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_E */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Floor_DDS/Floor7_E.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Floor/Floor7_E.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1568,320 +1603,320 @@ HRESULT CLoader::Loading_For_Desert_Environment_Tree1(void* pArg)
 	/* For.Prototype_Component_Model_Tree_1A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_1A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree1_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree1_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_2A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_2A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree2_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree2_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_3A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_3A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree3_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree3_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_4A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_4A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree4_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree4_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_5B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_5B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree5_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree5_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_5C
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_5C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree5_C.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree5_C.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_6A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_6A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree6_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree6_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_6B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_6B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree6_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree6_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_7A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_7A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree7_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree7_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_7B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_7B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree7_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree7_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_8A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_8A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree8_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree8_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_8Aa
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_8Aa");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree8_Aa.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree8_Aa.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_8B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_8B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree8_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree8_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_8Ba
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_8Ba");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree8_Ba.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree8_Ba.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_10A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_10A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree10_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree10_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_11B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_11B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree11_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree11_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_15A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_15A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree15_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree15_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_15B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_15B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree15_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree15_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_16A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_16A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree16_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree16_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_17A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_17A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree17_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree17_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_18A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_18A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree18_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree18_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_19A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_19A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree19_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree19_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_20A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_20A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree20_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree20_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_21A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_21A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree21_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree21_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_23A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_23A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree23_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree23_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_25A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_25A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree25_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree25_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_26A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_26A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree26_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree26_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_27A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_27A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree27_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree27_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_29A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_29A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree29_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree29_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_30A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_30A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree30_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree30_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_31A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_31A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree31_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree31_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_32A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_32A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree32_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree32_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_33A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_33A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree33_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree33_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_34A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_34A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree34_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree34_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40C
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_C.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_C.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40D
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_D.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_D.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40E
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_E.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_E.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40F
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_F.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_F.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40G
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40G");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_G.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_G.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40H
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40H");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_H.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_H.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40I
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40I");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_I.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_I.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_40J
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_40J");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree40_J.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree40_J.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_42A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_42A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree42_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree42_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_43A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_43A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree43_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree43_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_43B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_43B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree43_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree43_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_44A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_44A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree44_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree44_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_44B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_44B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree44_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree44_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_44D
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_44D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree44_D.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree44_D.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_44F
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_44F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree44_F.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree44_F.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_45A
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_45A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree45_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree45_A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_45B
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_45B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree45_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree45_B.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	// --- TREE_45C
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tree_45C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree45_C.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Tree/Tree45_C.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
@@ -2400,7 +2435,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_52A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_52A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_52A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_52A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2408,7 +2443,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_55A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_55A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_55A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_55A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2416,7 +2451,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_58A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_58A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_58A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_58A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2424,7 +2459,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_59A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_59A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_59A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_59A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2433,7 +2468,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_60A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_60A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_60A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_60A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2442,7 +2477,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_61A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_61A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_61A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_61A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2450,7 +2485,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_65A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_65A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_65A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_65A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2458,7 +2493,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_66A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_66A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_66A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_66A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2474,7 +2509,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_69A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_69A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_69A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_69A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2482,7 +2517,7 @@ HRESULT CLoader::Loading_For_Desert_Canyon1_1(void* pArg)
 	/* For.Prototype_Component_Model_Canyon_71A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_71A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_71A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Environment/Canyon/Canyon_71A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
