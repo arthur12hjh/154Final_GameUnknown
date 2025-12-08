@@ -3,15 +3,15 @@
 #include "QuadTree.h"
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CVIBuffer { pDevice, pContext }
+	: CVIBuffer{ pDevice, pContext }
 {
 }
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& Prototype)
-	: CVIBuffer { Prototype }
-	, m_iNumVerticesX { Prototype.m_iNumVerticesX }
-	, m_iNumVerticesZ { Prototype.m_iNumVerticesZ }
-	, m_pQuadTree { Prototype.m_pQuadTree }
+	: CVIBuffer{ Prototype }
+	, m_iNumVerticesX{ Prototype.m_iNumVerticesX }
+	, m_iNumVerticesZ{ Prototype.m_iNumVerticesZ }
+	, m_pQuadTree{ Prototype.m_pQuadTree }
 {
 	Safe_AddRef(m_pQuadTree);
 }
@@ -57,7 +57,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 
 	m_iNumIndices = (m_iNumVerticesX - 1) * (m_iNumVerticesZ - 1) * 2 * 3;
 	m_iIndexStride = 4;
-	
+
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_ePrimitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -70,7 +70,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	VBDesc.StructureByteStride = m_iVertexStride;
 	//VBDesc.CPUAccessFlags = 0;
 	VBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	VBDesc.MiscFlags = 0; 
+	VBDesc.MiscFlags = 0;
 
 	VTXNORTEX* pVertices = new VTXNORTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXNORTEX) * m_iNumVertices);
@@ -91,7 +91,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	}
 
 	D3D11_SUBRESOURCE_DATA	InitialVBData{};
-	InitialVBData.pSysMem = pVertices;	
+	InitialVBData.pSysMem = pVertices;
 #pragma endregion
 
 #pragma region INDEX_BUFFER
@@ -116,7 +116,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 			_uint		iIndex = i * m_iNumVerticesX + j;
 
 			_uint		iIndices[4] = {
-				iIndex + m_iNumVerticesX, 
+				iIndex + m_iNumVerticesX,
 				iIndex + m_iNumVerticesX + 1,
 				iIndex + 1,
 				iIndex
@@ -170,7 +170,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	Safe_Delete_Array(pIndices);
 
 	Safe_Delete_Array(pPixels);
-	CloseHandle(hFile);	
+	CloseHandle(hFile);
 
 	m_pQuadTree = CQuadTree::Create(m_iNumVerticesX * m_iNumVerticesZ - m_iNumVerticesX, m_iNumVerticesX * m_iNumVerticesZ - 1, m_iNumVerticesX - 1, 0);
 	if (nullptr == m_pQuadTree)
@@ -255,7 +255,7 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 
 	m_pQuadTree->Culling(m_pGameInstance, m_pVertexPositions, pIndices, &iNumIndices);
 
-	/* 
+	/*
 	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
 	{
 		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
@@ -267,7 +267,7 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 				iIndex + m_iNumVerticesX + 1,
 				iIndex + 1,
 				iIndex
-			};	
+			};
 
 			_bool		isIn[4] = {
 				m_pGameInstance->isIn_LocalFrustum(XMLoadFloat3(&m_pVertexPositions[iIndices[0]])),
@@ -449,15 +449,15 @@ void CVIBuffer_Terrain::Change_Height_Sculpt(_vector vPickingPos, _float fAmount
 {
 	_float fRadiusSq = fRadius * fRadius;
 
-    _float fMinX = XMVectorGetX(vPickingPos) - fRadius;
-    _float fMaxX = XMVectorGetX(vPickingPos) + fRadius;
-    _float fMinZ = XMVectorGetZ(vPickingPos) - fRadius;
-    _float fMaxZ = XMVectorGetZ(vPickingPos) + fRadius;
+	_float fMinX = XMVectorGetX(vPickingPos) - fRadius;
+	_float fMaxX = XMVectorGetX(vPickingPos) + fRadius;
+	_float fMinZ = XMVectorGetZ(vPickingPos) - fRadius;
+	_float fMaxZ = XMVectorGetZ(vPickingPos) + fRadius;
 
-    _uint iMinZ_Idx = (_uint)floorf(max(0.0f, fMinZ - 1.f));
-    _uint iMaxZ_Idx = (_uint)ceilf(min((_float)m_iNumVerticesZ - 1.f, fMaxZ + 1.f));
-    _uint iMinX_Idx = (_uint)floorf(max(0.0f, fMinX - 1.f));
-    _uint iMaxX_Idx = (_uint)ceilf(min((_float)m_iNumVerticesX - 1.f, fMaxX + 1.f));
+	_uint iMinZ_Idx = (_uint)floorf(max(0.0f, fMinZ - 1.f));
+	_uint iMaxZ_Idx = (_uint)ceilf(min((_float)m_iNumVerticesZ - 1.f, fMaxZ + 1.f));
+	_uint iMinX_Idx = (_uint)floorf(max(0.0f, fMinX - 1.f));
+	_uint iMaxX_Idx = (_uint)ceilf(min((_float)m_iNumVerticesX - 1.f, fMaxX + 1.f));
 
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
@@ -491,62 +491,62 @@ void CVIBuffer_Terrain::Change_Height_Sculpt(_vector vPickingPos, _float fAmount
 		pVertices[i].vNormal = _float3(0.f, 0.f, 0.f);
 		pVertices[i].vTexcoord = _float2(m_pVertexPositions[i].x / (m_iNumVerticesX - 1.f), m_pVertexPositions[i].z / (m_iNumVerticesZ - 1.f));
 	}
-    
-    // 노멀 재계산 (영역 한정)
-    for (size_t i = iMinZ_Idx; i < iMaxZ_Idx; i++)
-    {
-        for (size_t j = iMinX_Idx; j < iMaxX_Idx; j++)
-        {
-            _uint iIndex = i * m_iNumVerticesX + j;
-            
-            if (i + 1 >= m_iNumVerticesZ || j + 1 >= m_iNumVerticesX)
-                continue; 
 
-            _uint iIndices[4] = { iIndex + m_iNumVerticesX, iIndex + m_iNumVerticesX + 1, iIndex + 1, iIndex };
+	// 노멀 재계산 (영역 한정)
+	for (size_t i = iMinZ_Idx; i < iMaxZ_Idx; i++)
+	{
+		for (size_t j = iMinX_Idx; j < iMaxX_Idx; j++)
+		{
+			_uint iIndex = i * m_iNumVerticesX + j;
 
-            // 삼각형 1 (iIndices[0], iIndices[1], iIndices[2])
-            _vector vPos0 = XMLoadFloat3(&m_pVertexPositions[iIndices[0]]);
-            _vector vPos1 = XMLoadFloat3(&m_pVertexPositions[iIndices[1]]);
-            _vector vPos2 = XMLoadFloat3(&m_pVertexPositions[iIndices[2]]);
-            
-            _vector vSourDir1 = vPos1 - vPos0;
-            _vector vDestDir1 = vPos2 - vPos1;
-            _vector vNormal1 = XMVector3Normalize(XMVector3Cross(vSourDir1, vDestDir1));
+			if (i + 1 >= m_iNumVerticesZ || j + 1 >= m_iNumVerticesX)
+				continue;
 
-            XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal1);
-            XMStoreFloat3(&pVertices[iIndices[1]].vNormal, XMLoadFloat3(&pVertices[iIndices[1]].vNormal) + vNormal1);
-            XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal1);
+			_uint iIndices[4] = { iIndex + m_iNumVerticesX, iIndex + m_iNumVerticesX + 1, iIndex + 1, iIndex };
 
-            // 삼각형 2 (iIndices[0], iIndices[2], iIndices[3])
-            _vector vPos3 = XMLoadFloat3(&m_pVertexPositions[iIndices[3]]);
-            
-            _vector vSourDir2 = vPos2 - vPos0;
-            _vector vDestDir2 = vPos3 - vPos2;
-            _vector vNormal2 = XMVector3Normalize(XMVector3Cross(vSourDir2, vDestDir2));
+			// 삼각형 1 (iIndices[0], iIndices[1], iIndices[2])
+			_vector vPos0 = XMLoadFloat3(&m_pVertexPositions[iIndices[0]]);
+			_vector vPos1 = XMLoadFloat3(&m_pVertexPositions[iIndices[1]]);
+			_vector vPos2 = XMLoadFloat3(&m_pVertexPositions[iIndices[2]]);
 
-            XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal2);
-            XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal2);
-            XMStoreFloat3(&pVertices[iIndices[3]].vNormal, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal2);
-        }
-    }
+			_vector vSourDir1 = vPos1 - vPos0;
+			_vector vDestDir1 = vPos2 - vPos1;
+			_vector vNormal1 = XMVector3Normalize(XMVector3Cross(vSourDir1, vDestDir1));
 
-    // 노멀 벡터 정규화 (영역 한정)
-    for (size_t i = iMinZ_Idx; i <= iMaxZ_Idx; i++)
-    {
-        for (size_t j = iMinX_Idx; j <= iMaxX_Idx; j++)
-        {
-            _uint iIndex = i * m_iNumVerticesX + j;
-            XMStoreFloat3(&pVertices[iIndex].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[iIndex].vNormal)));
-        }
-    }
-    
-    // Vertex Buffer 업데이트 (Map/Unmap 사용)
-    D3D11_MAPPED_SUBRESOURCE	SubResource{};
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[1]].vNormal, XMLoadFloat3(&pVertices[iIndices[1]].vNormal) + vNormal1);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal1);
+
+			// 삼각형 2 (iIndices[0], iIndices[2], iIndices[3])
+			_vector vPos3 = XMLoadFloat3(&m_pVertexPositions[iIndices[3]]);
+
+			_vector vSourDir2 = vPos2 - vPos0;
+			_vector vDestDir2 = vPos3 - vPos2;
+			_vector vNormal2 = XMVector3Normalize(XMVector3Cross(vSourDir2, vDestDir2));
+
+			XMStoreFloat3(&pVertices[iIndices[0]].vNormal, XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[2]].vNormal, XMLoadFloat3(&pVertices[iIndices[2]].vNormal) + vNormal2);
+			XMStoreFloat3(&pVertices[iIndices[3]].vNormal, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal2);
+		}
+	}
+
+	// 노멀 벡터 정규화 (영역 한정)
+	for (size_t i = iMinZ_Idx; i <= iMaxZ_Idx; i++)
+	{
+		for (size_t j = iMinX_Idx; j <= iMaxX_Idx; j++)
+		{
+			_uint iIndex = i * m_iNumVerticesX + j;
+			XMStoreFloat3(&pVertices[iIndex].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[iIndex].vNormal)));
+		}
+	}
+
+	// Vertex Buffer 업데이트 (Map/Unmap 사용)
+	D3D11_MAPPED_SUBRESOURCE	SubResource{};
 
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 	VTXNORTEX* pMappedVertices = static_cast<VTXNORTEX*>(SubResource.pData);
 
-    memcpy(pMappedVertices, pVertices, sizeof(VTXNORTEX) * m_iNumVertices);
+	memcpy(pMappedVertices, pVertices, sizeof(VTXNORTEX) * m_iNumVertices);
 
 	m_pContext->Unmap(m_pVB, 0);
 

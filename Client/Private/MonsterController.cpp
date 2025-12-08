@@ -110,6 +110,7 @@ HRESULT CMonsterController::Render()
 
 void CMonsterController::Damage(void* pDesc)
 {
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
 
 	auto pAttackState = dynamic_cast<CMonsterAttackState *>(m_pFSM->GetCurrentState());
@@ -133,20 +134,22 @@ void CMonsterController::Damage(void* pDesc)
 			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
 				AttackCompleted(1.5f);
-				if (0 >= m_pOwnerData->iCurrentStemina)
+				if (0 >= m_pOwnerData->iCurrentStamina)
 				{
 					// 여기서 그로기 타임 주고 설정
 					// 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
 					// 원작은 뒤로 물러나면서 들어가는거 같음
 					bIsHitAble = false;
-					m_pFSM->Change_State(TEXT("Groogy"));
+					m_pFSM->Change_State(TEXT("Groggy"), nullptr, true);
+				}
+				else
+				{
+					if (false == pNayitba->bIsHitReaction())
+						bIsHitAble = false;
 				}
 			}
 			else
 			{
-				if (CMonsterFSM::MONSTER_STATE::GROOGY == m_pFSM->GetMonsterState())
-					bIsHitAble = false;
-
 				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
 					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -156,6 +159,8 @@ void CMonsterController::Damage(void* pDesc)
 				}
 			}
 		}
+		else if (CMonsterFSM::MONSTER_STATE::GROGGY == m_pFSM->GetMonsterState())
+			bIsHitAble = false;
 
 		if (bIsHitAble)
 		{

@@ -2,13 +2,13 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D g_Texture;
-texture2D g_Texture0;
-texture2D g_Texture1;
-texture2D g_Texture2;
-texture2D g_Texture3;
-texture2D g_Texture4;
-texture2D g_DepthTexture;
+Texture2D g_Texture;
+Texture2D g_Texture0;
+Texture2D g_Texture1;
+Texture2D g_Texture2;
+Texture2D g_Texture3;
+Texture2D g_Texture4;
+Texture2D g_DepthTexture;
 
 vector g_Color = 1.f;
 
@@ -70,6 +70,50 @@ BlendState BS_Additive
 
     RenderTargetWriteMask[0] = 0x0F; // RGBA 쓰기 가능
 };
+
+BlendState BS_AddAlpha
+{
+    BlendEnable[0] = true;
+    SrcBlend = SRC_ALPHA;
+    DestBlend = INV_SRC_ALPHA;
+    BlendOp = ADD;
+    SrcBlendAlpha = ONE;
+    DestBlendAlpha = ZERO;
+    BlendOpAlpha = ADD;
+};
+
+BlendState BS_Premultiplied
+{
+    BlendEnable[0] = TRUE;
+
+    SrcBlend = ONE;
+    DestBlend = INV_SRC_ALPHA;
+    BlendOp = ADD;
+
+    SrcBlendAlpha = ONE;
+    DestBlendAlpha = INV_SRC_ALPHA;
+    BlendOpAlpha = ADD;
+
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
+BlendState BS_AlphaGlow
+{
+    BlendEnable[0] = TRUE;
+
+    // Color = Additive
+    SrcBlend = ONE;
+    DestBlend = ONE;
+    BlendOp = ADD;
+
+    // Alpha = Standard AlphaBlend
+    SrcBlendAlpha = SRC_ALPHA;
+    DestBlendAlpha = INV_SRC_ALPHA;
+    BlendOpAlpha = ADD;
+
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
 
 /*------------------[S_DEBUG]---------------*/
 
@@ -786,27 +830,7 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
 /*------------------[S_RUSH_SLOT_GLOW]----------------*/
 
 PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
-{
-    //PS_OUT Out;
-  
-    //float2 uv = In.vTexcoord;
-
-    ////float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
-    
-    //float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
-    
-    //if(g_bUseGlow)
-    //{
-    //    glow0.rgb += glow0.rgb * g_GlowIntensity;
-    //    glow0.rgb *= glow0.a * 0.5;
-    //}
-    
-    //float4 result = glow0;
-    
-    //Out.vColor = result;
-    
-    //return Out;
-    
+{    
     PS_OUT Out;
   
     float2 uv = In.vTexcoord;
@@ -1035,8 +1059,6 @@ PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
     glow.a *= g_Alpha * 0.5f;
     result += glow.rgb * glow.a * (g_GlowIntensity * 0.5f);
     
-    float4 Color = float4(1.f, 1.f, 1.f, 1.f);
-    
     // LightFX의 "빛나는 부분" 추가
     flare.a *= g_Alpha;
     result += flare.rgb * flare.a * g_GlowIntensity;
@@ -1047,11 +1069,141 @@ PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
 
 /*------------------[E_INTERACTION_FX_GLOW]----------------*/
 
+/*------------------[S_STAMINA]----------------*/
+
+PS_OUT PS_STAMINA(PS_IN In)
+{
+    PS_OUT Out;
+    Out.vColor = float4(0, 0, 0, 0);
+
+    float2 uv = In.vTexcoord;
+
+    int tileCount = g_GroupCount;
+
+// 타일 폭 (GAP 반영)
+    float tileWidth = (1.0 - g_UVGap * (tileCount - 1)) / tileCount;
+
+// 현재 픽셀의 타일 찾기
+    int tileIndex = -1;
+    float start = 0;
+    float end = tileWidth;
+
+    for (int i = 0; i < tileCount; i++)
+    {
+        if (uv.x >= start && uv.x < end)
+        {
+            tileIndex = i;
+            break;
+        }
+
+        start = end + g_UVGap;
+        end = start + tileWidth;
+    }
+
+    if (tileIndex < 0)
+    {
+        Out.vColor = float4(0, 0, 0, 0);
+        return Out;
+    }
+
+//-----------------------------------------------
+// tileUV (GAP 고려된 로컬 UV)
+//-----------------------------------------------
+    float2 tileUV;
+    tileUV.x = (uv.x - start) / tileWidth;
+    tileUV.y = uv.y;
+
+//-----------------------------------------------
+// BG Only Scale 0.5
+//-----------------------------------------------
+    float2 bgUV = tileUV;
+
+    bgUV -= float2(0.5f, 0.5f);
+    bgUV /= 0.75f;
+    bgUV += float2(0.5f, 0.5f);
+
+    float4 bg = g_Texture0.Sample(ClampSampler, bgUV);
+
+//-----------------------------------------------
+// FG normal
+//-----------------------------------------------
+    float filledTiles = g_fFillAmount * tileCount;
+
+    int fullTiles = (int) filledTiles;
+    float partial = filledTiles - fullTiles;
+
+    float4 fg = float4(0, 0, 0, 0);
+
+    bool isFull = (tileIndex < fullTiles);
+    bool isPart = (tileIndex == fullTiles);
+
+    if (isFull)
+    {
+        float4 mask = g_Texture1.Sample(DefaultSampler, tileUV);
+        float4 tint = g_Texture2.Sample(DefaultSampler, float2(0.5f, 0.5f));
+        fg = mask * tint;
+    }
+    else if (isPart)
+    {
+        if (tileUV.x < partial)
+        {
+            float4 mask = g_Texture1.Sample(DefaultSampler, tileUV);
+            float4 tint = g_Texture2.Sample(DefaultSampler, float2(0.5f, 0.5f));
+            fg = mask * tint;
+        }
+    }
+
+    Out.vColor = lerp(bg, fg, fg.a);
+    return Out;
+}
+
+/*------------------[E_STAMINA]----------------*/
+
+/*------------------[S_STAMINA_FX]----------------*/
+
+PS_OUT PS_STAMINA_FX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+
+    float2 ScaleUV = In.vTexcoord;
+    ScaleUV -= float2(0.5f, 0.5f);
+    ScaleUV /= g_fScale;
+    ScaleUV += float2(0.5f, 0.5f);
+
+    float2 GlowUV = In.vTexcoord;
+    GlowUV -= float2(0.5f, 0.5f);
+    GlowUV *= 2.f;
+    GlowUV += float2(0.5f, 0.5f);
+
+// 텍스쳐 샘플링
+    float4 Glow = g_Texture0.Sample(ClampSampler, ScaleUV);
+    //float4 OutLine = g_Texture1.Sample(ClampSampler, ScaleUV);
+
+    Glow.rgb += Glow.rgb * (g_GlowIntensity * 2.f);
+    Glow.rgb *= Glow.a;
+
+    //OutLine.rgb += OutLine.rgb * g_GlowIntensity;
+    //OutLine.rgb *= OutLine.a;
+
+    //float4 result = lerp(Glow, OutLine, OutLine.a);
+
+    //Glow.rgb += OutLine.rgb;
+    //Glow.a *= OutLine.a;
+    
+    Out.vColor.rgb = Glow.rgb * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_STAMINA_FX]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1249,5 +1401,25 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_INTERACTION_FX_GLOW();
+    }
+
+    pass STAMINA // 19
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_STAMINA();
+    }
+
+    pass STAMINA_FX // 20
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_STAMINA_FX();
     }
 }

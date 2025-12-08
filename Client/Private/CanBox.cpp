@@ -44,15 +44,19 @@ void CCanBox::Priority_Update(_float fTimeDelta)
 
 void CCanBox::Update(_float fTimeDelta)
 {
-    switch (m_eInterState)
+    if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
     {
-    case INTERACTION_STATE::ACTIVE:
-        m_pModelCom->Play_Animation(fTimeDelta);
-        break;
-    default :
-        m_pModelCom->Play_Animation(0.f);
-        break;
+        switch (m_eInterState)
+        {
+        case INTERACTION_STATE::ACTIVE:
+            m_pModelCom->Play_Animation(fTimeDelta);
+            break;
+        default:
+            m_pModelCom->Play_Animation(0.f);
+            break;
+        }
     }
+   
 }
 
 void CCanBox::Late_Update(_float fTimeDelta)

@@ -780,7 +780,7 @@ _bool CGameInstance::isIn_WorldFrustum(CCollider* pCollider)
 	return m_pFrustum->isIn_WorldFrustum(pCollider);
 }
 
-_bool CGameInstance::isIn_DistanceFrustum(_float3 vPoint, _float fDistance)
+_bool CGameInstance::isIn_DistanceFrustum(_vector vPoint, _float fDistance)
 {
 	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
 }

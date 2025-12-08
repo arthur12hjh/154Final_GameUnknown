@@ -159,9 +159,9 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
-_bool CFrustum::isIn_DistanceFrustum(_float3 vPoint, _float fDistance)
+_bool CFrustum::isIn_DistanceFrustum(_vector vPoint, _float fDistance)
 {
-	_float fLength = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_vCamPos) - XMLoadFloat3(&vPoint)));
+	_float fLength = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_vCamPos) - vPoint));
 	if (fLength < fDistance)
 		return true;
 

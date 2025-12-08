@@ -112,6 +112,8 @@ HRESULT CMonsterMimesisController::Render()
 void CMonsterMimesisController::Damage(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	auto pAttackState = dynamic_cast<CMonsterAttackState*>(m_pFSM->GetCurrentState());
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
@@ -133,7 +135,7 @@ void CMonsterMimesisController::Damage(void* pArg)
 			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
 				AttackCompleted(1.5f);
-				if (0 >= m_pOwnerData->iCurrentStemina)
+				if (0 >= m_pOwnerData->iCurrentStamina)
 				{
 					// 여기서 그로기 타임 주고 설정
 					// 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
@@ -141,12 +143,14 @@ void CMonsterMimesisController::Damage(void* pArg)
 					bIsHitAble = false;
 					m_pFSM->Change_State(TEXT("Groggy"), nullptr, true);
 				}
+				else
+				{
+					if (false == pNayitba->bIsHitReaction())
+						bIsHitAble = false;
+				}
 			}
 			else
 			{
-				if (CMonsterFSM::MONSTER_STATE::GROOGY == m_pFSM->GetMonsterState())
-					bIsHitAble = false;
-
 				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 				{
 					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
@@ -156,6 +160,8 @@ void CMonsterMimesisController::Damage(void* pArg)
 				}
 			}
 		}
+		else if (CMonsterFSM::MONSTER_STATE::GROGGY == m_pFSM->GetMonsterState())
+			bIsHitAble = false;
 
 		if (bIsHitAble)
 		{

@@ -48,7 +48,7 @@
                         "fRotation": 0.0,
                         "fSizeX": 45.0,
                         "fSizeY": 64.28571319580078,
-                        "fX": -800.0,
+                        "fX": 0.0,
                         "fY": 0.0,
                         "iDepth": 6,
                         "iDrawType": 2,
@@ -119,6 +119,59 @@
                 "szProtoTag": "Prototype_GameObject_UI_Monster_Shield",
                 "szUIID": "Vital_Wrapper_Monster_Shield_2-3",
                 "szUITag": "Monster_Shield"
+            },
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.0,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 50.0,
+                        "fSizeY": 50.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 3,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Stamina_FX",
+                                "szPrefabTag": "Stamina_FX"
+                            }
+                        ],
+                        "szLayerTag": "Layer_World",
+                        "szProtoTag": "Prototype_GameObject_UI_Monster_StaminaFX",
+                        "szUIID": "Monster_Stamina_MonsterStaminaFX_3-1",
+                        "szUITag": "Monster_StaminaFX"
+                    }
+                ],
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 21.0,
+                "fRotation": 0.0,
+                "fSizeX": 58.0,
+                "fSizeY": 10.0,
+                "fX": 0.0,
+                "fY": 0.0,
+                "iDepth": 2,
+                "iDrawType": 2,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 1,
+                "szLayerTag": "Layer_Boss",
+                "szProtoTag": "Prototype_GameObject_UI_Monster_Stamina",
+                "szUIID": "Vital_Wrapper_Stamina_2-4",
+                "szUITag": "Monster_Stamina"
             },
             {
                 "TextureDesc": {

@@ -32,6 +32,7 @@ private :
 	_int								m_CurPatternIndex = {};
 
 	_float								m_fMaxDelayTime = {};
+	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
 	_float3								m_fAttackMoveDir = {};
 	

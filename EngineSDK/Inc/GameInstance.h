@@ -184,7 +184,7 @@ public:
 	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
-	_bool				isIn_DistanceFrustum(_float3 vPoint, _float fDistance);
+	_bool				isIn_DistanceFrustum(_vector vPoint, _float fDistance);
 
 
 #ifdef _DEBUG
