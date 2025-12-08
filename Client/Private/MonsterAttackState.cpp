@@ -97,6 +97,7 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 void CMonsterAttackState::End()
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	
 	pEntity->SetAttackData(nullptr);
 }
 
@@ -378,7 +379,7 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 	if (1.f >= m_fDistance - m_pSkillData->fRange)
 		return;
 	
-	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange) * m_fMoveAnimMaxRatio / fAnimPlayRatio;
+	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
 	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }

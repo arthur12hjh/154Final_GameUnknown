@@ -42,6 +42,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
+    vAttackerPos.m128_f32[1] = vOwnerPos.m128_f32[1] = 0.f;
     _vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
     m_bIsEnableChange = false;
     if (pDesc->bIsHitMotion)
@@ -65,12 +66,25 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
             }
             else
                 szAnimationName += "_Bw";
+
+            XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+            m_fImpactForce = 3.f;
+
+            /*if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
+            {
+                
+            }
+            else
+            {
+                m_vImpactDir = pDesc->vImpactDir;
+                m_fImpactForce = pDesc->fImpactForce;
+            }*/
         }
         else
         {
             szAnimationName = pSkillData->szHitAnimationName;
         }
-        pEntity->Set_Animation(szAnimationName.c_str(), false, 1.5f, 0.12f, true);
+        pEntity->Set_Animation(szAnimationName.c_str(), false, 1.2f, 0.12f, true);
     }
     else
     {
@@ -79,37 +93,31 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         pEntity->Set_Animation(szAnimationName.c_str(), false, 0.3f, 0.08f, true, 4.f, 0.f);
     }
     
-    if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
-    {
-        XMStoreFloat3(&m_vImpactDir, XMVectorZero());
-        m_fImpactForce = 0.f;
-    }
-    else
-    {
-        m_vImpactDir = pDesc->vImpactDir;
-        m_fImpactForce = pDesc->fImpactForce;
-    }
+ 
 }
 
 void CMonsterHitState::Update(_float fTimeDelta)
 {
     //맞으면 여기서 들어온 스킬 따라서 분기해서 하기
     auto pEntity = static_cast<CNayitba*>(m_pOwner);
- 
+    auto pAnimationRatio = pEntity->Get_AnimationRatio();
+
+    if (0.5f >= pAnimationRatio)
+        m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
+
     if (pEntity->Play_Animation(fTimeDelta))
     {
         m_bIsFinished = true;
         m_bIsEnableChange = true;
     }
-    else
-    {
-        m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
-    }
+  
        
 }
 
 void CMonsterHitState::End()
 {
+    XMStoreFloat3(&m_vImpactDir, XMVectorZero());
+    m_fImpactForce = 0;
     m_bIsFinished = false;
     m_bIsGroggy = false;
     m_iSectionIndex = 0;
