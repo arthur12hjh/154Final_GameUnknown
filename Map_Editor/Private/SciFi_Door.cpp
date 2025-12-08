@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Top_Roof.h"
+#include "SciFi_Door.h"
 #include "GameInstance.h"
 
-CTop_Roof::CTop_Roof(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSciFi_Door::CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CDesertObject{ pDevice, pContext }
 {
 }
 
-CTop_Roof::CTop_Roof(const CTop_Roof& Prototype)
+CSciFi_Door::CSciFi_Door(const CSciFi_Door& Prototype)
 	: CDesertObject{ Prototype }
 {
 }
 
-HRESULT CTop_Roof::Initialize_Prototype()
+HRESULT CSciFi_Door::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CTop_Roof::Initialize(void* pArg)
+HRESULT CSciFi_Door::Initialize(void* pArg)
 {
 
 	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
@@ -33,28 +33,28 @@ HRESULT CTop_Roof::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
-	m_eCurState = START;
+	m_eCurState = OPEN;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
 	return S_OK;
 }
 
-void CTop_Roof::Priority_Update(_float fTimeDelta)
+void CSciFi_Door::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CTop_Roof::Update(_float fTimeDelta)
+void CSciFi_Door::Update(_float fTimeDelta)
 {
 	if (m_eCurState != m_ePrevState)
 	{
 
 		switch (m_eCurState)
 		{
-		case IDLE:
-			m_pModelCom->Set_AnimationIndex(IDLE, false, 0.f);
+		case OPEN:
+			m_pModelCom->Set_AnimationIndex(OPEN, false, 0.f);
 			break;
-		case START:
-			m_pModelCom->Set_AnimationIndex(START, true, 0.f);
+		case CLOSE:
+			m_pModelCom->Set_AnimationIndex(CLOSE, true, 0.f);
 			break;
 		}
 
@@ -66,13 +66,13 @@ void CTop_Roof::Update(_float fTimeDelta)
 	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
-void CTop_Roof::Late_Update(_float fTimeDelta)
+void CSciFi_Door::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
-HRESULT CTop_Roof::Render()
+HRESULT CSciFi_Door::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -103,7 +103,7 @@ HRESULT CTop_Roof::Render()
 	return S_OK;
 }
 
-HRESULT CTop_Roof::Ready_Components(const _tchar* pComponentTag)
+HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), pComponentTag,
@@ -119,7 +119,7 @@ HRESULT CTop_Roof::Ready_Components(const _tchar* pComponentTag)
 	return S_OK;
 }
 
-HRESULT CTop_Roof::Bind_ShaderResources()
+HRESULT CSciFi_Door::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -133,9 +133,9 @@ HRESULT CTop_Roof::Bind_ShaderResources()
 	return S_OK;
 }
 
-CTop_Roof* CTop_Roof::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CSciFi_Door* CSciFi_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTop_Roof* pInstance = new CTop_Roof(pDevice, pContext);
+	CSciFi_Door* pInstance = new CSciFi_Door(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -146,20 +146,20 @@ CTop_Roof* CTop_Roof::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CDesertObject* CTop_Roof::Clone(void* pArg)
+CDesertObject* CSciFi_Door::Clone(void* pArg)
 {
-	CTop_Roof* pInstance = new CTop_Roof(*this);
+	CSciFi_Door* pInstance = new CSciFi_Door(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CTop_Roof");
+		MSG_BOX("Failed to Cloned : CSciFi_Door");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CTop_Roof::Free()
+void CSciFi_Door::Free()
 {
 	__super::Free();
 
