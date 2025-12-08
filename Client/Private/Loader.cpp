@@ -29,6 +29,10 @@
 #include "CameraBone_Player.h"
 #pragma endregion
 
+#pragma region MyRegion
+#include "Bullet_Rock.h"
+#pragma endregion
+
 #pragma region Monster
 
 #include "MonsterFSM.h"
@@ -2092,6 +2096,13 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	/* For.Prototype_Component_GorillaBehavior */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_GorillaBehaviorTree");
 	pProtoDesc.pPrototype = CGorillaBehaviorTree::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Bullet_Rock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_RockBullet");
+	pProtoDesc.pPrototype = CBullet_Rock::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

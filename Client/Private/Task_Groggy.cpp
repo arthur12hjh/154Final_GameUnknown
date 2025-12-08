@@ -97,4 +97,6 @@ CTask_Groggy* CTask_Groggy::Create(CBehaviorTree* pOwnerTree)
 void CTask_Groggy::Free()
 {
     __super::Free();
+
+    Safe_Release(m_pBlackBoard);
 }

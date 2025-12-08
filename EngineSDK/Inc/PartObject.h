@@ -18,7 +18,7 @@ protected:
 	virtual ~CPartObject() = default;
 
 public:
-	void Update_PreCombinedMatrix();
+	void	Update_PreCombinedMatrix();
 public:
 	virtual HRESULT			Initialize_Prototype();
 	virtual HRESULT			Initialize(void* pArg);
