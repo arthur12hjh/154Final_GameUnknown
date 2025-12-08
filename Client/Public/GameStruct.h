@@ -194,6 +194,8 @@ namespace Client
 
 		// Skill Hit Box Size
 		_float3						vHitBoxExtents;				// 스킬 히트박스 크기
+		_uint						iMaxComboCount;
+
 
 		// Attack Dir
 		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
@@ -234,7 +236,7 @@ namespace Client
 
 		long long			iMaxHealth;
 		long long			iMaxShield;
-		_uint				iMaxStemina;
+		_uint				iMaxStamina;
 		float				fMoveSpeed;
 
 		float				fAttackCoolTime;
@@ -251,7 +253,7 @@ namespace Client
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
-		_uint				iCurrentStemina;
+		_uint				iCurrentStamina;
 
 		_float3				vLockOnPoint;
 		_float3				vStatusBarPoint;
@@ -260,6 +262,7 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
+		_bool				m_bIsParryHitAble;
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];

@@ -503,6 +503,13 @@
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VendingMachine.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\VendingMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Chair.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CanBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -779,6 +786,13 @@
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VendingMachine.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\VendingMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chair.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CanBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Map_Editor.ico">

@@ -91,7 +91,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
         BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
-        BossDesc.iMaxStemina = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxStamina = atoi(BossDataList[i++].c_str());
         BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
 
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
@@ -118,7 +118,7 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 10; i < iMaxSize;)
+    for (auto i = 11; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
@@ -131,11 +131,11 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.vHitBoxExtents.x = atof(SkillDataList[i++].c_str());
         SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
         SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
+        SkillDesc.iMaxComboCount = atoi(SkillDataList[i++].c_str());
 
         SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
-
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
 

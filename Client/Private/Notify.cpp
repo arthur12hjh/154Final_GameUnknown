@@ -118,23 +118,12 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case Client::CNotify::SET_TRANSFORM:
 		return Notify_Set_Transform(AnimNotify);
 		break;
-	case Client::CNotify::SET_DYNAMICTRANSFORM:
-		return Notify_Set_DynamicTransform(AnimNotify);
-		break;
-	case Client::CNotify::SET_DELTATIMESPEED:
-		return Notify_Set_DeltaTimeSpeed(AnimNotify);
-		break;
-	case Client::CNotify::ADJUST_LIGHT:
-		return Notify_Adjust_Light(AnimNotify);
-		break;
-	case Client::CNotify::PLAY_SCREENSFX:
-		return Notify_Play_ScreenSFX(AnimNotify);
 		break;
 	case CNotify::ACTIVE_PARTOBJECT_COLLISION:
 		return Notify_Active_PartObject_Collision(AnimNotify);
 		break;
-	case Client::CNotify::UNDEFINED:
-		return Notify_Undefined(AnimNotify);
+	case CNotify::HIT_REACTION:
+		return Notify_Hit_Reaction(AnimNotify);
 		break;
 	case Client::CNotify::END:
 		return E_FAIL;
@@ -153,13 +142,10 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Play_Sound")					return PLAY_SOUND;
 	if (szNotifyTag == "Active_Collision")				return ACTIVE_COLLISION;
 	if (szNotifyTag == "Set_Transform")					return SET_TRANSFORM;
-	if (szNotifyTag == "Set_DynamicTransform")			return SET_DYNAMICTRANSFORM;
-	if (szNotifyTag == "Set_DeltaTimeSpeed")			return SET_DELTATIMESPEED;
-	if (szNotifyTag == "Adjust_Light")					return ADJUST_LIGHT;
-	if (szNotifyTag == "Play_ScreenSFX")				return PLAY_SCREENSFX;
 	if (szNotifyTag == "Active_PartObjectCollision")	return ACTIVE_PARTOBJECT_COLLISION; 
+	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;
 
-	return NOTIFY_TYPE::UNDEFINED;
+	return NOTIFY_TYPE::END;
 }
 
 HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
@@ -278,23 +264,9 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Set_DynamicTransform(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Hit_Reaction(ANIM_NOTIFY AnimNotify)
 {
-	return S_OK;
-}
-
-HRESULT CNotify::Notify_Set_DeltaTimeSpeed(ANIM_NOTIFY AnimNotify)
-{
-	return S_OK;
-}
-
-HRESULT CNotify::Notify_Adjust_Light(ANIM_NOTIFY AnimNotify)
-{
-	return S_OK;
-}
-
-HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
-{
+	m_pCharacter->CallNotify(HIT_REACTION, &AnimNotify);
 	return S_OK;
 }
 
@@ -309,10 +281,6 @@ HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Undefined(ANIM_NOTIFY AnimNotify)
-{
-	return S_OK;
-}
 
 CNotify* CNotify::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

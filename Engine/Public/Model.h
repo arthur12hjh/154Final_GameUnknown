@@ -121,6 +121,7 @@ public:
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
 	HRESULT Initialize_AnimationIndexMap();
+	HRESULT Initialize_AnimationBufferResource();
 
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
@@ -167,8 +168,6 @@ private:
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
 	ID3D11Buffer* m_pBoneSource = { nullptr };
-	ID3D11Buffer* m_pChannelSource = { nullptr };
-	ID3D11Buffer* m_pKeyFrameSource = { nullptr };
 	ID3D11Buffer* m_pOutSource = { nullptr };
 	ID3D11Buffer* m_pRootSource = { nullptr };
 	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
@@ -189,6 +188,9 @@ private:
 
 	vector<class CBone*>		m_Bones;
 	vector<_float4x4>			m_GlobalOffsetMatrices;
+
+	vector<ID3D11Buffer*>		m_pChannelBufferList;
+	vector<ID3D11Buffer*>		m_pKeyFrameBufferList;
 
 	_float4x4					m_PreRootMatrix{};
 	_float4x4					m_CurRootMatrix{};

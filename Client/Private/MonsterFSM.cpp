@@ -59,9 +59,9 @@ HRESULT CMonsterFSM::Change_State(const WCHAR* LayerTag, void* pArg, _bool bIsFo
 		}
 	}
 
-	iter->second->Start(pArg, m_pCurrentState);
 	if (m_pCurrentState)
 		m_pCurrentState->End();
+	iter->second->Start(pArg, m_pCurrentState);
 
 	m_pCurrentState = iter->second;
 	m_eMonsterState = MONSTER_STATE(m_pCurrentState->GetStateID());

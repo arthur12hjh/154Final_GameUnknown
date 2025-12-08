@@ -26,6 +26,9 @@ private:
 	string								m_szAnimationName = {};
 	const Default_Damage_Desc*			m_pHit_Data = { nullptr };
 
+	_float3								m_vImpactDir = {};
+	_float								m_fImpactForce = {};
+
 private :
 	void								Refresh_HitMotion();
 

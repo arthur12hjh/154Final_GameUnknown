@@ -1309,9 +1309,9 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Chair */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Chair");
-	pProtoDesc.pPrototype = CChair::Create(m_pDevice, m_pContext);
+	/* For.Prototype_GameObject_VendingMachine */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_VendingMachine");
+	pProtoDesc.pPrototype = CVendingMachine::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
