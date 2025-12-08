@@ -22,7 +22,7 @@ public:
 private:
 	//aiScene은 모델 정보를 갖는 파일, Assimp::Importer는 모델을 불러오는 객체이다.
 	//aiScene은 모든 모델 정보를 갖고 있기에 엄청나게 무겁다.
-	const aiScene* m_pAIScene = { nullptr };
+	aiScene* m_pAIScene = { nullptr };
 	Assimp::Importer		m_Importer;
 
 
