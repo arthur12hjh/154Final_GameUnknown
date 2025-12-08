@@ -709,6 +709,27 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy">
       <UniqueIdentifier>{bf0f5972-7a20-443a-a23d-a9d5e7419158}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Corpse">
+      <UniqueIdentifier>{20f513c8-c1ee-4331-a5bc-7bcbe0aadac6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Chair">
+      <UniqueIdentifier>{e9465ef8-b710-421c-87e6-fec954022839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\VendingMachine">
+      <UniqueIdentifier>{1a1adbf1-4207-485e-ae33-c5064bdf3229}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Door">
+      <UniqueIdentifier>{701e8900-8bbd-42db-818b-8490ef4a46f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\RepairConsole">
+      <UniqueIdentifier>{3f6dc9ba-9a6f-43a2-af3b-dec84398ffcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Top_Roof">
+      <UniqueIdentifier>{1cff9895-596c-4bb9-95b9-3cb5d10910fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Container">
+      <UniqueIdentifier>{d6e42e5b-06f0-4256-92f6-dc60f4455149}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1435,6 +1456,27 @@
     <ClInclude Include="..\public\Task_Groggy.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Corpse.h">
+      <Filter>02.GameObjects\Actor\Interaction\Corpse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Chair.h">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RepairConsole.h">
+      <Filter>02.GameObjects\Actor\Interaction\RepairConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VendingMachine.h">
+      <Filter>02.GameObjects\Actor\Interaction\VendingMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SciFi_Door.h">
+      <Filter>02.GameObjects\Actor\Interaction\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Container.h">
+      <Filter>02.GameObjects\Actor\Interaction\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Top_Roof.h">
+      <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2130,6 +2172,27 @@
     </ClCompile>
     <ClCompile Include="..\private\Task_Groggy.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Corpse.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Corpse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Chair.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Chair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SciFi_Door.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Top_Roof.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RepairConsole.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\RepairConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VendingMachine.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\VendingMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Container.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Container</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
