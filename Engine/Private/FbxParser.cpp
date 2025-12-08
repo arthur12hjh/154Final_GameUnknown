@@ -19,34 +19,36 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	binModel* pModel = new binModel;
 	_uint iFlag = {};
 
+	Assimp::Importer ImporterBuffer;
+
 	iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 
 	if (MODEL_TYPE::NONANIM == eType)
 		iFlag |= aiProcess_PreTransformVertices;
 
- 	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
-	if (nullptr == m_pAIScene)
+ 	auto pAIScene = ImporterBuffer.ReadFile(pModelFilePath, iFlag);
+	if (nullptr == pAIScene)
 		return E_FAIL;
 
 	// BINMODEL->iNumMaterials
-	pModel->iNumMaterials = m_pAIScene->mNumMaterials;
+	pModel->iNumMaterials = pAIScene->mNumMaterials;
 	// BINMODEL->iNumMeshes
-	pModel->iNumMeshes = m_pAIScene->mNumMeshes;
+	pModel->iNumMeshes = pAIScene->mNumMeshes;
 	// BINMODEL->iNumAnimations
-	pModel->iNumAnimations = m_pAIScene->mNumAnimations;
+	pModel->iNumAnimations = pAIScene->mNumAnimations;
 
 	if (true)
 	{
 		binNode RootNode;
 		// BINMODEL->BINNODE->iNumChildren
-		RootNode.iNumChildren = m_pAIScene->mRootNode->mNumChildren;
+		RootNode.iNumChildren = pAIScene->mRootNode->mNumChildren;
 		// BINMODEL->BINNODE->matTransformation
-		RootNode.matTransformation = XMFLOAT4X4(m_pAIScene->mRootNode->mTransformation.a1, m_pAIScene->mRootNode->mTransformation.a2, m_pAIScene->mRootNode->mTransformation.a3, m_pAIScene->mRootNode->mTransformation.a4,
-			m_pAIScene->mRootNode->mTransformation.b1, m_pAIScene->mRootNode->mTransformation.b2, m_pAIScene->mRootNode->mTransformation.b3, m_pAIScene->mRootNode->mTransformation.b4,
-			m_pAIScene->mRootNode->mTransformation.c1, m_pAIScene->mRootNode->mTransformation.c2, m_pAIScene->mRootNode->mTransformation.c3, m_pAIScene->mRootNode->mTransformation.c4,
-			m_pAIScene->mRootNode->mTransformation.d1, m_pAIScene->mRootNode->mTransformation.d2, m_pAIScene->mRootNode->mTransformation.d3, m_pAIScene->mRootNode->mTransformation.d4);
+		RootNode.matTransformation = XMFLOAT4X4(pAIScene->mRootNode->mTransformation.a1, pAIScene->mRootNode->mTransformation.a2, pAIScene->mRootNode->mTransformation.a3, pAIScene->mRootNode->mTransformation.a4,
+			pAIScene->mRootNode->mTransformation.b1, pAIScene->mRootNode->mTransformation.b2, pAIScene->mRootNode->mTransformation.b3, pAIScene->mRootNode->mTransformation.b4,
+			pAIScene->mRootNode->mTransformation.c1, pAIScene->mRootNode->mTransformation.c2, pAIScene->mRootNode->mTransformation.c3, pAIScene->mRootNode->mTransformation.c4,
+			pAIScene->mRootNode->mTransformation.d1, pAIScene->mRootNode->mTransformation.d2, pAIScene->mRootNode->mTransformation.d3, pAIScene->mRootNode->mTransformation.d4);
 		// BINMODEL->BINNODE->szName
-		strcpy_s(RootNode.szName, m_pAIScene->mRootNode->mName.data);
+		strcpy_s(RootNode.szName, pAIScene->mRootNode->mName.data);
 
 		pModel->iRootNodeIndex = 0;
 		pModel->vNodes.push_back(RootNode);
@@ -54,48 +56,48 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		// BINMODEL->BINNODE->vChildren
 		for (size_t i = 0; i < RootNode.iNumChildren; ++i)
 		{
-			pModel->vNodes[pModel->iRootNodeIndex].vChildrenIndex.push_back(Get_BinNodeIndex(m_pAIScene->mRootNode->mChildren[i], pModel));
+			pModel->vNodes[pModel->iRootNodeIndex].vChildrenIndex.push_back(Get_BinNodeIndex(pAIScene->mRootNode->mChildren[i], pModel));
 		}
 
 
 		for (size_t i = 0; i < pModel->iNumMeshes; ++i)
 		{
 			binMesh meshTmp;
-			meshTmp.iNumVertices = m_pAIScene->mMeshes[i]->mNumVertices;
-			meshTmp.iNumFaces = m_pAIScene->mMeshes[i]->mNumFaces;
-			meshTmp.iNumBones = m_pAIScene->mMeshes[i]->mNumBones;
-			meshTmp.iMaterialIndex = m_pAIScene->mMeshes[i]->mMaterialIndex;
+			meshTmp.iNumVertices = pAIScene->mMeshes[i]->mNumVertices;
+			meshTmp.iNumFaces = pAIScene->mMeshes[i]->mNumFaces;
+			meshTmp.iNumBones = pAIScene->mMeshes[i]->mNumBones;
+			meshTmp.iMaterialIndex = pAIScene->mMeshes[i]->mMaterialIndex;
 			meshTmp.vTextureCoords.resize(1);
 			for (_uint j = 0; j < meshTmp.iNumVertices; ++j)
 			{
-				meshTmp.vPositions.push_back(_float3(m_pAIScene->mMeshes[i]->mVertices[j].x, m_pAIScene->mMeshes[i]->mVertices[j].y, m_pAIScene->mMeshes[i]->mVertices[j].z));
-				meshTmp.vNormals.push_back(_float3(m_pAIScene->mMeshes[i]->mNormals[j].x, m_pAIScene->mMeshes[i]->mNormals[j].y, m_pAIScene->mMeshes[i]->mNormals[j].z));
-				meshTmp.vTangents.push_back(_float3(m_pAIScene->mMeshes[i]->mTangents[j].x, m_pAIScene->mMeshes[i]->mTangents[j].y, m_pAIScene->mMeshes[i]->mTangents[j].z));
-				meshTmp.vBinormals.push_back(_float3(m_pAIScene->mMeshes[i]->mBitangents[j].x, m_pAIScene->mMeshes[i]->mBitangents[j].y, m_pAIScene->mMeshes[i]->mBitangents[j].z));
-				meshTmp.vTextureCoords[0].push_back(_float2(m_pAIScene->mMeshes[i]->mTextureCoords[0][j].x, m_pAIScene->mMeshes[i]->mTextureCoords[0][j].y));
+				meshTmp.vPositions.push_back(_float3(pAIScene->mMeshes[i]->mVertices[j].x, pAIScene->mMeshes[i]->mVertices[j].y, pAIScene->mMeshes[i]->mVertices[j].z));
+				meshTmp.vNormals.push_back(_float3(pAIScene->mMeshes[i]->mNormals[j].x, pAIScene->mMeshes[i]->mNormals[j].y, pAIScene->mMeshes[i]->mNormals[j].z));
+				meshTmp.vTangents.push_back(_float3(pAIScene->mMeshes[i]->mTangents[j].x, pAIScene->mMeshes[i]->mTangents[j].y, pAIScene->mMeshes[i]->mTangents[j].z));
+				meshTmp.vBinormals.push_back(_float3(pAIScene->mMeshes[i]->mBitangents[j].x, pAIScene->mMeshes[i]->mBitangents[j].y, pAIScene->mMeshes[i]->mBitangents[j].z));
+				meshTmp.vTextureCoords[0].push_back(_float2(pAIScene->mMeshes[i]->mTextureCoords[0][j].x, pAIScene->mMeshes[i]->mTextureCoords[0][j].y));
 			}
 
 			//vBones
 
-			for (size_t x = 0; x < m_pAIScene->mMeshes[i]->mNumBones; ++x)
+			for (size_t x = 0; x < pAIScene->mMeshes[i]->mNumBones; ++x)
 			{
 				binBone binBoneTmp;
-				strcpy_s(binBoneTmp.szName, m_pAIScene->mMeshes[i]->mBones[x]->mName.data);
+				strcpy_s(binBoneTmp.szName, pAIScene->mMeshes[i]->mBones[x]->mName.data);
 
-				binBoneTmp.iNumWeights = m_pAIScene->mMeshes[i]->mBones[x]->mNumWeights;
+				binBoneTmp.iNumWeights = pAIScene->mMeshes[i]->mBones[x]->mNumWeights;
 
 				for (size_t y = 0; y < binBoneTmp.iNumWeights; ++y)
 				{
 					binVertexWeight weightTmp;
-					weightTmp.iVertexId = m_pAIScene->mMeshes[i]->mBones[x]->mWeights[y].mVertexId;
-					weightTmp.fWeight = m_pAIScene->mMeshes[i]->mBones[x]->mWeights[y].mWeight;
+					weightTmp.iVertexId = pAIScene->mMeshes[i]->mBones[x]->mWeights[y].mVertexId;
+					weightTmp.fWeight = pAIScene->mMeshes[i]->mBones[x]->mWeights[y].mWeight;
 
 					binBoneTmp.vWeights.push_back(weightTmp);
 				}
 
 
 				XMStoreFloat4x4(&binBoneTmp.OffsetMatrix, XMMatrixIdentity());
-				memcpy(&binBoneTmp.OffsetMatrix, &m_pAIScene->mMeshes[i]->mBones[x]->mOffsetMatrix, sizeof(_float4x4));
+				memcpy(&binBoneTmp.OffsetMatrix, &pAIScene->mMeshes[i]->mBones[x]->mOffsetMatrix, sizeof(_float4x4));
 
 				//pBone->pNode = m_Nodes[x];
 				meshTmp.vBones.push_back(binBoneTmp);
@@ -104,20 +106,20 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 
 			_uint iNumIndices = {};
 
-			for (size_t j = 0; j < m_pAIScene->mMeshes[i]->mNumFaces; ++j)
+			for (size_t j = 0; j < pAIScene->mMeshes[i]->mNumFaces; ++j)
 			{
 				binFace bFace;
-				bFace.vIndices.push_back(m_pAIScene->mMeshes[i]->mFaces[j].mIndices[0]);
+				bFace.vIndices.push_back(pAIScene->mMeshes[i]->mFaces[j].mIndices[0]);
 				++iNumIndices;
-				bFace.vIndices.push_back(m_pAIScene->mMeshes[i]->mFaces[j].mIndices[1]);
+				bFace.vIndices.push_back(pAIScene->mMeshes[i]->mFaces[j].mIndices[1]);
 				++iNumIndices;
-				bFace.vIndices.push_back(m_pAIScene->mMeshes[i]->mFaces[j].mIndices[2]);
+				bFace.vIndices.push_back(pAIScene->mMeshes[i]->mFaces[j].mIndices[2]);
 				++iNumIndices;
 				bFace.iNumIndices = iNumIndices;
 				meshTmp.vFaces.push_back(bFace);
 			}
 
-			strcpy_s(meshTmp.szName, m_pAIScene->mMeshes[i]->mName.data);
+			strcpy_s(meshTmp.szName, pAIScene->mMeshes[i]->mName.data);
 
 			pModel->vMeshes.push_back(meshTmp);
 		}
@@ -127,50 +129,50 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 			binMaterial matTmp;
 			for (size_t j = 0; j < BINMATERIAL::TEXTURETYPE::END; ++j)
 			{
-				matTmp.vNumSRVs.push_back(m_pAIScene->mMaterials[i]->GetTextureCount(static_cast<aiTextureType>(j)));
+				matTmp.vNumSRVs.push_back(pAIScene->mMaterials[i]->GetTextureCount(static_cast<aiTextureType>(j)));
 				matTmp.strTexturePaths[j].clear();
 				matTmp.strTexturePaths[j].reserve(matTmp.vNumSRVs[j]);
 				for (size_t k = 0; k < matTmp.vNumSRVs[j]; ++k)
 				{
 					aiString strTexturePath;
-					m_pAIScene->mMaterials[i]->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
+					pAIScene->mMaterials[i]->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
 
 					matTmp.strTexturePaths[j].emplace_back(strTexturePath.data);
 				}
 
 			}
 
-			strcpy_s(matTmp.szName, m_pAIScene->mMaterials[i]->GetName().C_Str());
+			strcpy_s(matTmp.szName, pAIScene->mMaterials[i]->GetName().C_Str());
 			pModel->vMaterials.push_back(matTmp);
 		}
 
 		for (size_t i = 0; i < pModel->iNumAnimations; ++i)
 		{
 			binAnimation AnimTmp;
-			const char* szAnimName = strchr(m_pAIScene->mAnimations[i]->mName.data, '|');
+			const char* szAnimName = strchr(pAIScene->mAnimations[i]->mName.data, '|');
 			if (nullptr != szAnimName && strcmp(szAnimName, ""))
-				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(m_pAIScene->mAnimations[i]->mName.data, '|') + 1);
+				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(pAIScene->mAnimations[i]->mName.data, '|') + 1);
 			else
-				strcpy_s(AnimTmp.szName, m_pAIScene->mAnimations[i]->mName.data);
+				strcpy_s(AnimTmp.szName, pAIScene->mAnimations[i]->mName.data);
 
-			AnimTmp.fDuration = m_pAIScene->mAnimations[i]->mDuration;
-			AnimTmp.fTicksPerSecond = m_pAIScene->mAnimations[i]->mTicksPerSecond;
-			AnimTmp.iNumChannels = m_pAIScene->mAnimations[i]->mNumChannels;
+			AnimTmp.fDuration = pAIScene->mAnimations[i]->mDuration;
+			AnimTmp.fTicksPerSecond = pAIScene->mAnimations[i]->mTicksPerSecond;
+			AnimTmp.iNumChannels = pAIScene->mAnimations[i]->mNumChannels;
 
 			for (size_t j = 0; j < AnimTmp.iNumChannels; ++j)
 			{
 				binChannel channelTmp;
-				strcpy_s(channelTmp.szName, m_pAIScene->mAnimations[i]->mChannels[j]->mNodeName.data);
-				channelTmp.iNumScalingKeys = m_pAIScene->mAnimations[i]->mChannels[j]->mNumScalingKeys;
-				channelTmp.iNumRotationKeys = m_pAIScene->mAnimations[i]->mChannels[j]->mNumRotationKeys;
-				channelTmp.iNumPositionKeys = m_pAIScene->mAnimations[i]->mChannels[j]->mNumPositionKeys;
+				strcpy_s(channelTmp.szName, pAIScene->mAnimations[i]->mChannels[j]->mNodeName.data);
+				channelTmp.iNumScalingKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumScalingKeys;
+				channelTmp.iNumRotationKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumRotationKeys;
+				channelTmp.iNumPositionKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumPositionKeys;
 				for (size_t k = 0; k < channelTmp.iNumScalingKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					keyTmp.fTime = m_pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
-					keyTmp.vValue.x = m_pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.x;
-					keyTmp.vValue.y = m_pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.y;
-					keyTmp.vValue.z = m_pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.z;
+					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
+					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.x;
+					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.y;
+					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.z;
 					keyTmp.vValue.w = 0.f;
 
 					channelTmp.cScalingKeys.push_back(keyTmp);
@@ -178,21 +180,21 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 				for (size_t k = 0; k < channelTmp.iNumRotationKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					keyTmp.fTime = m_pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
-					keyTmp.vValue.x = m_pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.x;
-					keyTmp.vValue.y = m_pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.y;
-					keyTmp.vValue.z = m_pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.z;
-					keyTmp.vValue.w = m_pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.w;
+					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
+					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.x;
+					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.y;
+					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.z;
+					keyTmp.vValue.w = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.w;
 
 					channelTmp.cRotationKeys.push_back(keyTmp);
 				}
 				for (size_t k = 0; k < channelTmp.iNumPositionKeys; ++k)
 				{
 					binVectorKey keyTmp;
-					keyTmp.fTime = m_pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
-					keyTmp.vValue.x = m_pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.x;
-					keyTmp.vValue.y = m_pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.y;
-					keyTmp.vValue.z = m_pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.z;
+					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
+					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.x;
+					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.y;
+					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.z;
 					keyTmp.vValue.w = 0.f;
 
 					channelTmp.cPositionKeys.push_back(keyTmp);
@@ -207,7 +209,6 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	}
 
 	*ppOut = pModel;
-
 	return S_OK;
 }
 
@@ -253,5 +254,4 @@ void CFbxParser::Free()
 {
 	__super::Free();
 
-	m_Importer.FreeScene();
 }

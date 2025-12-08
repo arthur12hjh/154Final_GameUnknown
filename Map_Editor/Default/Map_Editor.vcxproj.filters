@@ -211,6 +211,12 @@
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Canbox">
       <UniqueIdentifier>{331fbebf-a475-4105-92c7-1de0fbeb3558}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\RepairConsole">
+      <UniqueIdentifier>{6898f5ec-d88d-484d-8f25-36e160419749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Top_Roof">
+      <UniqueIdentifier>{a6c1958d-6c27-4eae-a8ff-aa2d20c8fc1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -509,7 +515,15 @@
     <ClInclude Include="..\public\Chair.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CanBox.h" />
+    <ClInclude Include="..\public\CanBox.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Canbox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Top_Roof.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RepairConsole.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -792,7 +806,15 @@
     <ClCompile Include="..\private\Chair.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CanBox.cpp" />
+    <ClCompile Include="..\private\CanBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Canbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Top_Roof.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RepairConsole.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Map_Editor.ico">
