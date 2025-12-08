@@ -5,8 +5,8 @@
 4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,2,11
 5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,1,2,11
 6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,1,2,11
-7,M_Gorilla_S01_ShortMoveLeft,None,None,19,0,"4,3,4",0,0,1,11
-8,M_Gorilla_S02_ShortMoveRight,None,None,0,0,"4,3,4",0,0,1,11
+7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,1,11
+8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,1,11
 9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,11
 10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,4,3,11
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,1,2,11

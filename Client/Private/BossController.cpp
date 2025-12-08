@@ -94,7 +94,7 @@ void CBossController::Damage(void* pArg)
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
                 pBossBlackBoard->SetAttackDelay(1.5f);
-                if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentStemina)
+                if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentStamina)
                 {
                     // 여기서 그로기 타임 주고 설정
                     // 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감

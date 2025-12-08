@@ -83,7 +83,12 @@ void CTask_GorillaAttack::SelectRandomPattern()
 	//if(30 >= m_pGameInstance->Random(0.f, 100.f))
 	//	m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
 	//else
-		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
+	{
+		auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
+		m_pSkillData.push(pBetaSkill);
+		if (11 == pBetaSkill->iSkillID)
+			m_pSkillData.push(m_pGameManager->Find_SkillData(14));
+	}
 
 	SelectAttack();
 }
@@ -93,30 +98,37 @@ _bool CTask_GorillaAttack::SelectPattern()
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 
-	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
-	{
-		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-
-		/*if (30.f > fRandomIndex)
-			BboyStepPattern();
-		else*/ if (30.f > fRandomIndex)
-		{
-			m_CurPatternIndex = 1;
-		}
-		else
-		{
-			m_PrePatternIndex = 0;
-			if(65 > fRandomIndex)
-				m_CurPatternIndex = 2;
-			else
-				m_CurPatternIndex = 3;
-		}
-	}
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	m_PrePatternIndex = 0;
+	if (65 > fRandomIndex)
+		m_CurPatternIndex = 2;
 	else
-	{
-		m_PrePatternIndex = 0;
-		m_CurPatternIndex = 4;
-	}
+		m_CurPatternIndex = 3;
+
+	//if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
+	//{
+	//	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+
+	//	/*if (30.f > fRandomIndex)
+	//		BboyStepPattern();
+	//	else*/ if (30.f > fRandomIndex)
+	//	{
+	//		m_CurPatternIndex = 1;
+	//	}
+	//	else
+	//	{
+	//		m_PrePatternIndex = 0;
+	//		if(65 > fRandomIndex)
+	//			m_CurPatternIndex = 2;
+	//		else
+	//			m_CurPatternIndex = 3;
+	//	}
+	//}
+	//else
+	//{
+	//	m_PrePatternIndex = 0;
+	//	m_CurPatternIndex = 4;
+	//}
 
 	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
 	{
@@ -230,13 +242,6 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 	if (nullptr == pNaytibaStaticData)
 		return false;
 
-	m_pBlackBoard->SetTargetDistacne();
-
-	m_fMoveSpeed = m_pOwner->GetMonsterData().fMoveSpeed;
-	_float fDistance = m_pBlackBoard->GetTargetDistance();
-	if (0 > fDistance)
-		return false;
-
 	// 여기서 선택된 스킬에 대한 정보를 처리한다.
 	_bool  bIsMove{ false }, bIsLerpMove{ false };
 	m_bIsLookAtPoint = true;
@@ -246,8 +251,10 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 	// 플레이어와 몬스터의 거리기반으로 이동시키는 걸로하자 공격할때
 	// 타이밍에 맞춰서 최소거리 유지
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
 	_vector vTargetPos{}, vTempTargetPos{};
-	vTargetPos = vTempTargetPos = m_pBlackBoard->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
+	auto pTarget = m_pBlackBoard->GetTarget();
+	vTargetPos = vTempTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
 	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
@@ -269,8 +276,7 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 				if (0.40f > fAnimationRatio)
 				{
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos);
-					if (pNaytibaStaticData->fAttackRange > fDistance)
-						m_fLerpSpeed = 5.f;
+					m_fLerpSpeed = 5.f;
 				}
 			
 				bIsLerpMove = true;
@@ -331,10 +337,11 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			// M_Gorilla_S02_ShortMoveLeft
 			// Max Frame : 30
 			// Frame : 20 ~ 25
-			if (0.8f >= fAnimationRatio)
+			if (0.8f >= fAnimationRatio && 0.45f < fAnimationRatio)
 			{
-				XMStoreFloat3(&m_fAttackMovePoint, vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * -5.f);
-				m_fLerpSpeed = 5.f;
+				vDir = -1.f * m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
+				XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * m_pBlackBoard->GetAttackData()->fRange);
+				m_fLerpSpeed = 2.f;
 				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
 			}
@@ -345,10 +352,11 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			// M_Gorilla_S02_ShortMoveRight
 			// Max Frame : 30
 			// Frame : 20 ~ 25
-			if (0.8f >= fAnimationRatio)
+			if (0.8f >= fAnimationRatio && 0.45f < fAnimationRatio)
 			{
-				XMStoreFloat3(&m_fAttackMovePoint, vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 5.f);
-				m_fLerpSpeed = 5.f;
+				vDir = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
+				XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * m_pBlackBoard->GetAttackData()->fRange);
+				m_fLerpSpeed = 2.f;
 				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
 			}
@@ -480,13 +488,13 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
 
-	if (m_vLerpTime.x > m_vLerpTime.y)
-	{
-		m_bIsAttackStartLerp = false;
-		m_vLerpTime.x = 0.f;
-	}
-	else
-		m_vLerpTime.x += fTimeDelta;
+	//if (m_vLerpTime.x > m_vLerpTime.y)
+	//{
+	//	m_bIsAttackStartLerp = false;
+	//	m_vLerpTime.x = 0.f;
+	//}
+	//else
+	//	m_vLerpTime.x += fTimeDelta;
 }
 
 CTask_GorillaAttack* CTask_GorillaAttack::Create(CBehaviorTree* pOwnerTree)

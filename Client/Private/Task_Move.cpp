@@ -53,28 +53,36 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		if (nullptr == pTarget)
 			return NODE_STATE::FAIL;
 
+		auto pNaytibaDefaultInfo = m_pBlackBoard->GetBossDefaultInfo();
 		_vector vOwnerPos{}, vTempOwnerPos{};
 		vTempOwnerPos = vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 		_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
 		vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vTempOwnerPos));
+		if (fDistance < pNaytibaDefaultInfo->fAttackRange * 0.7f)
+		{
+			if(DIRECTION::FRONT == m_eDirection )
+				Refresh_MovePoint();
+		}
+
 		_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 		_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-		_float fScalar = acosf(XMVectorGetX(XMVector3Dot(vOwnerLook, vDir)));
+		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
 
-		if (0.1f < fabsf(fScalar))
-			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.0f);
-		else
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
+		if (0.99f > fScalar)
+			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 3.0f);
+		/*else
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);*/
+
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
-
 		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
 		if (false == m_bIsCaution)
 		{
 			if (bIsFinished)
 			{
-				m_szAnimationName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+				m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
 				m_iAnimSection++;
 				switch (m_iAnimSection)
 				{
@@ -104,11 +112,12 @@ void CTask_Move::Refresh_MovePoint()
 {
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 
+	auto pNaytibaDefaultInfo = m_pBlackBoard->GetBossDefaultInfo();
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
 
-	m_szAnimationName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+	m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
 	if (fDistance < fATKRange * 1.5f)
 	{
 		if (50 > fRandomIndex)
