@@ -33,7 +33,7 @@ HRESULT CTop_Roof::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
-	m_eCurState = IDLE;
+	m_eCurState = START;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
 	return S_OK;
