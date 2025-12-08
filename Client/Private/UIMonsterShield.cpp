@@ -6,9 +6,6 @@
 
 #include "Nayitba.h"
 
-#ifdef _DEBUG
-#include "../../UI_Editor/Public/UI_Camera.h"
-#endif // DEBUG
 
 CUIMonsterShield::CUIMonsterShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -32,27 +29,6 @@ HRESULT CUIMonsterShield::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-//	auto pCharactor{ nullptr };
-//
-//	if (pCharactor)
-//	{
-//		/*m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-//		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);*/
-//	}
-//#ifdef _DEBUG
-//	else
-//	{
-//		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
-//
-//		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iMaxShield);
-//		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iCurrentShield);
-//
-//		Safe_Release(pGaraPlayer);
-//	}
-//#endif // DEBUG
-
-	//Safe_Release(pCharactor);
 	
 	return S_OK;
 }
@@ -78,14 +54,14 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 //#endif
 
 
-	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	/*auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
 		auto StaticDesc = pMonster->GetStaticMonsterData();
 		auto CurDesc = pMonster->GetMonsterData();
 
 		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
-	}
+	}*/
 
 	/*if (m_iCurrentShield)
 		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/

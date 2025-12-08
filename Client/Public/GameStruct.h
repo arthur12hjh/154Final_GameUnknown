@@ -234,7 +234,7 @@ namespace Client
 
 		long long			iMaxHealth;
 		long long			iMaxShield;
-		_uint				iMaxStemina;
+		_uint				iMaxStamina;
 		float				fMoveSpeed;
 
 		float				fAttackCoolTime;
@@ -251,7 +251,7 @@ namespace Client
 	typedef struct Naytiba_Desc : public DEFAULT_STATUS
 	{
 		unsigned int		iCurrentPhase;
-		_uint				iCurrentStemina;
+		_uint				iCurrentStamina;
 
 		_float3				vLockOnPoint;
 		_float3				vStatusBarPoint;
