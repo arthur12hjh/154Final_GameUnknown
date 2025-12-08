@@ -1642,8 +1642,18 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     
     float2 uvDistorted = fTexcoord + distort * pow((1 - In.vTexcoord.y), 2);
     
+    float2 uv = uvDistorted;
+    
+    float dist = abs(uv.y - (1 / (g_iUV.y * 2)));
+    
+    float width = 1;
+    
+    float alpha = saturate((width - dist) / width);
+    
+    
+    
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a);
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a) * alpha;
     float linePos = 1 - In.vTexcoord.y; 
     float t = In.vLifeTime.x / In.vLifeTime.y;
 

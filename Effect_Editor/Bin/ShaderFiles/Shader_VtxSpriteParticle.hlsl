@@ -1642,17 +1642,18 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     
     float2 uvDistorted = fTexcoord + distort * pow((1 - In.vTexcoord.y), 2);
     
-    Out.vDiffuse = g_vColor;
-    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a);
-    float linePos = 1 - In.vTexcoord.y; 
-    float t = In.vLifeTime.x / In.vLifeTime.y;
-
-    float head = smoothstep(0, 0.1, linePos - t);
-    float tail = smoothstep(0, 0.4, t - linePos); 
-
-    float weight2 = head * tail;
-    weight2 = pow(weight2, 2.0);
+    float2 uv = uvDistorted;
     
+    float dist = abs(uv.y - (1 / (g_iUV.y * 2)));
+    
+    float width = 1.f;
+    
+    float alpha = saturate((width - dist) / width);
+    
+    
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a) * alpha;
     
     Out.vDiffuse *= pow(saturate(((In.vLifeTime.x / In.vLifeTime.y)) * 2 / (1 - In.vTexcoord.y)), 5) * pow(saturate((1 - In.vTexcoord.y) / ((In.vLifeTime.x / In.vLifeTime.y) * 2)), 15);
     //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
