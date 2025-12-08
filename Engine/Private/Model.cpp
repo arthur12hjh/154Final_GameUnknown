@@ -30,6 +30,7 @@ CModel::CModel(const CModel& Prototype)
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
+    , m_pOutRootReadBack{nullptr }
     , m_pBoneMatricesSRV{ nullptr }
     , m_pPreBoneMatricesSRV{ nullptr }
     , m_pComputeShaderCom{ nullptr }
@@ -944,35 +945,35 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    //// CPU CBone 전체 동기화
-    //if (m_pOutReadBack)
-    //{
-    //    m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-    //
-    //    D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    //    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
-    //    {
-    //        COMPUTE_BONEMATRIX_OUT* pOut =
-    //            reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-    //
-    //        // 무조건 최적화
-    //        for (_uint i = 0; i < m_Bones.size(); ++i)
-    //        {
-    //            m_Bones[i]->Set_TransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-    //
-    //            m_Bones[i]->Set_CombinedTransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
-    //        }
-    //
-    //        m_pContext->Unmap(m_pOutReadBack, 0);
-    //    }
-    //}
+    // CPU CBone 전체 동기화
+    if (m_pOutReadBack)
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+    
+        D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
+    
+            // 무조건 최적화
+            for (_uint i = 0; i < m_Bones.size(); ++i)
+            {
+                m_Bones[i]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
+    
+                m_Bones[i]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
+            }
+    
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
 
     // 루트모션 적용
-    if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
+    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
     {
-        m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
+        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
         Apply_RootMotion(pTransform, fRootMotionMagnification);
     }
 
@@ -1438,19 +1439,25 @@ HRESULT CModel::Ready_ComputeShader()
             // 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고
             {
                 TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
                 TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-                D3D11_SUBRESOURCE_DATA rootSub{};
-                rootSub.pSysMem = vInit.data();
+                vector<COMPUTE_BONEMATRIX_OUT> vRootInit(1);
+
+                XMStoreFloat4x4(&vRootInit[0].BoneLocalTransformMatrix, XMMatrixIdentity());
+                XMStoreFloat4x4(&vRootInit[0].BoneCombinedTransformMatrix, XMMatrixIdentity());
+
+
+                D3D11_SUBRESOURCE_DATA RootSubResource{};
+                RootSubResource.pSysMem = vRootInit.data();
 
                 Safe_Release(m_pRootSource);
-                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &rootSub, &m_pRootSource)))
+                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &RootSubResource, &m_pRootSource)))
                     return E_FAIL;
 
-                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
+                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource, 1)))
                     return E_FAIL;
             }
 
@@ -1468,6 +1475,16 @@ HRESULT CModel::Ready_ComputeShader()
     readbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
+
+
+    D3D11_BUFFER_DESC RootReadbackDesc = {};
+    RootReadbackDesc.Usage = D3D11_USAGE_STAGING;
+    RootReadbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    RootReadbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+    m_pDevice->CreateBuffer(&RootReadbackDesc, nullptr, &m_pOutRootReadBack);
 
 
 
@@ -1665,12 +1682,12 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
         return S_OK;
     }
 
-    if (nullptr == m_pOutReadBack)
+    if (nullptr == m_pOutRootReadBack)
         return S_OK;
 
     // 먼저, CBone에 Set도 해줘야하기 때문에 받아와준다.
     D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+    if (SUCCEEDED(m_pContext->Map(m_pOutRootReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
     {
         COMPUTE_BONEMATRIX_OUT* pOut = reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
@@ -1717,7 +1734,7 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 
         }
 
-        m_pContext->Unmap(m_pOutReadBack, 0);
+        m_pContext->Unmap(m_pOutRootReadBack, 0);
     }
 
     return S_OK;
@@ -1867,6 +1884,7 @@ void CModel::Free()
 
     Safe_Release(m_pBoneSource);
     Safe_Release(m_pOutReadBack);
+    Safe_Release(m_pOutRootReadBack);
     //Safe_Release(m_pOutSource);
     //Safe_Release(m_pRootSource);
     Safe_Release(m_pPreBoneMatrices);
