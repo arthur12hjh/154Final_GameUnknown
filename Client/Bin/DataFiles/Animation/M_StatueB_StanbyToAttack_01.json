@@ -76,9 +76,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.15,
-                    0.15,
-                    0.15
+                    0.15000000596046448,
+                    0.15000000596046448,
+                    0.15000000596046448
                 ]
             },
             {
@@ -86,7 +86,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 50,
+                "iNotifyKeyFrame": 55,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -116,9 +116,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.15,
-                    0.15,
-                    0.15
+                    0.15000000596046448,
+                    0.15000000596046448,
+                    0.15000000596046448
                 ]
             },
             {
@@ -126,7 +126,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 51,
+                "iNotifyKeyFrame": 50,
                 "iNumData01": 2,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -135,7 +135,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Sand_Hit",
+                "szNotifyArg01": "Prototype_Component_Effect_Blood_Hit",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -144,7 +144,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "B_L_HandCenter",
+                "szSocketTag": "B_L_HandCenter_end",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -156,9 +156,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.9,
+                    0.9,
+                    0.9
                 ]
             }
         ],

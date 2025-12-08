@@ -1160,6 +1160,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Shock */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Shock_Final");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock_Final.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Effect_Parrying */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Parrying");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
@@ -1217,6 +1222,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	// 몬스터 둔기 피 이펙트
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Club");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Club.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Blood_Hit */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blood_Hit");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 

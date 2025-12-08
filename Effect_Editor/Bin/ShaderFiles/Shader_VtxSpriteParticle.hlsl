@@ -959,6 +959,125 @@ void GS_WEIGHT_START(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutS
     }
 }
 
+[maxvertexcount(6)]
+void GS_WEIGHT_BLOOD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
+{
+    GS_WEIGHT_OUT Out[4];
+    
+    if (g_bisBillboard)
+    {
+        float3 vRight = -normalize(g_CamMatrix._11_12_13);
+        float3 vUp = normalize(g_CamMatrix._21_22_23);
+        
+        matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+        
+        float angle = radians(g_fAngle);
+    
+        float s = sin(angle);
+        float c = cos(angle);
+    
+        float3 vRightRot = vRight * c + vUp * s;
+        float3 vUpRot = vUp * c - vRight * s;
+    
+        float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+        float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
+        
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = Out[0].vPosition;
+        
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = Out[1].vPosition;
+     
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = Out[2].vPosition;
+     
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = Out[3].vPosition;
+    
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+    else
+    {
+        float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+        float3 vRight = normalize(float4(cross(normalize(g_CamMatrix._31_32_33), vLook), 0));
+        float3 vUp = normalize(cross(vLook, vRight));
+        matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+        
+        float angle = radians(g_fAngle);
+    
+        float s = sin(angle);
+        float c = cos(angle);
+    
+        float3 vRightRot = vRight * c + vLook * s;
+        float3 vUpRot = vLook * c - vRight * s;
+        if (!g_bisSpectrum)
+        {
+            vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+            vUpRot = normalize(mul(float4(vUpRot, 0), g_WorldMatrix)).xyz;
+        }
+    
+        float3 vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+        float3 vU = vUpRot * (g_fSize.y * In[0].fSize * 0.5f);
+        vLook *= g_fSize.x * In[0].fSize;
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vU, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = Out[0].vPosition;
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vU, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = Out[1].vPosition;
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vU, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = Out[2].vPosition;
+    
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vU, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = Out[3].vPosition;
+    
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+}
+
+
+
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
 /* 정점의 모든 정보를 보간하여 픽셀을 만든다. -> 래스터라이즈 */ 
@@ -1517,9 +1636,9 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     int iU = i % g_iUV.x;
     int iV = i / g_iUV.x;
     
-    float2 fTexcoord = float2(In.vTexcoord.x * 0.8 / g_iUV.x + 1.0 / g_iUV.x * iU, -In.vTexcoord.y * 0.8 / g_iUV.y + 1.0 / g_iUV.y * iV);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, -In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     
-    float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.03;
+    float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.03 * g_fDissolveUVSize.y;
     
     float2 uvDistorted = fTexcoord + distort * pow((1 - In.vTexcoord.y), 2);
     
@@ -1579,7 +1698,7 @@ technique11 DefaultTechnique
     pass Bloom
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_None, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
@@ -1732,7 +1851,27 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_WEIGHT_START();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BLOOD();
         PixelShader = compile ps_5_0 PS_ELECTRIC4();
+    }
+    // idx 17
+    pass BloodTrail
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BLOOD();
+        PixelShader = compile ps_5_0 PS_BLOOD();
+    }
+    // idx 18
+    pass DSSNoneBloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_MASK();
     }
 }
