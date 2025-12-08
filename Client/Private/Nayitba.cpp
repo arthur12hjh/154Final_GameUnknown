@@ -19,6 +19,8 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 
+#include "Bullet.h"
+
 #include "UIHUD.h"
 #include "UIBase.h"
 
@@ -46,6 +48,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	m_iMonsterID = pDesc->iMonsterID;
 	m_bIsSuperMonster = pDesc->bIsSuperMonster;
 
+	m_pBulletList.reserve(30);
 	m_SkillCandidates.reserve(30);
 	if (FAILED(Ready_CharacterData()))
 		return E_FAIL;
@@ -160,6 +163,12 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	{
 	case CNotify::ACTIVE_COLLISION:
 		CreateHitBox(pNotify);
+		break;
+	case CNotify::SPAWN_OBJECT:
+		SpawnObject(pNotify);
+		break;
+	case CNotify::SHOOT_PROJECTILE:
+		ShootProjectile(pNotify);
 		break;
 	}
 
@@ -638,6 +647,47 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
 		return;
 	m_iComboCount++;
+}
+
+void CNayitba::SpawnObject(const AnimNotify* pNotify)
+{
+	// 여기서 파트오브젝트로 만들고 파트오브젝트업데이트에서 소켓에 붙여서
+	// 랜더링하다가 특정 Shoot 함수가 들어오면 발사하자
+
+	//	"iNumData01" : 스킬 번호
+	//	"iNumData02" : 충돌체 번호,
+	//	"iNumData03" : 어떤 타입이랑 충돌할지
+	 
+	//	프로토 타입 데이터 만들거
+	//	"szNotifyArg01" : "Prototype_GameObject_RockBullet"
+	//	"szNotifyArg02" : "RockBullet_Layer",
+	//	"szNotifyArg03" : "Bip001-R-Hand",
+
+	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
+	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
+	// 돌 오브젝트 만들어서
+	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
+	CBullet::BULLET_DESC pBulletDesc = {};
+	pBulletDesc.pParent = this;
+	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+	pBulletDesc.iSkillID = pNotify->iNumData01;
+	pBulletDesc.iHitType = pNotify->iNumData03;
+
+	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
+	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
+	m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+}
+
+void CNayitba::ShootProjectile(const AnimNotify* pNotify)
+{
+	// 여기서 소유하고 있는 Projectile을 모두 발사한다.
+	// pNotify->iNumData01; <- true : 활성화
+	// false : 비활성화
+
+	for (auto& iter : m_pBulletList)
+		iter->Shoot_Projectile(m_pTransformCom->Get_State(STATE::LOOK), 35.f);
+
+	m_pBulletList.clear();
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

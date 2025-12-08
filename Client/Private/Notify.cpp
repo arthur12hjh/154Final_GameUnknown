@@ -125,6 +125,12 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::HIT_REACTION:
 		return Notify_Hit_Reaction(AnimNotify);
 		break;
+	case CNotify::SPAWN_OBJECT:
+		return Notify_Spawn_Object(AnimNotify);
+		break;
+	case CNotify::SHOOT_PROJECTILE:
+		return Notify_Shoot_Projectile(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -144,11 +150,13 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Set_Transform")					return SET_TRANSFORM;
 	if (szNotifyTag == "Active_PartObjectCollision")	return ACTIVE_PARTOBJECT_COLLISION; 
 	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;
+	if (szNotifyTag == "Spawn_Object")					return SPAWN_OBJECT;
+	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 
 	return NOTIFY_TYPE::END;
 }
 
-HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 {
 	const _float4x4* pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
 
@@ -214,7 +222,7 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Active_SFX(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szPartTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg08.c_str(), szPartTag);
@@ -227,7 +235,7 @@ HRESULT CNotify::Notify_Active_SFX(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szNotifyTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szNotifyTag);
@@ -236,14 +244,14 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Active_Collision(const ANIM_NOTIFY& AnimNotify)
 {
 	m_pCharacter->CallNotify(ACTIVE_COLLISION, &AnimNotify);
 
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Set_Transform(const ANIM_NOTIFY& AnimNotify)
 {
 	_vector vCurrentPosition = m_pCharacter->Get_Position();
 
@@ -264,13 +272,25 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Hit_Reaction(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Hit_Reaction(const ANIM_NOTIFY& AnimNotify)
 {
 	m_pCharacter->CallNotify(HIT_REACTION, &AnimNotify);
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Spawn_Object(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pCharacter->CallNotify(SPAWN_OBJECT, &AnimNotify);
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Shoot_Projectile(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pCharacter->CallNotify(SHOOT_PROJECTILE, &AnimNotify);
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Active_PartObject_Collision(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);

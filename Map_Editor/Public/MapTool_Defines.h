@@ -58,7 +58,22 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region Deco
-		LAMP_47A, VendingMachine_6A, VendingMachine_7A,
+		LAMP_47A, VendingMachine_6A, VendingMachine_7A, POSTER_4D,
+#pragma endregion
+
+#pragma region Deco_Camp
+		BASE_1A, CAMP_1B, CAMP_1D, CAMP_1E, CAMP_1F, CAMP_1G, CAMP_1H, CAMP_1I, CAMP_1J, CAMP_1K, CAMP_1L, CAMP_1M, CAMP_1N, CAMP_1R, CAMP_1S, CAMP_1T, CAMP_1W, REPAIRCONSOLE, TOP_ROOF,
+#pragma endregion
+
+#pragma region Deco_Corpse
+
+#pragma	endregion
+
+#pragma region Environment_TREE
+		TREE_1A, TREE_2A, TREE_3A, TREE_4A, TREE_5B, TREE_5C, TREE_6A, TREE_6B, TREE_7A, TREE_7B, TREE_8A, TREE_8Aa, TREE_8B, TREE_8Ba,
+		TREE_10A, TREE_11B, TREE_15A, TREE_15B, TREE_16A, TREE_17A, TREE_18A, TREE_19A, TREE_20A, TREE_21A, TREE_23A, TREE_25A, TREE_26A, TREE_27A,
+		TREE_29A, TREE_30A, TREE_31A, TREE_32A, TREE_33A, TREE_34A, TREE_40B, TREE_40C, TREE_40D, TREE_40E, TREE_40F, TREE_40G, TREE_40H, TREE_40I, TREE_40J,
+		TREE_42A, TREE_43A, TREE_43B, TREE_44A, TREE_44B, TREE_44D, TREE_44F, TREE_45A, TREE_45B, TREE_45C,
 #pragma endregion
 
 #pragma region Spawner
