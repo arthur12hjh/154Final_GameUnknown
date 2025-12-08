@@ -196,6 +196,21 @@
     <Filter Include="02.GameObjects\Maps\Desert\Building\Iron_Floor">
       <UniqueIdentifier>{3d1e688a-bd2a-4756-8902-59d2381af6ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Environment\Desert__Tree">
+      <UniqueIdentifier>{9d7df503-1cc2-4767-bfa8-395c957c2187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction">
+      <UniqueIdentifier>{b8437baf-4335-47ab-a3e7-a16882b0f8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\VendingMachine">
+      <UniqueIdentifier>{73499dd2-42be-49b9-a6b3-bcc86f61bf2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Chair">
+      <UniqueIdentifier>{882f2d26-9613-460c-8ddc-087782723fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Canbox">
+      <UniqueIdentifier>{331fbebf-a475-4105-92c7-1de0fbeb3558}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -485,6 +500,9 @@
     <ClInclude Include="..\public\Iron_Floor.h">
       <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Desert_Tree.h">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -757,6 +775,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Iron_Floor.cpp">
       <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Tree.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
