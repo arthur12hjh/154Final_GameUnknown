@@ -4,6 +4,7 @@
 
 NS_BEGIN(Client)
 class CEffect;
+class CTrailEffect;
 class CNayitbaPartBody final : public CPartObject
 {
 public :
@@ -11,6 +12,12 @@ public :
 	{
 		const WCHAR*				szBodyModel;
 	}NAYITBA_PART_BODY_DESC;
+	typedef struct NayitbaTrailDesc
+	{
+		CTrailEffect*	pTrailEffect = {};
+		_bool			bisPlay = false;
+		const _float4x4* pRootMatrix = nullptr;
+	}NAYITBA_TRAIL_DESC;
 
 private:
 	CNayitbaPartBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -31,8 +38,9 @@ public:
 	virtual void					Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
 
 private:
-	CCollider*						m_pColliderCom = { nullptr };
-	vector<pair<CEffect*, _int>>			m_pEffects = {};
+	CCollider*											m_pColliderCom = { nullptr };
+	vector<pair<CEffect*, _int>>						m_pEffects = {};
+	vector<pair<NAYITBA_TRAIL_DESC*, _int>>		m_pTrailEffects = {};
 	_bool							m_isAnimFinish = { false };
 
 private:

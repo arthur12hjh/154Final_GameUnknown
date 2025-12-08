@@ -1636,9 +1636,9 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     int iU = i % g_iUV.x;
     int iV = i / g_iUV.x;
     
-    float2 fTexcoord = float2(In.vTexcoord.x * 0.8 / g_iUV.x + 1.0 / g_iUV.x * iU, -In.vTexcoord.y * 0.8 / g_iUV.y + 1.0 / g_iUV.y * iV);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, -In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     
-    float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.03;
+    float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.03 * g_fDissolveUVSize.y;
     
     float2 uvDistorted = fTexcoord + distort * pow((1 - In.vTexcoord.y), 2);
     
@@ -1698,7 +1698,7 @@ technique11 DefaultTechnique
     pass Bloom
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_None, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
@@ -1851,7 +1851,7 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_WEIGHT_START();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BLOOD();
         PixelShader = compile ps_5_0 PS_ELECTRIC4();
     }
     // idx 17
@@ -1863,5 +1863,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BLOOD();
         PixelShader = compile ps_5_0 PS_BLOOD();
+    }
+    // idx 18
+    pass DSSNoneBloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_MASK();
     }
 }

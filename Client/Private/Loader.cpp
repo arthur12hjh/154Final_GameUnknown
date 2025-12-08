@@ -1234,10 +1234,21 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Blood_Hit */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_TrailEffect_Test */
+
+	/* For.Prototype_Component_TrailEffect_Default_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
 	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
+	/* For.Prototype_Component_TrailEffect_Monster_Slash */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Monster_Slash");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Monster_Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	//Desc->OnCompleted(this_thread::get_id());
