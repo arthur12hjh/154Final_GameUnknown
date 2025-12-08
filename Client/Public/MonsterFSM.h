@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CMonsterFSM final : public CStateMachine
 {
 public :
-	enum class MONSTER_STATE { IDLE, ATTACK, HIT, MOVE, MIMESIS, GROOGY, DEAD, END };
+	enum class MONSTER_STATE { IDLE, ATTACK, HIT, MOVE, MIMESIS, GROGGY, DEAD, END };
 
 private :
 	CMonsterFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

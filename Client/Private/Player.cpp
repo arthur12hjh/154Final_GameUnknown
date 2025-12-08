@@ -522,8 +522,19 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 
 		Default_Damage_Desc DamageDesc = {};
 		DamageDesc.pAttacker = this;
-		DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
-		static_cast<CCharacter*>(pDamageDesc->pAttacker)->Damaged(&DamageDesc);
+
+		auto pNayitba = static_cast<CNayitba*>(pDamageDesc->pAttacker);
+		if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+		{
+			if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+			else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+		}
+		else
+			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+
+		pNayitba->Damaged(&DamageDesc);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)

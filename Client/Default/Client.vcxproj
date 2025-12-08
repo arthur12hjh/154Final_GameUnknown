@@ -332,6 +332,7 @@
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\Public\Task_Dead.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
+    <ClInclude Include="..\public\Task_Groggy.h" />
     <ClInclude Include="..\Public\Task_Hit.h" />
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
@@ -585,6 +586,7 @@
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\Private\Task_Dead.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
+    <ClCompile Include="..\private\Task_Groggy.cpp" />
     <ClCompile Include="..\Private\Task_Hit.cpp" />
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
