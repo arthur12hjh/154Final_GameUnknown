@@ -5,13 +5,14 @@
 NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
-struct Default_Damage_Desc;
 
-class CTask_Hit : public CTask
+class CTask_Groggy : public CTask
 {
+	enum class GROGGY_STATE { START, LOOP, END };
+
 protected:
-	CTask_Hit();
-	virtual ~CTask_Hit() = default;
+	CTask_Groggy();
+	virtual ~CTask_Groggy() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -23,18 +24,14 @@ private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
-	string								m_szAnimationName = {};
-	const Default_Damage_Desc*			m_pHit_Data = { nullptr };
-
-	_float3								m_vImpactDir = {};
-	_float								m_fImpactForce = {};
+	string								m_szAnimation = {};
+	GROGGY_STATE						m_eState = {};
 
 private :
-	void								Refresh_HitMotion();
+	void								ChangeGroggyState(GROGGY_STATE eState);
 
 public:
-	static	CTask_Hit*					Create(CBehaviorTree* pOwnerTree);
+	static	CTask_Groggy*				Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
-
 };
 NS_END

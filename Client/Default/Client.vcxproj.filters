@@ -706,6 +706,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy">
+      <UniqueIdentifier>{bf0f5972-7a20-443a-a23d-a9d5e7419158}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1429,6 +1432,9 @@
     <ClInclude Include="..\public\MonsterGroggyState.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Task_Groggy.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2121,6 +2127,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MonsterGroggyState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Groggy.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

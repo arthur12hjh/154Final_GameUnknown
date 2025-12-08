@@ -37,14 +37,13 @@ private :
 	const Character_Skill_Desc*					m_pSkillData = { nullptr };
 
 	CGameObject*								m_pTarget = { nullptr };
-	
+
 	// 특정 몬스터의 행동에 대한 정의
 	_bool										m_bIsPattern = {};
 
 	_float3										m_vMoveDir = {};
 	_float										m_fDistance = {};
 	_float										m_fMoveAnimMaxRatio = {};
-
 	_float										m_fMoveSpeed = {};
 
 	function<void(_float)>						m_AttackCompletedFunc;
