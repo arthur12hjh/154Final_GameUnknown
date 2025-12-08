@@ -37,6 +37,23 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 			_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, nullptr, 0, nullptr, 0);
 			_splitpath_s(strTexturePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szEXT, MAX_PATH);
 
+
+			if (false == strcmp(".png", szEXT))
+			{
+				char	strDDSTexturePath[MAX_PATH];
+				strcpy_s(strDDSTexturePath, strTexturePath);
+
+				strcpy_s(strDDSTexturePath, szDrive);
+				strcat_s(strDDSTexturePath, szDir);
+				strcat_s(strDDSTexturePath, szFileName);
+				strcat_s(strDDSTexturePath, ".dds");
+
+				if ((_access(strDDSTexturePath, 0) != -1))
+				{
+					strcpy_s(szEXT, ".dds");
+				}
+			}
+
 			strcpy_s(szTextureFilePath, szDrive);
 			strcat_s(szTextureFilePath, szDir);
 			strcat_s(szTextureFilePath, szFileName);
@@ -49,6 +66,7 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 			ID3D11ShaderResourceView* pSRV = { nullptr };
 
 			HRESULT			hr = {};
+
 
 			if (false == strcmp(".dds", szEXT))
 				hr = CreateDDSTextureFromFile(m_pDevice, szAbsolutePath, nullptr, &pSRV);
