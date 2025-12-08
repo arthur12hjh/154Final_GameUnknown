@@ -26,6 +26,7 @@ HRESULT CLift_Body::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	return S_OK;
 }
 
@@ -39,8 +40,8 @@ void CLift_Body::Update(_float fTimeDelta)
 
 void CLift_Body::Late_Update(_float fTimeDelta)
 {
-
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if(m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CLift_Body::Render()
@@ -133,6 +134,7 @@ HRESULT CLift_Body::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, m_pTransformCom->Get_Scale());
 
 	return S_OK;
 }

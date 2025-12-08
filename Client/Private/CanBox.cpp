@@ -35,6 +35,7 @@ HRESULT CCanBox::Initialize(void* pArg)
     m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(1, false);
 
+    m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;
 }
 
@@ -169,7 +170,7 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         return E_FAIL;
 
     m_pGameInstance->Add_Event(TEXT("Box_Open"), m_pEventHandle);
-
+    static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
     return S_OK;
 }
 
