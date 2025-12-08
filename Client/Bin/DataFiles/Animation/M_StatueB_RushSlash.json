@@ -56,7 +56,7 @@
                 "iNumData07": 0,
                 "iNumData08": 0,
                 "szNotifyArg01": "Prototype_Component_Effect_Monster_Sting",
-                "szNotifyArg02": "",
+                "szNotifyArg02": "Bip001-R-Hand",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
@@ -64,7 +64,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001-R-Hand",
+                "szSocketTag": "NoneBone",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -72,13 +72,13 @@
                 ],
                 "vNotifyRotation": [
                     0.0,
-                    90.0,
+                    0.0,
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.6,
-                    0.6,
-                    0.6
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],
