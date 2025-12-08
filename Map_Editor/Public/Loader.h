@@ -55,7 +55,9 @@ private:
 	HRESULT Loading_For_Desert_Canyon2_1(void* pArg);
 	HRESULT Loading_For_Desert_Canyon2_2(void* pArg);
 	HRESULT Loading_For_Desert_Deco(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Camp(void* pArg);
 	HRESULT Loading_For_Desert_Archi(void* pArg);
+	HRESULT Loading_For_Desert_Environment_Tree1(void* pArg);
 	
 
 public:
