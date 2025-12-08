@@ -75,6 +75,10 @@ void CTrailData::Set_Data(TRAIL_DATA tData)
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
 	}
 	Ready_Components();
 }

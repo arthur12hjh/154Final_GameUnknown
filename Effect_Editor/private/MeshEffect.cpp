@@ -113,6 +113,10 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
+		break;
 	}
 
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
@@ -184,6 +188,10 @@ void CMeshEffect::Update(MESH_DATA tData)
 	case 7:
 		m_eRender = RENDER::BLEND;
 		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		break;
+	case 8:
+		m_eRender = RENDER::BLUR;
+		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 }

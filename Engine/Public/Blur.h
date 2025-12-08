@@ -21,7 +21,7 @@ public:
 #endif
 
 private:
-	list<class CGameObject*> m_BlurObjects = {};
+	list<class CGameObject*> m_BlurObjects[2] = {};
 	_bool					 m_bisWeight;
 
 public:

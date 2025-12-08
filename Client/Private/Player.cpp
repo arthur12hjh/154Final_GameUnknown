@@ -175,7 +175,8 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 	{
 		auto pInteraction = m_pGameInstance->GetNearInteraction();
-		pInteraction->Action_InteractionEvent(this);
+		if(pInteraction)
+			pInteraction->Action_InteractionEvent(this);
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
