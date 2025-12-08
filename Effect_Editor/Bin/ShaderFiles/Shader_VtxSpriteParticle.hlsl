@@ -1699,7 +1699,7 @@ technique11 DefaultTechnique
     pass Bloom
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
