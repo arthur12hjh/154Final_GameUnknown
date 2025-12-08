@@ -52,11 +52,12 @@ HRESULT CBullet::Render()
     return S_OK;
 }
 
-void CBullet::Shoot_Projectile(_vector vDir, _float fSpeed)
+void CBullet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 {
     _matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
     m_pTransformCom->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
-    XMStoreFloat3(&m_vProjectileDir, vDir);
+
+    XMStoreFloat3(&m_vProjectileDir, XMVector3Normalize(vTargetPoint - CombinedMatrix.r[3]));
     m_bIsAttachment = false;
     m_fSpeed = fSpeed;
 }

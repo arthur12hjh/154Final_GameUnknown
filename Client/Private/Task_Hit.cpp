@@ -94,6 +94,8 @@ void CTask_Hit::Refresh_HitMotion()
 	}
 	else
 	{
+		XMStoreFloat3(&m_vImpactDir, XMVectorZero());
+		m_fImpactForce = 0.f;
 		m_szAnimationName = pSkill_Data->szHitAnimationName;
 	}
 
