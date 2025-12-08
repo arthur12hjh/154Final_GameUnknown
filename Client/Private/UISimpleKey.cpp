@@ -48,6 +48,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	
 	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
@@ -68,52 +69,60 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	if (m_eInterState != m_ePrevInterState)
+	auto pInteraction = m_pGameInstance->GetNearInteraction();
+	if (pInteraction)
 	{
-		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-		UI_EVENT_ARG_DESC Arg{};
-		Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
-		Arg.pData = &m_eInterState;
+		if (pInteraction == static_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
+		{
+			/*	if (m_eInterState != m_ePrevInterState)
+				{*/
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-		switch (m_eInterState)
-		{
-		case INTERACTION_STATE::DEFAULT:
-		{
-			pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-			break;
-		}
-		case INTERACTION_STATE::CONTACT:
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key_") + to_wstring(m_iCloneIdx));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
-			break;
-		}
-		case INTERACTION_STATE::LOCK:
-		{
-			break;
-		}
-		case INTERACTION_STATE::ACTIVE:
-		{
-			auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx));
-			if (AnimTag != m_tUIDesc.m_AnimTags.end())
-				pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-			__super::Trigger_Event(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx), &Arg);
-			
-			_bool bActive = true;
 			UI_EVENT_ARG_DESC Arg{};
-			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
-			Arg.pData = &bActive;
-			__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
+			Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
+			Arg.pData = &m_eInterState;
 
-			break;
+			switch (m_eInterState)
+			{
+			case INTERACTION_STATE::DEFAULT:
+			{
+				auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key_") + to_wstring(m_iCloneIdx));
+				if (AnimTag != m_tUIDesc.m_AnimTags.end())
+					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+				__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
+				break;
+			}
+			case INTERACTION_STATE::CONTACT:
+			{
+
+				break;
+			}
+			case INTERACTION_STATE::LOCK:
+			{
+				break;
+			}
+			case INTERACTION_STATE::ACTIVE:
+			{
+				auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx));
+				if (AnimTag != m_tUIDesc.m_AnimTags.end())
+					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+				__super::Trigger_Event(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx), &Arg);
+
+				_bool bActive = true;
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+				Arg.pData = &bActive;
+				__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
+
+				break;
+			}
+			}
+
+			m_ePrevInterState = m_eInterState;
+			Safe_Release(pHUD);
+			/*	}*/
 		}
-		}
-		
-		m_ePrevInterState = m_eInterState;
-		Safe_Release(pHUD);
 	}
 }
 

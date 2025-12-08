@@ -8,6 +8,7 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIBase;
+class CBullet;
 
 struct Character_Skill_Desc;
 
@@ -88,6 +89,7 @@ private:
 
 	size_t									m_iNumCandidate = {};
 	vector<const CHARACTER_SKILL_DESC*>		m_SkillCandidates = {};
+	vector<CBullet*>						m_pBulletList = {};
 
 private :
 	HRESULT									Ready_CharacterData();
@@ -100,7 +102,9 @@ private :
 	void									VisibleStatusUI(_float fTimeDelta);
 	
 #pragma region Notify Event
-	void							CreateHitBox(const AnimNotify* pNotify);
+	void									CreateHitBox(const AnimNotify* pNotify);
+	void									SpawnObject(const AnimNotify* pNotify);
+	void									ShootProjectile(const AnimNotify* pNotify);
 #pragma endregion
 
 #pragma region Damage Logic
