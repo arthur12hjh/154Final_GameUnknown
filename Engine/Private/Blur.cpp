@@ -70,7 +70,15 @@ HRESULT CBlur::Add_RenderObject(CGameObject* pRenderObject)
 	if (nullptr == pRenderObject)
 		return E_FAIL;
 
-	m_BlurObjects.push_back(pRenderObject);
+	switch (pRenderObject->GetTeam())
+	{
+	case OBJECT_TEAM::FRIENDLY:
+		m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].push_back(pRenderObject);
+		break;
+	case OBJECT_TEAM::ENEMY:
+		m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].push_back(pRenderObject);
+		break;
+	}
 	
 	Safe_AddRef(pRenderObject);
 
@@ -79,60 +87,118 @@ HRESULT CBlur::Add_RenderObject(CGameObject* pRenderObject)
 
 HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 {
+	m_pGameInstance->Clear_MRT(TEXT("MRT_Blur_Final"));
 	/* 블러 기록할 물체들만 뺴서 기록 */
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
-		return E_FAIL;
+	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].size()) {
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
+			return E_FAIL;
 
-	for (auto& pRenderObject : m_BlurObjects)
-	{
-		if (nullptr != pRenderObject)
-			pRenderObject->Render();
+		for (auto& pRenderObject : m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)])
+		{
+			if (nullptr != pRenderObject)
+				pRenderObject->Render();
 
-		Safe_Release(pRenderObject);
+			Safe_Release(pRenderObject);
+		}
+
+		m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].clear();
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
+
+		/* 블러 X 처리 */
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
+			return E_FAIL;
+
+		m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+		m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+		m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), m_pShader, "g_BlurTexture")))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Weight"), m_pShader, "g_WeightTexture")))
+			return E_FAIL;
+
+		m_pShader->Begin(0);
+		pVIBuffer->Bind_Resources();
+		pVIBuffer->Render();
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
+
+		/* 블러 Y 처리 */
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
+			return E_FAIL;
+
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurTexture")))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X_Weight"), m_pShader, "g_WeightTexture")))
+			return E_FAIL;
+
+		m_pShader->Begin(1);
+
+		pVIBuffer->Bind_Resources();
+
+		pVIBuffer->Render();
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
 	}
+	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].size()) {
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
+			return E_FAIL;
 
-	m_BlurObjects.clear();
+		for (auto& pRenderObject : m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)])
+		{
+			if (nullptr != pRenderObject)
+				pRenderObject->Render();
 
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;
+			Safe_Release(pRenderObject);
+		}
 
-	/* 블러 X 처리 */
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
-		return E_FAIL;
+		m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].clear();
 
-	m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
-	m_pShader->Bind_Matrix("g_ViewMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
-	m_pShader->Bind_Matrix("g_ProjMatrix",  m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), m_pShader, "g_BlurTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Weight"), m_pShader, "g_WeightTexture")))
-		return E_FAIL;
+		/* 블러 X 처리 */
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
+			return E_FAIL;
 
-	m_pShader->Begin(0);
-	pVIBuffer->Bind_Resources();
-	pVIBuffer->Render();
+		m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+		m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+		m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur"), m_pShader, "g_BlurTexture")))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_Weight"), m_pShader, "g_WeightTexture")))
+			return E_FAIL;
 
-	/* 블러 Y 처리 */
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
-		return E_FAIL;
+		m_pShader->Begin(4);
+		pVIBuffer->Bind_Resources();
+		pVIBuffer->Render();
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurTexture")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X_Weight"), m_pShader, "g_WeightTexture")))
-		return E_FAIL;
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
 
-	m_pShader->Begin(1);
+		/* 블러 Y 처리 */
+		if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Blur_Final"))))
+			return E_FAIL;
 
-	pVIBuffer->Bind_Resources();
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X"), m_pShader, "g_BlurTexture")))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Blur_X_Weight"), m_pShader, "g_WeightTexture")))
+			return E_FAIL;
 
-	pVIBuffer->Render();
+		m_pShader->Begin(5);
 
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;
+		pVIBuffer->Bind_Resources();
+
+		pVIBuffer->Render();
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
+	}
 
 	m_bisWeight = false;
 	return S_OK;
@@ -190,10 +256,17 @@ void CBlur::Free()
 {
 	__super::Free();
 
-	for (auto& BlurObject : m_BlurObjects)
+	for (auto& BlurObject : m_BlurObjects[0])
 	{
 		Safe_Release(BlurObject);
 	}
 
-	m_BlurObjects.clear();
+	m_BlurObjects[0].clear();
+
+	for (auto& BlurObject : m_BlurObjects[1])
+	{
+		Safe_Release(BlurObject);
+	}
+
+	m_BlurObjects[1].clear();
 }

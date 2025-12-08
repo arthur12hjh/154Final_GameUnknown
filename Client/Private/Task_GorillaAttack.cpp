@@ -31,6 +31,16 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 {
+	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
+	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
+
+	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
+		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+	{
+		while (!m_pSkillData.empty())
+			m_pSkillData.pop();
+	}
+
 	if (nullptr == m_pBlackBoard->GetAttackData())
 	{
 		if (false == SelectPattern())
@@ -39,15 +49,14 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		m_bIsAttackStartLerp = true;
 	}
 
-	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
-	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
+
+	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || 
 		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
 	{
 		while (!m_pSkillData.empty())
 			m_pSkillData.pop();
 
 		Compute_AttackCoolTime(true);
-		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetAttackData(nullptr);
 		return NODE_STATE::FAIL;
 	}
@@ -98,37 +107,30 @@ _bool CTask_GorillaAttack::SelectPattern()
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 
-	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-	m_PrePatternIndex = 0;
-	if (65 > fRandomIndex)
-		m_CurPatternIndex = 2;
+	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
+	{
+		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+
+		/*if (30.f > fRandomIndex)
+			BboyStepPattern();
+		else*/ if (30.f > fRandomIndex)
+		{
+			m_CurPatternIndex = 1;
+		}
+		else
+		{
+			m_PrePatternIndex = 0;
+			if(65 > fRandomIndex)
+				m_CurPatternIndex = 2;
+			else
+				m_CurPatternIndex = 3;
+		}
+	}
 	else
-		m_CurPatternIndex = 3;
-
-	//if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
-	//{
-	//	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-
-	//	/*if (30.f > fRandomIndex)
-	//		BboyStepPattern();
-	//	else*/ if (30.f > fRandomIndex)
-	//	{
-	//		m_CurPatternIndex = 1;
-	//	}
-	//	else
-	//	{
-	//		m_PrePatternIndex = 0;
-	//		if(65 > fRandomIndex)
-	//			m_CurPatternIndex = 2;
-	//		else
-	//			m_CurPatternIndex = 3;
-	//	}
-	//}
-	//else
-	//{
-	//	m_PrePatternIndex = 0;
-	//	m_CurPatternIndex = 4;
-	//}
+	{
+		m_PrePatternIndex = 0;
+		m_CurPatternIndex = 4;
+	}
 
 	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
 	{
@@ -202,7 +204,7 @@ void CTask_GorillaAttack::BackStepPattern()
 	m_pSkillData.push(m_pGameManager->Find_SkillData(10));
 
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-	if (40.f < fRandomIndex)
+	if (80.f < fRandomIndex)
 	{
 		CrushPattern();
 		

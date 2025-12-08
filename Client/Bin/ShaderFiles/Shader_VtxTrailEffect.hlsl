@@ -100,7 +100,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     
@@ -144,7 +144,7 @@ PS_OUT PS_SLASH(PS_IN In)
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;
