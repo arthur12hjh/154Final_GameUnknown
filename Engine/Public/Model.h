@@ -84,7 +84,7 @@ public:
 
 	_uint Get_AnimationKeyFrameIndex() const;
 
-	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
+	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
 
 	// 더 이상 쓰지 않음.
 	void Attach_CombinedTransformationMatrix();

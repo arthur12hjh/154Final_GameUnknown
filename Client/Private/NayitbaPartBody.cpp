@@ -158,7 +158,6 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             }
             else
             {
-                m_pModelCom->AddCount_PartialBone(NotifyReference.szNotifyArg03.c_str());
                 EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
                 EffectDesc.pWorldMatrix = &m_CombinedWorldMatrix;
             }
@@ -217,7 +216,6 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
 
             if (NotifyReference.szSocketTag.compare("Transform") != 0)
             {
-                m_pModelCom->AddCount_PartialBone(NotifyReference.szNotifyArg03.c_str());
                 ptrailDesc->pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
             }
             ptrailDesc->bisPlay = true;

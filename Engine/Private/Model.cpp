@@ -116,8 +116,10 @@ _uint CModel::Get_AnimationKeyFrameIndex() const
     return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
-const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 {
+    AddCount_PartialBone(pBoneName);
+
     auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
         {
             if (true == pBone->Compare_Name(pBoneName))
