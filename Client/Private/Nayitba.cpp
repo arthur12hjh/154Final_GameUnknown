@@ -91,8 +91,8 @@ void CNayitba::Update(_float fTimeDelta)
 			BattleEvent(nullptr, NAYTIBA_STATE::DEFAULT);
 		}
 
-		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
-			VisibleStatusUI(fTimeDelta);
+	/*	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+			VisibleStatusUI(fTimeDelta);*/
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
@@ -148,6 +148,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
+	
 
 	VisibleStatusUI(0.f);
 	if(0 >= m_MonsterInfo.iCurrentHealth)
@@ -515,6 +516,10 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 
 		Safe_Release(pUIHUD);
 	}
+	else
+	{
+		VisibleStatusUI(0.f);
+	}
 }
 
 void CNayitba::VisibleStatusUI(_float fTimeDelta)
@@ -615,6 +620,7 @@ _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 		iDamage = 0;
 
 	_bool bIsCheckDefenceLogic = false;
+	
 	if (m_pAttack_Data)
 	{
 		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))

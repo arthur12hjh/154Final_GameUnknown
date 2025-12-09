@@ -290,7 +290,13 @@ void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const
 
 	m_bIsEnableCollider = NotifyRef.iNumData01;
 	if (false == m_bIsEnableCollider)
+	{
+	
 		static_cast<CCollider*>(pComponents)->ResetCollision();
+	}
+	else
+		m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+
 }
 
 void CWeapon::EnableCollider(_bool bIsEnable)
@@ -391,16 +397,16 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
 
-		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-		EffectDesc.fRotationPerSec = 1.f;
-		EffectDesc.fSpeedPerSec = 1.f;
+		//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		//EffectDesc.fRotationPerSec = 1.f;
+		//EffectDesc.fSpeedPerSec = 1.f;
 
-		EffectDesc.vPos = XMVectorSet(vHitPoint.x, vHitPoint.y, vHitPoint.z, 1);
-		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 1.f;
-		EffectDesc.pDir = &vHitDir;
-		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+		//EffectDesc.vPos = XMVectorSet(vHitPoint.x, vHitPoint.y, vHitPoint.z, 1);
+		//EffectDesc.fRot = _float3(0, 0, 0);
+		//EffectDesc.fSize = 1.f;
+		//EffectDesc.pDir = &vHitDir;
+		//CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
+		//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 	}
 }
 
