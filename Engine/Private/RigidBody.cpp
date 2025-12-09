@@ -40,7 +40,11 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 {
 	/* 월드 위치 받아와서 트랜스폼 갱신 */
 	/* 필요하면 추후 멤카피로 바꾸던가 해야됨.. */
-	m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+
+	if(RIGIDBODY_TYPE::KINEMATIC == m_eType)
+		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+	else
+		m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 }
 
 HRESULT CRigidBody::Ready_PxMaterial(RIGIDBODY_DESC* pDesc)
@@ -86,8 +90,8 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 
 		// TriangleMesh는 여러 개일 수 있으므로 Shape 리스트 유지
 		// (CRigidBody::m_pShape 를 첫 번째 shape 로 사용)
-		vector<PxShape*> triangleShapes;
-		triangleShapes.reserve(iMeshNum);
+		vector<PxShape*> TriangleShapes;
+		TriangleShapes.reserve(iMeshNum);
 
 		for (_uint i = 0; i < iMeshNum; ++i)
 		{
@@ -138,10 +142,11 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			if (pTriangleMesh == nullptr)
 				continue;
 
-			PxTriangleMeshGeometry geom(pTriangleMesh);
+			PxMeshScale vMeshScale(PxVec3(pDesc->vSize.x, pDesc->vSize.y, pDesc->vSize.z));
+			PxTriangleMeshGeometry MeshGeometry(pTriangleMesh, vMeshScale);
 
 			// Shape 생성
-			PxShape* pShape = m_pPxPhysics->createShape(geom, *m_pMaterial);
+			PxShape* pShape = m_pPxPhysics->createShape(MeshGeometry, *m_pMaterial);
 			if (nullptr != pShape)
 				m_TriangleShapes.push_back(pShape);
 
@@ -150,7 +155,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			pTriangleMesh->release();
 		}
 
-		triangleShapes.clear();
+		TriangleShapes.clear();
 
 		break;
 	}
@@ -204,6 +209,7 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 		m_pPxRigidBody->attachShape(*m_pShape);
 
 	/* 유저 데이터 세팅 */
+	m_tUserData.pHitActor = this;
 	m_pPxRigidBody->userData = &m_tUserData;
 
 	return S_OK;

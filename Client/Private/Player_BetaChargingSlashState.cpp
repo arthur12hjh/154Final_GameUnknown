@@ -63,6 +63,14 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) && fAnimationRatio > 0.5f)
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
+    else if (true == m_isAttack &&
+        (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) && fAnimationRatio > 0.5f))
+        m_tNextState.eNextState = PLAYER_STATE::EVADE;
+
+    else if (true == m_isAttack &&
+        (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E) && fAnimationRatio > 0.5f))
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
 
     if (true == m_isAttack && true == isAnimFinished)
     {

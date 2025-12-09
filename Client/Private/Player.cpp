@@ -186,7 +186,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	//m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
