@@ -27,9 +27,22 @@ HRESULT CItem::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	ITEM_DESC* pDesc = static_cast<ITEM_DESC*>(pArg);
+	m_bIsLerpAnimation = true;
+	m_fAmount = pDesc->fAmount;
+
+	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
+	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
+
+	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 0.3f);
+	vBezirPoint.m128_f32[1] += 3.f;
+
+	XMStoreFloat3(&m_vTargetDir, XMVector3Normalize(vBezirPoint - vOwnerPos));
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
+
+	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
+
 
 	return S_OK;
 }
@@ -40,7 +53,18 @@ void CItem::Priority_Update(_float fTimeDelta)
 
 void CItem::Update(_float fTimeDelta)
 {
-	// 이거 애니메이션있으니까
+	if (m_bIsLerpAnimation)
+	{
+		m_fLerpTime.x += fTimeDelta;
+		m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vTargetDir), 3.f);
+
+		if (m_fLerpTime.x >= m_fLerpTime.y)
+		{
+			m_bIsLerpAnimation = false;
+			m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+		}
+	}
+
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
@@ -106,7 +130,11 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	_float3 Com_Size = m_pTransformCom->Get_Scale();
 
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
+	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	//	return E_FAIL;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Item"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -152,9 +180,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 		return E_FAIL;
 
-	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
-	// 없으면 충돌 안됨
-	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+
 	return S_OK;
 }
 

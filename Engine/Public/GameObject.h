@@ -36,9 +36,10 @@ public:
 	virtual HRESULT		Render();
 	virtual HRESULT		Render_Shadow() { return S_OK; }
 	virtual HRESULT		Render_MotionBlur() { return S_OK; }
-	virtual void		Set_Dead(_bool isDead) { m_isDead = isDead; }
+	virtual void		PlayDeadEffect() {}
 
 public:
+	void				Set_Dead(_bool isDead) { m_isDead = isDead; }
 	_bool isDead() const {
 		return m_isDead;
 	}

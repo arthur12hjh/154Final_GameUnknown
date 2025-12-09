@@ -42,7 +42,7 @@ public:
 	virtual HRESULT							ActionSuccess(void* pArg) override;
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 	virtual void							RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
-	virtual void							Set_Dead(_bool isDead);
+	virtual void							PlayDeadEffect();
 
 	_uint									GetMonsterID();
 	CGameObject*							GetTarget();

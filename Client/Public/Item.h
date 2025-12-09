@@ -13,13 +13,13 @@ NS_END
 NS_BEGIN(Client)
 class CItem final : public CProb_Interaction
 {
-public :
-	typedef struct Item_Desc : public GAMEOBJECT_DESC
+public:
+	typedef struct Item_Desc : public ACTOR_DESC
 	{
 		_uint						iItemID;
 		_uint						fAmount;
 		_float3						fDropPoint;
-	}ITEM_DESC; 
+	}ITEM_DESC;
 
 protected:
 	CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,9 +36,15 @@ public:
 
 	virtual HRESULT					Render() override;
 
-protected :
+protected:
 	CModel*							m_pModelCom = { nullptr };
+
 	ITEM_DSEC						m_ItemData = {};
+	_float							m_fAmount = {};
+
+	_bool							m_bIsLerpAnimation = { false };
+	_float2							m_fLerpTime = { 0.f, 1.f };
+	_float3							m_vTargetDir = {};
 
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;

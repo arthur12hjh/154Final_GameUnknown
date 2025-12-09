@@ -46,6 +46,9 @@ HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float
     {
         m_DoprItemList.push_back(ItemData);
         m_AmountItemList.push_back(fAmount);
+
+        m_fTotalWeight += ItemData.second;
+        m_iNumItemCount++;
     }
     else
         return E_FAIL;
@@ -64,7 +67,7 @@ void CDropComponent::CalculationItemDrop()
     for (_uint i = 0; i < m_iNumItemCount; ++i)
     {
         fRandomWeight -= m_DoprItemList[i].second;
-        if (0 <= fRandomWeight)
+        if (0 >= fRandomWeight)
         {
             DROP_RESULT_DESC ResultDesc = {};
             ResultDesc.iDropItemID = m_DoprItemList[i].first;
@@ -88,23 +91,26 @@ void CDropComponent::CreateObjectToLayer()
         CItem::ITEM_DESC ItemDesc = {};
         ItemDesc.bIsApplyTransform = true;
         ItemDesc.vScale = { 1.f, 1.f, 1.f };
-        ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
-                               XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
-                               XMConvertToRadians(m_pGameInstance->Random(0, 360.f)), 0.f };
+        //ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
+        //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
+        //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)), 0.f };
 
         _float fRange = m_pGameInstance->Random(m_fDropRange * 0.7f, m_fDropRange);
         _float fRadius = m_pGameInstance->Random(0.f, 360.f);
         
         _vector vDorpPoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+        XMStoreFloat3(&ItemDesc.vPosition, vDorpPoint);
         vDorpPoint.m128_f32[0] += cosf(XMConvertToRadians(fRadius)) * fRange;
+        vDorpPoint.m128_f32[1] += 0.2f;
         vDorpPoint.m128_f32[2] += sinf(XMConvertToRadians(fRadius)) * fRange;
 
-        XMStoreFloat3(&ItemDesc.vPosition, vDorpPoint);
+        XMStoreFloat3(&ItemDesc.fDropPoint, vDorpPoint);
         memcpy(&ItemDesc.iItemID, &iter.iDropItemID, sizeof(_uint));
         memcpy(&ItemDesc.fAmount, &iter.fAmountVal, sizeof(_float));
         if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iLevelID, m_szProtoTypeName, iLevelID, m_szLayerName, &ItemDesc)))
             return;
     }
+    m_DropResultList.clear();
 }
 
 CDropComponent* CDropComponent::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

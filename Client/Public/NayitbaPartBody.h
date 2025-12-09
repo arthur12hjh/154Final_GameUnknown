@@ -39,6 +39,7 @@ public:
 	virtual HRESULT					Render_Shadow() override;
 
 	virtual void					Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+	void							Play_DeadEffect();
 
 private:
 	CCollider*											m_pColliderCom = { nullptr };
@@ -47,7 +48,7 @@ private:
 	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
 	
 	CTexture*											m_pTexture = {};
-	_bool												m_isAnimFinish = { false };
+	_bool												m_isDeadEffect = { false };
 	_float												m_fDeadTime = {};
 
 private:

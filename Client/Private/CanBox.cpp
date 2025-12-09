@@ -191,7 +191,6 @@ HRESULT CCanBox::Bind_ShaderResources()
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = true;
 
     return S_OK;
 }
@@ -213,8 +212,6 @@ HRESULT CCanBox::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
-
-    m_bIsInteractionAble = false;
 
     return S_OK;
 }

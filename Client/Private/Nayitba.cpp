@@ -149,11 +149,10 @@ HRESULT CNayitba::Damaged(void* pArg)
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
 
+	VisibleStatusUI(0.f);
 	if(0 >= m_MonsterInfo.iCurrentHealth)
 	{
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-
-
 	}
 
 	return S_OK;
@@ -197,7 +196,7 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 		else
 		{
 			m_MonsterInfo.iCurrentHealth += iCost;
-			m_MonsterInfo.iCurrentHealth = Clamp<long long>(m_MonsterInfo.iCurrentHealth, 0, m_pInitMonsterInfo->iMaxHealth);
+			m_MonsterInfo.iCurrentHealth = Clamp<long long>((long long)m_MonsterInfo.iCurrentHealth, 0, (long long)m_pInitMonsterInfo->iMaxHealth);
 		}
 	}
 	break;
@@ -208,7 +207,7 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 		else
 		{
 			m_MonsterInfo.iCurrentShield += iCost;
-			m_MonsterInfo.iCurrentShield = Clamp<long long>(m_MonsterInfo.iCurrentShield, 0, m_pInitMonsterInfo->iMaxShield);
+			m_MonsterInfo.iCurrentShield = Clamp<long long>((long long)m_MonsterInfo.iCurrentShield, 0, (long long)m_pInitMonsterInfo->iMaxShield);
 		}
 	}
 	break;
@@ -219,7 +218,7 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 		else
 		{
 			m_MonsterInfo.iCurrentStamina += iCost;
-			m_MonsterInfo.iCurrentStamina = Clamp<long long>(m_MonsterInfo.iCurrentStamina, 0, m_pInitMonsterInfo->iMaxStamina);
+			m_MonsterInfo.iCurrentStamina = Clamp<long long>((long long)m_MonsterInfo.iCurrentStamina, 0, (long long)m_pInitMonsterInfo->iMaxStamina);
 		}
 	}
 	break;
@@ -228,21 +227,15 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 	}
 }
 
-void CNayitba::Set_Dead(_bool isDead)
+void CNayitba::PlayDeadEffect()
 {
 	m_pDropCom->ItemDrop(3);
 	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
-
 	if (nullptr == pPartBody)
-		__super::Set_Dead(true);
-	else
-	{
-		auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+		return;
 
-		// 여기서 디졸브 하겠음
-
-
-	}
+	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+	pNaytibaPartBody->Play_DeadEffect();
 }
 
 _uint CNayitba::GetMonsterID()
@@ -406,9 +399,9 @@ HRESULT CNayitba::ADD_Components()
 		return E_FAIL;
 
 #pragma region DropItem Setting
-	m_pDropCom->ADD_DropItem({ 1, 30 }, 50);
-	m_pDropCom->ADD_DropItem({ 2, 30 }, 3);
-	m_pDropCom->ADD_DropItem({ 3, 10 }, 1);
+	m_pDropCom->ADD_DropItem(make_pair( 1, 30.f ), 50);
+	m_pDropCom->ADD_DropItem(make_pair( 2, 30.f ), 3);
+	m_pDropCom->ADD_DropItem(make_pair( 3, 10.f ), 1);
 #pragma endregion
 
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
@@ -574,13 +567,14 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	m_vHitVisibleDuration.x = 0.f;
 	m_pGameManager->Start_Lockon();
+	
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 	{
 		// 이제 진짜라고 합니다.
 	
 		m_pAISenceCom->Add_SenceTargetObject(pDamageDesc->pAttacker);
 
-		VisibleStatusUI(0.f);
+	
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 	}
 
