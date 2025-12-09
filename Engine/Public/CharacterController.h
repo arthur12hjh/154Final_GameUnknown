@@ -47,6 +47,8 @@ public:
 	PxRigidActor* Get_PxActor();
 	void		  Set_Gravity(_bool bFlag, _float fVelocity);
  	_bool		  Get_Gravity() { return m_isGravity; }
+	void		  Set_Riding(_bool isRiding, class CTransform* pTransform = nullptr, class CRigidBody* pRigidBody = nullptr);
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -55,7 +57,7 @@ public:
 	/* 컨트롤러 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함 */
 	void Update_PrePxPosition(class CTransform* pOwnerTransform);
 	void Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform);
-	void Update_ControllerTransform();
+	void Update_ControllerTransform(_float fTimeDelta, class CTransform* pOwnerTransform);
 	void Set_Position(_vector vPosition);
 	_vector Calc_Gravity(_float fTimeDelta);
 
@@ -81,6 +83,11 @@ private:
 	_float				 m_fGravityTimeAcc = { 0.f }; 
 	_float				 m_fJumpVelocity = 0.f; // 현재 Y 속도 (점프 시 +, 낙하 시 -)
 	_float				 m_fGravity = 30.f; // 중력 가속도 (아래로)
+
+	_bool				 m_isRiding = { false };
+	class CRigidBody*	 m_pRidingTarget = { nullptr };
+	class CTransform*	 m_pRidingTargetTransform = { nullptr };
+	PxVec3				 m_vHitPosition = {};
 
 private:
 	HRESULT Ready_CapsuleController(CCT_DESC* pDesc);

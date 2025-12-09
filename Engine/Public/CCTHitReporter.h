@@ -16,14 +16,20 @@ public:
 	virtual void onObstacleHit(const PxControllerObstacleHit& hit) override {}
 
 public:
-	void Set_Controller(PxController* pController, PxUserData tUserData) {
+	PxVec3 Get_HitPosition() { return m_vHitPos; }
+
+public:
+	void Set_Controller(class CCharacterController* pCCT, PxController* pController, PxUserData tUserData) {
+		m_pCCT = pCCT;
 		m_pController = pController; 
 		m_tUserData = tUserData;
 	}
 
 protected:
+	class CCharacterController* m_pCCT = { nullptr };
 	PxController*	m_pController = { nullptr };
 	PxUserData		m_tUserData = {};
+	PxVec3			m_vHitPos = {};
 
 public:
 	virtual void Free() override;

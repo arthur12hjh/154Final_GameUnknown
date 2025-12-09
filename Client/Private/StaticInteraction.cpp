@@ -106,7 +106,6 @@ HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
-
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
     tUserData.szActorTag = TEXT("Static_Interaction");
@@ -137,6 +136,7 @@ HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
     // 없으면 충돌 안됨
     m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
+
     return S_OK;
 }
 
@@ -158,7 +158,6 @@ HRESULT CStaticInteraction::Begin_OverlapCallBack()
         m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
 
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = true;
     return S_OK;
 }
 
@@ -174,7 +173,6 @@ HRESULT CStaticInteraction::End_OverlapCallBack()
         m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
 
     m_pGameInstance->Remove_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = false;
     return S_OK;
 }
 

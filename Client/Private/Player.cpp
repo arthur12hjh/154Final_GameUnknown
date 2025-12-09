@@ -186,7 +186,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	//m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
@@ -536,6 +536,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
 		pNayitba->Damaged(&DamageDesc);
+		m_pGameInstance->GamePauseDurationTime(3.f, 0.1f, 3.f);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)

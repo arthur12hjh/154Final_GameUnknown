@@ -31,9 +31,7 @@ public:
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
-
 	CInteraction_Component*			m_pInteractionCom = { nullptr };
-	_bool							m_bIsInteractionAble = { false };
 
 	CUIBase*						m_pInteractionUI = { nullptr };
 	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
