@@ -423,11 +423,11 @@ PS_OUT PS_HP_GAUGE(PS_IN In)
     // ----------------------------
     //  TintColor
     // ----------------------------
-    //if (g_bUseTintColor)
-    //{
-    //    gaugeColor.rgb *= g_vTintColor.rgb;
-    //    gaugeColor.a *= g_vTintColor.a;
-    //}
+    if (g_bUseTintColor)
+    {
+        GaugeColor.rgb *= g_vTintColor.rgb;
+        GaugeColor.a *= g_vTintColor.a;
+    }
   
     float4 CombinedColor = BgColor;
     CombinedColor = lerp(CombinedColor, GaugeColor, GaugeColor.a);
@@ -984,16 +984,16 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
     float2 KeyUv = In.vTexcoord;
     float baseScale = 0.25f;
     
-    float4 Color = float4(1.f, 1.f, 1.f, 1.f);
+    //float4 Color = float4(1.f, 1.f, 1.f, 1.f);
     
-    uv -= float2(0.5f, 0.5f);
-    uv /= baseScale;
-    uv += float2(0.5f, 0.5f);
+    //uv -= float2(0.5f, 0.5f);
+    //uv /= baseScale;
+    //uv += float2(0.5f, 0.5f);
     
-    float base = g_Texture0.Sample(ClampSampler, uv).r;
+    //float base = g_Texture0.Sample(ClampSampler, uv).r;
     
-    base *= 1.f - g_fScale;
-    Color.a *= base;
+    //base *= 1.f - g_fScale;
+    //Color.a *= base;
     
     if(g_bUseScale)
     {
@@ -1007,9 +1007,9 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
     key.a *= g_Alpha;
     
     //float4 result = base;
-    Color = lerp(Color, key, key.a);
+    //Color = lerp(Color, key, key.a);
     
-    Out.vColor = Color;
+    Out.vColor = key;
     
     return Out;
 }

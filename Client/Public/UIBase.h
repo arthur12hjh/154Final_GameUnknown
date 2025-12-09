@@ -90,11 +90,22 @@ public:
 	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
 	_bool Get_Anim_Playing() { return m_bPlayingAnim; }
 
-	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
+	void Set_TargetPos(const _float3* pPos, _bool isPtr = true) {
+		if (!isPtr)
+		{
+			m_vTargetPos = *pPos;
+			m_pTargetPos = &m_vTargetPos;
+		}
+		else
+			m_pTargetPos = pPos;
+	}
 
 	CUIBase* Clone_UI(CUIHUD* pHUD, _uint iIdx);
 	void Set_CloneIdx(_uint iIdx) { m_iCloneIdx = iIdx; }
 	void Update_Children(CUIBase* pChild);
+
+	void Set_Rent(_bool isRent) { m_isRent = isRent; }
+	_bool Get_Rent() const { return m_isRent; }
 
 #ifdef _DEBUG
 	void Render_Debug_Rect();
@@ -116,8 +127,11 @@ protected:
 	_bool					m_bPlayingAnim{ false };
 
 	const _float3*			m_pTargetPos{nullptr};
+	_float3					m_vTargetPos{};
 
 	_uint					m_iCloneIdx{ 0 };
+
+	_bool					m_isRent{ false };
 
 private:
 	HRESULT Ready_Texture();

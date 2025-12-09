@@ -39,7 +39,7 @@ private:
 	CTexture* m_pKeyTextureCom{ nullptr };
 
 	INTERACTION_STATE m_eInterState{ INTERACTION_STATE::DEFAULT };
-	INTERACTION_STATE m_ePrevInterState{ m_eInterState };
+	INTERACTION_STATE m_ePrevInterState{ INTERACTION_STATE::END };
 
 public:
 	static CUISimpleKey* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -19,7 +19,6 @@ HRESULT CChair::Initialize_Prototype()
 
 HRESULT CChair::Initialize(void* pArg)
 {
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
