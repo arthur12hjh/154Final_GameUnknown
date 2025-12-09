@@ -4,6 +4,7 @@
 #include "Effect.h"
 #include "Trail.h"
 #include "TrailEffect.h"
+#include "Texture.h"
 
 #include "GameInstance.h"
 
@@ -42,7 +43,7 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
+    //m_fDeadTime += fTimeDelta;
     //m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
@@ -89,9 +90,14 @@ HRESULT CNayitbaPartBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
-
-        if (FAILED(m_pShaderCom->Begin(0)))
-            return E_FAIL;
+        if (0 < m_fDeadTime) {
+            if (FAILED(m_pShaderCom->Begin(5)))
+                return E_FAIL;
+        }
+        else {
+            if (FAILED(m_pShaderCom->Begin(0)))
+                return E_FAIL;
+        }
 
 
         if (FAILED(m_pModelCom->Render(i)))
@@ -257,6 +263,11 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
 
+    /* Com_Texture */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Dissolve_bullet0.dds"),
+        TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
+        return E_FAIL;
+
     ///* Com_Collider_Sphere */
     //CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 
@@ -282,6 +293,12 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+        return E_FAIL;
+
+
+    if (FAILED(m_pTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
         return E_FAIL;
 
     return S_OK;

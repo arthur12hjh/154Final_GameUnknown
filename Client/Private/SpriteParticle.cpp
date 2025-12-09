@@ -178,18 +178,18 @@ HRESULT CSpriteParticle::Render()
 }
 
 void CSpriteParticle::Stop() {
-	m_bisStop = true;
-	if (!m_tData.bisSpectrum) {
+	if (!m_bisStop && !m_tData.bisSpectrum) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 	}
+	m_bisStop = true;
 }
 
 void CSpriteParticle::Play()
 {
-	m_bisStop = false;
-	if (m_tData.bisSpectrum) {
+	if (m_bisStop && m_tData.bisSpectrum) {
 		m_CBData.iLoopAndCount.x = 2;
 	}
+	m_bisStop = false;
 }
 
 void CSpriteParticle::End()
