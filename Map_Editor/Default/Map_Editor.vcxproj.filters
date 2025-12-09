@@ -217,6 +217,15 @@
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Top_Roof">
       <UniqueIdentifier>{a6c1958d-6c27-4eae-a8ff-aa2d20c8fc1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Corpse">
+      <UniqueIdentifier>{80eaa75a-0561-4837-909c-937bfc44fd82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Container">
+      <UniqueIdentifier>{32039993-b0d1-4d09-ab2b-c19dc710d8b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Door">
+      <UniqueIdentifier>{f513af03-52bc-4fe3-91cf-485c6a84a81d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -524,6 +533,15 @@
     <ClInclude Include="..\public\RepairConsole.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Corpse.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Corpse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Container.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SciFi_Door.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -814,6 +832,15 @@
     </ClCompile>
     <ClCompile Include="..\private\RepairConsole.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Corpse.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Corpse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Container.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SciFi_Door.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
