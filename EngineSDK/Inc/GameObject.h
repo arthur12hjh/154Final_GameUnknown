@@ -36,13 +36,12 @@ public:
 	virtual HRESULT		Render();
 	virtual HRESULT		Render_Shadow() { return S_OK; }
 	virtual HRESULT		Render_MotionBlur() { return S_OK; }
+	virtual void		Set_Dead(_bool isDead) { m_isDead = isDead; }
 
 public:
 	_bool isDead() const {
 		return m_isDead;
 	}
-
-	void Set_Dead(_bool isDead) { m_isDead = isDead; }
 
 	class CComponent*			Find_Component(const _wstring& strComponentTag);
 

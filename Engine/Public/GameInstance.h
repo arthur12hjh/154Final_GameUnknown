@@ -368,6 +368,10 @@ private:
 	class CCinematicManager*		m_pCinema_Manager = { nullptr };
 	class CEventManager*			m_pEventManager = { nullptr };
 
+#pragma region Random Device
+	static	mt19937								m_RandomDevice;
+	static	uniform_real_distribution<_float>	m_distribution;
+#pragma endregion
 
 	_bool							m_bIsPause = false;
 	_float							m_fTimeRatio = { 1.f };

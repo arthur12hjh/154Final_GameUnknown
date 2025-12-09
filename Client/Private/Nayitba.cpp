@@ -6,21 +6,22 @@
 #include "StringHelper.h"
 #include "NayitbaPartBody.h"
 
-#include "TargetComponent.h"
 #include "GameManager.h"
 #include "BossController.h"
 #include "MonsterHitState.h"
 
-#include "Notify.h"
 #include "AttackHitBox.h"
-#include "GameManager.h"
+#include "Bullet.h"
+
+#pragma region Component
+#include "Notify.h"
 #include "TargetComponent.h"
+#include "DropComponent.h"
+#pragma endregion
 
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
-
-#include "Bullet.h"
 
 #include "UIHUD.h"
 #include "UIBase.h"
@@ -148,6 +149,13 @@ HRESULT CNayitba::Damaged(void* pArg)
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
 
+	if(0 >= m_MonsterInfo.iCurrentHealth)
+	{
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+
+
+	}
+
 	return S_OK;
 }
 
@@ -217,6 +225,23 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 	break;
 	default:
 		return;
+	}
+}
+
+void CNayitba::Set_Dead(_bool isDead)
+{
+	m_pDropCom->ItemDrop(3);
+	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+
+	if (nullptr == pPartBody)
+		__super::Set_Dead(true);
+	else
+	{
+		auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+
+		// 여기서 디졸브 하겠음
+
+
 	}
 }
 
@@ -362,7 +387,7 @@ HRESULT CNayitba::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
-	/* 시야 센서가 Controller에 달려있어야하나?*/
+	/* Sence Component */
 	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
 	TargetComDesc.fRadius = m_pInitMonsterInfo->fAttackRange - 3.f;
 	TargetComDesc.iNumPoints = 6.f;
@@ -371,6 +396,20 @@ HRESULT CNayitba::ADD_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TargetComponent"),
 		TEXT("Com_TargetCom"), reinterpret_cast<CComponent**>(&m_pTargetCom), &TargetComDesc)))
 		return E_FAIL;
+
+	/* Drop Component */
+	CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
+	DropComDesc.fDropRange = 7.f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
+		TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
+		return E_FAIL;
+
+#pragma region DropItem Setting
+	m_pDropCom->ADD_DropItem({ 1, 30 }, 50);
+	m_pDropCom->ADD_DropItem({ 2, 30 }, 3);
+	m_pDropCom->ADD_DropItem({ 3, 10 }, 1);
+#pragma endregion
 
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
@@ -724,6 +763,7 @@ void CNayitba::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pDropCom);
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
 	Safe_Release(m_pTargetCom);

@@ -30,6 +30,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
+mt19937 CGameInstance::m_RandomDevice(random_device{}());
+uniform_real_distribution<_float> CGameInstance::m_distribution(0.f, 1.f);
+
 CGameInstance::CGameInstance()
 {
 }
@@ -277,10 +280,7 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	random_device	rd;
-	uniform_real_distribution<_float> distribution(0, 1.f);
-
-	return distribution(rd);
+	return m_distribution(m_RandomDevice);
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)

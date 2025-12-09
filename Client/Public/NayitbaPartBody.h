@@ -39,9 +39,9 @@ public:
 
 private:
 	CCollider*											m_pColliderCom = { nullptr };
+
 	vector<pair<CEffect*, _int>>						m_pEffects = {};
-	vector<pair<NAYITBA_TRAIL_DESC*, _int>>		m_pTrailEffects = {};
-	_bool							m_isAnimFinish = { false };
+	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
 
 private:
 	HRESULT							Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc);
