@@ -321,7 +321,7 @@ public:
 
 	void									SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 
-	void									GamePauseDurationTime(_float fTime, _float fTimeRatio, _float fReturnSpeed);
+	void									GamePauseDurationTime(_uint fStopCnt, _float fTimeRatio, _float fReturnSpeed);
 	_bool									IsGamePasue() { return m_bIsPause; }
 
 	_float									GetGameSpeedfRatio();
@@ -373,23 +373,27 @@ private:
 	static	uniform_real_distribution<_float>	m_distribution;
 #pragma endregion
 
+#pragma region Game System
 	_bool							m_bIsPause = false;
+
+	_bool							m_bIsHitStopDurationTime;
+	_float							m_fHitStopReturnSpeed = {};
+	_uint2							m_iHitStopFrame = {};
+
 	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
 
+#pragma endregion
+
+#pragma region FPS
 	_uint							m_iDrawCnt = {};
-
-	_bool							m_bIsHitStopDurationTime;
-	_float							m_fHitStopReturnSpeed = {};
-	_float2							m_fHitStopTime = {};
-
 	_float							m_fTimeAcc = {};
 	_tchar							m_szFPS[MAX_PATH] = {};
-
 #ifdef _DEBUG
 	_float							m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::END)];
 #endif // _DEBUG
+#pragma endregion
 
 public:
 	void							Release_Engine();
