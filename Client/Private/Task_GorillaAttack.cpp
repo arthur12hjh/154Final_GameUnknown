@@ -45,8 +45,6 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	{
 		if (false == SelectPattern())
 			return NODE_STATE::FAIL;
-
-		m_bIsAttackStartLerp = true;
 	}
 
 
@@ -60,9 +58,6 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		m_pBlackBoard->SetAttackData(nullptr);
 		return NODE_STATE::FAIL;
 	}
-
-	if (m_bIsAttackStartLerp)
-		LookAtPoint(fTimeDelta);
 
 	// 일단 여기서 고릴라 공격에대한 이동 처리
 	AttackMoveAction(fTimeDelta);
@@ -267,19 +262,24 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 	{
 		switch (pAttackData->iSkillID)
 		{
+		case 1 : case 9: 
+			if (0.33f >= fAnimationRatio)
+				LookAtPoint(fTimeDelta);
+			break;
 		case 2 : 
 		{
 			// M_Gorilla_S12_Crush
 			// Max Frame : 90
 			// Farme: 30 ~50
-
-			if (0.33f <= fAnimationRatio && 0.55f >= fAnimationRatio)
+			if (0.37f <= fAnimationRatio && 0.55f >= fAnimationRatio)
 			{
 				if (0.40f > fAnimationRatio)
 				{
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos);
 					m_fLerpSpeed = 5.f;
 				}
+				else
+					m_bIsLookAtPoint = false;
 			
 				bIsLerpMove = true;
 			}
@@ -422,6 +422,15 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			}
 		}
 		break;
+		case 14:
+		{
+			// M_Gorilla_S21_SkillGetUp
+			// Max Frame : 135
+			// Frame : 40 ~ 50
+			if (0.25f <= fAnimationRatio && 0.40f >= fAnimationRatio)
+				LookAtPoint(fTimeDelta);
+		}
+		break;
 		}
 	}
 
@@ -464,17 +473,14 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 
-	LookAtPoint(fTimeDelta);
+	if (m_bIsLookAtPoint)
+		LookAtPoint(fTimeDelta);
 	if (1.f >= fDistance - pSkill_Data->fRange)
 		return;
 
 	_float fSpeed = m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed * (fDistance / pSkill_Data->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
 	fSpeed = Clamp<_float>(fSpeed, 0.f, m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
-
-	// 거리기반으로 속도 조절해보자
-	//m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_fAttackMoveDir), m_fMoveSpeed);
-
 }
 
 void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
@@ -489,14 +495,6 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
-
-	//if (m_vLerpTime.x > m_vLerpTime.y)
-	//{
-	//	m_bIsAttackStartLerp = false;
-	//	m_vLerpTime.x = 0.f;
-	//}
-	//else
-	//	m_vLerpTime.x += fTimeDelta;
 }
 
 CTask_GorillaAttack* CTask_GorillaAttack::Create(CBehaviorTree* pOwnerTree)

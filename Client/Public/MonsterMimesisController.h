@@ -4,7 +4,6 @@
 
 NS_BEGIN(Client)
 class CMonsterFSM;
-class CTargetComponent;
 
 struct Character_Skill_Desc;
 struct Naytiba_Desc;
@@ -32,9 +31,7 @@ public:
 	virtual void					ActionSuccess(void* pArg) override;
 
 private:
-	CTargetComponent*					m_pTargetCom = { nullptr };
 	CMonsterFSM*						m_pFSM = { nullptr };
-
 	const		Naytiba_Desc*			m_pOwnerData = { nullptr };
 
 	_bool								m_bIsMimesis = { true };
@@ -46,7 +43,6 @@ private:
 	_float2								m_vDelayTime = { 0.f, 1.f };
 
 private:
-	HRESULT								Ready_Components();
 	HRESULT								Ready_FSM();
 
 	void								Battle_Action(_float fTimeDelta);

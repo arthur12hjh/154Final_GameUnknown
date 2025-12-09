@@ -24,6 +24,7 @@ public:
 		return XMLoadFloat4(reinterpret_cast<const _float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]));		
 	}
 
+	_float3	Get_Delta() const { return m_vDelta; }
 	_float3 Get_Scale() const ;
 
 	const _float4x4* Get_WorldMatrixPtr() const {
@@ -45,7 +46,7 @@ public:
 public:
 	/* 이전 프레임 월드 매트릭스 넣을 수 있게 변경. */
 	HRESULT					Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, _bool IsPreWorldMatrix = false);
-
+	
 public:
 	void					Go_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr);
 	void					Go_Backward(_float fTimeDelta);
@@ -72,7 +73,7 @@ private:
 	_float					m_fRotationPerSec = {};
 	_float4x4				m_WorldMatrix{};
 	_float4x4				m_PreWorldMatrix{};
-
+	_float3					m_vDelta = {};
 public:
 	static CTransform*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent*		Clone(void* pArg) override;

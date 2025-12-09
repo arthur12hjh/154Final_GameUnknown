@@ -24,21 +24,21 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.5,
+                    3.0,
                     0.0
                 ],
                 "vNotifyRotation": [
-                    0.0,
+                    270.0,
                     0.0,
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    2.0,
+                    2.0,
+                    2.0
                 ]
             },
             {
@@ -64,21 +64,21 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.5,
+                    3.0,
                     0.0
                 ],
                 "vNotifyRotation": [
-                    0.0,
+                    270.0,
                     0.0,
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    2.0,
+                    2.0,
+                    2.0
                 ]
             },
             {
@@ -95,7 +95,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Shock",
+                "szNotifyArg01": "Prototype_Component_Effect_Shock_Final",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -104,10 +104,50 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "None",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.5,
+                    3.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    270.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    4.0,
+                    4.0,
+                    4.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 22,
+                "iNumData01": 1006,
+                "iNumData02": 1,
+                "iNumData03": 3,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "Hit_Box_Layer",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [

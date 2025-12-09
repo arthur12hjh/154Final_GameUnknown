@@ -153,14 +153,15 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
         float3 vGeoPos = Calc_ViewSpace(fSampleDepthNDC, vOffsetUV);
         float fGeoZ = vGeoPos.z; //실제 geometry view-space Z
 
-        // range check
-        float fDeltaZ = abs(vViewPos.z - fGeoZ);
-        fDeltaZ = max(fDeltaZ, 0.001f);
-        float fRangeCheck = smoothstep(0.f, 1.f, fRadius / fDeltaZ);
+        float fDeltaZ = abs(vViewPos.z - fGeoZ) + 0.001f;
 
-        // bias
-        float fBias = lerp(g_fBiasMin, g_fBiasMax, vDepth.g);
+        // Range Check 수정
+        float fRangeCheck = 1.0f - saturate(fDeltaZ / fRadius);
 
+        // bias는 고정값 권장
+        float fBias = g_fBiasMin; // 또는 0.01f;
+
+        // occlusion 조건
         if (fGeoZ <= vSamplePos.z - fBias)
             fOcclusion += fRangeCheck;
     }

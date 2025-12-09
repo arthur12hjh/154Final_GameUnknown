@@ -191,6 +191,8 @@
     <ClInclude Include="..\Public\CM_Rock7.h" />
     <ClInclude Include="..\Public\CM_Rock8.h" />
     <ClInclude Include="..\Public\CM_Rock9.h" />
+    <ClInclude Include="..\public\Container.h" />
+    <ClInclude Include="..\public\Corpse.h" />
     <ClInclude Include="..\public\Deco.h" />
     <ClInclude Include="..\public\DesertObject.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
@@ -243,6 +245,7 @@
     <ClInclude Include="..\Public\Rock6.h" />
     <ClInclude Include="..\Public\Rock7.h" />
     <ClInclude Include="..\Public\Rock8.h" />
+    <ClInclude Include="..\public\SciFi_Door.h" />
     <ClInclude Include="..\public\SpawnBox.h" />
     <ClInclude Include="..\Public\Stair.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -296,6 +299,8 @@
     <ClCompile Include="..\Private\CM_Rock7.cpp" />
     <ClCompile Include="..\Private\CM_Rock8.cpp" />
     <ClCompile Include="..\Private\CM_Rock9.cpp" />
+    <ClCompile Include="..\private\Container.cpp" />
+    <ClCompile Include="..\private\Corpse.cpp" />
     <ClCompile Include="..\private\Deco.cpp" />
     <ClCompile Include="..\private\DesertObject.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
@@ -366,6 +371,7 @@
     <ClCompile Include="..\Private\Rock6.cpp" />
     <ClCompile Include="..\Private\Rock7.cpp" />
     <ClCompile Include="..\Private\Rock8.cpp" />
+    <ClCompile Include="..\private\SciFi_Door.cpp" />
     <ClCompile Include="..\private\SpawnBox.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />

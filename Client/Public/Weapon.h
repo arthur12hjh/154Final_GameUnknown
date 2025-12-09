@@ -44,6 +44,7 @@ private:
 
 	class CTrailEffect*			m_pTrail = { nullptr };
 	class CEffect*				m_pSpark = { nullptr };
+	class CEffect*				m_pBlood = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
@@ -53,6 +54,7 @@ private:
 	_float						m_fTrailTime = -10.f;
 	_float						m_fChargeTime = -10.f;
 	_bool						m_bIsTrail = FALSE;
+	_bool						m_bisBlood = FALSE;
 
 	_bool						m_bIsEnableCollider = { false };
 
@@ -63,6 +65,7 @@ private:
 	HRESULT						Ready_Components();
 	HRESULT						Bind_ShaderResources();
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void						OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 	_bool						isVisible(); 
 public:

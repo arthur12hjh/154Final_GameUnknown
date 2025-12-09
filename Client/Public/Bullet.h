@@ -31,7 +31,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	void							Shoot_Projectile(_vector vDir, _float fSpeed);
+	void							Shoot_Projectile(_vector vTargetPoint, _float fSpeed);
 
 protected :
 	const	_float4x4*				m_pSocketMatrix = { nullptr };

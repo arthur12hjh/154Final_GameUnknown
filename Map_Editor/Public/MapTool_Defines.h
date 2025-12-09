@@ -58,7 +58,7 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region Deco
-		LAMP_47A, VendingMachine_6A, VendingMachine_7A, POSTER_4D,
+		LAMP_47A, VendingMachine_6A, VendingMachine_7A, POSTER_4D, SCIFI_DOOR,
 #pragma endregion
 
 #pragma region Deco_Camp
@@ -66,8 +66,12 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region Deco_Corpse
-
+		CORPSE_1A, CORPSE_1B, CORPSE_2A, CORPSE_2B, CORPSE_2C, CORPSE_3A,
 #pragma	endregion
+
+#pragma region Deco_Container
+		CONTAINER_2A, CONTAINER_2B, CONTAINER_2C, CONTAINER_2D, CONTAINER_3A, CONTAINER_4B, CONTAINER_5A, CONTAINER_5B, CONTAINER_5C, CONTAINER_5D, CONTAINER_5E, CONTAINER_7B, CONTAINER_7F,
+#pragma endregion
 
 #pragma region Environment_TREE
 		TREE_1A, TREE_2A, TREE_3A, TREE_4A, TREE_5B, TREE_5C, TREE_6A, TREE_6B, TREE_7A, TREE_7B, TREE_8A, TREE_8Aa, TREE_8B, TREE_8Ba,

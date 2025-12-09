@@ -84,7 +84,7 @@ public:
 
 	_uint Get_AnimationKeyFrameIndex() const;
 
-	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
+	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
 
 	// 더 이상 쓰지 않음.
 	void Attach_CombinedTransformationMatrix();
@@ -130,6 +130,10 @@ public:
 	HRESULT Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList);
 	// </end>
 
+	// <본매핑을 위해 사용할 본들이 누구들인지 입력하는 함수>
+	HRESULT AddCount_PartialBone(const _char* pBoneName);
+	HRESULT ReleaseCount_PartialBone(const _char* pBoneName);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, CModel* pSkeletonModel);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -167,18 +171,19 @@ private:
 
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
-	ID3D11Buffer* m_pBoneSource = { nullptr };
 	ID3D11Buffer* m_pOutSource = { nullptr };
 	ID3D11Buffer* m_pRootSource = { nullptr };
 	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
 	ID3D11Buffer* m_pLerpBoneMatrices = { nullptr };
 	ID3D11Buffer* m_pOutReadBack = { nullptr };
+	ID3D11Buffer* m_pOutRootReadBack = { nullptr };
 
 	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
-	ID3D11ShaderResourceView* m_pLerpBoneMatricesSRV = { nullptr };
 
-	unordered_map<string, int>	m_AnimationIndexMap;
+	unordered_map<string, _int>	m_AnimationIndexMap;
+
+	unordered_map<_int, _int>	m_PartialBoneCountMap;
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;

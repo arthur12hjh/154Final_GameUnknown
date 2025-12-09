@@ -58,7 +58,8 @@ void CComputeShader::SetConstantData(_uint iIndex, void* pData)
     m_pContext->UpdateSubresource(m_pCBuffer[iIndex], 0, nullptr, pData, 0, 0);
 }
 
-void CComputeShader::GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pOutBuffer){
+void CComputeShader::GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pOutBuffer)
+{
     switch (eBufferType)
     {
     case CComputeShader::BUFFER_TYPE::INPUT:

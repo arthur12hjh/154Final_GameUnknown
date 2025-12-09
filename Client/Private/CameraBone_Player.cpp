@@ -93,6 +93,7 @@ void CCameraBone_Player::Late_Update(_float fTimeDelta)
 
 	auto* pBone = m_pModelCom->Get_BoneMatrixPtr("Camera_Bone");
 
+
 	if (pBone == nullptr)
 	{
 		OutputDebugStringW(L"[Error] Camera_Bone not found.\n");
@@ -155,6 +156,7 @@ CGameObject* CCameraBone_Player::Clone(void* pArg)
 
 void CCameraBone_Player::Free()
 {
+
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
