@@ -116,8 +116,10 @@ _uint CModel::Get_AnimationKeyFrameIndex() const
     return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
-const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 {
+    AddCount_PartialBone(pBoneName);
+
     auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
         {
             if (true == pBone->Compare_Name(pBoneName))
@@ -668,6 +670,43 @@ HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>
     return S_OK;
 }
 
+HRESULT CModel::AddCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto& iRefCount = m_PartialBoneCountMap[iBoneIndex];
+    ++iRefCount;
+
+    return S_OK;
+}
+
+HRESULT CModel::ReleaseCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto iter = m_PartialBoneCountMap.find(iBoneIndex);
+
+    if (iter != m_PartialBoneCountMap.end())
+    {
+        --(*iter).second;
+    }
+
+    if ((*iter).second <= 0)
+        m_PartialBoneCountMap.erase(iter);
+
+    return S_OK;
+}
+
 HRESULT CModel::Mapping_OffsetMatrix()
 {
     _uint iNumBones = (_uint)m_Bones.size();
@@ -945,27 +984,27 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    // CPU CBone 전체 동기화
-    if (m_pOutReadBack)
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
     {
         m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-    
-        D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
         {
-            COMPUTE_BONEMATRIX_OUT* pOut =
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-    
-            // 무조건 최적화
-            for (_uint i = 0; i < m_Bones.size(); ++i)
+            COMPUTE_BONEMATRIX_OUT* pOut = 
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
             {
-                m_Bones[i]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-    
-                m_Bones[i]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
+                _int iBoneIndex = BoneCountIndex.first;
+
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
             }
-    
+
             m_pContext->Unmap(m_pOutReadBack, 0);
         }
     }
@@ -1629,7 +1668,8 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
     // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
     // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
-    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+    //if(nullptr == m_pOutSource)
+    //    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
 
 
     m_pCombinedMatrixComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_GlobalBuffer);
@@ -1657,8 +1697,10 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
     // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
     // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
-    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
-    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
+    //if (nullptr == m_pOutSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+    //if(nullptr == m_pRootSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
 
     {
         ID3D11UnorderedAccessView* pNullUAV[2] = { nullptr, nullptr };

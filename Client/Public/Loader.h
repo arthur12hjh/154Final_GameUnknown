@@ -67,6 +67,8 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertF(void* pArg);
 
 	HRESULT Loading_For_Desert_Deco(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Camp(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Corpse_And_Container(void* pArg);
 	HRESULT Loading_For_Desert_Archi(void* pArg);
 	HRESULT Loading_For_Desert_Archi_Col(void* pArg);
 

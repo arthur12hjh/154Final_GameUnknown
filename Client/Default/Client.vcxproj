@@ -163,6 +163,9 @@
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
+    <ClInclude Include="..\Public\Chair.h" />
+    <ClInclude Include="..\Public\Container.h" />
+    <ClInclude Include="..\Public\Corpse.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -228,6 +231,8 @@
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
+    <ClInclude Include="..\Public\RepairConsole.h" />
+    <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
@@ -346,6 +351,7 @@
     <ClInclude Include="..\public\TombStoneBase1.h" />
     <ClInclude Include="..\public\TombStoneBase2.h" />
     <ClInclude Include="..\public\TestQuest.h" />
+    <ClInclude Include="..\Public\Top_Roof.h" />
     <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\TrailEffect.h" />
     <ClInclude Include="..\Public\UIActionEvent.h" />
@@ -389,6 +395,7 @@
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
+    <ClInclude Include="..\Public\VendingMachine.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -403,6 +410,9 @@
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
+    <ClCompile Include="..\Private\Chair.cpp" />
+    <ClCompile Include="..\Private\Container.cpp" />
+    <ClCompile Include="..\Private\Corpse.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -468,6 +478,8 @@
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
+    <ClCompile Include="..\Private\RepairConsole.cpp" />
+    <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
@@ -602,6 +614,7 @@
     <ClCompile Include="..\private\TombStoneBase1.cpp" />
     <ClCompile Include="..\private\TombStoneBase2.cpp" />
     <ClCompile Include="..\private\TestQuest.cpp" />
+    <ClCompile Include="..\Private\Top_Roof.cpp" />
     <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\TrailEffect.cpp" />
     <ClCompile Include="..\Private\UIActionEvent.cpp" />
@@ -644,6 +657,7 @@
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\Private\VendingMachine.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
