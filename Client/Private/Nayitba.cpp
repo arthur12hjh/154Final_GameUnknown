@@ -112,8 +112,10 @@ void CNayitba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
-		XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+		if(m_pLockOnMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
+		if(m_pHeadBoneMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
 	}
 	__super::Update(fTimeDelta);
 }

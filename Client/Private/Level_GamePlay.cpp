@@ -361,6 +361,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
+	Desc.iMonsterID = 6;
+	for (_uint i = 0; i < 3; ++i)
+	{ 
+		Desc.vPosition = { 450.f + (10 * i), 1.f, 600.f };
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+			return E_FAIL;
+	}
+
+	Desc.iMonsterID = 7;
+	for (_uint i = 0; i < 3; ++i)
+	{
+		Desc.vPosition = { 400.f + (10 * i), 1.f, 600.f };
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+			return E_FAIL;
+	}
 
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
