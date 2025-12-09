@@ -33,7 +33,7 @@ public:
 		_float4x4		StartWorldMatrix = {};
 		/* 질량 */
 		_float			fMass = {};
-		class CModel* pColModel = { nullptr };
+		class CModel*	pColModel = { nullptr };
 		/* 현재는 식별용 문자열만 넣을 수 있습니다. */
 		PxUserData		tUserData = {};
 	} RIGIDBODY_DESC;
@@ -44,12 +44,25 @@ private:
 	virtual ~CRigidBody() = default;
 
 public:
+	void  Set_Ridable(_bool bFlag) { m_isRidable = bFlag; }
+	_bool IsRidable() { return m_isRidable; }
+	
 	PxRigidActor* Get_PxRigidBody() { return m_pPxRigidBody; }
 	const PxTransform& Get_PxTransform() { m_PxTransform = m_pPxRigidBody->getGlobalPose(); return m_PxTransform; }
 
 	PxShape* Get_PxShape() { return m_pShape; }
 	RIGIDBODY_TYPE Get_Type() { return m_eType; }
 	RIGIDBODY_SHAPE Get_Shape() { return m_eShape; }
+
+	void Set_DeltaMove(PxVec3 vDelta) { m_vDeltaMove = vDelta; }
+
+	PxVec3 Get_DeltaMove() 
+	{ 
+		if (RIGIDBODY_TYPE::KINEMATIC != m_eType)
+			return PxVec3(0.f, 0.f, 0.f);
+
+		return m_vDeltaMove; 
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -75,6 +88,10 @@ private:
 	_float3			m_vSize = { -1.f, -1.f, -1.f };
 	PxUserData		m_tUserData = {};
 	_float			m_fMass = {};
+	// 키네마틱 오브젝트만을 위한 함수.
+	// 이동량을 저장해둡니다
+	PxVec3			m_vDeltaMove = { 0.f, 0.f, 0.f };
+	_bool			m_isRidable = { false };
 
 private:
 	HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);

@@ -43,6 +43,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
 
     if (0.47f <= fAnimationRatio)
     {
+
         if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         {
             m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
@@ -50,8 +51,10 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
             m_tNextState.eMode = PLAYER_MODE::BATTLE;
         }
 
-        else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-            m_tNextState.eNextState = PLAYER_STATE::EVADE;
+        else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+            m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
+
         else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
             m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
