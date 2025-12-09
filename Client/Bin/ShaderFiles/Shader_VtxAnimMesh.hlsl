@@ -8,12 +8,16 @@ Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_EmissiveTexture; 
 Texture2D g_ORMTexture;
+Texture2D g_DissolveTexture;
 
 //림라이트용 변수
 vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
 float4 g_vRimLightColor;
+
+//디졸브용 변수
+float g_fDeadTime;
 
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
@@ -167,7 +171,6 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
@@ -239,6 +242,34 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
     return Out;
 }
 
+PS_OUT PS_DISSOLVE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    
+    vector vDissolve = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vDissolve.r + 0.7 < g_fDeadTime)
+        discard;
+    
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    Out.vDiffuse = vMtrlDiffuse;
+    if (vDissolve.r < g_fDeadTime)
+    {
+        vDissolve = min(vDissolve.r + 0.3 - g_fDeadTime, 1);
+        Out.vDiffuse.rgb *= vDissolve.r;
+    }
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -295,6 +326,17 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN_MOTIONBLUR();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MOTIONBLUR();
+    }
+    // 몬스터 디졸브
+    // 5
+    pass Dissolve
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DISSOLVE();
     }
 }
 

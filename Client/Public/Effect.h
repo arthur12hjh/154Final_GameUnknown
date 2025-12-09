@@ -23,6 +23,7 @@ public:
     {
         const   _float4x4* pWorldMatrix = { nullptr };
         const   _float4x4* pRootMatrix = { nullptr };
+        const   _float3*   pDir = { nullptr };
         _vector vPos;
         _float3 fRot;
         _float fSize;

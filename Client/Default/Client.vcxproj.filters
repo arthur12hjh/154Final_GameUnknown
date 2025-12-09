@@ -729,6 +729,7 @@
     </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\Container">
       <UniqueIdentifier>{d6e42e5b-06f0-4256-92f6-dc60f4455149}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Bullet">
       <UniqueIdentifier>{ec9b7d15-17db-4e16-b960-8063e0c4b96e}</UniqueIdentifier>
     </Filter>
@@ -2248,7 +2249,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
@@ -2259,6 +2259,9 @@
       <Filter>97.ShaderFiles\ComputeShader\Cull</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
