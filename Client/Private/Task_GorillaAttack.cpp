@@ -34,6 +34,19 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
+	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || 
+		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
+	{
+		while (!m_pSkillData.empty())
+			m_pSkillData.pop();
+
+		Compute_AttackCoolTime(true);
+		m_pBlackBoard->SetAttackData(nullptr);
+		return NODE_STATE::FAIL;
+	}
+
+	// 일단 여기서 고릴라 공격에대한 이동 처리
+	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
 		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 	{
@@ -47,22 +60,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 			return NODE_STATE::FAIL;
 	}
 
-
-	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || 
-		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
-	{
-		while (!m_pSkillData.empty())
-			m_pSkillData.pop();
-
-		Compute_AttackCoolTime(true);
-		m_pBlackBoard->SetAttackData(nullptr);
-		return NODE_STATE::FAIL;
-	}
-
-	// 일단 여기서 고릴라 공격에대한 이동 처리
 	AttackMoveAction(fTimeDelta);
-	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-
 	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
 	if (bIsFinished)
 	{

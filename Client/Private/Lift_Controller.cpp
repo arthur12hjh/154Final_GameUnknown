@@ -212,7 +212,6 @@ HRESULT CLift_Controller::Begin_OverlapCallBack()
 
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 
-	m_bIsInteractionAble = true;
 
 	return S_OK;
 }
@@ -223,7 +222,6 @@ HRESULT CLift_Controller::End_OverlapCallBack()
 
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 
-	m_bIsInteractionAble = false;
 
 	return S_OK;
 }
