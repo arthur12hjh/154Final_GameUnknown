@@ -24,6 +24,8 @@ HRESULT CItem::Initialize_Prototype()
 
 HRESULT CItem::Initialize(void* pArg)
 {
+	m_iInterID = 0;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -121,17 +123,23 @@ HRESULT CItem::Render()
 HRESULT CItem::Begin_OverlapCallBack()
 {
 	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	m_eInterState = INTERACTION_STATE::DEFAULT;
 
 	return S_OK;
 }
 
 HRESULT CItem::End_OverlapCallBack()
 {
+	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	m_eInterState = INTERACTION_STATE::END;
+
 	return S_OK;
 }
 
 void CItem::Excute_CallBack(CGameObject* pActionObject)
 {
+	m_eInterState = INTERACTION_STATE::ACTIVE;
+
 	// 여기서 상호작용해서 나올거임
 	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }

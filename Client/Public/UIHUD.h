@@ -60,6 +60,10 @@ public:
 	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
 	CUIBase* Get_UIObject(_wstring szLayerTag, _wstring szUITag);
 
+	// 한글 때문에 만듦
+	string WStringToUTF8(const _wstring& wstr);
+	_wstring UTF8ToWString(const string& str);
+
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
 	void Load_Hierarchy(CUIBase* pUIParent, Json jData);
@@ -67,9 +71,7 @@ private:
 	void Reset_WorldUI_State(CUIBase* pUI);
 
 private:
-	// 한글 때문에 만듦
-	string WStringToUTF8(const _wstring& wstr);
-	_wstring UTF8ToWString(const string& str);
+	
 
 	_bool m_bShowDebugRect{ true };
 

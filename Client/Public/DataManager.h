@@ -20,6 +20,8 @@ public :
 	const BETA_SKILL_DESC*					Find_BetaSkillData(_uint iSkillID);
 	map<_uint, BETA_SKILL_DESC>*			Get_AllBetaSkillDesc();
 
+	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
+
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
 private:
@@ -37,9 +39,12 @@ private:
 	// 애니메이션 노티파이(이벤트) 데이터
 	unordered_map<_wstring, vector<ANIM_NOTIFY>>		m_AnimationNotifyDatas = {};
 
+	// 상호작용 오브젝트 데이터
+	map<_uint, INTERACTION_DATA>			m_pInteractionDatas = {};
 
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
+	HRESULT									LoadInteractionData(void* pArg);
 	HRESULT									LoadSkillData();
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);

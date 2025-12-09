@@ -18,6 +18,7 @@ HRESULT CDataManager::Initalize()
         return E_FAIL;
 
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
 
     return S_OK;
 }
@@ -52,6 +53,15 @@ const BETA_SKILL_DESC* CDataManager::Find_BetaSkillData(_uint iSkillID)
 map<_uint, BETA_SKILL_DESC>* CDataManager::Get_AllBetaSkillDesc()
 {
     return &m_pBetaSkills;
+}
+
+const INTERACTION_DATA* CDataManager::Get_InteractionData(_uint iID)
+{
+    auto iter = m_pInteractionDatas.find(iID);
+    if (iter == m_pInteractionDatas.end())
+        return nullptr;
+
+    return &iter->second;
 }
 
 const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
@@ -107,6 +117,34 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         m_pNaytibaDatas.emplace(BossDesc.iMonsetID, BossDesc);
     }
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadInteractionData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    vector<string> InterDataList;
+    InterDataList.reserve(1000);
+
+    CStringHelper::CSVRead("../Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
+
+    size_t iMaxSize = InterDataList.size();
+    for (auto i = 4; i < iMaxSize;)
+    {
+        INTERACTION_DATA InterDesc = {};
+        
+        InterDesc.iID = atoi(InterDataList[i++].c_str());
+
+        strcpy_s(InterDesc.szObjectTag, InterDataList[i++].c_str());
+        strcpy_s(InterDesc.szInteractionText, InterDataList[i++].c_str());
+
+        InterDesc.vUIPivot.x = (_float)atof(InterDataList[i++].c_str());
+        InterDesc.vUIPivot.y = (_float)atof(InterDataList[i++].c_str());
+        InterDesc.vUIPivot.z = (_float)atof(InterDataList[i++].c_str());
+
+        m_pInteractionDatas.emplace(InterDesc.iID, InterDesc);
+    }
+
     return S_OK;
 }
 

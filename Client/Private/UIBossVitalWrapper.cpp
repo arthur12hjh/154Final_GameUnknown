@@ -52,7 +52,11 @@ void CUIBossVitalWrapper::Late_Update(_float fTimeDelta)
 	if (m_pNaytibaDesc && m_eVisibility == VISIBILITY::VISIBLE)
 	{
 		if (m_pNaytibaDesc->iCurrentHealth <= 0)
+		{
 			m_eVisibility = VISIBILITY::HIDDEN;
+			for (auto& pChild : m_Children)
+				Update_Children(pChild);
+		}
 	}
 }
 

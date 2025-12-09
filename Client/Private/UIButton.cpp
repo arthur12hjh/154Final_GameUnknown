@@ -71,6 +71,7 @@ void CUIButton::Late_Update(_float fTimeDelta)
 			Arg.pData = &bTrue;
 
 			__super::Trigger_Event(TEXT("Click"), &Arg);
+			m_eBtnState = BTN_STATE::HOVER;
 			break;
 		}
 		case CUIButton::BTN_STATE::DEFAULT:
