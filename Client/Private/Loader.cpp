@@ -20,6 +20,11 @@
 
 #include "GameInstance.h"
 
+
+#pragma region Item
+#include "Item.h"
+#pragma endregion
+
 #pragma region PLAYER
 #include "PlayerFSM.h"
 #include "Body_Player.h"
@@ -29,7 +34,7 @@
 #include "CameraBone_Player.h"
 #pragma endregion
 
-#pragma region MyRegion
+#pragma region Bullet
 #include "Bullet_Rock.h"
 #pragma endregion
 
@@ -50,6 +55,7 @@
 #pragma region Client Component
 #include "Interaction_Component.h"
 #include "TargetComponent.h"
+#include "DropComponent.h"
 #include "AISenceComponent.h"
 #pragma endregion
 
@@ -122,10 +128,29 @@
 #include "CM_Rock14.h"
 #include "InstanceModel.h"
 #pragma endregion
+#pragma region Map_Desert
+#include "Canyon.h"
+#include "Building_Ruin.h"
+#include "Terrain_Desert.h"
+#include "Instance_Desert.h"
+#include "Lift_Body.h"
+#include "Lift_Controller.h"
+#include "Lift_Platform.h"
+#include "Iron_Floor.h"
+#include "Deco.h"
+#include "Corpse.h"
+#include "Chair.h"
+#include "SciFi_Door.h"
+#include "Container.h"
+#include "Top_Roof.h"
+#include "RepairConsole.h"
+#include "VendingMachine.h"
+#pragma endregion
 
 #include "Instance_Model.h"
 #include "PxTestProp.h"
 
+#pragma region UI Header
 #include "UIWrapper.h"
 #include "UIPanel.h"
 #include "UIButton.h"
@@ -159,26 +184,7 @@
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
-
-#pragma region Map_Desert
-#include "Canyon.h"
-#include "Building_Ruin.h"
-#include "Terrain_Desert.h"
-#include "Instance_Desert.h"
-#include "Lift_Body.h"
-#include "Lift_Controller.h"
-#include "Lift_Platform.h"
-#include "Iron_Floor.h"
-#include "Deco.h"
-#include "Corpse.h"
-#include "Chair.h"
-#include "SciFi_Door.h"
-#include "Container.h"
-#include "Top_Roof.h"
-#include "RepairConsole.h"
-#include "VendingMachine.h"
 #pragma endregion
-
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -318,9 +324,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	_matrix PreMatrix = XMMatrixScaling(0.03, 0.03, 0.03) * XMMatrixRotationY(XMConvertToRadians(270.f));
-
-	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
-	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
 
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
@@ -605,12 +608,12 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Texture_Terrain_Mask */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Mask");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1);
+	/* For.Prototype_GameObject_ItemObject */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GamePlay_ItemObject");
+	pProtoDesc.pPrototype = CItem::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
@@ -619,24 +622,17 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Texture_Snow */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Snow");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_Component_Texture_Sky */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
 	/* For.Prototype_Component_Model_Moon */
 	_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Item");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Item/Glod/Gold.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -647,20 +643,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_Component_Texture_Explosion*/
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_Component_Texture_Explosion_Test*/
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion_Test");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
@@ -903,40 +885,12 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Snow */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Snow");
-	pProtoDesc.pPrototype = CSnow::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_GameObject_Explosion */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Explosion");
-	pProtoDesc.pPrototype = CExplosion::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_GameObject_Sprite_Explosion */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sprite_Explosion");
-	pProtoDesc.pPrototype = CSpriteEffect::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Test_InstanceModel");
 	pProtoDesc.pPrototype = CInstance_Model::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_ForkLift */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ForkLift");
-	pProtoDesc.pPrototype = CForkLift::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_PxTestProp */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_PxTestProp");
@@ -1853,6 +1807,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+
 	/* For.Prototype_GameObject_Stone2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone2");
 	pProtoDesc.pPrototype = CStone2::Create(m_pDevice, m_pContext);
@@ -2154,7 +2110,14 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	//Desc->OnCompleted(this_thread::get_id());
+
+
+	/* For.Prototype_GameObject_DropComponent */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_DropComponent");
+	pProtoDesc.pPrototype = CDropComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
