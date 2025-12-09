@@ -146,10 +146,11 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 		m_pSelectedObject->Set_Dead(TRUE);
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
-		m_iBeforeEventIndex = 0;
+		m_iBeforeEventIndex = -1;
 		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
+		
 		
 	}
 
@@ -174,7 +175,7 @@ void CImGui_Manager::Create_Extra(const _wstring& szModelTag)
 		m_pSelectedObject->Set_Dead(TRUE);
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
-		m_iBeforeEventIndex = 0;
+		m_iBeforeEventIndex = -1;
 		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
@@ -444,7 +445,7 @@ void CImGui_Manager::Update_AnimationList()
 		{
 			m_iSelectedAnimationIndex = i;
 			m_iSelectedEventIndex = 0;
-			m_iBeforeEventIndex = 0;
+			m_iBeforeEventIndex = -1;
 			Update_AnimNotifyList(pAnimation);	// 애니메이션 이름을 기반으로한 map에서 받아오면 될듯. 일단 미루자
 		}
 	}
@@ -453,6 +454,7 @@ void CImGui_Manager::Update_AnimationList()
 	{
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
+		Update_AnimNotifyList((*m_pAnimationList)[m_iSelectedAnimationIndex]);
 	}
 
 	ImGui::EndChild();

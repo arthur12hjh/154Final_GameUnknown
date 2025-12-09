@@ -119,6 +119,23 @@ void CDebugCheatUI::DrawObjectDebug()
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
         Safe_Release(pPlayer);
     }
+
+    ImGui::Dummy(ImVec2(0.f, 10.f));
+    // 12.09 서민석 - 텔포 포인트 하나 임의로 추가해뒀음
+    // 얘는 치우지 말아다오
+    if (ImGui::Button("Teleport Player To Elevator"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(479.678f, 24.858f, 328.388f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
+
 #endif // _DEBUG
 }
 
@@ -126,6 +143,23 @@ void CDebugCheatUI::DrawCameraDebug()
 {
 #ifdef _DEBUG
     ImGui::Text("Camera Debug");
+
+
+    // 12.09 서민석 - 트랜스폼 보는거 없길래 추가해둠 
+    // 문제생기면 말 ㄱㄱ
+    if (nullptr != m_pSelectCamera)
+    {
+        _float3 vCamPosition = {};
+        XMStoreFloat3(&vCamPosition, m_pSelectCamera->GetTransform()->Get_State(STATE::POSITION));
+
+        ImGui::Dummy(ImVec2(0.f, 5.f));
+        ImGui::Text("Camera Position : %.3f , %.3f , %.3f", vCamPosition.x, vCamPosition.y, vCamPosition.z);
+        ImGui::Dummy(ImVec2(0.f, 5.f));
+    }
+
+    if (ImGui::InputFloat("Camera Transform", &m_fFreeCamSpeed))
+        static_cast<CCamera_Free*>(m_pSelectCamera)->SetCameraSpeed(m_fFreeCamSpeed);
+
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
 
     if (ImGui::BeginCombo("Camera Change", m_szSelectCamera))

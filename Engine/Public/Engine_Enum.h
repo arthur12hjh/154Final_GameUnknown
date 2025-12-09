@@ -38,7 +38,7 @@ namespace Engine
 	enum class KEY_INPUT		{ KEYBOARD, MOUSE, END };
 								// 이전 프레임 뷰 투영도 추가
 	enum class D3DTS			{ VIEW, PROJ, END };
-	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, END };
+	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, ANIMONLY,  END };
 								
 	enum class VISIBILITY		{ VISIBLE, HIDDEN, END };
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };
