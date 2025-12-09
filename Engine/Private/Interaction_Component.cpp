@@ -115,6 +115,12 @@ HRESULT CInteraction_Component::Ready_Components(const INTERACTION_DESC& Desc)
     m_pOBBColiider->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_BeginCallBackFunc(); });
     m_pOBBColiider->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_EndCallBackFunc(); });
 
+    m_pOBBColiider->SetColliderHitType(HIT_TYPE::INTERACTION);
+
+    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::SENCE);
+    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::OBJECT);
+    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::STATIC);
     return S_OK;
 }
 

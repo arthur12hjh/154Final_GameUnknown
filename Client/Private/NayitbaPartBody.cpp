@@ -342,8 +342,14 @@ void CNayitbaPartBody::Free()
     for (auto pEffect : m_pEffects)
         Safe_Release(pEffect.first);
     m_pEffects.clear();
-    for (auto pTrailEffect : m_pTrailEffects)
+
+    for (auto& pTrailEffect : m_pTrailEffects)
+    {
         Safe_Release(pTrailEffect.first->pTrailEffect);
+        Safe_Delete(pTrailEffect.first);
+    }
+     
     m_pTrailEffects.clear();
+
     Safe_Release(m_pTexture);
 }
