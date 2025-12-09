@@ -46,7 +46,6 @@ void CLift_Platform::Update(_float fTimeDelta)
 
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
-		m_pRigidBody->Update_PxTransform(WorldMat);
 	}
 }
 
@@ -126,6 +125,7 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
+			m_pRigidBody->Set_Ridable(true);
 		}
 		else
 			XMStoreFloat3(&m_vTargetPoint, vPlatformPos);
@@ -143,10 +143,16 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
 	if (fDistance < 0.1f)
+	{
+		m_pRigidBody->Set_Ridable(false);
 		m_bIsPaltformMove = false;
+	}
 
 	_vector vLerpPos = XMVectorLerp(vPlatformPos, vTargetPos, fTimeDelta * m_vLerpSpeed);
 	m_pTransformCom->Set_State(STATE::POSITION, vLerpPos);
+
+	_vector vDelta = vLerpPos - vPlatformPos;
+	m_pRigidBody->Set_DeltaMove(PxVec3(XMVectorGetX(vDelta), XMVectorGetY(vDelta), XMVectorGetZ(vDelta)));
 }
 
 HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
@@ -179,7 +185,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 	// 세팅 방법 보고도 잘 이해 안되면 물어봐주세요 키네마틱, 다이나믹, 스태틱 세팅 중요해요
 	PxUserData tUserData;
 	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
-	tUserData.szActorTag = TEXT("Elavator_Actor");
+	tUserData.szActorTag = TEXT("Elevator_Platform");
 
 	// 리지드 바디 Desc 세팅. 
 	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
@@ -205,7 +211,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 	RigidBodyDesc.fMass = { 0.3f };
 	// TRIANGLE로 세팅하고 충돌용 메시 작업하는거니까, 충돌용 메시 넣어줘야돼요 
 	// TRIANGLE 타입이 아닌 (충돌용 메시가 아닌) 녀석들은 굳이 안넣어줘도 됩니다.
-	RigidBodyDesc.pColModel = m_pColModelCom;
+	RigidBodyDesc.pColModel = m_pModelCom;
 
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

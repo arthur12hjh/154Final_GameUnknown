@@ -99,7 +99,7 @@ HRESULT CLift_Body::Ready_Components(const _tchar* pComponentTag)
 	// 세팅 방법 보고도 잘 이해 안되면 물어봐주세요 키네마틱, 다이나믹, 스태틱 세팅 중요해요
 	PxUserData tUserData;
 	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
-	tUserData.szActorTag = TEXT("Elavator_Actor");
+	tUserData.szActorTag = TEXT("Elevator_Actor");
 
 	// 리지드 바디 Desc 세팅. 
 	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.

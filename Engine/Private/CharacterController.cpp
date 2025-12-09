@@ -4,6 +4,8 @@
 #include "CCTHitReporter.h"
 #include "CCTBehaviorCallback.h"
 
+#include "GameObject.h"
+
 CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent { pDevice, pContext }
 	, m_pPxPhysics	  { m_pGameInstance->Get_PxPhysics() }
@@ -48,6 +50,13 @@ void CCharacterController::Set_Gravity(_bool bFlag, _float fVelocity)
 	m_fJumpVelocity = fVelocity;  // 이제 "현재 속도"로 사용
 }
 
+void CCharacterController::Set_Riding(_bool isRiding, CTransform* pTransform,  CRigidBody* pRigidBody)
+{
+	m_isRiding = isRiding;
+	m_pRidingTarget = pRigidBody;
+	m_pRidingTargetTransform = pTransform;
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;
@@ -85,25 +94,101 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
+	//if (m_pController == nullptr)
+	//	return;
+
+	//PxVec3 vTargetDeltaMove = { 0.f, 0.f, 0.f };
+	//
+	//if (true == m_isRiding)
+	//{
+	//	if (false == m_pRidingTarget->IsRidable())
+	//	{
+	//		m_isRiding = false;
+	//		m_isGravity = true;
+	//		m_pRidingTarget = nullptr;
+	//	}
+
+	//	else
+	//	{
+	//		vTargetDeltaMove = m_pRidingTarget->Get_DeltaMove();
+	//		m_isGravity = false;
+	//	}
+	//}
+
+	////중력은 Transform에 적용.
+	//_vector vGravity = Calc_Gravity(fTimeDelta);
+	//pOwnerTransform->Move_Direction(1.f, vGravity, 1.f);
+
+	//_float3 vPos;
+	//XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
+
+	/////* 현재 프레임의 위치*/
+	//m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
+
+	////무브 자체는 시뮬레이션에서 안 돌아간다고함..
+	//PxVec3 MoveSum = m_vPosition - m_vPrePosition + vTargetDeltaMove;
+
+	//PxU32 ResultFlag = m_pController->move(MoveSum, 0.005f, fTimeDelta, PxControllerFilters());
+
+	//PxExtendedVec3 vNewPos = m_pController->getFootPosition();
+	//pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
+
+	//if (ResultFlag & PxControllerCollisionFlag::eCOLLISION_DOWN)
+	//{
+	//	m_fJumpVelocity = 0.f;
+	//	m_fGravityTimeAcc = 0.f;
+	//	m_isGravity = false;
+	//}
+	//else
+	//{
+	//	m_isGravity = true;
+	//}
+}
+
+void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class CTransform* pOwnerTransform)
+{
 	if (m_pController == nullptr)
 		return;
+	
+	PxVec3 vTargetDeltaMove = { 0.f, 0.f, 0.f };
+	
+	if (true == m_isRiding)
+	{
+		if (false == m_pRidingTarget->IsRidable())
+		{
+			m_isRiding = false;
+			m_isGravity = true;
+			m_pRidingTarget = nullptr;
+		}
+	
+		else
+		{
+			//_float3 vDelta = m_pRidingTargetTransform->Get_Delta();
+			//vTargetDeltaMove =  PxVec3(vDelta.x, vDelta.y, vDelta.z);
 
+			vTargetDeltaMove = m_pRidingTarget->Get_DeltaMove() * 30.f;
+			m_isGravity = false;
+		}
+	}
+	
+	//중력은 Transform에 적용.
+	_vector vGravity = Calc_Gravity(fTimeDelta);
+	pOwnerTransform->Move_Direction(1.f, vGravity, 1.f);
+	
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
-
+	
 	///* 현재 프레임의 위치*/
 	m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
-
-	_vector vGravity = Calc_Gravity(fTimeDelta);
-
+	
 	//무브 자체는 시뮬레이션에서 안 돌아간다고함..
-	PxVec3 MoveSum = m_vPosition - m_vPrePosition + PxVec3(XMVectorGetX(vGravity), XMVectorGetY(vGravity), XMVectorGetZ(vGravity));
-
-	PxU32 ResultFlag = m_pController->move(MoveSum, 0.f, fTimeDelta, PxControllerFilters());
-
+	PxVec3 MoveSum = m_vPosition - m_vPrePosition + vTargetDeltaMove;
+	
+	PxU32 ResultFlag = m_pController->move(MoveSum, 0.005f, fTimeDelta, PxControllerFilters());
+	
 	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
 	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
-
+	
 	if (ResultFlag & PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		m_fJumpVelocity = 0.f;
@@ -114,10 +199,6 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 	{
 		m_isGravity = true;
 	}
-}
-
-void CCharacterController::Update_ControllerTransform()
-{
 }
 
 void CCharacterController::Set_Position(_vector vPosition)
@@ -148,7 +229,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-	CCTDesc.contactOffset = 0.5f;                // 충돌 감지 오프셋
+	CCTDesc.contactOffset = 0.2f;                // 충돌 감지 오프셋
 	CCTDesc.stepOffset = 0.95f;                // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;
@@ -171,7 +252,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
-	m_pHitReporter->Set_Controller(m_pController, pDesc->tUserData);
+	m_pHitReporter->Set_Controller(this, m_pController, pDesc->tUserData);
 
 	return S_OK;
 }
@@ -212,7 +293,7 @@ HRESULT CCharacterController::Ready_BoxController(CCT_DESC* pDesc)
 	if (nullptr == m_pController)
 		return E_FAIL;
 
-	m_pHitReporter->Set_Controller(m_pController, pDesc->tUserData);
+	m_pHitReporter->Set_Controller(this, m_pController, pDesc->tUserData);
 
 	return S_OK;
 }

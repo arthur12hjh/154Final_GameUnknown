@@ -41,14 +41,14 @@ private :
 	_bool							m_bIsPaltformMove = { false };
 
 	_float3							m_vTargetPoint = {};
-	_float							m_vLerpSpeed = { 1.f };
+	_float							m_vLerpSpeed = { 0.5f };
 	
 	_float3							m_vRootPos = {};
 
 	// 이거는 리프트가 올라가는 거리입니다.
 	// 이거도 형이 툴에서 수정해서 같이 넘겨서 받으면될거같음
 	_float							m_fMoveDistance = { 45.f };
-
+	
 private :
 	void							LerpTargetPoint(_float fTimeDelta);
 

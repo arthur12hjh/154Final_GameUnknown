@@ -65,6 +65,10 @@ void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 
 void CTransform::Update_PreWorldMatrix()
 {
+	_vector vCurrPos = XMLoadFloat4(reinterpret_cast<const _float4*>(&m_WorldMatrix.m[ENUM_CLASS(STATE::POSITION)]));
+	_vector vPrePos = XMLoadFloat4(reinterpret_cast<const _float4*>(&m_PreWorldMatrix.m[ENUM_CLASS(STATE::POSITION)]));
+	XMStoreFloat3(&m_vDelta, vCurrPos - vPrePos);
+
 	memcpy(&m_PreWorldMatrix, &m_WorldMatrix, sizeof(_float4x4));
 }
 
