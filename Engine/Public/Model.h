@@ -171,7 +171,6 @@ private:
 
 	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
 
-	ID3D11Buffer* m_pBoneSource = { nullptr };
 	ID3D11Buffer* m_pOutSource = { nullptr };
 	ID3D11Buffer* m_pRootSource = { nullptr };
 	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
@@ -181,7 +180,6 @@ private:
 
 	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
-	ID3D11ShaderResourceView* m_pLerpBoneMatricesSRV = { nullptr };
 
 	unordered_map<string, _int>	m_AnimationIndexMap;
 
