@@ -384,10 +384,12 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSkillDataID());
+		_uint iSkillID = static_cast<CPlayer*>(m_pParent)->GetSkillDataID();
+		if (-1 == iSkillID)
+			return;
+
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
-
-
 
 		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 		EffectDesc.fRotationPerSec = 1.f;

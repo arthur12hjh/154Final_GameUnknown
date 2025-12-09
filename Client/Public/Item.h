@@ -41,10 +41,10 @@ protected:
 
 	ITEM_DSEC						m_ItemData = {};
 	_float							m_fAmount = {};
+	_float3							m_CurvePoins[5] = {};
 
 	_bool							m_bIsLerpAnimation = { false };
 	_float2							m_fLerpTime = { 0.f, 1.f };
-	_float3							m_vTargetDir = {};
 
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;

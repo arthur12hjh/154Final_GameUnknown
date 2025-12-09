@@ -34,10 +34,20 @@ HRESULT CItem::Initialize(void* pArg)
 	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
 
-	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 0.3f);
-	vBezirPoint.m128_f32[1] += 3.f;
+	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 1.f);
+	vBezirPoint.m128_f32[1] += 5.f;
+	XMStoreFloat3(&m_CurvePoins[4], vDropPoint);
 
-	XMStoreFloat3(&m_vTargetDir, XMVector3Normalize(vBezirPoint - vOwnerPos));
+	_vector vCenterPoint = (vOwnerPos + vBezirPoint) / 2.f;
+	XMStoreFloat3(&m_CurvePoins[2], vCenterPoint);
+
+	_vector vCenterRightPoint = (vCenterPoint + vBezirPoint) / 2.f;
+	XMStoreFloat3(&m_CurvePoins[3], vCenterRightPoint);
+
+	_vector vCenterLeftPoint = (vOwnerPos + vCenterPoint) / 2.f;
+	XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
+	XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
+
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
@@ -56,13 +66,14 @@ void CItem::Update(_float fTimeDelta)
 	if (m_bIsLerpAnimation)
 	{
 		m_fLerpTime.x += fTimeDelta;
-		m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vTargetDir), 3.f);
+		m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_CurvePoins, m_fLerpTime.x / m_fLerpTime.y));
 
-		if (m_fLerpTime.x >= m_fLerpTime.y)
+		if (m_fLerpTime.x >= 0.3f)
 		{
-			m_bIsLerpAnimation = false;
 			m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 		}
+		if(m_fLerpTime.x > m_fLerpTime.y)
+			m_bIsLerpAnimation = false;
 	}
 
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -167,7 +178,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	// STATIC : 충돌하는데 가만히 있는 녀석
 	// DYNAMIC : 충돌 
 	// KINEMATIC : 충돌 X
-	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;

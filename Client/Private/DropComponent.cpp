@@ -101,7 +101,7 @@ void CDropComponent::CreateObjectToLayer()
         _vector vDorpPoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
         XMStoreFloat3(&ItemDesc.vPosition, vDorpPoint);
         vDorpPoint.m128_f32[0] += cosf(XMConvertToRadians(fRadius)) * fRange;
-        vDorpPoint.m128_f32[1] += 0.2f;
+        vDorpPoint.m128_f32[1] += 1.f;
         vDorpPoint.m128_f32[2] += sinf(XMConvertToRadians(fRadius)) * fRange;
 
         XMStoreFloat3(&ItemDesc.fDropPoint, vDorpPoint);
