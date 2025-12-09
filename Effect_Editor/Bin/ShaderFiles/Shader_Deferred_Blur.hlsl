@@ -132,7 +132,7 @@ PS_OUT_BLUR_X PS_MAIN_METABALL_BLUR_X(PS_IN In)
     
     for (int i = -6; i < 7; ++i)
     {
-        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX * 0.6;
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
@@ -157,7 +157,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_METABALL_BLUR_FINAL(PS_IN In)
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY * 0.6;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);

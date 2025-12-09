@@ -397,7 +397,7 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 
 		EffectDesc.vPos = XMVectorSet(vHitPoint.x, vHitPoint.y, vHitPoint.z, 1);
 		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 0.5f;
+		EffectDesc.fSize = 1.f;
 		EffectDesc.pDir = &vHitDir;
 		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
@@ -453,4 +453,5 @@ void CWeapon::Free()
 	Safe_Release(m_pTrail);
 	Safe_Release(m_pSpark);
 	Safe_Release(m_pCharge);
+	Safe_Release(m_pBlood);
 }
