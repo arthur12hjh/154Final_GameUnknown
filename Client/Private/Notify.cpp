@@ -182,6 +182,7 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 	}
 	else if (AnimNotify.szSocketTag.compare("NoneBone") != 0)
 	{
+		m_pModelCom->AddCount_PartialBone(AnimNotify.szNotifyArg03.c_str());
 		EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(AnimNotify.szSocketTag.c_str());
 		EffectDesc.pWorldMatrix = pWorldMatrix;
 	}

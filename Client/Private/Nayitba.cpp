@@ -65,6 +65,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	// Bip001_Spine1
 	// Bip001_Spine2
 
+	m_pBodyModelCom->AddCount_PartialBone("Bip001-Spine");
+	m_pBodyModelCom->AddCount_PartialBone("Bip001-Head");
+
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
 	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 
@@ -678,6 +681,7 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.pParent = this;
 	pBulletDesc.vScale = pNotify->vNotifyScale;
 	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+	m_pBodyModelCom->AddCount_PartialBone(pNotify->szNotifyArg03.c_str());
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
 
