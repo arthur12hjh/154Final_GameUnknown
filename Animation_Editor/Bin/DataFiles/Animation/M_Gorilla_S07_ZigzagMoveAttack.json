@@ -116,9 +116,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.5,
-                    0.5,
-                    0.5
+                    0.30000001192092896,
+                    0.30000001192092896,
+                    0.30000001192092896
                 ]
             },
             {
@@ -142,7 +142,7 @@
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
-                "szNotifyArg08": "",
+                "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
@@ -156,9 +156,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.5,
-                    0.5,
-                    0.5
+                    0.30000001192092896,
+                    0.30000001192092896,
+                    0.30000001192092896
                 ]
             },
             {

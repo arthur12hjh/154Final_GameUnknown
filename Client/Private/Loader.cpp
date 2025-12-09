@@ -1179,6 +1179,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Perfect_Parrying */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Perfect_Parrying");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Perfect_Parrying.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Effect_Sand_Hit */
 	// 모래 내려찍었을때 나오는 이펙트
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sand_Hit");
@@ -1238,7 +1243,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Blood_Hit */
+	/* For.Prototype_Component_Effect_Monster_Sting */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);

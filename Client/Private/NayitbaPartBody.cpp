@@ -188,6 +188,17 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         if (nullptr != pEffect)
             pEffect->Stop();
     }
+    else if (strObjectTag == TEXT("Stop_All_Effect"))
+    {
+        for (auto Effect : m_pEffects)
+        {
+            Effect.first->Stop();
+        }
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            TrailEffect.first->bisPlay = false;
+        }
+    }
     else if (strObjectTag == TEXT("Play_Trail"))
     {
         CTrailEffect* pTrailEffect = nullptr;
