@@ -34,11 +34,20 @@ HRESULT CLoadingBG::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_iTextureIndex = 0;
+	m_fLoadingTime = 0.f;
 	return S_OK;
 }
 
 void CLoadingBG::Priority_Update(_float fTimeDelta)
 {
+	m_fLoadingTime += fTimeDelta;
+
+	if (m_fLoadingTime > 5.f)
+	{
+		m_fLoadingTime = 0.f;
+		m_iTextureIndex ^= 3;
+	}
 }
 
 void CLoadingBG::Update(_float fTimeDelta)
@@ -98,7 +107,7 @@ HRESULT CLoadingBG::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;

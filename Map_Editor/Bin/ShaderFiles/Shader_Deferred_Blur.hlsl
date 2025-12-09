@@ -121,6 +121,62 @@ PS_OUT_BACKBUFFER PS_MAIN_EMISSIVE_BLUR_FINAL(PS_IN In)
     return Out;
 }
 
+PS_OUT_BLUR_X PS_MAIN_METABALL_BLUR_X(PS_IN In)
+{
+    PS_OUT_BLUR_X Out;
+    
+    float2 vTexcoord;
+    float4 vColor = 0.f;
+    float4 vWeight = 0.f;
+    float vSize;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX * 0.6;
+        vTexcoord.y = In.vTexcoord.y;
+        
+        vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
+        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+    }
+    
+    Out.vBlurX = vColor / vSize;
+    Out.vWeight = vWeight / vSize;
+    
+    return Out;
+}
+
+PS_OUT_BLUR_FINAL PS_MAIN_METABALL_BLUR_FINAL(PS_IN In)
+{
+    PS_OUT_BLUR_FINAL Out;
+    
+    float2 vTexcoord;
+    float4 vColor;
+    float4 vWeight = 0.f;
+    float vSize;
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY * 0.6;
+        
+        vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
+        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fWeights[i + 6];
+
+    }
+    
+    Out.vBlurY = vColor / vSize;
+    Out.vWeight = (vWeight / vSize);
+    float fAlpha = saturate(Out.vWeight.g);
+    Out.vWeight.g = saturate(pow(saturate(Out.vWeight.g * 2), 5));
+    if (0 < fAlpha)
+    {
+        Out.vWeight *= Out.vWeight.g / fAlpha;
+    }
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 { 
     // idx 0
@@ -162,5 +218,25 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE_BLUR_FINAL();
+    }
+    // idx 4
+    pass MetaBall_Blur_X
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_METABALL_BLUR_X();
+    }
+    // idx 5
+    pass MetaBall_Blur_Final
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_METABALL_BLUR_FINAL();
     }
 }

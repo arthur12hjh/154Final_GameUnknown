@@ -89,11 +89,19 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 		/* For.Prototype_Component_Model_Eve_Anim01_P_Eve_Sword_Normal_LinkAttack1_Scarlet */
 		if (FAILED(Add_Prototype(iLevelIndex, szPrototypeTag,
-			CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, szFullPath.c_str()), &pAnimModel)))
+			CModel::Create(pDevice, pContext, MODEL_TYPE::ANIMONLY, szFullPath.c_str()), &pAnimModel)))
 			return E_FAIL;
 
 		if (FAILED(pModel->Import_Animations(static_cast<CModel*>(pAnimModel)->Get_AnimationList())))
 			return E_FAIL;
+
+		auto iter = m_pPrototypes->find(szPrototypeTag);
+
+		if (iter != m_pPrototypes->end())
+		{
+			m_pPrototypes->erase(iter);
+			Safe_Release(pAnimModel);
+		}
 
 		iResult = _findnext64(handle, &fd);
 		Safe_Delete_Array(pFileName);

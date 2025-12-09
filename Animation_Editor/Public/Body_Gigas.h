@@ -24,7 +24,7 @@ private:
 	virtual ~CBody_Gigas() = default;
 
 public:
-	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName) const;
+	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
 	_bool isFinish_Att();
 
 public:
