@@ -1,6 +1,9 @@
 #pragma once
 #include "Client_Defines.h"
 #include "PartObject.h"
+NS_BEGIN(Engine)
+class CTexture;
+NS_END
 
 NS_BEGIN(Client)
 class CEffect;
@@ -40,8 +43,10 @@ public:
 private:
 	CCollider*											m_pColliderCom = { nullptr };
 	vector<pair<CEffect*, _int>>						m_pEffects = {};
-	vector<pair<NAYITBA_TRAIL_DESC*, _int>>		m_pTrailEffects = {};
+	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
+	CTexture*											m_pTexture = {};
 	_bool							m_isAnimFinish = { false };
+	_float							m_fDeadTime = {};
 
 private:
 	HRESULT							Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc);

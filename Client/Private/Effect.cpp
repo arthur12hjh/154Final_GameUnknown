@@ -53,6 +53,9 @@ HRESULT CEffect::Initialize(void* pArg)
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
         m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
+        if (nullptr != pDesc->pDir) {
+            m_pTransformCom->LookAt(m_pTransformCom->Get_State(STATE::POSITION) + XMLoadFloat3(pDesc->pDir));
+        }
         m_bisFloor = pDesc->bisFloor;
     }
     if (nullptr != m_pParentMat) {

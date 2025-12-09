@@ -103,7 +103,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<CBoxCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
@@ -114,7 +114,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<CSphereCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
@@ -125,7 +125,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<COBBCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
