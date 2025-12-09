@@ -26,7 +26,6 @@ CModel::CModel(const CModel& Prototype)
     , m_iNumAnimations{ Prototype.m_iNumAnimations }
     , m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
     , m_AnimationIndexMap{ Prototype.m_AnimationIndexMap }
-    , m_pBoneSource{ nullptr }
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
@@ -603,19 +602,19 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
 
     if (FAILED(m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV)))
         return E_FAIL;
-    if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
-    {
-        m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
-    }
-    else
-    {
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
-    }
+    //if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
+    //}
+    //else
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
+    //}
 
 #ifdef _DEBUG
-    if (bIsSaved == TRUE)
-        m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    //if (bIsSaved == TRUE)
+    //    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
     return S_OK;
 }
@@ -655,18 +654,20 @@ HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>
     if (FALSE == bIsTagFound)
         return E_FAIL;
 
-    for (auto& pNode : m_pModel->vNodes)
-    {
-        if (strcmp(pNode.szName, szNodeName) == 0)
-        {
-            strcpy_s(pNode.szName, szAfterBoneTag);
-            break;
-        }
-    }
+    //for (auto& pNode : m_pModel->vNodes)
+    //{
+    //    if (strcmp(pNode.szName, szNodeName) == 0)
+    //    {
+    //        strcpy_s(pNode.szName, szAfterBoneTag);
+    //        break;
+    //    }
+    //}
 
 #ifdef _DEBUG
-    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    //m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
+    //Safe_Delete(m_pModel);
+
     return S_OK;
 }
 
@@ -858,6 +859,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
         Initialize_AnimationBufferResource();
     }
+
+    Safe_Delete(m_pModel);
 
     return S_OK;
 }
@@ -1292,15 +1295,6 @@ HRESULT CModel::Ready_ComputeShader()
         if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
 
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pBoneSource)))
-            return E_FAIL;
     }
     // 두 번째로, Channel을 넣어주자
     {
@@ -1894,8 +1888,8 @@ void CModel::Free()
 {
     __super::Free();
 
-    if (m_isCloned == FALSE)
-        Safe_Delete(m_pModel);
+    //if (m_isCloned == FALSE)
+    //    Safe_Delete(m_pModel);
 
     for (auto& pChannelBuffer : m_pChannelBufferList)
         Safe_Release(pChannelBuffer);
@@ -1924,7 +1918,6 @@ void CModel::Free()
 
     m_GlobalOffsetMatrices.clear();
 
-    Safe_Release(m_pBoneSource);
     Safe_Release(m_pOutReadBack);
     Safe_Release(m_pOutRootReadBack);
     //Safe_Release(m_pOutSource);
@@ -1934,7 +1927,6 @@ void CModel::Free()
 
     Safe_Release(m_pBoneMatricesSRV);
     Safe_Release(m_pPreBoneMatricesSRV);
-    Safe_Release(m_pLerpBoneMatricesSRV);
     Safe_Release(m_pComputeShaderCom);
     Safe_Release(m_pCombinedMatrixComputeShaderCom);
 
