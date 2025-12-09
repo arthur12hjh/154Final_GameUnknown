@@ -130,6 +130,10 @@ public:
 	HRESULT Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList);
 	// </end>
 
+	// <본매핑을 위해 사용할 본들이 누구들인지 입력하는 함수>
+	HRESULT AddCount_PartialBone(const _char* pBoneName);
+	HRESULT ReleaseCount_PartialBone(const _char* pBoneName);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, CModel* pSkeletonModel);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -179,7 +183,9 @@ private:
 	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
 	ID3D11ShaderResourceView* m_pLerpBoneMatricesSRV = { nullptr };
 
-	unordered_map<string, int>	m_AnimationIndexMap;
+	unordered_map<string, _int>	m_AnimationIndexMap;
+
+	unordered_map<_int, _int>	m_PartialBoneCountMap;
 
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;

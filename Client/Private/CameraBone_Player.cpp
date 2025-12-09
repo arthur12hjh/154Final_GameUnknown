@@ -91,7 +91,10 @@ void CCameraBone_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
+	m_pModelCom->AddCount_PartialBone("Camera_Bone");
+
 	auto* pBone = m_pModelCom->Get_BoneMatrixPtr("Camera_Bone");
+
 
 	if (pBone == nullptr)
 	{
@@ -155,6 +158,7 @@ CGameObject* CCameraBone_Player::Clone(void* pArg)
 
 void CCameraBone_Player::Free()
 {
+
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);

@@ -38,6 +38,9 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Set_AnimationIndex(1);
 
+	m_pModelCom->AddCount_PartialBone("Weapon");
+	m_pModelCom->AddCount_PartialBone("Root");
+
 	//m_pModelCom->Bind_MaterialTag(TE)
 
 	return S_OK;
