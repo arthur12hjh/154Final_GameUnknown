@@ -232,4 +232,6 @@ CGameObject* CItem::Clone(void* pArg)
 void CItem::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pModelCom);
 }

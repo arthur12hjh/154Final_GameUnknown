@@ -45,11 +45,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
-	//Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);

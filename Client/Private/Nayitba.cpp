@@ -510,8 +510,8 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 		m_pAISenceCom->Add_SenceTargetObject(pTarget);
 
 		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-		pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
+		if(pUIHUD)
+			pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
 		Safe_Release(pUIHUD);
 	}
@@ -523,8 +523,9 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 	{
 		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
 		{
-			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
+			auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			if(pCurHUD)
+				m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
 			Safe_Release(pCurHUD);
 		}
 	}
@@ -533,10 +534,12 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 		if (0 >= m_MonsterInfo.iCurrentHealth)
 		{
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-			auto pCurHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
+			if(pCurHUD)
+				pCurHUD->Return_WorldUI(m_pStatusUI);
 			// 몬스터 체력
-			pCurHUD->Return_WorldUI(m_pStatusUI);
+			
 			m_pStatusUI = nullptr;
 			Safe_Release(pCurHUD);
 		}
