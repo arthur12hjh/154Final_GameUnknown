@@ -1452,6 +1452,14 @@ void Converge(uint3 Gid : SV_GroupID,
         {
             vDir.xyzw = 0;
         }
+        if (0 > fGravity)
+        {
+            vDir = normalize(float4(Input[DTid.x].WorldMat._41_42_43 - Input[DTid.x].vTranslation.xyz, 0));
+            if (0 >= length(Input[DTid.x].WorldMat._41_42_43 - Input[DTid.x].vTranslation.xyz))
+            {
+                vDir.xyzw = 0;
+            }
+        }
         if (DTid.x >= viLoopAndCount.y)
             return;
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
@@ -1462,6 +1470,14 @@ void Converge(uint3 Gid : SV_GroupID,
             vDir = normalize(mul(float4(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz, 0), g_Out[DTid.x].WorldMat));
             if (0 >= length(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz))
                 vDir.xyzw = 0;
+            if (0 > fGravity)
+            {
+                vDir = normalize(float4(Input[DTid.x].WorldMat._41_42_43 - Input[DTid.x].vTranslation.xyz, 0));
+                if (0 >= length(Input[DTid.x].WorldMat._41_42_43 - Input[DTid.x].vTranslation.xyz))
+                {
+                    vDir.xyzw = 0;
+                }
+            }
             if (0 > g_Out[DTid.x].vLifeTime.x)
                 return;
             else if (0 == vfisSphere.x)
@@ -1504,6 +1520,10 @@ void Converge(uint3 Gid : SV_GroupID,
         }
     
         float4 vRight = normalize(float4(cross(g_WorldMatrix._21_22_23, vDir.xyz), 0));
+        if (0 > fGravity)
+        {
+            vRight = normalize(float4(cross(Input[DTid.x].WorldMat._21_22_23, vDir.xyz), 0));
+        }
         float4 vUp = normalize(float4(cross(vDir.xyz, vRight.xyz), 0));
     
         if (!bisStart && 0 == g_Out[DTid.x].vLifeTime.x)

@@ -31,6 +31,10 @@ private:
 	CTexture* m_pTextureCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
+
+	_float m_fLoadingTime = 0.f;
+	_uint m_iTextureIndex = 0;
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

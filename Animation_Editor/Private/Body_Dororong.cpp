@@ -15,7 +15,7 @@ CBody_Dororong::CBody_Dororong(const CBody_Dororong& Prototype)
 {
 }
 
-const _float4x4* CBody_Dororong::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CBody_Dororong::Get_BoneMatrixPtr(const _char* pBoneName)
 {
 	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);
 }

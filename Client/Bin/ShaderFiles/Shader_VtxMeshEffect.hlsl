@@ -212,7 +212,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
     Out.vWeight.r = Out.vColor.a * weight;
     Out.vWeight.g = Out.vColor.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vColor.a = 1;
     Out.vWeight.a = 1;
     
@@ -266,7 +266,7 @@ PS_OUT PS_Hit(PS_IN In)
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight;
     Out.vWeight.r = Out.vColor.a * weight;
     Out.vWeight.g = Out.vColor.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vColor.a = 1;
     Out.vWeight.a = 1;
     

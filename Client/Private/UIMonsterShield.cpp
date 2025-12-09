@@ -54,17 +54,17 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 //#endif
 
 
-	/*auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
 		auto StaticDesc = pMonster->GetStaticMonsterData();
 		auto CurDesc = pMonster->GetMonsterData();
 
 		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
-	}*/
+	}
 
-	/*if (m_iCurrentShield)
-		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/
+	if (m_iCurrentShield)
+		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }

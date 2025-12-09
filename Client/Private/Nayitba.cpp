@@ -14,6 +14,7 @@
 #include "Notify.h"
 #include "AttackHitBox.h"
 #include "GameManager.h"
+#include "TargetComponent.h"
 
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
@@ -102,6 +103,8 @@ void CNayitba::Update(_float fTimeDelta)
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
 		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
+		m_pTargetCom->Target_Search(m_pAISenceCom->GetSearchAllObject());
+
 		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
 	
@@ -222,9 +225,9 @@ _uint CNayitba::GetMonsterID()
 	return m_iMonsterID;
 }
 
-const list<CGameObject*>* CNayitba::GetTargetList()
+CGameObject* CNayitba::GetTarget()
 {
-	return m_pAISenceCom->GetSearchAllObject();
+	return m_pTargetCom->GetTarget();
 }
 
 const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)
@@ -288,11 +291,6 @@ CAIController* CNayitba::GetController()
 {
 	Safe_AddRef(m_pAIController);
 	return m_pAIController;
-}
-
-const list<CGameObject*>* CNayitba::GetTraceObejectList()
-{
-	return m_pAISenceCom->GetSearchAllObject();
 }
 
 void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
@@ -364,7 +362,16 @@ HRESULT CNayitba::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
-	
+	/* 시야 센서가 Controller에 달려있어야하나?*/
+	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
+	TargetComDesc.fRadius = m_pInitMonsterInfo->fAttackRange - 3.f;
+	TargetComDesc.iNumPoints = 6.f;
+
+	/* Prototype_Component_TargetComponent */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TargetComponent"),
+		TEXT("Com_TargetCom"), reinterpret_cast<CComponent**>(&m_pTargetCom), &TargetComDesc)))
+		return E_FAIL;
+
 	WCHAR	ControllerProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szAIControllerPrototype, ControllerProtoType);
 
@@ -623,7 +630,7 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 
 	_uint iGameLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
 	_wstring szProtoType(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
-	_wstring szLayerName(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
+	_wstring szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
 
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	auto pSkillData = m_pGameManager->Find_SkillData(pNotify->iNumData01);
@@ -669,6 +676,7 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
+	pBulletDesc.vScale = pNotify->vNotifyScale;
 	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
@@ -683,9 +691,9 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// 여기서 소유하고 있는 Projectile을 모두 발사한다.
 	// pNotify->iNumData01; <- true : 활성화
 	// false : 비활성화
-
+	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(m_pTransformCom->Get_State(STATE::LOOK), 35.f);
+		iter->Shoot_Projectile(vTargetPos, 55.f);
 
 	m_pBulletList.clear();
 }
@@ -718,4 +726,5 @@ void CNayitba::Free()
 
 	Safe_Release(m_pAISenceCom);
 	Safe_Release(m_pAIController);
+	Safe_Release(m_pTargetCom);
 }
