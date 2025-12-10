@@ -748,6 +748,9 @@
     <Filter Include="02.GameObjects\Character\CCTQueryFilterCallback">
       <UniqueIdentifier>{651a9412-91f3-4020-bec4-104c498b478b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Architecture">
+      <UniqueIdentifier>{412b9843-e2f2-466f-b075-6996a915c366}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1513,6 +1516,9 @@
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h">
       <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Desert_Architecture.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2247,6 +2253,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp">
       <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Desert_Architecture.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

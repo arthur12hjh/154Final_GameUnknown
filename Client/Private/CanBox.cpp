@@ -127,7 +127,7 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-    m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
