@@ -983,6 +983,7 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
     float2 uv = In.vTexcoord;
     float2 KeyUv = In.vTexcoord;
     float baseScale = 0.25f;
+    float4 cooltime = 0.f;
     
     //float4 Color = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -1002,14 +1003,23 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
         KeyUv += float2(0.5f, 0.5f);
     }
     
-    float4 key = g_Texture1.Sample(ClampSampler, KeyUv);
+    float4 key = g_Texture0.Sample(ClampSampler, KeyUv);
     
     key.a *= g_Alpha;
     
-    //float4 result = base;
-    //Color = lerp(Color, key, key.a);
+    if (g_bUseCoolTime)
+    {
+        cooltime = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+        
+        float mask = CoolMask(In.vTexcoord, g_fCoolAmount);
+        cooltime *= mask;
+        //cooltime.a *= 1.25f;
+    }
     
-    Out.vColor = key;
+    float4 result = key;
+    result = lerp(result, cooltime, cooltime.a);
+    
+    Out.vColor = result;
     
     return Out;
 }
