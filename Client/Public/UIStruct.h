@@ -124,6 +124,7 @@ namespace Client
 
 	typedef struct tagUITextDesc
 	{
+		wstring szFont{};
 		wstring szText{};
 		float	fScale{ 1.f };
 		XMFLOAT4 vColor{ 1.f, 1.f, 1.f, 1.f };

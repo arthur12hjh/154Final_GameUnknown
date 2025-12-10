@@ -19,6 +19,8 @@ HRESULT CSciFi_Door::Initialize_Prototype()
 
 HRESULT CSciFi_Door::Initialize(void* pArg)
 {
+	m_iInterID = 4;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -126,16 +128,24 @@ HRESULT CSciFi_Door::Bind_ShaderResources()
 
 HRESULT CSciFi_Door::Begin_OverlapCallBack()
 {
+	m_eInterState = INTERACTION_STATE::DEFAULT;
+	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+
 	return S_OK;
 }
 
 HRESULT CSciFi_Door::End_OverlapCallBack()
 {
+	m_eInterState = INTERACTION_STATE::END;
+	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+
 	return S_OK;
 }
 
 void CSciFi_Door::Excute_CallBack(CGameObject* pActionObject)
 {
+	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+		m_eInterState = INTERACTION_STATE::ACTIVE;
 }
 
 CSciFi_Door* CSciFi_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

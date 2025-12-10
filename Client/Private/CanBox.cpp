@@ -57,7 +57,6 @@ void CCanBox::Update(_float fTimeDelta)
             break;
         }
     }
-   
 }
 
 void CCanBox::Late_Update(_float fTimeDelta)
