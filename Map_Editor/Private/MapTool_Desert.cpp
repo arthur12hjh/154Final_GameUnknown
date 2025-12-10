@@ -644,6 +644,150 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SciFi_Door"); layerTag = TEXT("Layer_SciFi_Door");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_SciFi_Door");
 					break;
+				case DESESRT_RUIN_OBJECT::CANBOX:
+					protoTag = TEXT("Prototype_GameObject_CanBox"); layerTag = TEXT("Layer_CanBox");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CanBox");
+					break;
+				case DESESRT_RUIN_OBJECT::FENCE_1A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Fence_1A");
+					break;
+				case DESESRT_RUIN_OBJECT::FENCE_1B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Fence_1B");
+					break;
+				case DESESRT_RUIN_OBJECT::FENCE_1F:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Fence_1F");
+					break;
+				case DESESRT_RUIN_OBJECT::FENCE_1H:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Fence_1H");
+					break;
+				case DESESRT_RUIN_OBJECT::RUIN_7A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_7A");
+					break;
+				case DESESRT_RUIN_OBJECT::RUIN_7B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_7B");
+					break;
+				case DESESRT_RUIN_OBJECT::RUIN_7C:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_7C");
+					break;
+				case DESESRT_RUIN_OBJECT::RUIN_7D:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_7D");
+					break;
+				case DESESRT_RUIN_OBJECT::RUIN_7E:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_7E");
+					break;
+				case DESESRT_RUIN_OBJECT::BUILDING_4B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Building_4B");
+					break;
+				case DESESRT_RUIN_OBJECT::BUILDING_4C:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Building_4C");
+					break;
+				case DESESRT_RUIN_OBJECT::BUILDING_4D:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Building_4D");
+					break;
+				case DESESRT_RUIN_OBJECT::WHEEL_1A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Wheel_1A");
+					break;
+				case DESESRT_RUIN_OBJECT::WHEEL_1B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Wheel_1B");
+					break;
+				case DESESRT_RUIN_OBJECT::WHEEL_1C:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Wheel_1C");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4A");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4B");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4D:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4D");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4H:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4H");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4L:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4L");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4M:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4M");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_4N:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_4N");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_5:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_5");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_6:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_6");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_8:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_8");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_14A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_14A");
+					break;
+				case DESESRT_RUIN_OBJECT::BRIDGE_14B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Bridge_14B");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_2A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_2A");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_2B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_2B");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_3B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_3B");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_4C:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_4C");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_6A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_6A");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_8B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_8B");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_14A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_14A");
+					break;
+				case DESESRT_RUIN_OBJECT::VEHICLE_14B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_14B");
+					break;
 
 					// 5. Monster Spawn Boxes
 				case DESESRT_RUIN_OBJECT::GORILLA:
@@ -1601,8 +1745,12 @@ HRESULT CMapTool_Desert::Render()
 	{
 		ImGui::Text("Architecture Objects");
 		_int nSelectedModel = -1;
+		_int nSelectedRuin = -1;
+		_int nSelectedBridge = -1;
 
 		const _char* modelNames[] = { "LIFT_BODY", "LIFT_CONTROLLER", "LIFT_PLATFORM", "FLOOR7_A", "FLOOR7_B", "FLOOR7_C", "FLOOR7_D", "FLOOR7_E", "FLOOR7_F" };
+		const _char* ruinNames[] = { "RUIN_7A", "RUIN_7B", "RUIN_7C", "RUIN_7D", "RUIN_7E" };
+		const _char* bridgeNames[] = { "BRIDGE_4A","BRIDGE_4B","BRIDGE_4D","BRIDGE_4H","BRIDGE_4L","BRIDGE_4M","BRIDGE_4N","BRIDGE_5","BRIDGE_6","BRIDGE_8","BRIDGE_14A","BRIDGE_14B" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -1656,6 +1804,91 @@ HRESULT CMapTool_Desert::Render()
 				
 			}
 		}
+		if (ImGui::CollapsingHeader("Ruin"))
+		{
+			if (ImGui::ListBox("##Ruin", &nSelectedRuin, ruinNames, IM_ARRAYSIZE(ruinNames), 7))
+			{
+				if (nSelectedRuin == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RUIN_7A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedRuin == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RUIN_7B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedRuin == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RUIN_7C;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedRuin == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RUIN_7D;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedRuin == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RUIN_7E;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Bridge"))
+		{
+			if (ImGui::ListBox("##Bridge", &nSelectedBridge, bridgeNames, IM_ARRAYSIZE(bridgeNames), 7))
+			{
+				if (nSelectedBridge == 0) 
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4A; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4B; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4D; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4H; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4L; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4M; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_4N; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_5; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 8)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_6; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 9)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_8; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 10)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_14A; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedBridge == 11)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BRIDGE_14B; m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+			}
+		}
 	}
 	else if (m_eCurrentMap == DESERT_THEME::DECO)
 	{
@@ -1664,12 +1897,17 @@ HRESULT CMapTool_Desert::Render()
 		_int nSelectedCamp = -1;
 		_int nSelectedCorpse = -1;
 		_int nSelectedContainer = -1;
+		_int nSelectedFence = -1;
+		_int nSelectedVehicle = -1;
 
-		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A", "Poster_4D", "SciFi_Door"};
+		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A", "Poster_4D", "SciFi_Door", "CanBox", 
+									  "Building_4B", "Building_4C", "Building_4D", "Wheel_1A", "Wheel_1B", "Wheel_1C"};
 		const _char* campNames[] = { "BASE_1A", "CAMP_1B", "CAMP_1D", "CAMP_1E", "CAMP_1F", "CAMP_1G", "CAMP_1H", "CAMP_1J", "CAMP_1K", "CAMP_1L", 
 									"CAMP_1M", "CAMP_1N", "CAMP_1R", "CAMP_1S", "CAMP_1T", "CAMP_1W", "REPAIRCONSOLE", "TOP_ROOF", "CAMP_1I"};
 		const _char* corpseNamees[] = { "CORPSE_1A", "CORPSE_1B", "CORPSE_2A", "CORPSE_2B", "CORPSE_2C", "CORPSE_3A" };
 		const _char* containerNamees[] = { "CONTAINER_2A", "CONTAINER_2B",	"CONTAINER_2C",	"CONTAINER_2D",	"CONTAINER_3A",	"CONTAINER_4B",	"CONTAINER_5A",	"CONTAINER_5B",	"CONTAINER_5C",	"CONTAINER_5D",	"CONTAINER_5E",	"CONTAINER_7B",	"CONTAINER_7F" };
+		const _char* fenceNames[] = { "FENCE_1A", "FENCE_1B", "FENCE_1F", "FENCE_1H" };
+		const _char* vehicleNames[] = { "VEHICLE_2A", "VEHICLE_2B", "VEHICLE_3B", "VEHICLE_4C", "VEHICLE_6A", "VEHICLE_8B", "VEHICLE_14A", "VEHICLE_14B" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -1699,6 +1937,41 @@ HRESULT CMapTool_Desert::Render()
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SCIFI_DOOR;
 					m_CurrentLayerName = TEXT("Layer_SciFi_Door");
+				}
+				else if (nSelectedModel == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CANBOX;
+					m_CurrentLayerName = TEXT("Layer_CanBox");
+				}
+				else if (nSelectedModel == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BUILDING_4B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BUILDING_4C;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 8)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::BUILDING_4D;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 9)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::WHEEL_1A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 10)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::WHEEL_1B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedModel == 11)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::WHEEL_1C;
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
 		}
@@ -1907,6 +2180,78 @@ HRESULT CMapTool_Desert::Render()
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_7F;
 					m_CurrentLayerName = TEXT("Layer_Container");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Fence"))
+		{
+			if (ImGui::ListBox("##Fence", &nSelectedFence, fenceNames, IM_ARRAYSIZE(fenceNames), 7))
+			{
+				if (nSelectedFence == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FENCE_1A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedFence == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FENCE_1B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedFence == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FENCE_1F;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedFence == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::FENCE_1H;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Vehicle"))
+		{
+			if (ImGui::ListBox("##Vehicle", &nSelectedVehicle, vehicleNames, IM_ARRAYSIZE(vehicleNames), 7))
+			{
+				if (nSelectedVehicle == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_2A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_2B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_3B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_4C;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_6A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_8B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_14A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedVehicle == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_14B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
 		}
@@ -2297,6 +2642,9 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Corpse")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Container")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_SciFi_Door")))) return S_OK; 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CanBox")))) return S_OK; 
+
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Architecture")))) return S_OK; 
 
 
 	ofs.close();
@@ -2414,6 +2762,9 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Corpse"), TEXT("Layer_Corpse")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Container"), TEXT("Layer_Container")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
 	ifs.close();
 
 	return S_OK;
@@ -3089,7 +3440,7 @@ CGameObject* CMapTool_Desert::Find_Object_To_Pick(_uint iLevelIndex, const _wstr
 	for (auto pObject : *pObjects)
 	{
 		CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
-		_float fRadius = 5.f;
+		_float fRadius = 10.f;
 
 		if (pTransform == nullptr) continue;
 

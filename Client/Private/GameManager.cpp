@@ -87,6 +87,11 @@ const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring
     return m_pDataManager->Find_AnimationNotifyData(szAnimationTag);
 }
 
+const INTERACTION_DATA* CGameManager::Find_InteractionData(_uint iID)
+{
+    return m_pDataManager->Get_InteractionData(iID);
+}
+
 #pragma endregion
 
 #pragma region Quest Manager
