@@ -20,7 +20,7 @@ public :
 		CTrailEffect*	pTrailEffect = {};
 		_bool			bisPlay = false;
 		const _float4x4* pRootMatrix = nullptr;
-	}NAYITBA_TRAIL_DESC;
+	}NAYITBA_TRAIL_DESC;	
 
 private:
 	CNayitbaPartBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

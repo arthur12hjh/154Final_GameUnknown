@@ -33,7 +33,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 		return E_FAIL;
 
     m_eInterState = INTERACTION_STATE::DEFAULT;
-    m_pModelCom->Set_AnimationIndex(1, false);
+    m_pModelCom->Set_AnimationIndex(END, false);
 
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;

@@ -163,12 +163,6 @@
     <Filter Include="96.IMGUI\Map\Scarlet">
       <UniqueIdentifier>{f9eeda88-0c69-4b9a-971d-2183b921d060}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Building">
-      <UniqueIdentifier>{1447ad0d-e982-4332-ac61-7f812e970a7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Building\Building_Ruin">
-      <UniqueIdentifier>{80f03000-baf2-4ad0-8569-e74cab751069}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player\Desert">
       <UniqueIdentifier>{cd45f209-0e08-4528-aad7-f7df6228b21d}</UniqueIdentifier>
     </Filter>
@@ -193,9 +187,6 @@
     <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Platform">
       <UniqueIdentifier>{6c797e52-f4dd-4f06-9aa0-0dbaf09f1158}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Building\Iron_Floor">
-      <UniqueIdentifier>{3d1e688a-bd2a-4756-8902-59d2381af6ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Environment\Desert__Tree">
       <UniqueIdentifier>{9d7df503-1cc2-4767-bfa8-395c957c2187}</UniqueIdentifier>
     </Filter>
@@ -207,9 +198,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Chair">
       <UniqueIdentifier>{882f2d26-9613-460c-8ddc-087782723fd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Canbox">
-      <UniqueIdentifier>{331fbebf-a475-4105-92c7-1de0fbeb3558}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\RepairConsole">
       <UniqueIdentifier>{6898f5ec-d88d-484d-8f25-36e160419749}</UniqueIdentifier>
@@ -225,6 +213,21 @@
     </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Door">
       <UniqueIdentifier>{f513af03-52bc-4fe3-91cf-485c6a84a81d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Architecture">
+      <UniqueIdentifier>{1447ad0d-e982-4332-ac61-7f812e970a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Architecture\Building_Ruin">
+      <UniqueIdentifier>{80f03000-baf2-4ad0-8569-e74cab751069}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Architecture\Iron_Floor">
+      <UniqueIdentifier>{3d1e688a-bd2a-4756-8902-59d2381af6ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Architecture\Desert_Architecture">
+      <UniqueIdentifier>{2adecbf0-5be4-4263-879d-0697321384a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Box">
+      <UniqueIdentifier>{331fbebf-a475-4105-92c7-1de0fbeb3558}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -483,7 +486,7 @@
       <Filter>96.IMGUI\Map\Desert</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Building_Ruin.h">
-      <Filter>02.GameObjects\Maps\Desert\Building\Building_Ruin</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Building_Ruin</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Player_Test.h">
       <Filter>02.GameObjects\Player\Desert</Filter>
@@ -513,7 +516,7 @@
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Iron_Floor.h">
-      <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Iron_Floor</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
@@ -525,7 +528,7 @@
       <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CanBox.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Canbox</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Box</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Top_Roof.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
@@ -541,6 +544,12 @@
     </ClInclude>
     <ClInclude Include="..\public\SciFi_Door.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Architecture.h">
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Desert_Architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky_Desert.h">
+      <Filter>02.GameObjects\Maps\Desert\Sky</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -783,7 +792,7 @@
       <Filter>96.IMGUI\Map\Desert</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Building_Ruin.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Building\Building_Ruin</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Building_Ruin</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player_Test.cpp">
       <Filter>02.GameObjects\Player\Desert</Filter>
@@ -813,7 +822,7 @@
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Iron_Floor.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Building\Iron_Floor</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Iron_Floor</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
@@ -825,7 +834,7 @@
       <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CanBox.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Canbox</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Box</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Top_Roof.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
@@ -841,6 +850,12 @@
     </ClCompile>
     <ClCompile Include="..\private\SciFi_Door.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Architecture.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Architecture\Desert_Architecture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky_Desert.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

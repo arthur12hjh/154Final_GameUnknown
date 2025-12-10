@@ -18,7 +18,7 @@ CUISimpleKey::CUISimpleKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
-CUISimpleKey::CUISimpleKey(const CUISimpleKey& Prototype) 
+CUISimpleKey::CUISimpleKey(const CUISimpleKey& Prototype)
 	: CUIBase{ Prototype }
 {
 }
@@ -29,7 +29,7 @@ HRESULT CUISimpleKey::Initialize_Prototype()
 }
 
 HRESULT CUISimpleKey::Initialize(void* pArg)
-{	
+{
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -46,37 +46,13 @@ void CUISimpleKey::Priority_Update(_float fTimeDelta)
 
 void CUISimpleKey::Update(_float fTimeDelta)
 {
-	__super::Update(fTimeDelta);
-
-	
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
-	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
-			m_eInterState = INTERACTION_STATE::DEFAULT;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
-			m_eInterState = INTERACTION_STATE::CONTACT;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			m_eInterState = INTERACTION_STATE::ACTIVE;
-	}*/
-
-	if (dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
-	{
-		m_eInterState = dynamic_cast<CProb_Interaction*>(dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom()->GetOwner())->Get_InterState();
-	}
-}
-
-void CUISimpleKey::Late_Update(_float fTimeDelta)
-{
-	__super::Late_Update(fTimeDelta);
-
 	auto pInteraction = m_pGameInstance->GetNearInteraction();
 	if (pInteraction)
 	{
+		m_eInterState = static_cast<CProb_Interaction*>(pInteraction->GetOwner())->Get_InterState();
 
-		if (pInteraction == static_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
+		if (m_eInterState != m_ePrevInterState)
 		{
-			/*	if (m_eInterState != m_ePrevInterState)
-				{*/
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			UI_EVENT_ARG_DESC Arg{};
@@ -91,10 +67,17 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 				if (AnimTag != m_tUIDesc.m_AnimTags.end())
 					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 				__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
-				break;
-			}
-			case INTERACTION_STATE::CONTACT:
-			{
+
+				if (static_cast<CProb_Interaction*>(pInteraction->GetOwner())->Get_InterDesc()->szInteractionText[0])
+				{
+					CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag,
+						TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
+					Safe_AddRef(pUIText);
+
+					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = pHUD->UTF8ToWString(
+						static_cast<CProb_Interaction*>(pInteraction->GetOwner())->Get_InterDesc()->szInteractionText);
+					Safe_Release(pUIText);
+				}
 
 				break;
 			}
@@ -114,16 +97,42 @@ void CUISimpleKey::Late_Update(_float fTimeDelta)
 				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
 				Arg.pData = &bActive;
 				__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
-
 				break;
 			}
 			}
 
 			m_ePrevInterState = m_eInterState;
 			Safe_Release(pHUD);
-			/*	}*/
 		}
 	}
+	else
+	{
+		m_eInterState = INTERACTION_STATE::END;
+		m_ePrevInterState = INTERACTION_STATE::END;
+	}
+
+	__super::Update(fTimeDelta);
+
+	
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
+	{
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+			m_eInterState = INTERACTION_STATE::DEFAULT;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
+			m_eInterState = INTERACTION_STATE::CONTACT;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
+			m_eInterState = INTERACTION_STATE::ACTIVE;
+	}*/
+
+	/*if (dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
+	{
+		m_eInterState = dynamic_cast<CProb_Interaction*>(dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom()->GetOwner())->Get_InterState();
+	}*/
+}
+
+void CUISimpleKey::Late_Update(_float fTimeDelta)
+{
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUISimpleKey::Render()
@@ -158,10 +167,10 @@ HRESULT CUISimpleKey::Ready_Components()
 		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
 		return E_FAIL;
 
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
+	///* Com_Texture */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
+	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	//	return E_FAIL;
 	
 	/* Com_Texture_UI_Interaction_Key */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
@@ -183,8 +192,8 @@ HRESULT CUISimpleKey::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
-		return E_FAIL;
+	/*if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+		return E_FAIL;*/
 	if (FAILED(m_pKeyTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
 		return E_FAIL;
 
@@ -194,18 +203,6 @@ HRESULT CUISimpleKey::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_tUIDesc.m_tUIShaderDesc.fScale, sizeof(_float))))
 		return E_FAIL;
-
-	/*if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &m_tUIDesc.m_tUIShaderDesc.fGlowSpread, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &m_tUIDesc.m_tUIShaderDesc.bUseTintColor, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &m_tUIDesc.m_tUIShaderDesc.vTintColor, sizeof(_float4))))
-		return E_FAIL;*/
 
 	return S_OK;
 }

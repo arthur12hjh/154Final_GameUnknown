@@ -330,4 +330,13 @@ namespace Client
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
+
+	typedef struct Interaction_Data
+	{
+		_uint				iID;
+		char				szObjectTag[256];
+		char				szInteractionText[256];
+		_float3				vUIPivot;
+
+	}INTERACTION_DATA;
 }

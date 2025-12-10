@@ -161,7 +161,6 @@ void CMonsterController::Damage(void* pDesc)
 		if (bIsHitAble)
 		{
 			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
-			m_pGameInstance->GamePauseDurationTime(0.1f, 0.5f, 1.3f);
 		}
 			
 	}

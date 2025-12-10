@@ -91,8 +91,8 @@ void CNayitba::Update(_float fTimeDelta)
 			BattleEvent(nullptr, NAYTIBA_STATE::DEFAULT);
 		}
 
-		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
-			VisibleStatusUI(fTimeDelta);
+	/*	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+			VisibleStatusUI(fTimeDelta);*/
 	}
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
@@ -148,6 +148,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
+	
 
 	VisibleStatusUI(0.f);
 	if(0 >= m_MonsterInfo.iCurrentHealth)
@@ -515,50 +516,53 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 
 		Safe_Release(pUIHUD);
 	}
+	else
+	{
+		VisibleStatusUI(0.f);
+	}
 }
 
 void CNayitba::VisibleStatusUI(_float fTimeDelta)
 {
-	if (nullptr == m_pStatusUI)
+	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
-		if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
-		{
-			auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			if(pCurHUD)
-				m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
-			Safe_Release(pCurHUD);
-		}
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+		auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		if(pCurHUD)
+			pCurHUD->Return_WorldUI(m_pStatusUI);
+		// 몬스터 체력
+			
+		m_pStatusUI = nullptr;
+		Safe_Release(pCurHUD);
 	}
 	else
 	{
-		if (0 >= m_MonsterInfo.iCurrentHealth)
+		if (m_bIsTimeVisible)
 		{
-			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-			auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			if(pCurHUD)
-				pCurHUD->Return_WorldUI(m_pStatusUI);
-			// 몬스터 체력
-			
-			m_pStatusUI = nullptr;
-			Safe_Release(pCurHUD);
-		}
-		else
-		{
-			if (m_bIsTimeVisible)
+			if (m_vHitVisibleDuration.x <= m_vHitVisibleDuration.y)
 			{
-				if (m_vHitVisibleDuration.x <= m_vHitVisibleDuration.y)
-				{
-					if (VISIBILITY::HIDDEN == m_pStatusUI->GetVisibility())
-						m_pStatusUI->SetVisibility(VISIBILITY::VISIBLE);
+				if (VISIBILITY::HIDDEN == m_pStatusUI->GetVisibility())
+					m_pStatusUI->SetVisibility(VISIBILITY::VISIBLE);
 
-					m_vHitVisibleDuration.x += fTimeDelta;
-				}
-				else
-					m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
+				m_vHitVisibleDuration.x += fTimeDelta;
+			}
+			else
+				m_pStatusUI->SetVisibility(VISIBILITY::HIDDEN);
+		}
+
+		if (nullptr == m_pStatusUI)
+		{
+			if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+			{
+				auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+				if (pCurHUD)
+					m_pStatusUI = pCurHUD->Rent_WorldUI(TEXT("Pool_MonsterVital"), this, &m_MonsterInfo.vStatusBarPoint);
+				Safe_Release(pCurHUD);
 			}
 		}
 	}
+	
 }
 
 _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
@@ -615,6 +619,7 @@ _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 		iDamage = 0;
 
 	_bool bIsCheckDefenceLogic = false;
+	
 	if (m_pAttack_Data)
 	{
 		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))

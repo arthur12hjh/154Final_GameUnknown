@@ -51,7 +51,7 @@ void CIron_Floor::Update(_float fTimeDelta)
 
 void CIron_Floor::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	//if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG

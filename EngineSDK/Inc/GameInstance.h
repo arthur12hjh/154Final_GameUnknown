@@ -376,9 +376,10 @@ private:
 #pragma region Game System
 	_bool							m_bIsPause = false;
 
-	_bool							m_bIsHitStopDurationTime;
+	_bool							m_bIsHitStopDurationTime = { false };
 	_float							m_fHitStopReturnSpeed = {};
 	_uint2							m_iHitStopFrame = {};
+	_float2							m_vLerpTime = {0.f, 0.3f};
 
 	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
