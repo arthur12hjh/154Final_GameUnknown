@@ -16,7 +16,7 @@ PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxShap
 
 PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxController& controller)
 {
-    return PxControllerBehaviorFlags(0);
+    return PxControllerBehaviorFlag::eCCT_SLIDE;
 }
 
 PxControllerBehaviorFlags CPlayerBehaviorCallback::getBehaviorFlags(const PxObstacle& obstacle)

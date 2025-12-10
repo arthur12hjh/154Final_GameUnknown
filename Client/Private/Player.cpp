@@ -22,6 +22,7 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
+#include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -175,9 +176,23 @@ void CPlayer::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteraction = m_pGameInstance->GetNearInteraction();
-		if(pInteraction)
-			pInteraction->Action_InteractionEvent(this);
+		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+
+		if (nullptr != pInteractionCom)
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::SMALLBOX_INTERACTION;
+			Desc.isChangeMode = false;
+			Desc.pArg = pInteractionCom;
+
+			// Transition 너무 이곳저곳에서 일어나지 않나?..
+			// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
+			// 제어가 안될 것까진 없다고 봄.. 
+			m_pFSM->Handle_Transition(Desc);
+		}
+		
+		// 얘는 인터랙션 상태 내부에서 처리.
+		// pInteractionCom->Action_InteractionEvent(this);
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -415,9 +430,9 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.pPlayerController  = m_pCCT;
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
-	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
+	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
 	return S_OK;
 }
@@ -566,7 +581,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 
 		m_pFSM->Handle_Transition(Desc);
-		
+		m_pGameInstance->Shake(0.2f, 0.2f);
 	}
 }
 

@@ -48,7 +48,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 3.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio *  4.f), 0.f), nullptr);
 
     return m_tNextState;
 }

@@ -4,6 +4,7 @@
 #include "CCTHitReporter.h"
 #include "CCTBehaviorCallback.h"
 #include "CCTQueryFilterCallback.h"
+#include "CCTFilterCallback.h"
 
 #include "GameObject.h"
 
@@ -147,17 +148,18 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 	PxControllerFilters ControllerFilter;
 	ControllerFilter.mFilterCallback = static_cast<PxQueryFilterCallback*>(m_pQueryFilterCallback);
 
+	PxExtendedVec3 vPrevPos = m_pController->getFootPosition();
 	PxU32 ResultFlag = m_pController->move(MoveSum, 0.005f, fTimeDelta, ControllerFilter);
-	
 	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
 	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
-	
+
 	if (ResultFlag & PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		m_fJumpVelocity = 0.f;
 		m_fGravityTimeAcc = 0.f;
 		m_isGravity = false;
 	}
+
 	else
 	{
 		m_isGravity = true;
