@@ -111,6 +111,7 @@
                     },
                     {
                         "TextDesc": {
+                            "szFont": "KoPub",
                             "szText": "새 게임 시작",
                             "fScale": 0.8,
                             "vColor": [

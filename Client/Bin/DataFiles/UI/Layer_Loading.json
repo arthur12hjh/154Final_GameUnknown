@@ -28,6 +28,7 @@
             },
             {
                 "TextDesc": {
+                    "szFont": "KoPub",
                     "szText": "그럴 리가 없고, 그럴 수도 없다",
                     "fScale": 0.8,
                     "vColor": [

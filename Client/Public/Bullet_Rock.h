@@ -18,11 +18,17 @@ public:
 	virtual void				Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT				Render() override;
+	virtual void				Shoot_Projectile(_vector vTargetPoint, _float fSpeed);
+
 protected:
 	HRESULT						ADD_Components(BULLET_DESC& pDesc);
 	HRESULT                     Bind_ShaderResources();
 
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+
+private :
+	_float3						m_vLerpPoints[5] = {};
+	_float2						m_LerpTime = { 0.f, 1.f };
 
 public:
 	static	CBullet_Rock*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

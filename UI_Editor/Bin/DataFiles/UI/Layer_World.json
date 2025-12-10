@@ -282,6 +282,7 @@
                     {
                         "TextDesc": {
                             "fScale": 0.7,
+                            "szFont": "KoPub",
                             "szText": "상호작용",
                             "vColor": [
                                 1.0,

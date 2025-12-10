@@ -185,6 +185,9 @@
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
+
+#include "UIGetterQueue.h"
+
 #pragma endregion
 
 
@@ -388,6 +391,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	// _wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	// 
 	// vector<string> szTargetTagList;
+	// szTargetTagList.push_back("DaeJaeHoon`");
 	// szTargetTagList.push_back("sunho");
 	// szTargetTagList.push_back("jindol");
 	// szTargetTagList.push_back("Chanbin");
@@ -403,7 +407,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* For.Prototype_Component_Texture_Sky1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.dds"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sky */
@@ -680,6 +684,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	/* For.Prototype_Component_Model_Prob_CanBox */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CanBox");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Box/CanBox/CanBox.binx", PreTransformMatrix);
@@ -691,6 +696,35 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_Beholder */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Beholder");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Beholder/CH_M_NA_51.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	/* For.Prototype_Component_Model_SunFlower */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_SunFlower");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/SunFlower/SunFlower.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	vector<string> szTargetTagList;
+	szTargetTagList.push_back("Haed");
+
+	CModel* pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
+	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
+
+	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	/* For.Prototype_Component_Model_Minion11 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Minion11");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Minion/11/Minion11.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Bullet_Rock1 */
+	PreTransformMatrix = XMMatrixScaling(0.015f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bullet_Rock1");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Gorilla/Rock/SM_B_GorillaRock_01.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -712,10 +746,10 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	vector<string> szTargetTagList;
+	szTargetTagList.clear();
 	szTargetTagList.push_back("Haed001_end");
 
-	auto pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
+	pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
 	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 
 
@@ -3984,6 +4018,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	/* For.Prototype_GameObject_UI_BossStamina */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossStaminaFX");
 	pProtoDesc.pPrototype = CUIBossStaminaFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_GetterQueue */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_GetterQueue");
+	pProtoDesc.pPrototype = CUIGetterQueue::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

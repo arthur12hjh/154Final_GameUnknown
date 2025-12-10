@@ -31,11 +31,6 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
     m_pOwnerInfo = &pOwner->GetMonsterData();
     m_OnMoveCompleted = pMoveStateDesc->OnMoveCompleted;
 
-    if (AI_TYPE::PASSIVE == pOwnerStaticInfo->eAI_Type)
-    {
-
-    }
-
     switch (m_pOwnerInfo->eNaytibaState)
     {
     case NAYTIBA_STATE::DEFAULT :
@@ -44,7 +39,6 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 
         // 이건 여기서 패트롤 또는 움직임을 제어
         m_vMovePoint.x += m_pGameInstance->Random(-5.f, 5.f);
-        m_vMovePoint.y = 0.f;
         m_vMovePoint.z += m_pGameInstance->Random(-5.f, 5.f);
     }
         break;
@@ -249,14 +243,12 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     {
         // 전투 상태가 아니라면 걸어서 배회
         AnimationName += "_Walk_L";
+        m_vMovePoint.y = vOwnerPos.m128_f32[1] = 0.f;
         vDir = XMVector3Normalize(XMLoadFloat3(&m_vMovePoint) - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_vMovePoint) - vOwnerPos));
 
         if (fDistance >= 0.3f)
         {
-            _vector vMovePoint = XMLoadFloat3(&m_vMovePoint);
-            vMovePoint.m128_f32[3] = 1.f;
-
             LerpLookAt(fTimeDelta, 3.f);
             m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 0.5f);
         }

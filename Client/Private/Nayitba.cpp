@@ -22,6 +22,7 @@
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+#include "PlayerCCTQueryFilterCallback.h"
 
 #include "UIHUD.h"
 #include "UIBase.h"
@@ -112,8 +113,10 @@ void CNayitba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
-		XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+		if(m_pLockOnMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
+		if(m_pHeadBoneMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
 	}
 	__super::Update(fTimeDelta);
 }
@@ -132,7 +135,6 @@ void CNayitba::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 		m_pAISenceCom->Update_Debuge();
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-		m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif // _DEBUG
 	}
 }
@@ -230,7 +232,7 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 
 void CNayitba::PlayDeadEffect()
 {
-	m_pDropCom->ItemDrop(3);
+	m_pDropCom->ItemDrop(1);
 	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
 	if (nullptr == pPartBody)
 		return;
@@ -400,8 +402,8 @@ HRESULT CNayitba::ADD_Components()
 		return E_FAIL;
 
 #pragma region DropItem Setting
-	m_pDropCom->ADD_DropItem(make_pair( 1, 30.f ), 50);
-	m_pDropCom->ADD_DropItem(make_pair( 2, 30.f ), 3);
+	m_pDropCom->ADD_DropItem(make_pair( 1, 30.f ), 1);
+	m_pDropCom->ADD_DropItem(make_pair( 2, 30.f ), 1);
 	m_pDropCom->ADD_DropItem(make_pair( 3, 10.f ), 1);
 #pragma endregion
 
@@ -473,6 +475,8 @@ HRESULT CNayitba::ADD_Components()
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
+	Desc.iCollisionGroup = PHYSX_CCT;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
@@ -717,14 +721,18 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
+	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	pBulletDesc.vScale = pNotify->vNotifyScale;
 	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
 	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
-	m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+	
+	if(pBullet)
+		m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
 }
 
 void CNayitba::ShootProjectile(const AnimNotify* pNotify)

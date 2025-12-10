@@ -78,29 +78,41 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	return NODE_STATE::RUNNING;
 }
 
-void CTask_GorillaAttack::SelectRandomPattern()
+void CTask_GorillaAttack::SelectRandomPattern(_bool bIsBeta)
 {
 	// 여기서 거리가 일단 멀어지면 날라오거나
 	// 돌을 던지는 패턴을 하자
-	//if(30 >= m_pGameInstance->Random(0.f, 100.f))
-	//	m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
-	//else
+	if (bIsBeta)
 	{
 		auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
 		m_pSkillData.push(pBetaSkill);
 		if (11 == pBetaSkill->iSkillID)
 			m_pSkillData.push(m_pGameManager->Find_SkillData(14));
 	}
+	else
+	{
+		if (30 >= m_pGameInstance->Random(0.f, 100.f))
+			m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
+		else
+		{
+			auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
+			m_pSkillData.push(pBetaSkill);
+			if (11 == pBetaSkill->iSkillID)
+				m_pSkillData.push(m_pGameManager->Find_SkillData(14));
+		}
+	}
+	
 
 	SelectAttack();
 }
 
 _bool CTask_GorillaAttack::SelectPattern()
 {
+	_bool bIsAttack = false;
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 
-	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.5f)
+	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.4f)
 	{
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 
@@ -118,34 +130,43 @@ _bool CTask_GorillaAttack::SelectPattern()
 			else
 				m_CurPatternIndex = 3;
 		}
+		bIsAttack = true;
 	}
-	else
+	else if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 2.0f)
+	{
+		SelectRandomPattern(true);
+	}
+	else if(fDistance >= m_pOwner->GetMonsterData().fAttackRange * 3.f)
 	{
 		m_PrePatternIndex = 0;
 		m_CurPatternIndex = 4;
-	}
+		bIsAttack = true;
+	} 
 
-	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
+	if (bIsAttack)
 	{
-		m_PrePatternIndex = m_CurPatternIndex;
-		switch (m_CurPatternIndex)
+		if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
 		{
-		case 1 :
-			BackStepPattern();
-			break;
-		case 2:
-			SelectRandomPattern();
-			break;
-		case 3:
-			MoveAttackPattern();
-			break;
-		case 4:
-			CrushPattern();
-			break;
+			m_PrePatternIndex = m_CurPatternIndex;
+			switch (m_CurPatternIndex)
+			{
+			case 1:
+				BackStepPattern();
+				break;
+			case 2:
+				SelectRandomPattern();
+				break;
+			case 3:
+				MoveAttackPattern();
+				break;
+			case 4:
+				CrushPattern();
+				break;
+			}
 		}
+		else
+			SelectPattern();
 	}
-	else
-		SelectPattern();
 
 	if (nullptr == m_pBlackBoard->GetAttackData())
 		return false;
@@ -204,14 +225,6 @@ void CTask_GorillaAttack::BackStepPattern()
 	}
 	else
 	{
-		//돌을 던져봐요~
-		//영차!영차!
-		//
-		//높이 던져봐요~
-		//영차!영차!
-		//
-		//굴러가는 돌~
-		//데굴 데굴 굴러가요~
 		m_pSkillData.push(m_pGameManager->Find_SkillData(13));
 		SelectAttack();
 	}
@@ -477,7 +490,7 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 		return;
 
 	_float fSpeed = m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed * (fDistance / pSkill_Data->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
-	fSpeed = Clamp<_float>(fSpeed, 0.f, m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed);
+	fSpeed = Clamp<_float>(fSpeed, 0.f, 10.f);//m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
