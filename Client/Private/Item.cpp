@@ -3,7 +3,6 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
-#include "Effect.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -37,6 +36,8 @@ HRESULT CItem::Initialize(void* pArg)
 	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
 
+	m_pTransformCom->Set_State(STATE::POSITION, vOwnerPos + XMVectorSet(0.f, 2.f, 0.f, 0.f));
+
 	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 1.f);
 	vBezirPoint.m128_f32[1] += 5.f;
 	XMStoreFloat3(&m_CurvePoins[4], vDropPoint);
@@ -54,21 +55,6 @@ HRESULT CItem::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-	EffectDesc.fRotationPerSec = 1.f;
-	EffectDesc.fSpeedPerSec = 1.f;
-
-	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
-	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.5f;
-	EffectDesc.iFloor = 2;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-	
-	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
-
-
 	return S_OK;
 }
 
@@ -78,18 +64,18 @@ void CItem::Priority_Update(_float fTimeDelta)
 
 void CItem::Update(_float fTimeDelta)
 {
-	if (m_bIsLerpAnimation)
-	{
-		m_fLerpTime.x += fTimeDelta;
-		m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_CurvePoins, m_fLerpTime.x / m_fLerpTime.y));
+	//if (m_bIsLerpAnimation)
+	//{
+	//	m_fLerpTime.x += fTimeDelta;
+	//	m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_CurvePoins, m_fLerpTime.x / m_fLerpTime.y));
 
-		if (m_fLerpTime.x >= 0.3f)
-		{
-			m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-		}
-		if(m_fLerpTime.x > m_fLerpTime.y)
-			m_bIsLerpAnimation = false;
-	}
+	//	//if (m_fLerpTime.x >= 0.3f)
+	//	//{
+	//	//	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	//	//}
+	//	if(m_fLerpTime.x > m_fLerpTime.y)
+	//		m_bIsLerpAnimation = false;
+	//}
 
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
@@ -103,7 +89,6 @@ void CItem::Late_Update(_float fTimeDelta)
 		m_pInteractionCom->Update_Com();
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -188,7 +173,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	PxUserData tUserData;
 	// 밀려야하는 애들은 이키워드로 세팅
-	tUserData.szActorTag = TEXT("Item_Actor");
+	tUserData.szActorTag = TEXT("Non_Collidable");
 
 	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -203,15 +188,20 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
-	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	RigidBodyDesc.vMaterial = _float3(1.f, 0.8f, 0.f);
 	RigidBodyDesc.vSize = Com_Size;
-	RigidBodyDesc.fMass = { 0.3f };
-
+	RigidBodyDesc.fMass = { 0.0001f };
+	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 		return E_FAIL;
-
+	
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
+	_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
 
 	return S_OK;
 }
@@ -255,5 +245,4 @@ void CItem::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	m_pEffect->End();
 }

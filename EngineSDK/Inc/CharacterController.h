@@ -33,7 +33,13 @@ public:
 		_float4			vStartPos = { 0.f, 0.f, 0.f, 1.f };
 		class CCTHitReporter* pHitReporter = { nullptr };
 		class CCTBehaviorCallback* pBehaviorCallback = { nullptr };
+		class CCTQueryFilterCallback* pQueryFilterCallback = { nullptr };
+
 		PxUserData		tUserData = {};
+		// 자신의 충돌쌍
+		PxU32 iCollisionGroup = { PHYSX_CCT };
+		// 자신이 충돌을 수행할 그룹.
+		PxU32 iCollisionMask = { 0xFFFFFFFF };
 	} CCT_DESC;
 
 private:
@@ -66,6 +72,7 @@ private:
 	/* RigidBody -> RigidDynamic & RigidArticulationLink */
 	class CCTHitReporter* m_pHitReporter = { nullptr };
 	class CCTBehaviorCallback* m_pBehaviorCallback = { nullptr };
+	class CCTQueryFilterCallback* m_pQueryFilterCallback = { nullptr };
 
 	PxControllerManager* m_pPxCCTManager = { nullptr };
 	PxPhysics*			 m_pPxPhysics = { nullptr };

@@ -50,6 +50,10 @@ PLAYER_TRANSITION_DESC CPlayer_HitState::Update(_float fTimeDelta)
 		&& fAnimationRatio >= 0.3f)
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
 
+	else if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		&& fAnimationRatio >= 0.15f)
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
 	return m_tNextState;
 }
 

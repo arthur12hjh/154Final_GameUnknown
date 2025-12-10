@@ -12,6 +12,15 @@ namespace Engine
 #define ANIMATIONFLAG_PLAY		(1 << 0)
 #define ANIMATIONFLAG_FINISH	(1 << 1)
 
+#define PHYSX_DEFAULT	(1 << 1)
+#define PHYSX_CCT		(1 << 2)
+#define PHYSX_DYNAMIC	(1 << 3)
+#define PHYSX_STATIC	(1 << 4)
+#define PHYSX_KINEMATIC (1 << 5)
+#define PHYSX_NONTERRAIN  (1 << 6)
+#define PHYSX_TERRAIN   (1 << 7)
+#define PHYSX_CUSTOM_3  (1 << 8)
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG
