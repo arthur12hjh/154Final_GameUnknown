@@ -3,7 +3,8 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
-#include "Effect.h"
+#include "UIHUD.h"
+#include "UIGetterQueue.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -53,17 +54,6 @@ HRESULT CItem::Initialize(void* pArg)
 	XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
 	XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
 
-	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-	EffectDesc.fRotationPerSec = 1.f;
-	EffectDesc.fSpeedPerSec = 1.f;
-
-	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
-	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.5f;
-	EffectDesc.iFloor = 2;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
@@ -92,6 +82,21 @@ void CItem::Update(_float fTimeDelta)
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
+
+	// ui 애니메이션 끝나고 나오게
+	//if (m_eInterState == INTERACTION_STATE::ACTIVE)
+	//{
+	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	//	if (pHUD)
+	//	{
+	//		//여기서 상호작용해서 나올거임
+	//		if (pHUD->Check_AnimFinish(TEXT("Layer_World"), TEXT("SimpleKey_Cloned_0"), TEXT("Hide_Key_0")))
+	//			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	//	}
+
+	//	Safe_Release(pHUD);
+	//}
 }
 
 void CItem::Late_Update(_float fTimeDelta)
@@ -150,7 +155,17 @@ void CItem::Excute_CallBack(CGameObject* pActionObject)
 {
 	m_eInterState = INTERACTION_STATE::ACTIVE;
 
-	// 여기서 상호작용해서 나올거임
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	if (pHUD)
+	{
+		CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+		if (pGetterQueue)
+			pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
+	}
+
+	Safe_Release(pHUD);
+
 	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }
 
@@ -257,6 +272,4 @@ void CItem::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	if(nullptr != m_pEffect)
-		m_pEffect->End();
 }

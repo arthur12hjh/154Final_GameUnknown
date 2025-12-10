@@ -375,6 +375,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	{
 		Json TextDesc;
 
+		TextDesc["szFont"] = pDesc.Get_UI_Text_Desc()->szFont;
 		TextDesc["szText"] = WStringToUTF8(pDesc.Get_UI_Text_Desc()->szText.c_str());
 		TextDesc["fScale"] = pDesc.Get_UI_Text_Desc()->fScale;
 		TextDesc["vColor"] = {
@@ -595,6 +596,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			Json jDesc = pUIObject["TextDesc"];
 			//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
 			//TextDesc.szText = szText;
+			TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 			TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 			TextDesc.fScale = jDesc["fScale"].get<_float>();
 			TextDesc.vColor = {
@@ -815,6 +817,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
+		TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.fScale = jDesc["fScale"].get<_float>();
 		TextDesc.vColor = {

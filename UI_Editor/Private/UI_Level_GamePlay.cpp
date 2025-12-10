@@ -86,7 +86,8 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 	
-	//pUIHUD->Register_WorldUI(TEXT("Pool_Test"), TEXT("World_Test"), 20, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;
 
 	return S_OK;
 }

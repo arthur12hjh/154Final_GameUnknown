@@ -184,6 +184,9 @@
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
+
+#include "UIGetterQueue.h"
+
 #pragma endregion
 
 
@@ -3746,6 +3749,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	/* For.Prototype_GameObject_UI_BossStamina */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BossStaminaFX");
 	pProtoDesc.pPrototype = CUIBossStaminaFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_GetterQueue */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_GetterQueue");
+	pProtoDesc.pPrototype = CUIGetterQueue::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

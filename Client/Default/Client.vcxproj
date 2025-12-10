@@ -369,6 +369,7 @@
     <ClInclude Include="..\Public\UIBossStamina.h" />
     <ClInclude Include="..\Public\UIBossStaminaFX.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
+    <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
@@ -634,6 +635,7 @@
     <ClCompile Include="..\Private\UIBossShield.cpp" />
     <ClCompile Include="..\Private\UIBossStamina.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
+    <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
