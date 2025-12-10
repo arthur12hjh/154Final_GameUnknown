@@ -339,6 +339,10 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 	// Lockon 모드에서 타겟이 사라진 경우, Battle로 되돌리기
 	if (m_pPlayerDesc->ePlayerMode == PLAYER_MODE::LOCKON)
 	{
+		//보스락온일떈 풀지마
+		if (true == m_pPlayerDesc->isBossLock)
+			return;
+
 		// 락온 거리보다 멀다면
 		if (!m_pPlayerDesc->HasTarget ||
 			m_pPlayerDesc->fCurrentMinDist > m_pPlayerDesc->fLockOnDistance)

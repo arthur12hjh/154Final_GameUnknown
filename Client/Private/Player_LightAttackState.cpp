@@ -47,6 +47,9 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
     {
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
     }
+    else if ((m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E)) && fAnimationRatio >= m_fLimitProgress)
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1) &&
         fAnimationRatio >= m_fLimitProgress)

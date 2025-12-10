@@ -18,6 +18,7 @@
 #include "AttackHitBox.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+#include "PlayerCCTQueryFilterCallback.h"
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
@@ -167,7 +168,7 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill();
 	Update_FSM(fTimeDelta);
-	
+
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
 		Use_RushSkill();
@@ -193,7 +194,6 @@ void CPlayer::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif
 }
 
@@ -270,7 +270,7 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 2.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
@@ -301,6 +301,9 @@ HRESULT CPlayer::Ready_Components()
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
+	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.iCollisionMask &= ~(PHYSX_CUSTOM_3);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
