@@ -28,11 +28,11 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-	//static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 1;
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+	static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 1;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 	 
@@ -85,14 +85,16 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	/*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-	}
+	}*/
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
 }
 
 HRESULT CLift_Controller::Render()

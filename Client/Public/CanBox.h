@@ -35,7 +35,7 @@ private:
 	CEventHandle*					m_pEventHandle = { nullptr };
 
 private:
-	HRESULT							ADD_Components(const ACTOR_DESC& Desc);
+	HRESULT							ADD_Components(const PROB_INTERACTION_DESC& Desc);
 	HRESULT							Bind_ShaderResources();
 
 	virtual HRESULT					Begin_OverlapCallBack() override;

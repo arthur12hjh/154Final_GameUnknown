@@ -80,15 +80,12 @@
 #include "Iron_Floor.h"
 #include "SpawnBox.h"
 #include "Desert_Tree.h"
-#include "Chair.h"
-#include "VendingMachine.h"
 #include "RepairConsole.h"
 #include "Top_Roof.h"
-#include "Corpse.h"
-#include "Container.h"
 #include "SciFi_Door.h"
 #include "CanBox.h"
 #include "Desert_Architecture.h"
+#include "Interaction_NonAnim.h"
 #pragma endregion
 
 
@@ -1324,18 +1321,9 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	
-
 	/* For.Prototype_GameObject_Deco */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Deco");
 	pProtoDesc.pPrototype = CDeco::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Chair */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Chair");
-	pProtoDesc.pPrototype = CChair::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1347,6 +1335,13 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Interaction_NonAnim */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Interaction_NonAnim");
+	pProtoDesc.pPrototype = CInteraction_NonAnim::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_Desert_Architecture */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Architecture");
 	pProtoDesc.pPrototype = CDesert_Architecture::Create(m_pDevice, m_pContext);
@@ -1354,15 +1349,16 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_VendingMachine */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_VendingMachine");
-	pProtoDesc.pPrototype = CVendingMachine::Create(m_pDevice, m_pContext);
+
+	/* For.Prototype_GameObject_SciFi_Door */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SciFi_Door");
+	pProtoDesc.pPrototype = CSciFi_Door::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_SciFi_Door */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SciFi_Door");
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Interaction_NonAnim");
 	pProtoDesc.pPrototype = CSciFi_Door::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
@@ -1687,20 +1683,6 @@ HRESULT CLoader::Loading_For_Desert_Deco_Corpse_And_Container(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_7F");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Deco/Container/Container_7F.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Container */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Container");
-	pProtoDesc.pPrototype = CContainer::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Corpse */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Corpse");
-	pProtoDesc.pPrototype = CCorpse::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

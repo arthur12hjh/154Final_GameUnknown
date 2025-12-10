@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CRepairConsole::CRepairConsole(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CInteraction{ pDevice, pContext }
 {
 }
 
 CRepairConsole::CRepairConsole(const CRepairConsole& Prototype)
-	: CDesertObject{ Prototype }
+	: CInteraction{ Prototype }
 {
 }
 
@@ -20,7 +20,7 @@ HRESULT CRepairConsole::Initialize_Prototype()
 HRESULT CRepairConsole::Initialize(void* pArg)
 {
 
-	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -33,6 +33,7 @@ HRESULT CRepairConsole::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+	m_iInteractionID = pDesc->iInteractionID;
 	m_eCurState = OPEN;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
@@ -143,7 +144,7 @@ CRepairConsole* CRepairConsole::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CDesertObject* CRepairConsole::Clone(void* pArg)
+CGameObject* CRepairConsole::Clone(void* pArg)
 {
 	CRepairConsole* pInstance = new CRepairConsole(*this);
 

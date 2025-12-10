@@ -28,9 +28,15 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
-	if (FAILED(ADD_Components(*pDesc)))
-		return E_FAIL;
+
+
+    PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+    static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 5;
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
+    if (FAILED(ADD_Components(*pDesc)))
+        return E_FAIL;
 
     m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(END, false);
@@ -109,7 +115,7 @@ HRESULT CCanBox::Render()
 	return S_OK;
 }
 
-HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
 

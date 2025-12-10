@@ -138,13 +138,9 @@
 #include "Lift_Platform.h"
 #include "Iron_Floor.h"
 #include "Deco.h"
-#include "Corpse.h"
-#include "Chair.h"
 #include "SciFi_Door.h"
-#include "Container.h"
 #include "Top_Roof.h"
 #include "RepairConsole.h"
-#include "VendingMachine.h"
 #include "Desert_Architecture.h"
 #pragma endregion
 
@@ -1294,8 +1290,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* Prototype_GameObject_Static_Interaction */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Static_Interaction");
+	/* Prototype_GameObject_Interaction_NonAnim */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Interaction_NonAnim");
 	pProtoDesc.pPrototype = CStaticInteraction::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
@@ -2946,19 +2942,6 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Chair */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Chair");
-	pProtoDesc.pPrototype = CChair::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_VendingMachine */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_VendingMachine");
-	pProtoDesc.pPrototype = CVendingMachine::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_SciFi_Door */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SciFi_Door");
@@ -3297,19 +3280,6 @@ HRESULT CLoader::Loading_For_Desert_Deco_Corpse_And_Container(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Container */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Container");
-	pProtoDesc.pPrototype = CContainer::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Corpse */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Corpse");
-	pProtoDesc.pPrototype = CCorpse::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
