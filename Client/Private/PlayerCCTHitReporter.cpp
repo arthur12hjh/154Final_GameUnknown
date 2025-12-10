@@ -35,21 +35,40 @@ void CPlayerCCTHitReporter::onShapeHit(const PxControllerShapeHit& HitInfo)
         // 다이나믹
         else
         {
-            if (pData->szActorTag != TEXT("Prop_Actor"))
-                return;
-            // 밀기 방향 계산 (수직 성분 제외)
-            PxExtendedVec3 vExPushDir = HitInfo.worldPos - m_pController->getPosition();
-            PxVec3 vPushDir = PxVec3(static_cast<_float>(vExPushDir.x), static_cast<_float>(vExPushDir.y), static_cast<_float>(vExPushDir.z));
-
-            // 영벡터가 아니라면
-            if (vPushDir.magnitudeSquared() != 0.f)
+            if (pData->szActorTag == TEXT("Prop_Actor"))
             {
-                _wstring szActorTag = static_cast<PxUserData*>(pDynamic->userData)->szActorTag;
-                vPushDir.normalize();
-                _float fPushStrength = 15.0f; // 원하는 힘 크기
+                // 밀기 방향 계산 (수직 성분 제외)
+                PxExtendedVec3 vExPushDir = HitInfo.worldPos - m_pController->getPosition();
+                PxVec3 vPushDir = PxVec3(static_cast<_float>(vExPushDir.x), static_cast<_float>(vExPushDir.y), static_cast<_float>(vExPushDir.z));
 
-                // Force 또는 Impulse 적용
-                pDynamic->addForce(vPushDir * fPushStrength, PxForceMode::eIMPULSE);
+                // 영벡터가 아니라면
+                if (vPushDir.magnitudeSquared() != 0.f)
+                {
+                    _wstring szActorTag = static_cast<PxUserData*>(pDynamic->userData)->szActorTag;
+                    vPushDir.normalize();
+                    _float fPushStrength = 15.0f; // 원하는 힘 크기
+
+                    // Force 또는 Impulse 적용
+                    pDynamic->addForce(vPushDir * fPushStrength, PxForceMode::eIMPULSE);
+                }
+            }
+
+            if (pData->szActorTag == TEXT("Non_Collidable"))
+            {
+                // 밀기 방향 계산 (수직 성분 제외)
+                PxExtendedVec3 vExPushDir = HitInfo.worldPos - m_pController->getPosition();
+                PxVec3 vPushDir = PxVec3(static_cast<_float>(vExPushDir.x), static_cast<_float>(vExPushDir.y), static_cast<_float>(vExPushDir.z));
+
+                // 영벡터가 아니라면
+                if (vPushDir.magnitudeSquared() != 0.f)
+                {
+                    _wstring szActorTag = static_cast<PxUserData*>(pDynamic->userData)->szActorTag;
+                    vPushDir.normalize();
+                    _float fPushStrength = 15.0f; // 원하는 힘 크기
+
+                    // Force 또는 Impulse 적용
+                    pDynamic->addForce(vPushDir * fPushStrength, PxForceMode::eIMPULSE);
+                }
             }
         }
         break;
