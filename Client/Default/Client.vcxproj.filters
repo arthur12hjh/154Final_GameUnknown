@@ -742,6 +742,9 @@
     <Filter Include="05.Component\DropComponent">
       <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Architecture">
+      <UniqueIdentifier>{412b9843-e2f2-466f-b075-6996a915c366}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1501,6 +1504,9 @@
     <ClInclude Include="..\public\DropComponent.h">
       <Filter>05.Component\DropComponent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Desert_Architecture.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2229,6 +2235,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DropComponent.cpp">
       <Filter>05.Component\DropComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Desert_Architecture.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
