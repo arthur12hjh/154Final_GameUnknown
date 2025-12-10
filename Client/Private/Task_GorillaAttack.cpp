@@ -82,9 +82,9 @@ void CTask_GorillaAttack::SelectRandomPattern()
 {
 	// 여기서 거리가 일단 멀어지면 날라오거나
 	// 돌을 던지는 패턴을 하자
-	//if(30 >= m_pGameInstance->Random(0.f, 100.f))
-	//	m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
-	//else
+	if(30 >= m_pGameInstance->Random(0.f, 100.f))
+		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
+	else
 	{
 		auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
 		m_pSkillData.push(pBetaSkill);

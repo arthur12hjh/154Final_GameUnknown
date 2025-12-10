@@ -193,6 +193,8 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
 
             pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
                 ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+            Safe_AddRef(pEffect);
             m_pEffects.push_back({ pEffect, NotifyReference.iNumData01 });
         }
         pEffect->Play();
@@ -252,6 +254,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             pTrailEffect = static_cast<CTrailEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
                 ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &Traildesc));
             ptrailDesc->pTrailEffect = pTrailEffect;
+            Safe_AddRef(pTrailEffect);
             m_pTrailEffects.push_back({ ptrailDesc, NotifyReference.iNumData01 });
         }
     }

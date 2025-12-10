@@ -22,7 +22,6 @@ HRESULT CBossBlackBoard::Initialize(void* pArg)
 
 void CBossBlackBoard::SetTarget(CGameObject* pGameObject)
 {
-    //m_pTarget = nullptr;
     m_pTarget = pGameObject;
 }
 

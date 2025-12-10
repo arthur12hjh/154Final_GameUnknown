@@ -32,11 +32,8 @@ HRESULT CBossController::Initialize(void* pArg)
     if (FAILED(Ready_Behavior(*pControllerDesc)))
         return E_FAIL;
 
-    //auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    //auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
-    //pBossBlackBoard->SetTarget(pPlayer);
-    //Safe_Release(pPlayer);
-    //Safe_Release(pBossBlackBoard);
+    m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
+    m_pBlackBoard->SetAttackDelay(3.f);
     return S_OK;
 }
 
@@ -48,11 +45,11 @@ void CBossController::Update(_float fTimeDelta)
 {
     auto pNayitba = static_cast<CNayitba*>(m_pParent);
 
-    auto pBossBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    pBossBlackBoard->SetTarget(pNayitba->GetTarget());
-
-    pBossBlackBoard->AccAttackDelay(fTimeDelta);
-    Safe_Release(pBossBlackBoard);
+    if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterData().eNaytibaState)
+    {
+        m_pBlackBoard->SetTarget(pNayitba->GetTarget());
+        m_pBlackBoard->AccAttackDelay(fTimeDelta);
+    }
 
     m_pBehaviorTree->Update(fTimeDelta);
 }
@@ -71,20 +68,19 @@ void CBossController::Damage(void* pArg)
     DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
     auto pNayitba = static_cast<CNayitba*>(m_pParent);
-    auto pBossBlackBoard = dynamic_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentHealth)
+    if (0 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // 이거 죽는모션 나옴 죽으면 
         // 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
-        pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+        m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
     }
     else
     {
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
         _bool bIsHitAble = true;
-        const Character_Skill_Desc* pAttackData = pBossBlackBoard->GetAttackData();
-        if (CBossBlackBoard::BOSS_STATE::ATTACK == pBossBlackBoard->GetCurState())
+        const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
+        if (CBossBlackBoard::BOSS_STATE::ATTACK == m_pBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정
             const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
@@ -94,14 +90,14 @@ void CBossController::Damage(void* pArg)
 
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
-                pBossBlackBoard->SetAttackDelay(1.5f);
-                if (0 >= pBossBlackBoard->GetBossInfo()->iCurrentStamina)
+                m_pBlackBoard->SetAttackDelay(1.5f);
+                if (0 >= m_pBlackBoard->GetBossInfo()->iCurrentStamina)
                 {
                     // 여기서 그로기 타임 주고 설정
                     // 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
                     // 원작은 뒤로 물러나면서 들어가는거 같음
                     bIsHitAble = false;
-                    pBossBlackBoard->EnterGroggy();
+                    m_pBlackBoard->EnterGroggy();
                 }
                 else
                 {
@@ -122,17 +118,16 @@ void CBossController::Damage(void* pArg)
                 }
             }
         }
-        else if (CBossBlackBoard::BOSS_STATE::GROGGY == pBossBlackBoard->GetCurState())
+        else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
             bIsHitAble = false;
 
         if (bIsHitAble)
         {
-            pBossBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
-            pBossBlackBoard->SetHitData(pDamageDesc);
+            m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
+            m_pBlackBoard->SetHitData(pDamageDesc);
         }
             
     }
-    Safe_Release(pBossBlackBoard);
 }
 
 void CBossController::ActionSuccess(void* pArg)
@@ -179,4 +174,5 @@ void CBossController::Free()
     __super::Free();
 
     Safe_Release(m_pBehaviorTree);
+    Safe_Release(m_pBlackBoard);
 }

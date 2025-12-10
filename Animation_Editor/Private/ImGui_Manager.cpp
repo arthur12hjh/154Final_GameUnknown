@@ -288,6 +288,8 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("StatueA")) { iCurrentIndex = 4; }
 		if (ImGui::Selectable("StatueB")) { iCurrentIndex = 5; }
 		if (ImGui::Selectable("Banacle")) { iCurrentIndex = 6; }
+		if (ImGui::Selectable("SunFlower")) { iCurrentIndex = 7; }
+		if (ImGui::Selectable("Minion11")) { iCurrentIndex = 8; }
 		ImGui::EndPopup();
 	}
 
@@ -318,6 +320,12 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 6:
 			Create_Extra(TEXT("Prototype_Component_Model_Banacle"));
+			break;
+		case 7:
+			Create_Extra(TEXT("Prototype_Component_Model_SunFlower"));
+			break;
+		case 8:
+			Create_Extra(TEXT("Prototype_Component_Model_Minion11"));
 			break;
 		}
 

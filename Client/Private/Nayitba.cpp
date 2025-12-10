@@ -113,8 +113,10 @@ void CNayitba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
-		XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+		if(m_pLockOnMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
+		if(m_pHeadBoneMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
 	}
 	__super::Update(fTimeDelta);
 }
@@ -719,14 +721,18 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
+	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	pBulletDesc.vScale = pNotify->vNotifyScale;
 	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
 	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
-	m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+	
+	if(pBullet)
+		m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
 }
 
 void CNayitba::ShootProjectile(const AnimNotify* pNotify)
