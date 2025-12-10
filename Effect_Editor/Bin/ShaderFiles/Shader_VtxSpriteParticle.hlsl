@@ -1250,6 +1250,53 @@ PS_NORMAL_OUT PS_STONE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
 }
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NORMAL_OUT PS_CRYSTAL(PS_NORMAL_IN In)
+{
+    PS_NORMAL_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    int i = In.vSeed % (g_iUV.x * g_iUV.y);
+    int iU = i % g_iUV.x;
+    int iV = i / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord);
+    if (0.5 > Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb = g_vColor;
+    Out.vDiffuse.rgb *= fmod(frac(sin(In.vSeed * 0.01) * 123456.789012), 0.6) + 0.4;
+    Out.vDiffuse.a *= saturate((In.vLifeTime.y - In.vLifeTime.x) * 5);
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    
+    float threshold = hole[index] / 32.0;
+    if (0 >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+        discard;
+    float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
+    float3 normal;
+    normal.xy = rg;
+    normal.z = sqrt(saturate(1.0 - dot(rg, rg)));
+    normal = normalize(normal);
+    
+    float3 N = normal;
+    float3 T = normalize(In.vTangent.xyz);
+    float3 B = normalize(In.vBitangent.xyz);
+    float3 G = normalize(In.vNormal.xyz);
+    
+    float3x3 TBN = float3x3(T, B, G);
+    float3 finalNormal = normalize(mul(N, TBN));
+    Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vOrm = float4(0, 0, 0, 0);
+    
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_WEIGHT_OUT PS_BLOOD(PS_WEIGHT_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_WEIGHT_OUT Out;
@@ -1301,7 +1348,28 @@ PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     Out.vDiffuse = float4(0, 0, 0, 0);
     Out.vBloom = g_vColor;
-    Out.vBloom *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    Out.vBloom *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);// * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vBloom.a)
+        discard;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_BLOOM_OUT PS_ITEM_BLOOM(PS_NONLIGHT_IN In)
+{
+    PS_BLOOM_OUT Out;
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    Out.vDiffuse = float4(0, 0, 0, 0);
+    Out.vBloom = g_vColor;
+    Out.vBloom *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a); // * saturate(In.vLifeTime.y - In.vLifeTime.x);
     if (0 >= Out.vBloom.a)
         discard;
     return Out;
@@ -1322,6 +1390,35 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     
     Out.vDiffuse = g_vColor;
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    //float weight = saturate(pow(1 - depth, 3));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = (1 - weight) * (g_fDissolveUVSize.x / length(g_WorldMatrix._11_12_13));
+    Out.vDiffuse.a = 1;
+    Out.vWeight.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_WEIGHT_OUT PS_GOLD(PS_WEIGHT_IN In)
+{
+    PS_WEIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
     if (0 >= Out.vDiffuse.a)
         discard;
     float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
@@ -1996,5 +2093,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_DISTORTION();
+    }
+    // idx 21
+    pass ItemBloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NORMAL_STONE();
+        PixelShader = compile ps_5_0 PS_CRYSTAL();
     }
 }

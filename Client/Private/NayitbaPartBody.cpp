@@ -46,6 +46,20 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     
     if (m_isDeadEffect)
     {
+        if (0 >= m_fDeadTime) {
+
+            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            EffectDesc.fRotationPerSec = 1.f;
+            EffectDesc.fSpeedPerSec = 1.f;
+                
+            EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+            EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+            EffectDesc.fRot = _float3(0, 0, 0);
+            EffectDesc.fSize = 0.8f;
+            EffectDesc.iFloor = 0;
+            m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Ashes"),
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+        }
         m_fDeadTime += fTimeDelta;
         if(1.5 < m_fDeadTime)
             m_pParent->Set_Dead(true);
@@ -173,7 +187,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             EffectDesc.vPos = XMVectorSet(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 1);
             EffectDesc.fRot = _float3(XMConvertToRadians(NotifyReference.vNotifyRotation.x), XMConvertToRadians(NotifyReference.vNotifyRotation.y), XMConvertToRadians(NotifyReference.vNotifyRotation.z));
             EffectDesc.fSize = NotifyReference.vNotifyScale.x;
-            EffectDesc.bisFloor = 1 == NotifyReference.iNumData02 ? true : false;
+            EffectDesc.iFloor = NotifyReference.iNumData02;
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
 

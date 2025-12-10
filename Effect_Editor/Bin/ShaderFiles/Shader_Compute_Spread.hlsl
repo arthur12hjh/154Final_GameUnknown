@@ -233,6 +233,8 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
+            if (0 == viLoopAndCount.x && 2 != vfisSphere.x)
+                return;
             if (4 == viLoopAndCount.x)
                 return;
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
@@ -1099,7 +1101,7 @@ void Tornado(uint3 Gid : SV_GroupID,
         {
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
         }
-        if ((1 == viLoopAndCount.x || 2 == viLoopAndCount.x || 3 == viLoopAndCount.x) && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
+        if ((1 == viLoopAndCount.x || 2 == viLoopAndCount.x || 3 == viLoopAndCount.x || 4 == viLoopAndCount.x) && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
         {
         
             switch (int(vfisSphere.x))
@@ -1145,6 +1147,8 @@ void Tornado(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
+            if (0 == viLoopAndCount.x && 2 != vfisSphere.x)
+                return;
             if (2 == viLoopAndCount.x)
                 return;
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
