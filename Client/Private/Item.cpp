@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
+#include "UIHUD.h"
+#include "UIGetterQueue.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -80,6 +82,21 @@ void CItem::Update(_float fTimeDelta)
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
+
+	// ui 애니메이션 끝나고 나오게
+	//if (m_eInterState == INTERACTION_STATE::ACTIVE)
+	//{
+	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	//	if (pHUD)
+	//	{
+	//		//여기서 상호작용해서 나올거임
+	//		if (pHUD->Check_AnimFinish(TEXT("Layer_World"), TEXT("SimpleKey_Cloned_0"), TEXT("Hide_Key_0")))
+	//			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	//	}
+
+	//	Safe_Release(pHUD);
+	//}
 }
 
 void CItem::Late_Update(_float fTimeDelta)
@@ -138,7 +155,17 @@ void CItem::Excute_CallBack(CGameObject* pActionObject)
 {
 	m_eInterState = INTERACTION_STATE::ACTIVE;
 
-	// 여기서 상호작용해서 나올거임
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	if (pHUD)
+	{
+		CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+		if (pGetterQueue)
+			pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
+	}
+
+	Safe_Release(pHUD);
+
 	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }
 

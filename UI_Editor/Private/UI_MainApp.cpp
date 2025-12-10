@@ -88,6 +88,8 @@ HRESULT CUI_MainApp::Ready_Default_Setting()
 
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Iceberg"), TEXT("../../Client/Bin/Resources/Fonts/Iceberg.spritefont"))))
+		return E_FAIL;
 
 	return S_OK;
 }

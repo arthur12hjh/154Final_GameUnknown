@@ -54,7 +54,7 @@ HRESULT CUIText::Render()
 	if (m_tUIDesc.Get_UI_Text_Desc())
 	{
 		_float2 fTextSize = m_pGameInstance->Get_Text_Size(
-			TEXT("KoPub"), m_tUIDesc.m_tUITextDesc.szText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
+			m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_tUIDesc.m_tUITextDesc.szText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
 		_float fAlpha{ m_tUIDesc.fAlpha };
 		/*if (m_pParent)
 			fAlpha = m_tUIDesc.fAlpha * dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fAlpha;*/
@@ -75,13 +75,13 @@ HRESULT CUIText::Render()
 				-(m_tUIDesc.fY + m_tUIDesc.fOffsetY + fTextSize.y * 0.5f) + iHalf.y
 			};
 
-			m_pGameInstance->Render_Text(TEXT("KoPub"),
+			m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
 				m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
 				pos, vColor, m_tUIDesc.m_tUITextDesc.fScale);
 		}
 		else
 		{
-			m_pGameInstance->Render_Text(TEXT("KoPub"),
+			m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
 				m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
 				_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f, m_tUIDesc.fY + m_tUIDesc.fOffsetY - fTextSize.y * 0.5f),
 				vColor, m_tUIDesc.m_tUITextDesc.fScale);

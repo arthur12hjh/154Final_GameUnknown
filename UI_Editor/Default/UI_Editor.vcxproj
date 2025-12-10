@@ -168,14 +168,17 @@
   <ItemGroup>
     <ClCompile Include="..\..\Client\Private\Actor.cpp" />
     <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp" />
+    <ClCompile Include="..\..\Client\Private\Bullet.cpp" />
     <ClCompile Include="..\..\Client\Private\CanBox.cpp" />
     <ClCompile Include="..\..\Client\Private\Character.cpp" />
     <ClCompile Include="..\..\Client\Private\DataManager.cpp" />
+    <ClCompile Include="..\..\Client\Private\DropComponent.cpp" />
     <ClCompile Include="..\..\Client\Private\Effect.cpp" />
     <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
     <ClCompile Include="..\..\Client\Private\LockonManager.cpp" />
     <ClCompile Include="..\..\Client\Private\MeshEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\Nayitba.cpp" />
+    <ClCompile Include="..\..\Client\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\..\Client\Private\Notify.cpp" />
     <ClCompile Include="..\..\Client\Private\Player.cpp" />
     <ClCompile Include="..\..\Client\Private\PlayerBehaviorCallback.cpp" />
@@ -216,6 +219,7 @@
     <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\..\Client\Private\SpriteUVEffect.cpp" />
+    <ClCompile Include="..\..\Client\Private\TargetComponent.cpp" />
     <ClCompile Include="..\..\Client\Private\TestQuest.cpp" />
     <ClCompile Include="..\..\Client\Private\TrailData.cpp" />
     <ClCompile Include="..\..\Client\Private\TrailEffect.cpp" />
@@ -232,6 +236,7 @@
     <ClCompile Include="..\..\Client\Private\UIBossStaminaFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />

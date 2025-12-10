@@ -742,6 +742,9 @@
     <Filter Include="05.Component\DropComponent">
       <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIGetterQueue">
+      <UniqueIdentifier>{0a500016-3cec-4400-bfb6-015a19d66535}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\CCTQueryFilterCallback">
       <UniqueIdentifier>{651a9412-91f3-4020-bec4-104c498b478b}</UniqueIdentifier>
     </Filter>
@@ -1504,6 +1507,9 @@
     <ClInclude Include="..\public\DropComponent.h">
       <Filter>05.Component\DropComponent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIGetterQueue.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIGetterQueue</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h">
       <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>
     </ClInclude>
@@ -2235,6 +2241,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DropComponent.cpp">
       <Filter>05.Component\DropComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIGetterQueue.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIGetterQueue</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp">
       <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>

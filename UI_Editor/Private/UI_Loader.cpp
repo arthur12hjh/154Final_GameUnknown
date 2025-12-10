@@ -34,6 +34,7 @@
 #include "UIBossStaminaFX.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
+#include "UIGetterQueue.h"
 
 #include "GameInstance.h"
 #include "UIResourceStore.h"
@@ -322,6 +323,11 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_GameObject_UI_BossStaminaFX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossStaminaFX"),
 		CUIBossStaminaFX::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_GetterQueue */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_GetterQueue"),
+		CUIGetterQueue::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
