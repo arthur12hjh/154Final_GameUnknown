@@ -1220,6 +1220,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Item_Aura");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ItemAura.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Item_Get */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Item_Get");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ItemGet.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	
 	/* For.Prototype_Component_TrailEffect_Default_Slash */
