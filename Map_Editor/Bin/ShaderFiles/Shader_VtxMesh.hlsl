@@ -73,6 +73,24 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_SKY(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    vMtrlDiffuse.a *= 0.5f;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    return Out;
+}
+
 PS_OUT PS_MOON(PS_IN In)
 {
     PS_OUT Out;
