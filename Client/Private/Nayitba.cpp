@@ -730,7 +730,9 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
 	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
-	m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+	
+	if(pBullet)
+		m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
 }
 
 void CNayitba::ShootProjectile(const AnimNotify* pNotify)
