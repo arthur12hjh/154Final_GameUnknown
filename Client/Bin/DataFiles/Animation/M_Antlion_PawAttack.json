@@ -6,28 +6,28 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 3,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
+                "iNotifyKeyFrame": 61,
+                "iNumData01": 731,
+                "iNumData02": 1,
+                "iNumData03": 4,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Parrying",
-                "szNotifyArg02": "",
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "Hit_Box_Layer",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Transform",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
                 "vNotifyPosition": [
-                    -0.05999999865889549,
-                    3.0,
+                    0.0,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -36,12 +36,12 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    3.0,
-                    3.0,
-                    3.0
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],
-        "szAnimationTag": "Proto_Guard_Parry"
+        "szAnimationTag": "M_Antlion_PawAttack"
     }
 ]

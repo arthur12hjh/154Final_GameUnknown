@@ -6,8 +6,8 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 71,
-                "iNumData01": 533,
+                "iNotifyKeyFrame": 63,
+                "iNumData01": 732,
                 "iNumData02": 1,
                 "iNumData03": 4,
                 "iNumData04": 0,
@@ -46,42 +46,82 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 71,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
+                "iNotifyKeyFrame": 116,
+                "iNumData01": 732,
+                "iNumData02": 1,
+                "iNumData03": 4,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Monster_Sting",
-                "szNotifyArg02": "",
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "Hit_Box_Layer",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Body",
-                "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001-R-Hand",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,
-                    3.0,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
-                    90.0,
+                    0.0,
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    0.6000000238418579
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 187,
+                "iNumData01": 732,
+                "iNumData02": 1,
+                "iNumData03": 4,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_GameObject_AttackHitBox",
+                "szNotifyArg02": "Hit_Box_Layer",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Active_Collision",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],
-        "szAnimationTag": "M_StatueB_RushSlash"
+        "szAnimationTag": "M_AntlionC_SwingTriple"
     }
 ]

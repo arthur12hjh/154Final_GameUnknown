@@ -720,10 +720,12 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
+	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	pBulletDesc.vScale = pNotify->vNotifyScale;
 	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
 	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);

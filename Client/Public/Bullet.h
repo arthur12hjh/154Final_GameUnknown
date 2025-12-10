@@ -14,7 +14,7 @@ public:
 
 		_uint					iSkillID;
 		_uint					iHitType;
-	
+		_float3					vTargetPoint;
 	}BULLET_DESC;
 
 protected:
@@ -31,7 +31,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	void							Shoot_Projectile(_vector vTargetPoint, _float fSpeed);
+	virtual void					Shoot_Projectile(_vector vTargetPoint, _float fSpeed);
 
 protected :
 	const	_float4x4*				m_pSocketMatrix = { nullptr };
