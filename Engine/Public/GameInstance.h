@@ -93,7 +93,7 @@ public:
 	void	Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void   Set_DebugVisible(_bool isVisible);
 	void   Set_DebugColliderVisible(_bool isVisible);
 	void*  Get_DoF_Desc();
@@ -241,6 +241,7 @@ public:
 #pragma endregion
 
 #pragma region Camera Manager
+	void							Shake(_float fShakeTime, _float fIntensity);
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
 	// Defaut 매개변수 있습니다.

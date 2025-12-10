@@ -385,9 +385,6 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Evade">
       <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Interaction">
-      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon">
       <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
     </Filter>
@@ -750,6 +747,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Architecture">
       <UniqueIdentifier>{412b9843-e2f2-466f-b075-6996a915c366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
+      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1252,7 +1252,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
@@ -1518,6 +1518,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Desert_Architecture.h">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1998,7 +2001,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
@@ -2256,6 +2259,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Desert_Architecture.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
