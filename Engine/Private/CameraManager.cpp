@@ -45,6 +45,11 @@ void CCameraManager::Late_Update(_float fTimeDelta)
 #endif // _DEBUG
 }
 
+void CCameraManager::Shake(_float fShakeTime, _float fIntensity)
+{
+    m_pMainCamera->Shake(fShakeTime, fIntensity);
+}
+
 HRESULT CCameraManager::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 {
     CCamera* pFindCamera = Find_Camera(szCameraTag);
@@ -71,6 +76,9 @@ HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreC
 {
     if (nullptr != m_pMainCamera)
     {
+        //혹시 모를 Shake 초기화.
+        m_pMainCamera->Shake(0.f, 0.f);
+
         if (nullptr != pPreCameraMatrix)
         {
             memcpy(pPreCameraMatrix, m_pMainCamera->GetTransform()->Get_WorldMatrixPtr(), sizeof(_float4x4));

@@ -25,13 +25,19 @@
 #include "Player_LockonEvadeState.h"
 #include "Player_BattleEvadeState.h"
 #include "Player_HitState.h"
+
+//무기 넣/뽑
 #include "Player_DrawHairpin.h"
 #include "Player_SheatheHairpin.h"
+
 //패링 관련 모션들은 상태 자세히 분리.
 #include "Player_ParryEndState.h"
 #include "Player_ParryState.h"
 #include "Player_ParrySuccessState.h"
 #include "Player_ParryGuardState.h"
+
+//인터랙션 관련 상태들. 당장은 작은 박스만 구현
+#include "Player_SmallBoxInteractionState.h"
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -240,6 +246,16 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::IDLE: nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_ParryGuardState::Create(tDesc.pArg);
 		case PLAYER_MODE::LOCKON: return CPlayer_ParryGuardState::Create(tDesc.pArg);
+		}
+		break;
+		
+	//인터랙션들은 Idle 상태에서만 넘어갈 수 있게끔 처리.
+	case PLAYER_STATE::SMALLBOX_INTERACTION:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_SmallBoxInteractionState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: nullptr;
+		case PLAYER_MODE::LOCKON: nullptr;
 		}
 		break;
 

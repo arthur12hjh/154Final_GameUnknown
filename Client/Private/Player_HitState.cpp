@@ -24,7 +24,7 @@ void CPlayer_HitState::Start(void* pArg, _float fBlendRatio)
 	m_eState = PLAYER_STATE::HIT;
 
 	m_Desc->isLookFixed = true;
-	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f);
+	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f, 0.12f, true);
 
 	XMStoreFloat3(&m_vDirection, XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION) - XMLoadFloat4(&m_vAttackerPos), 0.f)));
 

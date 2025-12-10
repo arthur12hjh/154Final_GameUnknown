@@ -35,6 +35,8 @@ HRESULT CCanBox::Initialize(void* pArg)
     m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(END, false);
 
+    m_fInteractionDuration = _float2(0.f, 1.f);
+
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;
 }

@@ -307,11 +307,11 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
     {
     //Charge Slash
     case 1004:
-        BetaSkillDesc.iRequiredBetaGauge = 4;
+        BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
     //테스트 용으로 0 처리
     case 1005:
-        BetaSkillDesc.iRequiredBetaGauge = 0;
+        BetaSkillDesc.iRequiredBetaGauge = 10;
         break;
     default:
         BetaSkillDesc.iRequiredBetaGauge = 10;

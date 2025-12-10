@@ -10,7 +10,7 @@
 #include "StringHelper.h"
 
 /*
-Å×½ºÆ®(Lift_Controller) À§Ä¡
+ï¿½×½ï¿½Æ®(Lift_Controller) ï¿½ï¿½Ä¡
 X=425.43, Y=55.00, Z=281.58
 */
 
@@ -50,7 +50,10 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	auto pInteraction = m_pGameInstance->GetNearInteraction();
 	if (pInteraction)
 	{
-		m_eInterState = static_cast<CProb_Interaction*>(pInteraction->GetOwner())->Get_InterState();
+		CProb_Interaction* pOwner = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
+
+		m_eInterState = pOwner->Get_InterState();
+		m_fInteractionDuration = pOwner->Get_Duration();
 
 		if (m_eInterState != m_ePrevInterState)
 		{
@@ -79,6 +82,11 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					WCHAR szText[MAX_PATH] = {};
 					CStringHelper::ConvertUTFToWide(InteractionObject->Get_InterDesc()->szInteractionText, szText);
 					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
+					//pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = pHUD->UTF8ToWString(pOwner->Get_InterDesc()->szInteractionText);
+
+					/*WCHAR szText[MAX_PATH]{};
+					CStringHelper::ConvertUTFToWide(pOwner->Get_InterDesc()->szInteractionText, szText);
+					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;*/
 					Safe_Release(pUIText);
 				}
 
@@ -114,8 +122,18 @@ void CUISimpleKey::Update(_float fTimeDelta)
 		m_ePrevInterState = INTERACTION_STATE::END;
 	}
 
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_H))
+	{
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_9))
+			m_fInteractionDuration.x += fTimeDelta;
+		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+			m_fInteractionDuration.x = 0;
+	}*/
+
 	__super::Update(fTimeDelta);
 
+	if(m_fInteractionDuration.y > 0.f)
+		m_fCoolAmount = m_fInteractionDuration.x / m_fInteractionDuration.y;
 	
 	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
 	{
@@ -169,15 +187,15 @@ HRESULT CUISimpleKey::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
 		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
 		return E_FAIL;
-
-	///* Com_Texture */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
-	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-	//	return E_FAIL;
 	
 	/* Com_Texture_UI_Interaction_Key */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		TEXT("Com_Texture_UI_Interaction_Key"), reinterpret_cast<CComponent**>(&m_pKeyTextureCom))))
+		TEXT("Com_Texture_UI_Interaction_Key"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture_UI_Interaction_Hold_Gauge */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge"),
+		TEXT("Com_Texture_UI_Interaction_Hold_Gauge"), reinterpret_cast<CComponent**>(&m_pHoldGaugeCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -197,14 +215,32 @@ HRESULT CUISimpleKey::Bind_ShaderResources()
 
 	/*if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 		return E_FAIL;*/
-	if (FAILED(m_pKeyTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
-		return E_FAIL;
+	
+	_bool bUseCoolTime = false;
+
+	if (m_fInteractionDuration.y > 0.f)
+	{
+		bUseCoolTime = true;
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 1)))
+			return E_FAIL;
+		if (FAILED(m_pHoldGaugeCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseScale", &m_tUIDesc.m_tUIShaderDesc.bUseScale, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_tUIDesc.m_tUIShaderDesc.fScale, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseCoolTime", &bUseCoolTime, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolAmount", &m_fCoolAmount, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -251,5 +287,5 @@ void CUISimpleKey::Free()
 	__super::Free();
 
 	Safe_Release(m_pVIBaseBufferCom);
-	Safe_Release(m_pKeyTextureCom);
+	Safe_Release(m_pHoldGaugeCom);
 }
