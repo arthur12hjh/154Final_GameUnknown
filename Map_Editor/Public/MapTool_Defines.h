@@ -57,8 +57,12 @@ namespace Tool_Map
 		LIFT_BODY, LIFT_CONTROLLER, LIFT_PLATFORM, FLOOR7_A, FLOOR7_B, FLOOR7_C, FLOOR7_D, FLOOR7_E, FLOOR7_F,
 #pragma endregion
 
+#pragma region Archi_Ruin
+		RUIN_7A, RUIN_7B, RUIN_7C, RUIN_7D, RUIN_7E,
+#pragma endregion
+
 #pragma region Deco
-		LAMP_47A, VendingMachine_6A, VendingMachine_7A, POSTER_4D, SCIFI_DOOR,
+		LAMP_47A, VendingMachine_6A, VendingMachine_7A, POSTER_4D, SCIFI_DOOR, CANBOX, BUILDING_4B, BUILDING_4C, BUILDING_4D, WHEEL_1A, WHEEL_1B, WHEEL_1C,
 #pragma endregion
 
 #pragma region Deco_Camp
@@ -71,6 +75,19 @@ namespace Tool_Map
 
 #pragma region Deco_Container
 		CONTAINER_2A, CONTAINER_2B, CONTAINER_2C, CONTAINER_2D, CONTAINER_3A, CONTAINER_4B, CONTAINER_5A, CONTAINER_5B, CONTAINER_5C, CONTAINER_5D, CONTAINER_5E, CONTAINER_7B, CONTAINER_7F,
+#pragma endregion
+
+#pragma region Deco_Bridge
+		BRIDGE_4A, BRIDGE_4B, BRIDGE_4D, BRIDGE_4H, BRIDGE_4L, BRIDGE_4M, BRIDGE_4N, BRIDGE_5, BRIDGE_6, BRIDGE_8, BRIDGE_14A, BRIDGE_14B,
+#pragma endregion
+
+#pragma region Deco_Fence
+		FENCE_1A, FENCE_1B, FENCE_1F, FENCE_1H,
+#pragma endregion
+
+
+#pragma region Deco_Vehicle
+		VEHICLE_2A, VEHICLE_2B, VEHICLE_3B, VEHICLE_4C, VEHICLE_6A, VEHICLE_8B, VEHICLE_14A, VEHICLE_14B,
 #pragma endregion
 
 #pragma region Environment_TREE

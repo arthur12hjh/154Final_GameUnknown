@@ -111,7 +111,7 @@ HRESULT CLevel_Desert::Ready_Lights()
 
 HRESULT CLevel_Desert::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Sky"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Sky_Desert"),
 		ENUM_CLASS(LEVEL::DESERT), strLayerTag)))
 		return E_FAIL;
 
