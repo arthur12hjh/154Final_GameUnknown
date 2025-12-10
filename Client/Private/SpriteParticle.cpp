@@ -126,8 +126,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_tData.bisLoop = false;
-	}
-	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
+	}if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		m_isDead = true;
 		return;
 	}

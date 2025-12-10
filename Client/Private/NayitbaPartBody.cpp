@@ -52,8 +52,12 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
             EffectDesc.fRotationPerSec = 1.f;
             EffectDesc.fSpeedPerSec = 1.f;
                 
-            EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
-            EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+            _float4x4 matTransform;
+            XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(&m_CombinedWorldMatrix));
+            EffectDesc.pRootMatrix = nullptr;
+            EffectDesc.pWorldMatrix = nullptr;
+            EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, 1);
+
             EffectDesc.fRot = _float3(0, 0, 0);
             EffectDesc.fSize = 0.8f;
             EffectDesc.iFloor = 0;
