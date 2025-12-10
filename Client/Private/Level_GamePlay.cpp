@@ -195,6 +195,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}*/
 
+	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
+	ProbDesc.vPosition = { 10.f, 0.f, 10.f };
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+		return E_FAIL;
+
 	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
@@ -354,12 +361,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	return E_FAIL;
 
 
-	Desc.iMonsterID = 4;
+	/*Desc.iMonsterID = 4;
 	Desc.bIsSuperMonster = true;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	Desc.iMonsterID = 6;
 	for (_uint i = 0; i < 3; ++i)
@@ -414,8 +421,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
-		return E_FAIL;
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;*/
 
 	return S_OK;
 }
