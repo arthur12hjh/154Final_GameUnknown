@@ -154,6 +154,26 @@ HRESULT CUIHPBar::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
 		return E_FAIL;
 
+	_bool bUseTint = false;
+	_float4 vTintColor = { 0.f, 0.f, 0.f, 0.f };
+
+	if (m_fCurrentFill <= 0.5f)
+	{
+		bUseTint = true;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTint, sizeof(_bool))))
+			return E_FAIL;
+
+		vTintColor = _float4{ 0.996f, 0.980f, 0.831f, 1.f };
+		
+		if (m_fCurrentFill <= 0.3f)
+			vTintColor = _float4{ 0.988f, 0.675f, 0.702f, 1.f };
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &vTintColor, sizeof(_float4))))
+			return E_FAIL;
+	}
+
+
 	return S_OK;
 }
 

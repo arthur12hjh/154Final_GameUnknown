@@ -10,6 +10,7 @@ NS_BEGIN(Client)
 class CUIBase;
 class CBullet;
 class CTargetComponent;
+class CDropComponent;
 
 struct Character_Skill_Desc;
 
@@ -41,6 +42,7 @@ public:
 	virtual HRESULT							ActionSuccess(void* pArg) override;
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 	virtual void							RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
+	virtual void							PlayDeadEffect();
 
 	_uint									GetMonsterID();
 	CGameObject*							GetTarget();
@@ -65,6 +67,7 @@ public:
 private:
 	CAISenceComponent*						m_pAISenceCom = { nullptr };
 	CTargetComponent*						m_pTargetCom = { nullptr };
+	CDropComponent*							m_pDropCom = { nullptr };
 	CAIController*							m_pAIController = { nullptr };
 
 	_uint									m_iMonsterID = {};

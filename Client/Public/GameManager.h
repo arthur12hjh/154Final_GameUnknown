@@ -50,6 +50,7 @@ public :
 	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
 	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
 #pragma endregion
 
 #pragma region Quest Manager

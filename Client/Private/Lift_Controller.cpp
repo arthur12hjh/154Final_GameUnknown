@@ -9,6 +9,8 @@
 #include "UIHUD.h"
 #include "UISimpleKey.h"
 
+#include "GameManager.h"
+
 CLift_Controller::CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProb_Interaction{ pDevice, pContext }
 {
@@ -26,13 +28,15 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
+	m_iInterID = 1;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
-
+	 
 	ResetAction(true);
 	m_bIsControllLift = true;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
@@ -54,6 +58,14 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
+
+	if (m_pLiftPlatform && m_eInterState == INTERACTION_STATE::ACTIVE)
+	{
+		if (m_pLiftPlatform->GetPlatformMove())
+			m_eInterState = INTERACTION_STATE::END;
+		else
+			m_eInterState = INTERACTION_STATE::DEFAULT;
+	}
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
@@ -212,7 +224,6 @@ HRESULT CLift_Controller::Begin_OverlapCallBack()
 
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 
-	m_bIsInteractionAble = true;
 
 	return S_OK;
 }
@@ -221,9 +232,8 @@ HRESULT CLift_Controller::End_OverlapCallBack()
 {
 	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 
-	m_eInterState = INTERACTION_STATE::DEFAULT;
+	m_eInterState = INTERACTION_STATE::END;
 
-	m_bIsInteractionAble = false;
 
 	return S_OK;
 }

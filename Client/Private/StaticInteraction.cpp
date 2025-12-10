@@ -22,11 +22,13 @@ HRESULT CStaticInteraction::Initialize_Prototype()
 
 HRESULT CStaticInteraction::Initialize(void* pArg)
 {
+    m_iInterID = 2;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
     ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
-    if (FAILED(ADD_Components(*pDesc)))
+    if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -85,6 +87,8 @@ HRESULT CStaticInteraction::Render()
 HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
+    Com_Size.x *= 4.f;
+    Com_Size.z *= 4.f;
 
     /* Com_Model */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
@@ -101,12 +105,12 @@ HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
+    m_pInteractionCom->SetOwner(this);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
-
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
     tUserData.szActorTag = TEXT("Static_Interaction");
@@ -137,6 +141,7 @@ HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
     // 없으면 충돌 안됨
     m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
+
     return S_OK;
 }
 
@@ -154,11 +159,8 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
 
 HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
-    if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::VISIBLE);
-
+    m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = true;
     return S_OK;
 }
 
@@ -170,11 +172,8 @@ void CStaticInteraction::Excute_CallBack(CGameObject* pActionObject)
 
 HRESULT CStaticInteraction::End_OverlapCallBack()
 {
-    if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
-
+    m_eInterState = INTERACTION_STATE::END;
     m_pGameInstance->Remove_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = false;
     return S_OK;
 }
 

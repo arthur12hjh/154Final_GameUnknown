@@ -19,7 +19,6 @@ HRESULT CSciFi_Door::Initialize_Prototype()
 
 HRESULT CSciFi_Door::Initialize(void* pArg)
 {
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 

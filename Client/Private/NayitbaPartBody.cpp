@@ -43,8 +43,13 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-    //m_fDeadTime += fTimeDelta;
-    //m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+    
+    if (m_isDeadEffect)
+    {
+        m_fDeadTime += fTimeDelta;
+        if(1.5 < m_fDeadTime)
+            m_pParent->Set_Dead(true);
+    }
 }
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
@@ -80,9 +85,6 @@ HRESULT CNayitbaPartBody::Render()
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
             return E_FAIL;
-
-        //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-        //    return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
             return E_FAIL;
@@ -251,6 +253,12 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
     }
 }
 
+void CNayitbaPartBody::Play_DeadEffect()
+{
+    if (false == m_isDeadEffect)
+         m_isDeadEffect = true;
+}
+
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
 {
     /* Com_Model */
@@ -334,8 +342,14 @@ void CNayitbaPartBody::Free()
     for (auto pEffect : m_pEffects)
         Safe_Release(pEffect.first);
     m_pEffects.clear();
-    for (auto pTrailEffect : m_pTrailEffects)
+
+    for (auto& pTrailEffect : m_pTrailEffects)
+    {
         Safe_Release(pTrailEffect.first->pTrailEffect);
+        Safe_Delete(pTrailEffect.first);
+    }
+     
     m_pTrailEffects.clear();
+
     Safe_Release(m_pTexture);
 }

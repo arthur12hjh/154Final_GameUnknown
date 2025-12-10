@@ -176,6 +176,8 @@ namespace Client
 		END
 	};
 
+
+
 	typedef struct Character_Skill_Desc
 	{
 		unsigned int				iSkillID;					// SKILL ID
@@ -280,6 +282,39 @@ namespace Client
 		vector<_uint>		RewardLists;
 	}QUEST_STRUCT;
 
+	enum class ITEM_TYPE { EQUIPMENT, CONSUMEABLE, MATERIAL, QUEST, END };
+
+	typedef struct ItemDefaultDesc
+	{
+
+	}ITEM_DEFAULT_DESC;
+
+	typedef struct ConsumeAbleItemDesc
+	{
+		long long				iRecoveryData;
+		char					ToolTip[MAX_PATH];
+	}CONSUMABLE_ITEM_DESC;
+
+	typedef union Item_Properity_Desc
+	{
+		ITEM_DEFAULT_DESC			DefaultData;
+		CONSUMABLE_ITEM_DESC		ConsumAble_Data;
+	}ITEM_PROPERITY_DESC;
+
+	typedef struct Item_Desc
+	{
+		ITEM_TYPE					eType;
+		_uint						iItemID;
+		
+		// 타입에 따라서 달라지는 데이터입니다.
+		// 이거 타입별로 캐스팅 다르게 해주세요
+		// 일단 임시로 두개만해뒀는데 다른건 매번 추가해 주세요
+		// 
+		// ITEM		: CONSUMABLE_ITEM_DESC
+		// 나머지	: ITEM_DEFAULT_DESC
+		ITEM_PROPERITY_DESC			Propertiy_Data;
+	}ITEM_DSEC;
+
 	typedef struct Default_Damage_Desc
 	{
 		CGameObject*		pAttacker;
@@ -294,4 +329,14 @@ namespace Client
 
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
+
+
+	typedef struct Interaction_Data
+	{
+		_uint				iID;
+		char				szObjectTag[256];
+		char				szInteractionText[256];
+		_float3				vUIPivot;
+
+	}INTERACTION_DATA;
 }

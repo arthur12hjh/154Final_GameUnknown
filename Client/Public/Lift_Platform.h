@@ -33,6 +33,7 @@ public:
 	virtual HRESULT					Render() override;
 
 	_bool							SetPlatformMove(LIFT_PLATFORM_STATE eState);
+	_bool							GetPlatformMove() const { return m_bIsPaltformMove; }
 
 private :
 	LIFT_PLATFORM_STATE				m_ePlatform_State = { LIFT_PLATFORM_STATE::END };

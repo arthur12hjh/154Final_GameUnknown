@@ -30,6 +30,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
+mt19937 CGameInstance::m_RandomDevice(random_device{}());
+uniform_real_distribution<_float> CGameInstance::m_distribution(0.f, 1.f);
+
 CGameInstance::CGameInstance()
 {
 }
@@ -157,13 +160,16 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	if (m_bIsHitStopDurationTime)
 	{
-		m_fHitStopTime.x += fTimeDelta;
-
-		if (m_fHitStopTime.x > m_fHitStopTime.y)
+		m_iHitStopFrame.x++;
+		if (m_iHitStopFrame.x > m_iHitStopFrame.y)
 		{
-			_float fRatio = Clamp<_float>(fTimeDelta * m_fHitStopReturnSpeed, 0.f, 1.f);
+			if (m_bIsPause)
+				m_bIsPause = false;
+
+			m_vLerpTime.x += fTimeDelta * m_fHitStopReturnSpeed;
+			_float fRatio = Clamp<_float>(m_vLerpTime.x / m_vLerpTime.y, 0.f, 1.f);
 			m_fTimeRatio = Lerp<_float>(m_fTimeRatio, 1.f, fRatio);
-			if (1 <= m_fTimeRatio)
+			if (1 <= fRatio)
 				m_bIsHitStopDurationTime = false;
 		}
 	}
@@ -277,10 +283,7 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex)
 
 _float CGameInstance::Random_Normal()
 {
-	random_device	rd;
-	uniform_real_distribution<_float> distribution(0, 1.f);
-
-	return distribution(rd);
+	return m_distribution(m_RandomDevice);
 }
 
 _float CGameInstance::Random(_float fMin, _float fMax)
@@ -1084,6 +1087,7 @@ HRESULT CGameInstance::Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent)
 {
 	return m_pEventManager->Add_Event(szEventTag, pEvent);
 }
+
 HRESULT CGameInstance::Remove_Event(const WCHAR* szEventTag)
 {
 	return m_pEventManager->Remove_Event(szEventTag);
@@ -1099,13 +1103,14 @@ HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pE
 #pragma endregion
 
 
-void CGameInstance::GamePauseDurationTime(_float fTime, _float fTimeRatio, _float fReturnSpeed)
+void CGameInstance::GamePauseDurationTime(_uint fStopCnt, _float fTimeRatio, _float fReturnSpeed)
 {
 	m_bIsHitStopDurationTime = true;
 	m_fHitStopReturnSpeed = fReturnSpeed;
 	m_fTimeRatio = fTimeRatio;
-	m_fHitStopTime.x = 0.f;
-	m_fHitStopTime.y = fTime;
+	m_vLerpTime.x = 0.f;
+	m_iHitStopFrame.x = 0;
+	m_iHitStopFrame.y = fStopCnt;
 }
 
 _float CGameInstance::GetGameSpeedfRatio()
