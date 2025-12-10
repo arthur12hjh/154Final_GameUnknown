@@ -48,9 +48,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
 
-	/* ��������, ���ؽ�, ũ��Ƽ�ü��� */
-
-	/* �Ӱ迵��(��, ������, �ڵ�)�� �����ϱ����� Ű�� �����Ѵ�. */
 	InitializeCriticalSection(&m_CriticalSection);
 
 	/* ���� �ε��� �����ϱ����� �����带 �����Ѵ�. */

@@ -36,7 +36,6 @@ HRESULT CLevel_AnimationEditor::Initialize()
 	//	return E_FAIL;
 
 	m_pToolManager->Set_Active(TRUE);
-
 	return S_OK;
 }
 

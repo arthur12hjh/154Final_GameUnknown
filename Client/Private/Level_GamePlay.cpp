@@ -6,6 +6,7 @@
 
 #include "Actor.h"
 #include "Nayitba.h"
+#include "Prob_Interaction.h"
 #include "Camera_Free.h"
 #include "Player.h"
 #include "UIHUD.h"
@@ -33,8 +34,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
  		return E_FAIL;
@@ -183,39 +184,45 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
+	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.bIsApplyTransform = true;
+	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	InteractionDesc.iInteractionID = 5;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { 10.f * i,
+		InteractionDesc.vPosition = { 10.f * i,
 							   m_pGameInstance->Random(0, 50),
 							   m_pGameInstance->Random(0, 50) };
 	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
-	}*/
+	}
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	InteractionDesc.iInteractionID = 2;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
 							   0.f,
 							   m_pGameInstance->Random(0, 50) };
 
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	InteractionDesc.iInteractionID = 3;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(50, 100),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
 							   0.f,
 							   m_pGameInstance->Random(50, 100) };
 
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
 
@@ -354,30 +361,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	return E_FAIL;
 
 
-	Desc.iMonsterID = 4;
-	Desc.bIsSuperMonster = true;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	//Desc.iMonsterID = 4;
+	//Desc.bIsSuperMonster = true;
+	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
+
+	Desc.iMonsterID = 6;
+	Desc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	Desc.iMonsterID = 6;
-	for (_uint i = 0; i < 3; ++i)
-	{ 
-		Desc.vPosition = { 450.f + (10 * i), 1.f, 600.f };
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-			return E_FAIL;
-	}
-
-	Desc.iMonsterID = 7;
-	for (_uint i = 0; i < 3; ++i)
-	{
-		Desc.vPosition = { 400.f + (10 * i), 1.f, 600.f };
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-			return E_FAIL;
-	}
+	//Desc.iMonsterID = 7;
+	//Desc.vPosition = { 450.f, 1.f, 600.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -414,8 +415,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
-		return E_FAIL;
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -500,7 +501,7 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 
 HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
 {
-	/*_uint iNumObjs = 0;
+	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
 	for (_uint i = 0; i < iNumObjs; ++i)
@@ -508,12 +509,12 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 		SAVEDINTERACTIONOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDINTERACTIONOBJECTINFO));
 
-		CInteraction::PROB_INTERACTION_DESC Desc = {};
+		CProb_Interaction::PROB_INTERACTION_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
-		Desc.iObjectId = info.iObjectID;
+		Desc.iObjectID = info.iObjectID;
 		Desc.iInteractionID = info.iInteractionID;
-		Desc.pComponentTag = info.szComponentTag;
+		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
 
 		_vector vScale = {};
 		_vector vRotation = {};
@@ -526,7 +527,7 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
-	}*/
+	}
 
 	return S_OK;
 }

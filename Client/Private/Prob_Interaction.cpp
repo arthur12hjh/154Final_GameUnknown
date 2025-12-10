@@ -29,8 +29,8 @@ HRESULT CProb_Interaction::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    if(m_iInterID > -1)
-        m_tInterDesc = *m_pGameManager->Find_InteractionData(m_iInterID);
+    PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+    m_InteractionDesc = m_pGameManager->Find_InteractionData(pDesc->iInteractionID);
 
     return S_OK;
 }

@@ -163,8 +163,6 @@
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
-    <ClInclude Include="..\Public\Chair.h" />
-    <ClInclude Include="..\Public\Corpse.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -229,6 +227,7 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -399,7 +398,6 @@
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
-    <ClInclude Include="..\Public\VendingMachine.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -414,9 +412,6 @@
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
-    <ClCompile Include="..\Private\Chair.cpp" />
-    <ClCompile Include="..\Private\Container.cpp" />
-    <ClCompile Include="..\Private\Corpse.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -482,6 +477,7 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
@@ -666,7 +662,6 @@
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
-    <ClCompile Include="..\Private\VendingMachine.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

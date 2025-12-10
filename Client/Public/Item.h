@@ -14,7 +14,7 @@ NS_BEGIN(Client)
 class CItem final : public CProb_Interaction
 {
 public:
-	typedef struct Item_Desc : public ACTOR_DESC
+	typedef struct Item_Desc : public PROB_INTERACTION_DESC
 	{
 		_uint						iItemID;
 		_uint						fAmount;

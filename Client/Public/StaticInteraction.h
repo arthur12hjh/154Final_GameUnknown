@@ -27,7 +27,7 @@ private:
 	CModel*								m_pModelCom = { nullptr };
 
 private:
-	HRESULT								ADD_Components(const ACTOR_DESC& Desc);
+	HRESULT								ADD_Components(const PROB_INTERACTION_DESC& Desc);
 	HRESULT								Bind_ShaderResources();
 
 	HRESULT								Begin_OverlapCallBack();

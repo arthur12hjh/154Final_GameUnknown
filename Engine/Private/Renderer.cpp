@@ -787,8 +787,11 @@ HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 	return m_pColliderRenderer->Add_DebugComponent(pDebugCom);
 }
 
-HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+HRESULT CRenderer::Add_PhysxGeometry(CGameObject* pGameObject, PxRigidActor* pActor, PxShape* pShape)
 {
+	if (true == pGameObject->isDead())
+		return S_OK;
+
 	return m_pColliderRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 

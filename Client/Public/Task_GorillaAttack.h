@@ -66,6 +66,7 @@ private :
 	void								AttackADDMove(_float fTimeDelta);
 
 	void								LookAtPoint(_float fTimeDelta);
+	void								ResetAttackTask(_bool bIsCoolTime = true);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);

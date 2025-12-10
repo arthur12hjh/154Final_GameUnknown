@@ -83,7 +83,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-    for (auto i = 18; i < iMaxSize;)
+    for (auto i = 19; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
@@ -106,6 +106,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
         BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
+        BossDesc.fLerpRatio = atof(BossDataList[i++].c_str());
 
         BossDesc.fColliderExtents.x = (_float)atof(BossDataList[i++].c_str());
         BossDesc.fColliderExtents.y = (_float)atof(BossDataList[i++].c_str());
@@ -129,18 +130,18 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
 
     size_t iMaxSize = InterDataList.size();
-    for (auto i = 4; i < iMaxSize;)
+    for (auto i = 5; i < iMaxSize;)
     {
         INTERACTION_DATA InterDesc = {};
         
         InterDesc.iID = atoi(InterDataList[i++].c_str());
-
         strcpy_s(InterDesc.szObjectTag, InterDataList[i++].c_str());
         strcpy_s(InterDesc.szInteractionText, InterDataList[i++].c_str());
 
         InterDesc.vUIPivot.x = (_float)atof(InterDataList[i++].c_str());
         InterDesc.vUIPivot.y = (_float)atof(InterDataList[i++].c_str());
         InterDesc.vUIPivot.z = (_float)atof(InterDataList[i++].c_str());
+        InterDesc.eType = INTERACTION_TYPE(atoi(InterDataList[i++].c_str()));
 
         m_pInteractionDatas.emplace(InterDesc.iID, InterDesc);
     }
@@ -306,11 +307,11 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
     {
     //Charge Slash
     case 1004:
-        BetaSkillDesc.iRequiredBetaGauge = 4;
+        BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
     //테스트 용으로 0 처리
     case 1005:
-        BetaSkillDesc.iRequiredBetaGauge = 0;
+        BetaSkillDesc.iRequiredBetaGauge = 10;
         break;
     default:
         BetaSkillDesc.iRequiredBetaGauge = 10;

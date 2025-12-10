@@ -44,6 +44,8 @@ private :
 	_float3										m_vMoveDir = {};
 	_float										m_fDistance = {};
 	_float										m_fMoveAnimMaxRatio = {};
+
+	_float										m_fAttackPlayRate = {};
 	_float										m_fMoveSpeed = {};
 
 	function<void(_float)>						m_AttackCompletedFunc;
@@ -54,9 +56,10 @@ private :
 	void										BeholderPattern(_float fTimeDelta);
 	void										StatueAPattern(_float fTimeDelta);
 	void										StatueBPattern(_float fTimeDelta);
+	void										SunFlowerPattern(_float fTimeDelta);
+	void										Minion11Pattern(_float fTimeDelta);
 
 	void										SearchTargetDistance();
-
 	void										LerpMoveAction(_float fTimeDelta, _float fSpeed);
 	_vector										LerpRotation(_float fRatio, _float fSpeed = 1.f);
 

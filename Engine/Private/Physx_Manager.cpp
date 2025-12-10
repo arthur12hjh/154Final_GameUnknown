@@ -106,7 +106,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 
             pTransform->Update_PreWorldMatrix();
 #ifdef _DEBUG
-            m_pGameInstance->Add_PhysxGeometry(Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
+            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
 #endif
         }
 
@@ -114,7 +114,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
         {
             Pair.second->Update_ControllerTransform(fTimeDelta, Pair.first->GetTransform());
 #ifdef _DEBUG
-            m_pGameInstance->Add_PhysxGeometry(Pair.second->Get_PxActor(), Pair.second->Get_PxShape());
+            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxActor(), Pair.second->Get_PxShape());
 #endif
         }
     }
