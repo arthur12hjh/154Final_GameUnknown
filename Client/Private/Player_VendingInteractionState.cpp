@@ -14,6 +14,9 @@ void CPlayer_VendingInteractionState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::VENDING_INTERACTION;
 
     m_pPlayer->Set_Animation("P_Eve_Interaction_VendingMachine", false, 1.2f);
+
+    // 아마 상호작용할 상자의 Look 받아와서 위치 잘 세팅해준 다음에..
+    // 애니 재생 + 상호작용도 해야할 듯?
 }
 
 PLAYER_TRANSITION_DESC CPlayer_VendingInteractionState::Update(_float fTimeDelta)

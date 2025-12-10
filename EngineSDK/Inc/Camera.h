@@ -21,6 +21,9 @@ protected:
 	virtual ~CCamera() = default;
 
 public:
+	void Shake(_float fShakeTime, _float fIntensity);
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Priority_Update(_float fTimeDelta) override;
@@ -42,6 +45,14 @@ protected:
 	CAMERA_INFO					m_pCameraInfo = {};
 
 	CAMERA_STATE				m_eCameraState = { CAMERA_STATE::NONE };
+
+#pragma region CAMERA_SHAKE
+	_bool							m_IsShake = { false };
+	_float							m_fShakeTime = {};
+	_float							m_fShakeTimeAcc = { 0.f };
+	_float							m_fIntensity = {};
+	_float4							m_vOriginPos = {};
+#pragma endregion
 
 protected:
 	HRESULT Bind_Matrices();

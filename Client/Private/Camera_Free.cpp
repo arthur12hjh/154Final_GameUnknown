@@ -119,6 +119,9 @@ void CCamera_Free::Update(_float fTimeDelta)
 {
 	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	//m_pColliderCom->UpdateColiision(WorldMat);
+
+	//카메라 쉐이킹을 위해서 부모 Update 호출. 
+	__super::Update(fTimeDelta);
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)

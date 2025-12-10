@@ -230,6 +230,7 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -483,6 +484,7 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />

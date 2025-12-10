@@ -42,6 +42,7 @@
 			// 자신이 충돌을 수행할 그룹.
 			PxU32           iCollisionMask = { 0xFFFFFFFF };
 			_bool			isQuery = { true };
+			_bool			isSyncByPhysx = { false };
 		} RIGIDBODY_DESC;
 
 	private:
@@ -77,7 +78,7 @@
 	public:
 		/* 리지드 바디 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함. */
 		void Update_PxTransform(_fmatrix vWorldMatrix);
-
+		void Add_Impulse(_vector vDir, _float fPower);
 	private:
 		/* RigidActor -> RigidBody & RigidStatic */
 		/* RigidBody -> RigidDynamic & RigidArticulationLink */
@@ -98,7 +99,7 @@
 		// 이동량을 저장해둡니다
 		PxVec3			m_vDeltaMove = { 0.f, 0.f, 0.f };
 		_bool			m_isRidable = { false };
-		_bool			m_isImpulse = { false }; 
+		_bool			m_isSyncByPhysx = { false };
 		//_bool			m_isUpdatable = { true };
 	private:
 		HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);
