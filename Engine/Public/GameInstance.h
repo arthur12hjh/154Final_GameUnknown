@@ -241,7 +241,7 @@ public:
 #pragma endregion
 
 #pragma region Camera Manager
-	void							Shake(_float fShakeTime, _float fIntensity);
+	void							Shake_Camera(_float fShakeTime, _float fIntensity);
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
 	// Defaut 매개변수 있습니다.

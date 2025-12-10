@@ -1,4 +1,4 @@
-��ų ID,�ִϸ��̼� �̸�,��Ʈ �ִϸ��̼�,���� �� �̸�,��ų ������,��ų ��Ÿ�,��ų ����,�޺� ����,����,��ų Ÿ��,��ų �Ӽ�
+ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,Skill Type  ,Properity
 1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,1,0,11
 2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,4,3,11
 3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,1,0,11
@@ -8,9 +8,9 @@
 7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,1,11
 8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,1,11
 9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,11
-10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,4,3,11
+10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,4,3,10
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,1,2,11
-12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,4,1,11
+12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,4,1,10
 13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,5,1,11
 14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,8
 511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",2,4,0,11
@@ -32,11 +32,11 @@
 542,M_BarnacleA_GrabAttack,Hit_BarnacleA_Beta_GrabAttack1,R_Hand_ex_01,15,3,"1,1,2",1,4,0,10
 543,M_BarnacleA_ComboAttack,None,None,16,3,"1,1,2",2,4,0,9
 544,M_BarnacleA_Shield,None,None,17,3,"1,1,2",0,4,0,32
-631,M_SunFlower_Swing,None,None,18,4,"1,1,2",1,4,0,11
-632,M_SunFlower_SwingChain,None,None,19,5,"1,1,2",4,4,0,11
-633,M_SunFlower_Spit,None,None,20,6,"1,1,2",1,4,0,11
-731,M_AntlionC_PawAttack,None,None,21,7,"1,1,2",1,0,0,11
-732,M_AntlionC_SwingTriple,None,None,22,8,"1,1,2",3,0,0,11
+631,M_SunFlower_Swing,None,None,18,4,"1,1,3",1,4,0,11
+632,M_SunFlower_SwingChain,None,None,19,4,"1,1,3",4,4,0,11
+633,M_SunFlower_Spit,None,None,20,4,"1,1,2",1,4,0,11
+731,M_AntlionC_PawAttack,None,None,21,2,"1,1,5",1,0,0,11
+732,M_AntlionC_SwingTriple,None,None,22,2,"1,1,5",3,0,0,11
 1000,Player_Light_Attack_Root1,None,None,30,3,"2,2,2",0,0,0,0
 1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,1,0,0
 1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,1,0,0
