@@ -126,6 +126,7 @@ namespace Client
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
+		bool   isBossLock = { false };
 		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
 		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
 		bool   isWeaponVisible = { false };
@@ -220,6 +221,7 @@ namespace Client
 
 	// 몬스터 구조체
 	// 인게임용
+	// ELITE, ELDER가 보스
 	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
 	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc

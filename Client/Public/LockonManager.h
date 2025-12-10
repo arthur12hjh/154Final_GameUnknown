@@ -48,9 +48,10 @@ private:
 	_wstring					m_strMonsterLayerTag = { TEXT("Layer_Monster") };
 	_float						m_fLockonTimer		= { 0.f };
 
-	_float						m_fBattleToIdleTimeAcc = { 0.f };
-	_float						m_fCurrentMinDist	  = { FLT_MAX };
-	_bool						m_isLock			  = { false };
+	_float						m_fBattleToIdleTimeAcc  = { 0.f };
+	_float						m_fCurrentMinDist		= { FLT_MAX };
+	_bool						m_isLock				= { false };
+	_bool						m_isBossLock			= { false };
 	class CUIBase*				m_pLockonUI				= { nullptr };
 
 	class CUIBase*				m_pMonsterVitalUI				= { nullptr }; // 테스트 용
