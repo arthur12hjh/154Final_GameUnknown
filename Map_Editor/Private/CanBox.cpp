@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CInteraction{ pDevice, pContext }
 {
 }
 
 CCanBox::CCanBox(const CCanBox& Prototype)
-	: CDesertObject{ Prototype }
+	: CInteraction{ Prototype }
 {
 }
 
@@ -20,7 +20,7 @@ HRESULT CCanBox::Initialize_Prototype()
 HRESULT CCanBox::Initialize(void* pArg)
 {
 
-	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -33,6 +33,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+	m_iInteractionID = pDesc->iInteractionID;
 	m_eCurState = OPEN;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
@@ -143,7 +144,7 @@ CCanBox* CCanBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CDesertObject* CCanBox::Clone(void* pArg)
+CGameObject* CCanBox::Clone(void* pArg)
 {
 	CCanBox* pInstance = new CCanBox(*this);
 

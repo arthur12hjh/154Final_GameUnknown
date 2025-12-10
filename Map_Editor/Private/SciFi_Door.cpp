@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CSciFi_Door::CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CInteraction{ pDevice, pContext }
 {
 }
 
 CSciFi_Door::CSciFi_Door(const CSciFi_Door& Prototype)
-	: CDesertObject{ Prototype }
+	: CInteraction{ Prototype }
 {
 }
 
@@ -19,8 +19,7 @@ HRESULT CSciFi_Door::Initialize_Prototype()
 
 HRESULT CSciFi_Door::Initialize(void* pArg)
 {
-
-	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,6 +31,8 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
+
+	m_iInteractionID = pDesc->iInteractionID;
 
 	m_eCurState = OPEN;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
@@ -146,7 +147,7 @@ CSciFi_Door* CSciFi_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CDesertObject* CSciFi_Door::Clone(void* pArg)
+CGameObject* CSciFi_Door::Clone(void* pArg)
 {
 	CSciFi_Door* pInstance = new CSciFi_Door(*this);
 

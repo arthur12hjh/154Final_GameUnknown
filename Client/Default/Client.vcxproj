@@ -164,7 +164,6 @@
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\Public\Chair.h" />
-    <ClInclude Include="..\Public\Container.h" />
     <ClInclude Include="..\Public\Corpse.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />

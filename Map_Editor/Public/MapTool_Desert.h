@@ -29,6 +29,14 @@ public:
 		_uint			iObjectID = 0;	
 	}SAVEDOBJECTINFO;
 
+	typedef struct SavedInteractionObjectInfo
+	{
+		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
+		_uint			iObjectID = 0;	
+		_uint			iInteractionID = 999;
+	}SAVEDINTERACTIONOBJECTINFO;
+
 	typedef struct LoadObjectInfo
 	{
 		_float4x4	    worldMatrix;
@@ -72,12 +80,14 @@ public:
 	HRESULT Save_Monster_Objects(const _char* szFilePath);
 
 	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Interaction_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
 	HRESULT Load_Monster_Objects(const _char* szFilePath);
 
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	

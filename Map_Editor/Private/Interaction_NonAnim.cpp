@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "RepairConsole.h"
+#include "Interaction_NonAnim.h"
 #include "GameInstance.h"
 
-CRepairConsole::CRepairConsole(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CInteraction_NonAnim::CInteraction_NonAnim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteraction{ pDevice, pContext }
 {
 }
 
-CRepairConsole::CRepairConsole(const CRepairConsole& Prototype)
+CInteraction_NonAnim::CInteraction_NonAnim(const CInteraction_NonAnim& Prototype)
 	: CInteraction{ Prototype }
 {
 }
 
-HRESULT CRepairConsole::Initialize_Prototype()
+HRESULT CInteraction_NonAnim::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CRepairConsole::Initialize(void* pArg)
+HRESULT CInteraction_NonAnim::Initialize(void* pArg)
 {
 
 	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
@@ -34,66 +34,44 @@ HRESULT CRepairConsole::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_iInteractionID = pDesc->iInteractionID;
-	m_eCurState = OPEN;
-	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
 	return S_OK;
 }
 
-void CRepairConsole::Priority_Update(_float fTimeDelta)
+void CInteraction_NonAnim::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CRepairConsole::Update(_float fTimeDelta)
+void CInteraction_NonAnim::Update(_float fTimeDelta)
 {
-	if (m_eCurState != m_ePrevState)
-	{
-
-		switch (m_eCurState)
-		{
-		case OPEN:
-			m_pModelCom->Set_AnimationIndex(OPEN, false, 0.f);
-			break;
-		}
-
-		m_ePrevState = m_eCurState;
-	}
-
-	m_pModelCom->Play_Animation(fTimeDelta);
-
-	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
-void CRepairConsole::Late_Update(_float fTimeDelta)
+void CInteraction_NonAnim::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
 }
 
-HRESULT CRepairConsole::Render()
+HRESULT CInteraction_NonAnim::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
+	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
+
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -102,7 +80,7 @@ HRESULT CRepairConsole::Render()
 	return S_OK;
 }
 
-HRESULT CRepairConsole::Ready_Components(const _tchar* pComponentTag)
+HRESULT CInteraction_NonAnim::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), pComponentTag,
@@ -110,14 +88,14 @@ HRESULT CRepairConsole::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CRepairConsole::Bind_ShaderResources()
+HRESULT CInteraction_NonAnim::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -131,9 +109,9 @@ HRESULT CRepairConsole::Bind_ShaderResources()
 	return S_OK;
 }
 
-CRepairConsole* CRepairConsole::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CInteraction_NonAnim* CInteraction_NonAnim::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRepairConsole* pInstance = new CRepairConsole(pDevice, pContext);
+	CInteraction_NonAnim* pInstance = new CInteraction_NonAnim(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -144,20 +122,20 @@ CRepairConsole* CRepairConsole::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CGameObject* CRepairConsole::Clone(void* pArg)
+CGameObject* CInteraction_NonAnim::Clone(void* pArg)
 {
-	CRepairConsole* pInstance = new CRepairConsole(*this);
+	CInteraction_NonAnim* pInstance = new CInteraction_NonAnim(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CRepairConsole");
+		MSG_BOX("Failed to Cloned : CInteraction_NonAnim");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CRepairConsole::Free()
+void CInteraction_NonAnim::Free()
 {
 	__super::Free();
 

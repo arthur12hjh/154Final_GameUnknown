@@ -1492,9 +1492,6 @@
     <ClInclude Include="..\Public\SciFi_Door.h">
       <Filter>02.GameObjects\Actor\Interaction\Door</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Container.h">
-      <Filter>02.GameObjects\Actor\Interaction\Container</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Top_Roof.h">
       <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
     </ClInclude>

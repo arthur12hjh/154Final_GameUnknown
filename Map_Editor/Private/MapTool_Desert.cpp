@@ -9,7 +9,7 @@
 #include "DesertObject.h"
 #include "Player_Test.h"
 #include "SpawnBox.h"
-
+#include "Interaction.h"
 #include "Instance_Desert.h"
 
 CMapTool_Desert::CMapTool_Desert()
@@ -101,7 +101,12 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				_wstring layerTag = L"";
 				_wstring protoTag = L"";
 				CDesertObject::DesertObjectDesc pDesc = {};
+
+				CInteraction::Prob_Interaction_Desc pInteractionDesc = {};
+				pInteractionDesc.iInteractionID = 0;
+
 				Nayitba_Desc MonsterDesc = {};
+
 
 				switch (m_eCurrentObject)
 				{
@@ -113,6 +118,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Building_Ruin"); layerTag = TEXT("Layer_Building_Ruin");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_B");
 					break;
+#pragma region CanyonObjects
 				case DESESRT_RUIN_OBJECT::CANYON_1A:
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_1A");
@@ -429,22 +435,23 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Canyon"); layerTag = TEXT("Layer_Canyon");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Canyon_133B");
 					break;
-
-					// 2. Lift Objects
+#pragma endregion
+#pragma region LiftObjects
 				case DESESRT_RUIN_OBJECT::LIFT_BODY:
 					protoTag = TEXT("Prototype_GameObject_Lift_Body"); layerTag = TEXT("Layer_Lift_Body");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Body");
 					break;
 				case DESESRT_RUIN_OBJECT::LIFT_CONTROLLER:
 					protoTag = TEXT("Prototype_GameObject_Lift_Controller"); layerTag = TEXT("Layer_Lift_Controller");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
+					pInteractionDesc.iInteractionID = 1;
 					break;
 				case DESESRT_RUIN_OBJECT::LIFT_PLATFORM:
 					protoTag = TEXT("Prototype_GameObject_Lift_Platform"); layerTag = TEXT("Layer_Lift_Platform");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Platform");
 					break;
-
-					// 3. Floor Objects
+#pragma endregion
+#pragma region Floor Objects
 				case DESESRT_RUIN_OBJECT::FLOOR7_A:
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_A");
@@ -469,22 +476,23 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Iron_Floor"); layerTag = TEXT("Layer_Iron_Floor");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Floor7_F");
 					break;
-
-					// 4. Deco/Camp/Misc Objects
+#pragma endregion
+#pragma region Camp/Misc Objects
 				case DESESRT_RUIN_OBJECT::LAMP_47A:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lamp_47A");
 					break;
 				case DESESRT_RUIN_OBJECT::VendingMachine_6A:
-					protoTag = TEXT("Prototype_GameObject_VendingMachine"); layerTag = TEXT("Layer_VendingMachine");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_6A");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_6A");
+					pInteractionDesc.iInteractionID = 3;
 					break;
 				case DESESRT_RUIN_OBJECT::VendingMachine_7A:
-					protoTag = TEXT("Prototype_GameObject_VendingMachine"); layerTag = TEXT("Layer_VendingMachine");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_VendingMachine_7A");
+					pInteractionDesc.iInteractionID = 3;
 					break;
 				case DESESRT_RUIN_OBJECT::POSTER_4D:
-					// 참고: POSTER_4D가 두 번 정의되어 있어 한 번만 포함했습니다.
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Poster_4D");
 					break;
@@ -517,8 +525,9 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1H");
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1I:
-					protoTag = TEXT("Prototype_GameObject_Chair"); layerTag = TEXT("Layer_Chair");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1I");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1I");
+					pInteractionDesc.iInteractionID = 2;
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1J:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco"); 
@@ -549,8 +558,9 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1S");
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1T:
-					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1T");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1T");
+					pInteractionDesc.iInteractionID = 3;
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1W:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
@@ -558,95 +568,108 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 				case DESESRT_RUIN_OBJECT::REPAIRCONSOLE:
 					protoTag = TEXT("Prototype_GameObject_RepairConsole"); layerTag = TEXT("Layer_RepairConsole");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_RepairConsole");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_RepairConsole");
+					pInteractionDesc.iInteractionID = 999;
 					break;
 				case DESESRT_RUIN_OBJECT::TOP_ROOF:
 					protoTag = TEXT("Prototype_GameObject_Top_Roof"); layerTag = TEXT("Layer_Top_Roof");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Top_Roof");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Top_Roof");
+					pInteractionDesc.iInteractionID = 999;
 					break;
+#pragma endregion
+#pragma region Corpse/Container Objects
 				case DESESRT_RUIN_OBJECT::CORPSE_1A:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_1A");
-					break;
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_1A");
+					pInteractionDesc.iInteractionID = 6;
+						break;
 				case DESESRT_RUIN_OBJECT::CORPSE_1B:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_1B");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_1B");
+					pInteractionDesc.iInteractionID = 6;
 					break;
 				case DESESRT_RUIN_OBJECT::CORPSE_2A:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2A");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2A");
+					pInteractionDesc.iInteractionID = 6;
 					break;
 				case DESESRT_RUIN_OBJECT::CORPSE_2B:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2B");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2B");
+					pInteractionDesc.iInteractionID = 6;
 					break;
 				case DESESRT_RUIN_OBJECT::CORPSE_2C:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2C");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_2C");
+					pInteractionDesc.iInteractionID = 6;
 					break;
 				case DESESRT_RUIN_OBJECT::CORPSE_3A:
-					protoTag = TEXT("Prototype_GameObject_Corpse"); layerTag = TEXT("Layer_Corpse");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_3A");
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Corpse_3A");
+					pInteractionDesc.iInteractionID = 6;
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_2A:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_2A");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_2B:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_2B");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_2C:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_2C");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_2D:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_2D");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_3A:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_3A");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_4B:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_4B");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_5A:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_5A");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_5B:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_5B");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_5C:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_5C");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_5D:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_5D");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_5E:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_5E");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_7B:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_7B");
 					break;
 				case DESESRT_RUIN_OBJECT::CONTAINER_7F:
-					protoTag = TEXT("Prototype_GameObject_Container"); layerTag = TEXT("Layer_Container");
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Container_7F");
 					break;
 				case DESESRT_RUIN_OBJECT::SCIFI_DOOR:
 					protoTag = TEXT("Prototype_GameObject_SciFi_Door"); layerTag = TEXT("Layer_SciFi_Door");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_SciFi_Door");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_SciFi_Door");
+					pInteractionDesc.iInteractionID = 4;
 					break;
+#pragma endregion
 				case DESESRT_RUIN_OBJECT::CANBOX:
 					protoTag = TEXT("Prototype_GameObject_CanBox"); layerTag = TEXT("Layer_CanBox");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_CanBox");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_CanBox");
+					pInteractionDesc.iInteractionID = 5;
 					break;
 				case DESESRT_RUIN_OBJECT::FENCE_1A:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
@@ -789,7 +812,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_14B");
 					break;
 
-					// 5. Monster Spawn Boxes
+#pragma region Monster
 				case DESESRT_RUIN_OBJECT::GORILLA:
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
 					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 1;
@@ -802,7 +825,9 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
 					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 5;
 					break;
+#pragma endregion
 
+#pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
 					if (fHeight > 0)
 						fHeight *= -1.f;
@@ -820,10 +845,13 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					m_pPlayerTransform->Set_State(STATE::POSITION, vPickPoint);
 					break;
 				}
-				if (pDesc.pComponentTag == nullptr)
-					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &MonsterDesc);
-				else
+#pragma endregion
+
+
+				if (pInteractionDesc.iInteractionID == 0)
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+				else
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pInteractionDesc);
 
 				if (SUCCEEDED(hr))
 				{
@@ -1921,12 +1949,12 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedModel == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_6A;
-					m_CurrentLayerName = TEXT("Layer_VendingMachine");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedModel == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::VendingMachine_7A;
-					m_CurrentLayerName = TEXT("Layer_VendingMachine");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedModel == 3)
 				{
@@ -2052,7 +2080,7 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedCamp == 14) 
 				{ 
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1T; 
-					m_CurrentLayerName = TEXT("Layer_Deco"); 
+					m_CurrentLayerName = TEXT("Layer_Interaction"); 
 				}
 				else if (nSelectedCamp == 15) 
 				{ 
@@ -2072,7 +2100,7 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedCamp == 18)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1I;
-					m_CurrentLayerName = TEXT("Layer_Chair");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 			}
 		}
@@ -2083,32 +2111,32 @@ HRESULT CMapTool_Desert::Render()
 				if (nSelectedCorpse == 0)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_1A;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedCorpse == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_1B;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedCorpse == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_2A;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedCorpse == 3)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_2B;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedCorpse == 4)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_2C;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 				else if (nSelectedCorpse == 5)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CORPSE_3A;
-					m_CurrentLayerName = TEXT("Layer_Corpse");
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 			}
 		}
@@ -2119,67 +2147,67 @@ HRESULT CMapTool_Desert::Render()
 				if (nSelectedContainer == 0)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_2A;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_2B;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_2C;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 3)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_2D;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 4)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_3A;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 5)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_4B;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 6)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_5A;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 7)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_5B;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 8)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_5C;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 9)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_5D;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 10)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_5E;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 11)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_7B;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 				else if (nSelectedContainer == 12)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CONTAINER_7F;
-					m_CurrentLayerName = TEXT("Layer_Container");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
 		}
@@ -2629,23 +2657,18 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Body")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Iron_Floor")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Deco")))) return S_OK; 
-
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Chair")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_VendingMachine")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Top_Roof")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_RepairConsole")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Desert_Tree")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Corpse")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Container")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_SciFi_Door")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CanBox")))) return S_OK; 
-
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Architecture")))) return S_OK; 
 
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Top_Roof")))) return S_OK;
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_RepairConsole")))) return S_OK;
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_SciFi_Door")))) return S_OK;
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_CanBox")))) return S_OK;
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Interaction")))) return S_OK;
 
 	ofs.close();
 
@@ -2705,6 +2728,42 @@ HRESULT CMapTool_Desert::Save_Objects_By_Layer(std::ofstream& ofs, const _tchar*
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Interaction_Objects_By_Layer(std::ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CInteraction* pInteractionObject = dynamic_cast<CInteraction*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pInteractionObject))
+			{
+				SAVEDINTERACTIONOBJECTINFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _tchar* pTag = pInteractionObject->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pInteractionObject->Get_ObjectID();
+				info.iObjectID = pId;
+				info.iInteractionID = pInteractionObject->Get_InteractionID();
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDINTERACTIONOBJECTINFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
 {
 	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
@@ -2749,22 +2808,20 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
 
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Chair"), TEXT("Layer_Chair")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_VendingMachine"), TEXT("Layer_VendingMachine")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Corpse"), TEXT("Layer_Corpse")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Container"), TEXT("Layer_Container")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
+	
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+
 	ifs.close();
 
 	return S_OK;
@@ -2799,6 +2856,39 @@ HRESULT CMapTool_Desert::Load_Objects_By_Layer(std::ifstream& ifs, const _tchar*
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		Desc.iObjectId = info.iObjectID;
+		Desc.pComponentTag = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDINTERACTIONOBJECTINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDINTERACTIONOBJECTINFO));
+
+		CInteraction::PROB_INTERACTION_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iObjectId = info.iObjectID;
+		Desc.iInteractionID = info.iInteractionID;
 		Desc.pComponentTag = info.szComponentTag;
 
 		_vector vScale = {};

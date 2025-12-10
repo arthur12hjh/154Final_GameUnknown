@@ -11,18 +11,12 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CSciFi_Door final : public CInteraction
+class CInteraction_NonAnim final : public CInteraction
 {
-public:
-	enum SCIFI_DOOR_STATE
-	{
-		OPEN, CLOSE, END
-	};
-
 private:
-	CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CSciFi_Door(const CSciFi_Door& Prototype);
-	virtual ~CSciFi_Door() = default;
+	CInteraction_NonAnim(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CInteraction_NonAnim(const CInteraction_NonAnim& Prototype);
+	virtual ~CInteraction_NonAnim() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -33,16 +27,13 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	SCIFI_DOOR_STATE m_eCurState = { SCIFI_DOOR_STATE::END };
-	SCIFI_DOOR_STATE m_ePrevState = { SCIFI_DOOR_STATE::END };
-	CCollider* m_pColliderCom = { nullptr };
-
-private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+	//void	SetCullingCollider(_uint iObjectID);
+	//_uint	Object_Number(const _tchar* pComponentTag);
 
 public:
-	static CSciFi_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CInteraction_NonAnim* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
