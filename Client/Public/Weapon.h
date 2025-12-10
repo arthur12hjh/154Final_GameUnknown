@@ -43,7 +43,7 @@ private:
 	CCollider*					m_pColliderCom = { nullptr };
 
 	class CTrailEffect*			m_pTrail = { nullptr };
-	class CEffect*				m_pSpark = { nullptr };
+	//class CEffect*				m_pSpark = { nullptr };
 	class CEffect*				m_pBlood = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 

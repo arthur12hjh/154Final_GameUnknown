@@ -1122,6 +1122,11 @@ struct PS_NORMAL_OUT
 struct PS_NONLIGHT_OUT
 {
     float4 vDiffuse : SV_TARGET0;
+};
+
+struct PS_BLOOM_OUT
+{
+    float4 vDiffuse : SV_TARGET0;
     float4 vBloom : SV_TARGET1;
 };
 
@@ -1280,12 +1285,10 @@ PS_WEIGHT_OUT PS_BLOOD(PS_WEIGHT_IN In, bool isFrontFace : SV_IsFrontFace)
     return Out;
 }
 
-
-
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
-PS_NONLIGHT_OUT PS_MASK(PS_NONLIGHT_IN In)
+PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
 {
-    PS_NONLIGHT_OUT Out;
+    PS_BLOOM_OUT Out;
     
     if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
         discard;
@@ -1296,10 +1299,10 @@ PS_NONLIGHT_OUT PS_MASK(PS_NONLIGHT_IN In)
     
 
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
-
-    Out.vDiffuse = g_vColor;
-    Out.vDiffuse *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
-    if (0 >= Out.vDiffuse.a)
+    Out.vDiffuse = float4(0, 0, 0, 0);
+    Out.vBloom = g_vColor;
+    Out.vBloom *= g_vColor.a * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vBloom.a)
         discard;
     return Out;
 }
@@ -1332,6 +1335,37 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     Out.vWeight.a = 1;
     return Out;
 }
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_WEIGHT_OUT PS_PIXEL(PS_WEIGHT_IN In)
+{
+    PS_WEIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    //float weight = saturate(pow(1 - depth, 3));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = (1 - weight) * (g_fDissolveUVSize.x / length(g_WorldMatrix._11_12_13));
+    Out.vDiffuse.a = 1;
+    Out.vWeight.a = 1;
+    return Out;
+}
+
+
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_WEIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
@@ -1671,6 +1705,56 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     return Out;
 }
 
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_WEIGHT_OUT PS_SMOKEDISTORTION(PS_WEIGHT_IN In)
+{
+    PS_WEIGHT_OUT Out;
+    
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    float2 distort = (g_DiffuseTexture.Sample(MirrorSampler, DiffuseTexcoord).rb * 2.0 - 1.0) * 0.03 * g_fDissolveUVSize.y;
+    
+    float2 uvDistorted = fTexcoord + distort;
+    
+    float2 uv = uvDistorted;
+    
+    float dist = abs(uv.y - (1 / (g_iUV.y * 2)));
+    
+    float width = 1.f;
+    
+    float alpha = saturate((width - dist) / width);
+    
+    
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    
+    //Out.vDiffuse *= pow(saturate(((In.vLifeTime.x / In.vLifeTime.y)) * 2 / (1 - In.vTexcoord.y)), 5) * pow(saturate((1 - In.vTexcoord.y) / ((In.vLifeTime.x / In.vLifeTime.y) * 2)), 15);
+    //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
+    Out.vWeight.r = Out.vDiffuse.a * weight;
+    Out.vWeight.g = Out.vDiffuse.a;
+    Out.vWeight.b = (1 - weight) * (g_fDissolveUVSize.x / length(g_WorldMatrix._11_12_13));
+    Out.vDiffuse.a = 1;
+    Out.vWeight.a = 1;
+    return Out;
+}
+
+
+
 
 
 BlendState BS_Min_Blend
@@ -1721,7 +1805,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
-        PixelShader = compile ps_5_0 PS_MASK();
+        PixelShader = compile ps_5_0 PS_BLOOM();
     }
     // idx 2
     pass Weight
@@ -1891,6 +1975,26 @@ technique11 DefaultTechnique
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
-        PixelShader = compile ps_5_0 PS_MASK();
+        PixelShader = compile ps_5_0 PS_BLOOM();
+    }
+    // idx 19
+    pass SmokeDistortion
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Min_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_SMOKEDISTORTION();
+    }
+    // idx 20
+    pass DSSDistortion
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_DISTORTION();
     }
 }
