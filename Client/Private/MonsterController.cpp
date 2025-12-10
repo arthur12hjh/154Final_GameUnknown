@@ -153,6 +153,14 @@ void CMonsterController::Damage(void* pDesc)
 						bIsHitAble = false;
 					}
 				}
+
+				if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+				{
+					if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackState->GetSkillData()->eProPerty)
+					{
+						bIsHitAble = false;
+					}
+				}
 			}
 		}
 		else if (CMonsterFSM::MONSTER_STATE::GROGGY == m_pFSM->GetMonsterState())

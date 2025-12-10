@@ -28,8 +28,7 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-	m_iInterID = 1;
-
+	//static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 1;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -51,11 +50,27 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 void CLift_Controller::Update(_float fTimeDelta)
 {
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-
+	if (m_bIsControllLift)
+	{
+		if (m_pLiftPlatform)
+		{
+			_matrix vPlatformMatrix = XMLoadFloat4x4(m_pLiftPlatform->GetTransform()->Get_WorldMatrixPtr());
+			for (_uint i = 0; i < 3; ++i)
+				vPlatformMatrix.r[i] = XMVector3Normalize(vPlatformMatrix.r[i]);
+			
+			WorldMat = WorldMat * vPlatformMatrix;
+		}
+	}
+	
 	m_pCullingCollider->UpdateColiision(WorldMat);
-	m_pInteractionCom->Update_Com();
 	m_pRigidBody->Update_PxTransform(WorldMat);
 
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+	{
+		Excute_CallBack(nullptr);
+	}
+	//m_pInteractionCom->Update_Com();
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
 

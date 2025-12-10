@@ -6,6 +6,7 @@
 
 #include "Actor.h"
 #include "Nayitba.h"
+#include "Prob_Interaction.h"
 #include "Camera_Free.h"
 #include "Player.h"
 #include "UIHUD.h"
@@ -49,7 +50,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert10.bin");
-	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	//Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -183,39 +184,45 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
+	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.bIsApplyTransform = true;
+	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	InteractionDesc.iInteractionID = 5;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { 10.f * i,
+		InteractionDesc.vPosition = { 10.f * i,
 							   m_pGameInstance->Random(0, 50),
 							   m_pGameInstance->Random(0, 50) };
 	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
-	}*/
+	}
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	InteractionDesc.iInteractionID = 2;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
 							   0.f,
 							   m_pGameInstance->Random(0, 50) };
 
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Static_Interaction"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	InteractionDesc.iInteractionID = 3;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(50, 100),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
 							   0.f,
 							   m_pGameInstance->Random(50, 100) };
 
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Static_Interaction"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
 
@@ -354,30 +361,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	return E_FAIL;
 
 
-	Desc.iMonsterID = 4;
-	Desc.bIsSuperMonster = true;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	//Desc.iMonsterID = 4;
+	//Desc.bIsSuperMonster = true;
+	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
+
+	Desc.iMonsterID = 6;
+	Desc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	Desc.iMonsterID = 6;
-	for (_uint i = 0; i < 3; ++i)
-	{ 
-		Desc.vPosition = { 450.f + (10 * i), 1.f, 600.f };
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-			return E_FAIL;
-	}
-
-	Desc.iMonsterID = 7;
-	for (_uint i = 0; i < 3; ++i)
-	{
-		Desc.vPosition = { 400.f + (10 * i), 1.f, 600.f };
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-			return E_FAIL;
-	}
+	//Desc.iMonsterID = 7;
+	//Desc.vPosition = { 450.f, 1.f, 600.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -446,7 +447,6 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Container"), TEXT("Layer_Container")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
 	ifs.close();
 
@@ -496,36 +496,6 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
-
-		//if (SUCCEEDED(hr))
-		//{
-		//	list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag);
-		//	if (pObjs && !pObjs->empty())
-		//	{
-		//		CGameObject* pObj = pObjs->back();
-		//		CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-		//		if (pTransform)
-		//		{
-		//			_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
-
-		//			_vector vScale = {};
-		//			_vector vRotation = {};
-		//			_vector vPosition = {};
-		//			XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
-
-		//			_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-		//			_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-		//			_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
-
-		//			// 순서: Scale * Rotation * Translation (SRT 순서)
-		//			_matrix matFinalWorld = matScale * matRotation * matTranslation;
-
-		//			_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-		//			XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
-
-		//		}
-		//	}
-		//}
 	}
 
 	return S_OK;

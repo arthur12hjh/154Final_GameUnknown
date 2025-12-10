@@ -107,11 +107,17 @@ void CBossController::Damage(void* pArg)
             }
             else
             {
-              
-
                 if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
                 {
                     if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                    {
+                        bIsHitAble = false;
+                    }
+                }
+
+                if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+                {
+                    if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
                     {
                         bIsHitAble = false;
                     }

@@ -22,8 +22,6 @@ HRESULT CStaticInteraction::Initialize_Prototype()
 
 HRESULT CStaticInteraction::Initialize(void* pArg)
 {
-    m_iInterID = 2;
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
