@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
+#include "Effect.h"
 #include "UIHUD.h"
 #include "UIGetterQueue.h"
 
@@ -53,6 +54,19 @@ HRESULT CItem::Initialize(void* pArg)
 	_vector vCenterLeftPoint = (vOwnerPos + vCenterPoint) / 2.f;
 	XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
 	XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
+
+
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	EffectDesc.fRotationPerSec = 1.f;
+	EffectDesc.fSpeedPerSec = 1.f;
+
+	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+	EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.fSize = 0.5f;
+	EffectDesc.iFloor = 2;
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
@@ -272,4 +286,6 @@ void CItem::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	if(nullptr != m_pEffect)
+		m_pEffect->End();
 }

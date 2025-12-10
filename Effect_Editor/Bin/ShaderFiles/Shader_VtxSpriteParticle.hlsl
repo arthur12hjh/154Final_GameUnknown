@@ -1775,18 +1775,10 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     
     float2 uvDistorted = fTexcoord + distort * pow((1 - In.vTexcoord.y), 2);
     
-    float2 uv = uvDistorted;
-    
-    float dist = abs(uv.y - (1 / (g_iUV.y * 2)));
-    
-    float width = 1.f;
-    
-    float alpha = saturate((width - dist) / width);
-    
-    
     
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a) * alpha;
+    float fPow = max(fmod(frac(sin(In.vSeed * 0.01) * 123456.789012), 5), 1.5);
+    Out.vDiffuse.a *= pow(min(g_MaskTexture.Sample(DefaultSampler, uvDistorted).r, g_MaskTexture.Sample(DefaultSampler, uvDistorted).a), fPow);
     
     Out.vDiffuse *= pow(saturate(((In.vLifeTime.x / In.vLifeTime.y)) * 2 / (1 - In.vTexcoord.y)), 5) * pow(saturate((1 - In.vTexcoord.y) / ((In.vLifeTime.x / In.vLifeTime.y) * 2)), 15);
     //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
@@ -1878,6 +1870,14 @@ BlendState BS_Add_Blend
 DepthStencilState Less
 {
     DepthEnable = true;
+    DepthWriteMask = all;
+    DepthFunc = less;
+};
+
+/* ±Ì¿Ãæ≤±‚∏∏ ≤Ù±‚*/
+DepthStencilState DSS_DepthNonWriteEffect
+{
+    DepthEnable = false;
     DepthWriteMask = all;
     DepthFunc = less;
 };

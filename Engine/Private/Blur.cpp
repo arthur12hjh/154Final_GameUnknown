@@ -24,20 +24,20 @@ HRESULT CBlur::Initialize()
 		return E_FAIL;
 
 	/* Target_Blur. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x * 0.5f, vScreenSize.y * 0.5f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_X. X에 대해서 우선 블러처리. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x * 0.5f, vScreenSize.y * 0.5f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 
 	/* Target_Blur. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Weight"), vScreenSize.x * 0.5f, vScreenSize.y * 0.5f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_X. X에 대해서 우선 블러처리. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X_Weight"), vScreenSize.x * 0.5f, vScreenSize.y * 0.5f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
 		return E_FAIL;
 	/* Target_Blur_Final. Y에 대해서도 블러처리 수행. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Blur_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
@@ -90,16 +90,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* 블러 기록할 물체들만 뺴서 기록 */
 	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].size()) {
-		D3D11_VIEWPORT			ViewPortDesc;
-		ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-		ViewPortDesc.TopLeftX = 0;
-		ViewPortDesc.TopLeftY = 0;
-		ViewPortDesc.Width = vScreenSize.x * 0.5f;
-		ViewPortDesc.Height = vScreenSize.y * 0.5f;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
 			return E_FAIL;
@@ -137,12 +128,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(m_pGameInstance->End_MRT()))
 			return E_FAIL;
 
-		ViewPortDesc.Width = vScreenSize.x;
-		ViewPortDesc.Height = vScreenSize.y;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 		/* 블러 Y 처리 */
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
@@ -163,18 +149,10 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 			return E_FAIL;
 	}
 	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].size()) {
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
+
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
 			return E_FAIL;
-		D3D11_VIEWPORT			ViewPortDesc;
-		ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-		ViewPortDesc.TopLeftX = 0;
-		ViewPortDesc.TopLeftY = 0;
-		ViewPortDesc.Width = vScreenSize.x * 0.5f;
-		ViewPortDesc.Height = vScreenSize.y * 0.5f;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
 
 		for (auto& pRenderObject : m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)])
 		{
@@ -210,12 +188,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 			return E_FAIL;
 
 
-		ViewPortDesc.Width = vScreenSize.x;
-		ViewPortDesc.Height = vScreenSize.y;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 		/* 블러 Y 처리 */
 		if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Blur_Final"))))
