@@ -178,6 +178,7 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
+    <ClInclude Include="..\Public\Desert_Architecture.h" />
     <ClInclude Include="..\public\DropComponent.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
@@ -229,6 +230,7 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -429,6 +431,7 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
+    <ClCompile Include="..\Private\Desert_Architecture.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
@@ -481,6 +484,7 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />

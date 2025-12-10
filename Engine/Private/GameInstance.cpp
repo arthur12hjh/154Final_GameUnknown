@@ -479,9 +479,9 @@ HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
 }
-HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+HRESULT CGameInstance::Add_PhysxGeometry(CGameObject* pGameObject, PxRigidActor* pActor, PxShape* pShape)
 {
-	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
+	return m_pRenderer->Add_PhysxGeometry(pGameObject, pActor, pShape);
 }
 
 void CGameInstance::Set_DebugVisible(_bool isVisible)
@@ -908,6 +908,10 @@ _bool CGameInstance::IsWorkThread()
 #pragma endregion
 
 #pragma region Camera Manager
+void CGameInstance::Shake(_float fShakeTime, _float fIntensity)
+{
+	return m_pCameraManager->Shake(fShakeTime, fIntensity);
+}
 HRESULT CGameInstance::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 {
 	return m_pCameraManager->Add_Camera(szCameraTag, pCamera);
