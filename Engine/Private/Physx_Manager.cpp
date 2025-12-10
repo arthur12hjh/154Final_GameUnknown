@@ -16,7 +16,7 @@ HRESULT CPhysx_Manager::Initialize()
 	m_PxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_DefaultAllocator, m_DefaultErrorCallback);
 
     m_Pvd = physx::PxCreatePvd(*m_PxFoundation);
-
+    
     m_PxTransport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_PxTransport, physx::PxPvdInstrumentationFlag::eALL);
 
@@ -74,7 +74,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
     /* 씬 시뮬레이션 */
     if (nullptr != m_PxScene)
     {
-        m_PxScene->simulate(1 / 60);      // 시뮬레이션 시작
+        m_PxScene->simulate(fTimeDelta);      // 시뮬레이션 시작
         m_PxScene->fetchResults(true);        // 결과 가져오기, PVD에 전송됨
 
         /* 위치 동기화 */
@@ -94,7 +94,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 
         for (auto& Pair : m_CCTs)
         {
-            Pair.second->Update_ControllerTransform();
+            Pair.second->Update_ControllerTransform(fTimeDelta, Pair.first->GetTransform());
         }
     }
 }
@@ -188,16 +188,16 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 
     //점심먹고 터레인 추가하는 로직 작성
 
-    for (_uint row = 0; row < iNumVerticesZ; ++row)
+    for (_uint iRow = 0; iRow < iNumVerticesZ; ++iRow)
     {
-        for (_uint col = 0; col < iNumVerticesX; ++col)
+        for (_uint iCol = 0; iCol < iNumVerticesX; ++iCol)
         {
             // Terrain heightData = height[z][x]
             // PhysX heightField  = sample[row][col]
 
             // X/Z swap: height[x][z]
-            _uint srcIdx = col * iNumVerticesZ + row;           // 스왑된 소스 인덱스
-            _uint dstIdx = row * iNumVerticesX + col;           // PhysX가 요구하는 인덱스
+            _uint srcIdx = iCol * iNumVerticesZ + iRow;           // 스왑된 소스 인덱스
+            _uint dstIdx = iRow * iNumVerticesX + iCol;           // PhysX가 요구하는 인덱스
 
 
             _float fHeight = pHeightData[srcIdx] * 100.f;

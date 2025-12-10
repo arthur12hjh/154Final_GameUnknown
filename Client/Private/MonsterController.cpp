@@ -6,7 +6,6 @@
 
 #include "Nayitba.h"
 #include "GameManager.h"
-#include "TargetComponent.h"
 
 #pragma region State
 #include "MonsterIdleState.h"
@@ -51,9 +50,6 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -76,7 +72,7 @@ void CMonsterController::Update(_float fTimeDelta)
 				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
 				M_TranslationState.szTranslationAnimName = "_BattleStart";
 				M_TranslationState.szNextStateName = TEXT("Idle");
-				M_TranslationState.pTarget = m_pTargetCom->GetTarget();
+				M_TranslationState.pTarget = pNayitba->GetTarget();
 				M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
 					{
 						m_pFSM->Change_State(szNextStateName, pArg);
@@ -165,7 +161,6 @@ void CMonsterController::Damage(void* pDesc)
 		if (bIsHitAble)
 		{
 			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
-			m_pGameInstance->GamePauseDurationTime(0.1f, 0.5f, 1.3f);
 		}
 			
 	}
@@ -177,24 +172,6 @@ void CMonsterController::ActionSuccess(void* pArg)
 	// 근데 이거 이브 모션보고 이런형태일지 확인해야함
 	// 은신형 몬스터는 잡기가 맞음
 	m_pFSM->Change_State(TEXT("ActionSuccess"), pArg, true);
-}
-
-HRESULT CMonsterController::Ready_Components()
-{
-	// 여기서 타겟 컴포넌트 만들어서 붙이자
-
-	/* 시야 센서가 Controller에 달려있어야하나?*/
-	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
-	TargetComDesc.fRadius = m_pOwnerData->fAttackRange - 3.f;
-	TargetComDesc.iNumPoints = 6.f;
-
-	 /* Prototype_Component_TargetComponent */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TargetComponent"),
-		TEXT("Com_TargetCom"), reinterpret_cast<CComponent**>(&m_pTargetCom), &TargetComDesc)))
-		return E_FAIL;
-
-	 
-	return S_OK;
 }
 
 HRESULT CMonsterController::Ready_FSM()
@@ -242,8 +219,9 @@ void CMonsterController::Battle_Action(_float fTimeDelta)
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
-	m_pTargetCom->Target_Search(pNayitba->GetTraceObejectList());
-	auto pTarget = m_pTargetCom->GetTarget();
+	auto pTarget = pNayitba->GetTarget();
+	if (nullptr == pTarget)
+		return;
 
 	_vector vOwnerPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
 	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -309,7 +287,10 @@ void CMonsterController::MoveAction(_bool bIsTarget)
 	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };
 
 	if (bIsTarget)
-		MoveStateDesc.pTarget = m_pTargetCom->GetTarget();
+	{
+		auto pNayitba = static_cast<CNayitba*>(m_pParent);
+		MoveStateDesc.pTarget = pNayitba->GetTarget();
+	}
 	else
 		MoveStateDesc.pTarget = nullptr;
 
@@ -343,5 +324,4 @@ void CMonsterController::Free()
 	__super::Free();
 
 	Safe_Release(m_pFSM);
-	Safe_Release(m_pTargetCom);
 }

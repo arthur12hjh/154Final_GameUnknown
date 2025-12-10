@@ -176,7 +176,7 @@
                         "fSizeY": 120.0,
                         "fX": 800.0,
                         "fY": 75.0,
-                        "iDepth": 2,
+                        "iDepth": 0,
                         "iDrawType": 1,
                         "iLevel": 3,
                         "iRenderGroup": 9,

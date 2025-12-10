@@ -175,7 +175,8 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 	{
 		auto pInteraction = m_pGameInstance->GetNearInteraction();
-		pInteraction->Action_InteractionEvent(this);
+		if(pInteraction)
+			pInteraction->Action_InteractionEvent(this);
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -185,7 +186,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
 	
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	//m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
@@ -535,6 +536,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
 		pNayitba->Damaged(&DamageDesc);
+		m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)
@@ -561,6 +563,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 
 		m_pFSM->Handle_Transition(Desc);
+		
 	}
 }
 

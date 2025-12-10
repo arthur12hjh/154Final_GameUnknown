@@ -15,7 +15,7 @@ CBody_Character::CBody_Character(const CBody_Character& Prototype)
 {
 }
 
-const _float4x4* CBody_Character::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CBody_Character::Get_BoneMatrixPtr(const _char* pBoneName)
 {
 	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);
 }

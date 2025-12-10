@@ -2,6 +2,9 @@
 #include "NayitbaPartBody.h"
 #include "StringHelper.h"
 #include "Effect.h"
+#include "Trail.h"
+#include "TrailEffect.h"
+#include "Texture.h"
 
 #include "GameInstance.h"
 
@@ -40,12 +43,26 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
-    //m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+    
+    if (m_isDeadEffect)
+    {
+        m_fDeadTime += fTimeDelta;
+        if(1.5 < m_fDeadTime)
+            m_pParent->Set_Dead(true);
+    }
 }
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        if (nullptr == TrailEffect.first->pRootMatrix) {
+            TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
+        }
+        else {
+            TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
+        }
+    }
     m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -69,18 +86,20 @@ HRESULT CNayitbaPartBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
             return E_FAIL;
 
-        //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-        //    return E_FAIL;
-
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
-
-        if (FAILED(m_pShaderCom->Begin(0)))
-            return E_FAIL;
+        if (0 < m_fDeadTime) {
+            if (FAILED(m_pShaderCom->Begin(5)))
+                return E_FAIL;
+        }
+        else {
+            if (FAILED(m_pShaderCom->Begin(0)))
+                return E_FAIL;
+        }
 
 
         if (FAILED(m_pModelCom->Render(i)))
@@ -154,7 +173,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             EffectDesc.vPos = XMVectorSet(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 1);
             EffectDesc.fRot = _float3(XMConvertToRadians(NotifyReference.vNotifyRotation.x), XMConvertToRadians(NotifyReference.vNotifyRotation.y), XMConvertToRadians(NotifyReference.vNotifyRotation.z));
             EffectDesc.fSize = NotifyReference.vNotifyScale.x;
-
+            EffectDesc.bisFloor = 1 == NotifyReference.iNumData02 ? true : false;
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
 
@@ -177,6 +196,67 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         if (nullptr != pEffect)
             pEffect->Stop();
     }
+    else if (strObjectTag == TEXT("Stop_All_Effect"))
+    {
+        for (auto Effect : m_pEffects)
+        {
+            Effect.first->Stop();
+        }
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            TrailEffect.first->bisPlay = false;
+        }
+    }
+    else if (strObjectTag == TEXT("Play_Trail"))
+    {
+        CTrailEffect* pTrailEffect = nullptr;
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            if (TrailEffect.second == NotifyReference.iNumData01) {
+                TrailEffect.first->bisPlay = true;
+                return;
+            }
+        }
+
+        if (nullptr == pTrailEffect) {
+
+            NAYITBA_TRAIL_DESC* ptrailDesc = new NAYITBA_TRAIL_DESC;
+
+            if (NotifyReference.szSocketTag.compare("Transform") != 0)
+            {
+                ptrailDesc->pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
+            }
+            ptrailDesc->bisPlay = true;
+
+            CTrail::TRAILHIGHLOW Traildesc{};
+            Traildesc.vHigh = _float4(NotifyReference.vNotifyScale.x, NotifyReference.vNotifyScale.y, NotifyReference.vNotifyScale.z, 0.f);
+            Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
+
+            _TCHAR szEffectTag[MAX_PATH];
+            CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
+
+            pTrailEffect = static_cast<CTrailEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &Traildesc));
+            ptrailDesc->pTrailEffect = pTrailEffect;
+            m_pTrailEffects.push_back({ ptrailDesc, NotifyReference.iNumData01 });
+        }
+    }
+    else if (strObjectTag == TEXT("Stop_Trail"))
+    {
+        for (auto TrailEffect : m_pTrailEffects)
+        {
+            if (TrailEffect.second == NotifyReference.iNumData01) {
+                TrailEffect.first->bisPlay = false;
+                return;
+            }
+        }
+    }
+}
+
+void CNayitbaPartBody::Play_DeadEffect()
+{
+    if (false == m_isDeadEffect)
+         m_isDeadEffect = true;
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
@@ -189,6 +269,11 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+        return E_FAIL;
+
+    /* Com_Texture */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Dissolve_bullet0.dds"),
+        TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
         return E_FAIL;
 
     ///* Com_Collider_Sphere */
@@ -216,6 +301,12 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+        return E_FAIL;
+
+
+    if (FAILED(m_pTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
         return E_FAIL;
 
     return S_OK;
@@ -248,4 +339,17 @@ void CNayitbaPartBody::Free()
     __super::Free();
 
     Safe_Release(m_pColliderCom);
+    for (auto pEffect : m_pEffects)
+        Safe_Release(pEffect.first);
+    m_pEffects.clear();
+
+    for (auto& pTrailEffect : m_pTrailEffects)
+    {
+        Safe_Release(pTrailEffect.first->pTrailEffect);
+        Safe_Delete(pTrailEffect.first);
+    }
+     
+    m_pTrailEffects.clear();
+
+    Safe_Release(m_pTexture);
 }

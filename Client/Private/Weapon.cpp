@@ -66,6 +66,10 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
+	m_pBlood->Update(fTimeDelta);
+	if (!m_bisBlood)
+		m_pBlood->Stop();
+	m_bisBlood = false;
 	if (nullptr != m_pCharge) {
 		m_pCharge->Update(fTimeDelta);
 		if(m_pCharge->isDead())
@@ -173,6 +177,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
 	m_pSpark->Late_Update(fTimeDelta);
+	m_pBlood->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
@@ -285,7 +290,13 @@ void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const
 
 	m_bIsEnableCollider = NotifyRef.iNumData01;
 	if (false == m_bIsEnableCollider)
+	{
+	
 		static_cast<CCollider*>(pComponents)->ResetCollision();
+	}
+	else
+		m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+
 }
 
 void CWeapon::EnableCollider(_bool bIsEnable)
@@ -316,6 +327,7 @@ HRESULT CWeapon::Ready_Components()
 		return E_FAIL;
 
 	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
@@ -338,6 +350,17 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
 	m_pSpark->Play();
 	m_pSpark->Stop();
+
+	desc.fRotationPerSec = 1.f;
+	desc.fSpeedPerSec = 1.f;
+	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	desc.vPos = XMVectorSet(0, 3, 0, 1);
+	desc.fRot = _float3(0, 0, 0);
+	desc.fSize = 0.4f;
+
+	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
+	m_pBlood->Play();
+	m_pBlood->Stop();
 
 	return S_OK;
 }
@@ -367,8 +390,33 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSkillDataID());
+		_uint iSkillID = static_cast<CPlayer*>(m_pParent)->GetSkillDataID();
+		if (-1 == iSkillID)
+			return;
+
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
+
+		//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		//EffectDesc.fRotationPerSec = 1.f;
+		//EffectDesc.fSpeedPerSec = 1.f;
+
+		//EffectDesc.vPos = XMVectorSet(vHitPoint.x, vHitPoint.y, vHitPoint.z, 1);
+		//EffectDesc.fRot = _float3(0, 0, 0);
+		//EffectDesc.fSize = 1.f;
+		//EffectDesc.pDir = &vHitDir;
+		//CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
+		//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	}
+}
+
+void CWeapon::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	if (pNaytiba)
+	{
+		//m_bisBlood = true;
+		//m_pBlood->Play();
 	}
 }
 
@@ -411,4 +459,5 @@ void CWeapon::Free()
 	Safe_Release(m_pTrail);
 	Safe_Release(m_pSpark);
 	Safe_Release(m_pCharge);
+	Safe_Release(m_pBlood);
 }

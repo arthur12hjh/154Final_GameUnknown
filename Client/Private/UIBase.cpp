@@ -63,7 +63,6 @@ void CUIBase::Update(_float fTimeDelta)
 		//부모 따라가기
 		if (dynamic_cast<CUIBase*>(m_pParent))
 		{
-		
 			m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 			m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
@@ -89,11 +88,6 @@ void CUIBase::Update(_float fTimeDelta)
 	{
 		if (!m_pParent || !m_pTargetPos)
 			return;
-
-		/*if (m_pParent->GetVisibility() == VISIBILITY::HIDDEN)
-			return;
-
-		m_eVisibility = m_pParent->GetVisibility();*/
 
 		// View / Projection 행렬 로드
 		_matrix view = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
@@ -123,14 +117,16 @@ void CUIBase::Update(_float fTimeDelta)
 		// 4) NDC → Screen
  		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
 
-		if (m_pTargetPos)
+		//if (m_pTargetPos)
 		{
 			m_tUIDesc.fX = ndc.x * half.x + half.x;   // [-1~1] → [0~width]
 			m_tUIDesc.fY = -ndc.y * half.y + half.y;  // Y 반전
 			
 			m_pTransformCom->Set_State(STATE::POSITION,
-				XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX - half.x, -(m_tUIDesc.fY + m_tUIDesc.fOffsetY) + half.y, 0.f, 1.f));
+				XMVectorSet(m_tUIDesc.fX /*+ m_tUIDesc.fOffsetX*/ - half.x, -(m_tUIDesc.fY /*+ m_tUIDesc.fOffsetY*/) + half.y, 0.f, 1.f));
 		}
+
+		int a = 0;
 
 		for(auto& pChild : m_Children)
 			Update_Children(pChild);
@@ -373,13 +369,17 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 void CUIBase::Update_Children(CUIBase* pObj)
 {
 	pObj->SetVisibility(pObj->GetParent()->GetVisibility());
+	pObj->Set_Rent(static_cast<CUIBase*>(pObj->GetParent())->Get_Rent());
 
-	pObj->Get_UIBase_Desc().fX = XMVectorGetX(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
-	pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+	if (pObj->GetVisibility() == VISIBILITY::VISIBLE)
+	{
+		pObj->Get_UIBase_Desc().fX = XMVectorGetX(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+		pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
 
-	pObj->GetTransform()->Set_State(STATE::POSITION,
-		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX,
-			pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+		pObj->GetTransform()->Set_State(STATE::POSITION,
+			XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX,
+				pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+	}
 
 	for (auto& pChild : *pObj->Get_Children())
 	{

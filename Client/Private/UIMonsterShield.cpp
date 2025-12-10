@@ -36,35 +36,29 @@ HRESULT CUIMonsterShield::Initialize(void* pArg)
 void CUIMonsterShield::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (!m_isRent)
+	{
+		m_fCurrentFill = 0.f;
+		m_fTargetFill = 1.f;
+	}
 }
 
 void CUIMonsterShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-//#ifdef _DEBUG
-//	//테스트 용
-//	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
-//	{
-//		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-//			m_fTargetFill -= 0.1f;
-//		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-//			m_fTargetFill += 0.1f;
-//	}
-//#endif
-
-
-	/*auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
 		auto StaticDesc = pMonster->GetStaticMonsterData();
 		auto CurDesc = pMonster->GetMonsterData();
 
-		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
-	}*/
+		m_fTargetFill = (_float)CurDesc.iCurrentShield / (_float)StaticDesc->iMaxShield;
+	}
 
-	/*if (m_iCurrentShield)
-		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/
+	if (m_iCurrentShield)
+		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }

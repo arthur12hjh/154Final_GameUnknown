@@ -24,6 +24,7 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	pEntity->GetStaticMonsterData();
+
 	m_pLastHitSkill = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	// 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 
 	// 이름 더해주자
@@ -93,10 +94,10 @@ void CMonsterDeadState::Update(_float fTimeDelta)
 	else
 	{
 		m_fDeadEndTime.x += fTimeDelta;
-		if (m_fDeadEndTime.x >= m_fDeadEndTime.y)
+		if (!m_bIsDeadEffect && m_fDeadEndTime.x >= m_fDeadEndTime.y)
 		{
-			// 디졸브 대충 시간 기다리기
-			m_pOwner->Set_Dead(true);
+			pEntity->PlayDeadEffect();
+			m_bIsDeadEffect = true;
 		}
 	}
 }

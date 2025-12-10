@@ -37,10 +37,10 @@ PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
     float vsize;
     for (int i = -6; i < 7; ++i)
     {
-        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX * 2;
         vTexcoord.y = In.vTexcoord.y;
         
-        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord) * min(max((1 - saturate(g_WeightTexture.Sample(ClampSampler, vTexcoord).b)) * 1500, 1), 5);
+        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
         vsize += g_fWeights[i + 6];
 
@@ -64,7 +64,7 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY * 2;
         
         vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
         vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
@@ -72,7 +72,9 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
     }
     vColor /= vsize;
     
+    float farFactor = vWeight.b;
     Out.vGlowY = vColor;
+    Out.vGlowY.rgb *= farFactor;
     Out.vWeight = vWeight / vsize;
     return Out;
 }

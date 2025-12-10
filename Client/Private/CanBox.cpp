@@ -35,6 +35,7 @@ HRESULT CCanBox::Initialize(void* pArg)
     m_eInterState = INTERACTION_STATE::DEFAULT;
     m_pModelCom->Set_AnimationIndex(END, false);
 
+    m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;
 }
 
@@ -169,7 +170,7 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         return E_FAIL;
 
     m_pGameInstance->Add_Event(TEXT("Box_Open"), m_pEventHandle);
-
+    static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
     return S_OK;
 }
 
@@ -190,7 +191,6 @@ HRESULT CCanBox::Bind_ShaderResources()
 HRESULT CCanBox::Begin_OverlapCallBack()
 {
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = true;
 
     return S_OK;
 }
@@ -212,8 +212,6 @@ HRESULT CCanBox::End_OverlapCallBack()
 {
     if (m_pInteractionUI)
         m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
-
-    m_bIsInteractionAble = false;
 
     return S_OK;
 }

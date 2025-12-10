@@ -26,10 +26,10 @@ CModel::CModel(const CModel& Prototype)
     , m_iNumAnimations{ Prototype.m_iNumAnimations }
     , m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
     , m_AnimationIndexMap{ Prototype.m_AnimationIndexMap }
-    , m_pBoneSource{ nullptr }
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
+    , m_pOutRootReadBack{nullptr }
     , m_pBoneMatricesSRV{ nullptr }
     , m_pPreBoneMatricesSRV{ nullptr }
     , m_pComputeShaderCom{ nullptr }
@@ -115,8 +115,10 @@ _uint CModel::Get_AnimationKeyFrameIndex() const
     return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
-const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 {
+    AddCount_PartialBone(pBoneName);
+
     auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
         {
             if (true == pBone->Compare_Name(pBoneName))
@@ -600,19 +602,19 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
 
     if (FAILED(m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV)))
         return E_FAIL;
-    if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
-    {
-        m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
-    }
-    else
-    {
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
-    }
+    //if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
+    //}
+    //else
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
+    //}
 
 #ifdef _DEBUG
-    if (bIsSaved == TRUE)
-        m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    //if (bIsSaved == TRUE)
+    //    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
     return S_OK;
 }
@@ -652,18 +654,57 @@ HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>
     if (FALSE == bIsTagFound)
         return E_FAIL;
 
-    for (auto& pNode : m_pModel->vNodes)
-    {
-        if (strcmp(pNode.szName, szNodeName) == 0)
-        {
-            strcpy_s(pNode.szName, szAfterBoneTag);
-            break;
-        }
-    }
+    //for (auto& pNode : m_pModel->vNodes)
+    //{
+    //    if (strcmp(pNode.szName, szNodeName) == 0)
+    //    {
+    //        strcpy_s(pNode.szName, szAfterBoneTag);
+    //        break;
+    //    }
+    //}
 
 #ifdef _DEBUG
-    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    //m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
+    //Safe_Delete(m_pModel);
+
+    return S_OK;
+}
+
+HRESULT CModel::AddCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto& iRefCount = m_PartialBoneCountMap[iBoneIndex];
+    ++iRefCount;
+
+    return S_OK;
+}
+
+HRESULT CModel::ReleaseCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto iter = m_PartialBoneCountMap.find(iBoneIndex);
+
+    if (iter != m_PartialBoneCountMap.end())
+    {
+        --(*iter).second;
+    }
+
+    if ((*iter).second <= 0)
+        m_PartialBoneCountMap.erase(iter);
+
     return S_OK;
 }
 
@@ -819,6 +860,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
         Initialize_AnimationBufferResource();
     }
 
+    Safe_Delete(m_pModel);
+
     return S_OK;
 }
 
@@ -944,35 +987,35 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    //// CPU CBone 전체 동기화
-    //if (m_pOutReadBack)
-    //{
-    //    m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-    //
-    //    D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    //    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
-    //    {
-    //        COMPUTE_BONEMATRIX_OUT* pOut =
-    //            reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-    //
-    //        // 무조건 최적화
-    //        for (_uint i = 0; i < m_Bones.size(); ++i)
-    //        {
-    //            m_Bones[i]->Set_TransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-    //
-    //            m_Bones[i]->Set_CombinedTransformationMatrix(
-    //                XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
-    //        }
-    //
-    //        m_pContext->Unmap(m_pOutReadBack, 0);
-    //    }
-    //}
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut = 
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
+            {
+                _int iBoneIndex = BoneCountIndex.first;
+
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
+            }
+
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
 
     // 루트모션 적용
-    if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
+    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
     {
-        m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
+        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
         Apply_RootMotion(pTransform, fRootMotionMagnification);
     }
 
@@ -1252,15 +1295,6 @@ HRESULT CModel::Ready_ComputeShader()
         if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
 
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pBoneSource)))
-            return E_FAIL;
     }
     // 두 번째로, Channel을 넣어주자
     {
@@ -1438,19 +1472,25 @@ HRESULT CModel::Ready_ComputeShader()
             // 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고
             {
                 TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
                 TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-                D3D11_SUBRESOURCE_DATA rootSub{};
-                rootSub.pSysMem = vInit.data();
+                vector<COMPUTE_BONEMATRIX_OUT> vRootInit(1);
+
+                XMStoreFloat4x4(&vRootInit[0].BoneLocalTransformMatrix, XMMatrixIdentity());
+                XMStoreFloat4x4(&vRootInit[0].BoneCombinedTransformMatrix, XMMatrixIdentity());
+
+
+                D3D11_SUBRESOURCE_DATA RootSubResource{};
+                RootSubResource.pSysMem = vRootInit.data();
 
                 Safe_Release(m_pRootSource);
-                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &rootSub, &m_pRootSource)))
+                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &RootSubResource, &m_pRootSource)))
                     return E_FAIL;
 
-                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
+                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource, 1)))
                     return E_FAIL;
             }
 
@@ -1468,6 +1508,16 @@ HRESULT CModel::Ready_ComputeShader()
     readbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
+
+
+    D3D11_BUFFER_DESC RootReadbackDesc = {};
+    RootReadbackDesc.Usage = D3D11_USAGE_STAGING;
+    RootReadbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    RootReadbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+    m_pDevice->CreateBuffer(&RootReadbackDesc, nullptr, &m_pOutRootReadBack);
 
 
 
@@ -1612,7 +1662,8 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
     // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
     // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
-    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+    //if(nullptr == m_pOutSource)
+    //    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
 
 
     m_pCombinedMatrixComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_GlobalBuffer);
@@ -1640,8 +1691,10 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
     // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
     // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
-    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
-    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
+    //if (nullptr == m_pOutSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+    //if(nullptr == m_pRootSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
 
     {
         ID3D11UnorderedAccessView* pNullUAV[2] = { nullptr, nullptr };
@@ -1665,12 +1718,12 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
         return S_OK;
     }
 
-    if (nullptr == m_pOutReadBack)
+    if (nullptr == m_pOutRootReadBack)
         return S_OK;
 
     // 먼저, CBone에 Set도 해줘야하기 때문에 받아와준다.
     D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+    if (SUCCEEDED(m_pContext->Map(m_pOutRootReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
     {
         COMPUTE_BONEMATRIX_OUT* pOut = reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
@@ -1717,7 +1770,7 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 
         }
 
-        m_pContext->Unmap(m_pOutReadBack, 0);
+        m_pContext->Unmap(m_pOutRootReadBack, 0);
     }
 
     return S_OK;
@@ -1835,8 +1888,8 @@ void CModel::Free()
 {
     __super::Free();
 
-    if (m_isCloned == FALSE)
-        Safe_Delete(m_pModel);
+    //if (m_isCloned == FALSE)
+    //    Safe_Delete(m_pModel);
 
     for (auto& pChannelBuffer : m_pChannelBufferList)
         Safe_Release(pChannelBuffer);
@@ -1865,8 +1918,8 @@ void CModel::Free()
 
     m_GlobalOffsetMatrices.clear();
 
-    Safe_Release(m_pBoneSource);
     Safe_Release(m_pOutReadBack);
+    Safe_Release(m_pOutRootReadBack);
     //Safe_Release(m_pOutSource);
     //Safe_Release(m_pRootSource);
     Safe_Release(m_pPreBoneMatrices);
@@ -1874,7 +1927,6 @@ void CModel::Free()
 
     Safe_Release(m_pBoneMatricesSRV);
     Safe_Release(m_pPreBoneMatricesSRV);
-    Safe_Release(m_pLerpBoneMatricesSRV);
     Safe_Release(m_pComputeShaderCom);
     Safe_Release(m_pCombinedMatrixComputeShaderCom);
 

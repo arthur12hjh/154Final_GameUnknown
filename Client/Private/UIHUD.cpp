@@ -14,6 +14,7 @@
 #include "UIBossVitalWrapper.h"
 #include "UIWorldWrapper.h"
 #include "UISimpleKey.h"
+#include "Prob_Interaction.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -36,11 +37,86 @@ HRESULT CUIHUD::Initialize()
 
 void CUIHUD::Update(_float fTimeDelta)
 {
+	auto& Interactions = *m_pGameInstance->GetAllInteraction();
+
+	for (_int i = 0; i < m_WorldUIs[TEXT("Pool_InteractionDot")].size(); ++i)
+	{
+		if (Interactions.size() > i)
+		{
+			if (Interactions[i])
+			{
+				_float3 newPos{};
+				_float3 vPivot{ 0.f, 0.f, 0.f };
+
+				auto pOwner = static_cast<CProb_Interaction*>(Interactions[i]->GetOwner());
+
+				if (pOwner->Get_InterDesc())
+					vPivot = pOwner->Get_InterDesc()->vUIPivot;
+
+			/*	XMStoreFloat3(&newPos,
+					XMVectorSet(
+						Interactions[i]->Get_CenterPos().x + vPivot.x,
+						Interactions[i]->Get_CenterPos().y + vPivot.y,
+						Interactions[i]->Get_CenterPos().z + vPivot.z,
+						1.f
+					));*/
+				XMStoreFloat3(&newPos,
+					XMVectorSet(
+						XMVectorGetX(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
+						XMVectorGetY(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
+						XMVectorGetZ(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
+						1.f
+					));
+
+				Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(pOwner);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(&newPos, false);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::VISIBLE);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(true);
+
+				if (Interactions[i] == m_pGameInstance->GetNearInteraction())
+				{
+					Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]);
+					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetParent(pOwner);
+					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_TargetPos(&newPos, false);
+					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetVisibility(VISIBILITY::VISIBLE);
+					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_Rent(true);
+				}
+			}
+			else
+			{
+				Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(nullptr);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(nullptr);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
+			}
+		}
+		else
+		{
+			Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(nullptr);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(nullptr);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
+		}
+	}
+
+	if (!m_pGameInstance->GetNearInteraction() && !m_WorldUIs[TEXT("Pool_Simple_Interaction")].empty())
+	{
+		Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]);
+		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetParent(nullptr);
+		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_TargetPos(nullptr);
+		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetVisibility(VISIBILITY::HIDDEN);
+		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_Rent(false);
+
+		for (auto& pChild : *m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Get_Children())
+			m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Update_Children(pChild);
+	}
+
 	__super::Update(fTimeDelta);
 
-	m_pUIAnimMgr->Update(fTimeDelta);
-
-	for(auto& pPool : m_WorldUIs)
+	/*for (auto& pPool : m_WorldUIs)
 	{
 		for (auto& pObj : pPool.second)
 		{
@@ -52,39 +128,10 @@ void CUIHUD::Update(_float fTimeDelta)
 				pUIBase->Late_Update(fTimeDelta);
 			}
 		}
-	}
+	}*/
 
-	if (m_InteractionUIs.size() != m_pGameInstance->GetAllInteraction()->size())
-	{
-		_int count = m_InteractionUIs.size() - m_pGameInstance->GetAllInteraction()->size();
 
-		for (_int i = 0; i < abs(count); ++i)
-		{
-			if (count < 0)
-				Add_InteractionUI(m_pGameInstance->GetAllInteraction()->size());
-			else
-				m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]->SetVisibility(VISIBILITY::HIDDEN);
-				//Remove_InteractionUI(m_InteractionUIs[(m_InteractionUIs.size() - 1) - i]);
-		}
-	}
-
-	_int count = 0;
-
-	for (auto& pInteractionCom : *m_pGameInstance->GetAllInteraction())
-	{
-		dynamic_cast<CUIWorldWrapper*>(m_InteractionUIs[count])->Set_InteractionCom(pInteractionCom); 
-		dynamic_cast<CUIWorldWrapper*>(m_InteractionUIs[count])->SetParent(pInteractionCom->GetOwner());
-		m_InteractionUIs[count]->Set_TargetPos(&pInteractionCom->Get_CenterPos());
-		m_InteractionUIs[count]->SetVisibility(VISIBILITY::VISIBLE);
-		++count;
-	}
-
-	for (auto& pInteractionUI : m_InteractionUIs)
-	{
-		pInteractionUI->Priority_Update(fTimeDelta);
-		pInteractionUI->Update(fTimeDelta);
-		pInteractionUI->Late_Update(fTimeDelta);
-	}
+	m_pUIAnimMgr->Update(fTimeDelta);
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
@@ -145,7 +192,6 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
 	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
-	
 }
 
 CUIBase* CUIHUD::Get_UIObject(_wstring szLayerTag, _wstring szUITag)
@@ -811,10 +857,9 @@ void CUIHUD::Reset_WorldUI_State(CUIBase* pUI)
 	if (!pUI) return;
 	// 알파/애니/이벤트 등의 런타임 상태 초기화
 	UIBASE_DESC d = pUI->Get_UIBase_OriginDesc();
-	d.fAlpha = 1.f;
+	//d.fAlpha = 1.f;
 	// 필요 시 더 초기화…
 	pUI->Set_UIBase_Desc(d);
-
 	m_pUIAnimMgr->Anim_Stop(pUI);
 }
 
@@ -963,6 +1008,7 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 
 	// 상태 초기화 후 사용할 준비
 	Reset_WorldUI_State(pUI);
+	pUI->Set_Rent(true);
 	pUI->Set_DrawType((CUIObject::DRAW_TYPE)pUI->Get_UIBase_Desc().iDrawType);
 	pUI->SetVisibility(VISIBILITY::VISIBLE);
 
@@ -980,6 +1026,7 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 
 	// Parent/계층/애니/가시성 원복
 	m_pUIAnimMgr->Anim_Stop(pUI);
+	pUI->Set_Rent(false);
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
 
 	for (auto& pChild : *pUI->Get_Children())
@@ -991,6 +1038,7 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag;
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
+
 	pUI = nullptr;
 }
 

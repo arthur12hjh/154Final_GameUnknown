@@ -36,6 +36,12 @@ HRESULT CUIMonsterHPBar::Initialize(void* pArg)
 void CUIMonsterHPBar::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (!m_isRent)
+	{
+		m_fCurrentFill = 0.f;
+		m_fTargetFill = 1.f;
+	}
 }
 
 void CUIMonsterHPBar::Update(_float fTimeDelta)
@@ -111,6 +117,11 @@ HRESULT CUIMonsterHPBar::Bind_ShaderResources()
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
+		return E_FAIL;
+
+	_bool bUseTintColor = false;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
 		return E_FAIL;
 
 	_float2 vUV{};

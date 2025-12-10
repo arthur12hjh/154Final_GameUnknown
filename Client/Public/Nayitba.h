@@ -8,6 +8,9 @@ NS_END
 
 NS_BEGIN(Client)
 class CUIBase;
+class CBullet;
+class CTargetComponent;
+class CDropComponent;
 
 struct Character_Skill_Desc;
 
@@ -39,9 +42,10 @@ public:
 	virtual HRESULT							ActionSuccess(void* pArg) override;
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 	virtual void							RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
+	virtual void							PlayDeadEffect();
 
 	_uint									GetMonsterID();
-	const list<CGameObject*>*				GetTargetList();
+	CGameObject*							GetTarget();
 
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	
@@ -58,12 +62,12 @@ public:
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
-	const list<CGameObject*>*				GetTraceObejectList();
-
 	virtual void							Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
 
 private:
 	CAISenceComponent*						m_pAISenceCom = { nullptr };
+	CTargetComponent*						m_pTargetCom = { nullptr };
+	CDropComponent*							m_pDropCom = { nullptr };
 	CAIController*							m_pAIController = { nullptr };
 
 	_uint									m_iMonsterID = {};
@@ -88,6 +92,7 @@ private:
 
 	size_t									m_iNumCandidate = {};
 	vector<const CHARACTER_SKILL_DESC*>		m_SkillCandidates = {};
+	vector<CBullet*>						m_pBulletList = {};
 
 private :
 	HRESULT									Ready_CharacterData();
@@ -100,7 +105,9 @@ private :
 	void									VisibleStatusUI(_float fTimeDelta);
 	
 #pragma region Notify Event
-	void							CreateHitBox(const AnimNotify* pNotify);
+	void									CreateHitBox(const AnimNotify* pNotify);
+	void									SpawnObject(const AnimNotify* pNotify);
+	void									ShootProjectile(const AnimNotify* pNotify);
 #pragma endregion
 
 #pragma region Damage Logic

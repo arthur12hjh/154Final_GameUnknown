@@ -6,7 +6,6 @@
 
 #include "Nayitba.h"
 #include "GameManager.h"
-#include "TargetComponent.h"
 
 #pragma region State
 #include "MonsterIdleState.h"
@@ -45,9 +44,6 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
 	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	auto pDefaultData = pNayitba->GetStaticMonsterData();
 	m_pOwnerData = &pNayitba->GetMonsterData();
@@ -77,7 +73,7 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
 				M_TranslationState.szTranslationAnimName = "_BattleStart";
 				M_TranslationState.szNextStateName = TEXT("Idle");
-				M_TranslationState.pTarget = m_pTargetCom->GetTarget();
+				M_TranslationState.pTarget = pNayitba->GetTarget();
 				M_TranslationState.CompletedFunc = [&](const WCHAR* szNextStateName, void* pArg)
 					{
 						m_pFSM->Change_State(szNextStateName, pArg);
@@ -169,7 +165,6 @@ void CMonsterMimesisController::Damage(void* pArg)
 				m_bIsMimesis = false;
 
 			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
-			m_pGameInstance->GamePauseDurationTime(0.3f, 0.8f, 5.f);
 		}
 			
 	}
@@ -178,23 +173,6 @@ void CMonsterMimesisController::Damage(void* pArg)
 void CMonsterMimesisController::ActionSuccess(void* pArg)
 {
 	m_pFSM->Change_State(TEXT("ActionSuccess"), pArg, true);
-}
-
-HRESULT CMonsterMimesisController::Ready_Components()
-{
-	// 여기서 타겟 컴포넌트 만들어서 붙이자
-
-	/* 시야 센서가 Controller에 달려있어야하나?*/
-	CTargetComponent::TARGET_COMPONENT_DESC TargetComDesc = {};
-	TargetComDesc.fRadius = 3.f;
-	TargetComDesc.iNumPoints = 10.f;
-
-	/* Prototype_Component_TargetComponent */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TargetComponent"),
-		TEXT("Com_TargetCom"), reinterpret_cast<CComponent**>(&m_pTargetCom), &TargetComDesc)))
-		return E_FAIL;
-
-	return S_OK;
 }
 
 HRESULT CMonsterMimesisController::Ready_FSM()
@@ -248,8 +226,9 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
-	m_pTargetCom->Target_Search(pNayitba->GetTraceObejectList());
-	auto pTarget = m_pTargetCom->GetTarget();
+	auto pTarget = pNayitba->GetTarget();
+	if (nullptr == pTarget)
+		return;
 
 	_vector vOwnerPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
 	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -328,12 +307,13 @@ void CMonsterMimesisController::DelayAction(_float fDelayTime)
 
 void CMonsterMimesisController::MoveAction(_bool bIsTarget)
 {
+	auto pNayitba = static_cast<CNayitba*>(m_pParent);
 	CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
 	//MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
 	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };
 
 	if (bIsTarget)
-		MoveStateDesc.pTarget = m_pTargetCom->GetTarget();
+		MoveStateDesc.pTarget = pNayitba->GetTarget();
 	else
 		MoveStateDesc.pTarget = nullptr;
 
@@ -367,5 +347,4 @@ void CMonsterMimesisController::Free()
 	__super::Free();
 
 	Safe_Release(m_pFSM);
-	Safe_Release(m_pTargetCom);
 }

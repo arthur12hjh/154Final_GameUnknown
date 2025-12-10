@@ -20,6 +20,11 @@
 
 #include "GameInstance.h"
 
+
+#pragma region Item
+#include "Item.h"
+#pragma endregion
+
 #pragma region PLAYER
 #include "PlayerFSM.h"
 #include "Body_Player.h"
@@ -27,6 +32,10 @@
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
 #include "CameraBone_Player.h"
+#pragma endregion
+
+#pragma region Bullet
+#include "Bullet_Rock.h"
 #pragma endregion
 
 #pragma region Monster
@@ -46,6 +55,7 @@
 #pragma region Client Component
 #include "Interaction_Component.h"
 #include "TargetComponent.h"
+#include "DropComponent.h"
 #include "AISenceComponent.h"
 #pragma endregion
 
@@ -118,10 +128,29 @@
 #include "CM_Rock14.h"
 #include "InstanceModel.h"
 #pragma endregion
+#pragma region Map_Desert
+#include "Canyon.h"
+#include "Building_Ruin.h"
+#include "Terrain_Desert.h"
+#include "Instance_Desert.h"
+#include "Lift_Body.h"
+#include "Lift_Controller.h"
+#include "Lift_Platform.h"
+#include "Iron_Floor.h"
+#include "Deco.h"
+#include "Corpse.h"
+#include "Chair.h"
+#include "SciFi_Door.h"
+#include "Container.h"
+#include "Top_Roof.h"
+#include "RepairConsole.h"
+#include "VendingMachine.h"
+#pragma endregion
 
 #include "Instance_Model.h"
 #include "PxTestProp.h"
 
+#pragma region UI Header
 #include "UIWrapper.h"
 #include "UIPanel.h"
 #include "UIButton.h"
@@ -155,26 +184,7 @@
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
-
-#pragma region Map_Desert
-#include "Canyon.h"
-#include "Building_Ruin.h"
-#include "Terrain_Desert.h"
-#include "Instance_Desert.h"
-#include "Lift_Body.h"
-#include "Lift_Controller.h"
-#include "Lift_Platform.h"
-#include "Iron_Floor.h"
-#include "Deco.h"
-#include "Corpse.h"
-#include "Chair.h"
-#include "SciFi_Door.h"
-#include "Container.h"
-#include "Top_Roof.h"
-#include "RepairConsole.h"
-#include "VendingMachine.h"
 #pragma endregion
-
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -315,9 +325,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	_matrix PreMatrix = XMMatrixScaling(0.03, 0.03, 0.03) * XMMatrixRotationY(XMConvertToRadians(270.f));
 
-	//                        "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", 
-	//                        "../Bin/Resources/Models/Character/PC/Eve/CH_P_Eve_CombinedAnimationTest.bin", 
-
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
 
@@ -391,13 +398,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* For.Prototype_Component_Texture_Sky1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sky"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Terrain */
@@ -601,12 +608,12 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Texture_Terrain_Mask */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Mask");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1);
+	/* For.Prototype_GameObject_ItemObject */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GamePlay_ItemObject");
+	pProtoDesc.pPrototype = CItem::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
@@ -615,24 +622,17 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Texture_Snow */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Snow");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_Component_Texture_Sky */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
 	/* For.Prototype_Component_Model_Moon */
 	_matrix PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(0.0001f, 0.0001f, 0.0001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Item");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Item/Glod/Gold.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -643,20 +643,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_Component_Texture_Explosion*/
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_Component_Texture_Explosion_Test*/
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Explosion_Test");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Test.png"), 1);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
@@ -669,7 +655,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_CameraBone */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CameraBone");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Camera/CameraBone.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Camera/CameraBone.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -798,7 +784,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_Interaction_Vending7A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/VendingMachine/VendingMachine_7A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/VendingMachine/VendingMachine_7A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -806,7 +792,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_Interaction_Chair117 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/Chair/Chair117_C.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Interaction/Chair/Chair117_C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -862,7 +848,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	///* For.Prototype_Component_Model_Prob_Vending */
 	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Prob_Vending");
-	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Prob/Vending/Vending.fbx", PreTransformMatrix);
+	//pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Prob/Vending/Vending.binx", PreTransformMatrix);
 	//if (nullptr == pProtoDesc.pPrototype)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
@@ -899,40 +885,12 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_GameObject_Snow */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Snow");
-	pProtoDesc.pPrototype = CSnow::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_GameObject_Explosion */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Explosion");
-	pProtoDesc.pPrototype = CExplosion::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
-	/* For.Prototype_GameObject_Sprite_Explosion */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sprite_Explosion");
-	pProtoDesc.pPrototype = CSpriteEffect::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Test_InstanceModel");
 	pProtoDesc.pPrototype = CInstance_Model::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_ForkLift */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ForkLift");
-	pProtoDesc.pPrototype = CForkLift::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
 
 	/* For.Prototype_GameObject_PxTestProp */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_PxTestProp");
@@ -1174,9 +1132,19 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Shock */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Shock_Final");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Shock_Final.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Effect_Parrying */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Parrying");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Parrying.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Perfect_Parrying */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Perfect_Parrying");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Perfect_Parrying.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Sand_Hit */
@@ -1197,6 +1165,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Stone_Shrowing.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Stone_Shrowing */
+	// 고릴라가 던지는 돌에 붙이는 이펙트
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Stone_Floor_Shrowing");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Stone_Floor_Shrowing.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	
 	/* For.Prototype_Component_Effect_Sword_TakeIn */
 	// 검 집어 넣었을때 나오는 파티클
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_TakeIn");
@@ -1221,10 +1195,32 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SlashBlood.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Monster_Club */
+	// 몬스터 둔기 피 이펙트
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Club");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Club.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_TrailEffect_Test */
+	/* For.Prototype_Component_Effect_Blood_Hit */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blood_Hit");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Monster_Sting */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
+	/* For.Prototype_Component_TrailEffect_Default_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
 	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
+	/* For.Prototype_Component_TrailEffect_Monster_Slash */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Monster_Slash");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Monster_Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	//Desc->OnCompleted(this_thread::get_id());
@@ -1811,6 +1807,8 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+
 	/* For.Prototype_GameObject_Stone2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone2");
 	pProtoDesc.pPrototype = CStone2::Create(m_pDevice, m_pContext);
@@ -2105,7 +2103,21 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	//Desc->OnCompleted(this_thread::get_id());
+	/* For.Prototype_Bullet_Rock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_RockBullet");
+	pProtoDesc.pPrototype = CBullet_Rock::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+
+	/* For.Prototype_GameObject_DropComponent */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_DropComponent");
+	pProtoDesc.pPrototype = CDropComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
@@ -2887,6 +2899,61 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Building_4B */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Building_4B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Building/Building_4B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Building_4C */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Building_4C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Building/Building_4C.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Building_4D */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Building_4D");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Building/Building_4D.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1A */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1A.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1B */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1F */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1F");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1F.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1H */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1H");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1H.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_Deco */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Deco");
@@ -3297,7 +3364,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_A.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3305,7 +3372,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_B");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_B.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3313,7 +3380,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_C");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_C.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_C.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3321,7 +3388,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_D");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_D.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_D.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3329,7 +3396,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_E */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_E");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_E.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_E.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3337,7 +3404,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_F */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_F");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_F.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_F.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3408,7 +3475,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_A_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_A_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_A_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_A_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3416,7 +3483,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_B_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_B_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_B_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3424,7 +3491,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_C_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_C_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_C_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_C_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3432,7 +3499,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_D_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_D_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_D_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_D_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3440,7 +3507,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_E_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_E_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_E_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_E_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3448,7 +3515,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Floor7_F_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Floor7_F_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_F_COL.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Floor/Floor7_F_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

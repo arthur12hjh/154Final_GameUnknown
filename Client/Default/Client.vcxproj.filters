@@ -730,6 +730,18 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Container">
       <UniqueIdentifier>{d6e42e5b-06f0-4256-92f6-dc60f4455149}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet">
+      <UniqueIdentifier>{ec9b7d15-17db-4e16-b960-8063e0c4b96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Rock">
+      <UniqueIdentifier>{9b88c08a-d17f-4b8d-ac77-d57362bc0f63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Item">
+      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\DropComponent">
+      <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1477,6 +1489,18 @@
     <ClInclude Include="..\Public\Top_Roof.h">
       <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bullet_Rock.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02.GameObjects\Actor\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bullet.h">
+      <Filter>02.GameObjects\Actor\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DropComponent.h">
+      <Filter>05.Component\DropComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2194,6 +2218,18 @@
     <ClCompile Include="..\Private\Container.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Container</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Bullet_Rock.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02.GameObjects\Actor\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bullet.cpp">
+      <Filter>02.GameObjects\Actor\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DropComponent.cpp">
+      <Filter>05.Component\DropComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
@@ -2235,7 +2271,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
@@ -2246,6 +2281,9 @@
       <Filter>97.ShaderFiles\ComputeShader\Cull</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

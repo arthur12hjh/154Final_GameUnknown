@@ -28,16 +28,20 @@ public:
 	virtual HRESULT					Render() override;
 
 	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
+	const INTERACTION_DATA*			Get_InterDesc() { return &m_tInterDesc; }
+
+	const CInteraction_Component*	Get_InterCom() { return m_pInteractionCom; }
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
-
 	CInteraction_Component*			m_pInteractionCom = { nullptr };
-	_bool							m_bIsInteractionAble = { false };
 
 	CUIBase*						m_pInteractionUI = { nullptr };
 	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
 	_float2							m_fInteractionDuration = {};
+
+	INTERACTION_DATA				m_tInterDesc{};
+	_int							m_iInterID{-1};
 
 protected :
 	virtual HRESULT					Begin_OverlapCallBack() = 0;

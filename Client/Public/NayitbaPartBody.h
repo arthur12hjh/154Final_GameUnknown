@@ -1,9 +1,13 @@
 #pragma once
 #include "Client_Defines.h"
 #include "PartObject.h"
+NS_BEGIN(Engine)
+class CTexture;
+NS_END
 
 NS_BEGIN(Client)
 class CEffect;
+class CTrailEffect;
 class CNayitbaPartBody final : public CPartObject
 {
 public :
@@ -11,6 +15,12 @@ public :
 	{
 		const WCHAR*				szBodyModel;
 	}NAYITBA_PART_BODY_DESC;
+	typedef struct NayitbaTrailDesc
+	{
+		CTrailEffect*	pTrailEffect = {};
+		_bool			bisPlay = false;
+		const _float4x4* pRootMatrix = nullptr;
+	}NAYITBA_TRAIL_DESC;	
 
 private:
 	CNayitbaPartBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -29,11 +39,17 @@ public:
 	virtual HRESULT					Render_Shadow() override;
 
 	virtual void					Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+	void							Play_DeadEffect();
 
 private:
-	CCollider*						m_pColliderCom = { nullptr };
-	vector<pair<CEffect*, _int>>			m_pEffects = {};
-	_bool							m_isAnimFinish = { false };
+	CCollider*											m_pColliderCom = { nullptr };
+
+	vector<pair<CEffect*, _int>>						m_pEffects = {};
+	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
+	
+	CTexture*											m_pTexture = {};
+	_bool												m_isDeadEffect = { false };
+	_float												m_fDeadTime = {};
 
 private:
 	HRESULT							Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc);

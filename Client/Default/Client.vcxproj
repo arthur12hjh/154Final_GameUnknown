@@ -158,6 +158,8 @@
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
+    <ClInclude Include="..\public\Bullet.h" />
+    <ClInclude Include="..\public\Bullet_Rock.h" />
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
@@ -176,9 +178,11 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
+    <ClInclude Include="..\public\DropComponent.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
+    <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Level_Scarlet.h" />
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
@@ -403,6 +407,8 @@
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
+    <ClCompile Include="..\private\Bullet.cpp" />
+    <ClCompile Include="..\private\Bullet_Rock.cpp" />
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
@@ -421,9 +427,11 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
+    <ClCompile Include="..\private\DropComponent.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\private\Level_Scarlet.cpp" />
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
