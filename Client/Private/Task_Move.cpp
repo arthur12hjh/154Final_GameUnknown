@@ -116,7 +116,7 @@ void CTask_Move::Refresh_MovePoint()
 	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
 
 	m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
-	if (fDistance < fATKRange * 1.5f)
+	if (fDistance < fATKRange * 2.f)
 	{
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 		if (50 > fRandomIndex)

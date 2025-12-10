@@ -56,7 +56,7 @@ private :
 	void								BackStepPattern();
 	//void								BboyStepPattern();
 
-	void								SelectRandomPattern();
+	void								SelectRandomPattern(_bool bIsBeta = false);
 #pragma endregion
 
 	_bool								AttackMoveAction(_float fTimeDelta);
