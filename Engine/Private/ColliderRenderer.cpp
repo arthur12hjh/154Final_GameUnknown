@@ -32,7 +32,6 @@ HRESULT CColliderRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pSha
         return S_OK;
 
     m_PxShapes.push_back(make_pair(pActor, pShape));
-
     return S_OK;
 }
 
@@ -144,10 +143,10 @@ void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 
     for (auto& Pair : m_PxShapes)
     {
-        const _char* pActorName = Pair.first->getName();
+        if (nullptr == Pair.second || nullptr == Pair.first)
+            continue;
 
-        if (nullptr != pActorName && strcmp(Pair.first->getName(), "TERRAIN") == 0)
-            continue; 
+        const _char* pActorName = Pair.first->getName();
 
         PxGeometryHolder Geometry = Pair.second->getGeometry();
         PxTransform PhysxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);

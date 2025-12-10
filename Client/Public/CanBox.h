@@ -9,6 +9,12 @@ NS_END
 NS_BEGIN(Client)
 class CCanBox final : public CProb_Interaction
 {
+public:
+	enum CANBOX_STATE
+	{
+		OPEN, END
+	};
+
 private:
 	CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCanBox(const CCanBox& Prototype);

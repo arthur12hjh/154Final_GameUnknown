@@ -47,7 +47,6 @@ void CProb_Destory::Late_Update(_float fTimeDelta)
 	{
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);

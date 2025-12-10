@@ -235,15 +235,17 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 #endif
 
 	m_pInteract_Manager->Update();
+
+
 	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ÇØ¼­ •û°í
-
-	m_pRenderer->Update(fTimeDelta);
-
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
 	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
+	m_pRenderer->Update(fTimeDelta);
+
 	m_pThreadPool->Update_Async();
 	m_pLevel_Manager->Update(fTimeDelta);
+
 	m_fTimeAcc += fTimeDelta;
 }
 

@@ -33,7 +33,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 		return E_FAIL;
 
     m_eInterState = INTERACTION_STATE::DEFAULT;
-    m_pModelCom->Set_AnimationIndex(1, false);
+    m_pModelCom->Set_AnimationIndex(END, false);
 
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;
@@ -69,8 +69,6 @@ void CCanBox::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);

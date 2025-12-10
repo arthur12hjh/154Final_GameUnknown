@@ -359,6 +359,15 @@
     <ClInclude Include="..\Public\Emissive.h">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Physx_FilterShader.h">
+      <Filter>01.Utility\17.Physx\FilterShader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTQueryFilterCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysxSceneEventCallback.h">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -690,6 +699,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Emissive.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Physx_FilterShader.cpp">
+      <Filter>01.Utility\17.Physx\FilterShader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTQueryFilterCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysxSceneEventCallback.cpp">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1094,6 +1112,15 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\Blur\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\FilterShader">
+      <UniqueIdentifier>{5c39fd1e-1d94-4fe1-abfa-4368b4e262fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback">
+      <UniqueIdentifier>{4485119a-22b1-4fe0-bbd4-f2c184d9123d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\SceneEventCallback">
+      <UniqueIdentifier>{67b0a986-efab-42e5-8bf7-1dfb2b40fa33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -49,10 +49,6 @@ void CPxTestProp::Update(_float fTimeDelta)
 void CPxTestProp::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::BLEND, this);
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
-#endif
 }
 
 HRESULT CPxTestProp::Render()
