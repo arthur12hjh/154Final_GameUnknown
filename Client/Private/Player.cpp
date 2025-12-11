@@ -167,33 +167,13 @@ void CPlayer::Update(_float fTimeDelta)
 
 	Update_TestLogic(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
-	Update_BetaSkill();
+	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
+	Update_Interaction(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
 		Use_RushSkill();
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
-
-		if (nullptr != pInteractionCom)
-		{
-			PLAYER_TRANSITION_DESC Desc;
-			Desc.eNextState = PLAYER_STATE::SMALLBOX_INTERACTION;
-			Desc.isChangeMode = false;
-			Desc.pArg = pInteractionCom;
-
-			// Transition 너무 이곳저곳에서 일어나지 않나?..
-			// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
-			// 제어가 안될 것까진 없다고 봄.. 
-			m_pFSM->Handle_Transition(Desc);
-		}
-		
-		// 얘는 인터랙션 상태 내부에서 처리.
-		// pInteractionCom->Action_InteractionEvent(this);
-	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -486,7 +466,8 @@ void CPlayer::Update_RushSkill(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Update_BetaSkill()
+//베타스킬 상태 변경
+void CPlayer::Update_BetaSkill(_float fTimeDelta)
 {
 	_uint iIdx = 0;
 
@@ -505,6 +486,54 @@ void CPlayer::Update_BetaSkill()
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+	}
+}
+
+//인터랙션 관련 처리 (키입력)
+void CPlayer::Update_Interaction(_float fTimeDelta)
+{
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+
+		if (nullptr == pInteractionCom)
+			return;
+
+		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+
+		const INTERACTION_DATA* pInteractionData = pInteractionObject->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionObject->Get_InterState();
+
+		switch (InteractionState)
+		{
+		case INTERACTION_STATE::DEFAULT:
+		case INTERACTION_STATE::ACTIVE:
+		case INTERACTION_STATE::CONTACT:
+		{
+			switch (pInteractionData->eType)
+			{
+			// 만약 서플라이 박스라면 (발로 차는 모션)
+			case INTERACTION_TYPE::SUPPLY_BOX:
+			{
+				PLAYER_TRANSITION_DESC Desc;
+				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
+				Desc.isChangeMode = false;
+				Desc.pArg = pInteractionCom;
+
+				// Transition 너무 이곳저곳에서 일어나지 않나?..
+				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
+				// 제어가 안될 것까진 없다고 봄..
+				m_pFSM->Handle_Transition(Desc);
+				break;
+			}
+			}
+		}
+		// 끝났거나 잠겨있다면, 그냥 Break 처리.
+		// 디폴트여도 상호작용은 안되니까 Break 처리.
+		case INTERACTION_STATE::LOCK:
+		case INTERACTION_STATE::END:
+			break;
+		}
 	}
 }
 

@@ -1495,7 +1495,7 @@
     <ClInclude Include="..\Public\Desert_Architecture.h">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h">
+    <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2137,9 +2137,6 @@
     <ClCompile Include="..\Private\Lift_Controller.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClCompile>
@@ -2224,8 +2221,11 @@
     <ClCompile Include="..\Private\Desert_Architecture.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp">
+    <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
