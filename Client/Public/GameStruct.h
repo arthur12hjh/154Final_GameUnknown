@@ -22,13 +22,6 @@ namespace Client
 		RECOVERY_END
 	};
 
-	enum class INTERACTION_STATE {
-		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
-		CONTACT,	// 접촉해서 사용작용 가능한 녀석
-		LOCK,		// 상호작용 할수없음
-		ACTIVE,		// 상호작용 하는중
-		END			// 더이상 앞으로도 네버 상호작용 불가능
-	};
 
 	typedef struct Default_Status
 	{
@@ -169,17 +162,16 @@ namespace Client
 		// Bit Mask ex 
 		// All Property : 31
 		// Parry & Eavde : 3
-		PARRYABLE		= 0b00000001, // 1  <- 패링가능
-		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
-		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
-		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
-		EXCUTION		= 0b00010000, // 16 <- 처형
-		GUARD			= 0b00100000, // 32 <- 가드
-		PARRY			= 0b01000000, // 64 <- 가드
+		PARRYABLE				= 0b00000001, // 1  <- 패링가능
+		EVADEABLE				= 0b00000010, // 2  <- 회피 가능
+		BLINKABLE				= 0b00000100, // 4  <- 블링크 가능
+		SUPERARMOR				= 0b00001000, // 8  <- 슈퍼아머
+		EXCUTION				= 0b00010000, // 16 <- 처형
+		GUARD					= 0b00100000, // 32 <- 가드
+		PARRY					= 0b01000000, // 64 <- 패링
+		IGNORE_GUARDBREAK		= 0b10000000, // 128 <- 가드 파괴
 		END
 	};
-
-
 
 	typedef struct Character_Skill_Desc
 	{
@@ -247,6 +239,7 @@ namespace Client
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
+		float				fLerpRatio;
 		_float3				fColliderExtents;
 
 		//여기서 사용하는 스킬 정보
@@ -334,6 +327,14 @@ namespace Client
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, END };
+	enum class INTERACTION_STATE {
+		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
+		CONTACT,	// 접촉해서 사용작용 가능한 녀석
+		LOCK,		// 상호작용 할수없음
+		ACTIVE,		// 상호작용 하는중
+		END			// 더이상 앞으로도 네버 상호작용 불가능
+	};
 
 	typedef struct Interaction_Data
 	{
@@ -341,6 +342,6 @@ namespace Client
 		char				szObjectTag[256];
 		char				szInteractionText[256];
 		_float3				vUIPivot;
-
+		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
 }

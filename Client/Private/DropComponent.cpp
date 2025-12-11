@@ -89,6 +89,7 @@ void CDropComponent::CreateObjectToLayer()
     for (auto& iter : m_DropResultList)
     {
         CItem::ITEM_DESC ItemDesc = {};
+        ItemDesc.iInteractionID = 0;
         ItemDesc.bIsApplyTransform = true;
         ItemDesc.vScale = { 1.f, 1.f, 1.f };
         //ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),

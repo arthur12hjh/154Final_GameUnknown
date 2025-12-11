@@ -581,7 +581,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 
 		m_pFSM->Handle_Transition(Desc);
-		m_pGameInstance->Shake(0.2f, 0.2f);
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
 	}
 }
 

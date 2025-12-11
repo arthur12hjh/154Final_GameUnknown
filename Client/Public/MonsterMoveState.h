@@ -8,6 +8,7 @@ NS_END
 
 NS_BEGIN(Client)
 struct Naytiba_Desc;
+struct Naytiba_NetWork_Desc;
 
 class CMonsterMoveState final : public CState
 {
@@ -34,6 +35,7 @@ public:
 	virtual		void							End() override;
 
 private:
+	const Naytiba_NetWork_Desc*					m_pInitOwnerInfo = { nullptr };
 	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
 	CGameObject*								m_pTarget = { nullptr };
 

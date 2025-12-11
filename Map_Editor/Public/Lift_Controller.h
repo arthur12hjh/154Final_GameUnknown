@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Maptool_Defines.h"
-#include "DesertObject.h"
+#include "Interaction.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -11,7 +11,7 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CLift_Controller final : public CDesertObject
+class CLift_Controller final : public CInteraction
 {
 public:
 	enum LIFT_STATE
@@ -35,7 +35,6 @@ public:
 private:
 	LIFT_STATE m_eCurState = { LIFT_STATE::LIFT_END };
 	LIFT_STATE m_ePrevState = { LIFT_STATE::LIFT_END };
-	CCollider* m_pColliderCom = { nullptr };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
@@ -43,7 +42,7 @@ private:
 
 public:
 	static CLift_Controller* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CDesertObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

@@ -59,8 +59,8 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
-	_float fAttackSpeed = m_pGameInstance->Random(1.3f, 1.6f);
-	pEntity->Set_Animation(m_szAnimationName.c_str(), false, fAttackSpeed);
+	m_fAttackPlayRate = m_pGameInstance->Random(1.3f, 1.6f);
+	
 }
 
 void CMonsterAttackState::Update(_float fTimeDelta)
@@ -82,9 +82,16 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 		case 5:
 			StatueBPattern(fTimeDelta);
 			break;
+		case 6:
+			SunFlowerPattern(fTimeDelta);
+			break;
+		case 7:
+			Minion11Pattern(fTimeDelta);
+			break;
 		}	
 	}
 
+	pEntity->Set_Animation(m_szAnimationName.c_str(), false, 1.f, m_StaticMonsterData->fLerpRatio);
 	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
 
 	if (m_bIsFinished)
@@ -111,6 +118,8 @@ void CMonsterAttackState::ReadySetting()
 	case 2:
 	case 4:
 	case 5:
+	case 6:
+	case 7:
 	{
 		_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 		_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -352,6 +361,74 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		if (0.3f <= fAnimPlayRatio && 0.35f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.35f;
+			fSpeed = m_fMoveSpeed - 1.f;
+			bMoveAction = true;
+		}
+	}
+
+	if (bMoveAction)
+		LerpMoveAction(fTimeDelta, fSpeed);
+}
+
+void CMonsterAttackState::SunFlowerPattern(_float fTimeDelta)
+{
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
+	_float fSpeed = m_fMoveSpeed;
+	_bool bMoveAction = false;
+
+	if (631 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 42
+		if (0.58f <= fAnimPlayRatio && 0.7f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.7f;
+			fSpeed = m_fMoveSpeed - 1.f;
+			bMoveAction = true;
+		}
+	}
+	else if (632 == m_pSkillData->iSkillID)
+	{
+		
+		// 0 ~75
+		if (0.25f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.25f;
+			fSpeed = m_fMoveSpeed - 1.f;
+			bMoveAction = true;
+		}
+
+		// 0 ~ 75 È¸Àü
+		// 120 ~ 230
+		if (0.4f <= fAnimPlayRatio && 0.76f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.76f;
+			fSpeed = m_fMoveSpeed - 1.f;
+			bMoveAction = true;
+		}
+	}
+
+	if (bMoveAction)
+		LerpMoveAction(fTimeDelta, fSpeed);
+}
+
+void CMonsterAttackState::Minion11Pattern(_float fTimeDelta)
+{
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+
+	_float fSpeed = m_fMoveSpeed;
+	_bool bMoveAction = false;
+
+	if (732 == m_pSkillData->iSkillID)
+	{
+		// 150 ~ 175
+		if (0.58f <= fAnimPlayRatio && 0.7f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.7f;
 			fSpeed = m_fMoveSpeed - 1.f;
 			bMoveAction = true;
 		}

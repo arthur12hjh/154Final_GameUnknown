@@ -26,8 +26,6 @@ HRESULT CItem::Initialize_Prototype()
 
 HRESULT CItem::Initialize(void* pArg)
 {
-	m_iInterID = 0;
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 

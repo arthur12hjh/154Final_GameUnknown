@@ -27,7 +27,7 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 
     CNayitba* pOwner = static_cast<CNayitba*>(m_pOwner);
     m_pTarget = pMoveStateDesc->pTarget;
-    auto pOwnerStaticInfo = pOwner->GetStaticMonsterData();
+    m_pInitOwnerInfo = pOwner->GetStaticMonsterData();
     m_pOwnerInfo = &pOwner->GetMonsterData();
     m_OnMoveCompleted = pMoveStateDesc->OnMoveCompleted;
 
@@ -62,7 +62,7 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
             AnimationName += "_Run_S";
             m_bIsEnableChange = false;
             m_bIsCaution = false;
-            pOwner->Set_Animation(AnimationName.c_str(), false, 1.5f);
+            pOwner->Set_Animation(AnimationName.c_str(), false, 1.5f, 0.24f);
         }
         else
         {
@@ -181,7 +181,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     if (nullptr == m_pTarget)
         return;
 
-    pEntity->Set_Animation(AnimationName.c_str());
+    pEntity->Set_Animation(AnimationName.c_str(), true, 1.f, m_pInitOwnerInfo->fLerpRatio);
     pEntity->Play_Animation(fTimeDelta);
     
     // 애니메이션 속도 제어하는거 지금 되긴하는데 그거 테스트하면서
@@ -259,7 +259,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         }
     }
 
-    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, 0.08f);
+    pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, m_pInitOwnerInfo->fLerpRatio);
     pEntity->Play_Animation(fTimeDelta);
 
     if (pEntity->IsAnmiationFinished())

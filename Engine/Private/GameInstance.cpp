@@ -908,7 +908,7 @@ _bool CGameInstance::IsWorkThread()
 #pragma endregion
 
 #pragma region Camera Manager
-void CGameInstance::Shake(_float fShakeTime, _float fIntensity)
+void CGameInstance::Shake_Camera(_float fShakeTime, _float fIntensity)
 {
 	return m_pCameraManager->Shake(fShakeTime, fIntensity);
 }

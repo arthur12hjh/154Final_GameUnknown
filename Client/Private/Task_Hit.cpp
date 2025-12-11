@@ -100,6 +100,7 @@ void CTask_Hit::Refresh_HitMotion()
 	}
 
 	m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
+	m_pBlackBoard->SetAttackData(nullptr);
 	m_pBlackBoard->SetHitData(nullptr);
 }
 

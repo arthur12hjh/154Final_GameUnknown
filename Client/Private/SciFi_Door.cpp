@@ -19,12 +19,11 @@ HRESULT CSciFi_Door::Initialize_Prototype()
 
 HRESULT CSciFi_Door::Initialize(void* pArg)
 {
-	m_iInterID = 4;
-
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+	static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 4;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 

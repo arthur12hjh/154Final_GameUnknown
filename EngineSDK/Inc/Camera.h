@@ -55,7 +55,7 @@ protected:
 #pragma endregion
 
 protected:
-	HRESULT Bind_Matrices();
+	HRESULT Bind_Matrices(_float fTimeDelta);
 
 
 public:

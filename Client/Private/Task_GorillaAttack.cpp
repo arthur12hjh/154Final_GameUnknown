@@ -37,11 +37,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || 
 		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
 	{
-		while (!m_pSkillData.empty())
-			m_pSkillData.pop();
-
-		Compute_AttackCoolTime(true);
-		m_pBlackBoard->SetAttackData(nullptr);
+		ResetAttackTask();
 		return NODE_STATE::FAIL;
 	}
 
@@ -50,8 +46,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
 		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 	{
-		while (!m_pSkillData.empty())
-			m_pSkillData.pop();
+		ResetAttackTask(false);
 	}
 
 	if (nullptr == m_pBlackBoard->GetAttackData())
@@ -82,26 +77,29 @@ void CTask_GorillaAttack::SelectRandomPattern(_bool bIsBeta)
 {
 	// 여기서 거리가 일단 멀어지면 날라오거나
 	// 돌을 던지는 패턴을 하자
+	const CHARACTER_SKILL_DESC* SKill_Desc = {};
+	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
 	if (bIsBeta)
 	{
-		auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
-		m_pSkillData.push(pBetaSkill);
-		if (11 == pBetaSkill->iSkillID)
-			m_pSkillData.push(m_pGameManager->Find_SkillData(14));
+		// 5, 6, 11
+		if (30 >= fRandom)
+			SKill_Desc = m_pGameManager->Find_SkillData(5);
+		else if(60 >= fRandom)
+			SKill_Desc = m_pGameManager->Find_SkillData(6);
+		else
+			SKill_Desc = m_pGameManager->Find_SkillData(11);
 	}
 	else
 	{
-		if (30 >= m_pGameInstance->Random(0.f, 100.f))
-			m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
+		if (30 >= fRandom)
+			SKill_Desc = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL));
 		else
-		{
-			auto pBetaSkill = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
-			m_pSkillData.push(pBetaSkill);
-			if (11 == pBetaSkill->iSkillID)
-				m_pSkillData.push(m_pGameManager->Find_SkillData(14));
-		}
+			SKill_Desc = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL));
 	}
 	
+	m_pSkillData.push(SKill_Desc);
+	if (11 == SKill_Desc->iSkillID)
+		m_pSkillData.push(m_pGameManager->Find_SkillData(14));
 
 	SelectAttack();
 }
@@ -506,6 +504,15 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
+}
+
+void CTask_GorillaAttack::ResetAttackTask(_bool bIsCoolTime)
+{
+	if(bIsCoolTime)
+		Compute_AttackCoolTime(true);
+
+	while (!m_pSkillData.empty())
+		m_pSkillData.pop();
 }
 
 CTask_GorillaAttack* CTask_GorillaAttack::Create(CBehaviorTree* pOwnerTree)
