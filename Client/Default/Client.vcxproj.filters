@@ -739,6 +739,9 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
       <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn">
+      <UniqueIdentifier>{67890273-70b8-4770-bff7-c4c9ad815e04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1498,6 +1501,9 @@
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UILockOn.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2223,6 +2229,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UILockOn.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Platform.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>

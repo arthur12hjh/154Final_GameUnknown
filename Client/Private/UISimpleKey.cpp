@@ -82,11 +82,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					WCHAR szText[MAX_PATH] = {};
 					CStringHelper::ConvertUTFToWide(InteractionObject->Get_InterDesc()->szInteractionText, szText);
 					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
-					//pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = pHUD->UTF8ToWString(pOwner->Get_InterDesc()->szInteractionText);
-
-					/*WCHAR szText[MAX_PATH]{};
-					CStringHelper::ConvertUTFToWide(pOwner->Get_InterDesc()->szInteractionText, szText);
-					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;*/
 					Safe_Release(pUIText);
 				}
 
