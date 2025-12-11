@@ -231,19 +231,18 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 
 HRESULT CLift_Controller::Bind_ShaderResources()
 {
-	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
-	if (m_bIsControllLift)
+	if(!m_bIsControllLift || nullptr == m_pLiftPlatform)
+	{
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+			return E_FAIL;
+	}
+	else
 	{
 		if (m_pLiftPlatform)
 		{
 			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedMatrix)))
 				return E_FAIL;
 		}
-	}
-	else
-	{
-		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-			return E_FAIL;
 	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))

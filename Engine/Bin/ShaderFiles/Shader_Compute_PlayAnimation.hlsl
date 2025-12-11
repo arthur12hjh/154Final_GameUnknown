@@ -331,7 +331,7 @@ void LocalMatrices(uint3 gid : SV_GroupID,
         float4x4 R = MakeRotationMatrix(vRotationLocal);
         float4x4 T = MakeTranslationMatrix(float4(vTranslationLocal, 1.f));
 
-        matLocalSkin = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio); //mul(mul(S, R), T);
+        matLocalSkin = mul(mul(S, R), T);
     }
     
     g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = matLocalOriginal;
