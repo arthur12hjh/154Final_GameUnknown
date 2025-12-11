@@ -28,11 +28,9 @@ public:
 	_bool Use_RushSkill();
 
 
-	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
-	virtual void					Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
-
-
-	virtual HRESULT					CallNotify(_uint iNotiType, const AnimNotify* pNotify);
+	virtual void	 Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+	virtual void	 Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
+	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
 
 public:
@@ -79,6 +77,7 @@ private:
 	void Update_RushSkill(_float fTimeDelta);
 	void Update_BetaSkill(_float fTimeDelta);
 	void Update_Interaction(_float fTimeDelta);
+	void Update_PotionUse(_float fTimeDelta);
 
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
 	void CreateHitBox(const AnimNotify* pNotify);

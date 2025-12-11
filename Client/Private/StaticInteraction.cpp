@@ -49,7 +49,7 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        m_pInteractionCom->Update_Com();
+        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
@@ -72,7 +72,7 @@ HRESULT CStaticInteraction::Render()
             return E_FAIL;
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
-        if (FAILED(m_pShaderCom->Begin(3)))
+        if (FAILED(m_pShaderCom->Begin(0)))
             return E_FAIL;
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;

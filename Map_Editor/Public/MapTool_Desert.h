@@ -38,6 +38,7 @@ public:
 	{
 		_bool			bIsControllerType = false;
 		_uint			iPlatformID = 0;
+		_uint 			iPosition = 0;
 	}SAVED_LIFT_CONTROLLER_INFO;
 
 	typedef struct SavedLiftPlatformInfo:SavedObjectInfo
@@ -166,6 +167,7 @@ private:
 	// 리프트 변수용 
 	_float m_fPlatformMoveDistance = { 0.f };
 	_int m_iPlatformID = { 0 };
+	_int m_iPosition = { 0 };
 	_bool m_bIsLiftControllerType = { false };
 
 	_bool m_bShowLiftControllerWindow = { false };

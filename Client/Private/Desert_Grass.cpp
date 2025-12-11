@@ -39,7 +39,6 @@ void CDesert_Grass::Update(_float fTimeDelta)
 
 void CDesert_Grass::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
@@ -49,22 +48,22 @@ HRESULT CDesert_Grass::Render()
 		return E_FAIL;
 
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
-	for (_uint i = 0; i < iNumMeshes; i++)
+	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
+	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+			return E_FAIL;
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -81,7 +80,7 @@ HRESULT CDesert_Grass::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Instance_Model"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
