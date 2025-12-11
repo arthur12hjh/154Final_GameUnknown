@@ -181,7 +181,7 @@
 #include "UIBossName.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
-
+#include "UILockOn.h"
 #include "UIGetterQueue.h"
 
 #pragma endregion
@@ -4273,6 +4273,27 @@ HRESULT CLoader::Loading_UI_For_World(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_KeyIcon_Mouse */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_KeyIcon_Mouse");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Shadow_Ball */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Shadow_Ball");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Finish_Ring */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Finish_Ring");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_Interaction_Key */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Key");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 2);
@@ -4353,6 +4374,13 @@ HRESULT CLoader::Loading_UI_For_World(void* pArg)
 	/* For.Prototype_GameObject_UI_InteractionFX */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_InteractionFX");
 	pProtoDesc.pPrototype = CUIInteractionFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_LockOn */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_LockOn");
+	pProtoDesc.pPrototype = CUILockOn::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
