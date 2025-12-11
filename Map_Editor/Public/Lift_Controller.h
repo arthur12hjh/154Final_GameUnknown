@@ -17,6 +17,7 @@ public:
 	typedef struct Lift_Controller_Desc : public Prob_Interaction_Desc
 	{
 		_bool bIsControllerType = 0;
+		_uint iPlatformID = 0;
 	}LIFT_CONTROLLER_DESC;
 
 	enum LIFT_STATE
@@ -26,6 +27,7 @@ public:
 
 public:
 	_bool Get_ControllerType() const { return m_bIsControllerType; }
+	_uint Get_PlatformID() const { return m_iPlatformID; }
 
 private:
 	CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -44,6 +46,7 @@ private:
 	LIFT_STATE m_eCurState = { LIFT_STATE::LIFT_END };
 	LIFT_STATE m_ePrevState = { LIFT_STATE::LIFT_END };
 
+	_uint m_iPlatformID = 0;
 	_bool m_bIsControllerType = { false };
 
 private:
