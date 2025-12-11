@@ -28,9 +28,6 @@ HRESULT CCanBox::Initialize_Prototype()
 
 HRESULT CCanBox::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
-
     PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
     pDesc->iInteractionID = 5;
     if (FAILED(__super::Initialize(pArg)))

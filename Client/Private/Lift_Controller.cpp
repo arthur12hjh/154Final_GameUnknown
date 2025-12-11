@@ -166,7 +166,8 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-	m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
+	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
+
 	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
 
 	auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
