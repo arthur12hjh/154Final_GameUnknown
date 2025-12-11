@@ -15,6 +15,7 @@ NS_END
 NS_BEGIN(Client)
 class CUIAnimationCom;
 class CUIHUD;
+class CGameManager;
 
 class CUIBase abstract : public CUIObject
 {
@@ -47,13 +48,6 @@ public:
 		m_tUIDesc.iDepth = iDepth;
 		m_iZOrder = iDepth;
 	}
-
-	/*void Set_Parent(CGameObject* pParent) {
-		m_pParent = pParent;
-	}
-	CUIBase* Get_Parent() {
-		return dynamic_cast<CUIBase*>(m_pParent);
-	}*/
 
 	void Set_DrawType(DRAW_TYPE eDrawType) {
 		m_tUIDesc.iDrawType = ENUM_CLASS(eDrawType);
@@ -132,6 +126,8 @@ protected:
 	_uint					m_iCloneIdx{ 0 };
 
 	_bool					m_isRent{ false };
+
+	CGameManager*			m_pGameManager{ nullptr };
 
 private:
 	HRESULT Ready_Texture();

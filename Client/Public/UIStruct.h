@@ -17,6 +17,7 @@ namespace Client
 	typedef struct tagSkillInfoDesc
 	{
 		_int		iSkillIndex{ -1 };
+		_uint		iSkillID{ 0 };
 		_uint		iPrevSkillState{ 0 };
 		_uint		iSkillState{ 0 };
 	}UI_SKILL_INFO_DESC;

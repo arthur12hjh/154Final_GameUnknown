@@ -53,7 +53,7 @@ void CUIHUD::Update(_float fTimeDelta)
 				if (pOwner->Get_InterDesc())
 					vPivot = pOwner->Get_InterDesc()->vUIPivot;
 
-			/*	XMStoreFloat3(&newPos,
+				/* XMStoreFloat3(&newPos,
 					XMVectorSet(
 						Interactions[i]->Get_CenterPos().x + vPivot.x,
 						Interactions[i]->Get_CenterPos().y + vPivot.y,
@@ -115,21 +115,6 @@ void CUIHUD::Update(_float fTimeDelta)
 	}
 
 	__super::Update(fTimeDelta);
-
-	/*for (auto& pPool : m_WorldUIs)
-	{
-		for (auto& pObj : pPool.second)
-		{
-			CUIBase* pUIBase = dynamic_cast<CUIBase*>(pObj);
-			if (pUIBase && pUIBase->GetVisibility() == VISIBILITY::VISIBLE)
-			{
-				pUIBase->Priority_Update(fTimeDelta);
-				pUIBase->Update(fTimeDelta);
-				pUIBase->Late_Update(fTimeDelta);
-			}
-		}
-	}*/
-
 
 	m_pUIAnimMgr->Update(fTimeDelta);
 }
