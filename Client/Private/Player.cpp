@@ -173,6 +173,9 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pGameManager->Lockon(fTimeDelta);
 
 	Update_TestLogic(fTimeDelta);
+
+	//링크 어택이 가장 최우선 판정으로 들어간다.
+	Update_LinkAttack(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
@@ -180,8 +183,8 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-		Use_RushSkill();
+	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
+	//	 Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -594,6 +597,36 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
+	}
+}
+
+void CPlayer::Update_LinkAttack(_float fTimeDelta)
+{
+	if (false == m_PlayerDesc.isLinkAttackAvailable || nullptr == m_PlayerDesc.pLinkAttackTarget)
+		return;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	{		
+		PLAYER_TRANSITION_DESC TransitionDesc{};
+		SOCKETMATRIX_DESC TargetDesc{};
+		_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;		
+
+		TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
+		TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+
+		switch (iMonsterID)
+		{
+		case 1:
+			TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
+			//여기서 기가스 정보 꺼내와서 넘겨줘야함
+			TransitionDesc.pArg = &TargetDesc;
+			break;
+
+		default:
+			return;
+		}
+
+		m_pFSM->Handle_Transition(TransitionDesc);
 	}
 }
 

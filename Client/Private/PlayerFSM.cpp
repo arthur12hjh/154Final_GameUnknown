@@ -41,6 +41,9 @@
 //인터랙션 관련 상태들. 당장은 작은 박스만 구현
 #include "Player_SupplyBoxInteractionState.h"
 
+//링크 어택
+#include "Player_GigasLinkAttackState.h"
+
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -281,12 +284,12 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: return CPlayer_ParryGuardState::Create(tDesc.pArg);
 		}
 		break;
-	case PLAYER_STATE::TEST_STATE:
+	case PLAYER_STATE::GIGAS_LINKATTACK:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE: return CPlayer_TestState::Create(tDesc.pArg);;
-		case PLAYER_MODE::BATTLE: return CPlayer_TestState::Create(tDesc.pArg);
-		case PLAYER_MODE::LOCKON: return CPlayer_TestState::Create(tDesc.pArg);
+		case PLAYER_MODE::IDLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
 		}
 		break;
 		
@@ -299,6 +302,15 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: nullptr;
 		}
 		break;
+	// 테스트 스테이트는 제일 아래
+	//case PLAYER_STATE::TEST_STATE:
+	//	switch (m_pPlayerDesc->ePlayerMode)
+	//	{
+	//	case PLAYER_MODE::IDLE: return CPlayer_TestState::Create(tDesc.pArg);;
+	//	case PLAYER_MODE::BATTLE: return CPlayer_TestState::Create(tDesc.pArg);
+	//	case PLAYER_MODE::LOCKON: return CPlayer_TestState::Create(tDesc.pArg);
+	//	}
+	//	break;
 	default:
 		break;
 	}
