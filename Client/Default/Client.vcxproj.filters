@@ -760,6 +760,9 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Item">
       <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner">
+      <UniqueIdentifier>{8d2807a6-6a2b-4285-9ddb-1d0de7492f3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1534,6 +1537,9 @@
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Spawner.h">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2277,6 +2283,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Spawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -62,6 +62,17 @@ HRESULT CNayitba::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
+	if (pDesc->pTarget)
+	{
+		m_pAISenceCom->Add_SenceTargetObject(pDesc->pTarget);
+		if (pDesc->bIsSpanwer)
+		{
+			// 여기서 스폰 상태로 변경
+			// 일단 생성 되는지만 확인하고 가자
+		}
+	}
+
+
 	// 아래 세개중에서 하나
 	// Bip001-Spine
 	// Bip001_Spine1

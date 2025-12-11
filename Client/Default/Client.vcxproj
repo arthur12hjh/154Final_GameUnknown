@@ -239,6 +239,7 @@
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
+    <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
@@ -493,6 +494,7 @@
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
+    <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />

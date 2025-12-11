@@ -11,6 +11,7 @@
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
 #include "Player.h"
+#include "Spawner.h"
 #include "UIHUD.h"
 
 #ifdef _DEBUG
@@ -369,10 +370,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	Desc.iMonsterID = 6;
+	/*Desc.iMonsterID = 6;
 	Desc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;*/
+
+
+
+	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	pSapwnerDesc.bIsApplyTransform = true;
+	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
+	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
+	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
 		return E_FAIL;
 
 	//Desc.iMonsterID = 7;

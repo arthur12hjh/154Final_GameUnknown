@@ -21,6 +21,9 @@ public :
 	{
 		_uint						iMonsterID = {};
 		_bool						bIsSuperMonster = { false };
+
+		_bool						bIsSpanwer = { false };
+		CGameObject*				pTarget = { nullptr };
 	}NAYITBA_DESC;
 
 private :
