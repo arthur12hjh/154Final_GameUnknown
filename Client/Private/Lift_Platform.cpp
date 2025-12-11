@@ -45,7 +45,7 @@ void CLift_Platform::Update(_float fTimeDelta)
 {
 	if (m_bIsPaltformMove)
 	{
-		LerpTargetPoint(fTimeDelta);
+		LerpTargetPoint(fTimeDelta * 0.2f);
 
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
