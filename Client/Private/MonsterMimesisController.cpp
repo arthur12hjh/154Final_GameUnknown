@@ -154,6 +154,14 @@ void CMonsterMimesisController::Damage(void* pArg)
 						bIsHitAble = false;
 					}
 				}
+
+				if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+				{
+					if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackState->GetSkillData()->eProPerty)
+					{
+						bIsHitAble = false;
+					}
+				}
 			}
 		}
 		else if (CMonsterFSM::MONSTER_STATE::GROGGY == m_pFSM->GetMonsterState())
@@ -166,7 +174,6 @@ void CMonsterMimesisController::Damage(void* pArg)
 
 			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
 		}
-			
 	}
 }
 

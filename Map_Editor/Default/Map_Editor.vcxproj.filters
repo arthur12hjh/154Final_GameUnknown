@@ -181,9 +181,6 @@
     <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Body">
       <UniqueIdentifier>{23d3e7f8-e5e4-45fd-9373-5c3ffe137a11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Controller">
-      <UniqueIdentifier>{327db89e-e9d2-46a7-a968-b7177b62c2ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Lift\Lift_Platform">
       <UniqueIdentifier>{6c797e52-f4dd-4f06-9aa0-0dbaf09f1158}</UniqueIdentifier>
     </Filter>
@@ -192,27 +189,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Interaction">
       <UniqueIdentifier>{b8437baf-4335-47ab-a3e7-a16882b0f8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\VendingMachine">
-      <UniqueIdentifier>{73499dd2-42be-49b9-a6b3-bcc86f61bf2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Chair">
-      <UniqueIdentifier>{882f2d26-9613-460c-8ddc-087782723fd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\RepairConsole">
-      <UniqueIdentifier>{6898f5ec-d88d-484d-8f25-36e160419749}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Top_Roof">
-      <UniqueIdentifier>{a6c1958d-6c27-4eae-a8ff-aa2d20c8fc1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Corpse">
-      <UniqueIdentifier>{80eaa75a-0561-4837-909c-937bfc44fd82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Container">
-      <UniqueIdentifier>{32039993-b0d1-4d09-ab2b-c19dc710d8b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Door">
-      <UniqueIdentifier>{f513af03-52bc-4fe3-91cf-485c6a84a81d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Maps\Desert\Architecture">
       <UniqueIdentifier>{1447ad0d-e982-4332-ac61-7f812e970a7f}</UniqueIdentifier>
@@ -226,8 +202,29 @@
     <Filter Include="02.GameObjects\Maps\Desert\Architecture\Desert_Architecture">
       <UniqueIdentifier>{2adecbf0-5be4-4263-879d-0697321384a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Box">
-      <UniqueIdentifier>{331fbebf-a475-4105-92c7-1de0fbeb3558}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\NonAnim">
+      <UniqueIdentifier>{f2ec0156-4845-4490-a3bb-34975f820711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim">
+      <UniqueIdentifier>{3b029ce4-8b8b-4456-803b-60df1787f73b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\CanBox">
+      <UniqueIdentifier>{a80364af-f63a-4a21-b0c3-d1ab29362449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\Top_Roof">
+      <UniqueIdentifier>{05afd7b2-3053-49fb-9b1d-7076fce71e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\RepairConsole">
+      <UniqueIdentifier>{413aeffb-8bd9-4644-b6af-a541377d3284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\Door">
+      <UniqueIdentifier>{b29f3f33-f13c-4a9a-aa1f-c4212623a666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\Lift_Controller">
+      <UniqueIdentifier>{327db89e-e9d2-46a7-a968-b7177b62c2ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Environment\Desert_Grass">
+      <UniqueIdentifier>{f9c3a22b-aa08-4e8d-b1f3-91df4068db85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -510,7 +507,7 @@
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Body</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Lift_Controller.h">
-      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Lift_Controller</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Lift_Platform.h">
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
@@ -521,35 +518,32 @@
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VendingMachine.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\VendingMachine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Chair.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CanBox.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Box</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Top_Roof.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RepairConsole.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Corpse.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Corpse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Container.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SciFi_Door.h">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Desert_Architecture.h">
       <Filter>02.GameObjects\Maps\Desert\Architecture\Desert_Architecture</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sky_Desert.h">
       <Filter>02.GameObjects\Maps\Desert\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Interaction_NonAnim.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\NonAnim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CanBox.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\CanBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Top_Roof.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Top_Roof</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RepairConsole.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\RepairConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SciFi_Door.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Interaction.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Grass.h">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -816,7 +810,7 @@
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Body</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Lift_Controller.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Lift_Controller</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Lift_Platform.cpp">
       <Filter>02.GameObjects\Maps\Desert\Lift\Lift_Platform</Filter>
@@ -827,35 +821,32 @@
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert__Tree</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VendingMachine.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\VendingMachine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Chair.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Chair</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CanBox.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Box</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Top_Roof.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Top_Roof</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RepairConsole.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\RepairConsole</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Corpse.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Corpse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Container.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SciFi_Door.cpp">
-      <Filter>02.GameObjects\Maps\Desert\Interaction\Door</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Desert_Architecture.cpp">
       <Filter>02.GameObjects\Maps\Desert\Architecture\Desert_Architecture</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sky_Desert.cpp">
       <Filter>02.GameObjects\Maps\Desert\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interaction_NonAnim.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\NonAnim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SciFi_Door.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Top_Roof.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\Top_Roof</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CanBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\CanBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RepairConsole.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\RepairConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interaction.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Grass.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

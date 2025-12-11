@@ -184,6 +184,16 @@ HRESULT CUISkillSlot::Ready_Components()
 		TEXT("Com_Texture_UI_Skill_Slot_Covor"), reinterpret_cast<CComponent**>(&m_pCoverTextureCom))))
 		return E_FAIL;
 
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
+		TEXT("Com_Texture_Cost"), reinterpret_cast<CComponent**>(&m_pCostTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Beta_Cost_Deco"),
+		TEXT("Com_Texture_CostDeco"), reinterpret_cast<CComponent**>(&m_pCostDecoTextureCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -204,11 +214,33 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 
 	_bool bSkillUseable = false;
 
-	if (m_tSkillInfo.iSkillIndex >= 0)
+	/*if (FAILED(m_pShaderCom->Bind_SRV("g_Texture2", nullptr)))
+		return E_FAIL;*/
+
+	if (static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex) != 0)
 	{
 		bSkillUseable = true;
+		_uint iGauge = m_pGameManager->Find_BetaSkillData(static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex))->iRequiredBetaGauge;
 
-		if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", m_tSkillInfo.iSkillIndex))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+		switch (static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex))
+		{
+		case 1004:
+		{
+			if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+				return E_FAIL;
+			break;
+		}
+		case 1005:
+		{
+			if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 1))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+				return E_FAIL;
+			break;
+		}
+		}
+
+		if (FAILED(m_pCostTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture4", (iGauge / 4)))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+			return E_FAIL;
+		if (FAILED(m_pCostDecoTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture5", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
 			return E_FAIL;
 	}
 
@@ -222,9 +254,6 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 		if (FAILED(m_pShaderCom->Bind_SRV("g_Texture3", nullptr)))
 			return E_FAIL;
 	}
-
-	/*if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
-		&& m_bPlayingAnim == false)*/
 	if ((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 		|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
@@ -235,7 +264,6 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 			return E_FAIL;
 	}
 
-	//if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
 	if (m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
 		&& m_bPlayingAnim == true)
@@ -388,6 +416,8 @@ void CUISkillSlot::Free()
 	Safe_Release(m_pShadowTextureCom);
 	Safe_Release(m_pGlowTextureCom);
 	Safe_Release(m_pGlowTextureCom2);
+	Safe_Release(m_pCostTextureCom);
+	Safe_Release(m_pCostDecoTextureCom);
 	Safe_Release(m_pVIBaseBufferCom);
 	Safe_Release(m_pVIGlowBufferCom);
 }

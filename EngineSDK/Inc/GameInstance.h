@@ -137,7 +137,7 @@ public:
 	HRESULT								Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
-
+	LIGHT_DESC*							Get_Directional_Desc();
 #ifdef _DEBUG
 	void								Select_LightRender(CLight* pSelectLight);
 
@@ -241,7 +241,7 @@ public:
 #pragma endregion
 
 #pragma region Camera Manager
-	void							Shake(_float fShakeTime, _float fIntensity);
+	void							Shake_Camera(_float fShakeTime, _float fIntensity);
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
 	// Defaut 매개변수 있습니다.

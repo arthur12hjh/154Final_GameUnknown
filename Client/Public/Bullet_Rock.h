@@ -29,6 +29,7 @@ protected:
 
 private :
 	CEffect*					m_pEffect = {};
+	_bool						m_bIsBezierLerp = { false };
 	_float3						m_vLerpPoints[5] = {};
 	_float2						m_LerpTime = { 0.f, 1.f };
 	

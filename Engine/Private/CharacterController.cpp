@@ -104,15 +104,11 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
-}
-
-void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class CTransform* pOwnerTransform)
-{
 	if (m_pController == nullptr)
 		return;
-	
+
 	PxVec3 vTargetDeltaMove = { 0.f, 0.f, 0.f };
-	
+
 	if (true == m_isRiding)
 	{
 		if (false == m_pRidingTarget->IsRidable())
@@ -121,30 +117,30 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 			m_isGravity = true;
 			m_pRidingTarget = nullptr;
 		}
-	
+
 		else
 		{
 			//_float3 vDelta = m_pRidingTargetTransform->Get_Delta();
 			//vTargetDeltaMove =  PxVec3(vDelta.x, vDelta.y, vDelta.z);
 
-			vTargetDeltaMove = m_pRidingTarget->Get_DeltaMove() * 30.f;
+			vTargetDeltaMove = m_pRidingTarget->Get_DeltaMove();
 			m_isGravity = false;
 		}
 	}
-	
+
 	//중력은 Transform에 적용.
 	_vector vGravity = Calc_Gravity(fTimeDelta);
 	pOwnerTransform->Move_Direction(1.f, vGravity, 1.f);
-	
+
 	_float3 vPos;
 	XMStoreFloat3(&vPos, pOwnerTransform->Get_State(STATE::POSITION));
-	
+
 	///* 현재 프레임의 위치*/
 	m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
-	
+
 	//무브 자체는 시뮬레이션에서 안 돌아간다고함..
 	PxVec3 MoveSum = m_vPosition - m_vPrePosition + vTargetDeltaMove;
-	
+
 	PxControllerFilters ControllerFilter;
 	ControllerFilter.mFilterCallback = static_cast<PxQueryFilterCallback*>(m_pQueryFilterCallback);
 
@@ -164,6 +160,10 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 	{
 		m_isGravity = true;
 	}
+}
+
+void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class CTransform* pOwnerTransform)
+{
 }
 
 void CCharacterController::Set_Position(_vector vPosition)

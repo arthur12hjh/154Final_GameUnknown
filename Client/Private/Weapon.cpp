@@ -133,12 +133,19 @@ void CWeapon::Update(_float fTimeDelta)
 void CWeapon::Late_Update(_float fTimeDelta)
 {
 	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
+	_matrix		ParentMatrix = XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	_matrix		MyMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	
+	for (size_t i = 0; i < 3; i++)
+		MyMatrix.r[i] = XMVector3Normalize(MyMatrix.r[i]);
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+	for (size_t i = 0; i < 3; i++)
+		ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
+	//m_pTransformCom->Get_WorldMatrixPtr())
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+			MyMatrix * SocketMatrix * ParentMatrix);
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 	if (m_bIsEnableCollider)
@@ -181,12 +188,8 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
-
-
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-
 }
 
 HRESULT CWeapon::Render()

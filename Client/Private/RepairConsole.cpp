@@ -20,10 +20,11 @@ HRESULT CRepairConsole::Initialize_Prototype()
 HRESULT CRepairConsole::Initialize(void* pArg)
 {
 
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+	static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 999;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
@@ -134,7 +135,7 @@ HRESULT CRepairConsole::End_OverlapCallBack()
 	return S_OK;
 }
 
-void CRepairConsole::Excute_CallBack(CGameObject* pActionObject)
+void CRepairConsole::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 }
 

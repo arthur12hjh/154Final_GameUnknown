@@ -170,9 +170,8 @@
     <ClInclude Include="..\public\Building_Ruin.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_Tool.h" />
-    <ClInclude Include="..\public\CanBox.h" />
+    <ClInclude Include="..\Public\CanBox.h" />
     <ClInclude Include="..\public\Canyon.h" />
-    <ClInclude Include="..\public\Chair.h" />
     <ClInclude Include="..\public\CherryBlossom1.h" />
     <ClInclude Include="..\public\CherryBlossom2.h" />
     <ClInclude Include="..\public\CherryBlossom3.h" />
@@ -191,11 +190,10 @@
     <ClInclude Include="..\Public\CM_Rock7.h" />
     <ClInclude Include="..\Public\CM_Rock8.h" />
     <ClInclude Include="..\Public\CM_Rock9.h" />
-    <ClInclude Include="..\public\Container.h" />
-    <ClInclude Include="..\public\Corpse.h" />
     <ClInclude Include="..\public\Deco.h" />
     <ClInclude Include="..\public\DesertObject.h" />
     <ClInclude Include="..\public\Desert_Architecture.h" />
+    <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
@@ -216,6 +214,8 @@
     <ClInclude Include="..\Public\Inscription_R.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\public\Interaction.h" />
+    <ClInclude Include="..\public\Interaction_NonAnim.h" />
     <ClInclude Include="..\public\Iron_Floor.h" />
     <ClInclude Include="..\public\Level_Desert.h" />
     <ClInclude Include="..\public\Level_Loading.h" />
@@ -236,7 +236,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Player_Test.h" />
     <ClInclude Include="..\Public\Reed.h" />
-    <ClInclude Include="..\public\RepairConsole.h" />
+    <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\public\Rock.h" />
     <ClInclude Include="..\Public\Rock1.h" />
     <ClInclude Include="..\Public\Rock2.h" />
@@ -266,8 +266,7 @@
     <ClInclude Include="..\Public\TombStone.h" />
     <ClInclude Include="..\Public\TombStoneBase1.h" />
     <ClInclude Include="..\Public\TombStoneBase2.h" />
-    <ClInclude Include="..\public\Top_Roof.h" />
-    <ClInclude Include="..\public\VendingMachine.h" />
+    <ClInclude Include="..\Public\Top_Roof.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Map_Editor.h" />
     <ClInclude Include="Resource.h" />
@@ -280,9 +279,8 @@
     <ClCompile Include="..\private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_Tool.cpp" />
-    <ClCompile Include="..\private\CanBox.cpp" />
+    <ClCompile Include="..\Private\CanBox.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
-    <ClCompile Include="..\private\Chair.cpp" />
     <ClCompile Include="..\private\CherryBlossom1.cpp" />
     <ClCompile Include="..\private\CherryBlossom2.cpp" />
     <ClCompile Include="..\private\CherryBlossom3.cpp" />
@@ -301,11 +299,10 @@
     <ClCompile Include="..\Private\CM_Rock7.cpp" />
     <ClCompile Include="..\Private\CM_Rock8.cpp" />
     <ClCompile Include="..\Private\CM_Rock9.cpp" />
-    <ClCompile Include="..\private\Container.cpp" />
-    <ClCompile Include="..\private\Corpse.cpp" />
     <ClCompile Include="..\private\Deco.cpp" />
     <ClCompile Include="..\private\DesertObject.cpp" />
     <ClCompile Include="..\private\Desert_Architecture.cpp" />
+    <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
@@ -342,6 +339,8 @@
     <ClCompile Include="..\Private\Inscription_R.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\private\Interaction.cpp" />
+    <ClCompile Include="..\private\Interaction_NonAnim.cpp" />
     <ClCompile Include="..\private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Level_Desert.cpp" />
     <ClCompile Include="..\private\Level_Loading.cpp" />
@@ -364,7 +363,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Player_Test.cpp" />
     <ClCompile Include="..\Private\Reed.cpp" />
-    <ClCompile Include="..\private\RepairConsole.cpp" />
+    <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\private\Rock.cpp" />
     <ClCompile Include="..\Private\Rock1.cpp" />
     <ClCompile Include="..\Private\Rock2.cpp" />
@@ -394,8 +393,7 @@
     <ClCompile Include="..\Private\TombStone.cpp" />
     <ClCompile Include="..\Private\TombStoneBase1.cpp" />
     <ClCompile Include="..\Private\TombStoneBase2.cpp" />
-    <ClCompile Include="..\private\Top_Roof.cpp" />
-    <ClCompile Include="..\private\VendingMachine.cpp" />
+    <ClCompile Include="..\Private\Top_Roof.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
   </ItemGroup>
   <ItemGroup>

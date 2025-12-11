@@ -15,7 +15,12 @@ void CPlayer_ParrySuccessState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::PARRY_SUCCESS;
     m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.f, 0.12f);
 	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.3f);
-	m_pGameInstance->Shake(0.5f, 0.3f);
+	m_pGameInstance->Shake_Camera(0.5f, 0.6f);
+
+	//패링 하면 2개씩 채워주기?
+	m_Desc->iCurrentBetaEnergy += 2;
+	if (m_Desc->iMaxBetaEnergy < m_Desc->iCurrentBetaEnergy)
+		m_Desc->iCurrentBetaEnergy = m_Desc->iMaxBetaEnergy;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ParrySuccessState::Update(_float fTimeDelta)

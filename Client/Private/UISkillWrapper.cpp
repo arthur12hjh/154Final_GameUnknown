@@ -39,6 +39,7 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		for (size_t i = 0; i < 4; ++i)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState[i]);
+			m_iSkillID[i] = const_cast<_uint*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iBetaSkillId[i]);
 			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
@@ -89,7 +90,7 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 	// 러쉬 활성화 변화 감지
 	if (*m_eRushState != m_ePrevRushState)
 	{
-		UI_SKILL_INFO_DESC tDesc = { 0, ENUM_CLASS(m_ePrevRushState), ENUM_CLASS(*m_eRushState) };
+		UI_SKILL_INFO_DESC tDesc = { 0, 0, ENUM_CLASS(m_ePrevRushState), ENUM_CLASS(*m_eRushState) };
 
 		UI_EVENT_ARG_DESC Arg{};
 		Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;
@@ -126,7 +127,7 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 	{
 		if (m_ePrevSkillState[i] != *m_eSkillState[i])
 		{
-			UI_SKILL_INFO_DESC tDesc = {i, ENUM_CLASS(m_ePrevSkillState[i]), ENUM_CLASS(*m_eSkillState[i])};
+			UI_SKILL_INFO_DESC tDesc = {i, *m_iSkillID[i], ENUM_CLASS(m_ePrevSkillState[i]), ENUM_CLASS(*m_eSkillState[i])};
 
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::SKILL_INFO;

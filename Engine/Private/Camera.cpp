@@ -56,37 +56,6 @@ void CCamera::Priority_Update(_float fTimeDelta)
 
 void CCamera::Update(_float fTimeDelta)
 {
-	if (true == m_IsShake)
-	{
-		m_fShakeTimeAcc += fTimeDelta;
-		_vector vRight = m_pTransformCom->Get_State(STATE::RIGHT);
-		_vector vUp = m_pTransformCom->Get_State(STATE::UP);
-
-		// 정규화 
-		vRight = XMVector3Normalize(vRight);
-		vUp = XMVector3Normalize(vUp);
-
-		// 시간이 지날수록 약하게
-		_float fAttenuation = 1.f - (m_fShakeTimeAcc / m_fShakeTime);
-		fAttenuation = max(0.f, fAttenuation);
-
-		_float fOffsetRight = m_pGameInstance->Random_Normal() * m_fIntensity * fAttenuation;
-		_float fOffsetUp = m_pGameInstance->Random_Normal() * m_fIntensity * fAttenuation;
-
-		// 오프셋 벡터 계산 (right,up 방향으로만 흔들림, look 방향으론 안흔들림.)
-		_vector vShakeOffset = vRight * fOffsetRight + vUp * fOffsetUp;
-
-		_vector vNewPos = XMLoadFloat4(&m_vOriginPos) + vShakeOffset;
-		m_pTransformCom->Set_State(STATE::POSITION, vNewPos);
-
-		if (m_fShakeTime <= m_fShakeTimeAcc)
-		{
-			m_IsShake = false;
-			m_fShakeTimeAcc = 0.f;
-
-			m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_vOriginPos));
-		}
-	}
 }
 
 void CCamera::Late_Update(_float fTimeDelta)
@@ -114,8 +83,39 @@ void CCamera::SetCameraInfo(const CAMERA_INFO& CameraInfo, bitset<4> bitFlag)
 		m_pCameraInfo.fAspect = CameraInfo.fAspect;
 }
 
-HRESULT CCamera::Bind_Matrices()
+HRESULT CCamera::Bind_Matrices(_float fTimeDelta)
 {
+	if (true == m_IsShake)
+	{
+		m_fShakeTimeAcc += fTimeDelta;
+		_vector vPos = m_pTransformCom->Get_State(STATE::POSITION);
+		_vector vRight = m_pTransformCom->Get_State(STATE::RIGHT);
+		_vector vUp = m_pTransformCom->Get_State(STATE::UP);
+
+		// 정규화 
+		vRight = XMVector3Normalize(vRight);
+		vUp = XMVector3Normalize(vUp);
+
+		// 시간이 지날수록 약하게
+		_float fAttenuation = 1.f - (m_fShakeTimeAcc / m_fShakeTime);
+		fAttenuation = max(0.f, fAttenuation);
+
+		_float fOffsetRight = m_pGameInstance->Random_Normal() * m_fIntensity * fAttenuation;
+		_float fOffsetUp = m_pGameInstance->Random_Normal() * m_fIntensity * fAttenuation;
+
+		// 오프셋 벡터 계산 (right,up 방향으로만 흔들림, look 방향으론 안흔들림.)
+		_vector vShakeOffset = vRight * fOffsetRight + vUp * fOffsetUp;
+		_vector vNewPos = vPos + vShakeOffset;
+
+		m_pTransformCom->Set_State(STATE::POSITION, vNewPos);
+
+		if (m_fShakeTime <= m_fShakeTimeAcc)
+		{
+			m_IsShake = false;
+			m_fShakeTimeAcc = 0.f;
+		}
+	}
+
 	m_pGameInstance->Set_Transform(D3DTS::VIEW, XMMatrixInverse(nullptr, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())));
 	m_pGameInstance->Set_Transform(D3DTS::PROJ, XMMatrixPerspectiveFovLH(m_pCameraInfo.fFov, m_pCameraInfo.fAspect, m_pCameraInfo.fNear, m_pCameraInfo.fFar));
 

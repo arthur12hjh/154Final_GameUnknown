@@ -52,16 +52,21 @@ void CBody_Player::Update(_float fTimeDelta)
 { 
 	// FSM쪽에서 애니 재생.
 	// m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
-
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
 {
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+
+	
+	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+	
+	if(fDist < 100.f)
+		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 }
 
 HRESULT CBody_Player::Render()

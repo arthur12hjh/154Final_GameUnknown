@@ -85,9 +85,20 @@ namespace Tool_Map
 		FENCE_1A, FENCE_1B, FENCE_1F, FENCE_1H,
 #pragma endregion
 
-
 #pragma region Deco_Vehicle
 		VEHICLE_2A, VEHICLE_2B, VEHICLE_3B, VEHICLE_4C, VEHICLE_6A, VEHICLE_8B, VEHICLE_14A, VEHICLE_14B,
+#pragma endregion
+
+#pragma region Deco_Crane
+		CRANE_1C, CRANE_11, CRANE_13,
+#pragma endregion
+
+#pragma region Trash
+		TRASH_1A, TRASH_2A, TRASH_2B, TRASH_4A, TRASH_9A, TRASH_17A,
+#pragma endregion
+
+#pragma region Deco_Sign
+		SIGN_11A, SIGN_11B, SIGN_11F, SIGN_12B, SIGN_12C, SIGN_36B,
 #pragma endregion
 
 #pragma region Environment_TREE
@@ -95,6 +106,10 @@ namespace Tool_Map
 		TREE_10A, TREE_11B, TREE_15A, TREE_15B, TREE_16A, TREE_17A, TREE_18A, TREE_19A, TREE_20A, TREE_21A, TREE_23A, TREE_25A, TREE_26A, TREE_27A,
 		TREE_29A, TREE_30A, TREE_31A, TREE_32A, TREE_33A, TREE_34A, TREE_40B, TREE_40C, TREE_40D, TREE_40E, TREE_40F, TREE_40G, TREE_40H, TREE_40I, TREE_40J,
 		TREE_42A, TREE_43A, TREE_43B, TREE_44A, TREE_44B, TREE_44D, TREE_44F, TREE_45A, TREE_45B, TREE_45C,
+#pragma endregion
+
+#pragma region Environment_DeadShrubs
+		DEADSHRUBS_A, DEADSHRUBS_B,
 #pragma endregion
 
 #pragma region Spawner

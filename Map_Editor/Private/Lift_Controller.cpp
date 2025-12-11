@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLift_Controller::CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+	: CInteraction{ pDevice, pContext }
 {
 }
 
 CLift_Controller::CLift_Controller(const CLift_Controller& Prototype)
-	: CDesertObject{ Prototype }
+	: CInteraction{ Prototype }
 {
 }
 
@@ -20,7 +20,7 @@ HRESULT CLift_Controller::Initialize_Prototype()
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
 
-	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
+	LIFT_CONTROLLER_DESC* pDesc = static_cast<LIFT_CONTROLLER_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -33,6 +33,11 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+
+	m_iInteractionID = pDesc->iInteractionID;
+	m_bIsControllerType = pDesc->bIsControllerType;
+	m_iPlatformID = pDesc->iPlatformID;
+	m_iPosition = pDesc->iPosition;
 	m_eCurState = LIFT_PULL;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
@@ -63,7 +68,6 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
@@ -71,7 +75,6 @@ void CLift_Controller::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 
 #endif
 }
@@ -119,16 +122,6 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
-
-	SphereDesc.fRadius = 2.f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius * 0.5f, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -159,7 +152,7 @@ CLift_Controller* CLift_Controller::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CDesertObject* CLift_Controller::Clone(void* pArg)
+CGameObject* CLift_Controller::Clone(void* pArg)
 {
 	CLift_Controller* pInstance = new CLift_Controller(*this);
 
@@ -176,7 +169,6 @@ void CLift_Controller::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

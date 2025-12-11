@@ -56,19 +56,22 @@ void CBullet_Rock::Update(_float fTimeDelta)
 {
 	if (false == m_bIsAttachment)
 	{
+		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta);
 		// 여기서 베지어 Lerp
-		m_LerpTime.x += fTimeDelta;
-		if (m_LerpTime.x <= m_LerpTime.y)
+		if (m_bIsBezierLerp)
 		{
+			m_LerpTime.x += fTimeDelta;
 			_float fRatio = m_LerpTime.x / m_LerpTime.y;
-
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta);
-			m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_vLerpPoints, fRatio));
+			if (0.7f >= fRatio)
+			{
+				
+				m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_vLerpPoints, fRatio));
+			}
+			else
+				m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vProjectileDir), m_fSpeed);
 		}
 		else
-		{
 			m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vProjectileDir), m_fSpeed);
-		}
 	}
 
 	Update_BulletCombinedMatrix();
@@ -114,23 +117,33 @@ HRESULT CBullet_Rock::Render()
 
 void CBullet_Rock::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 {
-	__super::Shoot_Projectile(vTargetPoint, fSpeed);
+	__super::Shoot_Projectile(XMLoadFloat3(&m_vTargetPoint), fSpeed);
 	m_LerpTime.x = 0.f;
 
 	_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
 	XMStoreFloat3(&m_vLerpPoints[0], CombinedMatrix.r[3]);
 
-	XMStoreFloat3(&m_vLerpPoints[4], vTargetPoint);
+	_float fLength = XMVectorGetX(XMVector3Length(CombinedMatrix.r[3] - vTargetPoint));
+	if (30 > fLength)
+	{
+		m_bIsBezierLerp = false;
+		m_fSpeed = 50.f;
+	}
+	else
+	{
+		XMStoreFloat3(&m_vLerpPoints[4], vTargetPoint);
+		_vector vBeziorCenter = XMVectorLerp(CombinedMatrix.r[3], vTargetPoint, 0.6f);
+		vBeziorCenter.m128_f32[1] = CombinedMatrix.r[3].m128_f32[1];
+		XMStoreFloat3(&m_vLerpPoints[1], vBeziorCenter);
 
-	_vector vBeziorCenter = XMVectorLerp(CombinedMatrix.r[3], vTargetPoint, 0.6f);
-	vBeziorCenter.m128_f32[1] = CombinedMatrix.r[3].m128_f32[1];
-	XMStoreFloat3(&m_vLerpPoints[1], vBeziorCenter);
+		_vector vPoint = (vBeziorCenter + vTargetPoint) / 2.f;
+		XMStoreFloat3(&m_vLerpPoints[2], vPoint);
 
-	_vector vPoint = (vBeziorCenter + vTargetPoint) / 2.f;
-	XMStoreFloat3(&m_vLerpPoints[2], vPoint);
+		_vector vPoint2 = (vPoint + vTargetPoint) / 2.f;
+		XMStoreFloat3(&m_vLerpPoints[3], vPoint2);
+		m_bIsBezierLerp = true;
+	}
 
-	_vector vPoint2 = (vPoint + vTargetPoint) / 2.f;
-	XMStoreFloat3(&m_vLerpPoints[3], vPoint2);
 
 }
 

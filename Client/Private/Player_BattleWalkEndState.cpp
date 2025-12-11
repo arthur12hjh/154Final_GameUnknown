@@ -55,7 +55,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
 
 _float CPlayer_BattleWalkEndState::End()
 {
-    return 0.12f;
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)

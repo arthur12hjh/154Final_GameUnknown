@@ -31,6 +31,7 @@ private:
 	_float  m_fFogEnd	= { 500.f };
 	_float  m_fFogPowerMin = { 0.5f };
 	_float	m_fFogPowerMax = { 1.f };
+	_float  m_fSkyBoxFogPower = { 0.77f };
 
 public:
 	static CFog* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

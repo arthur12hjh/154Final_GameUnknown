@@ -47,9 +47,9 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 	}
 	else
 	{
-		if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
-			static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
-		else
+		//if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
+		//	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+		//else
 			m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 	}
 }
@@ -64,7 +64,7 @@ void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower)
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setMaxLinearVelocity(100.f);
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSolverIterationCounts(8, 4);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.05f);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.1f);
 
 	m_isSyncByPhysx = true;
 }

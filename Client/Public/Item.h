@@ -15,11 +15,13 @@ class CEffect;
 class CItem final : public CProb_Interaction
 {
 public:
-	typedef struct Item_Desc : public ACTOR_DESC
+	typedef struct Item_Desc : public PROB_INTERACTION_DESC
 	{
 		_uint						iItemID;
 		_uint						fAmount;
+
 		_float3						fDropPoint;
+		_float						fDropForce;
 	}ITEM_DESC;
 
 protected:
@@ -43,6 +45,7 @@ protected:
 
 	ITEM_DSEC						m_ItemData = {};
 	_float							m_fAmount = {};
+	_float							m_fDropForce = {};
 	_float3							m_CurvePoins[5] = {};
 
 	_bool							m_bIsLerpAnimation = { false };
@@ -51,7 +54,7 @@ protected:
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;
 	virtual HRESULT					End_OverlapCallBack() override;
-	virtual void					Excute_CallBack(CGameObject* pActionObject) override;
+	virtual void					Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
 private :
 	HRESULT							ADD_Components(const ACTOR_DESC& Desc);

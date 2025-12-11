@@ -28,18 +28,31 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-	m_iInterID = 1;
-
+	LIFT_CONTROLLER_DESC* pDesc = static_cast<LIFT_CONTROLLER_DESC*>(pArg);
+	static_cast<LIFT_CONTROLLER_DESC*>(pArg)->iInteractionID = 1;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	m_bIsControllLift = pDesc->bIsControllerType;
+	m_iPlatformID = pDesc->iPlatformID;
+
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
-	 
+
 	ResetAction(true);
-	m_bIsControllLift = true;
-	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+	m_bIsControllLift = pDesc->bIsControllerType;
+
+	m_iPlatformID = pDesc->iPlatformID;
+	// 뭐야 찬빈햄도 여기서하네 나도 여기서할래
+	m_iPosition = pDesc->iPosition;
+
+	// 미안해요 형 걍 정수로 하죠 프로토타입끝나고 바꾸던가 아몰ㄹ아!
+	if(m_iPosition == 0)
+		m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+	else if(m_iPosition == 1)
+		m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+
+
 
 	return S_OK;
 }
@@ -52,32 +65,47 @@ void CLift_Controller::Update(_float fTimeDelta)
 {
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 
-	m_pCullingCollider->UpdateColiision(WorldMat);
-	m_pInteractionCom->Update_Com();
-	m_pRigidBody->Update_PxTransform(WorldMat);
+	if (m_bIsControllLift)
+	{
+		if (m_pLiftPlatform)
+		{
+			_vector vControllerPos = m_pTransformCom->Get_State(STATE::LOOK);
+			_vector vPlatformPosition = m_pLiftPlatform->GetTransform()->Get_State(STATE::POSITION);
+			WorldMat.r[3] += vPlatformPosition + vControllerPos * -4.8f;
+			WorldMat.r[3].m128_f32[3] = 1.f;
 
+			XMStoreFloat4x4(&m_CombinedMatrix, WorldMat);
+		}
+	}
+	m_pCullingCollider->UpdateColiision(WorldMat);
+	m_pInteractionCom->Update_Com(WorldMat);
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
-
 	if (m_pLiftPlatform && m_eInterState == INTERACTION_STATE::ACTIVE)
 	{
-		if (m_pLiftPlatform->GetPlatformMove())
-			m_eInterState = INTERACTION_STATE::END;
-		else
+		if (!m_pLiftPlatform->GetPlatformMove())
 			m_eInterState = INTERACTION_STATE::DEFAULT;
 	}
+
+	//m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	
+
+	
+
+	/*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-	}
+	}*/
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
 }
 
 HRESULT CLift_Controller::Render()
@@ -113,7 +141,17 @@ HRESULT CLift_Controller::Render()
 
 void CLift_Controller::SetControllPlatform(CLift_Platform* pControllPlatform)
 {
+	if (m_bIsControllLift)
+	{
+		m_pTransformCom->Set_State(STATE::POSITION, { 0.f, 0.f, 0.f, 1.f });
+		m_CombinedMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	}
 
+	if (nullptr == m_pLiftPlatform)
+	{
+		m_pLiftPlatform = pControllPlatform;
+		Safe_AddRef(m_pLiftPlatform);
+	}
 }
 
 HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
@@ -133,22 +171,31 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	InteractionDesc.vSize = {2.f, 2.f, 2.f};
 	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-	InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
+	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-	m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
+	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
 	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
 
 	auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
 	if (pPlatformList)
 	{
-		if (false == pPlatformList->empty())
-			m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
+		for (auto& iter : *pPlatformList)
+		{
+			auto pPlatform = static_cast<CLift_Platform*>(iter);
+			_uint PlatformID = pPlatform->GetPlatformID();
+			if (PlatformID == m_iPlatformID)
+			{
+				SetControllPlatform(pPlatform);
+				break;
+			}
+		}
 	}
+
 
 	/* Com_Model_COL */
 	_wstring strComponentTag = pComponentTag;
@@ -181,7 +228,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	// STATIC : 충돌 O, 대신 고정되어 있음.
 	// ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 
-	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
@@ -206,9 +253,19 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 
 HRESULT CLift_Controller::Bind_ShaderResources()
 {
-	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	if(!m_bIsControllLift || nullptr == m_pLiftPlatform)
+	{
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+			return E_FAIL;
+	}
+	else
+	{
+		if (m_pLiftPlatform)
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedMatrix)))
+				return E_FAIL;
+		}
+	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
@@ -218,57 +275,36 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CLift_Controller::Begin_OverlapCallBack()
+void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+		m_fInteractionDuration.x += fTimeDelta;
 
-	m_eInterState = INTERACTION_STATE::DEFAULT;
+	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	{
+		if (IsInteractionEnable())
+		{
+			m_eInterState = INTERACTION_STATE::CONTACT;
+		}
+	}
 
-
-	return S_OK;
-}
-
-HRESULT CLift_Controller::End_OverlapCallBack()
-{
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
-
-	m_eInterState = INTERACTION_STATE::END;
-
-
-	return S_OK;
-}
-
-void CLift_Controller::Excute_CallBack(CGameObject* pActionObject)
-{
-	if (LIFT_ANIM_STATE::LIFT_ANIM_PUSH == m_eCurState)
+	if (INTERACTION_STATE::CONTACT == m_eInterState)
 	{
 		m_eInterState = INTERACTION_STATE::ACTIVE;
-
-		if (m_pLiftPlatform)
+		if (m_bIsControllLift)
 		{
-			if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
-			{
-				m_pModelCom->Set_AnimationIndex(1, false);
-				m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
-				m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
-			}
-
-			if (m_bIsControllLift)
-			{
-				if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
-					m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
-				else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
-					m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
-			}
+			if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+				m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+			else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 		}
-		else
+
+		m_fInteractionDuration.x = 0.f;
+		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
-			auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
-			if (pPlatformList)
-			{
-				if (false == pPlatformList->empty())
-					m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
-			}
+			m_pModelCom->Set_AnimationIndex(1, false);
+			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
+			m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
 		}
 	}
 }

@@ -150,7 +150,6 @@ HRESULT CNayitba::Damaged(void* pArg)
 
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	m_pAIController->Damage(pArg);
-	
 
 	VisibleStatusUI(0.f);
 	if(0 >= m_MonsterInfo.iCurrentHealth)
@@ -579,13 +578,20 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	m_vHitVisibleDuration.x = 0.f;
 	m_pGameManager->Start_Lockon();
 	
+	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
+	{
+		if (!m_pBulletList.empty())
+		{
+			for (auto& iter : m_pBulletList)
+				Safe_Release(iter);
+			m_pBulletList.clear();
+		}
+	}
+
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 	{
 		// 이제 진짜라고 합니다.
-	
 		m_pAISenceCom->Add_SenceTargetObject(pDamageDesc->pAttacker);
-
-	
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 	}
 

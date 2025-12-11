@@ -55,7 +55,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 // 월드 변환
     
-    matrix matWV, matWVP, matOldWV, matOldWVP;
+    matrix matWV, matWVP;
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
@@ -218,7 +218,7 @@ PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
     if(Out.vDiffuse.r <= 0.7f)
         discard;
     
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal, 0.001f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     

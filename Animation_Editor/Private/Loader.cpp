@@ -48,9 +48,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
 
-	/* ��������, ���ؽ�, ũ��Ƽ�ü��� */
-
-	/* �Ӱ迵��(��, ������, �ڵ�)�� �����ϱ����� Ű�� �����Ѵ�. */
 	InitializeCriticalSection(&m_CriticalSection);
 
 	/* ���� �ε��� �����ϱ����� �����带 �����Ѵ�. */
@@ -73,7 +70,7 @@ HRESULT CLoader::Loading()
 	{
 	case LEVEL::EDITOR:
 	{
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
 
 		hr = Loading_For_Editor();
 	}
