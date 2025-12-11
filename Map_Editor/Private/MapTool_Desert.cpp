@@ -666,6 +666,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pInteractionDesc.iInteractionID = 4;
 					break;
 #pragma endregion
+#pragma region Desert Ruin, Canbox, fences, buildings, wheels, bridges, vehicle
 				case DESESRT_RUIN_OBJECT::CANBOX:
 					protoTag = TEXT("Prototype_GameObject_CanBox"); layerTag = TEXT("Layer_CanBox");
 					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_CanBox");
@@ -811,6 +812,296 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Vehicle_14B");
 					break;
+#pragma endregion
+
+#pragma region Crane, Trash, Sign
+				case DESESRT_RUIN_OBJECT::CRANE_1C:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Crane_1C");
+					break;
+				case DESESRT_RUIN_OBJECT::CRANE_11:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Crane_11");
+					break;
+				case DESESRT_RUIN_OBJECT::CRANE_13:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Crane_13");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_1A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_1A");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_2A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_2A");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_2B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_2B");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_4A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_4A");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_9A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_9A");
+					break;
+				case DESESRT_RUIN_OBJECT::TRASH_17A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Trash_17A");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_11A:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_11A");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_11B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_11B");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_11F:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_11F");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_12B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_12B");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_12C:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_12C");
+					break;
+				case DESESRT_RUIN_OBJECT::SIGN_36B:
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Sign_36B");
+					break;
+#pragma endregion
+
+#pragma region Tree, Grass
+				case DESESRT_RUIN_OBJECT::TREE_1A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_1A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_2A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_2A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_3A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_3A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_4A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_4A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_5B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_5B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_5C:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_5C");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_6A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_6A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_6B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_6B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_7A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_7A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_7B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_7B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_8A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_8A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_8Aa:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_8Aa");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_8B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_8B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_8Ba:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_8Ba");
+					break;
+
+				case DESESRT_RUIN_OBJECT::TREE_10A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_10A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_11B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_11B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_15A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_15A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_15B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_15B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_16A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_16A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_17A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_17A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_18A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_18A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_19A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_19A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_20A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_20A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_21A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_21A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_23A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_23A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_25A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_25A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_26A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_26A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_27A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_27A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_29A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_29A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_30A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_30A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_31A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_31A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_32A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_32A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_33A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_33A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_34A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_34A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::TREE_40B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40C:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40C");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40D:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40D");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40E:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40E");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40F:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40F");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40G:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40G");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40H:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40H");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40I:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40I");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_40J:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_40J");
+					break;
+
+				case DESESRT_RUIN_OBJECT::TREE_42A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_42A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_43A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_43A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_43B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_43B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_44A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_44A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_44B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_44B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_44D:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_44D");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_44F:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_44F");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_45A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_45A");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_45B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_45B");
+					break;
+				case DESESRT_RUIN_OBJECT::TREE_45C:
+					protoTag = TEXT("Prototype_GameObject_Desert_Tree"); layerTag = TEXT("Layer_Desert_Tree");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Tree_45C");
+					break;
+				case DESESRT_RUIN_OBJECT::DEADSHRUBS_A:
+					protoTag = TEXT("Prototype_GameObject_Desert_Grass"); layerTag = TEXT("Layer_Desert_Grass");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_DeadShrubs_A");
+					break;
+				case DESESRT_RUIN_OBJECT::DEADSHRUBS_B:
+					protoTag = TEXT("Prototype_GameObject_Desert_Grass"); layerTag = TEXT("Layer_Desert_Grass");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_DeadShrubs_B");
+					break;
+#pragma endregion
 
 #pragma region Monster
 				case DESESRT_RUIN_OBJECT::GORILLA:
@@ -1325,19 +1616,16 @@ HRESULT CMapTool_Desert::Render()
 		ImGui::Text("Desert Common Objects");
 		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 모델 배치 메뉴
 		// 2. 모델 배치 / 삭제메뉴
-		_int nSelectedModel = -1;
-		_int nSelectedBuilding = -1;
 		_int nSelectedDesertTree = -1;
-
-		const _char* modelNames[] = { "" };
-
-		const _char* buildingNames[] = { "" };
+		_int nSelectedShrub = -1;
 
 		const _char* desertTreeNames[] = { "TREE_1A", "TREE_2A", "TREE_3A", "TREE_4A", "TREE_5B", "TREE_5C", "TREE_6A", "TREE_6B", "TREE_7A", "TREE_7B", 
 			"TREE_8A", "TREE_8Aa", "TREE_8B", "TREE_8Ba", "TREE_10A", "TREE_11B", "TREE_15A", "TREE_15B", "TREE_16A", "TREE_17A", "TREE_18A", "TREE_19A", 
 			"TREE_20A", "TREE_21A", "TREE_23A", "TREE_25A", "TREE_26A", "TREE_27A", "TREE_29A", "TREE_30A", "TREE_31A", "TREE_32A", "TREE_33A", "TREE_34A", 
 			"TREE_40B", "TREE_40C", "TREE_40D", "TREE_40E", "TREE_40F", "TREE_40G", "TREE_40H", "TREE_40I", "TREE_40J", 
 			"TREE_42A", "TREE_43A", "TREE_43B", "TREE_44A", "TREE_44B", "TREE_44D", "TREE_44F", "TREE_45A", "TREE_45B", "TREE_45C" };
+
+		const _char* desertShrubNames[] = { "DEADSHRUBS_A", "DEAD_SHRUBS_B" };
 
 		if (ImGui::CollapsingHeader("Desert_Trees"))
 		{
@@ -1609,6 +1897,22 @@ HRESULT CMapTool_Desert::Render()
 					m_CurrentLayerName = TEXT("Layer_Desert_Tree");
 				}
 
+			}
+		}
+		if (ImGui::CollapsingHeader("Desert_Grass"))
+		{
+			if (ImGui::ListBox("##Desert_Shrubs", &nSelectedShrub, desertShrubNames, IM_ARRAYSIZE(desertShrubNames), 7))
+			{
+				if (nSelectedShrub == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DEADSHRUBS_A;
+					m_CurrentLayerName = TEXT("Layer_Desert_Grass");
+				}
+				else if (nSelectedShrub == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DEADSHRUBS_B;
+					m_CurrentLayerName = TEXT("Layer_Desert_Grass");
+				}
 			}
 		}
 	}
@@ -1927,6 +2231,9 @@ HRESULT CMapTool_Desert::Render()
 		_int nSelectedContainer = -1;
 		_int nSelectedFence = -1;
 		_int nSelectedVehicle = -1;
+		_int nSelectedSign = -1;
+		_int nSelectedCrane = -1;
+		_int nSelectedTrash = -1;
 
 		const _char* modelNames[] = { "Lamp_47A", "VendingMachine_6A", "VendingMachine_7A", "Poster_4D", "SciFi_Door", "CanBox", 
 									  "Building_4B", "Building_4C", "Building_4D", "Wheel_1A", "Wheel_1B", "Wheel_1C"};
@@ -1936,6 +2243,9 @@ HRESULT CMapTool_Desert::Render()
 		const _char* containerNamees[] = { "CONTAINER_2A", "CONTAINER_2B",	"CONTAINER_2C",	"CONTAINER_2D",	"CONTAINER_3A",	"CONTAINER_4B",	"CONTAINER_5A",	"CONTAINER_5B",	"CONTAINER_5C",	"CONTAINER_5D",	"CONTAINER_5E",	"CONTAINER_7B",	"CONTAINER_7F" };
 		const _char* fenceNames[] = { "FENCE_1A", "FENCE_1B", "FENCE_1F", "FENCE_1H" };
 		const _char* vehicleNames[] = { "VEHICLE_2A", "VEHICLE_2B", "VEHICLE_3B", "VEHICLE_4C", "VEHICLE_6A", "VEHICLE_8B", "VEHICLE_14A", "VEHICLE_14B" };
+		const _char* signNames[] = { "SIGN_11A", "SIGN_11B", "SIGN_11F", "SIGN_12B", "SIGN_12C", "SIGN_36B" };
+		const _char* craneNames[] = { "CRANE_1C", "CRANE_11", "CRANE_13" };
+		const _char* trashNames[] = { "TRASH_1A", "TRASH_2A", "TRASH_2B", "TRASH_4A", "TRASH_9A", "TRASH_17A" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -2279,6 +2589,99 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedVehicle == 7)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::VEHICLE_14B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Sign"))
+		{
+			if (ImGui::ListBox("##Signs", &nSelectedSign, signNames, IM_ARRAYSIZE(signNames), 7))
+			{
+				if (nSelectedSign == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_11A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedSign == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_11B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedSign == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_11F;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedSign == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_12B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedSign == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_12C;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedSign == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SIGN_36B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Crane"))
+		{
+			if (ImGui::ListBox("##Cranes", &nSelectedCrane, craneNames, IM_ARRAYSIZE(craneNames), 3))
+			{
+				if (nSelectedCrane == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CRANE_1C;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedCrane == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CRANE_11;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedCrane == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CRANE_13;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Trash"))
+		{
+			if (ImGui::ListBox("##Trashs", &nSelectedTrash, trashNames, IM_ARRAYSIZE(trashNames), 6))
+			{
+				if (nSelectedTrash == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_1A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedTrash == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_2A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedTrash == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_2B;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedTrash == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_4A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedTrash == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_9A;
+					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedTrash == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::TRASH_17A;
 					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
@@ -2670,6 +3073,8 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Interaction")))) return S_OK;
 
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Desert_Grass")))) return S_OK;
+
 	ofs.close();
 
 	return S_OK;
@@ -2821,6 +3226,8 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
 
 	ifs.close();
 
