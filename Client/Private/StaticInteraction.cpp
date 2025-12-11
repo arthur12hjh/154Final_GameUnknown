@@ -95,9 +95,9 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     /* Com_Interaction */
     CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
-    InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
-    InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
+    InteractionDesc.BeginCallBackFunc = [&]() { Begin_OverlapCallBack(); };
+    InteractionDesc.EndCallBackFunc = [&]() { End_OverlapCallBack(); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
@@ -157,21 +157,25 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
 
 HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
-    m_eInterState = INTERACTION_STATE::DEFAULT;
-    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+    __super::Begin_OverlapCallBack();
     return S_OK;
 }
 
-void CStaticInteraction::Excute_CallBack(CGameObject* pActionObject)
+void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
+    if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+        m_fInteractionDuration.x += fTimeDelta;
+
     if (INTERACTION_STATE::DEFAULT == m_eInterState)
+    {
         m_eInterState = INTERACTION_STATE::ACTIVE;
+        m_fInteractionDuration.x = 0.f;
+    }
 }
 
 HRESULT CStaticInteraction::End_OverlapCallBack()
 {
-    m_eInterState = INTERACTION_STATE::END;
-    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+    __super::End_OverlapCallBack();
     return S_OK;
 }
 

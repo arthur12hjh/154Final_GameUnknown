@@ -201,31 +201,31 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	//InteractionDesc.iInteractionID = 2;
-	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
-	//for (size_t i = 0; i < 5; i++)
-	//{
-	//	InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
-	//						   0.f,
-	//						   m_pGameInstance->Random(0, 50) };
+	InteractionDesc.iInteractionID = 2;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	for (size_t i = 0; i < 5; i++)
+	{
+		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
+							   0.f,
+							   m_pGameInstance->Random(0, 50) };
 
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-	//		return E_FAIL;
-	//}
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+			return E_FAIL;
+	}
 
-	//InteractionDesc.iInteractionID = 3;
-	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
-	//for (size_t i = 0; i < 5; i++)
-	//{
-	//	InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
-	//						   0.f,
-	//						   m_pGameInstance->Random(50, 100) };
+	InteractionDesc.iInteractionID = 3;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	for (size_t i = 0; i < 5; i++)
+	{
+		InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
+							   0.f,
+							   m_pGameInstance->Random(50, 100) };
 
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-	//		return E_FAIL;
-	//}
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+			return E_FAIL;
+	}
 
 	//ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
 	//for (size_t i = 0; i < 5; i++)

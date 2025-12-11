@@ -507,7 +507,8 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		switch (InteractionState)
 		{
 		case INTERACTION_STATE::DEFAULT:
-		case INTERACTION_STATE::ACTIVE:
+			pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			break;
 		case INTERACTION_STATE::CONTACT:
 		{
 			switch (pInteractionData->eType)
@@ -519,7 +520,6 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
 				Desc.isChangeMode = false;
 				Desc.pArg = pInteractionCom;
-
 				// Transition 너무 이곳저곳에서 일어나지 않나?..
 				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
 				// 제어가 안될 것까진 없다고 봄..

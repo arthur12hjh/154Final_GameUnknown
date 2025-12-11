@@ -676,9 +676,6 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Platform">
       <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
-      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\ProbActor\DestoryProb">
       <UniqueIdentifier>{1368fba2-a5fa-4ea8-8b05-d446457d47fd}</UniqueIdentifier>
     </Filter>
@@ -721,9 +718,6 @@
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Rock">
       <UniqueIdentifier>{9b88c08a-d17f-4b8d-ac77-d57362bc0f63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Item">
-      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\DropComponent">
       <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
     </Filter>
@@ -738,6 +732,12 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
       <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Item">
+      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1478,7 +1478,7 @@
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
-      <Filter>02.GameObjects\Actor\Item</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bullet.h">
       <Filter>02.GameObjects\Actor\Bullet</Filter>
@@ -2204,7 +2204,7 @@
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
-      <Filter>02.GameObjects\Actor\Item</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet.cpp">
       <Filter>02.GameObjects\Actor\Bullet</Filter>

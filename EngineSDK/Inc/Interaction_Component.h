@@ -16,9 +16,9 @@ public:
 
 		//	업데이트 해주면 이거 계속 불립니다.
 		//	그안에서 로직구성하세요
-		function<void(CGameObject*)>	InteractionEvent;
-		function<void()>				BeginCallBackFunc;
-		function<void()>				EndCallBackFunc;
+		function<void(_float, CGameObject*)>	InteractionEvent;
+		function<void()>						BeginCallBackFunc;
+		function<void()>						EndCallBackFunc;
 	}INTERACTION_DESC;
 
 private:
@@ -32,7 +32,7 @@ public:
 	virtual void								SetOwner(CGameObject* pGameObject);
 
 	void										Update_Com();
-	void										Action_InteractionEvent(CGameObject* pGameObject);
+	void										Action_InteractionEvent(_float fTimeDelta, CGameObject* pGameObject);
 
 	void										SetInteractionHitType(HIT_TYPE eHitType);
 	void										ADD_InteractionIgnoreObject(HIT_TYPE eHitType);
@@ -50,11 +50,11 @@ public:
 	_bool										Is_RayHit(_vector vTargetPos, _vector vDir, void* OutDesc = nullptr);
 
 private :
-	COBBCollider*								m_pOBBColiider = nullptr;
+	COBBCollider*												m_pOBBColiider = nullptr;
 
-	function<void()>							m_BeginCallBackFunc = nullptr;
-	function<void(CGameObject* pGameObject)>	m_InteractionFunc = nullptr;
-	function<void()>							m_EndCallBackFunc = nullptr;
+	function<void()>											m_BeginCallBackFunc = nullptr;
+	function<void(_float fTimeDelta, CGameObject* pGameObject)>	m_InteractionFunc = nullptr;
+	function<void()>											m_EndCallBackFunc = nullptr;
 
 private :
 	HRESULT										Ready_Components(const INTERACTION_DESC& Desc);
