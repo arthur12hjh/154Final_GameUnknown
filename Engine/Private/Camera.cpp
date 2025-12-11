@@ -105,10 +105,8 @@ HRESULT CCamera::Bind_Matrices(_float fTimeDelta)
 
 		// 오프셋 벡터 계산 (right,up 방향으로만 흔들림, look 방향으론 안흔들림.)
 		_vector vShakeOffset = vRight * fOffsetRight + vUp * fOffsetUp;
-
-
-
 		_vector vNewPos = vPos + vShakeOffset;
+
 		m_pTransformCom->Set_State(STATE::POSITION, vNewPos);
 
 		if (m_fShakeTime <= m_fShakeTimeAcc)

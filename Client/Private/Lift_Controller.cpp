@@ -63,8 +63,6 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 
 void CLift_Controller::Update(_float fTimeDelta)
 {
-	//m_pRigidBody->Update_PxTransform(WorldMat);
-
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 
 	if (m_bIsControllLift)
@@ -88,6 +86,8 @@ void CLift_Controller::Update(_float fTimeDelta)
 		if (!m_pLiftPlatform->GetPlatformMove())
 			m_eInterState = INTERACTION_STATE::DEFAULT;
 	}
+
+	//m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)

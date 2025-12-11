@@ -54,7 +54,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 // 월드 변환
     
-    matrix matWV, matWVP, matOldWV, matOldWVP;
+    matrix matWV, matWVP;
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
