@@ -12,11 +12,11 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CPlayer_SmallBoxInteractionState final : public CPlayerState
+class CPlayer_SupplyBoxInteractionState final : public CPlayerState
 {
 private:
-	CPlayer_SmallBoxInteractionState(void* pArg);
-	virtual ~CPlayer_SmallBoxInteractionState() = default;
+	CPlayer_SupplyBoxInteractionState(void* pArg);
+	virtual ~CPlayer_SupplyBoxInteractionState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -29,7 +29,7 @@ private:
 	CInteraction_Component* m_pInteractionCom = { nullptr };
 	_bool					m_isLerpFinished = { false }; 
 public:
-	static	CPlayer_SmallBoxInteractionState* Create(void* pArg);
+	static	CPlayer_SupplyBoxInteractionState* Create(void* pArg);
 	virtual	void			   Free() override;
 
 };
