@@ -69,11 +69,11 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	//if (m_isOverlay)
-	//{
-	//	static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
-	//	m_isOverlay = false;
-	//}
+	if (m_isOverlay && m_pHUD)
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		m_isOverlay = false;
+	}
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
@@ -450,13 +450,13 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
 
-	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
+	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
 
-	//if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	//if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	
 	ifs.close();
@@ -562,6 +562,7 @@ HRESULT CLevel_GamePlay::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tch
 		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
 		Desc.bIsControllerType = info.bIsControllerType;
 		Desc.iPlatformID = info.iPlatformID;
+		Desc.iPosition = info.iPosition;
 
 		_vector vScale = {};
 		_vector vRotation = {};

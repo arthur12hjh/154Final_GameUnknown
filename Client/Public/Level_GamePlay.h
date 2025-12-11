@@ -26,6 +26,7 @@ public:
 	{
 		_bool			bIsControllerType = false;
 		_uint			iPlatformID = 0;
+		_uint 			iPosition = 0;	 // Top(0), Bottom(1)
 	}SAVED_LIFT_CONTROLLER_INFO;
 
 	typedef struct SavedLiftPlatformInfo :SavedObjectInfo

@@ -26,6 +26,7 @@ public:
     {
         _bool bIsControllerType = false;
         _uint iPlatformID = 0;
+		_uint iPosition = 0;    // 0: Up, 1 : Down
     }LIFT_CONTROLLER_DESC;
 
 private:
@@ -51,6 +52,7 @@ private:
     // 이거 _bool 값으로 리프트 가운데 설치하는 컨트롤러는 이거 켜줘야합니다.
     _bool                               m_bIsControllLift = { false };
 	_uint   					        m_iPlatformID = { 0 };     
+	_uint   				            m_iPosition = { 0 };    // Top(0), Bottom(1)
 
     // 컨트롤러가 이동시킬 리프트의 바닥 이라고 보시면 됩니다.
     // 진성햄이 Platform 이라고해둬서 제가 Platform으로 했어요
