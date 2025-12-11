@@ -25,7 +25,7 @@ HRESULT CTask_Theshold::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
 {
-    if (10 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
+    if (10 < m_pBlackBoard->GetBossInfo()->iCurrentHealth || m_pBlackBoard->bIsExcution())
         return NODE_STATE::FAIL;
 
     auto pHitData = m_pBlackBoard->GetHitData();
@@ -35,7 +35,11 @@ CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
         if (pSkillDesc)
         {
             if (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty)
+            {
+                m_pBlackBoard->EnterExcution(true);
+                m_pBlackBoard->SetHitData(pHitData);
                 return NODE_STATE::FAIL;
+            }
         }
     }
 

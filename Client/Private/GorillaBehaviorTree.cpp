@@ -129,7 +129,7 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 
 	// 飘府备己 1瞒 飘府
 	pRootSelect->Bind_BehaviorNode(pAliveSquence);
-	pRootSelect->Bind_BehaviorNode(CTask_Theshold::Create(this));
+	pRootSelect->Bind_BehaviorNode(CTask_Dead::Create(this));
 	
 	m_pRootNode = pRootSelect;
 	return S_OK;
