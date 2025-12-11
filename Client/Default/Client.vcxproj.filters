@@ -739,6 +739,18 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
       <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Sprint">
+      <UniqueIdentifier>{c46e3d19-c724-4dd6-9339-73406899f2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Evade">
+      <UniqueIdentifier>{7073a845-5c53-4d35-8390-f0ad90682728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Walk">
+      <UniqueIdentifier>{bcd7b35f-3fbd-4b8f-8ca6-2c4f06bdf5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Sprint">
+      <UniqueIdentifier>{f2e289de-1474-4577-a9b3-e9297c4991c3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn">
       <UniqueIdentifier>{67890273-70b8-4770-bff7-c4c9ad815e04}</UniqueIdentifier>
     </Filter>
@@ -1263,13 +1275,7 @@
     <ClInclude Include="..\public\InstanceModel.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonWalkState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
@@ -1506,6 +1512,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UILockOn.h">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
@@ -2009,13 +2027,7 @@
     <ClCompile Include="..\private\InstanceModel.cpp">
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
@@ -2241,6 +2253,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UILockOn.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>

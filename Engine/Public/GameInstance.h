@@ -137,7 +137,7 @@ public:
 	HRESULT								Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
-
+	LIGHT_DESC*							Get_Directional_Desc();
 #ifdef _DEBUG
 	void								Select_LightRender(CLight* pSelectLight);
 
