@@ -20,7 +20,7 @@ HRESULT CLift_Controller::Initialize_Prototype()
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
 
-	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+	LIFT_CONTROLLER_DESC* pDesc = static_cast<LIFT_CONTROLLER_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -35,6 +35,8 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 
 	m_iInteractionID = pDesc->iInteractionID;
+	m_bIsControllerType = pDesc->bIsControllerType;
+	m_iPlatformID = pDesc->iPlatformID;
 	m_eCurState = LIFT_PULL;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 

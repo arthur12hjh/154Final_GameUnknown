@@ -22,13 +22,16 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	LIFT_PLATFORM_DESC* pDesc = static_cast<LIFT_PLATFORM_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
+
+	m_iPlatformId = pDesc->iPlatFormID;
+	m_fMoveDistance = pDesc->fMoveDistance;
 
 	XMStoreFloat3(&m_vRootPos, m_pTransformCom->Get_State(STATE::POSITION));
 	return S_OK;

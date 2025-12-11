@@ -17,6 +17,12 @@ public :
 	// 이거 진성햄이 바꿔서 써도됨
 	enum class LIFT_PLATFORM_STATE { UPPER, DWON, END };
 
+	typedef struct Lift_Platform_Desc : public ACTOR_DESC
+	{
+		_uint	iPlatFormID = 0;
+		_float	fMoveDistance = 0.f;
+	}LIFT_PLATFORM_DESC;
+
 private:
 	CLift_Platform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CLift_Platform(const CLift_Platform& Prototype);
@@ -48,6 +54,7 @@ private :
 
 	// 이거는 리프트가 올라가는 거리입니다.
 	// 이거도 형이 툴에서 수정해서 같이 넘겨서 받으면될거같음
+	_uint							m_iPlatformId = 0;
 	_float							m_fMoveDistance = { 45.f };
 	
 private :

@@ -22,6 +22,11 @@ public:
         LIFT_END        // 아무상태 아님
     };
 
+    typedef struct Lift_Controller_Desc : public Prob_Interaction_Desc
+    {
+        _bool bIsControllerType = false;
+    }LIFT_CONTROLLER_DESC;
+
 private:
     CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     CLift_Controller(const CLift_Controller& Prototype);
