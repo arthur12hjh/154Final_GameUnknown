@@ -58,6 +58,8 @@ public:
 	
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
+	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
+	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(_bool bIsTheshold);
 
@@ -94,7 +96,7 @@ private:
 	_uint									m_iComboCount = { };
 	const _float4x4*						m_pLockOnMatrix = { nullptr };
 	const _float4x4*						m_pHeadBoneMatrix = { nullptr };
-
+	const _float4x4*						m_pLinkTargetBoneMatrix = { nullptr };
 
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
 	size_t									m_iSkillIndex = {};
