@@ -1,17 +1,23 @@
 #pragma once
 #include "Actor.h"
-#include "UIStruct.h"
 
 NS_BEGIN(Engine)
 class CInteraction_Component;
 NS_END
 
 NS_BEGIN(Client)
+struct Interaction_Data;
 class CGameManager;
 class CUIBase;
 
 class CProb_Interaction abstract : public CActor
 {
+public :
+	typedef struct Prob_Interaction_Desc : public ACTOR_DESC
+	{
+		_uint					iInteractionID;
+	}PROB_INTERACTION_DESC;
+
 protected:
 	CProb_Interaction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CProb_Interaction(const CProb_Interaction& Prototype);
@@ -26,27 +32,29 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	void							Finished_Interaction();
 
 	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
-	const INTERACTION_DATA*			Get_InterDesc() { return &m_tInterDesc; }
-
+	const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
 	const CInteraction_Component*	Get_InterCom() { return m_pInteractionCom; }
+
+	_float2							Get_Duration() { return m_fInteractionDuration; }
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
 	CInteraction_Component*			m_pInteractionCom = { nullptr };
 
-	CUIBase*						m_pInteractionUI = { nullptr };
+	const INTERACTION_DATA*			m_InteractionDesc = {};
 	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
+
 	_float2							m_fInteractionDuration = {};
 
-	INTERACTION_DATA				m_tInterDesc{};
-	_int							m_iInterID{-1};
-
 protected :
-	virtual HRESULT					Begin_OverlapCallBack() = 0;
-	virtual HRESULT					End_OverlapCallBack() = 0;
-	virtual void					Excute_CallBack(CGameObject* pActionObject) = 0;
+	virtual HRESULT					Begin_OverlapCallBack();
+	virtual HRESULT					End_OverlapCallBack();
+	virtual void					Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject);
+
+	_bool							IsInteractionEnable();
 
 public:
 	virtual		CGameObject*		Clone(void* pArg) override;

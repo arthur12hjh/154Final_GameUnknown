@@ -41,9 +41,9 @@ private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
 
-	virtual HRESULT					    Begin_OverlapCallBack() override;
-	virtual HRESULT					    End_OverlapCallBack() override;
-	virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+	virtual HRESULT					Begin_OverlapCallBack() override;
+	virtual HRESULT					End_OverlapCallBack() override;
+	virtual void					Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
 public:
 	static CRepairConsole* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

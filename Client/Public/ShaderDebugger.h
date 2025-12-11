@@ -31,6 +31,7 @@ private:
 	SSAO_DESC*   m_pSSAODesc = {};
 	VOLUMETRIC_DESC* m_pVolumetricDesc = {};
 	HDR_DESC*	m_pHDRDesc = {};
+	LIGHT_DESC* m_pDirectionalLightDesc = { nullptr };
 public:
 	static CShaderDebugger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

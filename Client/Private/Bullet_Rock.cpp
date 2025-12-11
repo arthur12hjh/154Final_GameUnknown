@@ -29,6 +29,8 @@ HRESULT CBullet_Rock::Initialize(void* pArg)
     if (FAILED(ADD_Components(*pDesc)))
         return E_FAIL;
 
+
+
 	return S_OK;
 }
 
@@ -39,7 +41,24 @@ void CBullet_Rock::Priority_Update(_float fTimeDelta)
 void CBullet_Rock::Update(_float fTimeDelta)
 {
 	if (false == m_bIsAttachment)
-		m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vProjectileDir), m_fSpeed);
+	{
+		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta);
+		// 여기서 베지어 Lerp
+		if (m_bIsBezierLerp)
+		{
+			m_LerpTime.x += fTimeDelta;
+			_float fRatio = m_LerpTime.x / m_LerpTime.y;
+			if (0.7f >= fRatio)
+			{
+				
+				m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_vLerpPoints, fRatio));
+			}
+			else
+				m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vProjectileDir), m_fSpeed);
+		}
+		else
+			m_pTransformCom->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vProjectileDir), m_fSpeed);
+	}
 
 	Update_BulletCombinedMatrix();
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
@@ -47,11 +66,13 @@ void CBullet_Rock::Update(_float fTimeDelta)
 
 void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
-    if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f))
-    {
-        m_pGameInstance->ADD_Collider(m_pColliderCom);
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    }
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 1000.f))
+	{
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
+	else
+		Set_Dead(true);
 }
 
 HRESULT CBullet_Rock::Render()
@@ -80,6 +101,38 @@ HRESULT CBullet_Rock::Render()
 	return S_OK;
 }
 
+void CBullet_Rock::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
+{
+	__super::Shoot_Projectile(XMLoadFloat3(&m_vTargetPoint), fSpeed);
+	m_LerpTime.x = 0.f;
+
+	_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+	XMStoreFloat3(&m_vLerpPoints[0], CombinedMatrix.r[3]);
+
+	_float fLength = XMVectorGetX(XMVector3Length(CombinedMatrix.r[3] - vTargetPoint));
+	if (30 > fLength)
+	{
+		m_bIsBezierLerp = false;
+		m_fSpeed = 50.f;
+	}
+	else
+	{
+		XMStoreFloat3(&m_vLerpPoints[4], vTargetPoint);
+		_vector vBeziorCenter = XMVectorLerp(CombinedMatrix.r[3], vTargetPoint, 0.6f);
+		vBeziorCenter.m128_f32[1] = CombinedMatrix.r[3].m128_f32[1];
+		XMStoreFloat3(&m_vLerpPoints[1], vBeziorCenter);
+
+		_vector vPoint = (vBeziorCenter + vTargetPoint) / 2.f;
+		XMStoreFloat3(&m_vLerpPoints[2], vPoint);
+
+		_vector vPoint2 = (vPoint + vTargetPoint) / 2.f;
+		XMStoreFloat3(&m_vLerpPoints[3], vPoint2);
+		m_bIsBezierLerp = true;
+	}
+
+
+}
+
 void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
 	// 여기서 일단 데미지 처리한다
@@ -99,7 +152,7 @@ HRESULT CBullet_Rock::ADD_Components(BULLET_DESC& pDesc)
 	// 모델 생성 하고
 	// 충돌체 생성 하자
 	/* Com_Model */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Canyon_4A"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bullet_Rock1"),
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 

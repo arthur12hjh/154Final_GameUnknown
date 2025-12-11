@@ -20,14 +20,15 @@ HRESULT CTop_Roof::Initialize_Prototype()
 HRESULT CTop_Roof::Initialize(void* pArg)
 {
 
+	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+	static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 999;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-	m_eCurState = START;
+	m_eCurState = IDLE;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
 	return S_OK;
@@ -135,7 +136,7 @@ HRESULT CTop_Roof::End_OverlapCallBack()
 	return S_OK;
 }
 
-void CTop_Roof::Excute_CallBack(CGameObject* pActionObject)
+void CTop_Roof::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 }
 

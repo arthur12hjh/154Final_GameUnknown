@@ -18,9 +18,11 @@
 #include "AttackHitBox.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+#include "PlayerCCTQueryFilterCallback.h"
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
+#include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -165,19 +167,14 @@ void CPlayer::Update(_float fTimeDelta)
 
 	Update_TestLogic(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
-	Update_BetaSkill();
+	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
-	
+	Update_Interaction(fTimeDelta);
+	Update_PotionUse(fTimeDelta);
+
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
 		Use_RushSkill();
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-	{
-		auto pInteraction = m_pGameInstance->GetNearInteraction();
-		if(pInteraction)
-			pInteraction->Action_InteractionEvent(this);
-	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -185,15 +182,13 @@ void CPlayer::Update(_float fTimeDelta)
 void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta); 
-	
-	//m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif
 }
 
@@ -270,7 +265,7 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 2.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
@@ -301,6 +296,9 @@ HRESULT CPlayer::Ready_Components()
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
+	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.iCollisionMask &= ~(PHYSX_CUSTOM_3);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
@@ -412,9 +410,9 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.pPlayerController  = m_pCCT;
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
-	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
+	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
 	return S_OK;
 }
@@ -468,7 +466,8 @@ void CPlayer::Update_RushSkill(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Update_BetaSkill()
+//베타스킬 상태 변경
+void CPlayer::Update_BetaSkill(_float fTimeDelta)
 {
 	_uint iIdx = 0;
 
@@ -487,6 +486,77 @@ void CPlayer::Update_BetaSkill()
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+	}
+}
+
+//인터랙션 관련 처리 (키입력)
+void CPlayer::Update_Interaction(_float fTimeDelta)
+{
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+
+		if (nullptr == pInteractionCom)
+			return;
+
+		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+
+		const INTERACTION_DATA* pInteractionData = pInteractionObject->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionObject->Get_InterState();
+
+		switch (InteractionState)
+		{
+		case INTERACTION_STATE::DEFAULT:
+			pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			break;
+		case INTERACTION_STATE::CONTACT:
+		{
+			switch (pInteractionData->eType)
+			{
+			// 만약 서플라이 박스라면 (발로 차는 모션)
+			case INTERACTION_TYPE::SUPPLY_BOX:
+			{
+				PLAYER_TRANSITION_DESC Desc;
+				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
+				Desc.isChangeMode = false;
+				Desc.pArg = pInteractionCom;
+				// Transition 너무 이곳저곳에서 일어나지 않나?..
+				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
+				// 제어가 안될 것까진 없다고 봄..
+				m_pFSM->Handle_Transition(Desc);
+				break;
+			}
+			}
+		}
+		// 끝났거나 잠겨있다면, 그냥 Break 처리.
+		// 디폴트여도 상호작용은 안되니까 Break 처리.
+		case INTERACTION_STATE::LOCK:
+		case INTERACTION_STATE::END:
+			break;
+		}
+	}
+}
+
+void CPlayer::Update_PotionUse(_float fTimeDelta)
+{
+	m_PlayerDesc.fCurrentPotionCoolDown += fTimeDelta;
+
+	if (m_PlayerDesc.fCurrentPotionCoolDown >= m_PlayerDesc.fPotionCoolDown)
+		m_PlayerDesc.fCurrentPotionCoolDown = m_PlayerDesc.fPotionCoolDown;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Q))
+	{
+		/* 여기서 포션 사용 이펙트 쏴줘 */
+		if (m_PlayerDesc.fPotionCoolDown <= m_PlayerDesc.fCurrentPotionCoolDown &&
+			m_PlayerDesc.iCurrentPotions > 0 && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
+		{
+			m_PlayerDesc.iCurrentPotions--;
+			m_PlayerDesc.fPotionCoolDown = 0.f;
+			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
+			
+			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
+				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
+		}
 	}
 }
 
@@ -563,7 +633,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 
 		m_pFSM->Handle_Transition(Desc);
-		
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
 	}
 }
 

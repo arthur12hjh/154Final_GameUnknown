@@ -41,17 +41,21 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 3.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio *  4.f), 0.f), nullptr);
 
     return m_tNextState;
 }
 
 _float CPlayer_BattleWalkEndState::End()
 {
-    return 0.12f;
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)

@@ -22,7 +22,7 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	LIFT_PLATFORM_DESC* pDesc = static_cast<LIFT_PLATFORM_DESC*>(pArg);
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
@@ -30,15 +30,14 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
 
+	m_iPlatformId = pDesc->iPlatFormID;
+	m_fMoveDistance = pDesc->fMoveDistance;
+
 	XMStoreFloat3(&m_vRootPos, m_pTransformCom->Get_State(STATE::POSITION));
 	return S_OK;
 }
 
 void CLift_Platform::Priority_Update(_float fTimeDelta)
-{
-}
-
-void CLift_Platform::Update(_float fTimeDelta)
 {
 	if (m_bIsPaltformMove)
 	{
@@ -46,7 +45,15 @@ void CLift_Platform::Update(_float fTimeDelta)
 
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
+
+		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
+	else
+		int a = 10;
+}
+
+void CLift_Platform::Update(_float fTimeDelta)
+{
 }
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
@@ -58,7 +65,6 @@ void CLift_Platform::Late_Update(_float fTimeDelta)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		// 얜 움직이니까 업데이트 해줘야합니다
-		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
 }
 
@@ -100,7 +106,7 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 	case CLift_Platform::LIFT_PLATFORM_STATE::UPPER:
 	{
 		vDir = m_pTransformCom->Get_State(STATE::UP);
-		_vector vTargetPos = XMLoadFloat3(&m_vRootPos) + vDir * m_fMoveDistance;
+		_vector vTargetPos = XMLoadFloat3(&m_vRootPos) + vDir * 28;
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
 		
 		// 여기서 위인지 아래인지
@@ -109,6 +115,7 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
+			m_pRigidBody->Set_Ridable(true);
 		}
 		else
 			XMStoreFloat3(&m_vTargetPoint, vPlatformPos);
@@ -142,7 +149,7 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 	_vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
 
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
-	if (fDistance < 0.1f)
+	if (fDistance < 0.5f)
 	{
 		m_pRigidBody->Set_Ridable(false);
 		m_bIsPaltformMove = false;
@@ -197,7 +204,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 
 	// 충돌처리를 할지말지 
 	// DYNAMIC : 충돌 
-	// KINEMATIC : 충돌 X
+	// KINEMATIC : 충돌 O
 	// STATIC : 충돌 O, 대신 고정되어 있음.
 	// ->> 엘레베이터는 몸체 제외하고 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 	// -> 얜 플랫폼이라 키네마틱으로 세팅해줘요.

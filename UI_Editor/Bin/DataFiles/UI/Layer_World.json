@@ -1,11 +1,5 @@
 [
     {
-        "TextureDesc": {
-            "iPass": 0,
-            "iTextureIndex": 0,
-            "szProtoTag": "Prototype_Component_UI_Texture_LockOn",
-            "szTextureComTag": "Com_Texture_UI_LockOn"
-        },
         "fAlpha": 1.0,
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
@@ -21,8 +15,8 @@
         "iVisibility": 1,
         "szLayerTag": "Layer_World",
         "szPoolTag": "Pool_LockOnMark",
-        "szProtoTag": "Prototype_GameObject_UI_Image",
-        "szUIID": "LockOn_Image_1-1",
+        "szProtoTag": "Prototype_GameObject_UI_LockOn",
+        "szUIID": "LockOn_1-1",
         "szUITag": "UI_LockOnMark"
     },
     {
@@ -282,6 +276,7 @@
                     {
                         "TextDesc": {
                             "fScale": 0.7,
+                            "szFont": "KoPub",
                             "szText": "상호작용",
                             "vColor": [
                                 1.0,

@@ -22,6 +22,13 @@ public:
         LIFT_END        // 아무상태 아님
     };
 
+    typedef struct Lift_Controller_Desc : public Prob_Interaction_Desc
+    {
+        _bool bIsControllerType = false;
+        _uint iPlatformID = 0;
+		_uint iPosition = 0;    // 0: Up, 1 : Down
+    }LIFT_CONTROLLER_DESC;
+
 private:
     CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     CLift_Controller(const CLift_Controller& Prototype);
@@ -44,9 +51,12 @@ private:
 
     // 이거 _bool 값으로 리프트 가운데 설치하는 컨트롤러는 이거 켜줘야합니다.
     _bool                               m_bIsControllLift = { false };
+	_uint   					        m_iPlatformID = { 0 };     
+	_uint   				            m_iPosition = { 0 };    // Top(0), Bottom(1)
 
     // 컨트롤러가 이동시킬 리프트의 바닥 이라고 보시면 됩니다.
     // 진성햄이 Platform 이라고해둬서 제가 Platform으로 했어요
+    _float4x4                           m_CombinedMatrix = {};
     CLift_Platform*                     m_pLiftPlatform = { nullptr };
 
     CModel*                             m_pModelCom = { nullptr };
@@ -55,9 +65,7 @@ private:
     HRESULT                             Ready_Components(const _tchar* pComponentTag);
     HRESULT                             Bind_ShaderResources();
 
-    virtual HRESULT					    Begin_OverlapCallBack() override;
-    virtual HRESULT					    End_OverlapCallBack() override;
-    virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+    virtual void					    Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
     void                                ResetAction(_bool bIsForce = false);
 

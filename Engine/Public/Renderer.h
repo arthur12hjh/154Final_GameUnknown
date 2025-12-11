@@ -37,7 +37,7 @@ public:
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void	Render_Debug();
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
@@ -67,11 +67,11 @@ private:
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
-	_bool								m_isBloom = { false };
-	_bool								m_isFog = { false };
+	_bool								m_isBloom = { true };
+	_bool								m_isFog = { true };
 	HDR_DESC							m_HDRDesc = {};
 	_bool								m_isHDR = { true };
-	_float								m_fHDRExposure = { 1.24f };
+	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };

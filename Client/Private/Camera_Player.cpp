@@ -130,7 +130,6 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
 
         m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
         m_pTransformCom->LookAt(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f));
-
     }
     else if (CAMERA_STATE::FOLLOW == m_eCameraState)
     {
@@ -160,11 +159,13 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     if (false == m_pGameInstance->IsMainCamera(this))
         return;
 
-    __super::Bind_Matrices();
+    __super::Bind_Matrices(fTimeDelta);
 }
 
 void CCamera_Player::Update(_float fTimeDelta)
 {
+    //카메라 쉐이킹을 위해서 부모 Update 호출. 
+    //__super::Update(fTimeDelta);
 }
 
 void CCamera_Player::Late_Update(_float fTimeDelta)

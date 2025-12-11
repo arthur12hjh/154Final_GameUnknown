@@ -11,12 +11,13 @@ namespace Client
 		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
 		SKILL_SLOT_GLOW, RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE, SKILL_WRAPPER_ON_FX,
 		LOADING_BLUR, SIMPLE_KEY, INTERACTION_FX, INTERACTION_FX_GLOW, STAMINA,
-		STAMINA_FX
+		STAMINA_FX, LOCKON
 	};
 
 	typedef struct tagSkillInfoDesc
 	{
 		_int		iSkillIndex{ -1 };
+		_uint		iSkillID{ 0 };
 		_uint		iPrevSkillState{ 0 };
 		_uint		iSkillState{ 0 };
 	}UI_SKILL_INFO_DESC;
@@ -124,6 +125,7 @@ namespace Client
 
 	typedef struct tagUITextDesc
 	{
+		wstring szFont{};
 		wstring szText{};
 		float	fScale{ 1.f };
 		XMFLOAT4 vColor{ 1.f, 1.f, 1.f, 1.f };

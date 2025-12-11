@@ -2,6 +2,10 @@
 
 #include "PlayerState.h"
 
+/*
+모든 Interaction 류 상태들은 Idle에서만 사용 가능하다.
+*/
+
 NS_BEGIN(Client)
 
 class CPlayer_VendingInteractionState final : public CPlayerState

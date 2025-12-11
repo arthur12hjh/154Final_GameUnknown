@@ -22,13 +22,6 @@ namespace Client
 		RECOVERY_END
 	};
 
-	enum class INTERACTION_STATE {
-		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
-		CONTACT,	// 접촉해서 사용작용 가능한 녀석
-		LOCK,		// 상호작용 할수없음
-		ACTIVE,		// 상호작용 하는중
-		END			// 더이상 앞으로도 네버 상호작용 불가능
-	};
 
 	typedef struct Default_Status
 	{
@@ -57,10 +50,12 @@ namespace Client
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
 	enum class PLAYER_STATE { 
-		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
-		EVADE, LANDING, VENDING_INTERACTION,
-		HIT, 
-		BETA_CHARGINGSLASH, BETA_TRIPLET,
+		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK, 
+		EVADE, LANDING, SPRINT, SPRINT_END,
+
+		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
+
+		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
 		
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
@@ -70,6 +65,7 @@ namespace Client
 
 		STATE_END
 	};
+	enum class PLAYER_DIRECTION { STRAIGHT, LEFT, RIGHT, BACKWARD, END };
 
 	enum class SKILL_STATE {
 		DEFAULT,   // 비활성화
@@ -98,7 +94,8 @@ namespace Client
 
 		int								iCurrentPotions; // 현재 소지한 포션 개수
 		int								iMaxPotions; // 전체 포션 개수
-
+		float							fPotionCoolDown = { 3.f };   // 포션 사용 쿨타임
+		float							fCurrentPotionCoolDown = { 0.f }; // 현재 남은 쿨타임
 		//
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
@@ -126,6 +123,7 @@ namespace Client
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
+		bool   isBossLock = { false };
 		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
 		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
 		bool   isWeaponVisible = { false };
@@ -166,17 +164,16 @@ namespace Client
 		// Bit Mask ex 
 		// All Property : 31
 		// Parry & Eavde : 3
-		PARRYABLE		= 0b00000001, // 1  <- 패링가능
-		EVADEABLE		= 0b00000010, // 2  <- 회피 가능
-		BLINKABLE		= 0b00000100, // 4  <- 블링크 가능
-		SUPERARMOR		= 0b00001000, // 8  <- 슈퍼아머
-		EXCUTION		= 0b00010000, // 16 <- 처형
-		GUARD			= 0b00100000, // 32 <- 가드
-		PARRY			= 0b01000000, // 64 <- 가드
+		PARRYABLE				= 0b00000001, // 1  <- 패링가능
+		EVADEABLE				= 0b00000010, // 2  <- 회피 가능
+		BLINKABLE				= 0b00000100, // 4  <- 블링크 가능
+		SUPERARMOR				= 0b00001000, // 8  <- 슈퍼아머
+		EXCUTION				= 0b00010000, // 16 <- 처형
+		GUARD					= 0b00100000, // 32 <- 가드
+		PARRY					= 0b01000000, // 64 <- 패링
+		IGNORE_GUARDBREAK		= 0b10000000, // 128 <- 가드 파괴
 		END
 	};
-
-
 
 	typedef struct Character_Skill_Desc
 	{
@@ -220,6 +217,7 @@ namespace Client
 
 	// 몬스터 구조체
 	// 인게임용
+	// ELITE, ELDER가 보스
 	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
 	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc
@@ -243,6 +241,7 @@ namespace Client
 
 		float				fAttackCoolTime;
 		float				fAttackRange;
+		float				fLerpRatio;
 		_float3				fColliderExtents;
 
 		//여기서 사용하는 스킬 정보
@@ -330,6 +329,16 @@ namespace Client
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
+	//인터랙션 타입.
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, END };
+	//인터랙션 상태(상호작용 중, 닿았는지 등)
+	enum class INTERACTION_STATE {
+		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
+		CONTACT,	// 접촉해서 사용작용 가능한 녀석
+		LOCK,		// 상호작용 할수없음
+		ACTIVE,		// 상호작용 하는중
+		END			// 더이상 앞으로도 네버 상호작용 불가능
+	};
 
 	typedef struct Interaction_Data
 	{
@@ -337,6 +346,6 @@ namespace Client
 		char				szObjectTag[256];
 		char				szInteractionText[256];
 		_float3				vUIPivot;
-
+		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
 }

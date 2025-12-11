@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 #include "RigidBody.h"
+#include "Physx_FilterShader.h"
 
 CPhysx_Manager::CPhysx_Manager()
 {
@@ -32,7 +33,8 @@ HRESULT CPhysx_Manager::Initialize()
     m_PxDispatcher = physx::PxDefaultCpuDispatcherCreate(4);
 
     sceneDesc.cpuDispatcher = m_PxDispatcher;
-    sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+    sceneDesc.filterShader = MyFilterShader;
+
     m_PxScene = m_PxPhysics->createScene(sceneDesc);
 
     m_pPxCCTManager = PxCreateControllerManager(*m_PxScene);
@@ -46,28 +48,41 @@ HRESULT CPhysx_Manager::Initialize()
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
 
-    //TestSetting();
-
     return S_OK;
 }
 
 void CPhysx_Manager::Update(_float fTimeDelta)
 {
     /* Dead 오브젝트 제거 */
-    for (auto iter = m_RigidBodies.begin(); iter != m_RigidBodies.end(); )
+    for (auto CCTPair = m_CCTs.begin(); CCTPair != m_CCTs.end();)
     {
-        if (iter->first->isDead())
+        if (CCTPair->first->isDead())
         {
-            // 씬 내에서 강체 우선 제거 
-            m_PxScene->removeActor(*iter->second->Get_PxRigidBody());
-            Safe_Release(iter->first);
-            Safe_Release(iter->second);
+            Safe_Release(CCTPair->first);
+            Safe_Release(CCTPair->second);
 
-            iter = m_RigidBodies.erase(iter); // erase는 다음 iterator 반환
+            CCTPair = m_CCTs.erase(CCTPair); // erase는 다음 iterator 반환
         }
         else
         {
-            ++iter;
+            ++CCTPair;
+        }
+    }
+
+    for (auto RigidBodyPair = m_RigidBodies.begin(); RigidBodyPair != m_RigidBodies.end();)
+    {
+        if (RigidBodyPair->first->isDead())
+        {
+            // 씬 내에서 강체 우선 제거 
+            m_PxScene->removeActor(*RigidBodyPair->second->Get_PxRigidBody());
+            Safe_Release(RigidBodyPair->first);
+            Safe_Release(RigidBodyPair->second);
+
+            RigidBodyPair = m_RigidBodies.erase(RigidBodyPair); // erase는 다음 iterator 반환
+        }
+        else
+        {
+            ++RigidBodyPair;
         }
     }
 
@@ -90,11 +105,17 @@ void CPhysx_Manager::Update(_float fTimeDelta)
             pTransform->Rotation(vPxRotation.x, vPxRotation.y, vPxRotation.z, vPxRotation.w);
 
             pTransform->Update_PreWorldMatrix();
+#ifdef _DEBUG
+            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
+#endif
         }
 
         for (auto& Pair : m_CCTs)
         {
             Pair.second->Update_ControllerTransform(fTimeDelta, Pair.first->GetTransform());
+#ifdef _DEBUG
+            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxActor(), Pair.second->Get_PxShape());
+#endif
         }
     }
 }
@@ -110,21 +131,7 @@ void CPhysx_Manager::TestSetting()
 
 void CPhysx_Manager::Clear()
 {
-    for (auto& Pair : m_RigidBodies)
-    {
-        // 씬 내에서 강체 우선 제거 
-        m_PxScene->removeActor(*Pair.second->Get_PxRigidBody());
-        Safe_Release(Pair.first);
-        Safe_Release(Pair.second);
-    }
-
     m_RigidBodies.clear();
-
-    for (auto& CCTPair : m_CCTs)
-    {
-        Safe_Release(CCTPair.first);
-        Safe_Release(CCTPair.second);
-    }
 
     m_CCTs.clear();
 
@@ -221,18 +228,25 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     PxHeightFieldGeometry hfGeom(pHeightField, PxMeshGeometryFlags(), 1 / 100.0f, 1.0f, 1.0f);
 
     PxTransform pose(PxVec3(-0.5f, 0, -0.5f));
-    
-    PxRigidStatic* hfActor = m_PxPhysics->createRigidStatic(pose);
 
     PxMaterial* pMaterial = NULL;
     pMaterial = m_PxPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+
     PxShape* pTerrianShape = m_PxPhysics->createShape(hfGeom, *pMaterial);
+    PxFilterData FilterData = {};
+    FilterData.word0 = PHYSX_TERRAIN;
+    FilterData.word1 = 0xFFFFFFFF;
+
+    pTerrianShape->setQueryFilterData(FilterData);
+    pTerrianShape->setSimulationFilterData(FilterData);
+
+    PxRigidStatic* hfActor = m_PxPhysics->createRigidStatic(pose);
     hfActor->attachShape(*pTerrianShape);
 
     // 씬 등록
     m_PxScene->addActor(*hfActor);
     hfActor->setName("TERRAIN");
-
+    
     m_pTerrains.push_back(hfActor);
 
     pHeightField->release();
@@ -294,10 +308,10 @@ void CPhysx_Manager::Free()
     
     for (auto& RigidBodyPair : m_RigidBodies)
     {
+        m_PxScene->removeActor(*RigidBodyPair.second->Get_PxRigidBody());
         Safe_Release(RigidBodyPair.first);
         Safe_Release(RigidBodyPair.second);
     }
-
     m_RigidBodies.clear();
 
     for (auto& CCTPair : m_CCTs)

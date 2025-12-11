@@ -7,6 +7,7 @@
 #include "ImGuiManager.h"
 #include "DebugHierarchy.h"
 
+#include "Nayitba.h"
 #include "Player.h"
 #include "Camera_Free.h"
 #include "Camera_Player.h"
@@ -135,6 +136,29 @@ void CDebugCheatUI::DrawObjectDebug()
         Safe_Release(pPlayer);
     }
 
+    //12.10 서민석 - 테스트용 몬스터 소환로직
+    //이건 나중에 치워도 될듯
+    if (ImGui::Button("Spawn Monster Front"))
+    {
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        _vector vPos = pPlayer->GetTransform()->Get_State(STATE::POSITION) + pPlayer->GetTransform()->Get_State(STATE::LOOK) * 5.f;
+
+        Safe_Release(pPlayer);
+
+        CNayitba::NAYITBA_DESC Desc = {};
+        Desc.bIsApplyTransform = true;
+        Desc.vScale = { 1.f, 1.f, 1.f };
+        Desc.iMonsterID = 4;
+        Desc.bIsSuperMonster = false;
+
+        Desc.vPosition = { XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos) };
+        if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+            ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
+            return;
+    }
 
 #endif // _DEBUG
 }

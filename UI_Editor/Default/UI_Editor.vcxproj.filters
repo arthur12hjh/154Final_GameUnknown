@@ -69,6 +69,9 @@
     <Filter Include="999. CPP From Client\04. Naytiba">
       <UniqueIdentifier>{f1450dc2-e8fd-427d-aaca-be0ff3d2a6fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="999. CPP From Client\05. ETC">
+      <UniqueIdentifier>{fdc9eb23-baec-4f26-bab5-a3212d906b3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -467,6 +470,21 @@
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIMonsterStaminaFX.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\NayitbaPartBody.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TargetComponent.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\DropComponent.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Bullet.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIGetterQueue.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,0 +1,42 @@
+[
+    {
+        "Children": [
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 180.0,
+                "fOffsetY": 100.0,
+                "fRotation": 0.0,
+                "fSizeX": 140.0,
+                "fSizeY": 20.0,
+                "fX": 0.0,
+                "fY": 0.0,
+                "iDepth": 10,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Combat_Info",
+                "szProtoTag": "Prototype_GameObject_UI_GetterQueue",
+                "szUIID": "UI_GetterQueue_0",
+                "szUITag": "UI_GetterQueue"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 0,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_Combat_Info",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_Combat_Info_Panel_0",
+        "szUITag": "Combat_Info_Panel"
+    }
+]

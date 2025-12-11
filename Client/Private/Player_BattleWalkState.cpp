@@ -118,6 +118,10 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
         m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
@@ -127,14 +131,14 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     else if (false == isWalking)
         m_tNextState.eNextState = PLAYER_STATE::WALK_END;
     // 이동은 제일 마지막에.
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.2f);
 
     return m_tNextState;
 }
 
 _float CPlayer_BattleWalkState::End()
 {
-    return 0.12f;
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BattleWalkState* CPlayer_BattleWalkState::Create(void* pArg)

@@ -2,6 +2,7 @@
 #include "UIBase.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "UIHUD.h"
 #include "UIPlayAnimEvent.h"
@@ -31,6 +32,13 @@ HRESULT CUIBase::Initialize(void* pArg)
 
 	if (FAILED(__super::Initialize(&m_tOriginUIDesc)))
 		return E_FAIL;
+
+  	m_pGameManager = CGameManager::GetInstance();
+
+	if (!m_pGameManager)
+		return E_FAIL;
+
+	Safe_AddRef(m_pGameManager);
 	
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
@@ -99,8 +107,6 @@ void CUIBase::Update(_float fTimeDelta)
 			
 		if(m_pTargetPos)
 			vView = XMVector3Transform(XMVectorSetW(XMLoadFloat3(m_pTargetPos), 1.f), view);
-		/*else
-			vView = XMVector3Transform(m_pParent->GetTransform()->Get_State(STATE::POSITION), view);*/
 
 		// 카메라 뒤에 있으면 표시 불가
 		if (XMVectorGetZ(vView) < 0.1f)
@@ -117,7 +123,7 @@ void CUIBase::Update(_float fTimeDelta)
 		// 4) NDC → Screen
  		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
 
-		//if (m_pTargetPos)
+		if (m_pTargetPos)
 		{
 			m_tUIDesc.fX = ndc.x * half.x + half.x;   // [-1~1] → [0~width]
 			m_tUIDesc.fY = -ndc.y * half.y + half.y;  // Y 반전
@@ -751,7 +757,7 @@ void CUIBase::Free()
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
-	//Safe_Release(m_pParent);
+	Safe_Release(m_pGameManager);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

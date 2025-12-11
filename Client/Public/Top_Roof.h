@@ -43,7 +43,7 @@ private:
 
 	virtual HRESULT					    Begin_OverlapCallBack() override;
 	virtual HRESULT					    End_OverlapCallBack() override;
-	virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+	virtual void					    Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
 public:
 	static CTop_Roof* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -53,7 +53,7 @@ void CUIHUD::Update(_float fTimeDelta)
 				if (pOwner->Get_InterDesc())
 					vPivot = pOwner->Get_InterDesc()->vUIPivot;
 
-			/*	XMStoreFloat3(&newPos,
+				/* XMStoreFloat3(&newPos,
 					XMVectorSet(
 						Interactions[i]->Get_CenterPos().x + vPivot.x,
 						Interactions[i]->Get_CenterPos().y + vPivot.y,
@@ -115,21 +115,6 @@ void CUIHUD::Update(_float fTimeDelta)
 	}
 
 	__super::Update(fTimeDelta);
-
-	/*for (auto& pPool : m_WorldUIs)
-	{
-		for (auto& pObj : pPool.second)
-		{
-			CUIBase* pUIBase = dynamic_cast<CUIBase*>(pObj);
-			if (pUIBase && pUIBase->GetVisibility() == VISIBILITY::VISIBLE)
-			{
-				pUIBase->Priority_Update(fTimeDelta);
-				pUIBase->Update(fTimeDelta);
-				pUIBase->Late_Update(fTimeDelta);
-			}
-		}
-	}*/
-
 
 	m_pUIAnimMgr->Update(fTimeDelta);
 }
@@ -375,6 +360,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	{
 		Json TextDesc;
 
+		TextDesc["szFont"] = pDesc.Get_UI_Text_Desc()->szFont;
 		TextDesc["szText"] = WStringToUTF8(pDesc.Get_UI_Text_Desc()->szText.c_str());
 		TextDesc["fScale"] = pDesc.Get_UI_Text_Desc()->fScale;
 		TextDesc["vColor"] = {
@@ -595,6 +581,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			Json jDesc = pUIObject["TextDesc"];
 			//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
 			//TextDesc.szText = szText;
+			TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 			TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 			TextDesc.fScale = jDesc["fScale"].get<_float>();
 			TextDesc.vColor = {
@@ -815,6 +802,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
+		TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.fScale = jDesc["fScale"].get<_float>();
 		TextDesc.vColor = {

@@ -32,8 +32,8 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		return NODE_STATE::COMPLETE;
 
 	// 블랙보드에 목표 지점 또는 타겟이 있을때 이동할 녀석
-	
-	if (m_pBlackBoard->GetCurState() == m_pBlackBoard->GetPreState())
+	if (CBossBlackBoard::BOSS_STATE::MOVE == m_pBlackBoard->GetCurState() &&
+		(m_pBlackBoard->GetCurState() == m_pBlackBoard->GetPreState()))
 	{
 		switch (m_eDirection)
 		{
@@ -110,16 +110,15 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 
 void CTask_Move::Refresh_MovePoint()
 {
-	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-
 	auto pNaytibaDefaultInfo = m_pBlackBoard->GetBossDefaultInfo();
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
 
 	m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
-	if (fDistance < fATKRange * 1.5f)
+	if (fDistance < fATKRange * 2.f)
 	{
+		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 		if (50 > fRandomIndex)
 		{
 			m_eDirection = DIRECTION::LEFT;

@@ -83,6 +83,13 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         m_pPlayerDesc->fCurrentMinDist = fMinDist;
         m_fCurrentMinDist = fMinDist;
         m_isLock = true; 
+
+        //보스 락온중인지 체크
+        if (m_pTarget->GetStaticMonsterData()->eNaytiba_Type == NAYTIBA_TYPE::ELITE ||
+            m_pTarget->GetStaticMonsterData()->eNaytiba_Type == NAYTIBA_TYPE::ELDER)
+            m_pPlayerDesc->isBossLock = true;
+        else
+            m_pPlayerDesc->isBossLock = false;
     }
 
     return m_pPlayerDesc->HasTarget;
@@ -146,7 +153,6 @@ void CLockonManager::Lockon(_float fTimeDelta)
         if (m_pLockonUI)
         {
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
             pUIHUD->Return_WorldUI(m_pLockonUI);
             Safe_Release(pUIHUD);
         }

@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
+#include "UIHUD.h"
+#include "UIGetterQueue.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -24,17 +26,18 @@ HRESULT CItem::Initialize_Prototype()
 
 HRESULT CItem::Initialize(void* pArg)
 {
-	m_iInterID = 0;
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	ITEM_DESC* pDesc = static_cast<ITEM_DESC*>(pArg);
 	m_bIsLerpAnimation = true;
 	m_fAmount = pDesc->fAmount;
+	m_fDropForce = pDesc->fDropForce;
 
 	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
+
+	m_pTransformCom->Set_State(STATE::POSITION, vOwnerPos + XMVectorSet(0.f, 2.f, 0.f, 0.f));
 
 	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 1.f);
 	vBezirPoint.m128_f32[1] += 5.f;
@@ -53,9 +56,6 @@ HRESULT CItem::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
-
-
 	return S_OK;
 }
 
@@ -65,32 +65,46 @@ void CItem::Priority_Update(_float fTimeDelta)
 
 void CItem::Update(_float fTimeDelta)
 {
-	if (m_bIsLerpAnimation)
-	{
-		m_fLerpTime.x += fTimeDelta;
-		m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_CurvePoins, m_fLerpTime.x / m_fLerpTime.y));
+	//if (m_bIsLerpAnimation)
+	//{
+	//	m_fLerpTime.x += fTimeDelta;
+	//	m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_CurvePoins, m_fLerpTime.x / m_fLerpTime.y));
 
-		if (m_fLerpTime.x >= 0.3f)
-		{
-			m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-		}
-		if(m_fLerpTime.x > m_fLerpTime.y)
-			m_bIsLerpAnimation = false;
-	}
+	//	//if (m_fLerpTime.x >= 0.3f)
+	//	//{
+	//	//	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	//	//}
+	//	if(m_fLerpTime.x > m_fLerpTime.y)
+	//		m_bIsLerpAnimation = false;
+	//}
 
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
+
+	// ui 애니메이션 끝나고 나오게
+	//if (m_eInterState == INTERACTION_STATE::ACTIVE)
+	//{
+	//	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	//	if (pHUD)
+	//	{
+	//		//여기서 상호작용해서 나올거임
+	//		if (pHUD->Check_AnimFinish(TEXT("Layer_World"), TEXT("SimpleKey_Cloned_0"), TEXT("Hide_Key_0")))
+	//			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	//	}
+
+	//	Safe_Release(pHUD);
+	//}
 }
 
 void CItem::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_pInteractionCom->Update_Com();
+		m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -122,7 +136,7 @@ HRESULT CItem::Render()
 
 HRESULT CItem::Begin_OverlapCallBack()
 {
-	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	__super::Begin_OverlapCallBack();
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 
 	return S_OK;
@@ -130,18 +144,35 @@ HRESULT CItem::Begin_OverlapCallBack()
 
 HRESULT CItem::End_OverlapCallBack()
 {
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	__super::End_OverlapCallBack();
 	m_eInterState = INTERACTION_STATE::END;
 
 	return S_OK;
 }
 
-void CItem::Excute_CallBack(CGameObject* pActionObject)
+void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	m_eInterState = INTERACTION_STATE::ACTIVE;
+	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+		m_fInteractionDuration.x += fTimeDelta;
 
-	// 여기서 상호작용해서 나올거임
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	{
+		if (IsInteractionEnable())
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			if (pHUD)
+			{
+				CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+				if (pGetterQueue)
+					pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
+			}
+			Safe_Release(pHUD);
+
+			m_eInterState = INTERACTION_STATE::ACTIVE;
+			m_fInteractionDuration.x = 0.f;
+			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		}
+	}
 }
 
 HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
@@ -162,11 +193,14 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	InteractionDesc.vSize = Com_Size;
 	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-	InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
+	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
+
+	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
@@ -175,7 +209,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	PxUserData tUserData;
 	// 밀려야하는 애들은 이키워드로 세팅
-	tUserData.szActorTag = TEXT("Item_Actor");
+	tUserData.szActorTag = TEXT("Non_Collidable");
 
 	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -190,15 +224,21 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
-	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	RigidBodyDesc.vMaterial = _float3(1.f, 1.f, 0.f);
 	RigidBodyDesc.vSize = Com_Size;
-	RigidBodyDesc.fMass = { 0.3f };
-
+	RigidBodyDesc.fMass = { 0.0001f };
+	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 		return E_FAIL;
-
+	
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
+	_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
+	m_pRigidBody->Add_Impulse(vDir, m_fDropForce);
 
 	return S_OK;
 }

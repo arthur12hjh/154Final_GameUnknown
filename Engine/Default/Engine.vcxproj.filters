@@ -359,6 +359,18 @@
     <ClInclude Include="..\Public\Emissive.h">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Physx_FilterShader.h">
+      <Filter>01.Utility\17.Physx\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTQueryFilterCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysxSceneEventCallback.h">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTFilterCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -691,6 +703,18 @@
     <ClCompile Include="..\Private\Emissive.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Physx_FilterShader.cpp">
+      <Filter>01.Utility\17.Physx\Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTQueryFilterCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysxSceneEventCallback.cpp">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTFilterCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -770,12 +794,6 @@
     </Filter>
     <Filter Include="01.Utility\17.Physx">
       <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine">
-      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine\State">
-      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -1094,6 +1112,24 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\Blur\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback">
+      <UniqueIdentifier>{4485119a-22b1-4fe0-bbd4-f2c184d9123d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\SceneEventCallback">
+      <UniqueIdentifier>{67b0a986-efab-42e5-8bf7-1dfb2b40fa33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\Filter">
+      <UniqueIdentifier>{5c39fd1e-1d94-4fe1-abfa-4368b4e262fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback">
+      <UniqueIdentifier>{5196f051-91b6-4501-8678-254eaf647f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine">
+      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine\State">
+      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -139,7 +139,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shadow"), 150.0f, 750.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 150.0f, 150.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 450.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
@@ -779,7 +779,10 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-	//x	return;
+	//	return;
+
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
+		return;
 
 }
 HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
@@ -787,8 +790,11 @@ HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 	return m_pColliderRenderer->Add_DebugComponent(pDebugCom);
 }
 
-HRESULT CRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+HRESULT CRenderer::Add_PhysxGeometry(CGameObject* pGameObject, PxRigidActor* pActor, PxShape* pShape)
 {
+	if (true == pGameObject->isDead())
+		return S_OK;
+
 	return m_pColliderRenderer->Add_PhysxGeometry(pActor, pShape);
 }
 

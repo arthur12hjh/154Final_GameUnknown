@@ -45,16 +45,26 @@ PLAYER_TRANSITION_DESC CPlayer_ParryState::Update(_float fTimeDelta)
 		m_isParryStart = false;
 	}
 
+
 	// 패링 스타트하고 패링 올리는 애니메이션이 얼마 남지  않은 상태부턴,
 	// 패링 판정이 가능해진다.
-	if (true == m_isParryStart && fAnimationRatio >= 0.4f)
+	if (true == m_isParryStart && fAnimationRatio >= 0.1f)
 	{
 		m_Desc->isParryable = true;
 		m_Desc->isJustParryable = true;
 	}
-	// 저스트 패링 판정은 0.2초 이상 가드하고 있으면 사라짐.
-	if (m_fGuardTimeAcc >= 0.2f)
+	if (true == m_isParryStart && fAnimationRatio >= 0.1f)
+	{
+		m_Desc->isParryable = true;
+		m_Desc->isJustParryable = true;
+	}
+
+	// 저스트 패링 판정은 조금 더 빡빡하게 처리한다.
+	// 따지지도 않고 저스트 패링 판정은 0.2초 이상 가드하고 있으면 사라짐.
+	if (true == m_isParryStart && fAnimationRatio >= 0.8f || m_fGuardTimeAcc >= 0.1f)
+	{
 		m_Desc->isJustParryable = false;
+	}
 
 	// 가드 키에서 손 뗴거나 가드가 3초이상 지속 됐다면
 	if ((false == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))

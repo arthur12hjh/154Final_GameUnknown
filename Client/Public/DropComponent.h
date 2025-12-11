@@ -9,6 +9,7 @@ public :
 	typedef struct DropComponentDesc
 	{
 		_float				fDropRange;
+		_float				fForce = 25.f;
 	}DROP_COMPONENT_DESC;
 
 	typedef struct Drop_Result_Desc
@@ -38,8 +39,8 @@ private:
 	// 모든 아이템에대한 토탈 가중치
 	_float							m_fTotalWeight = {};
 	_float							m_fDropRange = {};
+	_float							m_fDropForce = {};
 	_uint							m_iNumItemCount = {};
-
 
 	// 아이템 및 아이템 확률
 	vector<_float>					m_AmountItemList = {};

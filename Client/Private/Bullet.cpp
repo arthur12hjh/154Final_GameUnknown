@@ -26,6 +26,7 @@ HRESULT CBullet::Initialize(void* pArg)
 
     BULLET_DESC* pDesc = static_cast<BULLET_DESC*>(pArg);
     m_pSocketMatrix = pDesc->pSocketMatrix;
+    m_vTargetPoint = pDesc->vTargetPoint;
     m_pSkillData = CGameManager::GetInstance()->Find_SkillData(pDesc->iSkillID);
 
     return S_OK;
@@ -55,6 +56,9 @@ HRESULT CBullet::Render()
 void CBullet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 {
     _matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+    m_pTransformCom->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
+    m_pTransformCom->Set_State(STATE::UP, CombinedMatrix.r[1]);
+    m_pTransformCom->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
     m_pTransformCom->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
 
     XMStoreFloat3(&m_vProjectileDir, XMVector3Normalize(vTargetPoint - CombinedMatrix.r[3]));
@@ -70,6 +74,10 @@ void CBullet::Update_BulletCombinedMatrix()
             return;
 
         _matrix ParentMatrix = XMLoadFloat4x4(m_pParent->GetTransform()->Get_WorldMatrixPtr());
+
+        for (_uint i = 0; i < 3; ++i)
+            ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
+
         _matrix SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
         XMStoreFloat4x4(&m_CombinedWorldMatrix, SocketMatrix * ParentMatrix);

@@ -24,7 +24,7 @@ void CPlayer_HitState::Start(void* pArg, _float fBlendRatio)
 	m_eState = PLAYER_STATE::HIT;
 
 	m_Desc->isLookFixed = true;
-	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f);
+	m_pPlayer->Set_Animation("Result_Hit_Stand_Light_Fw_Lw", false, 1.2f, 0.12f, true);
 
 	XMStoreFloat3(&m_vDirection, XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION) - XMLoadFloat4(&m_vAttackerPos), 0.f)));
 
@@ -49,6 +49,10 @@ PLAYER_TRANSITION_DESC CPlayer_HitState::Update(_float fTimeDelta)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) 
 		&& fAnimationRatio >= 0.3f)
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+	else if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		&& fAnimationRatio >= 0.15f)
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
 	return m_tNextState;
 }

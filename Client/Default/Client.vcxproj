@@ -163,9 +163,6 @@
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
-    <ClInclude Include="..\Public\Chair.h" />
-    <ClInclude Include="..\Public\Container.h" />
-    <ClInclude Include="..\Public\Corpse.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -178,6 +175,9 @@
     <ClInclude Include="..\Public\Camera_Player.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
+    <ClInclude Include="..\Public\Desert_Architecture.h" />
+    <ClInclude Include="..\public\Desert_Grass.h" />
+    <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DropComponent.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
@@ -203,8 +203,11 @@
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
+    <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
+    <ClInclude Include="..\Public\Player_BattleSprintEndState.h" />
+    <ClInclude Include="..\Public\Player_BattleSprintState.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlashState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
     <ClInclude Include="..\Public\Player_BetaTripletState.h" />
@@ -228,6 +231,7 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
@@ -368,8 +372,10 @@
     <ClInclude Include="..\Public\UIBossStamina.h" />
     <ClInclude Include="..\Public\UIBossStaminaFX.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
+    <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
+    <ClInclude Include="..\Public\UILockOn.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
     <ClInclude Include="..\Public\UIMonsterHPFX.h" />
     <ClInclude Include="..\Public\UIMonsterShield.h" />
@@ -397,7 +403,6 @@
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
-    <ClInclude Include="..\Public\VendingMachine.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -412,9 +417,6 @@
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
-    <ClCompile Include="..\Private\Chair.cpp" />
-    <ClCompile Include="..\Private\Container.cpp" />
-    <ClCompile Include="..\Private\Corpse.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -427,6 +429,9 @@
     <ClCompile Include="..\Private\Camera_Player.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
+    <ClCompile Include="..\Private\Desert_Architecture.cpp" />
+    <ClCompile Include="..\private\Desert_Grass.cpp" />
+    <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
@@ -452,9 +457,12 @@
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
+    <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
+    <ClCompile Include="..\Private\Player_BattleSprintEndState.cpp" />
+    <ClCompile Include="..\Private\Player_BattleSprintState.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_BetaTripletState.cpp" />
@@ -478,6 +486,7 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
@@ -632,8 +641,10 @@
     <ClCompile Include="..\Private\UIBossShield.cpp" />
     <ClCompile Include="..\Private\UIBossStamina.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
+    <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
+    <ClCompile Include="..\Private\UILockOn.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
@@ -661,7 +672,6 @@
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
-    <ClCompile Include="..\Private\VendingMachine.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

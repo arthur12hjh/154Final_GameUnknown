@@ -33,7 +33,7 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 		
 			return NODE_STATE::FAIL;
 		}
-		else if (fDistance > fATKRange * 1.6f)
+		else if (fDistance > fATKRange * 4.f)
 		{
 			if (m_pBlackBoard->IsAttackEnable())
 			{

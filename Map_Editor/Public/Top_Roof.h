@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Maptool_Defines.h"
-#include "DesertObject.h"
+#include "Interaction.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -11,7 +11,7 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CTop_Roof final : public CDesertObject
+class CTop_Roof final : public CInteraction
 {
 public:
 	enum TOP_ROOF_STATE
@@ -43,7 +43,7 @@ private:
 
 public:
 	static CTop_Roof* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CDesertObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

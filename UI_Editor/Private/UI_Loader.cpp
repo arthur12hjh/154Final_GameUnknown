@@ -34,6 +34,7 @@
 #include "UIBossStaminaFX.h"
 #include "UISimpleKey.h"
 #include "UIInteractionFX.h"
+#include "UIGetterQueue.h"
 
 #include "GameInstance.h"
 #include "UIResourceStore.h"
@@ -322,6 +323,11 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_GameObject_UI_BossStaminaFX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_BossStaminaFX"),
 		CUIBossStaminaFX::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_GetterQueue */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_GetterQueue"),
+		CUIGetterQueue::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
@@ -624,11 +630,11 @@ HRESULT CUI_Loader::Loading_UI_For_World()
 	
 	/* For.Prototype_Component_UI_Texture_Interaction_Key */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		TEXT("Com_Texture_UI_Interaction_Key"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 1);
+		TEXT("Com_Texture_UI_Interaction_Key"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_Interaction_Shadow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Shadow"),

@@ -235,15 +235,17 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 #endif
 
 	m_pInteract_Manager->Update();
+
+
 	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ÇØ¼­ •û°í
-
-	m_pRenderer->Update(fTimeDelta);
-
 	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
 	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
 
+	m_pRenderer->Update(fTimeDelta);
+
 	m_pThreadPool->Update_Async();
 	m_pLevel_Manager->Update(fTimeDelta);
+
 	m_fTimeAcc += fTimeDelta;
 }
 
@@ -477,9 +479,9 @@ HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
 }
-HRESULT CGameInstance::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pShape)
+HRESULT CGameInstance::Add_PhysxGeometry(CGameObject* pGameObject, PxRigidActor* pActor, PxShape* pShape)
 {
-	return m_pRenderer->Add_PhysxGeometry(pActor, pShape);
+	return m_pRenderer->Add_PhysxGeometry(pGameObject, pActor, pShape);
 }
 
 void CGameInstance::Set_DebugVisible(_bool isVisible)
@@ -635,6 +637,11 @@ CLight* CGameInstance::Find_Light(_uint iIndex)
 const list<class CLight*>* CGameInstance::GetAllLight()
 {
 	return m_pLight_Manager->GetAllLight();
+}
+
+LIGHT_DESC* CGameInstance::Get_Directional_Desc()
+{
+	return m_pLight_Manager->Get_Directional_Desc();
 }
 
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
@@ -906,6 +913,10 @@ _bool CGameInstance::IsWorkThread()
 #pragma endregion
 
 #pragma region Camera Manager
+void CGameInstance::Shake_Camera(_float fShakeTime, _float fIntensity)
+{
+	return m_pCameraManager->Shake(fShakeTime, fIntensity);
+}
 HRESULT CGameInstance::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 {
 	return m_pCameraManager->Add_Camera(szCameraTag, pCamera);

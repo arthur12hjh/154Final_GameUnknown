@@ -268,7 +268,8 @@ PS_OUT PS_MAIN_MI_EVE_Head_V02(PS_IN In)
     //vMtrlORSS.a = 2.f;
     
     Out.vDiffuse = vMtrlDiffuse;  // float4(1.05f, 1.02f, 1.04f, 1.f);
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal) * 0.2f;
+    //Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal, 0.0001f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);

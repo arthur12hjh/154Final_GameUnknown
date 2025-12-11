@@ -56,7 +56,7 @@ private :
 	void								BackStepPattern();
 	//void								BboyStepPattern();
 
-	void								SelectRandomPattern();
+	void								SelectRandomPattern(_bool bIsBeta = false);
 #pragma endregion
 
 	_bool								AttackMoveAction(_float fTimeDelta);
@@ -66,6 +66,7 @@ private :
 	void								AttackADDMove(_float fTimeDelta);
 
 	void								LookAtPoint(_float fTimeDelta);
+	void								ResetAttackTask(_bool bIsCoolTime = true);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);

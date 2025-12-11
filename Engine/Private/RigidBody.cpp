@@ -2,6 +2,7 @@
 
 #include "GameInstance.h"
 #include "Mesh.h"
+#include "GameObject.h"
 
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent{ pDevice, pContext }
@@ -38,13 +39,34 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 {
-	/* 월드 위치 받아와서 트랜스폼 갱신 */
-	/* 필요하면 추후 멤카피로 바꾸던가 해야됨.. */
+	if (true == m_isSyncByPhysx)
+	{
+		PxVec3 vExtraGravity(0.f, -9.8f * 8.0f, 0.f); // 2배 중력
 
-	if(RIGIDBODY_TYPE::KINEMATIC == m_eType)
-		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->addForce(vExtraGravity, PxForceMode::eACCELERATION);
+	}
 	else
-		m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+	{
+		//if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
+		//	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+		//else
+			m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+	}
+}
+
+void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower)
+{
+	if (RIGIDBODY_TYPE::DYNAMIC != m_eType)
+		return;
+
+	PxVec3 vDir = PxVec3(XMVectorGetX(vImpulseDir), XMVectorGetY(vImpulseDir), XMVectorGetZ(vImpulseDir)) * fPower;
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->addForce(vDir, PxForceMode::eIMPULSE);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setMaxLinearVelocity(100.f);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSolverIterationCounts(8, 4);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.1f);
+
+	m_isSyncByPhysx = true;
 }
 
 HRESULT CRigidBody::Ready_PxMaterial(RIGIDBODY_DESC* pDesc)
@@ -60,25 +82,45 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 	m_eShape = pDesc->eRigidBodyShape;
 	m_vSize = pDesc->vSize;
 
+
+	PxShapeFlags ShapeFlags = PxShapeFlag::eSIMULATION_SHAPE | PxShapeFlag::eSCENE_QUERY_SHAPE;
+
+	if (false == pDesc->isQuery)
+		ShapeFlags = PxShapeFlag::eSIMULATION_SHAPE;
+
+
+	PxFilterData Filter;
+
+	Filter.word0 = pDesc->iCollisionGroup;
+	Filter.word1 = pDesc->iCollisionMask;
+
 	switch (m_eShape)
 	{
 	/* 박스는 그냥 x, y ,z 가 각각 지름 나타냄.. */
 	case RIGIDBODY_SHAPE::BOX:
-		m_pShape = m_pPxPhysics->createShape(PxBoxGeometry(m_vSize.x / 2.f, m_vSize.y / 2.f, m_vSize.z / 2.f), *m_pMaterial);
+		m_pShape = m_pPxPhysics->createShape(PxBoxGeometry(m_vSize.x / 2.f, m_vSize.y / 2.f, m_vSize.z / 2.f), *m_pMaterial, true, ShapeFlags);
+		m_pShape->setSimulationFilterData(Filter);
+		m_pShape->setQueryFilterData(Filter);
 		break;
 	/* 캡슐은 x 부분이 구 부분 반지름, y 부분이 높이 절반. */
 	case RIGIDBODY_SHAPE::CAPSULE:
-		m_pShape = m_pPxPhysics->createShape(PxCapsuleGeometry(m_vSize.x, m_vSize.y), *m_pMaterial);
+		m_pShape = m_pPxPhysics->createShape(PxCapsuleGeometry(m_vSize.x, m_vSize.y), *m_pMaterial, true, ShapeFlags);
+		m_pShape->setSimulationFilterData(Filter);
+		m_pShape->setQueryFilterData(Filter);
 		break;
 
 	/* 구는 x부분만 반지름으로 사용. */
 	case RIGIDBODY_SHAPE::SPHERE:
-		m_pShape = m_pPxPhysics->createShape(PxSphereGeometry(m_vSize.x), *m_pMaterial);
+		m_pShape = m_pPxPhysics->createShape(PxSphereGeometry(m_vSize.x), *m_pMaterial, true, ShapeFlags);
+		m_pShape->setSimulationFilterData(Filter);
+		m_pShape->setQueryFilterData(Filter);
 		break;
 
 	/* 플레인은 크기가 없는 무한대만 생성. */
 	case RIGIDBODY_SHAPE::PLANE:
-		m_pShape = m_pPxPhysics->createShape(PxPlaneGeometry(), *m_pMaterial);
+		m_pShape = m_pPxPhysics->createShape(PxPlaneGeometry(), *m_pMaterial, true, ShapeFlags);
+		m_pShape->setSimulationFilterData(Filter);
+		m_pShape->setQueryFilterData(Filter);
 		break;
 	/* 충돌용 메시 전용 로직 */
 	case RIGIDBODY_SHAPE::TRIANGLE:
@@ -146,7 +188,12 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			PxTriangleMeshGeometry MeshGeometry(pTriangleMesh, vMeshScale);
 
 			// Shape 생성
-			PxShape* pShape = m_pPxPhysics->createShape(MeshGeometry, *m_pMaterial);
+
+			PxShape* pShape = m_pPxPhysics->createShape(MeshGeometry, *m_pMaterial, ShapeFlags);
+
+			pShape->setSimulationFilterData(Filter);
+			pShape->setQueryFilterData(Filter);
+
 			if (nullptr != pShape)
 				m_TriangleShapes.push_back(pShape);
 
@@ -206,7 +253,9 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 	}
 	/* Shape 붙이기 */
 	else
+	{
 		m_pPxRigidBody->attachShape(*m_pShape);
+	}
 
 	/* 유저 데이터 세팅 */
 	m_tUserData.pHitActor = this;

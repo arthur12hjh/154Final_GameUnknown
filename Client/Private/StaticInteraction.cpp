@@ -22,12 +22,10 @@ HRESULT CStaticInteraction::Initialize_Prototype()
 
 HRESULT CStaticInteraction::Initialize(void* pArg)
 {
-    m_iInterID = 2;
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+    PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
     if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
@@ -51,10 +49,9 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        m_pInteractionCom->Update_Com();
+        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-        m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
         m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -75,7 +72,7 @@ HRESULT CStaticInteraction::Render()
             return E_FAIL;
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
-        if (FAILED(m_pShaderCom->Begin(3)))
+        if (FAILED(m_pShaderCom->Begin(0)))
             return E_FAIL;
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;
@@ -84,7 +81,7 @@ HRESULT CStaticInteraction::Render()
     return S_OK;
 }
 
-HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
     Com_Size.x *= 4.f;
@@ -98,14 +95,15 @@ HRESULT CStaticInteraction::ADD_Components(const ACTOR_DESC& Desc)
     /* Com_Interaction */
     CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
-    InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
-    InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
+    InteractionDesc.BeginCallBackFunc = [&]() { Begin_OverlapCallBack(); };
+    InteractionDesc.EndCallBackFunc = [&]() { End_OverlapCallBack(); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
     m_pInteractionCom->SetOwner(this);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
@@ -159,21 +157,25 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
 
 HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
-    m_eInterState = INTERACTION_STATE::DEFAULT;
-    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+    __super::Begin_OverlapCallBack();
     return S_OK;
 }
 
-void CStaticInteraction::Excute_CallBack(CGameObject* pActionObject)
+void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
+    if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+        m_fInteractionDuration.x += fTimeDelta;
+
     if (INTERACTION_STATE::DEFAULT == m_eInterState)
+    {
         m_eInterState = INTERACTION_STATE::ACTIVE;
+        m_fInteractionDuration.x = 0.f;
+    }
 }
 
 HRESULT CStaticInteraction::End_OverlapCallBack()
 {
-    m_eInterState = INTERACTION_STATE::END;
-    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+    __super::End_OverlapCallBack();
     return S_OK;
 }
 
