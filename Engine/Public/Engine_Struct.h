@@ -444,6 +444,7 @@ namespace Engine
 		float*    fFogEnd;
 		float*    fFogPowerMin;
 		float*	  fFogPowerMax;
+		float*	  fSkyboxFogPower;
 	} FOG_DESC;
 
 	typedef struct tagDoFInfo {

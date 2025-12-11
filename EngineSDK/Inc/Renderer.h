@@ -67,11 +67,11 @@ private:
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
 	
-	_bool								m_isBloom = { false };
-	_bool								m_isFog = { false };
+	_bool								m_isBloom = { true };
+	_bool								m_isFog = { true };
 	HDR_DESC							m_HDRDesc = {};
 	_bool								m_isHDR = { true };
-	_float								m_fHDRExposure = { 1.24f };
+	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
 private:
 	class CBlur*						m_pBlur = { nullptr };

@@ -81,7 +81,7 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 
         float sampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
 
-        if (fCurrentDepth >= sampleDepth + g_fBias)
+        if (fCurrentDepth <= sampleDepth + g_fBias)
         {
             float4 sampleColor = g_SceneTexture.Sample(ClampSampler, offset);
             float w = 1.0f - (float) i / g_iSampleCount;

@@ -1,20 +1,20 @@
 #include "pch.h"
 
-#include "Player_SmallBoxInteractionState.h"
+#include "Player_SupplyBoxInteractionState.h"
 
 #include "Interaction_Component.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_SmallBoxInteractionState::CPlayer_SmallBoxInteractionState(void* pArg)
+CPlayer_SupplyBoxInteractionState::CPlayer_SupplyBoxInteractionState(void* pArg)
 {
     m_pInteractionCom = static_cast<CInteraction_Component*>(pArg);
 }
 
-void CPlayer_SmallBoxInteractionState::Start(void* pArg, _float fBlendRatio)
+void CPlayer_SupplyBoxInteractionState::Start(void* pArg, _float fBlendRatio)
 {
-    m_eState = PLAYER_STATE::SMALLBOX_INTERACTION;
+    m_eState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
     m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
 
     CGameObject* pTarget = m_pInteractionCom->GetOwner();
@@ -27,7 +27,7 @@ void CPlayer_SmallBoxInteractionState::Start(void* pArg, _float fBlendRatio)
     m_pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSetY(vTargetLook, 0.f) * 3.f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
 }
 
-PLAYER_TRANSITION_DESC CPlayer_SmallBoxInteractionState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDelta)
 {
     if (true == m_isLerpFinished)
     {
@@ -53,7 +53,8 @@ PLAYER_TRANSITION_DESC CPlayer_SmallBoxInteractionState::Update(_float fTimeDelt
 
 
         _vector vPlayerLook = m_pPlayer->GetTransform()->Get_State(STATE::LOOK);
-        if (1.f >= XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(vPlayerLook, XMVector3Normalize(vTargetPos - vPlayerPos))))))
+        _float fDegree = XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(XMVectorSetY(vPlayerLook, 0.f), XMVector3Normalize(XMVectorSetY(vTargetPos - vPlayerPos, 0.f))))));
+        if (1.f >= fDegree)
 
         {
             m_isLerpFinished = true;
@@ -64,17 +65,17 @@ PLAYER_TRANSITION_DESC CPlayer_SmallBoxInteractionState::Update(_float fTimeDelt
     return m_tNextState;
 }
 
-_float CPlayer_SmallBoxInteractionState::End()
+_float CPlayer_SupplyBoxInteractionState::End()
 {
     return m_fNextBlendRatio;
 }
 
-CPlayer_SmallBoxInteractionState* CPlayer_SmallBoxInteractionState::Create(void* pArg)
+CPlayer_SupplyBoxInteractionState* CPlayer_SupplyBoxInteractionState::Create(void* pArg)
 {
-    return new CPlayer_SmallBoxInteractionState(pArg);
+    return new CPlayer_SupplyBoxInteractionState(pArg);
 }
 
-void CPlayer_SmallBoxInteractionState::Free()
+void CPlayer_SupplyBoxInteractionState::Free()
 {
     __super::Free();
 }
