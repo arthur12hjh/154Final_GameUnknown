@@ -66,7 +66,7 @@ void CBullet_Rock::Update(_float fTimeDelta)
 
 void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 1000.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 8000.f))
 	{
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
