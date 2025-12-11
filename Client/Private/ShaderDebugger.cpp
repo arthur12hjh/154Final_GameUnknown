@@ -23,6 +23,7 @@ HRESULT CShaderDebugger::Initialize()
     m_pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
     m_pVolumetricDesc = static_cast<VOLUMETRIC_DESC*>(m_pGameInstance->Get_Volumetric_Desc());
     m_pHDRDesc = static_cast<HDR_DESC*>(m_pGameInstance->Get_HDR_Desc());
+	m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
 #endif
 
     return S_OK;
@@ -33,6 +34,19 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
 
     ImGui::Begin("Shader Debugger", &bIsOpen);
+
+    if (nullptr != m_pDirectionalLightDesc)
+    {
+        ImGui::Text("DIRECTIONAL INFO");
+        ImGui::ColorEdit4("Light Diffuse", reinterpret_cast<float*>(&m_pDirectionalLightDesc->vDiffuse));
+
+        ImGui::DragFloat3("Light Direction", reinterpret_cast<float*>(&m_pDirectionalLightDesc->vDirection), 0.01f, -1.0f, 1.0f);
+
+
+        ImGui::Separator();
+    }
+    else
+        m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
 
     ImGui::Text("FOG INFO");
 

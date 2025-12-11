@@ -24,6 +24,7 @@ HRESULT CDropComponent::Initialize(void* pArg)
 
     DROP_COMPONENT_DESC* pDesc = static_cast<DROP_COMPONENT_DESC*>(pArg);
     m_fDropRange = pDesc->fDropRange;
+    m_fDropForce = pDesc->fForce;
     return S_OK;
 }
 
@@ -92,11 +93,12 @@ void CDropComponent::CreateObjectToLayer()
         ItemDesc.iInteractionID = 0;
         ItemDesc.bIsApplyTransform = true;
         ItemDesc.vScale = { 1.f, 1.f, 1.f };
+        ItemDesc.fDropForce = m_pGameInstance->Random(m_fDropForce - 5.f, m_fDropForce + 5.f);
         //ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
         //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
         //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)), 0.f };
 
-        _float fRange = m_pGameInstance->Random(m_fDropRange * 0.7f, m_fDropRange);
+        _float fRange = m_pGameInstance->Random(m_fDropRange * 0.7f, m_fDropRange * 1.3f);
         _float fRadius = m_pGameInstance->Random(0.f, 360.f);
         
         _vector vDorpPoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);

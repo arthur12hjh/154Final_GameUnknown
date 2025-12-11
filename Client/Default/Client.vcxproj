@@ -206,6 +206,8 @@
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
+    <ClInclude Include="..\Public\Player_BattleSprintEndState.h" />
+    <ClInclude Include="..\Public\Player_BattleSprintState.h" />
     <ClInclude Include="..\Public\Player_BetaChargingSlashState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
     <ClInclude Include="..\Public\Player_BetaTripletState.h" />
@@ -459,6 +461,8 @@
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
     <ClCompile Include="..\Private\Player_AerialAttack.cpp" />
+    <ClCompile Include="..\Private\Player_BattleSprintEndState.cpp" />
+    <ClCompile Include="..\Private\Player_BattleSprintState.cpp" />
     <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_BetaTripletState.cpp" />

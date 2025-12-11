@@ -11,6 +11,8 @@
 
 #include "Player_BattleIdleState.h"
 #include "Player_BattleWalkEndState.h"
+#include "Player_BattleSprintState.h"
+#include "Player_BattleSprintEndState.h"
 
 #include "Player_LockonIdleState.h"
 #include "Player_IdleWalkState.h"
@@ -25,7 +27,6 @@
 #include "Player_LockonEvadeState.h"
 #include "Player_BattleEvadeState.h"
 #include "Player_HitState.h"
-
 //무기 넣/뽑
 #include "Player_DrawHairpin.h"
 #include "Player_SheatheHairpin.h"
@@ -38,6 +39,7 @@
 
 //인터랙션 관련 상태들. 당장은 작은 박스만 구현
 #include "Player_SupplyBoxInteractionState.h"
+
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -137,6 +139,25 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		}
 		break;
 
+
+	case PLAYER_STATE::SPRINT:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return nullptr;
+		}
+		break;
+
+	case PLAYER_STATE::SPRINT_END:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintEndState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return nullptr ;
+		}
+		break;
+	
 	case PLAYER_STATE::LANDING:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
@@ -258,7 +279,6 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: nullptr;
 		}
 		break;
-
 	default:
 		break;
 	}
@@ -317,6 +337,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 
+			//Battle로 전환하고, 헤어핀 꺼내놓음.
 			PLAYER_TRANSITION_DESC t{};
 			t.eNextState = PLAYER_STATE::DRAW_HAIRPIN;
 
@@ -340,6 +361,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 				m_pPlayerDesc->fModeTimer = 0.f;
 				m_pPlayerDesc->ePlayerMode = PLAYER_MODE::IDLE;
 
+				//Idle로 전환하고, 헤어핀 집어넣음.
 				PLAYER_TRANSITION_DESC t{};
 				t.eNextState = PLAYER_STATE::SHEATHE_HAIRPIN; // 
 

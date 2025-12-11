@@ -42,6 +42,8 @@ protected :
 
 	_bool							m_bIsEnableCollider = { false };
 	_float3							m_vProjectileDir = {};
+	_float3							m_vTargetPoint = {};
+
 	_float							m_fSpeed = {};
 	_bool							m_bIsAttachment = { true };
 

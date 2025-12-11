@@ -40,6 +40,7 @@ public :
 	// 다 쓰면 감소시켜주세요
 	class CPlayer*				GetGameCharacter();
 	PLAYER_DESC*				Get_PlayerDesc();
+
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion
@@ -100,7 +101,7 @@ private :
 	CLockonManager*			m_pLockonManager = { nullptr };
 
 	//플레이어 매니저 굳이 안만들고 이대로 둘게요 이게 더 편할듯
-	CPlayer*				m_pPlayer = { nullptr };
+	class CPlayer*			m_pPlayer = { nullptr };
 private :
 	HRESULT						Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 

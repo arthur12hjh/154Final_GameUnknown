@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "SciFi_Door.h"
+
 #include "GameInstance.h"
+#include "GameManager.h"
+#include "Interaction_Component.h"
 
 CSciFi_Door::CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProb_Interaction{ pDevice, pContext }
@@ -27,9 +30,10 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-	m_eCurState = OPEN;
-	m_pModelCom->Set_AnimationIndex(m_eCurState);
-
+	m_eInterState = INTERACTION_STATE::DEFAULT;
+	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+	m_pModelCom->Set_AnimationIndex(0, false);
+	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	return S_OK;
 }
 
@@ -39,31 +43,48 @@ void CSciFi_Door::Priority_Update(_float fTimeDelta)
 
 void CSciFi_Door::Update(_float fTimeDelta)
 {
-	if (m_eCurState != m_ePrevState)
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
 	{
-
-		switch (m_eCurState)
+		if (INTERACTION_STATE::ACTIVE == m_eInterState)
 		{
-		case OPEN:
-			m_pModelCom->Set_AnimationIndex(OPEN, false, 0.f);
-			break;
-		case CLOSE:
-			m_pModelCom->Set_AnimationIndex(CLOSE, true, 0.f);
-			break;
+			if (m_pModelCom->Play_Animation(fTimeDelta))
+				m_eInterState = INTERACTION_STATE::DEFAULT;
 		}
+		else
+		{
+			auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
+			if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+			{
+				if (INTERACTION_STATE::LOCK == m_eInterState)
+				{
+					// 나중에 여기서 조건 체크하세요
+					m_eInterState = INTERACTION_STATE::DEFAULT;
+				}
+			}
+			else
+			{
+				if (INTERACTION_STATE::LOCK != m_eInterState)
+					m_eInterState = INTERACTION_STATE::LOCK;
+			}
 
-		m_ePrevState = m_eCurState;
+			m_pModelCom->Play_Animation(0.f);
+		}
 	}
-
-	m_pModelCom->Play_Animation(fTimeDelta);
-
-	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CSciFi_Door::Late_Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		if (INTERACTION_STATE::ACTIVE > m_eInterState)
+			m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+#ifdef _DEBUG
+		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
+
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
 }
 
 HRESULT CSciFi_Door::Render()
@@ -97,17 +118,59 @@ HRESULT CSciFi_Door::Render()
 
 HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 {
+	_float3 Com_Size = m_pTransformCom->Get_Scale();
+
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
+
+	/* Com_Interaction */
+	CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.vSize = Com_Size;
+	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
+	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
+	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
+		return E_FAIL;
+	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	PxUserData tUserData;
+	tUserData.szActorTag = TEXT("KIMETIC_Actor2");
 
+	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	// 콜라이더 모양
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+
+	// 충돌처리를 할지말지 
+	// DYNAMIC : 충돌 
+	// KINEMATIC : 충돌 X
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+
+	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	RigidBodyDesc.tUserData = tUserData;
+	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	RigidBodyDesc.vSize = Com_Size;
+	RigidBodyDesc.fMass = { 0.3f };
+
+	/* Com_RigidBody */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+
+	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
+	// 없으면 충돌 안됨
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
 	return S_OK;
 }
 
@@ -125,26 +188,42 @@ HRESULT CSciFi_Door::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CSciFi_Door::Begin_OverlapCallBack()
+void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	m_eInterState = INTERACTION_STATE::DEFAULT;
-	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
+	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+		m_fInteractionDuration.x += fTimeDelta;
 
-	return S_OK;
-}
-
-HRESULT CSciFi_Door::End_OverlapCallBack()
-{
-	m_eInterState = INTERACTION_STATE::END;
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
-
-	return S_OK;
-}
-
-void CSciFi_Door::Excute_CallBack(CGameObject* pActionObject)
-{
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	{
+		if (IsInteractionEnable())
+		{
+			
+			m_eInterState = INTERACTION_STATE::CONTACT;
+		}
+	}
+
+	if (INTERACTION_STATE::CONTACT == m_eInterState)
+	{
+		switch (m_eCurState)
+		{
+		case SCIFI_DOOR_STATE::OPEN:
+		{
+			m_pModelCom->Set_AnimationIndex(1, false);
+			m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+		}
+			break;
+		case SCIFI_DOOR_STATE::CLOSE:
+		{
+			m_pModelCom->Set_AnimationIndex(0, false);
+			m_eCurState = SCIFI_DOOR_STATE::OPEN;
+		}
+			break;
+		}
+			
 		m_eInterState = INTERACTION_STATE::ACTIVE;
+		m_fInteractionDuration.x = 0.f;
+	}
 }
 
 CSciFi_Door* CSciFi_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -178,5 +257,4 @@ void CSciFi_Door::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

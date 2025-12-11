@@ -8,6 +8,9 @@ Texture2D g_Texture1;
 Texture2D g_Texture2;
 Texture2D g_Texture3;
 Texture2D g_Texture4;
+Texture2D g_Texture5;
+Texture2D g_Texture6;
+Texture2D g_Texture7;
 Texture2D g_DepthTexture;
 
 vector g_Color = 1.f;
@@ -711,20 +714,48 @@ PS_OUT PS_SKILL_SLOT(PS_IN In)
 {
     PS_OUT Out;
     
+    float2 uv = In.vTexcoord;
     float4 TintColor = 1.f;
     
-    float4 shadow = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
-    float4 frame = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+    float4 shadow = g_Texture0.Sample(DefaultSampler, uv);
+    float4 frame = g_Texture1.Sample(DefaultSampler, uv);
     float4 icon = 0.f;
     float4 cover = 0.f;
+    float4 cost = 0.f;
+    float4 costDeco = 0.f;
     
     if(g_bUseTintColor)
         TintColor = g_vTintColor;
     
     if(g_isUseable)
     {   
-        icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+        icon = g_Texture2.Sample(DefaultSampler, uv);
         icon *= TintColor;
+        
+        float2 vCostScale = uv;
+        vCostScale -= float2(0.7f, 0.8f);
+        vCostScale /= 0.2f;
+        vCostScale += float2(0.7f, 0.8f);
+        
+        cost = g_Texture4.Sample(ClampSampler, vCostScale);
+        float4 costTint = float4(
+            0.443136990070343,
+            0.49803900718688965,
+            0.521569013595581,
+            1.0
+        );
+        
+        cost.rgb *= costTint.rgb;
+        cost.a *= costTint.a;
+        
+        float2 vCostDecoScale = uv;
+        vCostDecoScale -= float2(0.8f, 0.8f);
+        vCostDecoScale /= 0.1f;
+        vCostDecoScale += float2(0.8f, 0.8f);
+        
+        costDeco = g_Texture5.Sample(ClampSampler, vCostDecoScale);
+        costDeco.rgb *= costTint.rgb;
+        costDeco.a *= costTint.a;
     }
     
     if (g_UseCover)
@@ -736,6 +767,8 @@ PS_OUT PS_SKILL_SLOT(PS_IN In)
     result = lerp(result, frame, frame.a);
     result = lerp(result, icon, icon.a);
     result = lerp(result, cover, cover.a);
+    result = lerp(result, cost, cost.a);
+    result = lerp(result, costDeco, costDeco.a);
     
     Out.vColor = result;
     

@@ -163,9 +163,6 @@
     <Filter Include="10.GameManager\CharacterDataManager">
       <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
-      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\TestModel\TestProp">
       <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
     </Filter>
@@ -676,9 +673,6 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Platform">
       <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
-      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\ProbActor\DestoryProb">
       <UniqueIdentifier>{1368fba2-a5fa-4ea8-8b05-d446457d47fd}</UniqueIdentifier>
     </Filter>
@@ -721,9 +715,6 @@
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Rock">
       <UniqueIdentifier>{9b88c08a-d17f-4b8d-ac77-d57362bc0f63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Item">
-      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\DropComponent">
       <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
     </Filter>
@@ -739,6 +730,24 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
       <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Sprint">
+      <UniqueIdentifier>{c46e3d19-c724-4dd6-9339-73406899f2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Evade">
+      <UniqueIdentifier>{7073a845-5c53-4d35-8390-f0ad90682728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Walk">
+      <UniqueIdentifier>{bcd7b35f-3fbd-4b8f-8ca6-2c4f06bdf5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Sprint">
+      <UniqueIdentifier>{f2e289de-1474-4577-a9b3-e9297c4991c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Item">
+      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn">
       <UniqueIdentifier>{67890273-70b8-4770-bff7-c4c9ad815e04}</UniqueIdentifier>
     </Filter>
@@ -747,6 +756,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Environment\Grass">
       <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
+      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1263,13 +1275,7 @@
     <ClInclude Include="..\public\InstanceModel.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonWalkState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
@@ -1487,7 +1493,7 @@
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
-      <Filter>02.GameObjects\Actor\Item</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bullet.h">
       <Filter>02.GameObjects\Actor\Bullet</Filter>
@@ -1506,6 +1512,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UILockOn.h">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
@@ -2009,13 +2027,7 @@
     <ClCompile Include="..\private\InstanceModel.cpp">
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
@@ -2222,7 +2234,7 @@
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
-      <Filter>02.GameObjects\Actor\Item</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet.cpp">
       <Filter>02.GameObjects\Actor\Bullet</Filter>
@@ -2241,6 +2253,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UILockOn.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>

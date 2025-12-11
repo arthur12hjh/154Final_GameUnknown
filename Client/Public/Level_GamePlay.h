@@ -86,6 +86,7 @@ private:
 	HRESULT Load_Light_Data();
 	_float	m_fTime = 10;
 	_bool m_bChangeLevel{ false };
+	_bool m_isOverlay{ true };
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

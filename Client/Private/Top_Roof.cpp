@@ -136,7 +136,7 @@ HRESULT CTop_Roof::End_OverlapCallBack()
 	return S_OK;
 }
 
-void CTop_Roof::Excute_CallBack(CGameObject* pActionObject)
+void CTop_Roof::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 }
 

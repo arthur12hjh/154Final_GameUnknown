@@ -39,10 +39,6 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 
 void CLift_Platform::Priority_Update(_float fTimeDelta)
 {
-}
-
-void CLift_Platform::Update(_float fTimeDelta)
-{
 	if (m_bIsPaltformMove)
 	{
 		LerpTargetPoint(fTimeDelta);
@@ -50,6 +46,13 @@ void CLift_Platform::Update(_float fTimeDelta)
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
 	}
+	else
+		int a = 10;
+}
+
+void CLift_Platform::Update(_float fTimeDelta)
+{
+	
 }
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
@@ -103,7 +106,7 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 	case CLift_Platform::LIFT_PLATFORM_STATE::UPPER:
 	{
 		vDir = m_pTransformCom->Get_State(STATE::UP);
-		_vector vTargetPos = XMLoadFloat3(&m_vRootPos) + vDir * m_fMoveDistance;
+		_vector vTargetPos = XMLoadFloat3(&m_vRootPos) + vDir * 28;
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
 		
 		// 여기서 위인지 아래인지
@@ -145,7 +148,7 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 	_vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
 
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
-	if (fDistance < 0.1f)
+	if (fDistance < 0.5f)
 	{
 		m_pRigidBody->Set_Ridable(false);
 		m_bIsPaltformMove = false;

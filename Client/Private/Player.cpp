@@ -170,6 +170,7 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
 	Update_Interaction(fTimeDelta);
+	Update_PotionUse(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
@@ -507,7 +508,8 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		switch (InteractionState)
 		{
 		case INTERACTION_STATE::DEFAULT:
-		case INTERACTION_STATE::ACTIVE:
+			pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			break;
 		case INTERACTION_STATE::CONTACT:
 		{
 			switch (pInteractionData->eType)
@@ -519,7 +521,6 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
 				Desc.isChangeMode = false;
 				Desc.pArg = pInteractionCom;
-
 				// Transition 너무 이곳저곳에서 일어나지 않나?..
 				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
 				// 제어가 안될 것까진 없다고 봄..
@@ -533,6 +534,29 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		case INTERACTION_STATE::LOCK:
 		case INTERACTION_STATE::END:
 			break;
+		}
+	}
+}
+
+void CPlayer::Update_PotionUse(_float fTimeDelta)
+{
+	m_PlayerDesc.fCurrentPotionCoolDown += fTimeDelta;
+
+	if (m_PlayerDesc.fCurrentPotionCoolDown >= m_PlayerDesc.fPotionCoolDown)
+		m_PlayerDesc.fCurrentPotionCoolDown = m_PlayerDesc.fPotionCoolDown;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Q))
+	{
+		/* 여기서 포션 사용 이펙트 쏴줘 */
+		if (m_PlayerDesc.fPotionCoolDown <= m_PlayerDesc.fCurrentPotionCoolDown &&
+			m_PlayerDesc.iCurrentPotions > 0 && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
+		{
+			m_PlayerDesc.iCurrentPotions--;
+			m_PlayerDesc.fPotionCoolDown = 0.f;
+			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
+			
+			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
+				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
 	}
 }
