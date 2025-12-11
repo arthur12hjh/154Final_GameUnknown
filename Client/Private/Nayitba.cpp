@@ -750,7 +750,7 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// false : 비활성화
 	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(vTargetPos, 55.f);
+		iter->Shoot_Projectile(vTargetPos, 10000.f);
 
 	m_pBulletList.clear();
 }
