@@ -5,11 +5,12 @@
 
 
 float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
-                   float3 vNormal, float3 vTangent, float3 vBinormal)
+                   float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
 {
     // XY only normal map
-    float2 xy = NormalTexture.Sample(NormalSampler, vTexcoord).rg * 2.f - 1.f;
+    float2 xy = NormalTexture.SampleLevel(NormalSampler, vTexcoord, 2.f).rg * 2.f - 1.f;
 
+    xy *= fScale;
     // Z º¹¿ø
     float z = sqrt(saturate(1.f - dot(xy, xy)));
 

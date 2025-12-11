@@ -311,10 +311,10 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
         break;
     //테스트 용으로 0 처리
     case 1005:
-        BetaSkillDesc.iRequiredBetaGauge = 10;
+        BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
     default:
-        BetaSkillDesc.iRequiredBetaGauge = 10;
+        BetaSkillDesc.iRequiredBetaGauge = 12;
         break;
     }
 

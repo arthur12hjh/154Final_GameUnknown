@@ -33,8 +33,8 @@ private:
 	MOTIONBLUR_DESC m_Desc = {};
 	_float m_fCamBlurScale = { 0.05f };
 	_float m_fObjectBlurScale = { 1.f };
-	_float m_fBias = { -0.326f };
-	_uint   m_iSampleCount = { 11 };
+	_float m_fBias = { 0.8f };
+	_uint   m_iSampleCount = { 16 };
 public:
 	static CMotionBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

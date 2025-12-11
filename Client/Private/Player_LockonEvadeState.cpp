@@ -79,9 +79,6 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
 		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
-	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
-		m_tNextState.eNextState = PLAYER_STATE::EVADE;
-
 	else if (fAnimationRatio > 0.45f &&  m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) ||
 		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) ||

@@ -639,6 +639,11 @@ const list<class CLight*>* CGameInstance::GetAllLight()
 	return m_pLight_Manager->GetAllLight();
 }
 
+LIGHT_DESC* CGameInstance::Get_Directional_Desc()
+{
+	return m_pLight_Manager->Get_Directional_Desc();
+}
+
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer* pVIBuffer)
 {
 	return m_pLight_Manager->Render_Lights(pShader, pVIBuffer);
