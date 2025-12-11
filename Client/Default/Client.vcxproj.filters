@@ -2137,9 +2137,6 @@
     <ClCompile Include="..\Private\Lift_Controller.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClCompile>
@@ -2226,6 +2223,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
-	 
+
 	ResetAction(true);
 	m_bIsControllLift = true;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
@@ -50,6 +50,7 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 void CLift_Controller::Update(_float fTimeDelta)
 {
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
 	if (m_bIsControllLift)
 	{
 		if (m_pLiftPlatform)
@@ -57,8 +58,9 @@ void CLift_Controller::Update(_float fTimeDelta)
 			_matrix vPlatformMatrix = XMLoadFloat4x4(m_pLiftPlatform->GetTransform()->Get_WorldMatrixPtr());
 			for (_uint i = 0; i < 3; ++i)
 				vPlatformMatrix.r[i] = XMVector3Normalize(vPlatformMatrix.r[i]);
-			
+
 			WorldMat = WorldMat * vPlatformMatrix;
+			XMStoreFloat4x4(&m_CombinedMatrix, WorldMat);
 		}
 	}
 	
@@ -130,7 +132,13 @@ HRESULT CLift_Controller::Render()
 
 void CLift_Controller::SetControllPlatform(CLift_Platform* pControllPlatform)
 {
+	//XMStoreFloat4x4(&m_PlatformLocalMat, XMMatrixIdentity());
+	//memcpy(&m_PlatformLocalMat, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
 
+	m_pTransformCom->Set_State(STATE::POSITION, { 7.5f, 0.f, 0.f, 1.f });
+	//m_PlatformLocalMat._41 = 7.5f;
+	//m_PlatformLocalMat._42 = 0.f;
+	//m_PlatformLocalMat._43 = 0.f;
 }
 
 HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
@@ -164,7 +172,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	if (pPlatformList)
 	{
 		if (false == pPlatformList->empty())
-			m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
+			SetControllPlatform(static_cast<CLift_Platform*>(pPlatformList->front()));
 	}
 
 	/* Com_Model_COL */
@@ -224,8 +232,19 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 HRESULT CLift_Controller::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
+	if (m_bIsControllLift)
+	{
+		if (m_pLiftPlatform)
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedMatrix)))
+				return E_FAIL;
+		}
+	}
+	else
+	{
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
