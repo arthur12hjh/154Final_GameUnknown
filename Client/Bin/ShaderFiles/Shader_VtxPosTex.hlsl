@@ -6,6 +6,7 @@ texture2D g_Texture;
 texture2D g_DepthTexture;
 
 float g_fDistortionIntensity;
+float g_fFar;
 
 struct VS_IN
 {
@@ -116,7 +117,7 @@ PS_OUT PS_MAIN_SOFTEFFECT(PS_IN_SOFTEFFECT In)
     
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, vTexcoord);
     
-    float fOldViewZ = vDepthDesc.y * 500.f;
+    float fOldViewZ = vDepthDesc.y * g_fFar;
     
     float fDistance = fOldViewZ - In.vProjPos.w;
     

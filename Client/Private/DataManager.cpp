@@ -17,6 +17,9 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
+    if (FAILED(LoadCameraAnimationData()))
+        return E_FAIL;
+
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
 
@@ -73,6 +76,107 @@ const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring
     return &iter->second;
 }
 
+const CAMERA_ANIMATION_DATA* CDataManager::Find_CameraAnimationData(_uint iCameraAnimationData)
+{
+    auto iter = m_CameraAnimationDatas.find(iCameraAnimationData);
+    if (iter == m_CameraAnimationDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+void CDataManager::Save_CameraAnimationData()
+{
+    if (m_CameraAnimationDatas.size() == 0)
+        return;
+
+    for (auto& pData : m_CameraAnimationDatas)
+    {
+        Json jArray = Json::array();
+        Json jData;
+
+        jData["iCameraAnimationID"] = pData.first;
+        jData["iCameraAnimationFlag"] = pData.second.iCameraAnimationFlag;
+        jData["fBaseFOV"] = pData.second.fBaseFOV;
+        jData["vBaseCameraPivot"] = { pData.second.vBaseCameraPivot.x, pData.second.vBaseCameraPivot.y, pData.second.vBaseCameraPivot.z};
+        jData["vBaseBonePosition"] = { pData.second.vBaseBonePosition.x, pData.second.vBaseBonePosition.y, pData.second.vBaseBonePosition.z};
+        jData["vBaseBoneRotation"] = { pData.second.vBaseBoneRotation.x, pData.second.vBaseBoneRotation.y, pData.second.vBaseBoneRotation.z};
+        jData["szCameraAnimationName"] = pData.second.szCameraAnimationName;
+
+        for (auto& pMember : pData.second.FOVTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["FOVTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.PivotTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["PivotTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.BonePositionTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["BonePositionTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.BoneRotationTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["BoneRotationTrackList"].push_back(jMember);
+        }
+
+        jArray.push_back(jData);
+
+        _wstring szFilePath = TEXT("../../Client/Bin/DataFiles/CameraData/");
+
+        szFilePath += to_wstring(pData.first);
+        szFilePath += TEXT(".json");
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+        CJsonParser::SaveJsonData(szPath, jArray);
+    }
+}
+
+#ifdef _DEBUG
+
+map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
+{
+    return &m_CameraAnimationDatas;
+}
+
+#endif
 
 HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {
@@ -292,6 +396,170 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         Safe_Delete_Array(pFileName);
     }
 
+
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
+{
+    //	- 카메라 애니메이션 관리하는 데이터파일
+    //  < 카메라 Data 파일 >
+    //      카메라 ID
+    //      카메라 플래그(본부착, 전환시 보간여부 등)
+    //      기본 FOV
+    //      기본 카메라 LookAt 포인트
+    //      카메라본 기본 위치(플래그 활성 시)
+    //      카메라본 기본 각도(플래그 활성 시)
+    //      카메라본 애니메이션 이름
+    //      FOV 채널
+    //      카메라 LookAt 포인트 채널
+    //      카메라본 위치 채널
+    //      카메라본 각도 채널
+
+
+    // _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
+    _finddatai64_t  fd;
+
+    // _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
+    intptr_t handle = _findfirst64("../Bin/DataFiles/CameraData/*.json*", &fd);
+
+    if (handle == -1)
+        return S_OK;
+
+    int iResult = 0;
+
+    _wstring szFrontPath = TEXT("../Bin/DataFiles/CameraData/");
+
+    while (iResult != -1)
+    {
+        int iLength = strlen(fd.name) + 1;
+        WCHAR* pFileName = new WCHAR[iLength];
+        ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
+
+        // 아스키 코드 문자열을 유니코드 문자열로 변환시켜주는 함수
+        MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
+
+        _wstring szFullPath = szFrontPath + pFileName;
+        _wstring szFilePath = pFileName;
+
+
+        Json jAnim;
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFullPath.c_str(), szPath);
+
+        CJsonParser::ReadJsonData(szPath, jAnim);
+
+        for (auto& pAnim : jAnim)
+        {
+            WCHAR szText[MAX_PATH];
+            _wstring szAnimTag;
+
+            CAMERA_ANIMATION_DATA CameraAnimationData;
+
+            CameraAnimationData.iCameraAnimationID = pAnim["iCameraAnimationID"].get<_int>();
+            CameraAnimationData.iCameraAnimationFlag = pAnim["iCameraAnimationFlag"].get<_int>();
+            CameraAnimationData.fBaseFOV = pAnim["fBaseFOV"].get<_float>();
+
+            CameraAnimationData.vBaseCameraPivot = {
+               pAnim["vBaseCameraPivot"][0].get<_float>(),
+               pAnim["vBaseCameraPivot"][1].get<_float>(),
+               pAnim["vBaseCameraPivot"][2].get<_float>()
+            };
+
+            CameraAnimationData.vBaseBonePosition = {
+               pAnim["vBaseBonePosition"][0].get<_float>(),
+               pAnim["vBaseBonePosition"][1].get<_float>(),
+               pAnim["vBaseBonePosition"][2].get<_float>()
+            };
+
+            CameraAnimationData.vBaseBoneRotation = {
+               pAnim["vBaseBoneRotation"][0].get<_float>(),
+               pAnim["vBaseBoneRotation"][1].get<_float>(),
+               pAnim["vBaseBoneRotation"][2].get<_float>()
+            };
+
+            strcpy_s(CameraAnimationData.szCameraAnimationName, pAnim["szCameraAnimationName"].get<string>().c_str());
+
+
+            for (auto& pFOVTrack : pAnim["FOVTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pFOVTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pFOVTrack["vTrackValue"][0].get<_float>(),
+                    pFOVTrack["vTrackValue"][1].get<_float>(),
+                    pFOVTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pFOVTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pFOVTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pFOVTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.FOVTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pPivotTrack : pAnim["PivotTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pPivotTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pPivotTrack["vTrackValue"][0].get<_float>(),
+                    pPivotTrack["vTrackValue"][1].get<_float>(),
+                    pPivotTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pPivotTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pPivotTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pPivotTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.PivotTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pBonePositionTrack : pAnim["BonePositionTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pBonePositionTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pBonePositionTrack["vTrackValue"][0].get<_float>(),
+                    pBonePositionTrack["vTrackValue"][1].get<_float>(),
+                    pBonePositionTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pBonePositionTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pBonePositionTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pBonePositionTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.BonePositionTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pBoneRotationTrack : pAnim["BoneRotationTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pBoneRotationTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pBoneRotationTrack["vTrackValue"][0].get<_float>(),
+                    pBoneRotationTrack["vTrackValue"][1].get<_float>(),
+                    pBoneRotationTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pBoneRotationTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pBoneRotationTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pBoneRotationTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.BoneRotationTrackList.push_back(TrackDesc);
+            }
+
+
+            m_CameraAnimationDatas.emplace(CameraAnimationData.iCameraAnimationID, CameraAnimationData);
+        }
+
+
+        //_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
+        iResult = _findnext64(handle, &fd);
+        Safe_Delete_Array(pFileName);
+    }
 
 
     return S_OK;

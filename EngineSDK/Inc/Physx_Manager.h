@@ -42,6 +42,7 @@ public:
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
 
 private:
+	class PxDefaultContactCallback* m_pSceneEventCallback = { nullptr };
 	/* 모든 Physx 모듈을 사용하려면 필요한 인스턴스. 다렉의 Device나 현재 프레임워크의 GameInstance 같은 녀석.*/
 	PxPvdTransport* m_PxTransport = { nullptr };
 	PxFoundation* m_PxFoundation = { nullptr };

@@ -41,7 +41,7 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 {
 	if (true == m_isSyncByPhysx)
 	{
-		PxVec3 vExtraGravity(0.f, -9.8f * 8.0f, 0.f); // 2배 중력
+		PxVec3 vExtraGravity(0.f, -9.8f * 5.0f, 0.f); // 2배 중력
 
 		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->addForce(vExtraGravity, PxForceMode::eACCELERATION);
 	}
@@ -64,7 +64,7 @@ void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower)
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setMaxLinearVelocity(100.f);
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSolverIterationCounts(8, 4);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.1f);
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.3f);
 
 	m_isSyncByPhysx = true;
 }
@@ -211,6 +211,8 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 	}
 
  	m_tUserData = pDesc->tUserData;
+	m_tUserData.pWord0 = &pDesc->iCollisionGroup;
+	m_tUserData.pWord1 = &pDesc->iCollisionMask;
 
 	return S_OK;
 }

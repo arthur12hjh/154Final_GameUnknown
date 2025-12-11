@@ -65,6 +65,9 @@ HRESULT CSSAO::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strDepthRTTag, 
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SSAO"))))
         return E_FAIL;
 
+    CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+    m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+    
     m_pShader->Bind_RawValue("g_NoiseValue", &m_vRandomNoise, sizeof(_float3) * 16);
 
     m_pShader->Bind_Matrix("g_OrthoWorldMatrix", m_pGameInstance->Get_Renderer_Matrix());

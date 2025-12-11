@@ -857,6 +857,8 @@ HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
 
 HRESULT CRenderer::Bind_WVP_Matrices()
 {
+	CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+	m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
 	m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix);
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);

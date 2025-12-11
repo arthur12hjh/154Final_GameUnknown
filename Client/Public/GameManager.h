@@ -16,6 +16,7 @@ struct Default_Status;
 class CQuestManager;
 class CDataManager;
 class CLockonManager;
+class CShaderManager;
 
 class CGameManager final : public CBase
 {
@@ -27,7 +28,7 @@ private:
 
 public :
 	HRESULT						Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-
+	void						Update(_float fTimeDelta);
 #pragma region Default 
 	// 캐릭터 바인딩
 	// 어떤 캐릭터를 플레이어가 지금 조종중인지를 바인딩
@@ -52,6 +53,12 @@ public :
 	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
+	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
+
+#ifdef _DEBUG
+	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
+	void							Save_CameraAnimationData();
+#endif
 #pragma endregion
 
 #pragma region Quest Manager
@@ -69,6 +76,11 @@ public :
 	void						CompletedQuest(_uint iQuestID);
 #pragma endregion
 
+#pragma region SHADER_MANAGER
+	HRESULT		Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, class CShader* pShader);
+	class CShader* Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag);
+	HRESULT Bind_CamInfo(LEVEL eLevelID);
+#pragma endregion
 
 #pragma region LOCKON
 public:
@@ -99,7 +111,7 @@ private :
 	CDataManager*			m_pDataManager = { nullptr };
 	CQuestManager*			m_pQuestManager = { nullptr };
 	CLockonManager*			m_pLockonManager = { nullptr };
-
+	CShaderManager*			m_pShaderManager = { nullptr };
 	//플레이어 매니저 굳이 안만들고 이대로 둘게요 이게 더 편할듯
 	class CPlayer*			m_pPlayer = { nullptr };
 private :

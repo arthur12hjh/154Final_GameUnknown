@@ -620,6 +620,11 @@ const _float4x4* CGameInstance::GetIdentityMatrixPtr()
 	return m_pPipeLine->GetIdentityMatrixPtr();
 }
 
+const CAMERA_INFO& CGameInstance::Get_CurrentCamInfo()
+{
+	return m_pPipeLine->Get_CurrentCamInfo();
+}
+
 #pragma endregion
 
 #pragma region LIGHT_MANAGER

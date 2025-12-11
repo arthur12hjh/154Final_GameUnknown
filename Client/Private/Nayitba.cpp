@@ -124,9 +124,11 @@ void CNayitba::Update(_float fTimeDelta)
 void CNayitba::Late_Update(_float fTimeDelta)
 {
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState )
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{

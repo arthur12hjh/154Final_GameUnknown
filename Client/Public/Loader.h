@@ -42,7 +42,7 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
-
+	class CGameManager*		m_pGameManager = { nullptr }; 
 private:
 	HRESULT Loading_For_Logo();
 

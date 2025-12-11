@@ -92,14 +92,14 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Editor()
 {
-	m_strMessage = TEXT("�ؽ��ĸ�(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("�𵨸�(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -111,7 +111,7 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_Component_Model_Grid */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Grid"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/GridModel/Plane_Grid.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/GridModel/Plane_Grid.binx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Dororong */
@@ -170,7 +170,7 @@ HRESULT CLoader::Loading_For_Editor()
 
 
 
-	m_strMessage = TEXT("���̴���(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("모름");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -201,7 +201,7 @@ HRESULT CLoader::Loading_For_Editor()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("�ݶ��̴���(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("절대 콜라이더를 로드하고 있지 않습니다.");
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -217,7 +217,7 @@ HRESULT CLoader::Loading_For_Editor()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("��ü������(��) �ε� �� �Դϴ�.");
+	m_strMessage = TEXT("절대 객체원형을 로드하고 있지 않습니다.");
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_BackGround"),
 	//	CBackGround::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
@@ -303,7 +303,7 @@ HRESULT CLoader::Loading_For_Editor()
 	//	return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("�ε��� �Ϸ�Ǿ����ϴ�..");
+	m_strMessage = TEXT("절대 로딩이 완료되지 않았습니다...");
 
 	m_isFinished = true;
 

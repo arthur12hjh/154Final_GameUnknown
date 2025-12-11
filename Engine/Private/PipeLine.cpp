@@ -1,7 +1,13 @@
 #include "PipeLine.h"
 
-CPipeLine::CPipeLine()
+#include "GameInstance.h"
+#include "Camera.h"
+
+CPipeLine::CPipeLine() :
+	m_pGameInstance{ CGameInstance::GetInstance() }
 {
+	Safe_AddRef(m_pGameInstance);
+	
 	XMStoreFloat4x4(&m_IdentityMatrix, XMMatrixIdentity());
 
 	/* 역행렬도 초기화 해놓기.*/
@@ -109,6 +115,12 @@ void CPipeLine::Update()
 	memcpy(&m_vCamUp, &m_TransformStateMatrixInverse[ENUM_CLASS(D3DTS::VIEW)].m[1], sizeof(_float4));
 	memcpy(&m_vCamLook, &m_TransformStateMatrixInverse[ENUM_CLASS(D3DTS::VIEW)].m[2], sizeof(_float4));
 	memcpy(&m_vCamPosition, &m_TransformStateMatrixInverse[ENUM_CLASS(D3DTS::VIEW)].m[3], sizeof(_float4));
+
+	CCamera* pCam = m_pGameInstance->GetMainCamera();
+	Safe_Release(pCam);
+
+	if(nullptr != pCam)
+		m_tCamDesc = pCam->GetCameraInfo();
 }
 
 CPipeLine* CPipeLine::Create()
@@ -119,5 +131,7 @@ CPipeLine* CPipeLine::Create()
 void CPipeLine::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pGameInstance);
 }
 
