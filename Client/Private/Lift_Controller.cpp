@@ -40,6 +40,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		return E_FAIL;
 
 	ResetAction(true);
+	m_eInterState = INTERACTION_STATE::DEFAULT;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 
 	return S_OK;
@@ -51,8 +52,10 @@ void CLift_Controller::Priority_Update(_float fTimeDelta)
 
 void CLift_Controller::Update(_float fTimeDelta)
 {
+	//m_pRigidBody->Update_PxTransform(WorldMat);
+
 	_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-	
+
 	if (m_bIsControllLift)
 	{
 		if (m_pLiftPlatform)
@@ -65,29 +68,23 @@ void CLift_Controller::Update(_float fTimeDelta)
 			XMStoreFloat4x4(&m_CombinedMatrix, WorldMat);
 		}
 	}
-	
 	m_pCullingCollider->UpdateColiision(WorldMat);
-	//m_pRigidBody->Update_PxTransform(WorldMat);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-	{
-		Excute_CallBack(fTimeDelta, nullptr);
-	}
-	m_pInteractionCom->Update_Com();
+	m_pInteractionCom->Update_Com(WorldMat);
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
-
 	if (m_pLiftPlatform && m_eInterState == INTERACTION_STATE::ACTIVE)
 	{
-		if (m_pLiftPlatform->GetPlatformMove())
-			m_eInterState = INTERACTION_STATE::END;
-		else
+		if (!m_pLiftPlatform->GetPlatformMove())
 			m_eInterState = INTERACTION_STATE::DEFAULT;
 	}
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
+	
+
+	
+
 	/*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -275,32 +272,20 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 		if (IsInteractionEnable())
 		{
 			m_eInterState = INTERACTION_STATE::CONTACT;
-			if (m_pLiftPlatform)
-			{
-			
-
-				if (m_bIsControllLift)
-				{
-					if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
-						m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
-					else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
-						m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
-				}
-			}
-			else
-			{
-				auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
-				if (pPlatformList)
-				{
-					if (false == pPlatformList->empty())
-						m_pLiftPlatform = static_cast<CLift_Platform*>(pPlatformList->front());
-				}
-			}
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+
+	if (INTERACTION_STATE::CONTACT == m_eInterState)
 	{
 		m_eInterState = INTERACTION_STATE::ACTIVE;
+		if (m_bIsControllLift)
+		{
+			if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+				m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+			else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+		}
+
 		m_fInteractionDuration.x = 0.f;
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
@@ -308,16 +293,7 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
 			m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
 		}
-		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 	}
-
-	//if (LIFT_ANIM_STATE::LIFT_ANIM_PUSH == m_eCurState)
-	//{
-	//	if (IsInteractionEnable())
-	//	{
-	//		
-	//	}
-	//}
 }
 
 void CLift_Controller::ResetAction(_bool bIsForce)

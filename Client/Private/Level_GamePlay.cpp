@@ -48,8 +48,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
@@ -69,11 +69,11 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_isOverlay)
-	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
-		m_isOverlay = false;
-	}
+	//if (m_isOverlay)
+	//{
+	//	static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+	//	m_isOverlay = false;
+	//}
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
@@ -209,31 +209,31 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	InteractionDesc.iInteractionID = 2;
-	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
-	for (size_t i = 0; i < 5; i++)
-	{
-		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
-							   0.f,
-							   m_pGameInstance->Random(0, 50) };
+	//InteractionDesc.iInteractionID = 2;
+	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
+	//for (size_t i = 0; i < 5; i++)
+	//{
+	//	InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
+	//						   0.f,
+	//						   m_pGameInstance->Random(0, 50) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-			return E_FAIL;
-	}
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+	//		return E_FAIL;
+	//}
 
-	InteractionDesc.iInteractionID = 3;
-	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
-	for (size_t i = 0; i < 5; i++)
-	{
-		InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
-							   0.f,
-							   m_pGameInstance->Random(50, 100) };
+	//InteractionDesc.iInteractionID = 3;
+	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
+	//for (size_t i = 0; i < 5; i++)
+	//{
+	//	InteractionDesc.vPosition = { m_pGameInstance->Random(50, 100),
+	//						   0.f,
+	//						   m_pGameInstance->Random(50, 100) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-			return E_FAIL;
-	}
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+	//		return E_FAIL;
+	//}
 
 	//ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
 	//for (size_t i = 0; i < 5; i++)
@@ -450,13 +450,13 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
 
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
 
-	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	//if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	//if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	
 	ifs.close();

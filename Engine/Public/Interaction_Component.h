@@ -31,7 +31,7 @@ public:
 	virtual HRESULT								Initialize(void* pArg) override;
 	virtual void								SetOwner(CGameObject* pGameObject);
 
-	void										Update_Com();
+	void										Update_Com(_matrix WorldMat);
 	void										Action_InteractionEvent(_float fTimeDelta, CGameObject* pGameObject);
 
 	void										SetInteractionHitType(HIT_TYPE eHitType);

@@ -32,7 +32,7 @@ HRESULT CCanBox::Initialize(void* pArg)
 		return E_FAIL;
 
     PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
-    static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 5;
+    pDesc->iInteractionID = 5;
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -90,7 +90,7 @@ void CCanBox::Late_Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
         if(INTERACTION_STATE::ACTIVE > m_eInterState)
-		    m_pInteractionCom->Update_Com();
+		    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);

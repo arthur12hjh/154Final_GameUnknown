@@ -38,9 +38,9 @@ void CInteraction_Component::SetOwner(CGameObject* pGameObject)
     m_pOBBColiider->SetOwner(pGameObject);
 }
 
-void CInteraction_Component::Update_Com()
+void CInteraction_Component::Update_Com(_matrix WorldMat)
 {
-    m_pOBBColiider->UpdateColiision(XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr()));
+    m_pOBBColiider->UpdateColiision(WorldMat);
     m_pGameInstance->ADD_Collider(m_pOBBColiider);
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pOBBColiider);

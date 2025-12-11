@@ -77,7 +77,7 @@ void CSciFi_Door::Late_Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		if (INTERACTION_STATE::ACTIVE > m_eInterState)
-			m_pInteractionCom->Update_Com();
+			m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
