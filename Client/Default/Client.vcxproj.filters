@@ -763,6 +763,9 @@
     <Filter Include="02.GameObjects\Actor\Spawner">
       <UniqueIdentifier>{8d2807a6-6a2b-4285-9ddb-1d0de7492f3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10.GameManager\PoolingManager">
+      <UniqueIdentifier>{89074d3c-6ab8-4ef0-9f50-5868e3322fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1540,6 +1543,9 @@
     <ClInclude Include="..\public\Spawner.h">
       <Filter>02.GameObjects\Actor\Spawner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PoolingManager.h">
+      <Filter>10.GameManager\PoolingManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2286,6 +2292,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Spawner.cpp">
       <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PoolingManager.cpp">
+      <Filter>10.GameManager\PoolingManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

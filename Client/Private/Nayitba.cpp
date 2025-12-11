@@ -62,15 +62,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
-	if (pDesc->pTarget)
-	{
-		m_pAISenceCom->Add_SenceTargetObject(pDesc->pTarget);
-		if (pDesc->bIsSpanwer)
-		{
-			// 여기서 스폰 상태로 변경
-			// 일단 생성 되는지만 확인하고 가자
-		}
-	}
+
 
 
 	// 아래 세개중에서 하나
@@ -259,6 +251,30 @@ _uint CNayitba::GetMonsterID()
 CGameObject* CNayitba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
+}
+
+void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
+{
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
+	m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
+	m_pTransformCom->Set_Scale(XMLoadFloat3(&Desc.vScale));
+	
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	m_iMonsterID = Desc.iMonsterID;
+	if (FAILED(Ready_CharacterData()))
+		return;
+
+	if (Desc.pTarget)
+	{
+		m_pAISenceCom->Add_SenceTargetObject(Desc.pTarget);
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
+
+		//if (pDesc->bIsSpanwer)
+		//{
+		//	// 여기서 스폰 상태로 변경
+		//	// 일단 생성 되는지만 확인하고 가자
+		//}
+	}
 }
 
 const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)

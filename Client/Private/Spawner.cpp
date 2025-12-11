@@ -47,6 +47,7 @@ void CSpawner::Priority_Update(_float fTimeDelta)
 
 void CSpawner::Update(_float fTimeDelta)
 {
+    m_fTimeDelta = fTimeDelta;
     if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
     {
         m_pGameInstance->ADD_Collider(m_pColliderCom);
@@ -121,7 +122,7 @@ void CSpawner::Trigger_Event()
 
 void CSpawner::Trigger_SpawnEvent()
 {
-    CNayitba::NAYITBA_DESC SpawnDesc = {};
+    /*CNayitba::NAYITBA_DESC SpawnDesc = {};
     SpawnDesc.bIsApplyTransform = true;
     SpawnDesc.vScale = { 1.f, 1.f, 1.f };
 
@@ -144,13 +145,12 @@ void CSpawner::Trigger_SpawnEvent()
             SpawnDesc.vRotation = {0.f, XMConvertToRadians(m_pGameInstance->Random(0.f, 360.f)), 0.f, 0.f};
             SpawnDesc.pTarget = pPlayer;
 
-            if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &SpawnDesc)))
-                return;
+            auto pGameObject = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), TEXT("Monster_Pool"));
+            static_cast<CNayitba*>(pGameObject)->Setting_Data(m_fTimeDelta, SpawnDesc);
         }
     }
 
-    Safe_Release(pPlayer);
+    Safe_Release(pPlayer);*/
 }
 
 CSpawner* CSpawner::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

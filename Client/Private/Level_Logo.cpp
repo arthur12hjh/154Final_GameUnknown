@@ -41,6 +41,9 @@ HRESULT CLevel_Logo::Initialize()
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
 	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
 
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::LOGO));
+
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG

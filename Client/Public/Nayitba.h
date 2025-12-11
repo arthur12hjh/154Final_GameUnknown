@@ -50,6 +50,7 @@ public:
 	_uint									GetMonsterID();
 	CGameObject*							GetTarget();
 
+	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	
 	//몬스터의 현재 데이터를 반환

@@ -16,6 +16,7 @@ struct Default_Status;
 class CQuestManager;
 class CDataManager;
 class CLockonManager;
+class CPoolingManager;
 
 class CGameManager final : public CBase
 {
@@ -84,12 +85,21 @@ public:
 
 #pragma endregion
 
+#pragma region Pool Manager
+	HRESULT											Setting_PoolManager(_uint iLevelID);
+	CGameObject*									SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag);
+	void											UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject);
+#pragma endregion
+
 #pragma region Damage Logic
 	// 매개변수 1 : Default Status 구조체 정보
 	// 매개변수 2 : 데미지 량
 	// 매개변수 3 : 쉴드로 감쇠할 데미지의 퍼센트
 	_bool					ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
+
+
+
 
 private :
 	ID3D11Device*			m_pDevice = { nullptr };
@@ -99,6 +109,7 @@ private :
 	CDataManager*			m_pDataManager = { nullptr };
 	CQuestManager*			m_pQuestManager = { nullptr };
 	CLockonManager*			m_pLockonManager = { nullptr };
+	CPoolingManager*		m_pPoolingManager = { nullptr };
 
 	//플레이어 매니저 굳이 안만들고 이대로 둘게요 이게 더 편할듯
 	class CPlayer*			m_pPlayer = { nullptr };

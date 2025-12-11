@@ -52,6 +52,7 @@ private :
 	SPAWNER_TYPE				m_eSpawnerType = { SPAWNER_TYPE::END };
 	list<pair<_uint, _uint>>	m_SpawnList = {};
 
+	_float						m_fTimeDelta = {};
 #pragma region Time
 	TIME_SPANWER_TYPE			m_eTimeSpanwerType = { TIME_SPANWER_TYPE::END };
 	_float2						m_SpawnTime = {};

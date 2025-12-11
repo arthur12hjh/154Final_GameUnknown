@@ -55,7 +55,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
-	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
+	auto pGameManager = CGameManager::GetInstance();
+	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+
+	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
 
