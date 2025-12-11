@@ -389,10 +389,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	//// 대부분 누수가 난다면 이새끼가 문제다 이새끼 주석처리해야한다반드시)
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-	//	return E_FAIL;
+	// 대부분 누수가 난다면 이새끼가 문제다 이새끼 주석처리해야한다반드시)
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
+		return E_FAIL;
 
 	//Desc.iMonsterID = 7;
 	//Desc.vPosition = { 450.f, 1.f, 600.f };
