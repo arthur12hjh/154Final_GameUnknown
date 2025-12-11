@@ -45,6 +45,10 @@ PLAYER_TRANSITION_DESC CPlayer_BattleIdleState::Update(_float fTimeDelta)
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
         m_tNextState.eNextState = PLAYER_STATE::JUMP;
 
+    //Test State로 전환하는 코드.
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
+        m_tNextState.eNextState = PLAYER_STATE::TEST_STATE;
+
     return m_tNextState;
 }
 

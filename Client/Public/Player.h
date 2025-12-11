@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.h"
+#include "ClientStruct.h"
 
 NS_BEGIN(Engine)
 class CCollider;
@@ -47,6 +48,9 @@ public:
 	void			SetSkillDataID(_uint iSkillID);
 	_int			GetSkillDataID();
 
+	// 존나가라. 나중에 반드시 수정할 것
+	HRESULT Get_GaraGorillaBone(class CLinkAttackTester* pObject);
+
 public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
 	// 나중에 한번에 정리할게요.
@@ -54,11 +58,12 @@ public:
 	_float m_fTestTimer = { 0.f };
 
 private:
-	struct Player_Desc		m_PlayerDesc = {};
-	CCollider*				m_pColliderCom = { nullptr };
-	CWeapon*				m_pWeapon = { nullptr };
+	struct Player_Desc			m_PlayerDesc = {};
+	CCollider*					m_pColliderCom = { nullptr };
+	CWeapon*					m_pWeapon = { nullptr };
+	class CCameraBone_Player*	m_pCameraBone = { nullptr };
+	class CPlayerFSM*			m_pFSM = { nullptr };
 
-	class CPlayerFSM*		m_pFSM = { nullptr };
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 
 	//

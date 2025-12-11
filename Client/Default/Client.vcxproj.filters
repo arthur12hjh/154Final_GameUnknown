@@ -760,6 +760,27 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Item">
       <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack">
+      <UniqueIdentifier>{160b9f71-8abf-4e4d-8575-379de2c01811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST">
+      <UniqueIdentifier>{99dd7ca2-e18c-465b-b30e-89a7bc85e2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester">
+      <UniqueIdentifier>{5d12c9c1-3029-4b2f-b2bb-e20c0ac9c2c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part">
+      <UniqueIdentifier>{e32eac82-bd3d-4361-84c2-e3cc641ea9a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_CutScene">
+      <UniqueIdentifier>{b500611a-8115-4467-983f-469d5e540a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Action">
+      <UniqueIdentifier>{559b4dcb-c12d-4871-912d-69f322112f25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\CameraActionInserter">
+      <UniqueIdentifier>{91a3ae3c-0b87-4dbf-a293-fbc3155b33ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1534,6 +1555,21 @@
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_TestState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Action.h">
+      <Filter>02.GameObjects\Camera\Camera_Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h">
+      <Filter>30.ImGui\CameraActionInserter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2277,6 +2313,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_TestState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Action.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp">
+      <Filter>30.ImGui\CameraActionInserter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

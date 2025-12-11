@@ -8,6 +8,8 @@
 #include "Effect.h"
 #include "AttackHitBox.h"
 
+#include "Camera_Action.h"
+
 #include "StringHelper.h"
 #include "PartObject.h"
 
@@ -131,6 +133,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::SHOOT_PROJECTILE:
 		return Notify_Shoot_Projectile(AnimNotify);
 		break;
+	case CNotify::PLAY_CINEMATIC:
+		return Notify_Play_Cinematic(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -152,6 +157,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;
 	if (szNotifyTag == "Spawn_Object")					return SPAWN_OBJECT;
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
+	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
 
 	return NOTIFY_TYPE::END;
 }
@@ -240,6 +246,20 @@ HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 	_TCHAR szNotifyTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szNotifyTag);
 	m_pGameInstance->Manager_PlaySound(szNotifyTag, CHANNELID::EFFECT, 1.f);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
+{
+	_float4x4 PrePosMatrix = {};
+
+	m_pGameInstance->SetMainCamera(TEXT("ActionCamera"), &PrePosMatrix);
+	CCamera* pCamera = m_pGameInstance->GetMainCamera();
+
+	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
+
+	Safe_Release(pCamera);
 
 	return S_OK;
 }

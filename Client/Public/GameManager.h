@@ -52,6 +52,12 @@ public :
 	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
+	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
+
+#ifdef _DEBUG
+	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
+	void							Save_CameraAnimationData();
+#endif
 #pragma endregion
 
 #pragma region Quest Manager
