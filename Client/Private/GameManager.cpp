@@ -6,6 +6,7 @@
 #include "QuestManager.h"
 #include "LockonManager.h"
 #include "ShaderManager.h"
+#include "PoolingManager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
@@ -31,6 +32,10 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
     m_pShaderManager = CShaderManager::Create();
     if (nullptr == m_pShaderManager)
+        return E_FAIL;
+
+    m_pPoolingManager = CPoolingManager::Create(pDevice, pContext);
+    if (nullptr == m_pPoolingManager)
         return E_FAIL;
 
     return S_OK;
@@ -179,7 +184,24 @@ _bool CGameManager::Get_Lockon()
 {
     return m_pLockonManager->Get_Lockon();
 }
+
 #pragma endregion
+
+#pragma region Pool Manager
+HRESULT CGameManager::Setting_PoolManager(_uint iLevelID)
+{
+    return m_pPoolingManager->Setting_PoolManager(iLevelID);
+}
+CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
+{
+    return m_pPoolingManager->SetActivePoolObject(iLevel, pLayerName, szPoolTag);
+}
+void CGameManager::UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject)
+{
+    m_pPoolingManager->UnActivePoolObject(szPoolTag, pObject);
+}
+#pragma endregion
+
 
 #pragma region Damage Logic
 _bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
@@ -226,7 +248,8 @@ void CGameManager::Free()
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
     Safe_Release(m_pShaderManager);
-
+    Safe_Release(m_pPoolingManager);
+    
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);
