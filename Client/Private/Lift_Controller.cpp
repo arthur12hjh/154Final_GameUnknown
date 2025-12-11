@@ -38,6 +38,9 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	ResetAction(true);
 	m_bIsControllLift = pDesc->bIsControllerType;
+	//체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지
+
+	m_iPlatformID = pDesc->iPlatformID;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 
 	return S_OK;
@@ -66,7 +69,6 @@ void CLift_Controller::Update(_float fTimeDelta)
 	
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
-
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
 	{

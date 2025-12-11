@@ -555,6 +555,7 @@ HRESULT CLevel_GamePlay::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tch
 		Desc.iInteractionID = info.iInteractionID;
 		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
 		Desc.bIsControllerType = info.bIsControllerType;
+		Desc.iPlatformID = info.iPlatformID;
 
 		_vector vScale = {};
 		_vector vRotation = {};
