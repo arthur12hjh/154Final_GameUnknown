@@ -25,6 +25,7 @@ public:
 	typedef struct SavedLiftControllerInfo :SAVEDINTERACTIONOBJECTINFO
 	{
 		_bool			bIsControllerType = false;
+		_uint			iPlatformID = 0;
 	}SAVED_LIFT_CONTROLLER_INFO;
 
 	typedef struct SavedLiftPlatformInfo :SavedObjectInfo
