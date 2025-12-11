@@ -39,10 +39,12 @@ public:
 	// 항등행렬 포인터 꺼내오기
 	const _float4x4*	GetIdentityMatrixPtr() { return &m_IdentityMatrix; }
 
+	const CAMERA_INFO& Get_CurrentCamInfo() { return m_tCamDesc; }
 public:
 	void				Update();
 
 private:
+	class CGameInstance* m_pGameInstance = { nullptr };
 	_float4x4				m_TransformStateMatrices[ENUM_CLASS(D3DTS::END)] = {};
 	_float4x4				m_TransformStateMatrixInverse[ENUM_CLASS(D3DTS::END)] = {};
 
@@ -60,6 +62,12 @@ private:
 	_float4					m_vPreCamUp = {};
 	_float4					m_vPreCamLook = {};
 	_float4					m_vPreCamPosition = {};
+
+	// 왜 이걸 파이프라인에 넣어뒀나요?
+	// -> 카메라가 업데이트 도중에 바뀌더라도, FOV,Near,Far 값은
+	// 파이프라인에서 세팅된 카메라를 기준으로 해야해서요.
+	CAMERA_INFO 			m_tCamDesc = {};	
+
 public:
 	static CPipeLine* Create();
 	virtual void Free() override;

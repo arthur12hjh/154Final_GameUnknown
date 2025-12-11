@@ -5,6 +5,7 @@
 #include "DataManager.h"
 #include "QuestManager.h"
 #include "LockonManager.h"
+#include "ShaderManager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
@@ -28,7 +29,17 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     if (nullptr == m_pQuestManager)
         return E_FAIL;
 
+    m_pShaderManager = CShaderManager::Create();
+    if (nullptr == m_pShaderManager)
+        return E_FAIL;
+
     return S_OK;
+}
+
+void CGameManager::Update(_float fTimeDelta)
+{
+    if(nullptr != m_pShaderManager)
+        m_pShaderManager->Update(fTimeDelta);
 }
 
 void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
@@ -136,6 +147,16 @@ void CGameManager::CompletedQuest(_uint iQuestID)
     m_pQuestManager->CompletedQuest(iQuestID);
 }
 
+HRESULT CGameManager::Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, CShader* pShader)
+{
+    return m_pShaderManager->Add_Shader(eLevelID, strShaderTag, pShader);
+}
+
+CShader* CGameManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag)
+{
+    return m_pShaderManager->Get_Shader(eLevelID, strShaderTag);
+}
+
 #pragma region LOCKON
 
 CTransform* CGameManager::Get_TargetTransform()
@@ -204,6 +225,7 @@ void CGameManager::Free()
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
+    Safe_Release(m_pShaderManager);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);

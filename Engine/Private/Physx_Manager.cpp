@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "RigidBody.h"
 #include "Physx_FilterShader.h"
+#include "PxDefaultContactCallback.h"
 
 CPhysx_Manager::CPhysx_Manager()
 {
@@ -14,6 +15,8 @@ HRESULT CPhysx_Manager::Initialize()
     m_pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(m_pGameInstance);
     /* 피직스 초기화 */
+    m_pSceneEventCallback = PxDefaultContactCallback::Create();
+
 	m_PxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_DefaultAllocator, m_DefaultErrorCallback);
 
     m_Pvd = physx::PxCreatePvd(*m_PxFoundation);
@@ -34,6 +37,7 @@ HRESULT CPhysx_Manager::Initialize()
 
     sceneDesc.cpuDispatcher = m_PxDispatcher;
     sceneDesc.filterShader = MyFilterShader;
+	sceneDesc.simulationEventCallback = m_pSceneEventCallback;
 
     m_PxScene = m_PxPhysics->createScene(sceneDesc);
 
@@ -351,4 +355,6 @@ void CPhysx_Manager::Free()
 
     if (nullptr != m_PxFoundation)
         m_PxFoundation->release();
+
+    Safe_Release(m_pSceneEventCallback);
 }

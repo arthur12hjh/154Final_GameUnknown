@@ -10,6 +10,9 @@ typedef struct tagPxUserData {
 	_bool isCCT = { false };
 	void* pHitActor = { nullptr };
 	class CTransform* pActorTransform = { nullptr };
+
+	void* pWord0 = { nullptr };
+	void* pWord1 = { nullptr };
 } PxUserData;
 
 NS_END
