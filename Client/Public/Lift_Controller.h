@@ -22,6 +22,11 @@ public:
         LIFT_END        // 아무상태 아님
     };
 
+    typedef struct Lift_Controller_Desc : public Prob_Interaction_Desc
+    {
+        _bool bIsControllerType = false;
+    }LIFT_CONTROLLER_DESC;
+
 private:
     CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     CLift_Controller(const CLift_Controller& Prototype);
@@ -47,6 +52,7 @@ private:
 
     // 컨트롤러가 이동시킬 리프트의 바닥 이라고 보시면 됩니다.
     // 진성햄이 Platform 이라고해둬서 제가 Platform으로 했어요
+    _float4x4                           m_CombinedMatrix = {};
     CLift_Platform*                     m_pLiftPlatform = { nullptr };
 
     CModel*                             m_pModelCom = { nullptr };

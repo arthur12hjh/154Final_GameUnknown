@@ -11,6 +11,8 @@
 #include "SpawnBox.h"
 #include "Interaction.h"
 #include "Instance_Desert.h"
+#include "Lift_Controller.h"
+#include "Lift_Platform.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -104,6 +106,9 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 
 				CInteraction::Prob_Interaction_Desc pInteractionDesc = {};
 				pInteractionDesc.iInteractionID = 0;
+
+				CLift_Controller::LIFT_CONTROLLER_DESC pLiftControllerDesc = {};
+				CLift_Platform::LIFT_PLATFORM_DESC pLiftPlatformDesc = {};
 
 				Nayitba_Desc MonsterDesc = {};
 
@@ -440,15 +445,19 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				case DESESRT_RUIN_OBJECT::LIFT_BODY:
 					protoTag = TEXT("Prototype_GameObject_Lift_Body"); layerTag = TEXT("Layer_Lift_Body");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Body");
+					
 					break;
 				case DESESRT_RUIN_OBJECT::LIFT_CONTROLLER:
 					protoTag = TEXT("Prototype_GameObject_Lift_Controller"); layerTag = TEXT("Layer_Lift_Controller");
-					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
-					pInteractionDesc.iInteractionID = 1;
+					pLiftControllerDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Controller");
+					pLiftControllerDesc.iInteractionID = 1;
+					pLiftControllerDesc.bIsControllerType = m_bIsLiftControllerType;
+
 					break;
 				case DESESRT_RUIN_OBJECT::LIFT_PLATFORM:
 					protoTag = TEXT("Prototype_GameObject_Lift_Platform"); layerTag = TEXT("Layer_Lift_Platform");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Platform");
+					pLiftPlatformDesc.pComponentTag = TEXT("Prototype_Component_Model_Lift_Platform");
+					pLiftPlatformDesc.iPlatFormID = m_iPlatformID;	pLiftPlatformDesc.fMoveDistance = m_fPlatformMoveDistance;
 					break;
 #pragma endregion
 #pragma region Floor Objects
@@ -1137,12 +1146,22 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 				}
 #pragma endregion
-
-
-				if (pInteractionDesc.iInteractionID == 0)
+				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_CONTROLLER)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pLiftControllerDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_PLATFORM)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pLiftPlatformDesc);
+				}
+				else if (pInteractionDesc.iInteractionID == 0)
+				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+				}
 				else
+				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pInteractionDesc);
+				}
 
 				if (SUCCEEDED(hr))
 				{
@@ -2077,10 +2096,12 @@ HRESULT CMapTool_Desert::Render()
 	{
 		ImGui::Text("Architecture Objects");
 		_int nSelectedModel = -1;
+		_int nSelectedLift = -1;
 		_int nSelectedRuin = -1;
 		_int nSelectedBridge = -1;
 
-		const _char* modelNames[] = { "LIFT_BODY", "LIFT_CONTROLLER", "LIFT_PLATFORM", "FLOOR7_A", "FLOOR7_B", "FLOOR7_C", "FLOOR7_D", "FLOOR7_E", "FLOOR7_F" };
+		const _char* modelNames[] = { "FLOOR7_A", "FLOOR7_B", "FLOOR7_C", "FLOOR7_D", "FLOOR7_E", "FLOOR7_F" };
+		const _char* liftNames[] = { "LIFT_BODY", "LIFT_CONTROLLER", "LIFT_PLATFORM" };
 		const _char* ruinNames[] = { "RUIN_7A", "RUIN_7B", "RUIN_7C", "RUIN_7D", "RUIN_7E" };
 		const _char* bridgeNames[] = { "BRIDGE_4A","BRIDGE_4B","BRIDGE_4D","BRIDGE_4H","BRIDGE_4L","BRIDGE_4M","BRIDGE_4N","BRIDGE_5","BRIDGE_6","BRIDGE_8","BRIDGE_14A","BRIDGE_14B" };
 
@@ -2090,51 +2111,98 @@ HRESULT CMapTool_Desert::Render()
 			{
 				if (nSelectedModel == 0) 
 				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_BODY;
-					m_CurrentLayerName = TEXT("Layer_Lift_Body");
-				}
-				else if (nSelectedModel == 1) 
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_CONTROLLER;
-					m_CurrentLayerName = TEXT("Layer_Lift_Controller");
-				}
-				else if (nSelectedModel == 2) 
-				{
-					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_PLATFORM;
-					m_CurrentLayerName = TEXT("Layer_Lift_Platform");
-				}
-				else if (nSelectedModel == 3) 
-				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_A;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
-				else if (nSelectedModel == 4) 
+				else if (nSelectedModel == 1) 
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_B;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
-				else if (nSelectedModel == 5) 
+				else if (nSelectedModel == 1) 
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_C;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
-				else if (nSelectedModel == 6) 
+				else if (nSelectedModel == 2) 
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_D;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
-				else if (nSelectedModel == 7) 
+				else if (nSelectedModel == 3) 
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_E;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
-				else if (nSelectedModel == 8) 
+				else if (nSelectedModel == 4) 
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::FLOOR7_F;
 					m_CurrentLayerName = TEXT("Layer_Iron_Floor");
 				}
 				
 			}
+		}
+
+		if (ImGui::CollapsingHeader("Lifts"))
+		{
+			if (ImGui::ListBox("##Lifts", &nSelectedLift, liftNames, IM_ARRAYSIZE(liftNames), 7))
+			{
+				if (nSelectedLift == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_BODY;
+					m_CurrentLayerName = TEXT("Layer_Lift_Body");
+				}
+				else if (nSelectedLift == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_CONTROLLER;
+					m_CurrentLayerName = TEXT("Layer_Lift_Controller");
+
+					m_bShowLiftControllerWindow = true;
+				}
+				else if (nSelectedLift == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::LIFT_PLATFORM;
+					m_CurrentLayerName = TEXT("Layer_Lift_Platform");
+
+					m_bShowLiftPlatformWindow = true;
+				}
+				
+			}
+		}
+		if (true == m_bShowLiftControllerWindow)
+		{
+			if (ImGui::Begin("Lift Controller Type Setting", &m_bShowLiftControllerWindow))
+			{
+				ImGui::Text("Controller Type(false : OUT, true : IN)");
+				if (ImGui::RadioButton("OUT (false)", m_bIsLiftControllerType == false))
+				{
+					m_bIsLiftControllerType = false;
+				}
+				if (ImGui::RadioButton("IN (true)", m_bIsLiftControllerType == true))
+				{
+					m_bIsLiftControllerType = true;
+				}
+
+			}
+
+			ImGui::End();
+		}
+		if (true == m_bShowLiftPlatformWindow)
+		{
+			if (ImGui::Begin("Lift Platform Type Setting", &m_bShowLiftPlatformWindow))
+			{
+				ImGui::Text("LiftPlatform_Move_Distance");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(50.f);
+				ImGui::InputFloat("##Distance", &m_fPlatformMoveDistance);
+
+				ImGui::Text("LiftPlatform_ID");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(100.f);
+				ImGui::InputInt("##Platform ID", &m_iPlatformID);
+			}
+
+			ImGui::End();
 		}
 		if (ImGui::CollapsingHeader("Ruin"))
 		{
@@ -2688,6 +2756,9 @@ HRESULT CMapTool_Desert::Render()
 		}
 	}
 
+
+	
+
 	// 삭제 버튼
 #pragma region Delete_Object
 	if (ImGui::Button("Delete All"))
@@ -3060,7 +3131,6 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Canyon")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Body")))) return S_OK; 
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Iron_Floor")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Deco")))) return S_OK; 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Desert_Tree")))) return S_OK; 
@@ -3070,10 +3140,12 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_SciFi_Door")))) return S_OK;
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_CanBox")))) return S_OK;
-	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_Interaction")))) return S_OK;
 
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Desert_Grass")))) return S_OK;
+
+	if (FAILED(Save_Lift_Platform_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Save_Lift_Controller_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	ofs.close();
 
@@ -3169,6 +3241,80 @@ HRESULT CMapTool_Desert::Save_Interaction_Objects_By_Layer(std::ofstream& ofs, c
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Lift_Controller_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CLift_Controller* pLiftController = dynamic_cast<CLift_Controller*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pLiftController))
+			{
+				SAVED_LIFT_CONTROLLER_INFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _tchar* pTag = pLiftController->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pLiftController->Get_ObjectID();
+				info.iObjectID = pId;
+				info.iInteractionID = pLiftController->Get_InteractionID();
+				info.bIsControllerType = pLiftController->Get_ControllerType();
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVED_LIFT_CONTROLLER_INFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Save_Lift_Platform_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CLift_Platform* pLift_Platform = dynamic_cast<CLift_Platform*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pLift_Platform))
+			{
+				SAVED_LIFT_PLATFORM_INFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _tchar* pTag = pLift_Platform->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pLift_Platform->Get_ObjectID();
+				info.iObjectID = pId;
+				info.iPlatformID = pLift_Platform->Get_PlatformID();
+				info.fMoveDistance = pLift_Platform->Get_MoveDistance();
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVED_LIFT_PLATFORM_INFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
 {
 	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
@@ -3213,10 +3359,8 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
-
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
 	
@@ -3224,10 +3368,12 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
 
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
+
+	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	ifs.close();
 
@@ -3297,6 +3443,74 @@ HRESULT CMapTool_Desert::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 		Desc.iObjectId = info.iObjectID;
 		Desc.iInteractionID = info.iInteractionID;
 		Desc.pComponentTag = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_LIFT_CONTROLLER_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_LIFT_CONTROLLER_INFO));
+
+		CLift_Controller::LIFT_CONTROLLER_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iObjectId = info.iObjectID;
+		Desc.iInteractionID = info.iInteractionID;
+		Desc.pComponentTag = info.szComponentTag;
+		Desc.bIsControllerType = info.bIsControllerType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_LIFT_PLATFORM_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_LIFT_PLATFORM_INFO));
+
+		CLift_Platform::LIFT_PLATFORM_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iObjectId = info.iObjectID;
+		Desc.pComponentTag = info.szComponentTag;
+		Desc.iPlatFormID = info.iPlatformID;
+		Desc.fMoveDistance = info.fMoveDistance;
 
 		_vector vScale = {};
 		_vector vRotation = {};

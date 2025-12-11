@@ -53,7 +53,7 @@ namespace Client
 		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
 		EVADE, LANDING, 
 
-		VENDING_INTERACTION, SMALLBOX_INTERACTION,
+		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
 
 		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
 		
@@ -327,7 +327,9 @@ namespace Client
 		const void*			pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
+	//인터랙션 타입.
 	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, END };
+	//인터랙션 상태(상호작용 중, 닿았는지 등)
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
 		CONTACT,	// 접촉해서 사용작용 가능한 녀석

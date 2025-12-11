@@ -223,7 +223,7 @@ float3 ScaleLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcScale, vDstScale, fRatio);
 }
-float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
+float4 RotationQuaternionLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
     matSrc[0].xyz = normalize(matSrc[0].xyz);
     matSrc[1].xyz = normalize(matSrc[1].xyz);
@@ -260,6 +260,19 @@ float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     vDstRotation = normalize(vDstRotation);
     
     return QuaternionSlerp(vSrcRotation, vDstRotation, fRatio);
+}
+
+float4x4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
+{
+    matSrc[0].xyz = normalize(matSrc[0].xyz);
+    matSrc[1].xyz = normalize(matSrc[1].xyz);
+    matSrc[2].xyz = normalize(matSrc[2].xyz);
+    
+    matDst[0].xyz = normalize(matDst[0].xyz);
+    matDst[1].xyz = normalize(matDst[1].xyz);
+    matDst[2].xyz = normalize(matDst[2].xyz);
+    
+    return lerp(matSrc, matDst, fRatio);
 }
 
 float3 TranslationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
@@ -311,7 +324,7 @@ void LocalMatrices(uint3 gid : SV_GroupID,
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
 
         float3 vScaleLocal = ScaleLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
-        float4 vRotationLocal = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
+        float4 vRotationLocal = RotationQuaternionLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
         float3 vTranslationLocal = TranslationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
 
         float4x4 S = MakeScaleMatrix(float4(vScaleLocal, 1.f));

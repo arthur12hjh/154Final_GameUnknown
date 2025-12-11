@@ -739,6 +739,12 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
       <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree">
+      <UniqueIdentifier>{48bc51ae-ebc7-407d-be82-6701678b8e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Grass">
+      <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1495,8 +1501,14 @@
     <ClInclude Include="..\Public\Desert_Architecture.h">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h">
+    <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Grass.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Tree.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2137,9 +2149,6 @@
     <ClCompile Include="..\Private\Lift_Controller.cpp">
       <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClCompile>
@@ -2224,8 +2233,17 @@
     <ClCompile Include="..\Private\Desert_Architecture.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp">
+    <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Grass.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Tree.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

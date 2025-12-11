@@ -37,7 +37,7 @@
 #include "Player_ParryGuardState.h"
 
 //인터랙션 관련 상태들. 당장은 작은 박스만 구현
-#include "Player_SmallBoxInteractionState.h"
+#include "Player_SupplyBoxInteractionState.h"
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -250,10 +250,10 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		break;
 		
 	//인터랙션들은 Idle 상태에서만 넘어갈 수 있게끔 처리.
-	case PLAYER_STATE::SMALLBOX_INTERACTION:
+	case PLAYER_STATE::SUPPLYBOX_INTERACTION:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE: return CPlayer_SmallBoxInteractionState::Create(tDesc.pArg);
+		case PLAYER_MODE::IDLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
 		case PLAYER_MODE::BATTLE: nullptr;
 		case PLAYER_MODE::LOCKON: nullptr;
 		}

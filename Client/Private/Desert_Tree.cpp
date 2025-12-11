@@ -1,59 +1,49 @@
 #include "pch.h"
-#include "Lift_Platform.h"
+#include "Desert_Tree.h"
 #include "GameInstance.h"
 
-CLift_Platform::CLift_Platform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CDesertObject{ pDevice, pContext }
+CDesert_Tree::CDesert_Tree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CActor{ pDevice, pContext }
 {
 }
 
-CLift_Platform::CLift_Platform(const CLift_Platform& Prototype)
-	: CDesertObject{ Prototype }
+CDesert_Tree::CDesert_Tree(const CDesert_Tree& Prototype)
+	: CActor{ Prototype }
 {
 }
 
-HRESULT CLift_Platform::Initialize_Prototype()
+HRESULT CDesert_Tree::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CLift_Platform::Initialize(void* pArg)
+HRESULT CDesert_Tree::Initialize(void* pArg)
 {
-
-	LIFT_PLATFORM_DESC* pDesc = static_cast<LIFT_PLATFORM_DESC*>(pArg);
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (pDesc && pDesc->pComponentTag)
-	{
-		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
-	}
-
-	if (FAILED(Ready_Components(m_ComponentTag)))
+	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
-
-	m_iPlatformId = pDesc->iPlatFormID;
-	m_fMoveDistance = pDesc->fMoveDistance;
 
 	return S_OK;
 }
 
-void CLift_Platform::Priority_Update(_float fTimeDelta)
+void CDesert_Tree::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CLift_Platform::Update(_float fTimeDelta)
+void CDesert_Tree::Update(_float fTimeDelta)
 {
 }
 
-void CLift_Platform::Late_Update(_float fTimeDelta)
+void CDesert_Tree::Late_Update(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
-HRESULT CLift_Platform::Render()
+HRESULT CDesert_Tree::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -68,6 +58,8 @@ HRESULT CLift_Platform::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+			return E_FAIL;
 
 
 		if (FAILED(m_pShaderCom->Begin(0)))
@@ -81,22 +73,22 @@ HRESULT CLift_Platform::Render()
 	return S_OK;
 }
 
-HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
+HRESULT CDesert_Tree::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CLift_Platform::Bind_ShaderResources()
+HRESULT CDesert_Tree::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -110,9 +102,9 @@ HRESULT CLift_Platform::Bind_ShaderResources()
 	return S_OK;
 }
 
-CLift_Platform* CLift_Platform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDesert_Tree* CDesert_Tree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLift_Platform* pInstance = new CLift_Platform(pDevice, pContext);
+	CDesert_Tree* pInstance = new CDesert_Tree(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -123,20 +115,20 @@ CLift_Platform* CLift_Platform::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CDesertObject* CLift_Platform::Clone(void* pArg)
+CGameObject* CDesert_Tree::Clone(void* pArg)
 {
-	CLift_Platform* pInstance = new CLift_Platform(*this);
+	CDesert_Tree* pInstance = new CDesert_Tree(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CLift_Platform");
+		MSG_BOX("Failed to Cloned : CDesert_Tree");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CLift_Platform::Free()
+void CDesert_Tree::Free()
 {
 	__super::Free();
 

@@ -81,7 +81,7 @@ void CCamera_AnimationEditor::Priority_Update(_float fTimeDelta)
 
 
 
-	__super::Bind_Matrices();
+	__super::Bind_Matrices(fTimeDelta);
 }
 
 void CCamera_AnimationEditor::Update(_float fTimeDelta)
