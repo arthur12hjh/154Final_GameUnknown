@@ -32,6 +32,7 @@ HRESULT CItem::Initialize(void* pArg)
 	ITEM_DESC* pDesc = static_cast<ITEM_DESC*>(pArg);
 	m_bIsLerpAnimation = true;
 	m_fAmount = pDesc->fAmount;
+	m_fDropForce = pDesc->fDropForce;
 
 	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
@@ -135,7 +136,7 @@ HRESULT CItem::Render()
 
 HRESULT CItem::Begin_OverlapCallBack()
 {
-	m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+	__super::Begin_OverlapCallBack();
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 
 	return S_OK;
@@ -143,28 +144,35 @@ HRESULT CItem::Begin_OverlapCallBack()
 
 HRESULT CItem::End_OverlapCallBack()
 {
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+	__super::End_OverlapCallBack();
 	m_eInterState = INTERACTION_STATE::END;
 
 	return S_OK;
 }
 
-void CItem::Excute_CallBack(CGameObject* pActionObject)
+void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	m_eInterState = INTERACTION_STATE::ACTIVE;
+	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+		m_fInteractionDuration.x += fTimeDelta;
 
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-	if (pHUD)
+	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
-		CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
-		if (pGetterQueue)
-			pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
+		if (IsInteractionEnable())
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			if (pHUD)
+			{
+				CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+				if (pGetterQueue)
+					pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
+			}
+			Safe_Release(pHUD);
+
+			m_eInterState = INTERACTION_STATE::ACTIVE;
+			m_fInteractionDuration.x = 0.f;
+			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		}
 	}
-
-	Safe_Release(pHUD);
-
-	m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }
 
 HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
@@ -185,7 +193,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	InteractionDesc.vSize = Com_Size;
 	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-	InteractionDesc.InteractionEvent = [&](CGameObject* pActionObject) { this->Excute_CallBack(pActionObject); };
+	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
@@ -227,8 +235,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
 	_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-
-	m_pRigidBody->Add_Impulse(vDir, 25.f);
+	m_pRigidBody->Add_Impulse(vDir, m_fDropForce);
 
 	return S_OK;
 }

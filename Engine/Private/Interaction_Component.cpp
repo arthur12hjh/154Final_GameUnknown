@@ -47,12 +47,12 @@ void CInteraction_Component::Update_Com()
 #endif // _DEBUG
 }
 
-void CInteraction_Component::Action_InteractionEvent(CGameObject* pGameObject)
+void CInteraction_Component::Action_InteractionEvent(_float fTimeDelta, CGameObject* pGameObject)
 {
     // 여기서 인터렉션 호출
     // 호출하면 여기서 호출한 녀석과 함께 넘겨준다.
     if(m_InteractionFunc)
-        m_InteractionFunc(pGameObject);
+        m_InteractionFunc(fTimeDelta, pGameObject);
 }
 
 void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)

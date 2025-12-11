@@ -4,7 +4,10 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "BoxOpenEvent.h"
+
 #include "Interaction_Component.h"
+#include "DropComponent.h"
+
 #include "UIBase.h"
 #include "UIHUD.h"
 
@@ -37,10 +40,9 @@ HRESULT CCanBox::Initialize(void* pArg)
         return E_FAIL;
 
     m_eInterState = INTERACTION_STATE::DEFAULT;
-    m_pModelCom->Set_AnimationIndex(END, false);
+    m_pModelCom->Set_AnimationIndex(1, false);
 
-    m_fInteractionDuration = _float2(0.f, 1.f);
-
+    m_fInteractionDuration = _float2(0.f, 3.f);
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     return S_OK;
 }
@@ -53,14 +55,32 @@ void CCanBox::Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
     {
-        switch (m_eInterState)
+        if (INTERACTION_STATE::ACTIVE == m_eInterState)
         {
-        case INTERACTION_STATE::ACTIVE:
-            m_pModelCom->Play_Animation(fTimeDelta);
-            break;
-        default:
+            if (m_pModelCom->Play_Animation(fTimeDelta))
+            {
+                m_pDropCom->ItemDrop(3);
+                m_eInterState = INTERACTION_STATE::END;
+            }
+        }
+        else
+        {
+            auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
+            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+            {
+                if (INTERACTION_STATE::LOCK == m_eInterState)
+                {
+                    // 나중에 여기서 조건 체크하세요
+                    m_eInterState = INTERACTION_STATE::DEFAULT;
+                }
+            }
+            else
+            {
+                if (INTERACTION_STATE::LOCK != m_eInterState)
+                    m_eInterState = INTERACTION_STATE::LOCK;
+            }
+                
             m_pModelCom->Play_Animation(0.f);
-            break;
         }
     }
 }
@@ -69,7 +89,7 @@ void CCanBox::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-        if(INTERACTION_STATE::ACTIVE != m_eInterState)
+        if(INTERACTION_STATE::ACTIVE > m_eInterState)
 		    m_pInteractionCom->Update_Com();
 
 #ifdef _DEBUG
@@ -122,12 +142,26 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 
+    /* Drop Component */
+    CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
+    DropComDesc.fDropRange = 7.f;
+    DropComDesc.fForce = 20.f;
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
+        TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
+        return E_FAIL;
+
+#pragma region DropItem Setting
+    m_pDropCom->ADD_DropItem(make_pair(1, 30.f), 1);
+    m_pDropCom->ADD_DropItem(make_pair(2, 30.f), 1);
+    m_pDropCom->ADD_DropItem(make_pair(3, 10.f), 1);
+
+#pragma endregion
     /* Com_Interaction */
     CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&](CGameObject * pActionObject) { this->Excute_CallBack(pActionObject); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject * pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
@@ -191,32 +225,29 @@ HRESULT CCanBox::Bind_ShaderResources()
     return S_OK;
 }
 
-HRESULT CCanBox::Begin_OverlapCallBack()
+void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+    // 여기서 플레이어 상태 처리 및 Lock 상태 관리
+    if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
+        m_fInteractionDuration.x += fTimeDelta;
 
-    return S_OK;
-}
-
-void CCanBox::Excute_CallBack(CGameObject* pActionObject)
-{
     if (INTERACTION_STATE::DEFAULT == m_eInterState)
     {
-        m_pModelCom->Set_AnimationIndex(1, false);
+        if (IsInteractionEnable())
+        {
+            m_pModelCom->Set_AnimationIndex(1, false);
 
-        if (m_pEventHandle)
-            m_pEventHandle->Notify(nullptr);
+     /*     if (m_pEventHandle)
+                m_pEventHandle->Notify(nullptr);*/
+            m_eInterState = INTERACTION_STATE::CONTACT;
+        }
+    }
+    else if (INTERACTION_STATE::CONTACT == m_eInterState)
+    {
         m_eInterState = INTERACTION_STATE::ACTIVE;
+        m_fInteractionDuration.x = 0.f;
         m_pGameInstance->Remove_Interaction(m_pInteractionCom);
     }
-}
-
-HRESULT CCanBox::End_OverlapCallBack()
-{
-    if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
-
-    return S_OK;
 }
 
 CCanBox* CCanBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -246,5 +277,6 @@ void CCanBox::Free()
     __super::Free();
 
     Safe_Release(m_pEventHandle);
+    Safe_Release(m_pDropCom);
     Safe_Release(m_pModelCom);
 }

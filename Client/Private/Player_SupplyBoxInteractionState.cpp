@@ -37,7 +37,7 @@ PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDel
         {
             m_tNextState.eNextState = PLAYER_STATE::IDLE;
             //상호작용 스타트
-            m_pInteractionCom->Action_InteractionEvent(m_pPlayer);
+            m_pInteractionCom->Action_InteractionEvent(fTimeDelta, m_pPlayer);
         }
 
     }

@@ -41,6 +41,8 @@ public:
 	_bool							SetPlatformMove(LIFT_PLATFORM_STATE eState);
 	_bool							GetPlatformMove() const { return m_bIsPaltformMove; }
 
+	_uint							GetPlatformID() { return m_iPlatformId; }
+
 private :
 	LIFT_PLATFORM_STATE				m_ePlatform_State = { LIFT_PLATFORM_STATE::END };
 	CModel*							m_pModelCom = { nullptr };
@@ -59,8 +61,6 @@ private :
 	
 private :
 	void							LerpTargetPoint(_float fTimeDelta);
-
-
 
 private:
 	HRESULT							Ready_Components(const _tchar* pComponentTag);

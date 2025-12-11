@@ -71,7 +71,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 				{
 					auto pInterraction = m_pGameInstance->GetNearInteraction();
 					if (pInterraction)
-						pInterraction->Action_InteractionEvent(this);
+						pInterraction->Action_InteractionEvent(fTimeDelta, this);
 				}
 			}
 

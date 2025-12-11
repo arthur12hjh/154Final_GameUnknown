@@ -51,64 +51,68 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	if (pInteraction)
 	{
 		CProb_Interaction* pOwner = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
-
-		m_eInterState = pOwner->Get_InterState();
-		m_fInteractionDuration = pOwner->Get_Duration();
-
-		if (m_eInterState != m_ePrevInterState)
+		if (pOwner)
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-			UI_EVENT_ARG_DESC Arg{};
-			Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
-			Arg.pData = &m_eInterState;
-
-			switch (m_eInterState)
+			m_eInterState = pOwner->Get_InterState();
+			m_fInteractionDuration = pOwner->Get_Duration();
+	
+			if (m_eInterState != m_ePrevInterState)
 			{
-			case INTERACTION_STATE::DEFAULT:
-			{
-				auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key_") + to_wstring(m_iCloneIdx));
-				if (AnimTag != m_tUIDesc.m_AnimTags.end())
-					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-				__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
+				CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-				//auto InteractionObject = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
-				if (pOwner->Get_InterDesc()->szInteractionText[0])
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
+				Arg.pData = &m_eInterState;
+
+				switch (m_eInterState)
 				{
-					CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag,
-						TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
-					Safe_AddRef(pUIText);
+				case INTERACTION_STATE::DEFAULT:
+				{
+					auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Show_Key_") + to_wstring(m_iCloneIdx));
+					if (AnimTag != m_tUIDesc.m_AnimTags.end())
+						pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+					__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
+					
+					auto pInteractionDesc = pOwner->Get_InterDesc();
+					if (pInteractionDesc)
+					{
+						CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag,
+							TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
+						Safe_AddRef(pUIText);
 
-					WCHAR szText[MAX_PATH] = {};
-					CStringHelper::ConvertUTFToWide(pOwner->Get_InterDesc()->szInteractionText, szText);
-					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
-					Safe_Release(pUIText);
+						WCHAR szText[MAX_PATH] = {};
+						CStringHelper::ConvertUTFToWide(pInteractionDesc->szInteractionText, szText);
+						pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
+						Safe_Release(pUIText);
+					}
+					
+					break;
+				}
+				case INTERACTION_STATE::LOCK:
+				{
+					break;
+				}
+				case INTERACTION_STATE::ACTIVE:
+				{
+					auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx));
+					if (AnimTag != m_tUIDesc.m_AnimTags.end())
+						pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+					__super::Trigger_Event(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx), &Arg);
+
+					_bool bActive = true;
+					UI_EVENT_ARG_DESC Arg{};
+					Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+					Arg.pData = &bActive;
+					__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
+					break;
+				}
 				}
 
-				break;
-			}
-			case INTERACTION_STATE::LOCK:
-			{
-				break;
-			}
-			case INTERACTION_STATE::ACTIVE:
-			{
-				auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx));
-				if (AnimTag != m_tUIDesc.m_AnimTags.end())
-					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-				__super::Trigger_Event(TEXT("Hide_Key_") + to_wstring(m_iCloneIdx), &Arg);
 
-				_bool bActive = true;
-				UI_EVENT_ARG_DESC Arg{};
-				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
-				Arg.pData = &bActive;
-				__super::Trigger_Event(TEXT("Interaction_Active_") + to_wstring(m_iCloneIdx), &Arg);
-				break;
-			}
-			}
 
-			m_ePrevInterState = m_eInterState;
-			Safe_Release(pHUD);
+				m_ePrevInterState = m_eInterState;
+				Safe_Release(pHUD);
+			}
 		}
 	}
 	else

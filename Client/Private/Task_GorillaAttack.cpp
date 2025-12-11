@@ -431,6 +431,14 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 			}
 		}
 		break;
+		case 13:
+		{
+			// Max Frame : 135
+			// Frame : 40 ~ 50
+			if (0.43f <= fAnimationRatio && 0.55f >= fAnimationRatio)
+				LookAtPoint(fTimeDelta);
+		}
+		break;
 		case 14:
 		{
 			// M_Gorilla_S21_SkillGetUp
@@ -466,6 +474,8 @@ void CTask_GorillaAttack::AttackLerpMove(_float fTimeDelta)
 	
 	if(m_bIsLookAtPoint)
 		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, 5.f);
+	else
+		LookAtPoint(fTimeDelta);
 
 	m_pOwner->GetTransform()->Set_State(STATE::POSITION, vLerpPos);
 }

@@ -14,10 +14,7 @@ NS_BEGIN(Client)
 class CSciFi_Door final : public CProb_Interaction
 {
 public:
-	enum SCIFI_DOOR_STATE
-	{
-		OPEN, CLOSE, END
-	};
+	enum class SCIFI_DOOR_STATE { OPEN, CLOSE, END };
 
 private:
 	CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,19 +30,16 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	SCIFI_DOOR_STATE m_eCurState = { SCIFI_DOOR_STATE::END };
-	SCIFI_DOOR_STATE m_ePrevState = { SCIFI_DOOR_STATE::END };
+	SCIFI_DOOR_STATE			m_eCurState = { SCIFI_DOOR_STATE::END };
 
 private:
-	CModel* m_pModelCom = { nullptr };
+	CModel*						m_pModelCom = { nullptr };
 
 private:
-	HRESULT Ready_Components(const _tchar* pComponentTag);
-	HRESULT Bind_ShaderResources();
+	HRESULT						Ready_Components(const _tchar* pComponentTag);
+	HRESULT						Bind_ShaderResources();
 
-	virtual HRESULT					    Begin_OverlapCallBack() override;
-	virtual HRESULT					    End_OverlapCallBack() override;
-	virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+	virtual void				Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
 public:
 	static CSciFi_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
