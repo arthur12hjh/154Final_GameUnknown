@@ -195,32 +195,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
 	InteractionDesc.bIsApplyTransform = true;
 	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
-	InteractionDesc.iInteractionID = 5;
+	InteractionDesc.iInteractionID = 2;
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+		return E_FAIL;
+
+	/*InteractionDesc.iInteractionID = 2;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
-		InteractionDesc.vPosition = { 10.f * i,
-								1.f,
-							   //m_pGameInstance->Random(0, 50),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
+							   0.f,
 							   m_pGameInstance->Random(0, 50) };
-	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
-	}
-
-	//InteractionDesc.iInteractionID = 2;
-	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
-	//for (size_t i = 0; i < 5; i++)
-	//{
-	//	InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
-	//						   0.f,
-	//						   m_pGameInstance->Random(0, 50) };
-
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-	//		return E_FAIL;
-	//}
+	}*/
 
 	//InteractionDesc.iInteractionID = 3;
 	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
