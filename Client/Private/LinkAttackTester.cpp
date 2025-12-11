@@ -37,7 +37,7 @@ HRESULT CLinkAttackTester::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(666.f, 2.f, 550.f, 1.f));
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(720.f, 50.f, 580.f, 1.f));
 
 	m_pBodyModelCom = static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")));
 
