@@ -742,6 +742,12 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn">
       <UniqueIdentifier>{67890273-70b8-4770-bff7-c4c9ad815e04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree">
+      <UniqueIdentifier>{48bc51ae-ebc7-407d-be82-6701678b8e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Grass">
+      <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1504,6 +1510,12 @@
     <ClInclude Include="..\Public\UILockOn.h">
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Desert_Grass.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Tree.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2234,7 +2246,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Grass.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Tree.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -29,20 +29,22 @@ public:
 		_uint			iObjectID = 0;	
 	}SAVEDOBJECTINFO;
 
-	typedef struct SavedInteractionObjectInfo
+	typedef struct SavedInteractionObjectInfo:SAVEDOBJECTINFO
 	{
-		_float4x4	    worldMatrix;
-		_tchar			szComponentTag[256];
-		_uint			iObjectID = 0;	
 		_uint			iInteractionID = 999;
 	}SAVEDINTERACTIONOBJECTINFO;
 
-	typedef struct LoadObjectInfo
+	typedef struct SavedLiftControllerInfo:SAVEDINTERACTIONOBJECTINFO
 	{
-		_float4x4	    worldMatrix;
-		_tchar			szComponentTag[256];
-		//_uint			iObjectID = 0;	
-	}LOADOBJECTINFO;
+		_bool			bIsControllerType = false;
+	}SAVED_LIFT_CONTROLLER_INFO;
+
+	typedef struct SavedLiftPlatformInfo:SavedObjectInfo
+	{
+		_uint			iPlatformID = 0;
+		_float			fMoveDistance = 0.f;
+	}SAVED_LIFT_PLATFORM_INFO;
+
 
 
 	typedef struct SavedMonsterInfo
@@ -81,6 +83,8 @@ public:
 
 	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Interaction_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Lift_Controller_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Lift_Platform_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
@@ -88,10 +92,10 @@ public:
 
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Lift_Controller_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
-	
-	_uint Object_Number(const _tchar* pComponentTag);
 	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
@@ -156,6 +160,15 @@ private:
 	const _tchar* m_ComponentTag = {};
 	list<CGameObject*>* m_pObjects = { nullptr };
 	CGameObject* m_pObject = { nullptr };
+
+
+	// 리프트 변수용 
+	_float m_fPlatformMoveDistance = { 0.f };
+	_int m_iPlatformID = { 0 };
+	_bool m_bIsLiftControllerType = { false };
+
+	_bool m_bShowLiftControllerWindow = { false };
+	_bool m_bShowLiftPlatformWindow = { false };
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 	DESERT_THEME		m_eCurrentMap = { DESERT_THEME::END };

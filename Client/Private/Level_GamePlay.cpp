@@ -8,6 +8,8 @@
 #include "Nayitba.h"
 #include "Prob_Interaction.h"
 #include "Camera_Free.h"
+#include "Lift_Controller.h"
+#include "Lift_Platform.h"
 #include "Player.h"
 #include "UIHUD.h"
 
@@ -434,10 +436,8 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
-
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
 
@@ -445,10 +445,15 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
-	ifs.close();
 
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Grass"), TEXT("Layer_Desert_Grass")))) return S_OK;
+
+	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+
+	
+	ifs.close();
 
 	return S_OK;
 }
@@ -516,6 +521,74 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 		Desc.iObjectID = info.iObjectID;
 		Desc.iInteractionID = info.iInteractionID;
 		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_LIFT_CONTROLLER_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_LIFT_CONTROLLER_INFO));
+
+		CLift_Controller::LIFT_CONTROLLER_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iObjectID = info.iObjectID;
+		Desc.iInteractionID = info.iInteractionID;
+		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
+		Desc.bIsControllerType = info.bIsControllerType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_LIFT_PLATFORM_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_LIFT_PLATFORM_INFO));
+
+		CLift_Platform::LIFT_PLATFORM_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iObjectID = info.iObjectID;
+		Desc.szVIBuffer_PrototypeName = info.szComponentTag;
+		Desc.iPlatFormID = info.iPlatformID;
+		Desc.fMoveDistance = info.fMoveDistance;
 
 		_vector vScale = {};
 		_vector vRotation = {};

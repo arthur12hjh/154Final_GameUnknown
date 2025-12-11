@@ -28,8 +28,8 @@ HRESULT CLift_Controller::Initialize_Prototype()
 
 HRESULT CLift_Controller::Initialize(void* pArg)
 {
-	PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
-	static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 1;
+	LIFT_CONTROLLER_DESC* pDesc = static_cast<LIFT_CONTROLLER_DESC*>(pArg);
+	static_cast<LIFT_CONTROLLER_DESC*>(pArg)->iInteractionID = 1;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -37,7 +37,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 		return E_FAIL;
 
 	ResetAction(true);
-	m_bIsControllLift = true;
+	m_bIsControllLift = pDesc->bIsControllerType;
 	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 
 	return S_OK;

@@ -193,6 +193,7 @@
     <ClInclude Include="..\public\Deco.h" />
     <ClInclude Include="..\public\DesertObject.h" />
     <ClInclude Include="..\public\Desert_Architecture.h" />
+    <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\private\Deco.cpp" />
     <ClCompile Include="..\private\DesertObject.cpp" />
     <ClCompile Include="..\private\Desert_Architecture.cpp" />
+    <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
