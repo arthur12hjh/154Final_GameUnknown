@@ -36,6 +36,7 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	m_iInteractionID = pDesc->iInteractionID;
 	m_bIsControllerType = pDesc->bIsControllerType;
+	m_iPlatformID = pDesc->iPlatformID;
 	m_eCurState = LIFT_PULL;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
