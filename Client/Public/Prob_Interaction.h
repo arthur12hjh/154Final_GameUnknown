@@ -34,10 +34,10 @@ public:
 	virtual HRESULT					Render() override;
 
 	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
-	const Interaction_Data*			Get_InterDesc() { return m_InteractionDesc; }
+	const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
 	const CInteraction_Component*	Get_InterCom() { return m_pInteractionCom; }
 
-	_float2						Get_Duration() { return m_fInteractionDuration; }
+	_float2							Get_Duration() { return m_fInteractionDuration; }
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };

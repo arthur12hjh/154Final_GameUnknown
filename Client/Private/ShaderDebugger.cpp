@@ -36,11 +36,13 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::Text("FOG INFO");
 
-    ImGui::DragFloat("Fog Start", m_pFogDesc->fFogStart, 1.f, 0.0f, 500.0f);
-    ImGui::DragFloat("Fog End", m_pFogDesc->fFogEnd, 1.f, 0.f, 500.0f);
-    ImGui::DragFloat("Fog Power Max", m_pFogDesc->fFogPowerMax, 0.01f, 0.f, 1.0f);
-    ImGui::DragFloat("Fog Power Min", m_pFogDesc->fFogPowerMin, 0.01f, 0.f, 1.0f);
+    ImGui::DragFloat("Fog Start", m_pFogDesc->fFogStart, 1.f, 0.0f, 1000.0f);
+    ImGui::DragFloat("Fog End", m_pFogDesc->fFogEnd, 1.f, 0.f, 1000.0f);
+    ImGui::DragFloat("Fog Power Max", m_pFogDesc->fFogPowerMax, 0.01f, 0.f, 2.0f);
+    ImGui::DragFloat("Fog Power Min", m_pFogDesc->fFogPowerMin, 0.01f, 0.f, 2.0f);
+    ImGui::DragFloat("SkyBox Fog Power", m_pFogDesc->fSkyboxFogPower, 0.01f, 0.f, 1.0f);
     ImGui::ColorEdit4("Fog Color", &m_pFogDesc->vFogColor->x);
+
 
     ImGui::Separator();
 
