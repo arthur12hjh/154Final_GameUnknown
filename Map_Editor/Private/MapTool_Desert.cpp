@@ -226,23 +226,23 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 				case DESESRT_RUIN_OBJECT::RUIN_BUILDING_A:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_BUILDING_A");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_Building_A");
 					break;
 				case DESESRT_RUIN_OBJECT::RUIN_BUILDING_B:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_BUILDING_B");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_Building_B");
 					break;
 				case DESESRT_RUIN_OBJECT::RUIN_BUILDING_C:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_BUILDING_C");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Ruin_Building_C");
 					break;
 				case DESESRT_RUIN_OBJECT::STONE009_A:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_STONE009_A");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stone009_A");
 					break;
 				case DESESRT_RUIN_OBJECT::STONE009_B:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
-					pDesc.pComponentTag = TEXT("Prototype_Component_Model_STONE009_B");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stone009_B");
 					break;
 				case DESESRT_RUIN_OBJECT::WALL_A:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
@@ -640,6 +640,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pLiftControllerDesc.iInteractionID = 1;
 					pLiftControllerDesc.bIsControllerType = m_bIsLiftControllerType;
 					pLiftControllerDesc.iPlatformID = m_iPlatformID;
+					pLiftControllerDesc.iPosition = m_iPosition;
 					break;
 				case DESESRT_RUIN_OBJECT::LIFT_PLATFORM:
 					protoTag = TEXT("Prototype_GameObject_Lift_Platform"); layerTag = TEXT("Layer_Lift_Platform");
@@ -2606,6 +2607,11 @@ HRESULT CMapTool_Desert::Render()
 				ImGui::SetNextItemWidth(100.f);
 				ImGui::InputInt("##Platform ID", &m_iPlatformID);
 
+				ImGui::Text("LiftPosition : (0)Top, (1)Bottom");
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(100.f);
+				ImGui::InputInt("##Position", &m_iPosition);
+
 			}
 
 			ImGui::End();
@@ -3695,6 +3701,7 @@ HRESULT CMapTool_Desert::Save_Lift_Controller_By_Layer(ofstream& ofs, const _tch
 				info.iPlatformID = iPlatformId;
 				info.iInteractionID = pLiftController->Get_InteractionID();
 				info.bIsControllerType = pLiftController->Get_ControllerType();
+				info.iPosition = pLiftController->Get_Position();
 
 				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVED_LIFT_CONTROLLER_INFO));
 			}
@@ -3904,6 +3911,7 @@ HRESULT CMapTool_Desert::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tch
 		Desc.pComponentTag = info.szComponentTag;
 		Desc.bIsControllerType = info.bIsControllerType;
 		Desc.iPlatformID = info.iPlatformID;
+		Desc.iPosition = info.iPosition;
 
 		_vector vScale = {};
 		_vector vRotation = {};
