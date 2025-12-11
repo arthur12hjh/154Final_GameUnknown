@@ -20,7 +20,7 @@ HRESULT CLift_Platform::Initialize_Prototype()
 HRESULT CLift_Platform::Initialize(void* pArg)
 {
 
-	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
+	LIFT_PLATFORM_DESC* pDesc = static_cast<LIFT_PLATFORM_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,6 +32,9 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
+
+	m_iPlatformId = pDesc->iPlatFormID;
+	m_fMoveDistance = pDesc->fMoveDistance;
 
 	return S_OK;
 }

@@ -223,6 +223,9 @@
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\Lift_Controller">
       <UniqueIdentifier>{327db89e-e9d2-46a7-a968-b7177b62c2ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Environment\Desert_Grass">
+      <UniqueIdentifier>{f9c3a22b-aa08-4e8d-b1f3-91df4068db85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -539,6 +542,9 @@
     <ClInclude Include="..\public\Interaction.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Desert_Grass.h">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -838,6 +844,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Interaction.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Grass.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

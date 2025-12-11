@@ -176,6 +176,8 @@
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\Deco_FindTarget.h" />
     <ClInclude Include="..\Public\Desert_Architecture.h" />
+    <ClInclude Include="..\public\Desert_Grass.h" />
+    <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DropComponent.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
@@ -371,6 +373,7 @@
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
+    <ClInclude Include="..\Public\UILockOn.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
     <ClInclude Include="..\Public\UIMonsterHPFX.h" />
     <ClInclude Include="..\Public\UIMonsterShield.h" />
@@ -425,6 +428,8 @@
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
     <ClCompile Include="..\Private\Desert_Architecture.cpp" />
+    <ClCompile Include="..\private\Desert_Grass.cpp" />
+    <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
@@ -635,6 +640,7 @@
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
+    <ClCompile Include="..\Private\UILockOn.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
