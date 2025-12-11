@@ -21,7 +21,7 @@ public:
 
 private:
 	_bool m_HasLockedOn = { false }; 
-
+	_bool m_isEffectActed = { false };
 public:
 	static	CPlayer_BetaTripletState* Create(void* pArg);
 	virtual	void			   Free() override;

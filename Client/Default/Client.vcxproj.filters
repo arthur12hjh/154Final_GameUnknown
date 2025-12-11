@@ -31,24 +31,6 @@
     <Filter Include="100.ETC">
       <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="30.ImGui">
-      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt">
-      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt\Header">
-      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt\Code">
-      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Profiler">
-      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Manager">
-      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager">
       <UniqueIdentifier>{b6aef18f-1b7e-4a2a-ad79-9041e705e206}</UniqueIdentifier>
     </Filter>
@@ -60,12 +42,6 @@
     </Filter>
     <Filter Include="99.Defines\GameStruct">
       <UniqueIdentifier>{6ab8c8b9-5402-4939-896e-b82f458230bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\DebugCheat">
-      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Hierarchy">
-      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
     </Filter>
     <Filter Include="97.ShaderFiles\ComputeShader">
       <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
@@ -174,9 +150,6 @@
     </Filter>
     <Filter Include="03.Effects\SpriteUVEffect">
       <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ShaderDebugger">
-      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
     </Filter>
     <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
@@ -781,6 +754,45 @@
     <Filter Include="30.ImGui\CameraActionInserter">
       <UniqueIdentifier>{91a3ae3c-0b87-4dbf-a293-fbc3155b33ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\RimLight">
+      <UniqueIdentifier>{b03d4615-3346-4cfd-b791-ceab1eab1e72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui">
+      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt">
+      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt\Header">
+      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt\Code">
+      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\Profiler">
+      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\Manager">
+      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\DebugCheat">
+      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\ShaderDebugger">
+      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\ShaderManager">
+      <UniqueIdentifier>{f7ea2137-afca-4706-930f-374bc4a3fa4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner">
+      <UniqueIdentifier>{8d2807a6-6a2b-4285-9ddb-1d0de7492f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\PoolingManager">
+      <UniqueIdentifier>{89074d3c-6ab8-4ef0-9f50-5868e3322fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -850,46 +862,46 @@
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGuiMain.h">
-      <Filter>30.ImGui</Filter>
+      <Filter>10.GameManager\30.ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_internal.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_rectpack.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
-      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugProfiler.h">
-      <Filter>30.ImGui\Profiler</Filter>
+      <Filter>10.GameManager\30.ImGui\Profiler</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGuiManager.h">
-      <Filter>30.ImGui\Manager</Filter>
+      <Filter>10.GameManager\30.ImGui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameManager.h">
       <Filter>10.GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugCheatUI.h">
-      <Filter>30.ImGui\DebugCheat</Filter>
+      <Filter>10.GameManager\30.ImGui\DebugCheat</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugHierarchy.h">
-      <Filter>30.ImGui\Hierarchy</Filter>
+      <Filter>10.GameManager\30.ImGui\Hierarchy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHUD.h">
       <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
@@ -1000,7 +1012,7 @@
       <Filter>06.Event\Notify</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ShaderDebugger.h">
-      <Filter>30.ImGui\ShaderDebugger</Filter>
+      <Filter>10.GameManager\30.ImGui\ShaderDebugger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\QuestManager.h">
       <Filter>04.Quest\QuestManager</Filter>
@@ -1555,6 +1567,12 @@
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RimLight.h">
+      <Filter>05.Component\RimLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShaderManager.h">
+      <Filter>10.GameManager\ShaderManager</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_TestState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
     </ClInclude>
@@ -1569,6 +1587,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\CameraActionInserter.h">
       <Filter>30.ImGui\CameraActionInserter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Spawner.h">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PoolingManager.h">
+      <Filter>10.GameManager\PoolingManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1632,40 +1656,40 @@
       <Filter>99.Defines\PCH</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGuiMain.cpp">
-      <Filter>30.ImGui</Filter>
+      <Filter>10.GameManager\30.ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_draw.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_impl_dx11.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_impl_win32.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_tables.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_widgets.cpp">
-      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugProfiler.cpp">
-      <Filter>30.ImGui\Profiler</Filter>
+      <Filter>10.GameManager\30.ImGui\Profiler</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGuiManager.cpp">
-      <Filter>30.ImGui\Manager</Filter>
+      <Filter>10.GameManager\30.ImGui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameManager.cpp">
       <Filter>10.GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugCheatUI.cpp">
-      <Filter>30.ImGui\DebugCheat</Filter>
+      <Filter>10.GameManager\30.ImGui\DebugCheat</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugHierarchy.cpp">
-      <Filter>30.ImGui\Hierarchy</Filter>
+      <Filter>10.GameManager\30.ImGui\Hierarchy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIHUD.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
@@ -1773,7 +1797,7 @@
       <Filter>06.Event\Notify</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ShaderDebugger.cpp">
-      <Filter>30.ImGui\ShaderDebugger</Filter>
+      <Filter>10.GameManager\30.ImGui\ShaderDebugger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DryGrass1.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Environments\Grass\DryGrass</Filter>
@@ -2314,6 +2338,12 @@
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\RimLight.cpp">
+      <Filter>05.Component\RimLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShaderManager.cpp">
+      <Filter>10.GameManager\ShaderManager</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Player_TestState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
     </ClCompile>
@@ -2328,6 +2358,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CameraActionInserter.cpp">
       <Filter>30.ImGui\CameraActionInserter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Spawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PoolingManager.cpp">
+      <Filter>10.GameManager\PoolingManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2383,6 +2419,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

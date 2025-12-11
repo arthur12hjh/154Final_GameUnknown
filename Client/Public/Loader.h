@@ -42,7 +42,7 @@ private:
 	CRITICAL_SECTION	m_CriticalSection = {};
 
 	CGameInstance*		m_pGameInstance = { nullptr };
-
+	class CGameManager*		m_pGameManager = { nullptr }; 
 private:
 	HRESULT Loading_For_Logo();
 
@@ -82,7 +82,13 @@ private:
 
 	HRESULT Loading_For_Desert_Archi(void* pArg);
 	HRESULT Loading_For_Desert_Archi_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertA_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertB_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertC_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertD_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Map_DesertF_Col(void* pArg);
 	HRESULT Loading_For_Desert_Bridge(void* pArg);
+	HRESULT Loading_For_Desert_Bridge_Col(void* pArg);
 
 //#pragma region Level_Scarlet
 //	HRESULT Loading_For_Scarlet_Mesh(void* pArg);

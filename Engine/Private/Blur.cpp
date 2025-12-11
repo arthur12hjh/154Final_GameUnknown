@@ -121,6 +121,8 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
 			return E_FAIL;
 
+		CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+		m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
 		m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
 		m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
 		m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
@@ -137,8 +139,8 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(m_pGameInstance->End_MRT()))
 			return E_FAIL;
 
-		ViewPortDesc.Width = vScreenSize.x;
-		ViewPortDesc.Height = vScreenSize.y;
+		ViewPortDesc.Width = (_float)vScreenSize.x;
+		ViewPortDesc.Height = (_float)vScreenSize.y;
 		ViewPortDesc.MinDepth = 0.f;
 		ViewPortDesc.MaxDepth = 1.f;
 

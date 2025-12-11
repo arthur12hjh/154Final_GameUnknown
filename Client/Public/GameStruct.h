@@ -31,12 +31,18 @@ namespace Client
 		RECOVERY_END
 	};
 
-
 	typedef struct Default_Status
 	{
 		long long						iCurrentHealth;
 		long long						iCurrentShield;
 	}DEFAULT_STATUS;
+
+	typedef struct tagRimLightDesc
+	{
+		_float4		vRimLightColor = { 1.f, 1.f, 1.f, 1.f };
+		_float		fRimLightPower = 2.f;
+		_float		fRimLightIntensity = 1.f;
+	} RIMLIGHT_DESC;
 
 
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체

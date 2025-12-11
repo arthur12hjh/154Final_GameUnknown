@@ -20,6 +20,23 @@ _bool CBody_Player::isFinish_Att()
 	return false;
 }
 
+HRESULT CBody_Player::Mapping_Shader_Material(_uint iIdx)
+{
+	if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_Basebody_V02_F1") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(6)))
+			return E_FAIL;
+	}
+
+	else 
+	{
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CBody_Player::Initialize_Prototype()
 {
 	return S_OK;
@@ -37,8 +54,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 
 	m_pModelCom->Set_AnimationIndex(1);
-
-	//m_pModelCom->Bind_MaterialTag(TE)
 
 	return S_OK;
 }
@@ -74,32 +89,17 @@ HRESULT CBody_Player::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	////림라이트 테스트. 추후 컴포넌트로 제공 예정
-	//_float fRimLightPower = { 2.f };
-	//_float fRimLightStrength = { 3.f };
-	//_float4 vRimLightColor = { 1.f, 0.f, 0.f, 1.f };
-
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vRimLightColor", &vRimLightColor, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightPower", &fRimLightPower, sizeof(_float))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightStrength", &fRimLightStrength, sizeof(_float))))
-	//	return E_FAIL;
-
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		//if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-		//	return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORSSTexture", aiTextureType_CLEARCOAT, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -109,7 +109,7 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 
 		//rimlight 버전
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(Mapping_Shader_Material(i)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

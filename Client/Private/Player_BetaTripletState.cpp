@@ -26,6 +26,7 @@ void CPlayer_BetaTripletState::Start(void* pArg, _float fBlendRatio)
 
     m_pPlayer->Set_Animation("P_Eve_Sword_SlotNormal_ChainStab", false, 2.5f);
     m_pPlayer->Set_ImpactForce(2.f);
+    m_Desc->isSuperArmor = true;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
@@ -38,6 +39,13 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
     if (0.33f <= fAnimationRatio && 0.36f > fAnimationRatio)
     {
         m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 10.f * fAnimationRatio);
+        
+        if (false == m_isEffectActed)
+        {
+            m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+            m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.5f);
+            m_isEffectActed = true;
+        }
     }
 
 
@@ -83,6 +91,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
 
 _float CPlayer_BetaTripletState::End()
 {
+    m_Desc->isSuperArmor = false;
     return m_fNextBlendRatio;
 }
 

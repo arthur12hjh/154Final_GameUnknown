@@ -17,6 +17,7 @@ float2 g_fDissolveUVSize = float2(1, 1);
 int g_iSizeCount;
 bool g_bisBillboard, g_bisSpectrum;
 StructuredBuffer<float3> g_fSizeDiagram : register(t0);
+float g_fFar;
 
 struct VS_IN
 {
@@ -487,7 +488,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In)
         discard;
     float3 vNormal = normalize(mul(vector(In.vNormal.xyz, 0), g_WorldMatrix)).xyz;
     Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vRimLight = (0, 0, 0, 0);
     return Out;
 }
@@ -525,8 +526,8 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
         discard;
     
     
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -573,8 +574,8 @@ PS_WEIGHT_OUT PS_SPHERE(PS_WEIGHT_IN In)
         discard;
     
     
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -634,8 +635,8 @@ PS_WEIGHT_OUT PS_POWER(PS_WEIGHT_IN In)
         discard;
     Out.vDiffuse.a *= col.r;
     //Out.vDiffuse.a *= col.r - (smoothstep(min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5), min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5) - 0.1, dist));
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     if (0 >= Out.vDiffuse.a)
         discard;
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
@@ -747,8 +748,8 @@ PS_WEIGHT_OUT PS_SHOCK(PS_WEIGHT_IN In)
     //    discard;
     Out.vDiffuse.a *= col.r * saturate(In.vLifeTime.y - In.vLifeTime.x);
     //Out.vDiffuse.a *= col.r - (smoothstep(min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5), min((In.vLifeTime.x / In.vLifeTime.y) * 0.9, 0.5) - 0.1, dist));
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     if (0 >= Out.vDiffuse.a)
         discard;
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;

@@ -17,6 +17,10 @@ HRESULT CEmissive::Initialize()
 
     /* 스크린 사이즈는 미리 바인딩 한다. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
+
+    CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+    m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vScreenSize.x, sizeof(_int))))
         return E_FAIL;
 

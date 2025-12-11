@@ -1,8 +1,9 @@
 #include "CameraManager.h"
 
 #include "Camera.h"
+#include "GameInstance.h"
 
-HRESULT CCameraManager::Initialize()
+HRESULT CCameraManager::Initialize() 
 {
     return S_OK;
 }
@@ -185,7 +186,6 @@ void CCameraManager::Free()
     __super::Free();
 
     Safe_Release(m_pMainCamera);
-
     for (auto& iter : m_pCameras)
         Safe_Release(iter.second);
 
