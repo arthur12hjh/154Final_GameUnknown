@@ -170,6 +170,7 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
 	Update_Interaction(fTimeDelta);
+	Update_PotionUse(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
@@ -533,6 +534,29 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		case INTERACTION_STATE::LOCK:
 		case INTERACTION_STATE::END:
 			break;
+		}
+	}
+}
+
+void CPlayer::Update_PotionUse(_float fTimeDelta)
+{
+	m_PlayerDesc.fCurrentPotionCoolDown += fTimeDelta;
+
+	if (m_PlayerDesc.fCurrentPotionCoolDown >= m_PlayerDesc.fPotionCoolDown)
+		m_PlayerDesc.fCurrentPotionCoolDown = m_PlayerDesc.fPotionCoolDown;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Q))
+	{
+		/* 여기서 포션 사용 이펙트 쏴줘 */
+		if (m_PlayerDesc.fPotionCoolDown <= m_PlayerDesc.fCurrentPotionCoolDown &&
+			m_PlayerDesc.iCurrentPotions > 0 && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
+		{
+			m_PlayerDesc.iCurrentPotions--;
+			m_PlayerDesc.fPotionCoolDown = 0.f;
+			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
+			
+			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
+				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
 	}
 }

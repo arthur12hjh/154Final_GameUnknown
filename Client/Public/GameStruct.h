@@ -94,7 +94,8 @@ namespace Client
 
 		int								iCurrentPotions; // 현재 소지한 포션 개수
 		int								iMaxPotions; // 전체 포션 개수
-
+		float							fPotionCoolDown = { 3.f };   // 포션 사용 쿨타임
+		float							fCurrentPotionCoolDown = { 0.f }; // 현재 남은 쿨타임
 		//
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임

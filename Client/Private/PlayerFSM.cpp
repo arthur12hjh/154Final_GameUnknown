@@ -337,6 +337,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 
+			//Battle로 전환하고, 헤어핀 꺼내놓음.
 			PLAYER_TRANSITION_DESC t{};
 			t.eNextState = PLAYER_STATE::DRAW_HAIRPIN;
 
@@ -360,6 +361,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 				m_pPlayerDesc->fModeTimer = 0.f;
 				m_pPlayerDesc->ePlayerMode = PLAYER_MODE::IDLE;
 
+				//Idle로 전환하고, 헤어핀 집어넣음.
 				PLAYER_TRANSITION_DESC t{};
 				t.eNextState = PLAYER_STATE::SHEATHE_HAIRPIN; // 
 

@@ -131,7 +131,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     else if (false == isWalking)
         m_tNextState.eNextState = PLAYER_STATE::WALK_END;
     // 이동은 제일 마지막에.
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.2f);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 10.f);
 
     return m_tNextState;
 }
