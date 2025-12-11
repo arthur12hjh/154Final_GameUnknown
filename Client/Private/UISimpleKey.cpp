@@ -72,15 +72,15 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 				__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
 
-				auto InteractionObject = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
-				if (InteractionObject->Get_InterDesc()->szInteractionText[0])
+				//auto InteractionObject = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
+				if (pOwner->Get_InterDesc()->szInteractionText[0])
 				{
 					CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag,
 						TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
 					Safe_AddRef(pUIText);
 
 					WCHAR szText[MAX_PATH] = {};
-					CStringHelper::ConvertUTFToWide(InteractionObject->Get_InterDesc()->szInteractionText, szText);
+					CStringHelper::ConvertUTFToWide(pOwner->Get_InterDesc()->szInteractionText, szText);
 					pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
 					Safe_Release(pUIText);
 				}

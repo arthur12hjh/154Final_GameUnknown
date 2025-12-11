@@ -69,6 +69,12 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	if (m_isOverlay)
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		m_isOverlay = false;
+	}
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
 		m_pGameInstance->Clear_LevelResource();
@@ -418,8 +424,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
-	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
-		return E_FAIL;*/
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;
 
 	return S_OK;
 }

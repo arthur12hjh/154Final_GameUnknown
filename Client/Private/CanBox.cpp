@@ -28,8 +28,6 @@ HRESULT CCanBox::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-
-
     PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
     static_cast<PROB_INTERACTION_DESC*>(pArg)->iInteractionID = 5;
     if (FAILED(__super::Initialize(pArg)))
