@@ -61,7 +61,12 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+
+	
+	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+	
+	if(fDist < 100.f)
+		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 }
 
 HRESULT CBody_Player::Render()

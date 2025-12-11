@@ -63,9 +63,7 @@ private:
     HRESULT                             Ready_Components(const _tchar* pComponentTag);
     HRESULT                             Bind_ShaderResources();
 
-    virtual HRESULT					    Begin_OverlapCallBack() override;
-    virtual HRESULT					    End_OverlapCallBack() override;
-    virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+    virtual void					    Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
     void                                ResetAction(_bool bIsForce = false);
 

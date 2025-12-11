@@ -40,6 +40,7 @@ public :
 	// 다 쓰면 감소시켜주세요
 	class CPlayer*				GetGameCharacter();
 	PLAYER_DESC*				Get_PlayerDesc();
+
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion

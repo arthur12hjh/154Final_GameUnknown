@@ -32,6 +32,7 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	void							Finished_Interaction();
 
 	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
 	const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
@@ -41,20 +42,19 @@ public:
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
-	
-#pragma region Interaction
+	CInteraction_Component*			m_pInteractionCom = { nullptr };
+
 	const INTERACTION_DATA*			m_InteractionDesc = {};
 	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
-	CInteraction_Component*			m_pInteractionCom = { nullptr };
-#pragma endregion
 
-	CUIBase*						m_pInteractionUI = { nullptr };
 	_float2							m_fInteractionDuration = {};
 
 protected :
-	virtual HRESULT					Begin_OverlapCallBack() = 0;
-	virtual HRESULT					End_OverlapCallBack() = 0;
-	virtual void					Excute_CallBack(CGameObject* pActionObject) = 0;
+	virtual HRESULT					Begin_OverlapCallBack();
+	virtual HRESULT					End_OverlapCallBack();
+	virtual void					Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject);
+
+	_bool							IsInteractionEnable();
 
 public:
 	virtual		CGameObject*		Clone(void* pArg) override;

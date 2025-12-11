@@ -135,7 +135,7 @@ HRESULT CRepairConsole::End_OverlapCallBack()
 	return S_OK;
 }
 
-void CRepairConsole::Excute_CallBack(CGameObject* pActionObject)
+void CRepairConsole::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 }
 
