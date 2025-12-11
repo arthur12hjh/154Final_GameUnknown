@@ -18,6 +18,11 @@ public:
 	{
 	} BODY_PLAYER_DESC;
 
+	enum class BODY_MATERIAL {
+		//이 4개는 그냥 둬야함
+		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR, ORSS, END
+	};
+
 private:
 	CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Player(const CBody_Player& Prototype);
@@ -27,6 +32,7 @@ public:
 	_bool isFinish_Att();
 
 	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+	HRESULT Mapping_Shader_Material(_uint iIdx);
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

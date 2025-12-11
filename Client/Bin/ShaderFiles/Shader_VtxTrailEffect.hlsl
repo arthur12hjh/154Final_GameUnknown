@@ -15,6 +15,7 @@ float2 g_fDiffuseUVSize = float2(1, 1);
 float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
+float g_fFar;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 struct VS_IN
@@ -77,7 +78,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
+    float depth = In.vProjPos.z / In.vProjPos.w / g_fFar;
     float weight = saturate(pow(1 - depth, 3));
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     //if (g_bisEnd)
@@ -127,7 +128,7 @@ PS_OUT PS_SLASH(PS_IN In)
 {
     PS_OUT Out;
     
-    float depth = In.vProjPos.z / In.vProjPos.w / 500.0f;
+    float depth = In.vProjPos.z / In.vProjPos.w / g_fFar;
     float weight = saturate(pow(1 - depth, 3));
     
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);

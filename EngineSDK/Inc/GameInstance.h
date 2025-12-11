@@ -128,6 +128,7 @@ public:
 
 	// 항등행렬 포인터 꺼내오기
 	const _float4x4*					GetIdentityMatrixPtr();
+	const CAMERA_INFO&					Get_CurrentCamInfo();
 
 #pragma endregion
 

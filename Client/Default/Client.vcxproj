@@ -243,7 +243,9 @@
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
+    <ClInclude Include="..\Public\RimLight.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
+    <ClInclude Include="..\Public\ShaderManager.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
@@ -502,7 +504,9 @@
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
+    <ClCompile Include="..\Private\RimLight.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
+    <ClCompile Include="..\Private\ShaderManager.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
@@ -704,12 +708,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />
   </ItemGroup>
   <ItemGroup>

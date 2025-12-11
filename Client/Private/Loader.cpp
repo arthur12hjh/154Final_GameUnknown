@@ -19,7 +19,7 @@
 #include "TrailEffect.h"
 
 #include "GameInstance.h"
-
+#include "GameManager.h"
 
 #pragma region Item
 #include "Item.h"
@@ -196,7 +196,9 @@ CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
 	, m_pGameInstance{ CGameInstance::GetInstance() }
+	, m_pGameManager{ CGameManager::GetInstance() }
 {
+	Safe_AddRef(m_pGameManager);
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -362,6 +364,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.dds",
+		"g_ORSSTexture", TRUE);
+
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
 	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
@@ -550,6 +556,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_Eve_Hair */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Eve_Hair");
@@ -557,6 +564,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxAnimMesh */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Instance_Model");
@@ -564,6 +572,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 
 	/* For.Prototype_Component_Shader_VtxNorTex */
@@ -572,6 +581,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxMesh */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMesh");
@@ -579,6 +589,8 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+
 
 	/* For.Prototype_Component_Shader_VtxAnimMesh */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxAnimMesh");
@@ -586,6 +598,8 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+
 
 	/* For.Prototype_Component_Shader_VtxCube */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxCube");
@@ -593,6 +607,8 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+
 
 	/* For.Prototype_Component_Shader_VtxRectParticle */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxRectParticle");
@@ -600,6 +616,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxPointParticle */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxPointParticle");
@@ -607,6 +624,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Collider_AABB */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Collider_AABB");
@@ -1126,21 +1144,25 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshEffect");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxSpriteUVEffect */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteUVEffect");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxSpriteParticle */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteParticle");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxTrail */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
 	/* For.Prototype_Component_Effect_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
@@ -5337,6 +5359,7 @@ void CLoader::Free()
 
 	DeleteCriticalSection(&m_CriticalSection);
 
+	Safe_Release(m_pGameManager);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
