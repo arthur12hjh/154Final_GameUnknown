@@ -50,8 +50,6 @@ void CPlayer_TestState::Start(void* pArg, _float fBlendRatio)
 PLAYER_TRANSITION_DESC CPlayer_TestState::Update(_float fTimeDelta)
 {
     m_isEndList[m_iAnimationIndex] = m_pPlayer->Play_Animation(fTimeDelta);
-
-
     if (true == m_isEndList[0])
     {
         m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);

@@ -16,7 +16,7 @@ class CBossBlackBoard abstract : public CBlackBoard
 public:
 	enum class BOSS_STATE
 	{
-		IDLE, ATTACK, HIT, MOVE, GROGGY, DEAD, END
+		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, DEAD, END
 	};
 
 	typedef struct BossBlackBoardDesc

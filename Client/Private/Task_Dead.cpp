@@ -34,13 +34,7 @@ CBehaviorNode::NODE_STATE CTask_Dead::Update(_float fTimeDelta)
 
 CTask_Dead* CTask_Dead::Create(CBehaviorTree* pOwnerTree)
 {
-    CTask_Dead* pTask_Dead = new CTask_Dead();
-    if (FAILED(pTask_Dead->Initialize_Prototype(pOwnerTree)))
-    {
-        Safe_Release(pTask_Dead);
-        MSG_BOX("Create Fail : Task Dead");
-    }
-    return pTask_Dead;
+    return nullptr;
 }
 
 void CTask_Dead::Free()

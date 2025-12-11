@@ -6,11 +6,11 @@ NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
 
-class CTask_Dead : public CTask
+class CTask_Theshold : public CTask
 {
 protected:
-	CTask_Dead();
-	virtual ~CTask_Dead() = default;
+	CTask_Theshold();
+	virtual ~CTask_Theshold() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -18,13 +18,15 @@ public:
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
-private:
+private :
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
-public:
-	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
-	virtual	void						Free() override;
+	_uint								m_iNumSelection = { };
 
+public:
+	static	CTask_Theshold*					Create(CBehaviorTree* pOwnerTree);
+	virtual	void						Free() override;
+	
 };
 NS_END

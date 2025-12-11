@@ -68,18 +68,30 @@ void CBossController::Damage(void* pArg)
     DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
     auto pNayitba = static_cast<CNayitba*>(m_pParent);
-    if (0 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
+    const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
+
+    if (10 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // 이거 죽는모션 나옴 죽으면 
         // 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
-        m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+        if (SKILL_PROPERTY::EXCUTION & pAttackData->eProPerty)
+        {
+            if (0 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
+            {
+                m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
+                m_pBlackBoard->SetHitData(pDamageDesc);
+            }
+            else
+                m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+        }
+        else
+            m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::THESHOLD);
     }
     else
     {
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
         _bool bIsHitAble = true;
-        const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
         if (CBossBlackBoard::BOSS_STATE::ATTACK == m_pBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정
