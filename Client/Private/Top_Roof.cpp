@@ -28,7 +28,7 @@ HRESULT CTop_Roof::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-	m_eCurState = START;
+	m_eCurState = IDLE;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
 	return S_OK;

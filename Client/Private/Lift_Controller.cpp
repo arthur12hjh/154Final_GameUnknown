@@ -38,10 +38,18 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	ResetAction(true);
 	m_bIsControllLift = pDesc->bIsControllerType;
-	//체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지체인지
 
 	m_iPlatformID = pDesc->iPlatformID;
-	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+	// 뭐야 찬빈햄도 여기서하네 나도 여기서할래
+	m_iPosition = pDesc->iPosition;
+
+	// 미안해요 형 걍 정수로 하죠 프로토타입끝나고 바꾸던가 아몰ㄹ아!
+	if(m_iPosition == 0)
+		m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+	else if(m_iPosition == 1)
+		m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+
+
 
 	return S_OK;
 }
@@ -176,6 +184,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		if (false == pPlatformList->empty())
 			SetControllPlatform(static_cast<CLift_Platform*>(pPlatformList->front()));
 	}
+
 
 	/* Com_Model_COL */
 	_wstring strComponentTag = pComponentTag;

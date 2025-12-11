@@ -18,6 +18,7 @@ public:
 	{
 		_bool bIsControllerType = 0;
 		_uint iPlatformID = 0;
+		_uint iPosition = 0;	// 0: Up, 1 : Down
 	}LIFT_CONTROLLER_DESC;
 
 	enum LIFT_STATE
@@ -28,6 +29,7 @@ public:
 public:
 	_bool Get_ControllerType() const { return m_bIsControllerType; }
 	_uint Get_PlatformID() const { return m_iPlatformID; }
+	_uint Get_Position() const { return m_iPosition; }
 
 private:
 	CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -47,6 +49,7 @@ private:
 	LIFT_STATE m_ePrevState = { LIFT_STATE::LIFT_END };
 
 	_uint m_iPlatformID = 0;
+	_uint m_iPosition = 0; // 0: Up, 1 : Down
 	_bool m_bIsControllerType = { false };
 
 private:
