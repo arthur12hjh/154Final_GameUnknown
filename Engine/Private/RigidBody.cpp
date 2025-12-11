@@ -47,9 +47,9 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 	}
 	else
 	{
-		if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
-			static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
-		else
+		//if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
+		//	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+		//else
 			m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 	}
 }
