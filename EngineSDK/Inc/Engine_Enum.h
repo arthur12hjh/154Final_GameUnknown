@@ -4,13 +4,13 @@
 namespace Engine
 {
 
-#define ROOTFLAG_RESET		0
-#define ROOTFLAG_INIT		(1 << 0)
-#define ROOTFLAG_ACTIVE		(1 << 1)
+#define iFLAG_ROOT_RESET			0
+#define iFLAG_ROOT_INIT				(1 << 0)
+#define iFLAG_ROOT_ACTIVE			(1 << 1)
 
-#define ANIMATIONFLAG_RESET		0
-#define ANIMATIONFLAG_PLAY		(1 << 0)
-#define ANIMATIONFLAG_FINISH	(1 << 1)
+#define iFLAG_ANIMATION_RESET		0
+#define iFLAG_ANIMATION_PLAY		(1 << 0)
+#define iFLAG_ANIMATION_FINISH		(1 << 1)
 
 #define PHYSX_DEFAULT	(1 << 1)
 #define PHYSX_CCT		(1 << 2)

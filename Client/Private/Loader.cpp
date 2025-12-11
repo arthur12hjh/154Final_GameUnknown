@@ -50,6 +50,9 @@
 #include "BossController.h"
 #include "GorillaBehaviorTree.h"
 
+#include "LinkAttackTester.h"
+#include "Body_LinkAttackTester.h"
+
 #pragma endregion
 
 #pragma region Client Component
@@ -497,6 +500,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CMonsterMimesisController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion
+
+	/* For.Prototype_GameObject_LinkAttackTester */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Body_LinkAttackTester */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
+		CBody_LinkAttackTester::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_PonyTail_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),

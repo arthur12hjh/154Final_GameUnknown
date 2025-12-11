@@ -22,6 +22,7 @@ protected:
 
 public:
 	void Shake(_float fShakeTime, _float fIntensity);
+	void Set_MainCamera(const WCHAR* szCameraTag);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -53,6 +54,12 @@ protected:
 	_float							m_fIntensity = {};
 	_float4							m_vOriginPos = {};
 #pragma endregion
+
+	_float4x4					m_PreLerpMatrix;
+	_float4x4					m_BeforeMatrix;
+
+	_float2						m_fTransitionLerpTime;
+	_bool						m_bIsTransition;
 
 protected:
 	HRESULT Bind_Matrices(_float fTimeDelta);

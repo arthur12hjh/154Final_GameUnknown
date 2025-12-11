@@ -4,7 +4,7 @@
 #include "Camera.h"
 
 NS_BEGIN(Engine)
-
+class CModel;
 NS_END
 
 NS_BEGIN(Client)
@@ -34,21 +34,22 @@ public:
 
 	void		Set_Distance(_float fDistance) { m_fDistance = fDistance; }
 
+
 private:
 	class CGameManager*			m_pGameManager = { nullptr };
 	class CTransform*			m_pPlayerTransform = { nullptr };
-	class CCameraBone_Player*	m_pCameraBone = { nullptr };
 
 	_float4x4					m_CombinedWorldMatrix = {};
 
 	_float						m_fMouseSensor = { 0.f };
 	_float						m_fRotateX = { 0.f };
 	_float						m_fRotateY = { 0.f };
+	_float						m_fRotateZ = { 0.f };
 	_float						m_fYaw = {};
 	_float						m_fPitch = {};
 
 	_float						m_fDistance = { 10.f };
-
+	
 	_float						m_fLookMagnification = { 0.f };
 	_float						m_fUpMagnification = { 0.f };
 

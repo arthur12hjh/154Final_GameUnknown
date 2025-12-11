@@ -157,10 +157,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
     <ClInclude Include="..\public\Bullet_Rock.h" />
+    <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\CameraBone_Player.h" />
+    <ClInclude Include="..\Public\Camera_Action.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\Public\Deco.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
     <ClInclude Include="..\Public\Lift_Platform.h" />
+    <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
@@ -231,6 +235,7 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_TestState.h" />
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
@@ -411,10 +416,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
     <ClCompile Include="..\private\Bullet_Rock.cpp" />
+    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
+    <ClCompile Include="..\Private\Camera_Action.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
@@ -441,6 +449,7 @@
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
+    <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
@@ -486,6 +495,7 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_TestState.cpp" />
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />

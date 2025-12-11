@@ -22,6 +22,13 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
+
+// 이거 보이면 지워주셈
+#include "LinkAttackTester.h"
+#include "Body_LinkAttackTester.h"
+#include "CameraBone_Player.h"
+// </>
+ 
 #include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -261,6 +268,35 @@ _int CPlayer::GetSkillDataID()
 	return m_iSkillID;
 }
 
+HRESULT CPlayer::Get_GaraGorillaBone(CLinkAttackTester* pObject)
+{
+	const _float4x4* pSocketMatrix = pObject->Get_PartObject(TEXT("Part_Body"))->Get_BoneMatrixPtr("SC_LinkTarget");
+
+	if (nullptr == pSocketMatrix)
+		return E_FAIL;
+
+	PLAYER_TRANSITION_DESC Desc{};
+	Desc.isChangeMode = FALSE;
+	Desc.eNextState = PLAYER_STATE::TEST_STATE;
+
+	SOCKETMATRIX_DESC SocketMatrixDesc;
+	SocketMatrixDesc.pParentTransformMatrix = pObject->GetTransform()->Get_WorldMatrixPtr();
+	SocketMatrixDesc.pSocketMatrix = pSocketMatrix;
+
+
+	Desc.pArg = &SocketMatrixDesc;
+
+	if (m_pWeapon)
+	{
+		m_iSkillID = -1;
+		m_pWeapon->EnableCollider(false);
+	}
+
+	m_pFSM->Handle_Transition(Desc);
+
+	return S_OK;
+}
+
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
@@ -369,6 +405,8 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CameraBone_Player"),
 		TEXT("Part_CameraBone"), &CameraBoneDesc)))
 		return E_FAIL;
+
+	m_pCameraBone = static_cast<CCameraBone_Player*>(Find_PartObject(TEXT("Part_CameraBone")));
 
 	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);

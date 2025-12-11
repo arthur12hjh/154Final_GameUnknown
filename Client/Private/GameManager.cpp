@@ -92,6 +92,27 @@ const INTERACTION_DATA* CGameManager::Find_InteractionData(_uint iID)
     return m_pDataManager->Get_InteractionData(iID);
 }
 
+const CAMERA_ANIMATION_DATA* CGameManager::Find_CameraAnimationData(_uint iCameraAnimationData)
+{
+    return m_pDataManager->Find_CameraAnimationData(iCameraAnimationData);
+}
+
+
+#ifdef _DEBUG
+
+map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
+{
+    return m_pDataManager->Get_CameraAnimationMap();
+}
+
+
+void CGameManager::Save_CameraAnimationData()
+{
+    m_pDataManager->Save_CameraAnimationData();
+}
+
+#endif
+
 #pragma endregion
 
 #pragma region Quest Manager
