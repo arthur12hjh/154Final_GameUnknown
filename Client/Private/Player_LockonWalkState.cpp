@@ -45,7 +45,6 @@ void CPlayer_LockonWalkState::Start(void* pArg, _float fBlendRatio)
 
 PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 {
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		if (false == m_isRunStart)
@@ -117,7 +116,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 
 _float CPlayer_LockonWalkState::End()
 {
-	return 0.12f;
+	m_Desc->isLookFixed = false;
+	return m_fNextBlendRatio;
 }
 
 CPlayer_LockonWalkState* CPlayer_LockonWalkState::Create(void* pArg)

@@ -1,22 +1,22 @@
 #include "pch.h"
-#include "Player_BattleWalkEndState.h"
+#include "Player_BattleSprintEndState.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_BattleWalkEndState::CPlayer_BattleWalkEndState()
+CPlayer_BattleSprintEndState::CPlayer_BattleSprintEndState()
     : CPlayerState{}
 {
 }
 
-void CPlayer_BattleWalkEndState::Start(void* pArg, _float fBlendRatio)
+void CPlayer_BattleSprintEndState::Start(void* pArg, _float fBlendRatio)
 {
-    m_eState = PLAYER_STATE::WALK_END;
+    m_eState = PLAYER_STATE::SPRINT_END;
 
-    m_pPlayer->Set_Animation("Proto_Battle_Run_End", false);
+    m_pPlayer->Set_Animation("Proto_Battle_Sprint_End", false);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_BattleSprintEndState::Update(_float fTimeDelta)
 {
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
@@ -48,22 +48,22 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio *  4.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 4.f), 0.f), nullptr);
 
     return m_tNextState;
 }
 
-_float CPlayer_BattleWalkEndState::End()
+_float CPlayer_BattleSprintEndState::End()
 {
     return m_fNextBlendRatio;
 }
 
-CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)
+CPlayer_BattleSprintEndState* CPlayer_BattleSprintEndState::Create(void* pArg)
 {
-    return new CPlayer_BattleWalkEndState();
+    return new CPlayer_BattleSprintEndState();
 }
 
-void CPlayer_BattleWalkEndState::Free()
+void CPlayer_BattleSprintEndState::Free()
 {
     __super::Free();
 }

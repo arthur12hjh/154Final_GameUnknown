@@ -50,8 +50,8 @@ namespace Client
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
 	enum class PLAYER_STATE { 
-		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK , 
-		EVADE, LANDING, 
+		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK, 
+		EVADE, LANDING, SPRINT, SPRINT_END,
 
 		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
 
@@ -65,6 +65,7 @@ namespace Client
 
 		STATE_END
 	};
+	enum class PLAYER_DIRECTION { STRAIGHT, LEFT, RIGHT, BACKWARD, END };
 
 	enum class SKILL_STATE {
 		DEFAULT,   // 비활성화
@@ -93,7 +94,8 @@ namespace Client
 
 		int								iCurrentPotions; // 현재 소지한 포션 개수
 		int								iMaxPotions; // 전체 포션 개수
-
+		float							fPotionCoolDown = { 3.f };   // 포션 사용 쿨타임
+		float							fCurrentPotionCoolDown = { 0.f }; // 현재 남은 쿨타임
 		//
 		SKILL_STATE						eRushState;					// 러쉬 활성화 여부	
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임

@@ -23,6 +23,10 @@ public:
 		return &m_LightDesc;
 	}
 
+	//수정가능한 LightDesc 얻어옴.
+	LIGHT_DESC* Get_EditableLightDesc() {
+		return &m_LightDesc;
+	}
 public:
 	HRESULT					Initialize(const LIGHT_DESC& LightDesc);	
 
