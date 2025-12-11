@@ -143,7 +143,10 @@ void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 	pDamageDesc.vHitDir = vHitDir;
 	pDamageDesc.pSkillData = m_pSkillData;
 
-	static_cast<CCharacter*>(pHitActor)->Damaged(&pDamageDesc);
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if(pCharacter)
+		pCharacter->Damaged(&pDamageDesc);
+
 	Set_Dead(true);
 }
 
