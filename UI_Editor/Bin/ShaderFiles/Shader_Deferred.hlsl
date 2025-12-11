@@ -129,7 +129,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     bool isORSS = hasPacked && (A > 0.f);
     bool isORM = hasPacked && (A == 0.f);
 
-    // Fallback ---------------------------------------------------------
+    // Phong
     if (!hasPacked)
     {
         float NdotL = saturate(dot(N, L));
@@ -150,7 +150,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     if (isORSS)
     {
         AO = vORMDesc.r;
-        Rough = max(vORMDesc.g, 0.05f);
+        Rough = vORMDesc.g;
         float specFactor = saturate(vORMDesc.b);
         Metallic = 0.f;
 
@@ -160,25 +160,22 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     else if (isORM)
     {
         AO = vORMDesc.r;
-        Rough = max(vORMDesc.g, 0.05f);
+        Rough = vORMDesc.g;
         Metallic = saturate(vORMDesc.b);
         F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
 
-    // AO 증폭 완화 ------------------------------------------------------
-    float AOStr = lerp(1.0f, 1.2f, AO); // 기존 1.3~2.0 → 최소 수정
+    float AOStr = lerp(1.0f, 1.2f, AO);
     Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     Out.vShade.rgb *= AOStr;
 
-    //-------------------------------------------------------
-    // SSS Back-scattering 추가 (역광 문제 해결)
-    //-------------------------------------------------------
+    // SSS 추가
     if (isORSS)
     {
         float3 base = Out.vShade.rgb;
 
         float luma = dot(base, float3(0.299f, 0.587f, 0.114f));
-        float3 bloodHue = float3(1.0f, 0.45f, 0.45f);
+        float3 bloodHue = float3(1.0f, 0.7f, 0.7f);
         float3 bloodColor = bloodHue * luma;
 
         float ndl = saturate(dot(N, L));
@@ -191,8 +188,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // 역광 SSS BackScatter ----------------------------------------
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.3f, 0.25f)
-                         * pow(back, 1.1f) * 0.35f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
+                         * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }
