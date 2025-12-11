@@ -153,7 +153,6 @@ void CLockonManager::Lockon(_float fTimeDelta)
         if (m_pLockonUI)
         {
             CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
             pUIHUD->Return_WorldUI(m_pLockonUI);
             Safe_Release(pUIHUD);
         }

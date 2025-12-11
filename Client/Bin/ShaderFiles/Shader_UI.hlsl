@@ -54,6 +54,9 @@ bool g_bRushActiveOn = false;
 bool g_bUseScale = false;
 float g_fScale = { 1.f };
 
+bool g_isFinisher = false;
+float g_fRotation = 0.f;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -1209,6 +1212,68 @@ PS_OUT PS_STAMINA_FX(PS_IN In)
 
 /*------------------[E_STAMINA_FX]----------------*/
 
+/*------------------[S_LOCKON]----------------*/
+
+PS_OUT PS_LOCKON(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float4 LockOn = 0.f;
+    float4 Shadow = 0.f;
+    float4 Key = 0.f;
+    float4 Ring = 0.f;
+    
+    float4 Result = 0.f;
+    
+    float2 DotUV = In.vTexcoord;
+    DotUV -= float2(0.5f, 0.5f);
+    DotUV /= 0.16f;
+    DotUV += float2(0.5f, 0.5f);
+        
+    LockOn = g_Texture0.Sample(ClampSampler, DotUV);
+        
+    Result = LockOn;
+    
+    if (g_isFinisher)
+    {
+        float2 Center = float2(0.5f, 0.5f);
+        float s = sin(g_fRotation);
+        float c = cos(g_fRotation);
+
+        float2 rotatedUV;
+        float2 d = uv - Center;
+        rotatedUV.x = d.x * c - d.y * s;
+        rotatedUV.y = d.x * s + d.y * c;
+        rotatedUV += Center;
+        
+        float2 ScaleUV = In.vTexcoord;
+        ScaleUV -= float2(0.5f, 0.5f);
+        ScaleUV /= g_fScale * 0.75f;
+        ScaleUV += float2(0.5f, 0.5f);
+        
+        float2 ShadowScaleUV = In.vTexcoord;
+        ShadowScaleUV -= float2(0.5f, 0.5f);
+        ShadowScaleUV /= 1.2f;
+        ShadowScaleUV += float2(0.5f, 0.5f);
+        
+        Shadow = g_Texture1.Sample(ClampSampler, ShadowScaleUV);
+        Key = g_Texture2.Sample(ClampSampler, ScaleUV);
+        Ring = g_Texture3.Sample(ClampSampler, rotatedUV);
+        
+        Result = Shadow;
+        Result = lerp(Result, Key, Key.a);
+        Result = lerp(Result, Ring, Ring.a);
+    }
+    
+    Out.vColor = Result;
+    
+    return Out;
+}
+
+/*------------------[E_LOCKON]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1431,5 +1496,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_STAMINA_FX();
+    }
+
+    pass LOCKON // 21
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LOCKON();
     }
 }

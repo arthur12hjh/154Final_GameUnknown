@@ -373,6 +373,7 @@
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
+    <ClInclude Include="..\Public\UILockOn.h" />
     <ClInclude Include="..\Public\UIMonsterHPBar.h" />
     <ClInclude Include="..\Public\UIMonsterHPFX.h" />
     <ClInclude Include="..\Public\UIMonsterShield.h" />
@@ -639,6 +640,7 @@
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
+    <ClCompile Include="..\Private\UILockOn.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
