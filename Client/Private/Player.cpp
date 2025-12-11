@@ -283,7 +283,6 @@ HRESULT CPlayer::Get_GaraGorillaBone(CLinkAttackTester* pObject)
 	SocketMatrixDesc.pParentTransformMatrix = pObject->GetTransform()->Get_WorldMatrixPtr();
 	SocketMatrixDesc.pSocketMatrix = pSocketMatrix;
 
-
 	Desc.pArg = &SocketMatrixDesc;
 
 	if (m_pWeapon)

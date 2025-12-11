@@ -22,7 +22,7 @@ CBehaviorNode::NODE_STATE CDeco_CheckAlive::Update(_float fTimeDelta)
     const NAYTIBA_DESC* CharacterInfo = pBlackBoard->GetBossInfo();
     Safe_Release(pBlackBoard);
 
-    if (0 < CharacterInfo->iCurrentHealth)
+    if (0 <= CharacterInfo->iCurrentHealth)
         return NODE_STATE::COMPLETE;
 
     return NODE_STATE::FAIL;

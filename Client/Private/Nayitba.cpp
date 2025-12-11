@@ -152,15 +152,25 @@ HRESULT CNayitba::Render()
 HRESULT CNayitba::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
-	m_pAIController->Damage(pArg);
-
-	VisibleStatusUI(0.f);
-	if(0 >= m_MonsterInfo.iCurrentHealth)
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		if (10 >= m_MonsterInfo.iCurrentHealth)
+		{
+			if (false == (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty))
+				m_MonsterInfo.iCurrentHealth = 10.f;
+		}
+	}
+	
+	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 	}
+
+	VisibleStatusUI(0.f);
+	m_pAIController->Damage(pArg);
 
 	return S_OK;
 }
@@ -323,6 +333,11 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
 	m_iComboCount = 0;
+}
+
+void CNayitba::SetThesholdAction(_bool bIsTheshold)
+{
+	m_bIsTheshold = bIsTheshold;
 }
 
 _bool CNayitba::bIsHitReaction()

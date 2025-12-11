@@ -282,7 +282,6 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		_bool				m_bIsParryHitAble;
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];

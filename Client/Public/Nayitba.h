@@ -59,10 +59,14 @@ public:
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
+	void									SetThesholdAction(_bool bIsTheshold);
 
 	_bool									bIsHitReaction();
+	_bool									bIsThesholdAction() { return m_bIsTheshold; }
+
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
+
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
@@ -80,6 +84,7 @@ private:
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
 	NAYTIBA_STATE							m_MonsterPreState = {};
+	_bool									m_bIsTheshold = { false };
 
 	_bool									m_bIsSuperMonster = { false };
 	_float2									m_vHitVisibleDuration = { 0, 5.f };
