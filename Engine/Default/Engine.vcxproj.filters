@@ -795,12 +795,6 @@
     <Filter Include="01.Utility\17.Physx">
       <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\18.StateMachine">
-      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine\State">
-      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
     </Filter>
@@ -1130,6 +1124,12 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback">
       <UniqueIdentifier>{5196f051-91b6-4501-8678-254eaf647f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine">
+      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine\State">
+      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

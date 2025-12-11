@@ -26,6 +26,7 @@ HRESULT CBullet::Initialize(void* pArg)
 
     BULLET_DESC* pDesc = static_cast<BULLET_DESC*>(pArg);
     m_pSocketMatrix = pDesc->pSocketMatrix;
+    m_vTargetPoint = pDesc->vTargetPoint;
     m_pSkillData = CGameManager::GetInstance()->Find_SkillData(pDesc->iSkillID);
 
     return S_OK;
