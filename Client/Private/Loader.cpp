@@ -4386,6 +4386,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
+	/* For.Prototype_Component_UI_Texture_Overlay */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Overlay");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_Center_Pivot */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Center_Pivot");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1);
@@ -4553,12 +4560,12 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_UI_Texture_Player_Beta */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Beta");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 6);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	///* For.Prototype_Component_UI_Texture_Player_Beta */
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Beta");
+	//pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 2);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Potion */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Potion");
@@ -4642,6 +4649,13 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Skills(void* pArg)
 	/* For.Prototype_Component_UI_Texture_SkillFrame */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_SkillFrame");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Beta_Cost_Deco */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Beta_Cost_Deco");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Beta_Cost_Deco.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

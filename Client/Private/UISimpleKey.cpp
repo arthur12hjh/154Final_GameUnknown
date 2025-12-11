@@ -55,7 +55,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 		{
 			m_eInterState = pOwner->Get_InterState();
 			m_fInteractionDuration = pOwner->Get_Duration();
-
+			auto pInteractionDesc = pOwner->Get_InterDesc();
 			if (m_eInterState != m_ePrevInterState)
 			{
 				CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
@@ -72,18 +72,12 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					if (AnimTag != m_tUIDesc.m_AnimTags.end())
 						pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 					__super::Trigger_Event(TEXT("Show_Key_") + to_wstring(m_iCloneIdx), &Arg);
-
-					auto pInteractionDesc = pOwner->Get_InterDesc();
 					if (pInteractionDesc)
 					{
 						CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag,
 							TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
 						Safe_AddRef(pUIText);
 
-						WCHAR szText[MAX_PATH] = {};
-						CStringHelper::ConvertUTFToWide(pOwner->Get_InterDesc()->szInteractionText, szText);
-						pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
-						Safe_Release(pUIText);
 					}
 
 					break;
@@ -107,6 +101,11 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					break;
 				}
 				}
+
+				WCHAR szText[MAX_PATH] = {};
+				CStringHelper::ConvertUTFToWide(pInteractionDesc->szInteractionText, szText);
+				pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
+				Safe_Release(pUIText);
 
 				m_ePrevInterState = m_eInterState;
 				Safe_Release(pHUD);

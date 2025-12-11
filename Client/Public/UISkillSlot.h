@@ -45,6 +45,8 @@ private:
 	CTexture* m_pGlowTextureCom = { nullptr };
 	CTexture* m_pGlowTextureCom2 = { nullptr };
 	CTexture* m_pCoverTextureCom = { nullptr };
+	CTexture* m_pCostTextureCom = { nullptr };
+	CTexture* m_pCostDecoTextureCom = { nullptr };
 
 #ifdef _DEBUG
 #endif // DEBUG
