@@ -21,11 +21,12 @@
 #include "TestEveHead.h"
 
 #include "Notify.h"
+#include "EffectSRV.h"
 
 CMainApp::CMainApp()	
-	: m_pGameInstance { CGameInstance::GetInstance() }
+	: m_pGameInstance { CGameInstance::GetInstance() },
+	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
-
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -40,6 +41,9 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iNumLevels = ENUM_CLASS(LEVEL::END);
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
+		return E_FAIL;
+
+	if (FAILED(m_pEffectSRV->Initialize(m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Default_Setting()))
@@ -76,6 +80,8 @@ void CMainApp::Update(_float fTimeDelta)
 
 	m_pGameInstance->Update_Engine(fTimeDelta);
 
+
+	m_pEffectSRV->Reset();
 #ifdef _DEBUG
 	m_pImGuiDebug->Update(fTimeDelta);
 #endif
@@ -277,7 +283,7 @@ void CMainApp::Free()
 	__super::Free();
 
 	CGameManager::DestroyInstance();
-
+	m_pEffectSRV->DestroyInstance();
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
@@ -287,5 +293,5 @@ void CMainApp::Free()
 
 	m_pGameInstance->Release_Engine();
 
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
 }

@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Character.h"
 
+#include "Effect.h"
+
 CBullet_Rock::CBullet_Rock(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CBullet(pDevice, pContext)
 {
@@ -29,7 +31,19 @@ HRESULT CBullet_Rock::Initialize(void* pArg)
     if (FAILED(ADD_Components(*pDesc)))
         return E_FAIL;
 
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	EffectDesc.fRotationPerSec = 1.f;
+	EffectDesc.fSpeedPerSec = 1.f;
 
+		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+		EffectDesc.pWorldMatrix = nullptr;
+
+		EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+		EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.fSize = 0.4f;
+	EffectDesc.iFloor = 0;
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 	return S_OK;
 }
@@ -207,4 +221,21 @@ CGameObject* CBullet_Rock::Clone(void* pArg)
 void CBullet_Rock::Free()
 {
 	__super::Free();
+	if (nullptr != m_pEffect) {
+		m_pEffect->End();
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+
+		EffectDesc.vPos = XMVectorSet(m_CombinedWorldMatrix._41, m_CombinedWorldMatrix._42, m_CombinedWorldMatrix._43, 1);
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 1.f;
+		EffectDesc.iFloor = 0;
+		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Rock_Hit"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+	}
+	
 }

@@ -2,6 +2,7 @@
 #include "Bullet.h"
 
 NS_BEGIN(Client)
+class CEffect;
 class CBullet_Rock final : public CBullet
 {
 private:
@@ -27,9 +28,10 @@ protected:
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 private :
+	CEffect*					m_pEffect = {};
 	_float3						m_vLerpPoints[5] = {};
 	_float2						m_LerpTime = { 0.f, 1.f };
-
+	
 public:
 	static	CBullet_Rock*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg) override;

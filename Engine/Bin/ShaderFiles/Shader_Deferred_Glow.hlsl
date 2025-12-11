@@ -72,7 +72,7 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
     }
     vColor /= vsize;
     
-    float farFactor = vWeight.b;
+    float farFactor = vWeight.b * vWeight.g;
     Out.vGlowY = vColor;
     Out.vGlowY.rgb *= farFactor;
     Out.vWeight = vWeight / vsize;

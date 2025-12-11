@@ -37,7 +37,10 @@ HRESULT CEffect::Initialize_Prototype(const _char* szFile)
 
 HRESULT CEffect::Initialize(void* pArg)
 {
-    if (FAILED(__super::Initialize(nullptr)))
+    CGameObject::GAMEOBJECT_DESC desc = {};
+    desc.fRotationPerSec = 1;
+    desc.fSpeedPerSec = 1;
+    if (FAILED(__super::Initialize(&desc)))
         return E_FAIL;
     m_fStopTime = -10.f;
     if (nullptr != pArg)
@@ -425,6 +428,9 @@ void CEffect::Late_Update(_float fTimeDelta)
                   break;
             }
         }
+    }
+    else {
+        m_CombinedWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     }
     if (1 < m_pMeshEffects.size()) {
         for (auto i = m_pMeshEffects.begin(); i != m_pMeshEffects.end();) {

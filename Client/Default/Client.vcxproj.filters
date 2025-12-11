@@ -1522,6 +1522,9 @@
     <ClInclude Include="..\Public\Player_SmallBoxInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EffectSRV.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2262,6 +2265,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_SmallBoxInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectSRV.cpp">
+      <Filter>03.Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

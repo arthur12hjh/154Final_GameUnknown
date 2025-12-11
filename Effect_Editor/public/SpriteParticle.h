@@ -111,9 +111,11 @@ private:
 	string    m_szFile[3];
 
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
-
+	ID3D11Resource* m_resourse = { nullptr };
+	ID3D11ShaderResourceView* m_pRSV = { nullptr };
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
+	ID3D11DepthStencilView* m_pOriginalDSV = { nullptr };
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_float			m_fLength = {};

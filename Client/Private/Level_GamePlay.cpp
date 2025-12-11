@@ -10,6 +10,8 @@
 #include "Player.h"
 #include "UIHUD.h"
 
+#include "SpriteParticle.h"
+
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif // _DEBUG
@@ -678,6 +680,4 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
-
-
 }

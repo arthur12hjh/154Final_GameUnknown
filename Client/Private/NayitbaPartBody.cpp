@@ -32,6 +32,8 @@ HRESULT CNayitbaPartBody::Initialize(void* pArg)
     if (FAILED(Ready_Components(*pDesc)))
         return E_FAIL;
 
+    m_pModelCom->AddCount_PartialBone("Bip001-Spine2");
+
     return S_OK;
 }
 
@@ -46,27 +48,58 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     
     if (m_isDeadEffect)
     {
-        if (0 >= m_fDeadTime) {
+        if (0 >= m_fDeadTime && m_bisSetDeadEffect) {
 
+            //CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            //EffectDesc.fRotationPerSec = 1.f;
+            //EffectDesc.fSpeedPerSec = 1.f;
+            //
+            //_float4x4 matTransform;
+            //XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+            //EffectDesc.pRootMatrix = nullptr;
+            //EffectDesc.pWorldMatrix = nullptr;
+            //EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, matTransform._44);
+            //
+            //EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
+            //EffectDesc.fSize = 1.f;
+            //EffectDesc.iFloor = 0;
+            //m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Ashes"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+            
             CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
             EffectDesc.fRotationPerSec = 1.f;
             EffectDesc.fSpeedPerSec = 1.f;
                 
             _float4x4 matTransform;
-            XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(&m_CombinedWorldMatrix));
+            XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
             EffectDesc.pRootMatrix = nullptr;
             EffectDesc.pWorldMatrix = nullptr;
-            EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, 1);
-
-            EffectDesc.fRot = _float3(0, 0, 0);
-            EffectDesc.fSize = 0.8f;
+            EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42 - 1.f, matTransform._43, matTransform._44);
+            
+            EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
+            EffectDesc.fSize = 3.f;
             EffectDesc.iFloor = 0;
-            m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Ashes"),
-                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+            CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Dead"),
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+            matTransform._32 = 0;
+            
+            
+            _vector vLook = XMVector3Normalize(XMVectorSet(matTransform._31, 0, matTransform._33, 0));
+            _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
+            _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+            vLook *= EffectDesc.fSize;
+            vRight *= EffectDesc.fSize;
+            vUp *= EffectDesc.fSize;
+            
+            pEffect->GetTransform()->Set_State(STATE::RIGHT, vRight);
+            pEffect->GetTransform()->Set_State(STATE::UP, vUp);
+            pEffect->GetTransform()->Set_State(STATE::LOOK, vLook);
+            pEffect->GetTransform()->Turn(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(28));
+            m_bisSetDeadEffect = false;
         }
         m_fDeadTime += fTimeDelta;
-        if(1.5 < m_fDeadTime)
+        if (5 < m_fDeadTime) {
             m_pParent->Set_Dead(true);
+        }
     }
 }
 
@@ -111,7 +144,7 @@ HRESULT CNayitbaPartBody::Render()
             return E_FAIL;
 
         if (0 < m_fDeadTime) {
-            if (FAILED(m_pShaderCom->Begin(5)))
+            if (FAILED(m_pShaderCom->Begin(6)))
                 return E_FAIL;
         }
         else {
@@ -328,6 +361,9 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
     if (FAILED(m_pTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
+        return E_FAIL;
+    float time = 2.1f;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &time, sizeof(_float))))
         return E_FAIL;
 
     return S_OK;

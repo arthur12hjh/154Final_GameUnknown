@@ -180,6 +180,7 @@
     <ClInclude Include="..\public\Deco_FindTarget.h" />
     <ClInclude Include="..\Public\Desert_Architecture.h" />
     <ClInclude Include="..\public\DropComponent.h" />
+    <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
@@ -433,6 +434,7 @@
     <ClCompile Include="..\private\Deco_FindTarget.cpp" />
     <ClCompile Include="..\Private\Desert_Architecture.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
+    <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
