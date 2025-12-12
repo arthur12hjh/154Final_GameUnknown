@@ -67,9 +67,9 @@ void CWeapon::Update(_float fTimeDelta)
 {
 	m_pSpark->Update(fTimeDelta);
 	m_pBlood->Update(fTimeDelta);
-	if (!m_bisBlood)
-		m_pBlood->Stop();
-	m_bisBlood = false;
+	//if (!m_bisBlood)
+	//	m_pBlood->Stop();
+	//m_bisBlood = false;
 	if (nullptr != m_pCharge) {
 		m_pCharge->Update(fTimeDelta);
 		if(m_pCharge->isDead())
@@ -261,6 +261,14 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		m_pSpark->Play();
 	}
+	else if (strObjectTag == TEXT("Slash_Blood"))
+	{
+		m_pBlood->Play();
+	}
+	else if (strObjectTag == TEXT("Slash_Blood_End"))
+	{
+		m_pBlood->Stop();
+	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
 		if (nullptr == m_pCharge)
@@ -350,8 +358,6 @@ HRESULT CWeapon::Ready_Components()
 	m_pTrail[3] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
 	CEffect::EFFECT_TRANSFORM_DESC desc;
-	desc.fRotationPerSec = 1.f;
-	desc.fSpeedPerSec = 1.f;
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
 	desc.vPos = XMVectorSet(0, 5, 0, 1);
 	desc.fRot = _float3(0, 0, 0);
@@ -361,8 +367,6 @@ HRESULT CWeapon::Ready_Components()
 	m_pSpark->Play();
 	m_pSpark->Stop();
 
-	desc.fRotationPerSec = 1.f;
-	desc.fSpeedPerSec = 1.f;
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
 	desc.vPos = XMVectorSet(0, 3, 0, 1);
 	desc.fRot = _float3(0, 0, 0);
@@ -411,10 +415,13 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		EffectDesc.fRotationPerSec = 1.f;
 		EffectDesc.fSpeedPerSec = 1.f;
 
-		EffectDesc.vPos = XMVectorSet(vHitPoint.x, vHitPoint.y, vHitPoint.z, 1);
+		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+		EffectDesc.vPos = XMVectorSet(0, 3.f, 0, 1);
 		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 0.6f;
-		EffectDesc.pDir = &vHitDir;
+		EffectDesc.fSize = 0.15f;
+		_float3 dir = { m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_31, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_32, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_33};
+		XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
+		EffectDesc.pDir = &dir;
 		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 	}
