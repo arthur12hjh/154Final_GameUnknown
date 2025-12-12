@@ -11,6 +11,7 @@ class CModel;
 NS_END
 
 NS_BEGIN(Client)
+class CEffect;
 class CItem final : public CProb_Interaction
 {
 public:
@@ -40,6 +41,7 @@ public:
 
 protected:
 	CModel*							m_pModelCom = { nullptr };
+	CEffect*						m_pEffect = { nullptr };
 
 	ITEM_DSEC						m_ItemData = {};
 	_float							m_fAmount = {};

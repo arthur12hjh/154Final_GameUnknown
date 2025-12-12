@@ -90,16 +90,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* 블러 기록할 물체들만 뺴서 기록 */
 	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].size()) {
-		D3D11_VIEWPORT			ViewPortDesc;
-		ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-		ViewPortDesc.TopLeftX = 0;
-		ViewPortDesc.TopLeftY = 0;
-		ViewPortDesc.Width = vScreenSize.x * 0.5f;
-		ViewPortDesc.Height = vScreenSize.y * 0.5f;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x * 0.5f, vScreenSize.y * 0.5f);
 
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
 			return E_FAIL;
@@ -121,8 +112,6 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_X"))))
 			return E_FAIL;
 
-		CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
-		m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
 		m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
 		m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
 		m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
@@ -139,12 +128,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(m_pGameInstance->End_MRT()))
 			return E_FAIL;
 
-		ViewPortDesc.Width = (_float)vScreenSize.x;
-		ViewPortDesc.Height = (_float)vScreenSize.y;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 		/* 블러 Y 처리 */
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur_Final"))))
@@ -165,18 +149,10 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 			return E_FAIL;
 	}
 	if (0 < m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].size()) {
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x * 0.5f, vScreenSize.y * 0.5f);
+
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
 			return E_FAIL;
-		D3D11_VIEWPORT			ViewPortDesc;
-		ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-		ViewPortDesc.TopLeftX = 0;
-		ViewPortDesc.TopLeftY = 0;
-		ViewPortDesc.Width = vScreenSize.x * 0.5f;
-		ViewPortDesc.Height = vScreenSize.y * 0.5f;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
 
 		for (auto& pRenderObject : m_BlurObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)])
 		{
@@ -212,12 +188,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 			return E_FAIL;
 
 
-		ViewPortDesc.Width = vScreenSize.x;
-		ViewPortDesc.Height = vScreenSize.y;
-		ViewPortDesc.MinDepth = 0.f;
-		ViewPortDesc.MaxDepth = 1.f;
-
-		m_pContext->RSSetViewports(1, &ViewPortDesc);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 		/* 블러 Y 처리 */
 		if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Blur_Final"))))

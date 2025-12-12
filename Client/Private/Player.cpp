@@ -594,6 +594,19 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			m_PlayerDesc.fPotionCoolDown = 0.f;
 			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
 			
+
+
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 9.f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}

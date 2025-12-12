@@ -11,7 +11,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Client)
-
+class CEffectSRV;
 class CSpriteParticle final : public CGameObject
 {
 public:
@@ -101,11 +101,12 @@ private:
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
+	ID3D11Buffer* m_pReadSource = { nullptr };
+	ID3D11ShaderResourceView* m_pSizeDiagramSRV = nullptr;
 
-	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
+	CEffectSRV* m_pEffectSRV = { nullptr };
 
 	PointConstBufferData			m_CBData = {};
-	ID3D11Buffer* m_pReadSource = { nullptr };
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_float			m_fLength = {};
