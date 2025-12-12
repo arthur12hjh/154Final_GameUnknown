@@ -71,7 +71,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 		Safe_Release(pHUD);
 	}
-	else if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
+	
+	if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 		&& m_bPlayingAnim == false)
 	{
@@ -85,7 +86,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+	
+	if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 			|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_bPlayingAnim == false)
@@ -98,7 +100,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+	
+	if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
 		&& m_bPlayingAnim == true)
 	{
