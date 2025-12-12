@@ -8,6 +8,7 @@
 #include "Prob_Interaction.h"
 #include "UIWorldWrapper.h"
 #include "StringHelper.h"
+#include "SciFi_Door.h"
 
 /*
 �׽�Ʈ(Lift_Controller) ��ġ
@@ -80,9 +81,23 @@ void CUISimpleKey::Update(_float fTimeDelta)
 							TEXT("Interaction_Text_Cloned_") + to_wstring(m_iCloneIdx));
 						Safe_AddRef(pUIText);
 
+						
 						WCHAR szText[MAX_PATH] = {};
-						CStringHelper::ConvertUTFToWide(pInteractionDesc->szInteractionText, szText);
-						pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
+
+						//if (dynamic_cast<CSciFi_Door*>(pOwner)
+						//	&& dynamic_cast<CSciFi_Door*>(pOwner)->Get_DoorState() == CSciFi_Door::SCIFI_DOOR_STATE::OPEN)
+						//{
+						//	//_char szChar[MAX_PATH] = {"닫기"};
+						//	//CStringHelper::ConvertUTFToWide(szChar, szText);
+						//	pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = TEXT("닫기");
+						//}
+						//else
+						//{
+							CStringHelper::ConvertUTFToWide(pInteractionDesc->szInteractionText, szText);
+							pUIText->Get_UIBase_Desc().m_tUITextDesc.szText = szText;
+						//}
+
+						
 						Safe_Release(pUIText);
 					}
 					
@@ -107,8 +122,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					break;
 				}
 				}
-
-
 
 				m_ePrevInterState = m_eInterState;
 				Safe_Release(pHUD);

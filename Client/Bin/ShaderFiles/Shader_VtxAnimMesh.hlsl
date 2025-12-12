@@ -248,29 +248,37 @@ PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 PS_OUT PS_DISSOLVE(PS_IN In)
 {
     PS_OUT Out;
+    float3 dir = normalize(float3(0, -1, 0));
+    float h = dot(normalize(In.vWorldPos.xyz - g_WorldMatrix._41_42_43), dir);
     
-    
-    vector vDissolve = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vDissolve.r + 0.7 < g_fDeadTime)
+    h = h * 0.5 + 0.5;
+
+    float noise = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    h += noise * 0.2;
+
+    if (h * 4 + 0.6 < g_fDeadTime)
         discard;
-    
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    if (vDissolve.r < g_fDeadTime)
+    
+
+    if (h * 4 < g_fDeadTime)
     {
-        vDissolve = min(vDissolve.r + 0.3 - g_fDeadTime, 1);
-        Out.vDiffuse.rgb *= vDissolve.r;
+        noise = min(h * 4 + 0.3 - g_fDeadTime, 1);
+        Out.vDiffuse.rgb *= noise;
     }
+    
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
+
 }
 
 PS_OUT PS_GORILLA_DISSOLVE(PS_IN In)

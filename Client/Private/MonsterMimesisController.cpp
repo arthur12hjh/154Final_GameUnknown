@@ -49,7 +49,8 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
-	m_vAttackTime.y = 1.f;
+	m_vAttackTime.y = 0.8f;
+	m_vDelayTime.y = 0.5f;
 	//AttackCompleted(0.f);
 	m_bIsMimesis = true;
 
@@ -64,8 +65,6 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 {
 	if (false == m_bIsDead)
 	{
-		m_vDelayTime.x += fTimeDelta;
-
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 		{
 			auto pNayitba = static_cast<CNayitba*>(m_pParent);
@@ -85,12 +84,15 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 			}
 		}
 
-		if (m_vDelayTime.x >= m_vDelayTime.y)
+		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
+			Battle_Action(fTimeDelta);
+		else
 		{
-			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
-				Battle_Action(fTimeDelta);
-			else
+			m_vDelayTime.x += fTimeDelta;
+			if (m_vDelayTime.x >= m_vDelayTime.y)
+			{
 				Default_Action(fTimeDelta);
+			}
 		}
 	}
 
