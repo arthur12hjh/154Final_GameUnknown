@@ -50,9 +50,9 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     
     if (m_isDeadEffect)
     {
+        CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
         if (0 >= m_fDeadTime && m_bisSetDeadEffect) {
 
-            CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
             if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
                 CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
                 EffectDesc.fRotationPerSec = 1.f;
@@ -65,7 +65,7 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
                 EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42 - 1.f, matTransform._43, matTransform._44);
 
                 EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
-                EffectDesc.fSize = 3.f;
+                EffectDesc.fSize = 2.5f;
                 EffectDesc.iFloor = 0;
                 CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Dead"),
                     ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
@@ -104,7 +104,12 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
             m_bisSetDeadEffect = false;
         }
-        m_fDeadTime += fTimeDelta;
+        if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
+            m_fDeadTime += fTimeDelta * 0.7f;
+        }
+        else {
+            m_fDeadTime += fTimeDelta;
+        }
         if (5 < m_fDeadTime) {
             m_pParent->Set_Dead(true);
         }
@@ -140,8 +145,6 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 
 HRESULT CNayitbaPartBody::Render()
 {
-    if (m_pParent->isDead())
-        return S_OK;
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -161,15 +164,8 @@ HRESULT CNayitbaPartBody::Render()
             return E_FAIL;
 
         if (0 < m_fDeadTime) {
-            CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
-            if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
-                if (FAILED(m_pShaderCom->Begin(7)))
-                    return E_FAIL;
-            }
-            else {
-                if (FAILED(m_pShaderCom->Begin(5)))
-                    return E_FAIL;
-            }
+            if (FAILED(m_pShaderCom->Begin(5)))
+                return E_FAIL;
         }
         else {
             if (FAILED(m_pShaderCom->Begin(0)))
