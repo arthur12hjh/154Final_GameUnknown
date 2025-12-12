@@ -166,6 +166,7 @@ HRESULT CItem::End_OverlapCallBack()
 
 void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
+	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
 	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
 		m_fInteractionDuration.x += fTimeDelta;
 
@@ -173,19 +174,28 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 	{
 		if (IsInteractionEnable())
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			if (pHUD)
-			{
-				CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
-				if (pGetterQueue)
-					pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
-			}
-			Safe_Release(pHUD);
-
-			m_eInterState = INTERACTION_STATE::ACTIVE;
-			m_fInteractionDuration.x = 0.f;
-			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+			m_eInterState = INTERACTION_STATE::CONTACT;
 		}
+	}
+	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		if (pHUD)
+		{
+			CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+			if (pGetterQueue)
+			{
+				WCHAR pText[MAX_PATH] = {};
+				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
+				pGetterQueue->Insert_Queue(pText);
+			}
+		}
+		Safe_Release(pHUD);
+
+		m_eInterState = INTERACTION_STATE::ACTIVE;
+		m_fInteractionDuration.x = 0.f;
+		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		Set_Dead(true);
 	}
 }
 

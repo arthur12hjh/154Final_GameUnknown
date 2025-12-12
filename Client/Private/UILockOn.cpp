@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "UIHUD.h"
 
+#include "Nayitba.h"
+
 CUILockOn::CUILockOn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -39,10 +41,14 @@ void CUILockOn::Update(_float fTimeDelta)
 {
  	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
 		m_isFinisher = true;
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_L))
-		m_isFinisher = false;
+		m_isFinisher = false;*/
+
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent);
+	if (pMonster)
+		m_isFinisher = pMonster->bIsThesholdAction();
 }
 
 void CUILockOn::Late_Update(_float fTimeDelta)

@@ -67,6 +67,7 @@ public:
 	void Set_Position(_vector vPosition);
 	_vector Calc_Gravity(_float fTimeDelta);
 
+	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
 private:
 	/* RigidActor -> RigidBody & RigidStatic */
 	/* RigidBody -> RigidDynamic & RigidArticulationLink */
@@ -91,6 +92,7 @@ private:
 	_float				 m_fJumpVelocity = 0.f; // 현재 Y 속도 (점프 시 +, 낙하 시 -)
 	_float				 m_fGravity = 30.f; // 중력 가속도 (아래로)
 
+	_bool				 m_isActive = { true };
 	_bool				 m_isRiding = { false };
 	class CRigidBody*	 m_pRidingTarget = { nullptr };
 	class CTransform*	 m_pRidingTargetTransform = { nullptr };
