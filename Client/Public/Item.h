@@ -18,7 +18,7 @@ public:
 	typedef struct Item_Desc : public PROB_INTERACTION_DESC
 	{
 		_uint						iItemID;
-		_uint						fAmount;
+		_float						fAmount;
 
 		_float3						fDropPoint;
 		_float						fDropForce;

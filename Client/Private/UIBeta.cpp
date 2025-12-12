@@ -39,7 +39,6 @@ HRESULT CUIBeta::Initialize(void* pArg)
 		m_iMaxCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxBetaEnergy);
 		m_iCurrentCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentBetaEnergy);
 	}
-
 #ifdef _DEBUG
 	else
 	{
@@ -68,13 +67,13 @@ void CUIBeta::Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	// 테스트 용
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
 			*m_iCurrentCount -= 1;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
 			*m_iCurrentCount += 1;
-	}*/
+	}
 #endif
 
 	m_fTargetFill = static_cast<_float>(*m_iCurrentCount) / static_cast<_float>(*m_iMaxCount);
@@ -92,32 +91,16 @@ void CUIBeta::Update(_float fTimeDelta)
 
 	// 셰이더로 갈 때는 float(0~1)로 환산
 	m_fCurrentFill = (_float)filledTiles / *m_iMaxCount;
+
+	_int filledGroups = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
+
+	// 현재 묶음 인덱스
+	m_iCurrentvGroupFilled = filledGroups / m_iPerCount;  // 0~5 범위
 }
 
 void CUIBeta::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
-
-	_int filledTiles = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
-
-	// 현재 묶음 인덱스
-	_int currentGroup = filledTiles / m_iPerCount;  // 0~5 범위
-
-	// 묶음이 새로 완성된 순간 감지
-	if (currentGroup != m_iPrevGroupFilled)
-	{
-		// ★ 묶음이 새로 채워짐
-		// currentGroup가 증가 방향일 때만 체크하는게 더 깔끔함
-		if (currentGroup > m_iPrevGroupFilled)
-		{
-			// ---- 여기에서 이펙트 출력 ----
-			// 예: TriggerEffect(currentGroup);
-
-			int a = 0;
-		}
-
-		m_iPrevGroupFilled = currentGroup;
-	}
 }
 
 HRESULT CUIBeta::Render()

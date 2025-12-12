@@ -45,9 +45,9 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
-	AttackCompleted(0.f);
+	m_vAttackTime.y = 0.5f;
 
-	if (FAILED(Ready_FSM()))
+	if (FAILED(Ready_FSM())) 
 		return E_FAIL;
 
 	return S_OK;
@@ -62,8 +62,6 @@ void CMonsterController::Update(_float fTimeDelta)
 {
 	if (false == m_bIsDead)
 	{
-		m_vDelayTime.x += fTimeDelta;
-
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 		{
 			auto pNayitba = static_cast<CNayitba*>(m_pParent);
@@ -83,12 +81,16 @@ void CMonsterController::Update(_float fTimeDelta)
 			}
 		}
 
-		if (m_vDelayTime.x >= m_vDelayTime.y)
+
+		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
+			Battle_Action(fTimeDelta);
+		else
 		{
-			if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
-				Battle_Action(fTimeDelta);
-			else
+			m_vDelayTime.x += fTimeDelta;
+			if (m_vDelayTime.x >= m_vDelayTime.y)
+			{
 				Default_Action(fTimeDelta);
+			}
 		}
 	}
 
@@ -278,9 +280,9 @@ void CMonsterController::AttackCompleted(_float fDelayTime)
 {
 	m_vAttackTime.x = 0.f;
 	if (0.f == fDelayTime)
-		m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+		m_vAttackTime.y = m_pGameInstance->Random(1.f, m_fAttackDelay);
 	else
-		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 3.f, m_fAttackDelay);
+		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 2.f, m_fAttackDelay);
 }
 
 void CMonsterController::DelayAction(_float fDelayTime)

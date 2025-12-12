@@ -67,7 +67,7 @@
                 "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    1.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -77,7 +77,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.0,
+                    5.0,
                     0.0
                 ]
             },
@@ -107,7 +107,7 @@
                 "szSocketTag": "Bip001-R-Hand",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    1.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -117,7 +117,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.0,
+                    5.0,
                     0.0
                 ]
             }

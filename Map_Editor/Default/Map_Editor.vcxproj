@@ -231,6 +231,7 @@
     <ClInclude Include="..\public\MapTool.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\public\MapTool_Desert.h" />
+    <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\Player.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\MapTool.cpp" />
     <ClCompile Include="..\private\MapTool_Desert.cpp" />
+    <ClCompile Include="..\Private\Monster.cpp" />
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
