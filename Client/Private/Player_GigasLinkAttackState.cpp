@@ -50,10 +50,6 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
     {
         m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
         m_iAnimationIndex = 1;
-
-        DEFAULT_DAMAGE_DESC Desc;
-        Desc.pSkillData = m_pGameManager->Find_SkillData(1011);
-        m_Desc->pLinkAttackTarget->Damaged(&Desc);
     }
 
     //애니 재생이 끝났다면, Idle로 전환하는 코드
@@ -63,6 +59,10 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
         m_tNextState.eMode = PLAYER_MODE::BATTLE;
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
         //여기서 기가스 데미지 주면 됨.
+        DEFAULT_DAMAGE_DESC Desc;
+        Desc.pSkillData = m_pGameManager->Find_SkillData(1011);
+        m_Desc->pLinkAttackTarget->Damaged(&Desc);
+
     }
 
     _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
