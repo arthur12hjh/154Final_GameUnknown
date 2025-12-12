@@ -47,6 +47,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 	{
 		ResetAttackTask(false);
+		return NODE_STATE::FAIL;
 	}
 
 	if (nullptr == m_pBlackBoard->GetAttackData())
