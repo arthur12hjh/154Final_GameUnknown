@@ -198,7 +198,6 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 	{
 		if (IsInteractionEnable())
 		{
-			
 			m_eInterState = INTERACTION_STATE::CONTACT;
 		}
 	}
@@ -211,6 +210,7 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		{
 			m_pModelCom->Set_AnimationIndex(1, false);
 			m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+
 		}
 			break;
 		case SCIFI_DOOR_STATE::CLOSE:

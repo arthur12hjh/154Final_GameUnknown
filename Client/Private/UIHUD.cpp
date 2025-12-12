@@ -142,6 +142,8 @@ void CUIHUD::Update(_float fTimeDelta)
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
 		}
 	}
+
+	Safe_Release(pPlayer);
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)

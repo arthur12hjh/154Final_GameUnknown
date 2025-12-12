@@ -29,6 +29,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	SCIFI_DOOR_STATE			Get_DoorState() const { return m_eCurState; }
+
 private:
 	SCIFI_DOOR_STATE			m_eCurState = { SCIFI_DOOR_STATE::END };
 
