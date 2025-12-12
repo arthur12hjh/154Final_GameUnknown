@@ -1592,6 +1592,10 @@
       <Filter>10.GameManager\PoolingManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CameraActionInserter.h" />
+    <ClInclude Include="..\Public\Player_GigasLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\public\Task_Dead.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClInclude>
@@ -2362,6 +2366,10 @@
     </ClCompile>
     <ClCompile Include="..\private\PoolingManager.cpp">
       <Filter>10.GameManager\PoolingManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
+    <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp">

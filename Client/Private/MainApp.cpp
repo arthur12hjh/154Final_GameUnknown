@@ -20,12 +20,14 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
+#include "EffectSRV.h"
 
 #include "Notify.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
-	, m_pGameManager { CGameManager::GetInstance() }
+	, m_pGameManager { CGameManager::GetInstance() },
+	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
 	Safe_AddRef(m_pGameManager);
 	Safe_AddRef(m_pGameInstance);
@@ -42,6 +44,9 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iNumLevels = ENUM_CLASS(LEVEL::END);
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
+		return E_FAIL;
+
+	if (FAILED(m_pEffectSRV->Initialize(m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Default_Setting()))
@@ -75,7 +80,7 @@ void CMainApp::Update(_float fTimeDelta)
 
 	if (m_bIsMouseLock)
 		MouseLock();
-
+	m_pEffectSRV->Reset();
 
 	m_pGameInstance->Update_Engine(fTimeDelta);
 	m_pGameManager->Update(fTimeDelta);
@@ -286,6 +291,7 @@ void CMainApp::Free()
 	__super::Free();
 
 	CGameManager::DestroyInstance();
+	m_pEffectSRV->DestroyInstance();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

@@ -37,10 +37,10 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,S
 633,M_SunFlower_Spit,None,None,20,4,"1,1,2",1,4,0,11
 731,M_AntlionC_PawAttack,None,None,21,2,"1,1,5",1,0,0,11
 732,M_AntlionC_SwingTriple,None,None,22,2,"1,1,5",3,0,0,11
-1000,Player_Light_Attack_Root1,None,None,30,3,"2,2,2",0,0,0,0
-1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,1,0,0
-1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,1,0,0
-1003,Player_Light_Attack_Root4,None,None,30,3,"2,2,2",0,0,0,0
+1000,Player_Light_Attack_Root1,None,None,100,3,"2,2,2",0,0,0,0
+1001,Player_Light_Attack_Root2,None,None,100,3,"2,2,2",0,1,0,0
+1002,Player_Light_Attack_Root3,None,None,100,3,"2,2,2",0,1,0,0
+1003,Player_Light_Attack_Root4,None,None,100,3,"2,2,2",0,0,0,0
 1004,Player_Beta_Skill,None,None,30,4,"2,2,3",0,0,2,0
 1005,Player_Beta_Skill,None,None,30,3,"1,1,2",0,4,2,0
 1006,P_Eve_Sword_SlotNormal_ChainStab,None,None,30,7,"3,3,5",0,4,2,0

@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 float g_fTimeAcc;
 float g_fLifeTime;

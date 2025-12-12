@@ -75,6 +75,8 @@ namespace Client
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
 		AERIAL_ATTACK, //미구현
+
+		GIGAS_LINKATTACK,
 		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
@@ -154,6 +156,8 @@ namespace Client
 		// 만약 저스트 패링이 가능하다면 true, 불가능하다면 false
 		bool   isJustParryable = { false };
 
+		bool   isLinkAttackAvailable = { true };
+		class CNayitba* pLinkAttackTarget = { nullptr };
 	}PLAYER_DESC;
 
 	// 스킬 구조체

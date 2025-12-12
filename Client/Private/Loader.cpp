@@ -1186,6 +1186,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SheildBreakYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Power_Blue */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Power_Blue");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/PowerBlue.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
 	/* For.Prototype_Component_Effect_Hit_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
@@ -1305,7 +1311,32 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Ashes */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Ashes");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Ashes.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Gigas_Dead */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Dead");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/GigasDead.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Item_Aura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Item_Aura");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ItemAura.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Item_Get */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Item_Get");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ItemGet.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Rock_Hit */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Rock_Hit");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/RockHit.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	
+	
 	/* For.Prototype_Component_TrailEffect_Default_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
 	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");

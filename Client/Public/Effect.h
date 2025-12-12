@@ -27,7 +27,7 @@ public:
         _vector vPos;
         _float3 fRot;
         _float fSize;
-        _bool   bisFloor = false;
+        _int   iFloor;
     }EFFECT_TRANSFORM_DESC;
     
 private:
@@ -62,7 +62,7 @@ private:
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
     _float	        m_fStopTime = {};
-    _bool           m_bisFloor = {};
+    _int           m_iFloor = {};
     vector<CMeshEffect*> m_pMeshEffects;
     vector<CPointParticle*> m_pPointParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;

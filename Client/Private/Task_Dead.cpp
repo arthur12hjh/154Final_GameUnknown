@@ -29,12 +29,26 @@ CBehaviorNode::NODE_STATE CTask_Dead::Update(_float fTimeDelta)
     m_pOwner->Set_Animation("M_Finish_DeadLink");
     m_pOwner->Play_Animation(fTimeDelta);
 
+		m_fDeadEndTime += fTimeDelta;
+		if (!m_bIsDeadEffect && 0.5f <= m_fDeadEndTime)
+		{
+            m_pOwner->PlayDeadEffect();
+			m_bIsDeadEffect = true;
+		}
+
+
     return NODE_STATE::COMPLETE;
 }
 
 CTask_Dead* CTask_Dead::Create(CBehaviorTree* pOwnerTree)
 {
-    return nullptr;
+    CTask_Dead* pTask_Dead = new CTask_Dead();
+    if (FAILED(pTask_Dead->Initialize_Prototype(pOwnerTree)))
+    {
+        Safe_Release(pTask_Dead);
+        MSG_BOX("Create Fail : Task Dead");
+    }
+    return pTask_Dead;
 }
 
 void CTask_Dead::Free()

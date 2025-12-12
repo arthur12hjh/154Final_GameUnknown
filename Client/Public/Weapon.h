@@ -42,11 +42,11 @@ public:
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 
-	class CTrailEffect*			m_pTrail = { nullptr };
+	class CTrailEffect*			m_pTrail[4] = {nullptr};
 	class CEffect*				m_pSpark = { nullptr };
 	class CEffect*				m_pBlood = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
-
+	_uint						m_iTrail = {};
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;
 	PLAYER_DESC*				m_pPlayerDesc = { nullptr };

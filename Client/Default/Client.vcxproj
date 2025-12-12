@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DropComponent.h" />
+    <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\Public\Player_BattleIdleState.h" />
     <ClInclude Include="..\Public\Player_JumpState.h" />
     <ClInclude Include="..\Public\Player_BattleLandingState.h" />
+    <ClInclude Include="..\Public\Player_GigasLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
@@ -446,6 +448,7 @@
     <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
+    <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
@@ -491,6 +494,7 @@
     <ClCompile Include="..\Private\Player_BattleIdleState.cpp" />
     <ClCompile Include="..\Private\Player_JumpState.cpp" />
     <ClCompile Include="..\Private\Player_BattleLandingState.cpp" />
+    <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />

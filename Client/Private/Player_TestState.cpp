@@ -59,6 +59,8 @@ PLAYER_TRANSITION_DESC CPlayer_TestState::Update(_float fTimeDelta)
     //애니 재생이 끝났다면, Idle로 전환하는 코드
     if (true == m_isEndList[1])
     {
+        m_tNextState.isChangeMode = true;
+        m_tNextState.eMode = PLAYER_MODE::BATTLE;
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
 

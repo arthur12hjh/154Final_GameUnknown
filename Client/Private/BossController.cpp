@@ -69,12 +69,13 @@ void CBossController::Damage(void* pArg)
 
     auto pNayitba = static_cast<CNayitba*>(m_pParent);
     const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
+    const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
     if (10 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // 이거 죽는모션 나옴 죽으면 
         // 디졸브 이런 느낌의 이펙트 실행되고 삭제되게끔 제어할 예정
-        if (SKILL_PROPERTY::EXCUTION & pAttackData->eProPerty)
+        if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
         {
             if (0 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
             {
@@ -95,7 +96,7 @@ void CBossController::Damage(void* pArg)
         if (CBossBlackBoard::BOSS_STATE::ATTACK == m_pBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정
-            const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
+          
 
             if (nullptr == pDamageSKillDesc)
                 return;
