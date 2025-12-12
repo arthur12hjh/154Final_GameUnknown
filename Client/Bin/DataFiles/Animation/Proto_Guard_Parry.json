@@ -15,7 +15,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Parrying",
+                "szNotifyArg01": "Prototype_Component_Effect_Perfect_Parrying",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -36,9 +36,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    3.0,
-                    3.0,
-                    3.0
+                    4.0,
+                    4.0,
+                    4.0
                 ]
             }
         ],
