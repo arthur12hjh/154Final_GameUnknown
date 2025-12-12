@@ -278,6 +278,12 @@ HRESULT CParticle::Ready_Components()
 
 HRESULT CParticle::Bind_ShaderResources()
 {
+	//카메라의 여러 정보들을 받아올 수 있어 여기서 fFar 받아올 수 있음.
+	//카메라 Far 값을 받아오는 변수는 "g_fFar" 로 세팅해줘. 
+	//클라에선 g_fFar 알아서 세팅해주니까 걱정안해도 돼.
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+	CamInfo.fFar;
+
 	if (m_tData.bisSpectrum) {
 		_float4x4 world = m_CombinedWorldMatrix;
 		world._41 = 0;
@@ -319,6 +325,9 @@ HRESULT CParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))

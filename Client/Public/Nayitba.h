@@ -21,6 +21,9 @@ public :
 	{
 		_uint						iMonsterID = {};
 		_bool						bIsSuperMonster = { false };
+
+		_bool						bIsSpanwer = { false };
+		CGameObject*				pTarget = { nullptr };
 	}NAYITBA_DESC;
 
 private :
@@ -47,6 +50,7 @@ public:
 	_uint									GetMonsterID();
 	CGameObject*							GetTarget();
 
+	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 	
 	//몬스터의 현재 데이터를 반환
@@ -54,11 +58,17 @@ public:
 	
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
+	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
+	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
+	void									SetThesholdAction(_bool bIsTheshold);
 
 	_bool									bIsHitReaction();
+	_bool									bIsThesholdAction() { return m_bIsTheshold; }
+
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
+
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
@@ -76,6 +86,7 @@ private:
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
 	NAYTIBA_STATE							m_MonsterPreState = {};
+	_bool									m_bIsTheshold = { false };
 
 	_bool									m_bIsSuperMonster = { false };
 	_float2									m_vHitVisibleDuration = { 0, 5.f };
@@ -85,7 +96,7 @@ private:
 	_uint									m_iComboCount = { };
 	const _float4x4*						m_pLockOnMatrix = { nullptr };
 	const _float4x4*						m_pHeadBoneMatrix = { nullptr };
-
+	const _float4x4*						m_pLinkTargetBoneMatrix = { nullptr };
 
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스
 	size_t									m_iSkillIndex = {};

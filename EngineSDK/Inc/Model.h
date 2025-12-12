@@ -104,7 +104,14 @@ public:
 
 public:
 	// <애니메이션 관련 함수들. 인덱스, wstring, string. 자세한 정보는 디코 자료탭 존난애강 참고>
-	void Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
+	void Set_AnimationIndex(_int iAnimIndex,
+		_bool isLoop = true,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE);
 
 	void Set_Animation(const _wstring& strAnimationTag,
 		_bool isLoop = true,
@@ -113,8 +120,18 @@ public:
 		_bool bIsRestart = FALSE,
 		_float fEndTrackPosition = -1.f,
 		_float fStartTrackPosition = 0.f,
-		_bool isResetTrackPosition = TRUE);
-	void Set_Animation(const _char* szAnimationTag, _bool isLoop = true, _float fAnimationPlayRate = 1.f, _float fLerpDuration = 0.12f, _bool bIsRestart = FALSE, _float fEndTrackPosition = -1.f, _float fStartTrackPosition = 0.f, _bool isResetTrackPosition = TRUE);
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE);
+
+	void Set_Animation(const _char* szAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE);
 	// </end>
 
 
@@ -212,7 +229,7 @@ private:
 
 	_int						m_iCurrentAnimIndex = { -1 };
 	_uint						m_iNumAnimations = {};
-	_int						m_iFlagPreRootModified = ROOTFLAG_RESET;
+	_int						m_iFlagPreRootModified = iFLAG_ROOT_RESET;
 	_bool						m_isLoop = { false };
 	_bool						m_isFinish = { false };
 	vector<class CAnimation*>	m_Animations;
@@ -220,6 +237,7 @@ private:
 	_char						m_szBindTags[ENUM_CLASS(TEXTURE_TYPE::END)][MAX_PATH];
 
 	_bool						m_isLerp = { FALSE };
+	_bool						m_isRootMotionUpdated = { TRUE };
 
 #ifdef _DEBUG
 	_char						m_ModelFilePath[MAX_PATH];

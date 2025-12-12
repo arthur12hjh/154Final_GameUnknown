@@ -157,10 +157,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
     <ClInclude Include="..\public\Bullet_Rock.h" />
+    <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\CameraBone_Player.h" />
+    <ClInclude Include="..\Public\Camera_Action.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\Public\Deco.h" />
@@ -179,6 +182,7 @@
     <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DropComponent.h" />
+    <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
@@ -187,6 +191,7 @@
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
     <ClInclude Include="..\Public\Lift_Platform.h" />
+    <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
@@ -222,6 +227,7 @@
     <ClInclude Include="..\Public\Player_BattleIdleState.h" />
     <ClInclude Include="..\Public\Player_JumpState.h" />
     <ClInclude Include="..\Public\Player_BattleLandingState.h" />
+    <ClInclude Include="..\Public\Player_GigasLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
@@ -231,14 +237,19 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
+    <ClInclude Include="..\Public\Player_TestState.h" />
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
+    <ClInclude Include="..\public\PoolingManager.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
+    <ClInclude Include="..\Public\RimLight.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
+    <ClInclude Include="..\Public\ShaderManager.h" />
+    <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
@@ -343,7 +354,8 @@
     <ClInclude Include="..\public\StoneWall1.h" />
     <ClInclude Include="..\public\StoneWall2.h" />
     <ClInclude Include="..\Public\TargetComponent.h" />
-    <ClInclude Include="..\Public\Task_Dead.h" />
+    <ClInclude Include="..\public\Task_Dead.h" />
+    <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
     <ClInclude Include="..\Public\Task_Hit.h" />
@@ -411,10 +423,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
     <ClCompile Include="..\private\Bullet_Rock.cpp" />
+    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
+    <ClCompile Include="..\Private\Camera_Action.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
@@ -433,6 +448,7 @@
     <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DropComponent.cpp" />
+    <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
@@ -441,6 +457,7 @@
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
+    <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
@@ -477,6 +494,7 @@
     <ClCompile Include="..\Private\Player_BattleIdleState.cpp" />
     <ClCompile Include="..\Private\Player_JumpState.cpp" />
     <ClCompile Include="..\Private\Player_BattleLandingState.cpp" />
+    <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
@@ -486,13 +504,18 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
+    <ClCompile Include="..\Private\Player_TestState.cpp" />
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
+    <ClCompile Include="..\private\PoolingManager.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
+    <ClCompile Include="..\Private\RimLight.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
+    <ClCompile Include="..\Private\ShaderManager.cpp" />
+    <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
@@ -613,7 +636,8 @@
     <ClCompile Include="..\private\StoneWall1.cpp" />
     <ClCompile Include="..\private\StoneWall2.cpp" />
     <ClCompile Include="..\Private\TargetComponent.cpp" />
-    <ClCompile Include="..\Private\Task_Dead.cpp" />
+    <ClCompile Include="..\private\Task_Dead.cpp" />
+    <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
     <ClCompile Include="..\Private\Task_Hit.cpp" />
@@ -694,12 +718,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />
   </ItemGroup>
   <ItemGroup>

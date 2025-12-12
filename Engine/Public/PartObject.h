@@ -41,7 +41,8 @@ public:
 		_bool bIsRestart = FALSE,
 		_float fEndTrackPosition = -1.f,
 		_float fStartTrackPosition = 0.f,
-		_bool isResetTrackPosition = TRUE) {
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE) {
 	};
 
 protected:	

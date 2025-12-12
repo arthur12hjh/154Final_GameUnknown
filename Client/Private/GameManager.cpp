@@ -5,6 +5,8 @@
 #include "DataManager.h"
 #include "QuestManager.h"
 #include "LockonManager.h"
+#include "ShaderManager.h"
+#include "PoolingManager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
@@ -28,7 +30,21 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     if (nullptr == m_pQuestManager)
         return E_FAIL;
 
+    m_pShaderManager = CShaderManager::Create();
+    if (nullptr == m_pShaderManager)
+        return E_FAIL;
+
+    m_pPoolingManager = CPoolingManager::Create(pDevice, pContext);
+    if (nullptr == m_pPoolingManager)
+        return E_FAIL;
+
     return S_OK;
+}
+
+void CGameManager::Update(_float fTimeDelta)
+{
+    if(nullptr != m_pShaderManager)
+        m_pShaderManager->Update(fTimeDelta);
 }
 
 void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
@@ -92,6 +108,27 @@ const INTERACTION_DATA* CGameManager::Find_InteractionData(_uint iID)
     return m_pDataManager->Get_InteractionData(iID);
 }
 
+const CAMERA_ANIMATION_DATA* CGameManager::Find_CameraAnimationData(_uint iCameraAnimationData)
+{
+    return m_pDataManager->Find_CameraAnimationData(iCameraAnimationData);
+}
+
+
+#ifdef _DEBUG
+
+map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
+{
+    return m_pDataManager->Get_CameraAnimationMap();
+}
+
+
+void CGameManager::Save_CameraAnimationData()
+{
+    m_pDataManager->Save_CameraAnimationData();
+}
+
+#endif
+
 #pragma endregion
 
 #pragma region Quest Manager
@@ -113,6 +150,16 @@ _bool CGameManager::Accept_Quest(_uint iQuestID)
 void CGameManager::CompletedQuest(_uint iQuestID)
 {
     m_pQuestManager->CompletedQuest(iQuestID);
+}
+
+HRESULT CGameManager::Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, CShader* pShader)
+{
+    return m_pShaderManager->Add_Shader(eLevelID, strShaderTag, pShader);
+}
+
+CShader* CGameManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag)
+{
+    return m_pShaderManager->Get_Shader(eLevelID, strShaderTag);
 }
 
 #pragma region LOCKON
@@ -137,7 +184,24 @@ _bool CGameManager::Get_Lockon()
 {
     return m_pLockonManager->Get_Lockon();
 }
+
 #pragma endregion
+
+#pragma region Pool Manager
+HRESULT CGameManager::Setting_PoolManager(_uint iLevelID)
+{
+    return m_pPoolingManager->Setting_PoolManager(iLevelID);
+}
+CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
+{
+    return m_pPoolingManager->SetActivePoolObject(iLevel, pLayerName, szPoolTag);
+}
+void CGameManager::UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject)
+{
+    m_pPoolingManager->UnActivePoolObject(szPoolTag, pObject);
+}
+#pragma endregion
+
 
 #pragma region Damage Logic
 _bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
@@ -183,7 +247,9 @@ void CGameManager::Free()
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
-
+    Safe_Release(m_pShaderManager);
+    Safe_Release(m_pPoolingManager);
+    
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);

@@ -24,6 +24,15 @@ public :
 
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
+	const CAMERA_ANIMATION_DATA*			Find_CameraAnimationData(_uint iCameraAnimationData);
+
+	void									Save_CameraAnimationData();
+
+
+#ifdef _DEBUG
+	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
+#endif
+
 private:
 	// 캐릭터 구조체는 이거 하나만있으도 될거같아서 픽스
 	// map<_uint, CHARACTER_NETWORK_DESC>			m_pTextures = {};
@@ -42,11 +51,16 @@ private:
 	// 상호작용 오브젝트 데이터
 	map<_uint, INTERACTION_DATA>			m_pInteractionDatas = {};
 
+	// 카메라 애니메이션 전용 데이터
+	map<_uint, CAMERA_ANIMATION_DATA>		m_CameraAnimationDatas = {};
+
+
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
 	HRESULT									LoadInteractionData(void* pArg);
 	HRESULT									LoadSkillData();
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
+	HRESULT									LoadCameraAnimationData(void* pArg = nullptr);
 	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
 public:
 	static CDataManager*					Create();

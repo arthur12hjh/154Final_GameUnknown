@@ -439,6 +439,11 @@ CGameObject* CGameInstance::Add_Get_GameObject(_uint iPrototypeLevelIndex, const
 	return m_pObject_Manager->Add_Get_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLayerLevelIndex, strLayerTag, pArg);
 }
 
+void CGameInstance::ADD_ToLayer(_uint iLayerLevelIndex, const _wstring& strLayerTag, CGameObject* pObject)
+{
+	m_pObject_Manager->ADD_ToLayer(iLayerLevelIndex, strLayerTag, pObject);
+}
+
 list<CGameObject*>* CGameInstance::GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag)
 {
 	return m_pObject_Manager->Get_LayerObjects(iLayerIndex, szLayerTag);
@@ -618,6 +623,11 @@ _matrix CGameInstance::GetIdentityMatrix()
 const _float4x4* CGameInstance::GetIdentityMatrixPtr()
 {
 	return m_pPipeLine->GetIdentityMatrixPtr();
+}
+
+const CAMERA_INFO& CGameInstance::Get_CurrentCamInfo()
+{
+	return m_pPipeLine->Get_CurrentCamInfo();
 }
 
 #pragma endregion

@@ -50,6 +50,7 @@ private:
 	CTexture*											m_pTexture = {};
 	_bool												m_isDeadEffect = { false };
 	_float												m_fDeadTime = {};
+	_bool												m_bisSetDeadEffect = { true };
 
 private:
 	HRESULT							Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc);

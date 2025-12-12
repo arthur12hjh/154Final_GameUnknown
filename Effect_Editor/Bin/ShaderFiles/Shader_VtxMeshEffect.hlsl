@@ -15,6 +15,7 @@ float2 g_fDiffuseUVSize = float2(1, 1);
 float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
+float g_fFar;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 int g_iSizeCount;
@@ -168,8 +169,8 @@ PS_OUT PS_MAIN(PS_IN In)
     //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
     //Out.vDiffuse.a *= ((fireFront.r + fireBack.r) / 2) * ((In.vLifeTime.y - In.vLifeTime.x) / In.vLifeTime.y);
     
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     float time = g_fTime;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + min(time * g_fMaskUVSpeed.x, 1)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + time * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + time * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + time * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
@@ -217,7 +218,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vWeight.a = 1;
     
     //Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
-    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     return Out;
 }
 /* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
@@ -242,8 +243,8 @@ PS_OUT PS_Hit(PS_IN In)
 {
     PS_OUT Out;
     
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     float time = g_fTime;
     
     
@@ -312,7 +313,7 @@ PS_NORMAL_OUT PS_NORMAL_COLOR(PS_IN In)
     Out.vDiffuse = g_vColor;
     //Out.vDiffuse *= abs(MaskTexcoord.y) * 2;
     Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     return Out;
 }
 

@@ -6,6 +6,7 @@
 #include "Level_Loading.h"
 #include "Camera_Free.h"
 #include "Camera_Player.h"
+#include "Camera_Action.h"
 
 #include "GameManager.h"
 #include "JsonParser.h"
@@ -19,13 +20,16 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
+#include "EffectSRV.h"
 
 #include "Notify.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
+	, m_pGameManager { CGameManager::GetInstance() },
+	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
-
+	Safe_AddRef(m_pGameManager);
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -40,6 +44,9 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iNumLevels = ENUM_CLASS(LEVEL::END);
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
+		return E_FAIL;
+
+	if (FAILED(m_pEffectSRV->Initialize(m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Default_Setting()))
@@ -73,8 +80,10 @@ void CMainApp::Update(_float fTimeDelta)
 
 	if (m_bIsMouseLock)
 		MouseLock();
+	m_pEffectSRV->Reset();
 
 	m_pGameInstance->Update_Engine(fTimeDelta);
+	m_pGameManager->Update(fTimeDelta);
 
 #ifdef _DEBUG
 	m_pImGuiDebug->Update(fTimeDelta);
@@ -190,6 +199,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCamera_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Camera_Action */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"),
+		CCamera_Action::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
@@ -277,6 +291,7 @@ void CMainApp::Free()
 	__super::Free();
 
 	CGameManager::DestroyInstance();
+	m_pEffectSRV->DestroyInstance();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
@@ -288,4 +303,5 @@ void CMainApp::Free()
 	m_pGameInstance->Release_Engine();
 
 	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameManager);
 }

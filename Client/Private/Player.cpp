@@ -22,6 +22,13 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
+
+// 이거 보이면 지워주셈
+#include "LinkAttackTester.h"
+#include "Body_LinkAttackTester.h"
+#include "CameraBone_Player.h"
+// </>
+ 
 #include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -166,6 +173,9 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pGameManager->Lockon(fTimeDelta);
 
 	Update_TestLogic(fTimeDelta);
+
+	//링크 어택이 가장 최우선 판정으로 들어간다.
+	Update_LinkAttack(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
@@ -173,8 +183,8 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-		Use_RushSkill();
+	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
+	//	 Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -259,6 +269,34 @@ void CPlayer::SetSkillDataID(_uint iSkillID)
 _int CPlayer::GetSkillDataID()
 {
 	return m_iSkillID;
+}
+
+HRESULT CPlayer::Get_GaraGorillaBone(CLinkAttackTester* pObject)
+{
+	const _float4x4* pSocketMatrix = pObject->Get_PartObject(TEXT("Part_Body"))->Get_BoneMatrixPtr("SC_LinkTarget");
+
+	if (nullptr == pSocketMatrix)
+		return E_FAIL;
+
+	PLAYER_TRANSITION_DESC Desc{};
+	Desc.isChangeMode = FALSE;
+	Desc.eNextState = PLAYER_STATE::TEST_STATE;
+
+	SOCKETMATRIX_DESC SocketMatrixDesc;
+	SocketMatrixDesc.pParentTransformMatrix = pObject->GetTransform()->Get_WorldMatrixPtr();
+	SocketMatrixDesc.pSocketMatrix = pSocketMatrix;
+
+	Desc.pArg = &SocketMatrixDesc;
+
+	if (m_pWeapon)
+	{
+		m_iSkillID = -1;
+		m_pWeapon->EnableCollider(false);
+	}
+
+	m_pFSM->Handle_Transition(Desc);
+
+	return S_OK;
 }
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
@@ -369,6 +407,8 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CameraBone_Player"),
 		TEXT("Part_CameraBone"), &CameraBoneDesc)))
 		return E_FAIL;
+
+	m_pCameraBone = static_cast<CCameraBone_Player*>(Find_PartObject(TEXT("Part_CameraBone")));
 
 	Import_ModelPtr();
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
@@ -554,9 +594,52 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			m_PlayerDesc.fPotionCoolDown = 0.f;
 			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
 			
+
+
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 9.f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
+	}
+}
+
+void CPlayer::Update_LinkAttack(_float fTimeDelta)
+{
+	if (false == m_PlayerDesc.isLinkAttackAvailable || nullptr == m_PlayerDesc.pLinkAttackTarget)
+		return;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	{		
+		PLAYER_TRANSITION_DESC TransitionDesc{};
+		SOCKETMATRIX_DESC TargetDesc{};
+		_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;		
+
+		TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
+		TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+
+		switch (iMonsterID)
+		{
+		case 1:
+			TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
+			//여기서 기가스 정보 꺼내와서 넘겨줘야함
+			TransitionDesc.pArg = &TargetDesc;
+			break;
+
+		default:
+			return;
+		}
+
+		m_pFSM->Handle_Transition(TransitionDesc);
 	}
 }
 

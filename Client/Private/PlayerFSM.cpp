@@ -36,9 +36,13 @@
 #include "Player_ParryState.h"
 #include "Player_ParrySuccessState.h"
 #include "Player_ParryGuardState.h"
+#include "Player_TestState.h"
 
 //인터랙션 관련 상태들. 당장은 작은 박스만 구현
 #include "Player_SupplyBoxInteractionState.h"
+
+//링크 어택
+#include "Player_GigasLinkAttackState.h"
 
 
 CPlayerFSM::CPlayerFSM() 
@@ -94,6 +98,17 @@ void CPlayerFSM::Update(_float fTimeDelta)
 	// 모드 전환 체크
 	Evaluate_ModeTransitions(fTimeDelta, Desc);
 }
+
+/*
+다음 상태로의 생성을 결정해주는 함수.
+플레이어의 모드 3종류(IDLE, BATTLE, LOCKON)에 따라서
+어떤 상태로 전환할 것인지도 결정해줘. 
+
+그래서 idle 상태에서의 걷기, battle 상태에서의 걷기, lockon 상태에서의 걷기 등을
+이렇게 구분한거야.
+
+맨 밑에 보면 내가 Test_State 추가해놨으니까 참고 ㄱㄱ
+*/
 
 CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 {
@@ -269,6 +284,14 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: return CPlayer_ParryGuardState::Create(tDesc.pArg);
 		}
 		break;
+	case PLAYER_STATE::GIGAS_LINKATTACK:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		}
+		break;
 		
 	//인터랙션들은 Idle 상태에서만 넘어갈 수 있게끔 처리.
 	case PLAYER_STATE::SUPPLYBOX_INTERACTION:
@@ -279,6 +302,15 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: nullptr;
 		}
 		break;
+	// 테스트 스테이트는 제일 아래
+	//case PLAYER_STATE::TEST_STATE:
+	//	switch (m_pPlayerDesc->ePlayerMode)
+	//	{
+	//	case PLAYER_MODE::IDLE: return CPlayer_TestState::Create(tDesc.pArg);;
+	//	case PLAYER_MODE::BATTLE: return CPlayer_TestState::Create(tDesc.pArg);
+	//	case PLAYER_MODE::LOCKON: return CPlayer_TestState::Create(tDesc.pArg);
+	//	}
+	//	break;
 	default:
 		break;
 	}

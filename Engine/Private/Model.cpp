@@ -162,8 +162,10 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
     return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
 {
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
     if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
         return;
 
@@ -207,7 +209,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
         m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
     }
 
-    m_iFlagPreRootModified = ROOTFLAG_RESET;
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
     XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
 
@@ -218,8 +220,10 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
     return;
 }
 
-void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
 {
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
     _char pName[MAX_PATH] = {};
 
     CStringHelper::ConvertWideToUTF(strAnimationTag.c_str(), pName);
@@ -270,7 +274,7 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
         m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
     }
 
-    m_iFlagPreRootModified = ROOTFLAG_RESET;
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
     XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
 
@@ -283,8 +287,10 @@ void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float
     return;
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
 {
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
     _uint iAnimIndex = Find_Animation(szAnimationTag);
     m_fAnimationPlayRate = fAnimationPlayRate;
 
@@ -330,7 +336,7 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
         m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
     }
 
-    m_iFlagPreRootModified = ROOTFLAG_RESET;
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
     XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
 
@@ -946,11 +952,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
 
-    if (iAnimationState == ANIMATIONFLAG_FINISH)
+    if (iAnimationState == iFLAG_ANIMATION_FINISH)
         m_isFinish = TRUE;
-    else if (iAnimationState == ANIMATIONFLAG_PLAY)
+    else if (iAnimationState == iFLAG_ANIMATION_PLAY)
         m_isFinish = FALSE;
-    else if (iAnimationState == ANIMATIONFLAG_RESET)
+    else if (iAnimationState == iFLAG_ANIMATION_RESET)
     {
         if (AnimationChanged)
             AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
@@ -1012,12 +1018,14 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         }
     }
 
+
     // 루트모션 적용
     if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
     {
         m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
         Apply_RootMotion(pTransform, fRootMotionMagnification);
     }
+
 
     return m_isFinish;
 }
@@ -1712,9 +1720,9 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification)
 {
-    if (ROOTFLAG_RESET == m_iFlagPreRootModified)
+    if (iFLAG_ROOT_RESET == m_iFlagPreRootModified)
     {
-        m_iFlagPreRootModified = ROOTFLAG_INIT;
+        m_iFlagPreRootModified = iFLAG_ROOT_INIT;
         return S_OK;
     }
 
@@ -1730,42 +1738,63 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
         // 찾았을 때
         if (m_iRootIndex >= 0 && m_iRootIndex < (_int)m_Bones.size())
         {
-            m_Bones[m_iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
-            m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix));
+            _matrix matLocal = XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix);
+            _matrix matCombined = XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix);
+
+            m_Bones[m_iRootIndex]->Set_TransformationMatrix(matLocal);
+            m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(matCombined);
 
             // 첫 프레임이라는 뜻
-            if (ROOTFLAG_INIT == m_iFlagPreRootModified)
+            if (iFLAG_ROOT_INIT == m_iFlagPreRootModified)
             {
                 m_PreRootMatrix = pOut[0].BoneCombinedTransformMatrix;
                 m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
-                m_iFlagPreRootModified = ROOTFLAG_ACTIVE;
+                m_iFlagPreRootModified = iFLAG_ROOT_ACTIVE;
             }
             else
             {
                 // 루트 이동량이 있을 때, 로컬 본 기준으로 CombinedMatrix를 변화를 준다. 가 지금까지인데, 
                 m_PreRootMatrix = m_CurRootMatrix;
                 m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
+            }
 
-                if ((pTransform != nullptr)
-                    && (fRootMotionMagnification != 0.f))
-                {
-                    _vector vRootAmount = XMVectorSet(
-                        m_CurRootMatrix._41 - m_PreRootMatrix._41,
-                        m_CurRootMatrix._42 - m_PreRootMatrix._42,
-                        m_CurRootMatrix._43 - m_PreRootMatrix._43
-                        , 0.f);
 
-                    _matrix matTransform = XMLoadFloat4x4(pTransform->Get_WorldMatrixPtr());
-                    matTransform.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+            if ((m_isRootMotionUpdated == TRUE) &&
+                (pTransform != nullptr)
+                && (fRootMotionMagnification != 0.f))
+            {
+                _vector vRootAmount = XMVectorSet(
+                    m_CurRootMatrix._41 - m_PreRootMatrix._41,
+                    m_CurRootMatrix._42 - m_PreRootMatrix._42,
+                    m_CurRootMatrix._43 - m_PreRootMatrix._43
+                    , 0.f);
 
-                    vRootAmount = XMVector3TransformNormal(vRootAmount, matTransform);
+                _matrix matTransform = XMLoadFloat4x4(pTransform->Get_WorldMatrixPtr());
+                matTransform.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
-                    vRootAmount = XMVectorScale(vRootAmount, fRootMotionMagnification);
+                vRootAmount = XMVector3TransformNormal(vRootAmount, matTransform);
 
-                    _vector vRootMotion = pTransform->Get_State(STATE::POSITION) + vRootAmount;
+                vRootAmount = XMVectorScale(vRootAmount, fRootMotionMagnification);
 
-                    pTransform->Set_State(STATE::POSITION, vRootMotion);
-                }
+                _vector vRootMotion = pTransform->Get_State(STATE::POSITION) + vRootAmount;
+
+                pTransform->Set_State(STATE::POSITION, vRootMotion);
+            }
+            else
+            {
+                _vector vRootAmount = XMVectorSet(
+                    m_CurRootMatrix._41 - m_PreRootMatrix._41,
+                    m_CurRootMatrix._42 - m_PreRootMatrix._42,
+                    m_CurRootMatrix._43 - m_PreRootMatrix._43
+                    , 0.f);
+
+                _matrix vRootCombined = m_Bones[m_iRootIndex]->Get_CombinedTransformationMatrix();
+
+                vRootCombined.r[3] += vRootAmount;
+
+                m_Bones[m_iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
+                m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(vRootCombined);
+
             }
 
         }

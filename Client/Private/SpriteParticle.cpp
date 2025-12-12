@@ -2,6 +2,11 @@
 #include "SpriteParticle.h"
 
 #include "GameInstance.h"
+#include "MainApp.h"
+
+#include "EffectSRV.h"
+
+
 
 CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -114,6 +119,7 @@ HRESULT CSpriteParticle::Initialize(void* pArg)
 
 	if (FAILED(Ready_ComputeShader()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 	return S_OK;
 }
 
@@ -126,8 +132,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_tData.bisLoop = false;
-	}
-	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
+	}if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		m_isDead = true;
 		return;
 	}
@@ -161,6 +166,7 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+
 }
 
 HRESULT CSpriteParticle::Render()
@@ -296,6 +302,13 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+
+
+
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
+
 	return S_OK;
 }
 
@@ -465,4 +478,7 @@ void CSpriteParticle::Free()
 
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
+	//Safe_Release(m_pOriginalDSV);
+	//Safe_Release(m_pReadSource);
+	//Safe_Release(m_pRSV);
 }
