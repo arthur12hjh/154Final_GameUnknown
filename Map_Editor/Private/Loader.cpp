@@ -3350,9 +3350,30 @@ HRESULT CLoader::Loading_For_Desert()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/009_A_TD.dds"), 1))))
 		return E_FAIL;
+	/* For.Prototype_Component_Texture_Terrain_Red */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Red"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/004_A_TD.dds"), 1))))
+		return E_FAIL;
+	/* For.Prototype_Component_Texture_Terrain_Green */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Green"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/003_A_TD.dds"), 1))))
+		return E_FAIL;
 	/* For.Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/002_A_TAoRM.dds"), 1))))
+		return E_FAIL;
+	/* For.Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert_Red"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/004_A_TAoRM.dds"), 1))))
+		return E_FAIL;
+	/* For.Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert_Green"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/003_A_TAoRM.dds"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Terrain_Mask */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Mask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/Terrain_Mask.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Navigation */
@@ -3441,22 +3462,7 @@ HRESULT CLoader::Loading_For_Desert()
 		CPlayer_Test::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_01-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert2"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_02-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert3"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_03-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert4"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_04-512x512.png"), 1))))
-		return E_FAIL;
+	
 	/* For.Prototype_Component_Texture_Sky_Desert */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert5"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_05-512x512.png"), 1))))
@@ -3468,22 +3474,6 @@ HRESULT CLoader::Loading_For_Desert()
 	/* For.Prototype_Component_Texture_Sky_Desert */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert7"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_07-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert8"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_08-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert9"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_09-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert10"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_10-512x512.png"), 1))))
-		return E_FAIL;
-	/* For.Prototype_Component_Texture_Sky_Desert */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Sky_Desert11"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/Panorama_Sky_11-512x512.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
