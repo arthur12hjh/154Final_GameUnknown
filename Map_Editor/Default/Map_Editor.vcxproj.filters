@@ -226,6 +226,9 @@
     <Filter Include="02.GameObjects\Maps\Desert\Environment\Desert_Grass">
       <UniqueIdentifier>{f9c3a22b-aa08-4e8d-b1f3-91df4068db85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Monster">
+      <UniqueIdentifier>{5b856671-70c2-4f1c-92e6-3af682cdf7dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -545,6 +548,9 @@
     <ClInclude Include="..\public\Desert_Grass.h">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Monster.h">
+      <Filter>02.GameObjects\Player\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -847,6 +853,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Desert_Grass.cpp">
       <Filter>02.GameObjects\Maps\Desert\Environment\Desert_Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Monster.cpp">
+      <Filter>02.GameObjects\Player\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
