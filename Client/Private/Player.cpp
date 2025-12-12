@@ -303,7 +303,8 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	if (m_fTestTimer >= 1.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
@@ -526,6 +527,10 @@ void CPlayer::Update_BetaSkill(_float fTimeDelta)
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::ACTIVE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
 	}
 }
 

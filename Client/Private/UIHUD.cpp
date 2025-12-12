@@ -10,11 +10,15 @@
 #include "UIAnimManager.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "GameManager.h"
 
 #include "UIBossVitalWrapper.h"
 #include "UIWorldWrapper.h"
 #include "UISimpleKey.h"
 #include "Prob_Interaction.h"
+
+#include "Player.h"
+#include "PlayerFSM.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -29,6 +33,7 @@ HRESULT CUIHUD::Initialize()
 		return E_FAIL;
 
 	m_pGameInstance = CGameInstance::GetInstance();
+	m_pGameManager = CGameManager::GetInstance();
 	
 	m_pUIAnimMgr->Load_Anim_Files();
 
@@ -117,6 +122,26 @@ void CUIHUD::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	m_pUIAnimMgr->Update(fTimeDelta);
+
+	auto pPlayer = m_pGameManager->GetGameCharacter();
+
+	if (dynamic_cast<CPlayer*>(pPlayer))
+	{
+		if (PLAYER_STATE::GIGAS_LINKATTACK == pPlayer->Get_PlayerFSM()->Get_StateEnum())
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_World")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+		}
+		else
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+		}
+	}
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
@@ -1068,6 +1093,7 @@ void CUIHUD::Free()
 	__super::Free();
 
 	Safe_Release(m_pUIAnimMgr);
+	Safe_Release(m_pGameManager);
 
 	/*for (auto& pPools : m_WorldUIs)
 	{

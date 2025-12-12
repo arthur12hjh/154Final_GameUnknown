@@ -2,7 +2,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
-
+float g_fFar;
 //안개 색은 렌더타겟에 세팅해놓는다.
 float4 g_vFogColor;
 
@@ -96,7 +96,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     // 위치 복원 그대로 ---------------------------------------------------
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float  fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
 
     /* 로컬위치 * 월드 * 뷰 * 투영 / w */
     vector vPosition;
@@ -205,7 +205,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     
@@ -282,7 +282,7 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     
@@ -360,7 +360,7 @@ PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepth.x;
     vPosition.w = 1.f;
-    float fViewZ = vDepth.y * 500.f;
+    float fViewZ = vDepth.y * g_fFar;
     
     vPosition *= fViewZ;
 
@@ -393,7 +393,7 @@ PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
         vShadowUV.x = ((vShadowPosition.x / vShadowPosition.w) * 0.5f + 0.5f);
         vShadowUV.y = ((vShadowPosition.y / vShadowPosition.w) * -0.5f + 0.5f);
 
-        float fShadowMapDepth = g_ShadowTexture.Sample(DefaultSampler, vShadowUV).r * 500.0f;
+        float fShadowMapDepth = g_ShadowTexture.Sample(DefaultSampler, vShadowUV).r * g_fFar;
         float fCurrentDepth = vShadowPosition.w;
 
         float fBias = 0.05f;
@@ -444,7 +444,7 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     Out.vBloomScene = vShade;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     

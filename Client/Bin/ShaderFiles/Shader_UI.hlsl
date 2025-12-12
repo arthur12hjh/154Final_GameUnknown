@@ -60,6 +60,8 @@ float g_fScale = { 1.f };
 bool g_isFinisher = false;
 float g_fRotation = 0.f;
 
+bool g_isActive = false;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -87,39 +89,6 @@ BlendState BS_AddAlpha
     DestBlendAlpha = ZERO;
     BlendOpAlpha = ADD;
 };
-
-BlendState BS_Premultiplied
-{
-    BlendEnable[0] = TRUE;
-
-    SrcBlend = ONE;
-    DestBlend = INV_SRC_ALPHA;
-    BlendOp = ADD;
-
-    SrcBlendAlpha = ONE;
-    DestBlendAlpha = INV_SRC_ALPHA;
-    BlendOpAlpha = ADD;
-
-    RenderTargetWriteMask[0] = 0x0F;
-};
-
-BlendState BS_AlphaGlow
-{
-    BlendEnable[0] = TRUE;
-
-    // Color = Additive
-    SrcBlend = ONE;
-    DestBlend = ONE;
-    BlendOp = ADD;
-
-    // Alpha = Standard AlphaBlend
-    SrcBlendAlpha = SRC_ALPHA;
-    DestBlendAlpha = INV_SRC_ALPHA;
-    BlendOpAlpha = ADD;
-
-    RenderTargetWriteMask[0] = 0x0F;
-};
-
 
 /*------------------[S_DEBUG]---------------*/
 
@@ -561,79 +530,6 @@ PS_OUT PS_SHIELD(PS_IN In)
     return Out;
 }
 
-//PS_OUT PS_SHIELD(PS_IN In)
-//{    
-//    PS_OUT Out;
-//    Out.vColor = float4(0, 0, 0, 0);
-
-//    float2 uv = In.vTexcoord;
-
-//    float rightFill = saturate((g_fFillAmount - 0.5) * g_GroupCount);
-//    float leftFill = saturate(g_fFillAmount * g_GroupCount);
-    
-//    float leftEnd = 0.5 - g_UVGap * 0.5;
-//    float rightStart = 0.5 + g_UVGap * 0.5;
-
-//    // GAP → 완전 투명
-//    if (uv.x > leftEnd && uv.x < rightStart)
-//        return Out;
-
-//    //-----------------------------------------------
-//    // LEFT BLOCK (배경 FULL + 전경만 Clip)
-//    //-----------------------------------------------
-//    if (uv.x < leftEnd)
-//    {
-//        float localX = uv.x / leftEnd;
-
-//        // ---- 타일 반복 UV ----
-//        float2 tileUV;
-//        tileUV.x = frac(localX * g_UVScale.x);
-//        tileUV.y = frac(uv.y * g_UVScale.y);
-
-//        // 1) 배경은 항상 FULL
-//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-//        // 2) 전경은 FillAmount 기준으로 잘라냄
-//        float4 fgColor = float4(0, 0, 0, 0);
-
-//        if (localX <= leftFill)        // 조건 만족할 때만 FG를 그린다
-//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-//        fgColor *= g_vTintColor;
-        
-//        // 최종 색 = BG + FG
-//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
-//        return Out;
-//    }
-
-
-//    //-----------------------------------------------
-//    // RIGHT BLOCK (배경 FULL + 전경만 Clip)
-//    //-----------------------------------------------
-//    if (uv.x > rightStart)
-//    {
-//        float localX = (uv.x - rightStart) / (1.0 - rightStart);
-
-//        float2 tileUV;
-//        tileUV.x = frac(localX * g_UVScale.x);
-//        tileUV.y = frac(uv.y * g_UVScale.y);
-
-//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-//        float4 fgColor = float4(0, 0, 0, 0);
-
-//        if (localX <= rightFill)
-//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-//        fgColor *= g_vTintColor;
-        
-//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
-//        return Out;
-//    }
-
-//    return Out;
-//}
-
 /*------------------[E_SHIELD]----------------*/
 
 /*------------------[S_BETA]----------------*/
@@ -708,6 +604,55 @@ PS_OUT PS_BETA(PS_IN In)
 }
 
 /*------------------[E_BETA]----------------*/
+
+/*------------------[S_BETA_FX]----------------*/
+
+PS_OUT PS_BETA_FX(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 result = 0.f;
+    
+    if(g_isActive)
+    {
+        float2 Scale2UV = In.vTexcoord;
+        Scale2UV -= float2(0.5f, 0.5f);
+        Scale2UV /= 2.25f;
+        Scale2UV += float2(0.5f, 0.5f);
+   
+        float4 glow1 = g_Texture1.Sample(ClampSampler, Scale2UV);
+        result.rgb = glow1.rgb * float3(0.988f, 1.000f, 1.000f) * g_GlowIntensity;
+        //result.rgb = glow1.rgb * float3(0.f, 0.6f, 0.6f) * g_GlowIntensity;
+    }
+    else
+    {
+        float2 Center = float2(0.5f, 0.5f);
+        float s = sin(g_fRotation);
+        float c = cos(g_fRotation);
+
+        float2 rotatedUV;
+        float2 d = uv - Center;
+        rotatedUV.x = d.x * c - d.y * s;
+        rotatedUV.y = d.x * s + d.y * c;
+    
+        rotatedUV /= g_fScale;
+    
+        rotatedUV += Center;
+        
+        float4 glow0 = g_Texture0.Sample(ClampSampler, rotatedUV);
+        
+        result.rgb = glow0.rgb * float3(0.988f, 1.000f, 1.000f);
+        //result.rgb = glow0.rgb * float3(0.f, 0.6f, 0.6f);
+    }
+    
+    Out.vColor.rgb = result.rgb * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_BETA_FX]----------------*/
 
 /*------------------[S_SKILL_SLOT]----------------*/
 PS_OUT PS_SKILL_SLOT(PS_IN In)
@@ -1404,11 +1349,11 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
     
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
     
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_BETA();
+        PixelShader = compile ps_5_0 PS_BETA_FX();
     }
 
     pass SKILL_SLOT // 9

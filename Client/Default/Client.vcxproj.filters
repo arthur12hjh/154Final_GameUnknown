@@ -793,6 +793,12 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
       <UniqueIdentifier>{bbdd4585-dbfa-4936-91d8-bf60a2d46f2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10.GameManager\30.ImGui\CameraInserter">
+      <UniqueIdentifier>{f982a0fc-5ea3-474d-bec1-60601ff64a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX">
+      <UniqueIdentifier>{632fb142-8635-4cd8-b1c0-1eecc5f61f7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1591,13 +1597,21 @@
     <ClInclude Include="..\public\PoolingManager.h">
       <Filter>10.GameManager\PoolingManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\Player_GigasLinkAttackState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\public\Task_Dead.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h">
+      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectSRV.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBetaFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2367,13 +2381,21 @@
     <ClCompile Include="..\private\PoolingManager.cpp">
       <Filter>10.GameManager\PoolingManager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp">
+      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectSRV.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBetaFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
