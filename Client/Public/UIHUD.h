@@ -13,6 +13,7 @@ NS_BEGIN(Client)
 
 class CUIBase;
 class CUIAnimManager;
+class CGameManager;
 
 class CUIHUD final : public CGameHUD
 {
@@ -71,8 +72,6 @@ private:
 	void Reset_WorldUI_State(CUIBase* pUI);
 
 private:
-	
-
 	_bool m_bShowDebugRect{ true };
 
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
@@ -81,6 +80,7 @@ private:
 	vector<CUIBase*> m_InteractionUIs{};
 
 	CGameInstance* m_pGameInstance{ nullptr };
+	CGameManager* m_pGameManager{ nullptr };
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

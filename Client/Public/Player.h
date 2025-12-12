@@ -33,6 +33,7 @@ public:
 	virtual void	 Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
+	class CPlayerFSM* Get_PlayerFSM() { return m_pFSM; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -83,6 +84,7 @@ private:
 	void Update_BetaSkill(_float fTimeDelta);
 	void Update_Interaction(_float fTimeDelta);
 	void Update_PotionUse(_float fTimeDelta);
+	void Update_LinkAttack(_float fTimeDelta);
 
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
 	void CreateHitBox(const AnimNotify* pNotify);

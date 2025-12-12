@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Interaction_Component.h"
+#include "Effect.h"
 #include "UIHUD.h"
 #include "UIGetterQueue.h"
 
@@ -52,6 +53,19 @@ HRESULT CItem::Initialize(void* pArg)
 	_vector vCenterLeftPoint = (vOwnerPos + vCenterPoint) / 2.f;
 	XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
 	XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
+
+
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	EffectDesc.fRotationPerSec = 1.f;
+	EffectDesc.fSpeedPerSec = 1.f;
+
+	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+	EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.fSize = 0.5f;
+	EffectDesc.iFloor = 2;
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
@@ -152,6 +166,7 @@ HRESULT CItem::End_OverlapCallBack()
 
 void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
+	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
 	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
 		m_fInteractionDuration.x += fTimeDelta;
 
@@ -159,19 +174,28 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 	{
 		if (IsInteractionEnable())
 		{
-			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-			if (pHUD)
-			{
-				CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
-				if (pGetterQueue)
-					pGetterQueue->Insert_Queue(TEXT("테스트 60 G"));
-			}
-			Safe_Release(pHUD);
-
-			m_eInterState = INTERACTION_STATE::ACTIVE;
-			m_fInteractionDuration.x = 0.f;
-			m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+			m_eInterState = INTERACTION_STATE::CONTACT;
 		}
+	}
+	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		if (pHUD)
+		{
+			CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+			if (pGetterQueue)
+			{
+				WCHAR pText[MAX_PATH] = {};
+				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
+				pGetterQueue->Insert_Queue(pText);
+			}
+		}
+		Safe_Release(pHUD);
+
+		m_eInterState = INTERACTION_STATE::ACTIVE;
+		m_fInteractionDuration.x = 0.f;
+		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		Set_Dead(true);
 	}
 }
 
@@ -282,4 +306,6 @@ void CItem::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	if(nullptr != m_pEffect)
+		m_pEffect->End();
 }

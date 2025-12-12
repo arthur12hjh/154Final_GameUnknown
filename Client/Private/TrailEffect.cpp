@@ -222,3 +222,12 @@ _float2 CTrailEffect::ReadFloat2(ifstream& fileBinaryStream)
     fileBinaryStream.read((_char*)&fValue, sizeof(_float2));
     return fValue;
 }
+
+void CTrailEffect::Set_Color(_float4 fColor)
+{
+    for (auto pData : m_pTrailDatas) {
+        CTrailData::TRAIL_DATA data = pData->Get_Data();
+        data.fColor = fColor;
+        pData->Set_Data(data);
+    }
+}

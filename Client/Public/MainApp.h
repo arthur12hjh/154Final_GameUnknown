@@ -12,7 +12,7 @@ NS_BEGIN(Client)
 #ifdef _DEBUG
 class CImGuiMain;
 #endif
-
+class CEffectSRV;
 class CMainApp final : public CBase
 {	
 private:
@@ -32,7 +32,7 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
-
+	CEffectSRV*				m_pEffectSRV = { nullptr };
 	_bool					m_bIsMouseLock = { false };
 
 private:

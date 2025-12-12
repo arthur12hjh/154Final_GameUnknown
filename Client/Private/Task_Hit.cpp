@@ -37,25 +37,35 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 		Refresh_HitMotion();
 	}
 
-	if(nullptr == m_pHit_Data || m_pBlackBoard->IsAttackEnable())
+	if (false == m_pBlackBoard->bIsExcution())
 	{
-		// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
-		// 확인하고 EFail;
-		m_pHit_Data = nullptr;
-		if(CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
-			m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
-		return NODE_STATE::FAIL;
+		if (nullptr == m_pHit_Data || m_pBlackBoard->IsAttackEnable())
+		{
+			// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
+			// 확인하고 EFail;
+			m_pHit_Data = nullptr;
+			if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
+				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+			return NODE_STATE::FAIL;
+		}
 	}
 
 	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
 	if (m_pOwner->Play_Animation(fTimeDelta))
 	{
 		m_pHit_Data = nullptr;
+		if (m_pBlackBoard->bIsExcution())
+			m_pBlackBoard->EnterExcution(false);
+
 		return NODE_STATE::COMPLETE;
 	}
-	else if (0.5f >= fAnimationRatio)
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
+	else if (false == m_pBlackBoard->bIsExcution())
+	{
+		if (0.5f >= fAnimationRatio)
+			m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
 
+	}
+	
 	return NODE_STATE::RUNNING;
 }
 

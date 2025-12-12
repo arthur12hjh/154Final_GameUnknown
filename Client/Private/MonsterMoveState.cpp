@@ -307,7 +307,7 @@ void CMonsterMoveState::Compute_MoveDirection()
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _float fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
 
-    _float fSafeDistance = m_pOwnerInfo->fAttackRange * 0.6f;
+    _float fSafeDistance = m_pOwnerInfo->fAttackRange * 0.6F;
     if (fSafeDistance < fDistance)
     {
         _float fRandom = m_pGameInstance->Random(0.f, 100.f);

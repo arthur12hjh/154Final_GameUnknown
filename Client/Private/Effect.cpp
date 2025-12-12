@@ -37,7 +37,10 @@ HRESULT CEffect::Initialize_Prototype(const _char* szFile)
 
 HRESULT CEffect::Initialize(void* pArg)
 {
-    if (FAILED(__super::Initialize(nullptr)))
+    CGameObject::GAMEOBJECT_DESC desc = {};
+    desc.fRotationPerSec = 1;
+    desc.fSpeedPerSec = 1;
+    if (FAILED(__super::Initialize(&desc)))
         return E_FAIL;
     m_fStopTime = -10.f;
     if (nullptr != pArg)
@@ -56,23 +59,28 @@ HRESULT CEffect::Initialize(void* pArg)
         if (nullptr != pDesc->pDir) {
             m_pTransformCom->LookAt(m_pTransformCom->Get_State(STATE::POSITION) + XMLoadFloat3(pDesc->pDir));
         }
-        m_bisFloor = pDesc->bisFloor;
+        m_iFloor = pDesc->iFloor;
     }
     if (nullptr != m_pParentMat) {
         if (nullptr != m_pParentWorldMat) {
             XMStoreFloat4x4(&m_CombinedWorldMatrix,
                 XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat) * XMLoadFloat4x4(m_pParentWorldMat));
-            if (m_bisFloor) {
+            switch (m_iFloor)
+            {
+            case 1:
                 m_CombinedWorldMatrix._42 = m_pParentWorldMat->_42;
                 XMStoreFloat4x4(&m_CombinedWorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_CombinedWorldMatrix)));
+                break;
             }
         }
         else {
             XMStoreFloat4x4(&m_CombinedWorldMatrix,
-                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-            if (m_bisFloor) {
-                m_CombinedWorldMatrix._42 = m_pParentMat->_42;
-                XMStoreFloat4x4(&m_CombinedWorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_CombinedWorldMatrix)));
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat)); switch (m_iFloor)
+            {
+                case 1:
+                    m_CombinedWorldMatrix._42 = m_pParentMat->_42;
+                    XMStoreFloat4x4(&m_CombinedWorldMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_CombinedWorldMatrix)));
+                    break;
             }
         }
     }
@@ -122,7 +130,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
     ifstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
     _int iMeshCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iMeshCount; ++i) {
+    for (_int i = 0; i < iMeshCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         MeshDesc.szModel = szTemp;
         Safe_Delete(szTemp);
@@ -137,7 +145,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         MeshDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             MeshDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         MeshDesc.fColor = ReadFloat4(fileBinaryStream);
@@ -169,7 +177,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pMeshEffects.push_back(pMeshEffect);
     }
     _int iParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iParticleCount; ++i) {
+    for (_int i = 0; i < iParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         ParticleDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
@@ -184,7 +192,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         ParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
@@ -228,7 +236,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pPointParticles.push_back(pParticle);
     }
     _int iSpriteParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteParticleCount; ++i) {
+    for (_int i = 0; i < iSpriteParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         SpriteParticleDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
@@ -243,7 +251,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         SpriteParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             SpriteParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         SpriteParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
@@ -290,7 +298,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pSpriteParticles.push_back(pParticle);
     }
     _int iSpriteCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteCount; ++i) {
+    for (_int i = 0; i < iSpriteCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         SpriteDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
@@ -350,25 +358,10 @@ void CEffect::Late_Update(_float fTimeDelta)
         if (nullptr != m_pParentWorldMat) {
             XMStoreFloat4x4(&m_CombinedWorldMatrix, 
                 XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat) * XMLoadFloat4x4(m_pParentWorldMat));
-            if (m_bisFloor) {
-                m_CombinedWorldMatrix._42 = m_pParentWorldMat->_42;
-                _float  fLength = XMVectorGetX(XMVector3Length(XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14)));
-                _vector vLook = XMVector3Normalize(XMVectorSet(m_CombinedWorldMatrix._31, 0, m_CombinedWorldMatrix._33, 0));
-                _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0,1,0,0), vLook));
-                _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
-                vRight *= fLength;
-                vUp *= fLength;
-                vLook *= fLength;
 
-                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0]), vRight);
-                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[1]), vUp);
-                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2]), vLook);
-            }
-        }
-        else {
-            XMStoreFloat4x4(&m_CombinedWorldMatrix,
-                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-            if (m_bisFloor) {
+            switch (m_iFloor)
+            {
+            case 1: {
                 m_CombinedWorldMatrix._42 = m_pParentWorldMat->_42;
                 _float  fLength = XMVectorGetX(XMVector3Length(XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14)));
                 _vector vLook = XMVector3Normalize(XMVectorSet(m_CombinedWorldMatrix._31, 0, m_CombinedWorldMatrix._33, 0));
@@ -382,7 +375,62 @@ void CEffect::Late_Update(_float fTimeDelta)
                 XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[1]), vUp);
                 XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2]), vLook);
             }
+                  break;
+            case 2: {
+                _float  fLength = XMVectorGetX(XMVector3Length(XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14)));
+                _vector vLook = XMVector3Normalize(XMVectorSet(m_CombinedWorldMatrix._31, 0, m_CombinedWorldMatrix._33, 0));
+                _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
+                _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+                vRight *= fLength;
+                vUp *= fLength;
+                vLook *= fLength;
+
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0]), vRight);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[1]), vUp);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2]), vLook);
+            }
+                  break;
+            }
         }
+        else {
+            XMStoreFloat4x4(&m_CombinedWorldMatrix,
+                XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
+            switch (m_iFloor)
+            {
+            case 1: {
+                m_CombinedWorldMatrix._42 = m_pParentWorldMat->_42;
+                _float  fLength = XMVectorGetX(XMVector3Length(XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14)));
+                _vector vLook = XMVector3Normalize(XMVectorSet(m_CombinedWorldMatrix._31, 0, m_CombinedWorldMatrix._33, 0));
+                _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
+                _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+                vRight *= fLength;
+                vUp *= fLength;
+                vLook *= fLength;
+
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0]), vRight);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[1]), vUp);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2]), vLook);
+            }
+                  break;
+            case 2: {
+                _float  fLength = XMVectorGetX(XMVector3Length(XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14)));
+                _vector vLook = XMVector3Normalize(XMVectorSet(m_CombinedWorldMatrix._31, 0, m_CombinedWorldMatrix._33, 0));
+                _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
+                _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+                vRight *= fLength;
+                vUp *= fLength;
+                vLook *= fLength;
+
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0]), vRight);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[1]), vUp);
+                XMStoreFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2]), vLook);
+            }
+                  break;
+            }
+        }
+    }
+    else {
+        m_CombinedWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     }
     if (1 < m_pMeshEffects.size()) {
         for (auto i = m_pMeshEffects.begin(); i != m_pMeshEffects.end();) {

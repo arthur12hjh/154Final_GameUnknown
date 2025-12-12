@@ -577,9 +577,6 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
       <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
-      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
       <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
     </Filter>
@@ -751,9 +748,6 @@
     <Filter Include="02.GameObjects\Camera\Camera_Action">
       <UniqueIdentifier>{559b4dcb-c12d-4871-912d-69f322112f25}</UniqueIdentifier>
     </Filter>
-    <Filter Include="30.ImGui\CameraActionInserter">
-      <UniqueIdentifier>{91a3ae3c-0b87-4dbf-a293-fbc3155b33ae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\RimLight">
       <UniqueIdentifier>{b03d4615-3346-4cfd-b791-ceab1eab1e72}</UniqueIdentifier>
     </Filter>
@@ -786,6 +780,24 @@
     </Filter>
     <Filter Include="10.GameManager\ShaderManager">
       <UniqueIdentifier>{f7ea2137-afca-4706-930f-374bc4a3fa4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner">
+      <UniqueIdentifier>{8d2807a6-6a2b-4285-9ddb-1d0de7492f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\PoolingManager">
+      <UniqueIdentifier>{89074d3c-6ab8-4ef0-9f50-5868e3322fc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Theshold">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
+      <UniqueIdentifier>{bbdd4585-dbfa-4936-91d8-bf60a2d46f2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\30.ImGui\CameraInserter">
+      <UniqueIdentifier>{f982a0fc-5ea3-474d-bec1-60601ff64a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX">
+      <UniqueIdentifier>{632fb142-8635-4cd8-b1c0-1eecc5f61f7d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -951,8 +963,8 @@
     <ClInclude Include="..\Public\Task_Idle.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_Dead.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    <ClInclude Include="..\Public\Task_Theshold.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Hit.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
@@ -1579,8 +1591,27 @@
     <ClInclude Include="..\Public\Camera_Action.h">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Spawner.h">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PoolingManager.h">
+      <Filter>10.GameManager\PoolingManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_GigasLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h" />
+    <ClInclude Include="..\public\Task_Dead.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CameraActionInserter.h">
-      <Filter>30.ImGui\CameraActionInserter</Filter>
+      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectSRV.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBetaFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1730,8 +1761,8 @@
     <ClCompile Include="..\Private\Task_Idle.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Task_Dead.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    <ClCompile Include="..\Private\Task_Theshold.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Hit.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
@@ -2344,8 +2375,27 @@
     <ClCompile Include="..\Private\Camera_Action.cpp">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Spawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PoolingManager.cpp">
+      <Filter>10.GameManager\PoolingManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
+    <ClCompile Include="..\private\Task_Dead.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\CameraActionInserter.cpp">
-      <Filter>30.ImGui\CameraActionInserter</Filter>
+      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectSRV.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBetaFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

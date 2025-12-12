@@ -62,7 +62,6 @@ void CUIBossStamina::Update(_float fTimeDelta)
 		m_iCurrentStamina = Desc->iCurrentStamina;
 		m_iMaxStamina = StaticDesc->iMaxStamina;
 
-		// 여기서 사이즈, 위치 잡으면 될듯
 		m_tUIDesc.fSizeX = (m_iMaxStamina * 12.f) + ((m_iMaxStamina - 1) * 3.f);
 
 		_float4 vScale{ m_tUIDesc.fSizeX, m_pTransformCom->Get_Scale().y, m_pTransformCom->Get_Scale().z, 1.f };
@@ -77,29 +76,6 @@ void CUIBossStamina::Update(_float fTimeDelta)
 void CUIBossStamina::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
-
-	//_int filledTiles = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
-
-	//// 현재 묶음 인덱스
-	//_int currentGroup = filledTiles / m_iPerCount;  // 0~5 범위
-
-	//// 묶음이 새로 완성된 순간 감지
-	//if (currentGroup != m_iPrevGroupFilled)
-	//{
-	//	// ★ 묶음이 새로 채워짐
-	//	// currentGroup가 증가 방향일 때만 체크하는게 더 깔끔함
-	//	if (currentGroup > m_iPrevGroupFilled)
-	//	{
-	//		// ---- 여기에서 이펙트 출력 ----
-	//		// 예: TriggerEffect(currentGroup);
-
-	//		int a = 0;
-	//	}
-
-	//	m_iPrevGroupFilled = currentGroup;
-	//}
-
-	
 }
 
 HRESULT CUIBossStamina::Render()

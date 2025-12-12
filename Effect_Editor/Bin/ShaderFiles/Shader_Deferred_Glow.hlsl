@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -72,7 +73,7 @@ PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
     }
     vColor /= vsize;
     
-    float farFactor = vWeight.b;
+    float farFactor = vWeight.b * vWeight.g;
     Out.vGlowY = vColor;
     Out.vGlowY.rgb *= farFactor;
     Out.vWeight = vWeight / vsize;

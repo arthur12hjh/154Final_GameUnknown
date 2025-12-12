@@ -203,14 +203,14 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
         strcpy_s(BossDesc.szAIControllerPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIBehaviorPrototype, BossDataList[i++].c_str());
 
-        BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
-        BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
-        BossDesc.iMaxStamina = atoi(BossDataList[i++].c_str());
-        BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxHealth = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.iMaxShield = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.iMaxStamina = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fMoveSpeed = static_cast<_float>(atoi(BossDataList[i++].c_str()));
 
-        BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
-        BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
-        BossDesc.fLerpRatio = atof(BossDataList[i++].c_str());
+        BossDesc.fAttackCoolTime = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fAttackRange = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fLerpRatio = static_cast<_float>(atof(BossDataList[i++].c_str()));
 
         BossDesc.fColliderExtents.x = (_float)atof(BossDataList[i++].c_str());
         BossDesc.fColliderExtents.y = (_float)atof(BossDataList[i++].c_str());
@@ -270,10 +270,10 @@ HRESULT CDataManager::LoadSkillData()
         strcpy_s(SkillDesc.szLinkBoneName, SkillDataList[i++].c_str());
 
         SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
-        SkillDesc.fRange = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.x = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
+        SkillDesc.fRange = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.x = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.y = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.z = static_cast<_float>(atof(SkillDataList[i++].c_str()));
         SkillDesc.iMaxComboCount = atoi(SkillDataList[i++].c_str());
 
         SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));

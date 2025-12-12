@@ -11,13 +11,14 @@ class CModel;
 NS_END
 
 NS_BEGIN(Client)
+class CEffect;
 class CItem final : public CProb_Interaction
 {
 public:
 	typedef struct Item_Desc : public PROB_INTERACTION_DESC
 	{
 		_uint						iItemID;
-		_uint						fAmount;
+		_float						fAmount;
 
 		_float3						fDropPoint;
 		_float						fDropForce;
@@ -40,6 +41,7 @@ public:
 
 protected:
 	CModel*							m_pModelCom = { nullptr };
+	CEffect*						m_pEffect = { nullptr };
 
 	ITEM_DSEC						m_ItemData = {};
 	_float							m_fAmount = {};

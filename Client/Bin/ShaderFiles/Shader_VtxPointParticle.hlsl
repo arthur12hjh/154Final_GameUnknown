@@ -14,10 +14,10 @@ float2 g_fDiffuseUVSize = float2(1, 1);
 float2 g_fDissolveUV = float2(0, 0);
 float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
+float g_fFar;
 int g_iSizeCount;
 bool g_bisBillboard, g_bisSpectrum;
 StructuredBuffer<float3> g_fSizeDiagram : register(t0);
-float g_fFar;
 
 struct VS_IN
 {

@@ -123,7 +123,16 @@ void CLockonManager::Lockon(_float fTimeDelta)
     Find_NearestTarget(fTimeDelta);
 
     if (!m_pTarget)
+    {
+        if (m_pLockonUI)
+        {
+            CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+            pUIHUD->Return_WorldUI(m_pLockonUI);
+            Safe_Release(pUIHUD);
+        }
+
         return;
+    }
 
     // 타겟이 바뀌면 풀한테 돌려주기
     if (m_pLockonUI && m_pTarget != m_pLockonUI->GetParent())
@@ -135,7 +144,9 @@ void CLockonManager::Lockon(_float fTimeDelta)
 
     if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
+        //락온 포인트 받는 구간. 여기서 네이티브 아이디 받아와서 처리하면 될듯
         Get_LockOnPoint();
+        Check_LinkAttack();
 
         if (!m_pLockonUI)
         {
@@ -163,6 +174,15 @@ void CLockonManager::Start_Lockon()
 {
     // 락온모드 시작. 키입력으로 넣을때 추가할 것
     m_pPlayerDesc->isRequestLockonToggle = true;
+}
+
+void CLockonManager::Check_LinkAttack()
+{
+    if (true == m_pPlayerDesc->isBossLock && true == m_pTarget->bIsThesholdAction())
+    {
+		m_pPlayerDesc->pLinkAttackTarget = m_pTarget;
+        m_pPlayerDesc->isLinkAttackAvailable = true;
+    }
 }
 
 CLockonManager* CLockonManager::Create()

@@ -11,7 +11,10 @@
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
 #include "Player.h"
+#include "Spawner.h"
 #include "UIHUD.h"
+
+#include "SpriteParticle.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -54,7 +57,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
-	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
+	auto pGameManager = CGameManager::GetInstance();
+	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+
+	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
 
@@ -383,26 +389,39 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 
-	Desc.iMonsterID = 6;
+	/*Desc.iMonsterID = 6;
 	Desc.vPosition = { 350.f, 1.f, 600.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;*/
+
+
+
+	/*CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	pSapwnerDesc.bIsApplyTransform = true;
+	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
+	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
+	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
+		return E_FAIL;*/
+
+	//// 대부분 누수가 난다면 이새끼가 문제다 이새끼 주석처리해야한다반드시)
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
+	//	return E_FAIL;
+
+	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;*/
+
+	Desc.iMonsterID = 7;
+	Desc.vPosition = { 450.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	// 대부분 누수가 난다면 이새끼가 문제다 이새끼 주석처리해야한다반드시)
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-		return E_FAIL;
-
-	//Desc.iMonsterID = 7;
-	//Desc.vPosition = { 450.f, 1.f, 600.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
-
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-	//		return E_FAIL;
+		
 
 	return S_OK;
 }
@@ -772,6 +791,4 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
-
-
 }

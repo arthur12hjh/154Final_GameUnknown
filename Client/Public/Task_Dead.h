@@ -18,13 +18,15 @@ public:
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
-private :
+private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
+	_float								m_fDeadEndTime = {};
+	_bool										m_bIsDeadEffect = { false };
 
 public:
 	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
-	
+
 };
 NS_END

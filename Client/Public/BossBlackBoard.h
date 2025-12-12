@@ -16,7 +16,7 @@ class CBossBlackBoard abstract : public CBlackBoard
 public:
 	enum class BOSS_STATE
 	{
-		IDLE, ATTACK, HIT, MOVE, GROGGY, DEAD, END
+		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, DEAD, END
 	};
 
 	typedef struct BossBlackBoardDesc
@@ -59,6 +59,8 @@ public:
 	void								EnterGroggy();
 	_bool								ExitGroggy();
 
+	void								EnterExcution(_bool bIsExcution);
+	_bool								bIsExcution() { return m_bIsExcution; }
 	// 이걸로 공격 가능체크하고
 	// 가능하면 True를 반환.
 	_bool								IsAttackEnable();
@@ -77,6 +79,7 @@ protected :
 	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
+	_bool								m_bIsExcution = { false };
 	_float								m_fTargetDistance = {};
 	_float2								m_fAttackDelay = {};
 	_float2								m_vGroggyTime = { 0.f, 4.0f };

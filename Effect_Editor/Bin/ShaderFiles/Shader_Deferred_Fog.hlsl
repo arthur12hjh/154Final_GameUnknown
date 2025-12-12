@@ -3,9 +3,11 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 float g_fFogStart, g_fFogEnd;
 float g_fFogPowerMin, g_fFogPowerMax;
+float g_fSkyBoxFogPower;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -38,9 +40,12 @@ PS_OUT_FOG PS_MAIN_FOG(PS_IN In)
     
     //깊이 기록 되지 않은 녀석들에게 처리해주기 위한 코드
     if (vDepthDesc.r == 0 && vDepthDesc.g == 1 && vDepthDesc.b == 0 && vDepthDesc.a == 0)
-       return Out;
+    {
+        Out.fFogPower = g_fSkyBoxFogPower;
+        return Out;
+    }
     
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     vector vPosition;
 
     /* 로컬위치 * 월드 * 뷰 * 투영 / w */

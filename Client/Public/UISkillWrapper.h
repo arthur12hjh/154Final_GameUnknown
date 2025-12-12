@@ -44,7 +44,8 @@ private:
 
 	SKILL_STATE* m_eSkillState[4];
 	SKILL_STATE m_ePrevSkillState[4];
-	_uint*  m_iSkillID[4];
+	_uint* m_iSkillID[4];
+	LONGLONG* m_iCurrentBeta{ nullptr };
 	/*SKILL_STATE* m_eSkillState[4];
 	SKILL_STATE m_ePrevSkillState[4];*/
 

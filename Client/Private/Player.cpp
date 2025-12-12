@@ -173,6 +173,9 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pGameManager->Lockon(fTimeDelta);
 
 	Update_TestLogic(fTimeDelta);
+
+	//링크 어택이 가장 최우선 판정으로 들어간다.
+	Update_LinkAttack(fTimeDelta);
 	Update_RushSkill(fTimeDelta);
 	Update_BetaSkill(fTimeDelta);
 	Update_FSM(fTimeDelta);
@@ -180,8 +183,8 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-		Use_RushSkill();
+	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
+	//	 Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -282,7 +285,6 @@ HRESULT CPlayer::Get_GaraGorillaBone(CLinkAttackTester* pObject)
 	SOCKETMATRIX_DESC SocketMatrixDesc;
 	SocketMatrixDesc.pParentTransformMatrix = pObject->GetTransform()->Get_WorldMatrixPtr();
 	SocketMatrixDesc.pSocketMatrix = pSocketMatrix;
-
 
 	Desc.pArg = &SocketMatrixDesc;
 
@@ -524,6 +526,10 @@ void CPlayer::Update_BetaSkill(_float fTimeDelta)
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::ACTIVE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
 	}
 }
 
@@ -564,6 +570,10 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				m_pFSM->Handle_Transition(Desc);
 				break;
 			}
+			case INTERACTION_TYPE::ITEM:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
@@ -592,9 +602,52 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			m_PlayerDesc.fPotionCoolDown = 0.f;
 			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
 			
+
+
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 9.f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
+	}
+}
+
+void CPlayer::Update_LinkAttack(_float fTimeDelta)
+{
+	if (false == m_PlayerDesc.isLinkAttackAvailable || nullptr == m_PlayerDesc.pLinkAttackTarget)
+		return;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	{		
+		PLAYER_TRANSITION_DESC TransitionDesc{};
+		SOCKETMATRIX_DESC TargetDesc{};
+		_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;		
+
+		TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
+		TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+
+		switch (iMonsterID)
+		{
+		case 1:
+			TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
+			//여기서 기가스 정보 꺼내와서 넘겨줘야함
+			TransitionDesc.pArg = &TargetDesc;
+			break;
+
+		default:
+			return;
+		}
+
+		m_pFSM->Handle_Transition(TransitionDesc);
 	}
 }
 

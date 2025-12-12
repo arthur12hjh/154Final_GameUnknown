@@ -30,6 +30,7 @@ private:
     _int    ReadInt(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float2 ReadFloat2(ifstream& fileBinaryStream);
+    void    Set_Color(_float4 fColor);
 private:
     vector<CTrailData*> m_pTrailDatas = {};
     vector< CTrailData::TRAIL_DATA> m_tDatas = {};

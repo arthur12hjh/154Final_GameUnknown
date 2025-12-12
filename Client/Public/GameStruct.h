@@ -31,12 +31,18 @@ namespace Client
 		RECOVERY_END
 	};
 
-
 	typedef struct Default_Status
 	{
 		long long						iCurrentHealth;
 		long long						iCurrentShield;
 	}DEFAULT_STATUS;
+
+	typedef struct tagRimLightDesc
+	{
+		_float4		vRimLightColor = { 1.f, 1.f, 1.f, 1.f };
+		_float		fRimLightPower = 2.f;
+		_float		fRimLightIntensity = 1.f;
+	} RIMLIGHT_DESC;
 
 
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
@@ -69,6 +75,8 @@ namespace Client
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
 		AERIAL_ATTACK, //미구현
+
+		GIGAS_LINKATTACK,
 		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
@@ -148,6 +156,8 @@ namespace Client
 		// 만약 저스트 패링이 가능하다면 true, 불가능하다면 false
 		bool   isJustParryable = { false };
 
+		bool   isLinkAttackAvailable = { true };
+		class CNayitba* pLinkAttackTarget = { nullptr };
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -276,7 +286,6 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		_bool				m_bIsParryHitAble;
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
