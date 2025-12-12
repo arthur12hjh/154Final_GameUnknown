@@ -10,7 +10,6 @@
 #include "GameInstance.h"
 #include "CinemaTrack.h"
 #include "Monster.h"
-#include "Body_Monster.h"
 
 // Buildings
 #include "StoneWall1.h"
