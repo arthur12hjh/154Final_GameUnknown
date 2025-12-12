@@ -36,6 +36,8 @@ private:
 
 	MOUSE_SCALE					m_eMosueScale = {MOUSE_SCALE::SCLAE_DEFUALT};
 
+	_bool						m_bIsRendered = TRUE;
+
 private:
 	HRESULT						Ready_Components();
 	HRESULT						Bind_ShaderResources();

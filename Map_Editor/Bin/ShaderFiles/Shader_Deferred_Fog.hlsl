@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 float g_fFogStart, g_fFogEnd;
 float g_fFogPowerMin, g_fFogPowerMax;
@@ -44,7 +45,7 @@ PS_OUT_FOG PS_MAIN_FOG(PS_IN In)
         return Out;
     }
     
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     vector vPosition;
 
     /* 로컬위치 * 월드 * 뷰 * 투영 / w */
