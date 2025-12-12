@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Terrain_Desert.h"
 #include "GameInstance.h"
+#include "MapTool_Desert.h"
 
 CTerrain_Desert::CTerrain_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -55,7 +56,7 @@ HRESULT CTerrain_Desert::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(0)))
+	if (FAILED(m_pShaderCom->Begin(1)))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -166,10 +167,31 @@ HRESULT CTerrain_Desert::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Red"),
+		TEXT("Com_Texture_Red"), reinterpret_cast<CComponent**>(&m_pTextureCom_Red))))
+		return E_FAIL;
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Green"),
+		TEXT("Com_Texture_Green"), reinterpret_cast<CComponent**>(&m_pTextureCom_Green))))
+		return E_FAIL;
 
 	/* Com_ORM */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert"),
 		TEXT("Com_ORM"), reinterpret_cast<CComponent**>(&m_pORMTextureCom))))
+		return E_FAIL;
+	///* Com_ORM */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert_Red"),
+	//	TEXT("Com_ORM_Red"), reinterpret_cast<CComponent**>(&m_pORMTextureCom_Red))))
+	//	return E_FAIL;
+	///* Com_ORM */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert_Green"),
+	//	TEXT("Com_ORM_Green"), reinterpret_cast<CComponent**>(&m_pORMTextureCom_Green))))
+	//	return E_FAIL;
+
+	/* Com_Mask */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Mask"),
+		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
 		return E_FAIL;
 
 	/* Com_Shader */
@@ -195,7 +217,11 @@ HRESULT CTerrain_Desert::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Base")))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom_Red->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Red")))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom_Green->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Green")))
 		return E_FAIL;
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
@@ -205,6 +231,17 @@ HRESULT CTerrain_Desert::Bind_ShaderResources()
 	{
 		if (FAILED(m_pORMTextureCom->Bind_ShaderResources(m_pShaderCom, "g_ORMTexture")))
 			return E_FAIL;
+	}
+
+	if (m_pMaptool)
+	{
+		ID3D11ShaderResourceView* pMaskSRV = m_pMaptool->Get_MaskSRV();
+
+		if (pMaskSRV)
+		{
+			if (FAILED(m_pShaderCom->Bind_SRV("g_MaskTexture", pMaskSRV)))
+				return E_FAIL;
+		}
 	}
 
 
@@ -244,7 +281,12 @@ void CTerrain_Desert::Free()
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pTextureCom_Red);
+	Safe_Release(m_pTextureCom_Green);
+	Safe_Release(m_pMaskCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pORMTextureCom);
+	Safe_Release(m_pORMTextureCom_Red);
+	Safe_Release(m_pORMTextureCom_Green);
 
 }
