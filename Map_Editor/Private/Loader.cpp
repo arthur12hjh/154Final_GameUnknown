@@ -10,7 +10,7 @@
 #include "GameInstance.h"
 #include "CinemaTrack.h"
 #include "Monster.h"
-#include "Body_Monster.h"
+//#include "Body_Monster.h"
 
 // Buildings
 #include "StoneWall1.h"
@@ -905,7 +905,7 @@ HRESULT CLoader::Loading_For_Monster(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
 
 	/* For.Prototype_Component_Model_StatueA */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	_matrix PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Statue/A/CH_M_NA_40.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -913,7 +913,7 @@ HRESULT CLoader::Loading_For_Monster(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_StatueB */
-	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -921,14 +921,14 @@ HRESULT CLoader::Loading_For_Monster(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Gorilla */
-	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Gorilla/SuperGorilla.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	/* For.Prototype_Component_Model_Minion11 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Minion11");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../../Client/Bin/Resources/Models/Monster/Minion/11/Minion11.fbx", PreTransformMatrix);
@@ -936,7 +936,7 @@ HRESULT CLoader::Loading_For_Monster(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	/* For.Prototype_Component_Model_SunFlower */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_SunFlower");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../../Client/Bin/Resources/Models/Monster/SunFlower/SunFlower.binx", PreTransformMatrix);

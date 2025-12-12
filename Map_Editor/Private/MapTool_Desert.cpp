@@ -1313,6 +1313,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
 					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 5;
 					break;
+				case DESESRT_RUIN_OBJECT::SPAWN_BOX7:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 7;
+					break;
 #pragma endregion
 
 #pragma region Terrain
@@ -1344,7 +1348,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
-					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+					if(pDesc.pComponentTag == nullptr)
+						hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &MonsterDesc);
+					else	
+						hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+
 				}
 				else
 				{
@@ -1727,7 +1735,7 @@ HRESULT CMapTool_Desert::Render()
 	}
 
 	_int nSelectedCharacter = -1;
-	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5" };
+	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5", "Monster7"};
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
@@ -1751,6 +1759,11 @@ HRESULT CMapTool_Desert::Render()
 			else if (nSelectedCharacter == 3)
 			{
 				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 4)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX7;
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
 
