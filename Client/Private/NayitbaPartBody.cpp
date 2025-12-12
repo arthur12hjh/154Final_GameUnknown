@@ -5,6 +5,7 @@
 #include "Trail.h"
 #include "TrailEffect.h"
 #include "Texture.h"
+#include "Nayitba.h"
 
 #include "GameInstance.h"
 
@@ -51,50 +52,56 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     {
         if (0 >= m_fDeadTime && m_bisSetDeadEffect) {
 
-            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-            EffectDesc.fRotationPerSec = 1.f;
-            EffectDesc.fSpeedPerSec = 1.f;
-            
-            _float4x4 matTransform;
-            XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
-            EffectDesc.pRootMatrix = nullptr;
-            EffectDesc.pWorldMatrix = nullptr;
-            EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, matTransform._44);
-            
-            EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
-            EffectDesc.fSize = 1.f;
-            EffectDesc.iFloor = 0;
-            m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Ashes"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
-            
-            //CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-            //EffectDesc.fRotationPerSec = 1.f;
-            //EffectDesc.fSpeedPerSec = 1.f;
-            //    
-            //_float4x4 matTransform;
-            //XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
-            //EffectDesc.pRootMatrix = nullptr;
-            //EffectDesc.pWorldMatrix = nullptr;
-            //EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42 - 1.f, matTransform._43, matTransform._44);
-            //
-            //EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
-            //EffectDesc.fSize = 3.f;
-            //EffectDesc.iFloor = 0;
-            //CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Dead"),
-            //    ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-            //matTransform._32 = 0;
-            //
-            //
-            //_vector vLook = XMVector3Normalize(XMVectorSet(matTransform._31, 0, matTransform._33, 0));
-            //_vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
-            //_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
-            //vLook *= EffectDesc.fSize;
-            //vRight *= EffectDesc.fSize;
-            //vUp *= EffectDesc.fSize;
-            //
-            //pEffect->GetTransform()->Set_State(STATE::RIGHT, vRight);
-            //pEffect->GetTransform()->Set_State(STATE::UP, vUp);
-            //pEffect->GetTransform()->Set_State(STATE::LOOK, vLook);
-            //pEffect->GetTransform()->Turn(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(28));
+            CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
+            if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
+                CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+                EffectDesc.fRotationPerSec = 1.f;
+                EffectDesc.fSpeedPerSec = 1.f;
+
+                _float4x4 matTransform;
+                XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+                EffectDesc.pRootMatrix = nullptr;
+                EffectDesc.pWorldMatrix = nullptr;
+                EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42 - 1.f, matTransform._43, matTransform._44);
+
+                EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
+                EffectDesc.fSize = 3.f;
+                EffectDesc.iFloor = 0;
+                CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Dead"),
+                    ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+                matTransform._32 = 0;
+
+
+                _vector vLook = XMVector3Normalize(XMVectorSet(matTransform._31, 0, matTransform._33, 0));
+                _vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vLook));
+                _vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+                vLook *= EffectDesc.fSize;
+                vRight *= EffectDesc.fSize;
+                vUp *= EffectDesc.fSize;
+
+                pEffect->GetTransform()->Set_State(STATE::RIGHT, vRight);
+                pEffect->GetTransform()->Set_State(STATE::UP, vUp);
+                pEffect->GetTransform()->Set_State(STATE::LOOK, vLook);
+                pEffect->GetTransform()->Turn(XMVectorSet(0, 1, 0, 0), XMConvertToRadians(28));
+            }
+            else {
+                CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+                EffectDesc.fRotationPerSec = 1.f;
+                EffectDesc.fSpeedPerSec = 1.f;
+
+                _float4x4 matTransform;
+                XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+                EffectDesc.pRootMatrix = nullptr;
+                EffectDesc.pWorldMatrix = nullptr;
+                EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, matTransform._44);
+
+                EffectDesc.fRot = _float3(0, XMConvertToRadians(55), 0);
+                EffectDesc.fSize = 1.f;
+                EffectDesc.iFloor = 0;
+                m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Ashes"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+
+            }
+
             m_bisSetDeadEffect = false;
         }
         m_fDeadTime += fTimeDelta;
@@ -133,9 +140,10 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 
 HRESULT CNayitbaPartBody::Render()
 {
+    if (m_pParent->isDead())
+        return S_OK;
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
-
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
     for (size_t i = 0; i < iNumMeshes; i++)
@@ -153,8 +161,15 @@ HRESULT CNayitbaPartBody::Render()
             return E_FAIL;
 
         if (0 < m_fDeadTime) {
-            if (FAILED(m_pShaderCom->Begin(5)))
-                return E_FAIL;
+            CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
+            if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
+                if (FAILED(m_pShaderCom->Begin(6)))
+                    return E_FAIL;
+            }
+            else {
+                if (FAILED(m_pShaderCom->Begin(5)))
+                    return E_FAIL;
+            }
         }
         else {
             if (FAILED(m_pShaderCom->Begin(0)))

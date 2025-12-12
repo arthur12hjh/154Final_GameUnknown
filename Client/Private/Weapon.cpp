@@ -65,7 +65,7 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	//m_pSpark->Update(fTimeDelta);
+	m_pSpark->Update(fTimeDelta);
 	m_pBlood->Update(fTimeDelta);
 	if (!m_bisBlood)
 		m_pBlood->Stop();
@@ -168,7 +168,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		if (m_fTrailTime <= 0.f)
 		{
 			m_bIsTrail = FALSE;
-			//m_pSpark->Stop();
+			m_pSpark->Stop();
 		}
 	}
 
@@ -183,7 +183,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	}
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
-	//m_pSpark->Late_Update(fTimeDelta);
+	m_pSpark->Late_Update(fTimeDelta);
 	m_pBlood->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
@@ -255,7 +255,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	}
 	else if (strObjectTag == TEXT("Spark"))
 	{
-		//m_pSpark->Play();
+		m_pSpark->Play();
 	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
@@ -343,16 +343,16 @@ HRESULT CWeapon::Ready_Components()
 	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
 	CEffect::EFFECT_TRANSFORM_DESC desc;
-	//desc.fRotationPerSec = 1.f;
-	//desc.fSpeedPerSec = 1.f;
-	//desc.pRootMatrix = &m_CombinedWorldMatrix;
-	//desc.vPos = XMVectorSet(0, 5, 0, 1);
-	//desc.fRot = _float3(0, 0, 0);
-	//desc.fSize = 0.5f;
+	desc.fRotationPerSec = 1.f;
+	desc.fSpeedPerSec = 1.f;
+	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	desc.vPos = XMVectorSet(0, 5, 0, 1);
+	desc.fRot = _float3(0, 0, 0);
+	desc.fSize = 0.5f;
 
-	//m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
-	//m_pSpark->Play();
-	//m_pSpark->Stop();
+	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
+	m_pSpark->Play();
+	m_pSpark->Stop();
 
 	desc.fRotationPerSec = 1.f;
 	desc.fSpeedPerSec = 1.f;
@@ -460,7 +460,7 @@ void CWeapon::Free()
 
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTrail);
-	//Safe_Release(m_pSpark);
+	Safe_Release(m_pSpark);
 	Safe_Release(m_pCharge);
 	Safe_Release(m_pBlood);
 }
