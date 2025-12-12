@@ -6,6 +6,8 @@
 #include "Level_Loading.h"
 #include "Imgui_Manager.h"
 #include "DesertObject.h"
+#include "Terrain_Desert.h"
+#include "MapTool_Desert.h"
 
 CLevel_Desert::CLevel_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel{ pDevice, pContext, ENUM_CLASS(eLevelID) }
@@ -19,16 +21,10 @@ HRESULT CLevel_Desert::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
-		return E_FAIL;
-
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player_Test"))))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
 	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
@@ -39,6 +35,15 @@ HRESULT CLevel_Desert::Initialize()
 		if (FAILED(pManager->Create_MapTool_For_Desert(m_pDevice, m_pContext)))
 			return E_FAIL;
 	}
+
+	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
+		return E_FAIL;
+
+
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+
+
 
 	return S_OK;
 }
@@ -129,6 +134,19 @@ HRESULT CLevel_Desert::Ready_Layer_Terrain(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::DESERT), strLayerTag)))
 		return E_FAIL;
 
+	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Layer_Terrain"));
+	CTerrain_Desert* pTerrain = nullptr;
+	if (pTerrainList != nullptr && !pTerrainList->empty())
+	{
+		pTerrain = dynamic_cast<CTerrain_Desert*>(pTerrainList->back());
+	}
+
+	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
+	class CMapTool_Desert* pMapTool = pManager->Get_MapTool_Desert();
+
+	if(pMapTool && pManager)
+		pMapTool->Set_Terrain(pTerrain);
+
 	return S_OK;
 }
 
@@ -178,5 +196,5 @@ CLevel_Desert* CLevel_Desert::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 void CLevel_Desert::Free()
 {
 	__super::Free();
-	CImgui_Manager::GetInstance()->DestroyInstance();
+	//CImgui_Manager::GetInstance()->DestroyInstance();
 }

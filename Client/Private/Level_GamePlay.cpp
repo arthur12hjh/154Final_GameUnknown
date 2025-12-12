@@ -55,7 +55,7 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameManager = CGameManager::GetInstance();
 	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
