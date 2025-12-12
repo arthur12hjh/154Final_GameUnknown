@@ -526,6 +526,10 @@ void CPlayer::Update_BetaSkill(_float fTimeDelta)
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::ACTIVE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
 	}
 }
 
@@ -565,6 +569,10 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				// 제어가 안될 것까진 없다고 봄..
 				m_pFSM->Handle_Transition(Desc);
 				break;
+			}
+			case INTERACTION_TYPE::ITEM:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 			}
 			}
 		}

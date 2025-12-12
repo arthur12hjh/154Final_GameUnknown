@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -74,7 +75,7 @@ PS_OUT_BACKBUFFER PS_MAIN_DOF(PS_IN In)
     vBlurColor = vBlurColor / 6.28f;
     
     // 뷰 스페이스 상의 z. 카메라로부터 떨어진 거리를 의미하니까..
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     vector vPosition;
 
     float fBlurAmount = saturate(abs(fViewZ - g_fFocusDistance) / g_fMaxRange);

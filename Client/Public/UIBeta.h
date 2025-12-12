@@ -28,6 +28,9 @@ public:
 	virtual HRESULT Render() override;
 	HRESULT Render_Glow();
 
+	_int Get_CurrentGroupIdx() const { return m_iCurrentvGroupFilled; }
+	_float Get_CurrentFill() const { return m_fCurrentFill; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -47,6 +50,7 @@ private:
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
 
 	_int m_iPrevGroupFilled = -1;
+	_int m_iCurrentvGroupFilled = 0;
 	_int m_iPerCount = 4;
 
 #ifdef _DEBUG

@@ -45,9 +45,9 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
-	AttackCompleted(0.f);
+	m_vAttackTime.y = 1.f;
 
-	if (FAILED(Ready_FSM()))
+	if (FAILED(Ready_FSM())) 
 		return E_FAIL;
 
 	return S_OK;
@@ -278,9 +278,9 @@ void CMonsterController::AttackCompleted(_float fDelayTime)
 {
 	m_vAttackTime.x = 0.f;
 	if (0.f == fDelayTime)
-		m_vAttackTime.y = m_pGameInstance->Random(m_fAttackDelay - 3.f, m_fAttackDelay);
+		m_vAttackTime.y = m_pGameInstance->Random(1.f, m_fAttackDelay);
 	else
-		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 3.f, m_fAttackDelay);
+		m_vAttackTime.y = m_pGameInstance->Random(fDelayTime - 2.f, m_fAttackDelay);
 }
 
 void CMonsterController::DelayAction(_float fDelayTime)

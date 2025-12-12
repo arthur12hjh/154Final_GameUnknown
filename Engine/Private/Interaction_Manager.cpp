@@ -24,7 +24,25 @@ void CInteraction_Manager::Update()
     _matrix vCamMatrix = XMLoadFloat4x4(m_pGameInstance->GetMainCameraWorldMatrixPtr());
     _vector vBaseObjectPos = m_pBaseObject->GetTransform()->Get_State(STATE::POSITION);
 
-    m_pCandidates.clear();
+    sort(m_pInteractionList.begin(), m_pInteractionList.end(), [&](auto& pSrc, auto& pDest)
+        {
+            _vector vSrcPos = pSrc->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+            _vector vDestPos = pDest->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+
+            _float fSrcDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vSrcPos));
+            _float fDestDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vDestPos));
+
+            return fSrcDist < fDestDist;
+        });
+
+    if (m_pInteractionList.empty())
+        m_pNearInteraction = nullptr;
+    else
+        m_pNearInteraction = m_pInteractionList.front();
+
+
+
+  /*  m_pCandidates.clear();
     for (auto& iter : m_pInteractionList)
     {
         CCollider::DEFAULT_HIT_DESC Desc = {};
@@ -48,7 +66,7 @@ void CInteraction_Manager::Update()
         m_pNearInteraction = m_pCandidates.front();
     }
     else
-        m_pNearInteraction = nullptr;
+        m_pNearInteraction = nullptr;*/
 
 }
 

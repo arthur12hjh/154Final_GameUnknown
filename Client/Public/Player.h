@@ -33,6 +33,7 @@ public:
 	virtual void	 Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
+	class CPlayerFSM* Get_PlayerFSM() { return m_pFSM; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

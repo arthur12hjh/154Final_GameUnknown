@@ -165,6 +165,27 @@
                         "szUITag": "Vital_Tag_Beta"
                     },
                     {
+                        "Children": [
+                            {
+                                "fAlpha": 1.0,
+                                "fOffsetX": 0.0,
+                                "fOffsetY": 0.0,
+                                "fRotation": 0.0,
+                                "fSizeX": 100.0,
+                                "fSizeY": 100.0,
+                                "fX": 0.0,
+                                "fY": 0.0,
+                                "iDepth": 1,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 0,
+                                "szLayerTag": "Layer_Combat",
+                                "szProtoTag": "Prototype_GameObject_UI_BetaFX",
+                                "szUIID": "BetaFX_3-1",
+                                "szUITag": "Player_BetaFX"
+                            }
+                        ],
                         "Shader": {
                             "bUseTintColor": true,
                             "vTintColor": [

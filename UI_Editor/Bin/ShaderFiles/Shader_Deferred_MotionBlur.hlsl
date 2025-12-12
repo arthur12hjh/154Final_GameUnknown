@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 float g_fTimeAcc;
 float g_fLifeTime;
@@ -65,7 +66,7 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
 
     float2 vSampledVelocity = vVelocity / g_iSampleCount;
 
-    float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).g * 500.f;
+    float fCurrentDepth = g_DepthTexture.Sample(ClampSampler, In.vTexcoord).g * g_fFar;
 
     float4 accum = baseColor;
     float count = 1.0f;
@@ -79,7 +80,7 @@ PS_OUT_BACKBUFFER PS_MAIN_MotionBlur(PS_IN In)
         if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1)
             continue;
 
-        float sampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * 500.f;
+        float sampleDepth = g_DepthTexture.Sample(ClampSampler, offset).g * g_fFar;
 
         if (fCurrentDepth <= sampleDepth + g_fBias)
         {

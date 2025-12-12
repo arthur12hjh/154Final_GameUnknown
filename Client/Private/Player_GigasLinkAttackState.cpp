@@ -21,6 +21,11 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
     m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
     m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
 
+    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
+
+    m_Desc->isSuperArmor = true;
+    m_Desc->pPlayerController->Set_Active(false);
+  
     return S_OK;
 }
 
@@ -32,7 +37,8 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
 
     // 클래스의 상태를 변경해준다.
-    m_eState = PLAYER_STATE::TEST_STATE;
+    //m_eState = PLAYER_STATE::TEST_STATE;
+    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
 
     DEFAULT_DAMAGE_DESC Desc;
     Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
@@ -83,6 +89,9 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 
 _float CPlayer_GigasLinkAttackState::End()
 {
+    m_Desc->isSuperArmor = false;
+    m_Desc->pPlayerController->Set_Active(true);
+
     return m_fNextBlendRatio;
 }
 

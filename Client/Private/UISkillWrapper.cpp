@@ -38,15 +38,16 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 	{
 		for (size_t i = 0; i < 4; ++i)
 		{
-			m_eSkillState[i] = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eBetaSkillState[i]);
-			m_iSkillID[i] = const_cast<_uint*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iBetaSkillId[i]);
+			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pCharactor->Get_Desc()->eBetaSkillState[i]);
+			m_iSkillID[i] = const_cast<_uint*>(&pCharactor->Get_Desc()->iBetaSkillId[i]);
 			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
-		m_eRushState = const_cast<SKILL_STATE*>(&CGameManager::GetInstance()->Get_PlayerDesc()->eRushState);
+		m_iCurrentBeta = const_cast<LONGLONG*>(&pCharactor->Get_Desc()->iCurrentBetaEnergy);
+		m_eRushState = const_cast<SKILL_STATE*>(&pCharactor->Get_Desc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
-		m_fMaxRushCoolTime = const_cast<_float*>(&CGameManager::GetInstance()->Get_PlayerDesc()->fMaxRushCoolTime);
-		m_fCurrentRushCoolTime = const_cast<_float*>(&CGameManager::GetInstance()->Get_PlayerDesc()->fCurrentRushCoolTime);
+		m_fMaxRushCoolTime = const_cast<_float*>(&pCharactor->Get_Desc()->fMaxRushCoolTime);
+		m_fCurrentRushCoolTime = const_cast<_float*>(&pCharactor->Get_Desc()->fCurrentRushCoolTime);
 	}
 #ifdef _DEBUG
 	else
@@ -125,6 +126,9 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 
 	for (size_t i = 0; i < 4; ++i)
 	{
+		if (*m_iSkillID[i] <= 0)
+			continue;
+
 		if (m_ePrevSkillState[i] != *m_eSkillState[i])
 		{
 			UI_SKILL_INFO_DESC tDesc = {i, *m_iSkillID[i], ENUM_CLASS(m_ePrevSkillState[i]), ENUM_CLASS(*m_eSkillState[i])};
