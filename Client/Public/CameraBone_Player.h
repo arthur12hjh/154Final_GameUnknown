@@ -40,18 +40,43 @@ public:
 		_bool bIsRestart = FALSE,
 		_float fEndTrackPosition = -1.f,
 		_float fStartTrackPosition = 0.f,
-		_bool isResetTrackPosition = TRUE)override;
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE)override;
+
+	void Initilaize_CameraAnimationData(const CAMERA_ANIMATION_DATA& CameraAnimationData);
 
 private:
 	CCollider* m_pColliderCom = { nullptr };
 
 private:
-	const _float4x4* m_pSocketMatrix = { nullptr };
-	class CCharacter* m_pCharacter = { nullptr };
+	const _float4x4*					m_pSocketMatrix = { nullptr };
+	class CCharacter*					m_pCharacter = { nullptr };
 
-	_float						m_isAnimationChanged = 1.f;
-	_int						m_iAnimationIndex = 0;
+	_float4x4							m_ParentTransformMatrix;
 
+	_char								m_szAnimationTag[MAX_PATH];
+
+	CAMERA_ANIMATION_DATA				m_CameraAnimationData = {};
+
+	vector<CAMERA_TRACK_DESC>			m_vPositionTracks;
+	vector<CAMERA_TRACK_DESC>			m_vRotationTracks;
+
+	_uint								m_iPositionTrackIndex;
+	_uint								m_iRotationTrackIndex;
+
+	_float								m_fCurrentAnimationTime = 0.f;
+
+	_bool								m_isAnimationPlayed = FALSE;
+	_bool								m_bIsStop = FALSE;
+	_int								m_iAnimationIndex = 0;
+
+
+private:
+	_float								Get_PositionTrackRatio();
+	_float								Get_RotationTrackRatio();
+
+	_float3								Get_BeforePosition();
+	_float3								Get_BeforeRotation();
 
 private:
 	HRESULT						Ready_Components();

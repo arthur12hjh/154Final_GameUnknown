@@ -208,6 +208,8 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.upDirection = PxVec3(0, 1, 0); // ±âº» up
 
 	m_tUserData = pDesc->tUserData;
+	m_tUserData.pWord0 = &pDesc->iCollisionGroup;
+	m_tUserData.pWord1 = &pDesc->iCollisionMask;
 	CCTDesc.userData = &m_tUserData;
 
 	if (!CCTDesc.isValid())

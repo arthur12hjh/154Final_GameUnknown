@@ -78,7 +78,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
 
 
 
-    if (true == m_isSprintStart && true == isAnimFinished) //|| (true == m_isChangingDir && fDot <= 5.f))
+    if (true == m_isSprintStart && 0.9f <= fAnimationRatio) //|| (true == m_isChangingDir && fDot <= 5.f))
     {
         m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 0.12f);
         m_isSprintStart = false;

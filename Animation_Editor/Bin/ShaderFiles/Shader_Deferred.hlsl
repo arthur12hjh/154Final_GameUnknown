@@ -2,7 +2,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
-
+float g_fFar;
 //안개 색은 렌더타겟에 세팅해놓는다.
 float4 g_vFogColor;
 
@@ -96,7 +96,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     // 위치 복원 그대로 ---------------------------------------------------
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float  fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
 
     /* 로컬위치 * 월드 * 뷰 * 투영 / w */
     vector vPosition;
@@ -129,7 +129,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     bool isORSS = hasPacked && (A > 0.f);
     bool isORM = hasPacked && (A == 0.f);
 
-    // Fallback ---------------------------------------------------------
+    // Phong
     if (!hasPacked)
     {
         float NdotL = saturate(dot(N, L));
@@ -150,7 +150,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     if (isORSS)
     {
         AO = vORMDesc.r;
-        Rough = max(vORMDesc.g, 0.05f);
+        Rough = vORMDesc.g;
         float specFactor = saturate(vORMDesc.b);
         Metallic = 0.f;
 
@@ -160,25 +160,22 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     else if (isORM)
     {
         AO = vORMDesc.r;
-        Rough = max(vORMDesc.g, 0.05f);
+        Rough = vORMDesc.g;
         Metallic = saturate(vORMDesc.b);
         F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
 
-    // AO 증폭 완화 ------------------------------------------------------
-    float AOStr = lerp(1.0f, 1.2f, AO); // 기존 1.3~2.0 → 최소 수정
+    float AOStr = lerp(1.0f, 1.2f, AO);
     Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     Out.vShade.rgb *= AOStr;
 
-    //-------------------------------------------------------
-    // SSS Back-scattering 추가 (역광 문제 해결)
-    //-------------------------------------------------------
+    // SSS 추가
     if (isORSS)
     {
         float3 base = Out.vShade.rgb;
 
         float luma = dot(base, float3(0.299f, 0.587f, 0.114f));
-        float3 bloodHue = float3(1.0f, 0.45f, 0.45f);
+        float3 bloodHue = float3(1.0f, 0.7f, 0.7f);
         float3 bloodColor = bloodHue * luma;
 
         float ndl = saturate(dot(N, L));
@@ -191,8 +188,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // 역광 SSS BackScatter ----------------------------------------
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.3f, 0.25f)
-                         * pow(back, 1.1f) * 0.35f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
+                         * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }
@@ -208,7 +205,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     
@@ -285,7 +282,7 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     
@@ -363,7 +360,7 @@ PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepth.x;
     vPosition.w = 1.f;
-    float fViewZ = vDepth.y * 500.f;
+    float fViewZ = vDepth.y * g_fFar;
     
     vPosition *= fViewZ;
 
@@ -396,7 +393,7 @@ PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
         vShadowUV.x = ((vShadowPosition.x / vShadowPosition.w) * 0.5f + 0.5f);
         vShadowUV.y = ((vShadowPosition.y / vShadowPosition.w) * -0.5f + 0.5f);
 
-        float fShadowMapDepth = g_ShadowTexture.Sample(DefaultSampler, vShadowUV).r * 500.0f;
+        float fShadowMapDepth = g_ShadowTexture.Sample(DefaultSampler, vShadowUV).r * g_fFar;
         float fCurrentDepth = vShadowPosition.w;
 
         float fBias = 0.05f;
@@ -447,7 +444,7 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     Out.vBloomScene = vShade;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 500.f;
+    float fViewZ = vDepthDesc.y * g_fFar;
     
     vector vPosition;
     

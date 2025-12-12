@@ -5,7 +5,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_DiffuseTexture[1];
 texture2D g_ORMTexture;
 texture2D g_MaskTexture;
-
+float g_fFar;
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -89,7 +89,7 @@ PS_OUT PS_MAIN(PS_IN In)
     //Out.vDiffuse = vSourDiffuse;
     /* -1 ~ 1 -> 0 ~ 1 */
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = g_ORMTexture.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord);
     
     return Out;

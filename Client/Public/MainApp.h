@@ -28,7 +28,7 @@ private:
 #ifdef _DEBUG
 	CImGuiMain* m_pImGuiDebug = nullptr;
 #endif
-
+	class CGameManager*		m_pGameManager = { nullptr };
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };

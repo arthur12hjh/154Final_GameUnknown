@@ -69,6 +69,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
 	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
+	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
 
@@ -124,9 +125,11 @@ void CNayitba::Update(_float fTimeDelta)
 void CNayitba::Late_Update(_float fTimeDelta)
 {
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState )
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
@@ -147,15 +150,25 @@ HRESULT CNayitba::Render()
 HRESULT CNayitba::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
-	m_pAIController->Damage(pArg);
-
-	VisibleStatusUI(0.f);
-	if(0 >= m_MonsterInfo.iCurrentHealth)
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		if (10 >= m_MonsterInfo.iCurrentHealth)
+		{
+			if (false == (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty))
+				m_MonsterInfo.iCurrentHealth = 10.f;
+		}
+	}
+	
+	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 	}
+
+	VisibleStatusUI(0.f);
+	m_pAIController->Damage(pArg);
 
 	return S_OK;
 }
@@ -250,6 +263,30 @@ CGameObject* CNayitba::GetTarget()
 	return m_pTargetCom->GetTarget();
 }
 
+void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
+{
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
+	m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
+	m_pTransformCom->Set_Scale(XMLoadFloat3(&Desc.vScale));
+	
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	m_iMonsterID = Desc.iMonsterID;
+	if (FAILED(Ready_CharacterData()))
+		return;
+
+	if (Desc.pTarget)
+	{
+		m_pAISenceCom->Add_SenceTargetObject(Desc.pTarget);
+		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
+
+		//if (pDesc->bIsSpanwer)
+		//{
+		//	// 여기서 스폰 상태로 변경
+		//	// 일단 생성 되는지만 확인하고 가자
+		//}
+	}
+}
+
 const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)
 {
 	if (0 > iSkillIndex || (_uint)m_MonsterInfo.iAttackList[iTypeIndex].size() <= iSkillIndex)
@@ -294,6 +331,11 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
 	m_iComboCount = 0;
+}
+
+void CNayitba::SetThesholdAction(_bool bIsTheshold)
+{
+	m_bIsTheshold = bIsTheshold;
 }
 
 _bool CNayitba::bIsHitReaction()
@@ -748,7 +790,7 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// false : 비활성화
 	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(vTargetPos, 55.f);
+		iter->Shoot_Projectile(vTargetPos, 10000.f);
 
 	m_pBulletList.clear();
 }

@@ -8,6 +8,7 @@ Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_EmissiveTexture; 
 Texture2D g_ORMTexture;
+Texture2D g_ORSSTexture;
 Texture2D g_DissolveTexture;
 
 //림라이트용 변수
@@ -18,7 +19,8 @@ float4 g_vRimLightColor;
 
 //디졸브용 변수
 float g_fDeadTime;
-float g_fTime;
+float g_fFar;
+
 
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
@@ -197,7 +199,7 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse +
         Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     //림라이트도 더해서 던져.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
@@ -219,7 +221,7 @@ PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
         discard;
     
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal, 0.001f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
@@ -229,7 +231,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = In.vProjPos.w / 500.0f;
+    Out.vShadowLightDepth.x = In.vProjPos.w / g_fFar;
     
     return Out;
 }
@@ -247,75 +249,41 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 {
     PS_OUT Out;
     
-    float3 dir = normalize(float3(0, -1, 0));
-    float h = dot(normalize(In.vWorldPos.xyz - g_WorldMatrix._41_42_43), dir);
     
-    h = h * 0.5 + 0.5;
-
-    float noise = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    h += noise * 0.2;
-
-    if (h * 4 + 0.6 < g_fDeadTime)
+    vector vDissolve = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vDissolve.r + 0.7 < g_fDeadTime)
         discard;
+    
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    
-
-    if (h * 4 < g_fDeadTime)
+    if (vDissolve.r < g_fDeadTime)
     {
-        noise = min(h * 4 + 0.3 - g_fDeadTime, 1);
-        Out.vDiffuse.rgb *= noise;
+        vDissolve = min(vDissolve.r + 0.3 - g_fDeadTime, 1);
+        Out.vDiffuse.rgb *= vDissolve.r;
     }
-    
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
 }
 
-PS_OUT PS_GORILLA_DISSOLVE(PS_IN In)
+PS_OUT PS_ORSS(PS_IN In)
 {
     PS_OUT Out;
-    
-    float3 dir = normalize(float3(0, -1, 0));
-    float h = dot(normalize(In.vWorldPos.xyz - g_WorldMatrix._41_42_43), dir);
-    
-    h = h * 0.5 + 0.5;
-
-    float dissolve = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    h += dissolve * 0.2;
-    h *= 0.5;
-
-    if (h + g_fTime < g_fDeadTime)
-        discard;
-    
-    //vector vDissolve = g_DissolveTexture.Sample(DefaultSampler, In.vTexcoord);
-    //if (1 <= g_fDeadTime)
-    //{
-    //    if (vDissolve.r + g_fTime < g_fDeadTime * 6)
-    //        discard;
-    //}
-    
-    
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
     Out.vDiffuse = vMtrlDiffuse;
-    if (dissolve < g_fDeadTime)
-    {
-        dissolve = min(dissolve + 0.3 - g_fDeadTime, 1);
-        Out.vDiffuse.rgb *= dissolve;
-    }
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
@@ -389,16 +357,15 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISSOLVE();
     }
-    // 고릴라 디졸브
     // 6
-    pass GorillaDissolve
+    pass ORSS
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_GORILLA_DISSOLVE();
+        PixelShader = compile ps_5_0 PS_ORSS();
     }
 }
 

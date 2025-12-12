@@ -14,6 +14,15 @@ namespace Engine
 
 namespace Client
 {
+
+#define iFLAG_INTERPOLATION_NONE		0
+#define iFLAG_INTERPOLATION_LERP		(1 << 0)
+
+#define iFLAG_CAMERA_DEFAULTPOSTION		0
+#define iFLAG_CAMERA_ATTACKBONE			(1 << 0)
+#define iFLAG_CAMERA_MOVEDIRECT			(1 << 1)
+#define iFLAG_CAMERA_MOVELERP			(1 << 2)
+
 	enum class RECOVERY_TYPE
 	{
 		RECOVERY_HP,		// HP 회복
@@ -22,12 +31,18 @@ namespace Client
 		RECOVERY_END
 	};
 
-
 	typedef struct Default_Status
 	{
 		long long						iCurrentHealth;
 		long long						iCurrentShield;
 	}DEFAULT_STATUS;
+
+	typedef struct tagRimLightDesc
+	{
+		_float4		vRimLightColor = { 1.f, 1.f, 1.f, 1.f };
+		_float		fRimLightPower = 2.f;
+		_float		fRimLightIntensity = 1.f;
+	} RIMLIGHT_DESC;
 
 
 	// 기본적인 밖에서 저장하거나 불러오는 캐릭터 구조체
@@ -60,8 +75,14 @@ namespace Client
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
 		AERIAL_ATTACK, //미구현
+
+		GIGAS_LINKATTACK,
 		
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
+
+		//여기에 상태들 다 Enum화 해서 올려놔야해.
+		//안쓸것들은 나중에 치워줘
+		TEST_STATE,
 
 		STATE_END
 	};
@@ -135,6 +156,8 @@ namespace Client
 		// 만약 저스트 패링이 가능하다면 true, 불가능하다면 false
 		bool   isJustParryable = { false };
 
+		bool   isLinkAttackAvailable = { true };
+		class CNayitba* pLinkAttackTarget = { nullptr };
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -263,7 +286,6 @@ namespace Client
 		_float				fAttackRange;
 		_float				fMoveSpeed;
 
-		_bool				m_bIsParryHitAble;
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
 		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
@@ -348,4 +370,41 @@ namespace Client
 		_float3				vUIPivot;
 		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
+
+	// Camera_Action, Camera_CutScene 전용 Json Data
+	///
+	/// CameraAnimationID : 6글자로 되어있다.
+	/// - 1)		지역 이름. 1 : 처음맵, 2 : 마을, 3 : 홍련맵
+	/// - 2)		카메라 타입(0 : 컷신, 1 : 링크어택 같은 액션)
+	/// - 3)		시퀀스
+	/// - 4,5)		한 시퀀스 내 카메라 순서
+	/// - 6)		카메라 애니메이션이 연속될 시 순서
+	/// 
+	/// ex) 튜토리얼 인트로   : 101011 ~
+	/// ex) 고릴라처형 인트로 : 101031 ...
+	/// 
+	typedef struct CameraTrack_Desc
+	{
+		_float						fTrackPosition;						// 실행 시간.
+		_float3						vTrackValue;						// 목표 변환값
+		_float						fTangentStart;						// 에르미트 보간법 시작 각도
+		_float						fTangentEnd;						// 에르미트 보간법 종료 각도
+		_uint						iInterpolationFlag;					// 플래그
+	}CAMERA_TRACK_DESC;
+
+	typedef struct CameraAnimation_Data
+	{
+		_uint						iCameraAnimationID;					// 카메라 ID
+		_uint						iCameraAnimationFlag;				// 카메라 플래그(본부착, 전환시 보간여부 등)
+		_float						fBaseFOV;							// 기본 FOV
+		_float3						vBaseCameraPivot;					// 기본 카메라 LookAt 포인트
+		_float3						vBaseBonePosition;					// 카메라본 기본 위치(플래그 활성 시)
+		_float3						vBaseBoneRotation;					// 카메라본 기본 각도(플래그 활성 시)
+		char						szCameraAnimationName[MAX_PATH];	// 카메라본 애니메이션 이름
+		vector<CAMERA_TRACK_DESC>	FOVTrackList;						// FOV 채널
+		vector<CAMERA_TRACK_DESC>	PivotTrackList;						// 카메라 LookAt 포인트 채널
+		vector<CAMERA_TRACK_DESC>	BonePositionTrackList;				// 카메라본 위치 채널
+		vector<CAMERA_TRACK_DESC>	BoneRotationTrackList;				// 카메라본 각도 채널
+	}CAMERA_ANIMATION_DATA;
+	;
 }

@@ -21,6 +21,14 @@ void CCamera::Shake(_float fShakeTime, _float fIntensity)
 	XMStoreFloat4(&m_vOriginPos, m_pTransformCom->Get_State(STATE::POSITION));
 }
 
+void CCamera::Set_MainCamera(const WCHAR* szCameraTag)
+{
+	m_pGameInstance->SetMainCamera(szCameraTag, &m_PreLerpMatrix);
+
+	m_fTransitionLerpTime.x = 0.f;
+	m_bIsTransition = TRUE;
+}
+
 HRESULT CCamera::Initialize_Prototype()
 {
 	return S_OK;
@@ -44,6 +52,9 @@ HRESULT CCamera::Initialize(void* pArg)
 	m_pCameraInfo.fNear = pDesc->fNear;
 	m_pCameraInfo.fFar = pDesc->fFar;
 	m_pCameraInfo.fAspect = ViewportDesc.Width / ViewportDesc.Height;
+
+	m_fTransitionLerpTime = { 0.f, 1.f };
+	m_bIsTransition = FALSE;
 
 	return S_OK;
 }

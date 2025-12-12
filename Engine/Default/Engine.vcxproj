@@ -245,7 +245,7 @@ popd</Command>
     <ClInclude Include="..\public\Occlusion.h" />
     <ClInclude Include="..\public\PartObject.h" />
     <ClInclude Include="..\public\Percetion.h" />
-    <ClInclude Include="..\Public\PhysxSceneEventCallback.h" />
+    <ClInclude Include="..\Public\PxDefaultContactCallback.h" />
     <ClInclude Include="..\Public\CCTFilterCallback.h" />
     <ClInclude Include="..\Public\Physx_FilterShader.h" />
     <ClInclude Include="..\Public\Physx_Manager.h" />
@@ -362,7 +362,7 @@ popd</Command>
     <ClCompile Include="..\private\Occlusion.cpp" />
     <ClCompile Include="..\private\PartObject.cpp" />
     <ClCompile Include="..\private\Percetion.cpp" />
-    <ClCompile Include="..\Private\PhysxSceneEventCallback.cpp" />
+    <ClCompile Include="..\Private\PxDefaultContactCallback.cpp" />
     <ClCompile Include="..\Private\CCTFilterCallback.cpp" />
     <ClCompile Include="..\Private\Physx_FilterShader.cpp" />
     <ClCompile Include="..\Private\Physx_Manager.cpp" />

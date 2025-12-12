@@ -365,7 +365,7 @@
     <ClInclude Include="..\Public\CCTQueryFilterCallback.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PhysxSceneEventCallback.h">
+    <ClInclude Include="..\Public\PxDefaultContactCallback.h">
       <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CCTFilterCallback.h">
@@ -709,7 +709,7 @@
     <ClCompile Include="..\Private\CCTQueryFilterCallback.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PhysxSceneEventCallback.cpp">
+    <ClCompile Include="..\Private\PxDefaultContactCallback.cpp">
       <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CCTFilterCallback.cpp">

@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 matrix g_OrthoWorldMatrix, g_OrthoViewMatrix, g_OrthoProjMatrix;
 
@@ -97,7 +98,7 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     
     vector vDepth = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fDepth = vDepth.r;
-    float fViewDepth = vDepth.g * 500.0f;
+    float fViewDepth = vDepth.g * g_fFar;
     
     // 0 ~ 0.5f
     float fRadius = lerp(g_fRadiusMin, g_fRadiusMax, saturate(vDepth.g));

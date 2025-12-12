@@ -23,6 +23,7 @@
 #include "Task_GorillaAttack.h"
 #include "Task_Groggy.h"
 #include "Task_Hit.h"
+#include "Task_Theshold.h"
 #pragma endregion
 
 #include "Task_GorillaAttack.h"
@@ -87,6 +88,7 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 	if (nullptr == pHitSquence)
 		return E_FAIL;
 
+	pHitSquence->Bind_BehaviorNode(CTask_Theshold::Create(this));
 	pHitSquence->Bind_BehaviorNode(CTask_Hit::Create(this));
 #pragma endregion
 

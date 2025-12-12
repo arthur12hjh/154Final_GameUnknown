@@ -106,6 +106,11 @@ _bool CBossBlackBoard::ExitGroggy()
     return false;
 }
 
+void CBossBlackBoard::EnterExcution(_bool bIsExcution)
+{
+    m_bIsExcution = bIsExcution;
+}
+
 _bool CBossBlackBoard::IsAttackEnable()
 {
     if (m_fAttackDelay.x > m_fAttackDelay.y)

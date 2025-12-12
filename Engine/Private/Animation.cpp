@@ -83,13 +83,13 @@ _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool i
 			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
 				iKeyFrameIndex = 0;
 
-			return ANIMATIONFLAG_RESET;
+			return iFLAG_ANIMATION_RESET;
 		}
 		else
-			return ANIMATIONFLAG_FINISH;
+			return iFLAG_ANIMATION_FINISH;
 	}
 
-	return ANIMATIONFLAG_PLAY;
+	return iFLAG_ANIMATION_PLAY;
 }
 
 _bool CAnimation::Update_CurrentKeyFrameIndices()

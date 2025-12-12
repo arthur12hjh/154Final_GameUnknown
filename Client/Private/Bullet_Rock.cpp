@@ -80,7 +80,7 @@ void CBullet_Rock::Update(_float fTimeDelta)
 
 void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 1000.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 8000.f))
 	{
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -157,7 +157,10 @@ void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 	pDamageDesc.vHitDir = vHitDir;
 	pDamageDesc.pSkillData = m_pSkillData;
 
-	static_cast<CCharacter*>(pHitActor)->Damaged(&pDamageDesc);
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if(pCharacter)
+		pCharacter->Damaged(&pDamageDesc);
+
 	Set_Dead(true);
 }
 
