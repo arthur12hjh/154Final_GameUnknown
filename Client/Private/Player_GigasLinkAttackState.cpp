@@ -21,6 +21,11 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
     m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
     m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
 
+    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
+
+    m_Desc->isSuperArmor = true;
+    m_Desc->pPlayerController->Set_Active(false);
+  
     return S_OK;
 }
 
@@ -83,6 +88,9 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 
 _float CPlayer_GigasLinkAttackState::End()
 {
+    m_Desc->isSuperArmor = false;
+    m_Desc->pPlayerController->Set_Active(true);
+
     return m_fNextBlendRatio;
 }
 
