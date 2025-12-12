@@ -182,7 +182,10 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		}
 	}
 
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
+	m_pTrail[0]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 0 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 0 == m_iTrail);
+	m_pTrail[1]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 1 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 1 == m_iTrail);
+	m_pTrail[2]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 2 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 2 == m_iTrail);
+	m_pTrail[3]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 3 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 3 == m_iTrail);
 	m_pSpark->Late_Update(fTimeDelta);
 	m_pBlood->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
@@ -252,6 +255,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		m_fTrailTime = NotifyReference.fNumData01;
 		m_bIsTrail = TRUE;
+		m_iTrail = 4 > m_iTrail + 1 ? m_iTrail + 1 : 0;
 	}
 	else if (strObjectTag == TEXT("Spark"))
 	{
@@ -340,7 +344,10 @@ HRESULT CWeapon::Ready_Components()
 	CTrail::TRAILHIGHLOW Traildesc{};
 	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);
 	Traildesc.vLow = _float4(0.f, 1.f, 0.f, 0.f);
-	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[0] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[1] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[2] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[3] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
 	CEffect::EFFECT_TRANSFORM_DESC desc;
 	desc.fRotationPerSec = 1.f;
@@ -459,7 +466,10 @@ void CWeapon::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pTrail);
+	Safe_Release(m_pTrail[0]);
+	Safe_Release(m_pTrail[1]);
+	Safe_Release(m_pTrail[2]);
+	Safe_Release(m_pTrail[3]);
 	Safe_Release(m_pSpark);
 	Safe_Release(m_pCharge);
 	Safe_Release(m_pBlood);

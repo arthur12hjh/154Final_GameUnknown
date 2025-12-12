@@ -163,7 +163,7 @@ HRESULT CNayitbaPartBody::Render()
         if (0 < m_fDeadTime) {
             CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
             if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
-                if (FAILED(m_pShaderCom->Begin(6)))
+                if (FAILED(m_pShaderCom->Begin(7)))
                     return E_FAIL;
             }
             else {
@@ -418,9 +418,6 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
     if (FAILED(m_pTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
-        return E_FAIL;
-    float time = 2.1f;
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &time, sizeof(_float))))
         return E_FAIL;
 
     return S_OK;

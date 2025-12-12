@@ -18,6 +18,7 @@ float2 g_fDissolveUVSpeed = float2(0, 0);
 float2 g_fDissolveUVSize = float2(1, 1);
 int2 g_iUV;
 float g_fAngle;
+float g_fFar;
 int g_iSizeCount;
 bool g_bisBillboard, g_bisSpectrum;
 
@@ -1192,7 +1193,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
@@ -1246,7 +1247,7 @@ PS_NORMAL_OUT PS_STONE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
@@ -1294,7 +1295,7 @@ PS_NORMAL_OUT PS_CRYSTAL(PS_NORMAL_IN In)
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vOrm = float4(0, 0, 0, 0);
     
     return Out;
@@ -1326,8 +1327,8 @@ PS_WEIGHT_OUT PS_BLOOD(PS_WEIGHT_IN In, bool isFrontFace : SV_IsFrontFace)
     Out.vDiffuse.a *= g_MaskTexture.Sample(DefaultSampler, uvDistorted).r * saturate((In.vLifeTime.y - In.vLifeTime.x) * 2 * pow((1 - (fTexcoord.y - 1.0 / g_iUV.y * iV) / (1.0 / g_iUV.y)), 3));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1377,8 +1378,8 @@ PS_WEIGHT_OUT PS_WEIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1410,8 +1411,8 @@ PS_WEIGHT_OUT PS_DEPTH_WEIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1439,8 +1440,8 @@ PS_WEIGHT_OUT PS_GOLD(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1468,8 +1469,8 @@ PS_WEIGHT_OUT PS_PIXEL(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= saturate(In.vLifeTime.y - In.vLifeTime.x);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1500,8 +1501,8 @@ PS_WEIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
     Out.vDiffuse *= pow(saturate(((In.vLifeTime.x / In.vLifeTime.y)) * 2 / (1 - In.vTexcoord.y)), 5) * pow(saturate((1 - In.vTexcoord.y) / ((In.vLifeTime.x / In.vLifeTime.y) * 2)), 15);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1536,8 +1537,8 @@ PS_WEIGHT_OUT PS_ELECTRIC2(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1570,9 +1571,9 @@ PS_WEIGHT_OUT PS_BOXPARTICLE(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= (0 < min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) ? 1 : 0) * saturate((In.vLifeTime.y - In.vLifeTime.x));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
     
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1623,9 +1624,9 @@ PS_WEIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r, g_MaskTexture.Sample(NoneSampler, MaskTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
     
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1675,9 +1676,9 @@ PS_WEIGHT_OUT PS_BLUESIGNAL(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r, g_MaskTexture.Sample(NoneSampler, MaskTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
     
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1705,9 +1706,9 @@ PS_WEIGHT_OUT PS_BLUEMASK(PS_WEIGHT_IN In)
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x * 1.2);
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
     
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     //float weight = saturate(pow(1 - depth, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
@@ -1760,8 +1761,8 @@ PS_WEIGHT_OUT PS_ELECTRIC3(PS_WEIGHT_IN In)
     //Out.vDiffuse *= (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1801,8 +1802,8 @@ PS_WEIGHT_OUT PS_ELECTRIC4(PS_WEIGHT_IN In)
     //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
@@ -1849,8 +1850,8 @@ PS_WEIGHT_OUT PS_SMOKEDISTORTION(PS_WEIGHT_IN In)
     //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * (1 - abs(1 - (In.vLifeTime.x / In.vLifeTime.y) * 2) - abs(1 - ((In.vTexcoord.y) + (In.vLifeTime.x / In.vLifeTime.y))));
     if (0 >= Out.vDiffuse.a)
         discard;
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
