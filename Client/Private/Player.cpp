@@ -566,6 +566,10 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				m_pFSM->Handle_Transition(Desc);
 				break;
 			}
+			case INTERACTION_TYPE::ITEM:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
