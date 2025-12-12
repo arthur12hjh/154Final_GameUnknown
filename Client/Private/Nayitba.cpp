@@ -164,6 +164,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
+		m_bIsTheshold = false;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 	}
 
