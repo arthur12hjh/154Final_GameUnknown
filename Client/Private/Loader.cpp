@@ -166,6 +166,7 @@
 #include "UIHPFX.h"
 #include "UIShield.h"
 #include "UIBeta.h"
+#include "UIBetaFX.h"
 #include "UISkillWrapper.h"
 #include "UISkillWrapperLineFX.h"
 #include "UISkillWrapperOnFX.h"
@@ -5616,12 +5617,12 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	///* For.Prototype_Component_UI_Texture_Player_Beta */
-	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_Beta");
-	//pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_Beta_%d.png"), 2);
-	//if (nullptr == pProtoDesc.pPrototype)
-	//	return E_FAIL;
-	//Desc->pAddObejct.push_back(pProtoDesc);
+	/* For.Prototype_Component_UI_Texture_Player_BetaFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Player_BetaFX");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/BetaFx_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Potion */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Potion");
@@ -5689,6 +5690,13 @@ HRESULT CLoader::Loading_UI_For_Combat_HUD_Vitals(void* pArg)
 	/* For.Prototype_GameObject_UI_Beta */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Beta");
 	pProtoDesc.pPrototype = CUIBeta::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_BetaFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_BetaFX");
+	pProtoDesc.pPrototype = CUIBetaFX::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -37,7 +37,8 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
 
     // 클래스의 상태를 변경해준다.
-    m_eState = PLAYER_STATE::TEST_STATE;
+    //m_eState = PLAYER_STATE::TEST_STATE;
+    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
 
     DEFAULT_DAMAGE_DESC Desc;
     Desc.pSkillData = m_pGameManager->Find_SkillData(1010);

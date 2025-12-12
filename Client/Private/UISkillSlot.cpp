@@ -77,6 +77,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
+		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
+
 		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Skill_") + to_wstring(m_tSkillInfo.iSkillIndex) + TEXT("_ActiveOn"));
 		if (AnimTag != m_tUIDesc.m_AnimTags.end())
 			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
@@ -131,6 +133,10 @@ HRESULT CUISkillSlot::Render()
 	{
 		if (FAILED(Render_Glow()))
 			return E_FAIL;
+	}
+	else
+	{
+		m_tUIDesc.m_tUIShaderDesc = m_tOriginUIDesc.m_tUIShaderDesc;
 	}
 
 #ifdef _DEBUG
@@ -199,8 +205,6 @@ HRESULT CUISkillSlot::Ready_Components()
 
 HRESULT CUISkillSlot::Bind_ShaderResources()
 {
-	__super::Bind_ShaderResources();
-
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
@@ -310,9 +314,6 @@ HRESULT CUISkillSlot::Execute(const UI_EVENT_DESC& EventDesc)
 
 		Safe_Release(pHUD);
 	}
-	if (Type == TEXT("ActionEvent"))
-	{
-	}
 
 	return S_OK;
 }
@@ -325,22 +326,6 @@ void CUISkillSlot::CallbackEvent(void* pArg)
 	auto* pDesc = static_cast<UI_SKILL_INFO_DESC*>(arg->pData);
 	
 	m_tSkillInfo = *pDesc;
-
-	//CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	//
-	//// 이거 애니메이션 매니저로 돌리면 안될지도..
-	//if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
-	//{
-	//	pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-	//	Safe_Release(pHUD);
-	//	return;
-	//}
-
-	//auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	//if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//	pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	//Safe_Release(pHUD);
 }
 
 HRESULT CUISkillSlot::Render_Glow()
@@ -375,6 +360,9 @@ HRESULT CUISkillSlot::Bind_GlowShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
 		return E_FAIL;
+
+	//m_tUIDesc.m_tUIShaderDesc.fGlowIntensity = 1.f;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
 		return E_FAIL;
 

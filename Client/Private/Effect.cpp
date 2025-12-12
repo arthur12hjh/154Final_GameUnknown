@@ -130,7 +130,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
     ifstream fileBinaryStream;
     fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
     _int iMeshCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iMeshCount; ++i) {
+    for (_int i = 0; i < iMeshCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         MeshDesc.szModel = szTemp;
         Safe_Delete(szTemp);
@@ -145,7 +145,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         MeshDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             MeshDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         MeshDesc.fColor = ReadFloat4(fileBinaryStream);
@@ -177,7 +177,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pMeshEffects.push_back(pMeshEffect);
     }
     _int iParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iParticleCount; ++i) {
+    for (_int i = 0; i < iParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         ParticleDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
@@ -192,7 +192,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         ParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
@@ -236,7 +236,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pPointParticles.push_back(pParticle);
     }
     _int iSpriteParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteParticleCount; ++i) {
+    for (_int i = 0; i < iSpriteParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         SpriteParticleDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
@@ -251,7 +251,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         Safe_Delete(szTemp);
         _int iSizeDiagramCount = ReadInt(fileBinaryStream);
         SpriteParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+        for (_int j = 0; j < iSizeDiagramCount; ++j) {
             SpriteParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
         }
         SpriteParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
@@ -298,7 +298,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         m_pSpriteParticles.push_back(pParticle);
     }
     _int iSpriteCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteCount; ++i) {
+    for (_int i = 0; i < iSpriteCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
         SpriteDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
