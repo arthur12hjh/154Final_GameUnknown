@@ -90,6 +90,8 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	Get_PxShape()->setSimulationFilterData(Filter);
 	Get_PxShape()->setQueryFilterData(Filter);
 
+	m_pCCTFilterCallback = CCTFilterCallback::Create();
+
 	return S_OK;
 }
 
@@ -145,6 +147,8 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 
 	PxControllerFilters ControllerFilter;
 	ControllerFilter.mFilterCallback = static_cast<PxQueryFilterCallback*>(m_pQueryFilterCallback);
+	// -> 여기서 CCT 필터 추가
+	ControllerFilter.mCCTFilterCallback = static_cast<CCTFilterCallback*>(m_pCCTFilterCallback);
 
 	PxExtendedVec3 vPrevPos = m_pController->getFootPosition();
 	PxU32 ResultFlag = m_pController->move(MoveSum, 0.005f, fTimeDelta, ControllerFilter);
@@ -317,4 +321,5 @@ void CCharacterController::Free()
 	Safe_Release(m_pHitReporter);
 	Safe_Release(m_pBehaviorCallback);
 	Safe_Release(m_pQueryFilterCallback);
+	Safe_Release(m_pCCTFilterCallback);
 }
