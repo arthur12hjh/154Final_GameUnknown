@@ -36,7 +36,7 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     m_fRotateX = 0.f;
     m_fRotateY = 90.f;
 
-    m_fDistance = 10.f;
+    m_fDistance = 12.f;
 
     m_fLookMagnification = { 1.f };
     m_fUpMagnification = { 5.f };
