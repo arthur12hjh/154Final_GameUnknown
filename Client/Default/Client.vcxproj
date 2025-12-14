@@ -247,6 +247,8 @@
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\Public\RimLight.h" />
+    <ClInclude Include="..\public\ScarletBehaviorTree.h" />
+    <ClInclude Include="..\public\ScarletBlackBoard.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
     <ClInclude Include="..\public\Spawner.h" />
@@ -515,6 +517,8 @@
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\Private\RimLight.cpp" />
+    <ClCompile Include="..\private\ScarletBehaviorTree.cpp" />
+    <ClCompile Include="..\private\ScarletBlackBoard.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />

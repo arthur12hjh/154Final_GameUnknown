@@ -50,6 +50,7 @@
 
 #include "BossController.h"
 #include "GorillaBehaviorTree.h"
+#include "ScarletBehaviorTree.h"
 
 #include "LinkAttackTester.h"
 #include "Body_LinkAttackTester.h"
@@ -2244,6 +2245,13 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	/* For.Prototype_Component_GorillaBehavior */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_GorillaBehaviorTree");
 	pProtoDesc.pPrototype = CGorillaBehaviorTree::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_ScarletBehavior */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ScarletBehaviorTree");
+	pProtoDesc.pPrototype = CScarletBehaviorTree::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

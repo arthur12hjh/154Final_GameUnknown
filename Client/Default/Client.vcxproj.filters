@@ -802,6 +802,12 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIOwnGold">
       <UniqueIdentifier>{2398c82f-654f-42be-9953-8459ef90941b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree">
+      <UniqueIdentifier>{f98f9ecb-e5ca-4dc0-9e32-baacae6590ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard">
+      <UniqueIdentifier>{02264c9b-6177-40a7-8e81-7802c18e54ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1619,6 +1625,12 @@
     <ClInclude Include="..\Public\UIOwnGold.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ScarletBehaviorTree.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ScarletBlackBoard.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2405,6 +2417,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIOwnGold.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScarletBehaviorTree.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScarletBlackBoard.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
