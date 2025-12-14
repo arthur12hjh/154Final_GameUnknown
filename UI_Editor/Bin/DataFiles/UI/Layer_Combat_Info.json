@@ -3,7 +3,7 @@
         "Children": [
             {
                 "fAlpha": 1.0,
-                "fOffsetX": 180.0,
+                "fOffsetX": 220.0,
                 "fOffsetY": 100.0,
                 "fRotation": 0.0,
                 "fSizeX": 140.0,
@@ -19,6 +19,25 @@
                 "szProtoTag": "Prototype_GameObject_UI_GetterQueue",
                 "szUIID": "UI_GetterQueue_0",
                 "szUITag": "UI_GetterQueue"
+            },
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 640.0,
+                "fOffsetY": -400.0,
+                "fRotation": 0.0,
+                "fSizeX": 160.0,
+                "fSizeY": 50.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 10,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Combat_Info",
+                "szProtoTag": "Prototype_GameObject_UI_OwnGold",
+                "szUIID": "UI_OwnGold_1",
+                "szUITag": "UI_OwnGold"
             }
         ],
         "fAlpha": 1.0,

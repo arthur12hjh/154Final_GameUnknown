@@ -231,7 +231,7 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
     vector<string> InterDataList;
     InterDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
+    CStringHelper::CSVRead("../../Client/Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
 
     size_t iMaxSize = InterDataList.size();
     for (auto i = 5; i < iMaxSize;)
@@ -258,7 +258,7 @@ HRESULT CDataManager::LoadSkillData()
     vector<string> SkillDataList;
     SkillDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
+    CStringHelper::CSVRead("../../Client/Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
     for (auto i = 11; i < iMaxSize;)

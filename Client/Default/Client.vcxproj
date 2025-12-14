@@ -386,6 +386,7 @@
     <ClInclude Include="..\Public\UIBossStaminaFX.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
+    <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
     <ClInclude Include="..\Public\UILockOn.h" />
@@ -668,6 +669,7 @@
     <ClCompile Include="..\Private\UIBossStamina.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
+    <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\Private\UILockOn.cpp" />
