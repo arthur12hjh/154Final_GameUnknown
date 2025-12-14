@@ -57,9 +57,11 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		for (size_t i = 0; i < 4; ++i)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
+			m_iSkillID[i] = const_cast<_uint*>(&pGaraPlayer->Get_Desc()->iBetaSkillId[i]);
 			m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
+		m_iCurrentBeta = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);
 		m_eRushState = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eRushState);
 		m_ePrevRushState = *m_eRushState;
 		m_fMaxRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);

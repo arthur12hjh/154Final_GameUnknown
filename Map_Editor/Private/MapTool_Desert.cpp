@@ -1313,6 +1313,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
 					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 5;
 					break;
+				case DESESRT_RUIN_OBJECT::SPAWN_BOX7:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
+					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 7;
+					break;
 #pragma endregion
 
 #pragma region Terrain
@@ -1344,7 +1348,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
-					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+					if(pDesc.pComponentTag == nullptr)
+						hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &MonsterDesc);
+					else	
+						hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pDesc);
+
 				}
 				else
 				{
@@ -1459,14 +1467,18 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 			{
 				_vector vPickPoint = XMVectorSet(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
 
-				/*if (m_eCurrentObject == DESESRT_RUIN_OBJECT::MASK_WHITE)
+				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::MASK_RED)
 				{
-					Change_MaskMap_White(vPickedPoint);
+					Change_MaskMap_Red(vPickedPoint);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::MASK_GREEN)
+				{
+					Change_MaskMap_Green(vPickedPoint);
 				}
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::MASK_BLACK)
 				{
 					Change_MaskMap_Black(vPickedPoint);
-				}*/
+				}
 				if (m_eCurrentObject == DESESRT_RUIN_OBJECT::TERRAIN_UP)
 				{
 					m_pTerrain->Change_Height_Sculpt(vPickPoint, m_fHeight, m_fRadius, m_fMaxHeight);
@@ -1520,15 +1532,6 @@ HRESULT CMapTool_Desert::Render()
 
 #pragma region HeightMap Menu
 	// 1. 하이트맵 높이 조절 메뉴
-	/*if (ImGui::Button("INCREASE_CIRCLE"))
-	{
-		m_eCurrentObject = DESESRT_RUIN_OBJECT::TERRAIN_INCREASE_CIRCLE;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("DECREASE_CIRCLE"))
-	{
-		m_eCurrentObject = DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_CIRCLE;
-	}*/
 	if (ImGui::Button("INCREASE_RECT"))
 	{
 		m_eCurrentObject = DESESRT_RUIN_OBJECT::TERRAIN_INCREASE_RECT;
@@ -1595,35 +1598,39 @@ HRESULT CMapTool_Desert::Render()
 #pragma endregion
 
 #pragma region MaskMap Menu
-	//if (ImGui::Button("MASK_MAP_BALCK"))
-	//{
-	//	m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_BLACK;
-	//}
-	//ImGui::SameLine();
-	//if (ImGui::Button("MASK_MAP_WHITE"))
-	//{
-	//	m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_WHITE;
-	//}
-	//if (ImGui::Button("NEW_MASK_MAP"))
-	//{
-	//	Set_NewMaskMap();
-	//	m_pTerrain->Set_MapTool(this);
-	//}
-	//ImGui::Spacing(); // 메뉴 사이의 간격
-	//ImGui::Separator(); // 구분선을 추가
-	//ImGui::Spacing();
-	//static _char szMaskLoadFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/ReedMask2.png";
-	//ImGui::InputText("MaskMap Load File Path", szMaskLoadFilePath, sizeof(szMaskLoadFilePath));
-	//if (ImGui::Button("Load_MASK"))
-	//{
-	//	Set_LoadMaskMap(szMaskLoadFilePath);
-	//	m_pTerrain->Set_MapTool(this);
-	//}
+	if (ImGui::Button("MASK_MAP_BALCK"))
+	{
+		m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_BLACK;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("MASK_MAP_RED"))
+	{
+		m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_RED;
+	}
+	if (ImGui::Button("MASK_MAP_GREEN"))
+	{
+		m_eCurrentObject = DESESRT_RUIN_OBJECT::MASK_GREEN;
+	}
+	if (ImGui::Button("NEW_MASK_MAP"))
+	{
+		Set_NewMaskMap();
+		m_pTerrain->Set_MapTool(this);
+	}
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+	static _char szMaskLoadFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/TerrainMask.png";
+	ImGui::InputText("MaskMap Load File Path", szMaskLoadFilePath, sizeof(szMaskLoadFilePath));
+	if (ImGui::Button("Load_MASK"))
+	{
+		Set_LoadMaskMap(szMaskLoadFilePath);
+		m_pTerrain->Set_MapTool(this);
+	}
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	/*static _char szMaskMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/ReedMask.png";
+	static _char szMaskMapFilePath[256] = "../Bin/Resources/Maps/Desert/Terrain/TerrainMask.png";
 	ImGui::InputText("MaskMap Save File Path", szMaskMapFilePath, sizeof(szMaskMapFilePath));
 
 	if (ImGui::Button("Save_MASK"))
@@ -1636,7 +1643,7 @@ HRESULT CMapTool_Desert::Render()
 		{
 			MessageBoxW(g_hWnd, L"마스크 맵 저장 성공.", L"알림", MB_OK);
 		}
-	}*/
+	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -1728,7 +1735,7 @@ HRESULT CMapTool_Desert::Render()
 	}
 
 	_int nSelectedCharacter = -1;
-	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5" };
+	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5", "Monster7"};
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
@@ -1752,6 +1759,11 @@ HRESULT CMapTool_Desert::Render()
 			else if (nSelectedCharacter == 3)
 			{
 				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 4)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX7;
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
 
@@ -4171,269 +4183,323 @@ HRESULT CMapTool_Desert::Save_Terrain_HeightMap(const _char* szHeightMapFilePath
 
 }
 
-//HRESULT CMapTool_Desert::Save_MaskMap(const _char* szFilePath)
-//{
-//	if (m_pMaskTexture2D == nullptr)
-//	{
-//		return E_FAIL;
-//	}
-//
-//	// 1. 와이드 문자열 버퍼 선언
-//	wchar_t wszFilePath[256] = L"";
-//	size_t convertedChars = 0;
-//
-//	// 2. 멀티바이트 문자열 (char*)을 와이드 문자열 (wchar_t*)로 변환
-//	// szFilePath의 내용을 wszFilePath 버퍼로 안전하게 변환합니다.
-//	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
-//	{
-//		return E_FAIL;
-//	}
-//
-//	if (m_pMaskTexture2D != nullptr)
-//	{
-//		if (FAILED(DirectX::SaveWICTextureToFile(m_pContext, m_pMaskTexture2D, GUID_ContainerFormatPng, wszFilePath)))
-//			return E_FAIL;
-//	}
-//
-//	return S_OK;
-//}
+HRESULT CMapTool_Desert::Save_MaskMap(const _char* szFilePath)
+{
+	if (m_pMaskTexture2D == nullptr)
+	{
+		return E_FAIL;
+	}
 
-//HRESULT CMapTool_Desert::Set_LoadMaskMap(const _char* szFilePath)
-//{
-//	// 기존 리소스 해제
-//	Safe_Release(m_pMaskTexture2D);
-//	Safe_Release(m_pMaskSRV);
-//
-//	// 1. 와이드 문자열 버퍼 선언 및 변환 (DirectX::Load 함수는 wchar_t* 경로를 받음)
-//	wchar_t wszFilePath[256] = L"";
-//	size_t convertedChars = 0;
-//	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
-//	{
-//		return E_FAIL;
-//	}
-//
-//	// 2. 파일에서 텍스처를 로드하여 GPU 렌더링용 ID3D11Texture2D 생성 (기본 Usage: D3D11_USAGE_DEFAULT)
-//	ID3D11Resource* pLoadResource = nullptr;
-//	ID3D11Texture2D* pRenderTexture = nullptr;
-//
-//	// DirectX Tool Kit의 LoadWICTextureFromFileName 함수를 사용하여 텍스처 로드 및 SRV 생성
-//	// 여기서 pLoadResource는 내부적으로 생성된 ID3D11Texture2D 포인터입니다.
-//	if (FAILED(DirectX::CreateWICTextureFromFile(m_pDevice, m_pContext, wszFilePath, &pLoadResource, &m_pMaskSRV)))
-//	{
-//		return E_FAIL;
-//	}
-//
-//	// 3. 로드된 리소스에서 ID3D11Texture2D 포인터 가져오기
-//	// 로드된 텍스처의 속성을 파악하고, GPU 리소스를 준비합니다.
-//	if (pLoadResource)
-//	{
-//		// ID3D11Resource를 ID3D11Texture2D로 캐스팅
-//		pRenderTexture = reinterpret_cast<ID3D11Texture2D*>(pLoadResource);
-//	}
-//	else
-//	{
-//		// 로드 실패 또는 캐스팅 실패 시 SRV와 pLoadResource를 정리하고 반환
-//		Safe_Release(m_pMaskSRV);
-//		return E_FAIL;
-//	}
-//
-//	// 4. CPU 접근(편집)용 스테이징 Texture2D 생성 (m_pMaskTexture2D)
-//	D3D11_TEXTURE2D_DESC RenderDesc{};
-//	pRenderTexture->GetDesc(&RenderDesc); // 로드된 텍스처의 속성을 가져옴
-//
-//	D3D11_TEXTURE2D_DESC StageDesc = RenderDesc;
-//	StageDesc.Usage = D3D11_USAGE_STAGING;
-//	StageDesc.BindFlags = 0;
-//	StageDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-//	StageDesc.MiscFlags = 0;
-//
-//	if (FAILED(m_pDevice->CreateTexture2D(&StageDesc, nullptr, &m_pMaskTexture2D)))
-//	{
-//		Safe_Release(pLoadResource);
-//		return E_FAIL;
-//	}
-//
-//	// 5. GPU 텍스처의 내용을 CPU 스테이징 텍스처로 복사
-//	// 이제 m_pMaskTexture2D를 Map/Unmap으로 편집할 수 있습니다.
-//	m_pContext->CopyResource(m_pMaskTexture2D, pRenderTexture);
-//
-//	// pLoadResource는 로드된 GPU 텍스처이며, SRV 생성에 사용되었으므로 Safe_Release 처리
-//	Safe_Release(pLoadResource);
-//
-//	// 로드 성공 알림
-//	MessageBoxW(g_hWnd, L"마스크 맵 로드 성공.", L"알림", MB_OK);
-//
-//	return S_OK;
-//}
+	// 1. 와이드 문자열 버퍼 선언
+	wchar_t wszFilePath[256] = L"";
+	size_t convertedChars = 0;
 
-//HRESULT CMapTool_Desert::Set_NewMaskMap()
-//{
-//	Safe_Release(m_pMaskTexture2D);
-//	Safe_Release(m_pMaskSRV);
-//
-//	D3D11_TEXTURE2D_DESC		TextureDesc{};
-//	TextureDesc.Width = 512;
-//	TextureDesc.Height = 512;
-//	TextureDesc.MipLevels = 1;
-//	TextureDesc.ArraySize = 1;
-//	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-//
-//	TextureDesc.SampleDesc.Quality = 0;
-//	TextureDesc.SampleDesc.Count = 1;
-//	TextureDesc.Usage = D3D11_USAGE_STAGING;
-//	TextureDesc.BindFlags = 0;
-//	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-//	TextureDesc.MiscFlags = 0;
-//
-//	_uint* pPixel = new _uint[512 * 512];
-//
-//	for (size_t i = 0; i < 512; i++)
-//	{
-//		for (size_t j = 0; j < 512; j++)
-//		{
-//			_uint iIndex = i * 512 + j;
-//			pPixel[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);
-//		}
-//	}
-//
-//	D3D11_SUBRESOURCE_DATA		InitialDesc{};
-//	InitialDesc.pSysMem = pPixel;
-//	InitialDesc.SysMemPitch = 512 * 4;
-//
-//	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &InitialDesc, &m_pMaskTexture2D)))
-//		return E_FAIL;
-//
-//	// 2. GPU 렌더링용 Texture2D 생성
-//	D3D11_TEXTURE2D_DESC RenderTextureDesc = TextureDesc;
-//	RenderTextureDesc.Usage = D3D11_USAGE_DEFAULT;				// GPU 기본 사용
-//	RenderTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;	// 쉐이더 리소스로 바인드
-//	RenderTextureDesc.CPUAccessFlags = 0;						// CPU 접근 불가
-//
-//	ID3D11Texture2D* pRenderTexture = { nullptr };
-//	if (FAILED(m_pDevice->CreateTexture2D(&RenderTextureDesc, nullptr, &pRenderTexture)))
-//		return E_FAIL;
-//
-//	// 3. Shader Resource View 생성
-//	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc{};
-//	SRVDesc.Format = RenderTextureDesc.Format;
-//	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-//	SRVDesc.Texture2D.MipLevels = 1;
-//
-//	if (FAILED(m_pDevice->CreateShaderResourceView(pRenderTexture, &SRVDesc, &m_pMaskSRV)))
-//	{
-//		Safe_Release(pRenderTexture);
-//		return E_FAIL;
-//	}
-//
-//	m_pContext->CopyResource(pRenderTexture, m_pMaskTexture2D);
-//
-//	Safe_Release(pRenderTexture);
-//	Safe_Delete_Array(pPixel);
-//
-//	return S_OK;
-//}
+	// 2. 멀티바이트 문자열 (char*)을 와이드 문자열 (wchar_t*)로 변환
+	// szFilePath의 내용을 wszFilePath 버퍼로 안전하게 변환합니다.
+	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
+	{
+		return E_FAIL;
+	}
 
-//void CMapTool_Desert::Change_MaskMap_Black(_float3 vPickedPoint)
-//{
-//	D3D11_MAPPED_SUBRESOURCE		SubResource{};
-//
-//	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-//
-//	//const _float fTerrainHalfSize = 256.f;
-//	const _int iTexelSize = 512;
-//	const _float fTexelSize = 512;
-//
-//	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
-//
-//	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
-//	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
-//
-//
-//	_int iBrushRadius = static_cast<_int>(m_fRadius);
-//
-//	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
-//
-//	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
-//	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
-//	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
-//	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
-//
-//	for (_int i = iStartZ; i < iEndZ; i++)
-//	{
-//		char* pRowStart = static_cast<char*>(SubResource.pData) + (i * SubResource.RowPitch);
-//		_uint* pRow = reinterpret_cast<_uint*>(pRowStart);
-//
-//		for (_int j = iStartX; j < iEndX; j++)
-//		{
-//			// 픽셀 데이터 쓰기
-//			pRow[j] = D3DCOLOR_ARGB(255, 0, 0, 0); // (MASK_BLACK일 경우)
-//		}
-//	}
-//	m_pContext->Unmap(m_pMaskTexture2D, 0);
-//
-//	ID3D11Resource* pGpuResource = { nullptr };
-//	m_pMaskSRV->GetResource(&pGpuResource);
-//
-//	if (pGpuResource)
-//	{
-//		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
-//		Safe_Release(pGpuResource);
-//	}
-//}
-//
-//void CMapTool_Desert::Change_MaskMap_White(_float3 vPickedPoint)
-//{
-//	D3D11_MAPPED_SUBRESOURCE		SubResource{};
-//
-//	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-//
-//	//const _float fTerrainHalfSize = 256.f;
-//	const _int iTexelSize = 512;
-//	const _float fTexelSize = 512;
-//
-//	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
-//
-//	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
-//	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
-//
-//
-//	_int iBrushRadius = static_cast<_int>(m_fRadius);
-//
-//	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
-//
-//	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
-//	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
-//	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
-//	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
-//
-//	for (_int i = iStartZ; i < iEndZ; i++)
-//	{
-//		for (_int j = iStartX; j < iEndX; j++)
-//		{
-//			//_float fDistSq = (i - iCenterTexelY) * (i - iCenterTexelY) + (j - iCenterTexelX) * (j - iCenterTexelX);
-//
-//			/*if (fDistSq <= m_fRadius * m_fRadius)
-//			{
-//				_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
-//				pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
-//			}*/
-//			_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
-//			pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
-//		}
-//	}
-//	m_pContext->Unmap(m_pMaskTexture2D, 0);
-//
-//	// m_pMaskSRV 생성할떄 사용했던 원본ID3D11Texture2D를 다시 가져오거나
-//	// MapTool_Desert에서 m_pMaskSRV의 텍스처 포인터를 저장했다면 그것을 사용
-//	ID3D11Resource* pGpuResource = { nullptr };
-//	m_pMaskSRV->GetResource(&pGpuResource);
-//
-//	if (pGpuResource)
-//	{
-//		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
-//		Safe_Release(pGpuResource);
-//	}
-//}
+	if (m_pMaskTexture2D != nullptr)
+	{
+		if (FAILED(DirectX::SaveWICTextureToFile(m_pContext, m_pMaskTexture2D, GUID_ContainerFormatPng, wszFilePath)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Set_LoadMaskMap(const _char* szFilePath)
+{
+	// 기존 리소스 해제
+	Safe_Release(m_pMaskTexture2D);
+	Safe_Release(m_pMaskSRV);
+
+	// 1. 와이드 문자열 버퍼 선언 및 변환 (DirectX::Load 함수는 wchar_t* 경로를 받음)
+	wchar_t wszFilePath[256] = L"";
+	size_t convertedChars = 0;
+	if (mbstowcs_s(&convertedChars, wszFilePath, 256, szFilePath, _TRUNCATE) != 0)
+	{
+		return E_FAIL;
+	}
+
+	// 2. 파일에서 텍스처를 로드하여 GPU 렌더링용 ID3D11Texture2D 생성 (기본 Usage: D3D11_USAGE_DEFAULT)
+	ID3D11Resource* pLoadResource = nullptr;
+	ID3D11Texture2D* pRenderTexture = nullptr;
+
+	// DirectX Tool Kit의 LoadWICTextureFromFileName 함수를 사용하여 텍스처 로드 및 SRV 생성
+	// 여기서 pLoadResource는 내부적으로 생성된 ID3D11Texture2D 포인터입니다.
+	if (FAILED(DirectX::CreateWICTextureFromFile(m_pDevice, m_pContext, wszFilePath, &pLoadResource, &m_pMaskSRV)))
+	{
+		return E_FAIL;
+	}
+
+	// 3. 로드된 리소스에서 ID3D11Texture2D 포인터 가져오기
+	// 로드된 텍스처의 속성을 파악하고, GPU 리소스를 준비합니다.
+	if (pLoadResource)
+	{
+		// ID3D11Resource를 ID3D11Texture2D로 캐스팅
+		pRenderTexture = reinterpret_cast<ID3D11Texture2D*>(pLoadResource);
+	}
+	else
+	{
+		// 로드 실패 또는 캐스팅 실패 시 SRV와 pLoadResource를 정리하고 반환
+		Safe_Release(m_pMaskSRV);
+		return E_FAIL;
+	}
+
+	// 4. CPU 접근(편집)용 스테이징 Texture2D 생성 (m_pMaskTexture2D)
+	D3D11_TEXTURE2D_DESC RenderDesc{};
+	pRenderTexture->GetDesc(&RenderDesc); // 로드된 텍스처의 속성을 가져옴
+
+	D3D11_TEXTURE2D_DESC StageDesc = RenderDesc;
+	StageDesc.Usage = D3D11_USAGE_STAGING;
+	StageDesc.BindFlags = 0;
+	StageDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	StageDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&StageDesc, nullptr, &m_pMaskTexture2D)))
+	{
+		Safe_Release(pLoadResource);
+		return E_FAIL;
+	}
+
+	// 5. GPU 텍스처의 내용을 CPU 스테이징 텍스처로 복사
+	// 이제 m_pMaskTexture2D를 Map/Unmap으로 편집할 수 있습니다.
+	m_pContext->CopyResource(m_pMaskTexture2D, pRenderTexture);
+
+	// pLoadResource는 로드된 GPU 텍스처이며, SRV 생성에 사용되었으므로 Safe_Release 처리
+	Safe_Release(pLoadResource);
+
+	// 로드 성공 알림
+	MessageBoxW(g_hWnd, L"마스크 맵 로드 성공.", L"알림", MB_OK);
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Set_NewMaskMap()
+{
+	Safe_Release(m_pMaskTexture2D);
+	Safe_Release(m_pMaskSRV);
+
+	D3D11_TEXTURE2D_DESC		TextureDesc{};
+	TextureDesc.Width = 2048;
+	TextureDesc.Height = 2048;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+	TextureDesc.Usage = D3D11_USAGE_STAGING;
+	TextureDesc.BindFlags = 0;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	TextureDesc.MiscFlags = 0;
+
+	_uint* pPixel = new _uint[2048 * 2048];
+
+	for (size_t i = 0; i < 2048; i++)
+	{
+		for (size_t j = 0; j < 2048; j++)
+		{
+			_uint iIndex = i * 2048 + j;
+			pPixel[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);
+		}
+	}
+
+	D3D11_SUBRESOURCE_DATA		InitialDesc{};
+	InitialDesc.pSysMem = pPixel;
+	InitialDesc.SysMemPitch = 2048 * 4;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &InitialDesc, &m_pMaskTexture2D)))
+		return E_FAIL;
+
+	// 2. GPU 렌더링용 Texture2D 생성
+	D3D11_TEXTURE2D_DESC RenderTextureDesc = TextureDesc;
+	RenderTextureDesc.Usage = D3D11_USAGE_DEFAULT;				// GPU 기본 사용
+	RenderTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;	// 쉐이더 리소스로 바인드
+	RenderTextureDesc.CPUAccessFlags = 0;						// CPU 접근 불가
+
+	if (FAILED(m_pDevice->CreateTexture2D(&RenderTextureDesc, nullptr, &m_pMaskRenderTexture)))
+		return E_FAIL;
+
+	// 3. Shader Resource View 생성
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc{};
+	SRVDesc.Format = RenderTextureDesc.Format;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	SRVDesc.Texture2D.MipLevels = 1;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pMaskRenderTexture, &SRVDesc, &m_pMaskSRV)))
+	{
+		Safe_Release(m_pMaskRenderTexture);
+		return E_FAIL;
+	}
+
+	m_pContext->CopyResource(m_pMaskRenderTexture, m_pMaskTexture2D);
+
+	//Safe_Release(pRenderTexture);
+	Safe_Delete_Array(pPixel);
+
+	return S_OK;
+}
+
+void CMapTool_Desert::Change_MaskMap_Black(_float3 vPickedPoint)
+{
+	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+	//const _float fTerrainHalfSize = 256.f;
+	const _int iTexelSize = 2048;
+	const _float fTexelSize = 2048;
+
+	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
+
+	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
+	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
+
+
+	_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
+
+	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+	for (_int i = iStartZ; i < iEndZ; i++)
+	{
+		char* pRowStart = static_cast<char*>(SubResource.pData) + (i * SubResource.RowPitch);
+		_uint* pRow = reinterpret_cast<_uint*>(pRowStart);
+
+		for (_int j = iStartX; j < iEndX; j++)
+		{
+			// 픽셀 데이터 쓰기
+			pRow[j] = D3DCOLOR_ARGB(255, 0, 0, 0); // (MASK_BLACK일 경우)
+		}
+	}
+	m_pContext->Unmap(m_pMaskTexture2D, 0);
+
+	ID3D11Resource* pGpuResource = { nullptr };
+	m_pMaskSRV->GetResource(&pGpuResource);
+
+	if (pGpuResource)
+	{
+		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
+		Safe_Release(pGpuResource);
+	}
+}
+
+void CMapTool_Desert::Change_MaskMap_Red(_float3 vPickedPoint)
+{
+	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+	const _int iTexelSize = 2048;
+	const _float fTexelSize = 2048.f;
+
+	_float fFlippedZ = fTexelSize - vPickedPoint.z;
+
+	// 2. 0 ~ 2048 범위로 클램프
+	_float fClampedX = max(0.f, min(fTexelSize, vPickedPoint.x));
+	_float fClampedY = max(0.f, min(fTexelSize, fFlippedZ));
+
+	// 3. 정수 변환 (안전)
+	// 0.5를 더하여 반올림 효과를 줄 수도 있지만, 일단 클램핑된 값을 정수로 변환합니다.
+	_int iCenterTexelX = static_cast<_int>(fClampedX);
+	_int iCenterTexelY = static_cast<_int>(fClampedY);
+
+	_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+	_tchar szDebug[256];
+	wsprintf(szDebug, L"Picked: (X=%.2f, Z=%.2f), Texel: (%d, %d), Radius: %d\n",
+		vPickedPoint.x, vPickedPoint.z, iCenterTexelX, iCenterTexelY, iBrushRadius);
+	OutputDebugString(szDebug);
+
+	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+	for (_int i = iStartZ; i < iEndZ; i++) // Y (row) 방향 순회
+	{
+		char* pRowStart = static_cast<char*>(SubResource.pData) + (i * SubResource.RowPitch);
+		_uint* pRow = reinterpret_cast<_uint*>(pRowStart); // _uint는 32비트 ARGB (4바이트) 포맷일 때 적절합니다.
+
+		for (_int j = iStartX; j < iEndX; j++) // X (column) 방향 순회
+		{
+			// pRow는 i번째 행의 시작 주소를 가리키므로, pRow[j]는 j번째 픽셀의 주소입니다.
+			// pRow[j]에 직접 픽셀 데이터 쓰기
+			pRow[j] = D3DCOLOR_ARGB(255, 255, 0, 0); // Red
+		}
+	}
+	m_pContext->Unmap(m_pMaskTexture2D, 0);
+
+	/*ID3D11Resource* pGpuResource = { nullptr };
+	m_pMaskSRV->GetResource(&pGpuResource);*/
+
+	if (m_pMaskRenderTexture)
+	{
+		m_pContext->CopyResource(m_pMaskRenderTexture, m_pMaskTexture2D);
+		//Safe_Release(pGpuResource);
+	}
+}
+
+void CMapTool_Desert::Change_MaskMap_Green(_float3 vPickedPoint)
+{	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+
+	m_pContext->Map(m_pMaskTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+
+	//const _float fTerrainHalfSize = 256.f;
+	const _int iTexelSize = 2048;
+	const _float fTexelSize = 2048;
+
+	_int iCenterTexelX = static_cast<_int>(vPickedPoint.x);
+
+	_float fFlippedZ = fTexelSize - (vPickedPoint.z);
+	_int iCenterTexelY = static_cast<_int>(fFlippedZ);
+
+
+	_int iBrushRadius = static_cast<_int>(m_fRadius);
+
+	_uint iRowSize = SubResource.RowPitch / sizeof(_uint);
+
+	_int iStartX = max(0, iCenterTexelX - iBrushRadius);
+	_int iEndX = min(iTexelSize, iCenterTexelX + iBrushRadius);
+	_int iStartZ = max(0, iCenterTexelY - iBrushRadius);
+	_int iEndZ = min(iTexelSize, iCenterTexelY + iBrushRadius);
+
+	for (_int i = iStartZ; i < iEndZ; i++)
+	{
+		for (_int j = iStartX; j < iEndX; j++)
+		{
+			//_float fDistSq = (i - iCenterTexelY) * (i - iCenterTexelY) + (j - iCenterTexelX) * (j - iCenterTexelX);
+
+			/*if (fDistSq <= m_fRadius * m_fRadius)
+			{
+				_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
+				pRow[j] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}*/
+			_uint* pRow = static_cast<_uint*>(SubResource.pData) + (i * iRowSize);
+			pRow[j] = D3DCOLOR_ARGB(255, 0, 255, 0);
+		}
+	}
+	m_pContext->Unmap(m_pMaskTexture2D, 0);
+
+	// m_pMaskSRV 생성할떄 사용했던 원본ID3D11Texture2D를 다시 가져오거나
+	// MapTool_Desert에서 m_pMaskSRV의 텍스처 포인터를 저장했다면 그것을 사용
+	ID3D11Resource* pGpuResource = { nullptr };
+	m_pMaskSRV->GetResource(&pGpuResource);
+
+	if (pGpuResource)
+	{
+		m_pContext->CopyResource(pGpuResource, m_pMaskTexture2D);
+		Safe_Release(pGpuResource);
+	}
+}
 
 void CMapTool_Desert::Set_NaviEditMode(_bool bMode)
 {

@@ -90,7 +90,8 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
                 EffectDesc.fSpeedPerSec = 1.f;
 
                 _float4x4 matTransform;
-                XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+                //XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2")) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+                XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(&m_CombinedWorldMatrix));
                 EffectDesc.pRootMatrix = nullptr;
                 EffectDesc.pWorldMatrix = nullptr;
                 EffectDesc.vPos = XMVectorSet(matTransform._41, matTransform._42, matTransform._43, matTransform._44);

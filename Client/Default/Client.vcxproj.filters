@@ -799,6 +799,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
       <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIOwnGold">
+      <UniqueIdentifier>{2398c82f-654f-42be-9953-8459ef90941b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1613,6 +1616,9 @@
     <ClInclude Include="..\Public\UIBetaFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIOwnGold.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2396,6 +2402,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIBetaFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIOwnGold.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

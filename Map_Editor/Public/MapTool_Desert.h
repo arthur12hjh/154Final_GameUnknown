@@ -103,6 +103,18 @@ public:
 
 	HRESULT Save_Terrain_HeightMap(const _char* szHeightMapFilePath);
 
+	HRESULT Save_MaskMap(const _char* szFilePath);
+
+	HRESULT Set_LoadMaskMap(const _char* szFilePath);
+	HRESULT Set_NewMaskMap();
+	void Change_MaskMap_Black(_float3 vPickedPoint);
+	void Change_MaskMap_Red(_float3 vPickedPoint);
+	void Change_MaskMap_Green(_float3 vPickedPoint);
+
+	void Set_Terrain(class CTerrain_Desert* pTerrain) {
+		m_pTerrain = pTerrain;
+	}
+
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
 	void Reset_NaviPoints(); // 현재까지 선택된 네비게이션 포인트를 리셋
@@ -151,7 +163,7 @@ private:
 	_float m_fScaleZ = { 0.f };
 
 	_float m_fHeight = { 0.f };
-	_float m_fRadius = { 0.f };
+	_float m_fRadius = { 2.f };
 	_float m_fMaxHeight = { 0.f };
 	_float m_fSmoothFactor = { 0.f };
 	_float m_fMoveSpeed = { 3.f };
@@ -194,6 +206,7 @@ private:
 	_bool				m_bIsMapMode = { false };
 	_bool				m_bIsDragging = { false };
 
+	ID3D11Texture2D* m_pMaskRenderTexture = { nullptr };
 
 	vector<vector<VTX_INSTANCE_MODEL>*> m_vecInstancingData;
 

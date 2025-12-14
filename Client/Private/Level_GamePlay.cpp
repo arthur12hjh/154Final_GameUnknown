@@ -57,7 +57,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin");
-	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -290,6 +290,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
 
 	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
@@ -336,7 +337,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 696.44f, 2.f, 560.87f };
+	Desc.vPosition = { 222.f, 50.f, 250.87f };
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 

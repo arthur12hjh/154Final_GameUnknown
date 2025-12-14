@@ -158,6 +158,9 @@ namespace Client
 
 		bool   isLinkAttackAvailable = { true };
 		class CNayitba* pLinkAttackTarget = { nullptr };
+
+		// 골드
+		int iOwnGold{ 0 };
 	}PLAYER_DESC;
 
 	// 스킬 구조체

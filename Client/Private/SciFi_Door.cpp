@@ -119,6 +119,8 @@ HRESULT CSciFi_Door::Render()
 HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 {
 	_float3 Com_Size = m_pTransformCom->Get_Scale();
+	Com_Size.x *= 2.f;
+	Com_Size.z *= 2.f;
 
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
