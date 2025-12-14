@@ -59,7 +59,6 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	pEntity->SetAttackData(m_pSkillData);
 
 	m_bIsEnableChange = false;
-	m_fAttackPlayRate = 1.3f;
 	
 }
 
@@ -91,8 +90,8 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 		}	
 	}
 
-	pEntity->Set_Animation(m_szAnimationName.c_str(), false, m_fAttackPlayRate, m_StaticMonsterData->fLerpRatio);
-	m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
+	pEntity->Set_Animation(m_szAnimationName.c_str(), false, 1.f, m_StaticMonsterData->fLerpRatio);
+	m_bIsFinished = pEntity->Play_Animation(fTimeDelta * m_fPlayRatio);
 
 	if (m_bIsFinished)
 	{
@@ -131,11 +130,20 @@ void CMonsterAttackState::ReadySetting()
 		_float fLength = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 		_float fRangeRatio = fLength / pOwnerInfo->fAttackRange;
 		if (0.4f >= fRangeRatio)
+		{
 			m_fMoveSpeed *= 0.3f;
-		else if (0.6f >= fRangeRatio)
+			m_fPlayRatio = 2.f;
+		}
+		else if (0.8f >= fRangeRatio)
+		{
 			m_fMoveSpeed *= 0.5f;
+			m_fPlayRatio = 2.f; 
+		}
 		else
+		{
 			m_fMoveSpeed *= 0.8f;
+			m_fPlayRatio = 2.f;
+		}
 
 		m_bIsPattern = true;
 	}
@@ -290,10 +298,6 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		{
 			m_fMoveAnimMaxRatio = 0.12f;
 			bMoveAction = true;
-		}
-		else
-		{
-			m_fAttackPlayRate = 1.5f;
 		}
 
 		// 40 ~ 70 «¡∑π¿”

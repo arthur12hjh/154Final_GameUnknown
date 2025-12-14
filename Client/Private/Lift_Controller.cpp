@@ -277,8 +277,8 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 
 void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-		m_fInteractionDuration.x += fTimeDelta;
+	if (!IsInteractionEnable())
+		m_fInteractionDuration += fTimeDelta;
 
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
@@ -299,7 +299,7 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 		}
 
-		m_fInteractionDuration.x = 0.f;
+		m_fInteractionDuration = 0.f;
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
 			m_pModelCom->Set_AnimationIndex(1, false);

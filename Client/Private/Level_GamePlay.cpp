@@ -12,6 +12,7 @@
 #include "Lift_Platform.h"
 #include "Player.h"
 #include "Spawner.h"
+#include "AttackHitBox.h"
 #include "UIHUD.h"
 
 #include "SpriteParticle.h"
@@ -54,10 +55,15 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin");
 	Load_Monster_Desert_Data("../Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameManager = CGameManager::GetInstance();
+	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
+	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
+	pHitBoxDesc.eColType = COLLIDER::OBB;
+	pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
 	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
 
 	auto pGameCharacter = pGameManager->GetGameCharacter();

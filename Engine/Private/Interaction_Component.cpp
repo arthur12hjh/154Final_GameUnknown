@@ -62,12 +62,12 @@ void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)
 
 void CInteraction_Component::ADD_InteractionIgnoreObject(HIT_TYPE eHitType)
 {
-    m_pOBBColiider->ADD_IgnoreObject(eHitType);
+    m_pOBBColiider->ADD_IgnoreObjectType(eHitType);
 }
 
 void CInteraction_Component::ADD_InteractionOnlyHitObject(HIT_TYPE typeID)
 {
-    m_pOBBColiider->ADD_OnlyHitObject(typeID);
+    m_pOBBColiider->ADD_OnlyHitObjectType(typeID);
 }
 
 const _float3& CInteraction_Component::Get_CenterPos()
@@ -117,10 +117,10 @@ HRESULT CInteraction_Component::Ready_Components(const INTERACTION_DESC& Desc)
 
     m_pOBBColiider->SetColliderHitType(HIT_TYPE::INTERACTION);
 
-    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
-    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::SENCE);
-    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::OBJECT);
-    m_pOBBColiider->ADD_IgnoreObject(HIT_TYPE::STATIC);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::OBJECT);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::STATIC);
     return S_OK;
 }
 

@@ -303,6 +303,8 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
+
+		
 	}
 
 	break;
@@ -555,7 +557,7 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
+	
 	/* For.Prototype_Component_Shader_Eve_Face */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Eve_Face");
 	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Eve_Face.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);

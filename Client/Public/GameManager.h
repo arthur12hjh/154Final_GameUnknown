@@ -81,8 +81,9 @@ public:
 
 #pragma region Pool Manager
 	HRESULT											Setting_PoolManager(_uint iLevelID);
-	CGameObject*									SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag);
-	void											UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject);
+	HRESULT											ADD_PoolManager(_uint iLevelID, _uint iProtoTypeLevel, const WCHAR* ProtoTypeName, void* pArg, const WCHAR* szPoolTag, _uint iCount);
+	CGameObject*									SetActivePoolObject(_uint iLevel, _uint iProtoTypeLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag);
+	void											UnActivePoolObject(_uint iLevelID, const WCHAR* szPoolTag, CGameObject* pObject);
 #pragma endregion
 
 #pragma region Damage Logic

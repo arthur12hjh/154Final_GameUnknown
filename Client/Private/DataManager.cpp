@@ -234,7 +234,7 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
 
     size_t iMaxSize = InterDataList.size();
-    for (auto i = 5; i < iMaxSize;)
+    for (auto i = 6; i < iMaxSize;)
     {
         INTERACTION_DATA InterDesc = {};
         
@@ -245,6 +245,7 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         InterDesc.vUIPivot.x = (_float)atof(InterDataList[i++].c_str());
         InterDesc.vUIPivot.y = (_float)atof(InterDataList[i++].c_str());
         InterDesc.vUIPivot.z = (_float)atof(InterDataList[i++].c_str());
+        InterDesc.fInteractionTime = (_float)atof(InterDataList[i++].c_str());
         InterDesc.eType = INTERACTION_TYPE(atoi(InterDataList[i++].c_str()));
 
         m_pInteractionDatas.emplace(InterDesc.iID, InterDesc);

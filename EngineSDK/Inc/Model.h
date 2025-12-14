@@ -97,7 +97,7 @@ public:
 	_uint				Get_MeshIndices(_uint iMeshNum);
 	_uint				Get_MeshVertexStride(_uint iMeshNum);
 	DXGI_FORMAT			Get_MeshIndexFormat(_uint iMeshNum);
-	_float				Get_AnimationRatio() { return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition(); }
+	_float				Get_AnimationRatio();
 
 	// binModel 구조체로 받는 함수. 만들긴 했는데 쓸모는 없을듯
 	binModel* Get_RawModelDesc() { return m_pModel; }

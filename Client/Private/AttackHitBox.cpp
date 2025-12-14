@@ -2,6 +2,7 @@
 #include "AttackHitBox.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Player.h"
 
 CAttackHitBox::CAttackHitBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -32,25 +33,45 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 
 	m_vImpactDir = pHit_BoxDesc->vImapctDir;
 	m_fImpactForce = pHit_BoxDesc->fImpactForce;
+	
+	if (m_pAttacker)
+	{
+		_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
+
+		_vector vScale{}, vRotation{}, vPosition{};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, ParentMatrix);
+		m_pTransformCom->Set_Rotation(vRotation, true);
+	}
+
+	if (FAILED(Ready_Components(*pHit_BoxDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CAttackHitBox::Initialize(const HIT_BOX_DESC& pArg)
+{
+	m_pAttacker = pArg.pAttacker;
+	m_pData = pArg.pData;
+
+	m_vImpactDir = pArg.vImapctDir;
+	m_fImpactForce = pArg.fImpactForce;
 
 	_matrix ParentMatrix = XMLoadFloat4x4(m_pAttacker->GetTransform()->Get_WorldMatrixPtr());
-
 	_vector vScale{}, vRotation{}, vPosition{};
 	XMMatrixDecompose(&vScale, &vRotation, &vPosition, ParentMatrix);
 	m_pTransformCom->Set_Rotation(vRotation, true);
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&pArg.vPosition));
+	m_pTransformCom->Set_Scale(XMLoadFloat3(&pArg.vScale));
 
-	if (m_pData)
-	{
-		if (FAILED(Ready_Components(*pHit_BoxDesc)))
-			return E_FAIL;
-	}
-	else
-	{
-#ifdef _DEBUG
-		m_bIsDelayDead = true;
-		Set_Dead(true);
-#endif
-	}
+	auto HitType = m_pColliderCom->GetCollierHitType();
+	m_pColliderCom->ADD_HitObjectType(HitType);
+
+	m_pColliderCom->SetColliderHitType(pArg.eHitBoxType);
+	m_pColliderCom->ADD_IgnoreObjectType(pArg.eHitBoxType);
+
+	m_bIsDelayDead = false;
+	m_isDead = false;
 	return S_OK;
 }
 
@@ -74,9 +95,16 @@ void CAttackHitBox::Update(_float fTimeDelta)
 	}
 	else
 	{
+		if (1.f <= fTimeDelta)
+			int a = 10.f;
+
 		m_vDelayDead.x += fTimeDelta;
 		if (m_vDelayDead.x > m_vDelayDead.y)
-			Set_Dead(true);
+		{
+			m_isDead = true;
+			ReturnObjectPool();
+		}
+			
 	}
 #else
 	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -86,7 +114,7 @@ void CAttackHitBox::Update(_float fTimeDelta)
 
 	m_vAliveTime.x += fTimeDelta;
 	if (m_vAliveTime.x > m_vAliveTime.y)
-		Set_Dead(true);
+		ReturnObjectPool();;
 #endif
 }
 
@@ -94,9 +122,7 @@ void CAttackHitBox::Late_Update(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	if (!m_bIsDelayDead)
-	{
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
-	}
 
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #else
@@ -163,9 +189,9 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 
 	// 일단은 플레이어만 충돌처리 피직스 오브젝트 들어가면 그녀석들 충돌처리
 	// 공통으로 할수있는 Tag 만들어서 하기
-	m_pColliderCom->ADD_IgnoreObject(pDesc.eHitBoxType);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(pDesc.eHitBoxType);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision(_float3(0.f, pDesc.vScale.y, 0.f), {}, pDesc.vScale);
 	return S_OK;
 }
@@ -176,23 +202,28 @@ void CAttackHitBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	if (nullptr == pCharacter)
 		return;
 
-	auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
-	DEFAULT_DAMAGE_DESC pDamageDesc = {};
+	if (m_pData)
+	{
+		auto pDesc = static_cast<const CHARACTER_SKILL_DESC*>(m_pData);
+		DEFAULT_DAMAGE_DESC pDamageDesc = {};
 
-	pDamageDesc.pAttacker = m_pAttacker;
-	pDamageDesc.vHitDir = vHitDir;
-	pDamageDesc.vImpactDir = m_vImpactDir;
-	pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
-	pDamageDesc.fImpactForce = m_fImpactForce;
-	pDamageDesc.vHitPoint = vHitPoint;
-	pDamageDesc.pSkillData = pDesc;
+		pDamageDesc.pAttacker = m_pAttacker;
+		pDamageDesc.vHitDir = vHitDir;
+		pDamageDesc.vImpactDir = m_vImpactDir;
+		pDamageDesc.vHitWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+		pDamageDesc.fImpactForce = m_fImpactForce;
+		pDamageDesc.vHitPoint = vHitPoint;
+		pDamageDesc.pSkillData = pDesc;
 
-	pCharacter->Damaged(&pDamageDesc);
+		pCharacter->Damaged(&pDamageDesc);
+	}
+	 
 #ifdef _DEBUG
-	m_vDelayDead = { 0.f, 3.f };
+	m_vDelayDead = { 0.f, 1.f };
 	m_bIsDelayDead = true;
 #else
-	Set_Dead(true);
+	m_isDead = true;
+	ReturnObjectPool();
 #endif // _DEBUG
 
 }
@@ -206,6 +237,15 @@ void CAttackHitBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 {
 	// 이건 거의 쓸모없을듯
 
+}
+
+void CAttackHitBox::ReturnObjectPool()
+{
+	static_cast<COBBCollider*>(m_pColliderCom)->ResetCollision();
+	m_vDelayDead.x = m_vAliveTime.x = 0.f;
+
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::STATIC), TEXT("Hit_Box"), this);
 }
 
 CAttackHitBox* CAttackHitBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

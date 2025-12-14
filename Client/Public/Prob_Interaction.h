@@ -33,12 +33,13 @@ public:
 
 	virtual HRESULT					Render() override;
 	void							Finished_Interaction();
+	void							Reset_Interaction();
 
 	INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
 	const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
 	const CInteraction_Component*	Get_InterCom() { return m_pInteractionCom; }
 
-	_float2							Get_Duration() { return m_fInteractionDuration; }
+	_float							Get_Ratio() { return m_fInteractionDuration / m_InteractionDesc->fInteractionTime; }
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr };
@@ -47,7 +48,7 @@ protected:
 	const INTERACTION_DATA*			m_InteractionDesc = {};
 	INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
 
-	_float2							m_fInteractionDuration = {};
+	_float							m_fInteractionDuration = {};
 
 protected :
 	virtual HRESULT					Begin_OverlapCallBack();

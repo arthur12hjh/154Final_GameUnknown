@@ -87,6 +87,7 @@ private:
 	void Update_LinkAttack(_float fTimeDelta);
 
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	
 	void CreateHitBox(const AnimNotify* pNotify);
 
 
