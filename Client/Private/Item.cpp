@@ -6,6 +6,8 @@
 #include "Effect.h"
 #include "UIHUD.h"
 #include "UIGetterQueue.h"
+#include "GameManager.h"
+#include "Player.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -19,9 +21,6 @@ CItem::CItem(const CItem& Prototype) :
 
 HRESULT CItem::Initialize_Prototype()
 {
-
-
-
 	return S_OK;
 }
 
@@ -188,6 +187,13 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 				WCHAR pText[MAX_PATH] = {};
 				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
 				pGetterQueue->Insert_Queue(pText);
+
+				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+				if (pPlayer)
+					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+
+				Safe_Release(pPlayer);
 			}
 		}
 		Safe_Release(pHUD);

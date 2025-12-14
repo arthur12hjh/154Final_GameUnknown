@@ -4,8 +4,8 @@
         "fOffsetX": 0.0,
         "fOffsetY": 0.0,
         "fRotation": 0.0,
-        "fSizeX": 16.0,
-        "fSizeY": 16.0,
+        "fSizeX": 100.0,
+        "fSizeY": 100.0,
         "fX": 0.0,
         "fY": 0.0,
         "iDepth": 1,
@@ -27,7 +27,7 @@
                         "Shader": {
                             "bUseGlow": true,
                             "bUseTintColor": true,
-                            "fGlowIntensity": 2.333322048187256,
+                            "fGlowIntensity": 2.5,
                             "fGlowSpread": 0.0,
                             "vTintColor": [
                                 0.4415094256401062,
@@ -41,7 +41,7 @@
                         "fOffsetY": 0.0,
                         "fRotation": 0.0,
                         "fSizeX": 45.0,
-                        "fSizeY": 64.28571319580078,
+                        "fSizeY": 64.0,
                         "fX": 0.0,
                         "fY": 0.0,
                         "iDepth": 6,
