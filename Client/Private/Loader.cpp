@@ -190,6 +190,7 @@
 #include "UIInteractionFX.h"
 #include "UILockOn.h"
 #include "UIGetterQueue.h"
+#include "UIOwnGold.h"
 
 #pragma endregion
 
@@ -5933,14 +5934,14 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Overlay");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_UI_Texture_Center_Pivot */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Center_Pivot");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -5948,6 +5949,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	/* For.Prototype_Component_UI_Texture_Number */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Number");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.png"), 10);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Icon_Gold */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Icon_Gold");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Info/Icon_Gold.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6069,6 +6077,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 	/* For.Prototype_GameObject_UI_GetterQueue */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_GetterQueue");
 	pProtoDesc.pPrototype = CUIGetterQueue::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_OwnGold */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_OwnGold");
+	pProtoDesc.pPrototype = CUIOwnGold::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

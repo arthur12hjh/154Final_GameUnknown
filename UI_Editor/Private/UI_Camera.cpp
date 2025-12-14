@@ -68,28 +68,7 @@ void CUI_Camera::Priority_Update(_float fTimeDelta)
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 					m_pTransformCom->Go_Right(fTimeDelta);
-
-				//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-				//{
-				//	auto pInterraction = m_pGameInstance->GetNearInteraction();
-				//	if (pInterraction)
-				//		pInterraction->Action_InteractionEvent(this);
-				//}
 			}
-
-			/*if (false == m_bIsLock[1])
-			{
-				_long		MouseMove = {};
-				if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::HORIZONTAL)))
-				{
-					m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
-				}
-
-				if (MouseMove = m_pGameInstance->GetMouseAxis(ENUM_CLASS(MOUSEMOVESTATE::VERTICAL)))
-				{
-					m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
-				}
-			}*/
 		}
 		else
 		{
@@ -113,7 +92,7 @@ void CUI_Camera::Priority_Update(_float fTimeDelta)
 				m_pTransformCom->LookAt(vLookPos);
 			}
 		}
-		__super::Bind_Matrices();
+		__super::Bind_Matrices(fTimeDelta);
 	}
 }
 
@@ -327,12 +306,6 @@ void CUI_Camera::Update(_float fTimeDelta)
 
 void CUI_Camera::Late_Update(_float fTimeDelta)
 {
-//	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-//
-//#ifdef _DEBUG
-//	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-//	m_pGameInstance->ADD_Collider(m_pColliderCom);
-//#endif
 }
 
 HRESULT CUI_Camera::Render()
@@ -390,6 +363,12 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 	for (int i = 0; i < 4; ++i)
 		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
 
+	m_PlayerDesc.iOwnGold = 0;
+
+	m_PlayerDesc.iBetaSkillCount = 2;
+	m_PlayerDesc.iBetaSkillId[0] = 1004;
+	m_PlayerDesc.iBetaSkillId[1] = 1005;
+
 	return S_OK;
 }
 
@@ -433,6 +412,4 @@ CGameObject* CUI_Camera::Clone(void* pArg)
 void CUI_Camera::Free()
 {
 	__super::Free();
-
-	//Safe_Release(m_pColliderCom);
 }
