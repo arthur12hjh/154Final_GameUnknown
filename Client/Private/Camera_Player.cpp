@@ -32,19 +32,19 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     m_pPlayerTransform = m_pGameManager->Get_PlayerDesc()->pPlayerTransform;
 
     CPlayer* pPlayer = m_pGameManager->GetGameCharacter();
-
+    
     m_fRotateX = 0.f;
     m_fRotateY = 90.f;
 
     m_fDistance = 12.f;
 
-    m_fLookMagnification = { 1.f };
-    m_fUpMagnification = { 5.f };
-
-    Safe_Release(pPlayer);
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+
+    if (nullptr == pPlayer)
+        m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
+
+    Safe_Release(pPlayer);
 
     return S_OK;
 }
@@ -73,31 +73,38 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
     if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
 
+    _float3 vViewPoint = {};
+
+    float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+    vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
+
+    // 카메라와 ViewPoint 거리.
+    _float fCamDist = m_fDistance;
+    
     // 플레이어 위치 받아오기.
     _float3 vPlayerPos = {};
     XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
 
     // 피벗 위치를 받아온다.
     _float3 vPivotPos = {};
-    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVectorSet(1.f, 5.f, 0.f, 0.f));
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+    vPivotPos.x += fPitchRatio * -1.6f;
+    vPivotPos.y += fPitchRatio * 2.f;
 
     // ViewPoint를 구하기 위한 방향벡터
     _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
 
-    _float3 vViewPoint = {};
     XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
 
-    float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
-    vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
-
-    // 카메라와 ViewPoint 거리. 얼마가 나으려나~?
-    _float fCamDist = m_fDistance;
+    if (fPitchRatio > 0.5)
+        fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
 
     _float3 vCamPos = {};
-    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * fCamDist);
+    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
 
-    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-    m_pTransformCom->LookAt(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f));
+    //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta * 0.9f, 0.0f);
+    m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
 
     memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
 
