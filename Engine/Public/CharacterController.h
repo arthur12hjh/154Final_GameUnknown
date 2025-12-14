@@ -67,13 +67,14 @@ public:
 	void Set_Position(_vector vPosition);
 	_vector Calc_Gravity(_float fTimeDelta);
 
-	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
+	void Set_Active(_bool bFlag) { m_tUserData.isActive = bFlag; }
 private:
 	/* RigidActor -> RigidBody & RigidStatic */
 	/* RigidBody -> RigidDynamic & RigidArticulationLink */
 	class CCTHitReporter* m_pHitReporter = { nullptr };
 	class CCTBehaviorCallback* m_pBehaviorCallback = { nullptr };
 	class CCTQueryFilterCallback* m_pQueryFilterCallback = { nullptr };
+	class CCTFilterCallback* m_pCCTFilterCallback = { nullptr };
 
 	PxControllerManager* m_pPxCCTManager = { nullptr };
 	PxPhysics*			 m_pPxPhysics = { nullptr };
