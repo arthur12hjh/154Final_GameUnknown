@@ -35,6 +35,10 @@ private:
 
 	CCollider* m_pColliderCom = { nullptr };
 
+	_float m_fMoveTime = 0.f;
+	_int m_iAnimationSequence = 0;
+	_bool m_bIsActive = FALSE;
+
 
 private:
 	HRESULT Ready_Components();

@@ -290,6 +290,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Banacle")) { iCurrentIndex = 6; }
 		if (ImGui::Selectable("SunFlower")) { iCurrentIndex = 7; }
 		if (ImGui::Selectable("Minion11")) { iCurrentIndex = 8; }
+		if (ImGui::Selectable("Scarlet")) { iCurrentIndex = 9; }
 		ImGui::EndPopup();
 	}
 
@@ -326,6 +327,9 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 8:
 			Create_Extra(TEXT("Prototype_Component_Model_Minion11"));
+			break;
+		case 9:
+			Create_Character(TEXT("Prototype_GameObject_Scarlet"));
 			break;
 		}
 

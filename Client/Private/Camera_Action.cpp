@@ -50,9 +50,6 @@ HRESULT CCamera_Action::Initialize(void* pArg)
 
 void CCamera_Action::Priority_Update(_float fTimeDelta)
 {
-    if (false == m_pGameInstance->IsMainCamera(this))
-        return;
-
     m_fCurrentAnimationTime += fTimeDelta;
 
     _vector vFOVPosition;
@@ -131,6 +128,9 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
     m_pTransformCom->Set_State(STATE::POSITION, TransformMatrix.r[3]);
 
     m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + vPivotPosition);
+
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
 
     __super::Bind_Matrices(fTimeDelta);
 }
