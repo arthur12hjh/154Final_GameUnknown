@@ -558,7 +558,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CHair_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Gorilla/SuperGorilla.binx", PreTransformMatrix))))
 		return E_FAIL;
