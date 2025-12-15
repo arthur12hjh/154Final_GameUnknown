@@ -78,7 +78,7 @@
 
 	public:
 		/* 리지드 바디 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함. */
-		void Update_PxTransform(_fmatrix vWorldMatrix);
+		void Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarget = false);
 		void Add_Impulse(_vector vDir, _float fPower);
 
 	private:
