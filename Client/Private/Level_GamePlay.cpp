@@ -284,6 +284,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
 
 	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
@@ -330,7 +331,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 696.44f, 2.f, 560.87f };
+	Desc.vPosition = { 222.f, 50.f, 250.87f };
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 

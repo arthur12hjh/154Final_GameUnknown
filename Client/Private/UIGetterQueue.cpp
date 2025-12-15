@@ -62,7 +62,7 @@ void CUIGetterQueue::Update(_float fTimeDelta)
 		m_iCount = 0;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Q))
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Q))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
 			Insert_Queue(TEXT("+ ") + to_wstring(m_fTimeAcc));
@@ -70,7 +70,7 @@ void CUIGetterQueue::Update(_float fTimeDelta)
 			Insert_Queue(TEXT("+ ") + to_wstring(m_fTimeAcc));
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
 			Insert_Queue(TEXT("+ ") + to_wstring(m_fTimeAcc));
-	}
+	}*/
 	
 	Pop_Queue(fTimeDelta);
 }
@@ -86,20 +86,6 @@ HRESULT CUIGetterQueue::Render()
 
 	for (size_t i = 0; i < m_QueueItems.size(); ++i)
 		Render_Queue_Item(m_QueueItems[i]);
-	
-	/*m_pGameInstance->Render_Text(TEXT("Iceberg"),
-		TEXT("+60G"),
-		_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - (m_tUIDesc.fSizeX * 0.5f), m_tUIDesc.fY + m_tUIDesc.fOffsetY - (m_tUIDesc.fSizeY * 0.5f) - 20.f),
-		vColor, 0.8f);*/
-
-	/*_float2 fTextSize = m_pGameInstance->Get_Text_Size(
-		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_tUIDesc.m_tUITextDesc.szText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
-	_float fAlpha{ m_tUIDesc.fAlpha };
-
-	m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
-		m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
-		_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f, m_tUIDesc.fY + m_tUIDesc.fOffsetY - fTextSize.y * 0.5f),
-		vColor, m_tUIDesc.m_tUITextDesc.fScale);*/
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();
@@ -121,31 +107,10 @@ void CUIGetterQueue::Insert_Queue(_wstring szText)
 
 	m_QueueItems[m_iCount] = Desc;
 
-	//m_iHead = (m_iHead + 1) % 7;
-
 	if (m_iCount + 1 < 7)
 		++m_iCount;
 	else
 		m_iCount = 0;
-
-	/*_float fMinAlpha = 0.f;
-	_int iMinIdx = 0;
-
-	if (m_QueueItems.size() >= 7)
-	{
-		for (_int i = 0; i < m_QueueItems.size(); ++i)
-		{
-			if (m_QueueItems[i].fAlpha <= fMinAlpha
-				&& iMinIdx <= i)
-			{
-				fMinAlpha = m_QueueItems[i].fAlpha;
-				iMinIdx = i;
-			}
-		}
-		m_QueueItems[iMinIdx] = Desc;
-	}
-	else
-		m_QueueItems.push_back(Desc);*/
 }
 
 void CUIGetterQueue::Pop_Queue(_float fTimeDelta)
@@ -169,9 +134,6 @@ void CUIGetterQueue::Pop_Queue(_float fTimeDelta)
 		if (item.fTime >= 0.f && item.fAlpha <= 0.f)
 			item.bShow = false;
 	}
-
-	/*if (iSize >= m_QueueItems.size())
-		m_QueueItems.clear();*/
 }
 
 HRESULT CUIGetterQueue::Ready_Components()
@@ -221,19 +183,6 @@ void CUIGetterQueue::Render_Queue_Item(QUEUE_DESC Desc)
 	Render_MixedText(Desc.szText.c_str(),
 		_float2(vPivot.x, vPivot.y),
 		vColor, 0.8f);
-
-	/*_float2 fTextSize = m_pGameInstance->Get_Text_Size(
-		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_tUIDesc.m_tUITextDesc.szText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);*/
-
-	/*m_pGameInstance->Render_Text(TEXT("Iceberg"),
-		m_QueueItems[iIdx].szText.c_str(),
-		_float2(vPivot.x + 1.f, vPivot.y + 1.f),
-		vShadowColor, 0.8f);
-
-	m_pGameInstance->Render_Text(TEXT("Iceberg"),
-		m_QueueItems[iIdx].szText.c_str(),
-		_float2(vPivot.x, vPivot.y),
-		vColor, 0.8f);*/
 }
 
 _int CUIGetterQueue::GetCharType(WCHAR c)
@@ -316,4 +265,3 @@ void CUIGetterQueue::Free()
 {
 	__super::Free();
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

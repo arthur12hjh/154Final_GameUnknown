@@ -50,8 +50,7 @@ private:
 
 	_float						m_fDistance = { 10.f };
 	
-	_float						m_fLookMagnification = { 0.f };
-	_float						m_fUpMagnification = { 0.f };
+	_float3						m_vPivot = { 1.5f, 4.f, 0.f };
 
 public:
 	static CCamera_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
