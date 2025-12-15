@@ -57,14 +57,41 @@ void CCanyon::Update(_float fTimeDelta)
 
 void CCanyon::Late_Update(_float fTimeDelta)
 {
-    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+   /* if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);*/
+
+
+	/*if (!IsFrustomCulling())
+	{
+		m_bIsPrevVisibility = false;
+		return;
+	}*/
+
+	_bool bIsCurrentVisibility = false;
+
+	HRESULT hr = m_pGameInstance->Get_Result(&bIsCurrentVisibility);
+
+	if (hr == S_OK)
+		m_bIsPrevVisibility = bIsCurrentVisibility;
+	else
+	{
+		m_bIsPrevVisibility = false;
+	}
+
+
+	if (m_bIsPrevVisibility)
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+
+	m_pGameInstance->Begin_Query();
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	m_pGameInstance->End_Query();
 
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-    }
+    
 }
 
 HRESULT CCanyon::Render()

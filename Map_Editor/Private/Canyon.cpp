@@ -48,7 +48,6 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 
 void CCanyon::Update(_float fTimeDelta)
 {
-
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)

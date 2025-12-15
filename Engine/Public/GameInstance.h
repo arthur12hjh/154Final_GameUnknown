@@ -195,6 +195,13 @@ public:
 
 #pragma endregion
 
+
+#pragma region Occlusion
+	void							Begin_Query();
+	void							End_Query();
+	HRESULT							Get_Result(_bool* pIsVisible);
+#pragma endregion
+
 #pragma region Sound Manager
 	// 효과음 및 배경음악 선택적 재생
 	void			Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume);
@@ -361,6 +368,7 @@ private:
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
+	class COcclusion*				m_pOcculusion = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };

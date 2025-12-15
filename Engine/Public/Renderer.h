@@ -56,6 +56,9 @@ private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
+	class CShader*						m_pOcclusionShader = { nullptr };
+	class CVIBuffer_Cube*				m_pOcclusionVIBuffer = { nullptr };
+
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 	VOLUMETRIC_DESC						m_VolumetricDesc = {};
@@ -73,6 +76,7 @@ private:
 	_bool								m_isHDR = { true };
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
+
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -93,6 +97,7 @@ private:
 	void		Render_Priority();
 	void		Render_Shadow();
 	void		Render_MotionBlur();
+	void		Render_Occlusion();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
 	/* 기		록은 Combined 이전에. */

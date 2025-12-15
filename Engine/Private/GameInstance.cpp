@@ -16,6 +16,7 @@
 #include "Renderer.h"
 #include "PipeLine.h"
 #include "Frustum.h"
+#include "Occlusion.h"
 #include "ThreadPool.h"
 #include "CameraManager.h"
 #include "Level.h"
@@ -59,6 +60,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
+
+	m_pOcculusion = COcclusion::Create(*ppDevice, *ppContext);
+	if (nullptr == m_pOcculusion)
+		return E_FAIL;
+
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
 #else
@@ -813,7 +819,23 @@ void CGameInstance::FrustomRender()
 	return m_pFrustum->FrustomRender();
 }
 #endif // _DEBUG
+#pragma endregion
 
+#pragma region Occlusion
+void CGameInstance::Begin_Query()
+{
+	m_pOcculusion->Begin_Query();
+}
+void CGameInstance::End_Query()
+{
+	m_pOcculusion->End_Query();
+}
+HRESULT CGameInstance::Get_Result(_bool* pIsVisible)
+{
+	m_pOcculusion->Get_Result(pIsVisible);
+
+	return S_OK;
+}
 #pragma endregion
 
 #pragma region Sound Manager

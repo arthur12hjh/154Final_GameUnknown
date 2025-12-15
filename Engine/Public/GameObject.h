@@ -82,6 +82,7 @@ protected:
 	CCollider*									m_pCullingCollider = { nullptr };
 
 	_bool										m_isDead = { false };
+	_bool										m_bIsPrevVisibility = { true };
 
 	map<const _wstring, class CComponent*>		m_Components;
 

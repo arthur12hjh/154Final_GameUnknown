@@ -42,6 +42,7 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 		}
 	}*/
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
+		return E_FAIL;
 
 	return S_OK;
 }

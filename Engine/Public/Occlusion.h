@@ -13,11 +13,16 @@ private:
 public:
 	HRESULT							Initialize();
 
-	HRESULT							OccluseionBegin();
-	HRESULT							OccluseionEnd();
+	HRESULT							OcclusionBegin();
+	HRESULT							OcclusionEnd();
 
 	UINT64							GetNumSamplePassed();
 	_bool							IsDataReady() const;
+
+
+	void							Begin_Query();
+	void							End_Query();
+	HRESULT							Get_Result(_bool* pIsVisible);
 
 private :
 	ID3D11Device*					m_pDevice = { nullptr };
@@ -25,6 +30,7 @@ private :
 
 	_bool							m_bIsDataReady = false;
 	CQuery*							m_pOCclusionQuery = { nullptr };
+	ID3D11Query*					m_pQuery = { nullptr };
 
 public:
 	static		COcclusion*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

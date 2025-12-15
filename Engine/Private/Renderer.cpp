@@ -66,9 +66,17 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	m_pOcclusionShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DepthOnly.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	if (nullptr == m_pOcclusionShader)
+		return E_FAIL;
+
 	/* 직교용 렉트 하나 생성. */
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
+		return E_FAIL;
+
+	m_pOcclusionVIBuffer = CVIBuffer_Cube::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pOcclusionVIBuffer)
 		return E_FAIL;
 
 	/* 직교용 월드 뷰 투영 세팅 */
@@ -340,6 +348,7 @@ void CRenderer::Render()
 
 	Render_Priority();
 	Render_Shadow();
+	Render_Occlusion();
 	Render_NonBlend();
 	Render_LightAcc();
 
@@ -486,6 +495,35 @@ void CRenderer::Render_MotionBlur()
 		return;
 }
 
+void CRenderer::Render_Occlusion()
+{
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+
+	m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
+	m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
+	m_pOcclusionShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+
+	m_pOcclusionVIBuffer->Bind_Resources();
+
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
+	{
+		if (nullptr != pRenderObject)
+		{
+			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
+
+			if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", pCollider->Get_WorldMatrixPtr())))
+				continue;
+			
+			if (FAILED(m_pOcclusionShader->Begin(0)))
+				continue;
+
+			m_pOcclusionVIBuffer->Render();
+		}
+	}
+
+	m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
+}
+
 void CRenderer::Render_NonBlend()
 {
 	/* Diffuse + Normal */
@@ -505,6 +543,7 @@ void CRenderer::Render_NonBlend()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 }
+
 
 void CRenderer::Render_LightAcc()
 {
@@ -914,6 +953,8 @@ void CRenderer::Free()
 	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pSSAO);
 	Safe_Release(m_pEmissive);
+	Safe_Release(m_pOcclusionShader);
+	Safe_Release(m_pOcclusionVIBuffer);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);
