@@ -191,7 +191,6 @@ void CPlayer::Update(_float fTimeDelta)
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta); 
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -200,6 +199,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CPlayer::Render()

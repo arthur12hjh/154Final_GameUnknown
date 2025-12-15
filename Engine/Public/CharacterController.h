@@ -91,6 +91,7 @@ private:
 	_float				 m_fJumpVelocity = 0.f; // 현재 Y 속도 (점프 시 +, 낙하 시 -)
 	_float				 m_fGravity = 30.f; // 중력 가속도 (아래로)
 
+	_uint				 m_iFrameCounter = { 0 };
 	_bool				 m_isRiding = { false };
 	class CRigidBody*	 m_pRidingTarget = { nullptr };
 	class CTransform*	 m_pRidingTargetTransform = { nullptr };
