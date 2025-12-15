@@ -67,6 +67,9 @@ namespace Engine
 	{
 		XMFLOAT4		vEye, vAt;
 		float			fNear, fFar, fFovy, fAspect;
+
+		//for cascade
+		XMFLOAT4		vDir;
 	}SHADOW_LIGHT_DESC;
 
 	typedef struct tagVertexPosition

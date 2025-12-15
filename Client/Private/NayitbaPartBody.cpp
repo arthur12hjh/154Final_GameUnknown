@@ -136,8 +136,11 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
             m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition()
         )));
 
-    if(fCamDist < 100.f)
+    if (fCamDist < 100.f)
+    {
         m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+    }
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pColliderCom);
