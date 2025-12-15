@@ -74,9 +74,7 @@ HRESULT CDebugCheatUI::Render()
 void CDebugCheatUI::SetLevelMainCamera()
 {
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
-
     if (m_pSelectCamera)
     {
         auto pCameras = m_pGameInstance->GetAllCamera();

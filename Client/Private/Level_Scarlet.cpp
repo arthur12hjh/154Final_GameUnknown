@@ -37,8 +37,8 @@ HRESULT CLevel_Scarlet::Initialize()
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
+		return E_FAIL;
 
 	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;*/
@@ -70,6 +70,13 @@ void CLevel_Scarlet::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	if (m_isOverlay && m_pHUD)
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		m_isOverlay = false;
+	}
+
+
 }
 
 HRESULT CLevel_Scarlet::Render()
@@ -90,20 +97,20 @@ void CLevel_Scarlet::FontRender()
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
-	//LIGHT_DESC			LightDesc{};
-	//
-	//LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	//LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	//
-	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-	//	return E_FAIL;
+	LIGHT_DESC			LightDesc{};
+	
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	Load_Light_Data();
+	//Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 
@@ -216,15 +223,15 @@ HRESULT CLevel_Scarlet::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fSpeedPerSec = 15.f;
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 
-	/*pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
+	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("PlayerCamera"), static_cast<CCamera*>(pCamera));
-	m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));*/
+	m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
 	return S_OK;
 }
 
 HRESULT CLevel_Scarlet::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Terrain"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
 		return E_FAIL;
 
@@ -233,11 +240,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Terrain(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Sky"),
-		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Moon"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky_Scarlet"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
 		return E_FAIL;
 
@@ -253,7 +256,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Player"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
 		return E_FAIL;
 
@@ -275,7 +278,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 	Desc.iMonsterID = 1;
 	Desc.vPosition = { 180.f, 1.f, 220.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Nayitba"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
 		return E_FAIL;
 
@@ -445,7 +448,7 @@ HRESULT CLevel_Scarlet::Load_Map_Format(std::ifstream& ifs, const _tchar* protoT
 		SAVEDOBJECTINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDOBJECTINFO));
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), protoTag,
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 			ENUM_CLASS(LEVEL::SCARLET), pLayerTag);
 
 		if (SUCCEEDED(hr))
@@ -527,7 +530,7 @@ HRESULT CLevel_Scarlet::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pr
 		FinalLoadDesc.pPrototypeTag = protoTag;
 		FinalLoadDesc.pInstancingData = pDataVector;
 
-		hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_InstanceModel"),
+		hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_InstanceModel"),
 			ENUM_CLASS(LEVEL::SCARLET), pLayerTag, &FinalLoadDesc);
 
 		if (FAILED(hr))

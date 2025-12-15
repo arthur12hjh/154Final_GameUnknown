@@ -12,11 +12,11 @@ namespace Client
 	enum class LEVEL 
 	{ 
 		STATIC,
-		LEVEL_PROB,
 		LOADING,
 		LOGO,
 		GAMEPLAY,
 		SCARLET,
+		LEVEL_PROB,
 		END };
 }
 

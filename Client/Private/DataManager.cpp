@@ -443,8 +443,6 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
         _wstring szFullPath = szFrontPath + pFileName;
         _wstring szFilePath = pFileName;
-
-
         Json jAnim;
 
         _char szPath[MAX_PATH]{};
@@ -454,9 +452,6 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
         for (auto& pAnim : jAnim)
         {
-            WCHAR szText[MAX_PATH];
-            _wstring szAnimTag;
-
             CAMERA_ANIMATION_DATA CameraAnimationData;
 
             CameraAnimationData.iCameraAnimationID = pAnim["iCameraAnimationID"].get<_int>();

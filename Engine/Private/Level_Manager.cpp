@@ -9,11 +9,11 @@ CLevel_Manager::CLevel_Manager()
 	Safe_AddRef(m_pGameInstance);	
 }
 
-HRESULT CLevel_Manager::Clear_LevelResource()
+HRESULT CLevel_Manager::Clear_LevelResource(_bool bIsClearPrototype)
 {
 	if (nullptr != m_pCurrentLevel)
 	{
-		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID());
+		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID(), bIsClearPrototype);
 	}
 
 	return S_OK;

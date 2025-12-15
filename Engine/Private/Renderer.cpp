@@ -368,6 +368,16 @@ void CRenderer::Render()
 #endif
 }
 
+void CRenderer::Clear_Render()
+{
+	for (auto& RenderObjects : m_RenderObjects)
+	{
+		for (auto& pRenderObject : RenderObjects)
+			Safe_Release(pRenderObject);
+		RenderObjects.clear();
+	}
+}
+
 const _float4x4* CRenderer::Get_Renderer_Matrix(D3DTS eType)
 {
 	switch (eType)

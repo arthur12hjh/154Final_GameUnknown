@@ -21,7 +21,7 @@ public:
 	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 	void Update_Engine(_float fTimeDelta);
 	HRESULT Draw();
-	void Clear_Resources(_uint iLevelIndex);
+	void Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype);
 
 	_float Random_Normal();
 	_float Random(_float fMin, _float fMax);
@@ -69,11 +69,12 @@ public:
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
-	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
-	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
-	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
-	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
-	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	HRESULT										Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
+	HRESULT										Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
+	class CBase*								Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+
+	const map<const _wstring, class CBase*>*	Get_Prototypes_InLevel(_uint iLevelIndex);
+	class CBase*								Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
@@ -88,10 +89,12 @@ public:
 #pragma endregion
 
 #pragma region RENDERER
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
-	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
-	void	Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	void				Render_Clear();
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
@@ -272,6 +275,7 @@ public:
 #pragma endregion
 
 #pragma region Physx_Manager
+	void		Physx_Clear();
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
 	PxScene*	Get_PxScene();
@@ -387,7 +391,7 @@ private:
 	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
-
+	_uint							m_iNumLevels = {};
 #pragma endregion
 
 #pragma region FPS

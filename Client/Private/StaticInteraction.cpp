@@ -90,7 +90,7 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     Com_Size.z *= 4.f;
 
     /* Com_Model */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), Desc.szVIBuffer_PrototypeName,
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 

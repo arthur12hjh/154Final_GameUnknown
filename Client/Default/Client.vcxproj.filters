@@ -733,33 +733,6 @@
     <Filter Include="05.Component\RimLight">
       <UniqueIdentifier>{b03d4615-3346-4cfd-b791-ceab1eab1e72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10.GameManager\30.ImGui">
-      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt">
-      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt\Header">
-      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\ImGuiDefualt\Code">
-      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\Profiler">
-      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\Manager">
-      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\DebugCheat">
-      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\Hierarchy">
-      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\ShaderDebugger">
-      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager\ShaderManager">
       <UniqueIdentifier>{f7ea2137-afca-4706-930f-374bc4a3fa4f}</UniqueIdentifier>
     </Filter>
@@ -768,9 +741,6 @@
     </Filter>
     <Filter Include="10.GameManager\PoolingManager">
       <UniqueIdentifier>{89074d3c-6ab8-4ef0-9f50-5868e3322fc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="10.GameManager\30.ImGui\CameraInserter">
-      <UniqueIdentifier>{f982a0fc-5ea3-474d-bec1-60601ff64a54}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX">
       <UniqueIdentifier>{632fb142-8635-4cd8-b1c0-1eecc5f61f7d}</UniqueIdentifier>
@@ -807,6 +777,39 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard">
       <UniqueIdentifier>{02264c9b-6177-40a7-8e81-7802c18e54ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui">
+      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt">
+      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Header">
+      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Code">
+      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Profiler">
+      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Manager">
+      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\DebugCheat">
+      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ShaderDebugger">
+      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\CameraInserter">
+      <UniqueIdentifier>{f982a0fc-5ea3-474d-bec1-60601ff64a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Scarlet_Sky">
+      <UniqueIdentifier>{47e24dc7-8d2c-4dd4-b697-640438879649}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -877,46 +880,46 @@
       <Filter>99.Defines\PCH</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGuiMain.h">
-      <Filter>10.GameManager\30.ImGui</Filter>
+      <Filter>30.ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_internal.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_rectpack.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Header</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugProfiler.h">
-      <Filter>10.GameManager\30.ImGui\Profiler</Filter>
+      <Filter>30.ImGui\Profiler</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGuiManager.h">
-      <Filter>10.GameManager\30.ImGui\Manager</Filter>
+      <Filter>30.ImGui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameManager.h">
       <Filter>10.GameManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugCheatUI.h">
-      <Filter>10.GameManager\30.ImGui\DebugCheat</Filter>
+      <Filter>30.ImGui\DebugCheat</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugHierarchy.h">
-      <Filter>10.GameManager\30.ImGui\Hierarchy</Filter>
+      <Filter>30.ImGui\Hierarchy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHUD.h">
       <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
@@ -1027,7 +1030,7 @@
       <Filter>06.Event\Notify</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ShaderDebugger.h">
-      <Filter>10.GameManager\30.ImGui\ShaderDebugger</Filter>
+      <Filter>30.ImGui\ShaderDebugger</Filter>
     </ClInclude>
     <ClInclude Include="..\public\QuestManager.h">
       <Filter>04.Quest\QuestManager</Filter>
@@ -1631,6 +1634,9 @@
     <ClInclude Include="..\public\ScarletBlackBoard.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Sky_Scarlet.h">
+      <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1693,40 +1699,40 @@
       <Filter>99.Defines\PCH</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGuiMain.cpp">
-      <Filter>10.GameManager\30.ImGui</Filter>
+      <Filter>30.ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_draw.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_impl_dx11.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_impl_win32.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_tables.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\imgui_widgets.cpp">
-      <Filter>10.GameManager\30.ImGui\ImGuiDefualt\Code</Filter>
+      <Filter>30.ImGui\ImGuiDefualt\Code</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugProfiler.cpp">
-      <Filter>10.GameManager\30.ImGui\Profiler</Filter>
+      <Filter>30.ImGui\Profiler</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGuiManager.cpp">
-      <Filter>10.GameManager\30.ImGui\Manager</Filter>
+      <Filter>30.ImGui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameManager.cpp">
       <Filter>10.GameManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugCheatUI.cpp">
-      <Filter>10.GameManager\30.ImGui\DebugCheat</Filter>
+      <Filter>30.ImGui\DebugCheat</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugHierarchy.cpp">
-      <Filter>10.GameManager\30.ImGui\Hierarchy</Filter>
+      <Filter>30.ImGui\Hierarchy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIHUD.cpp">
       <Filter>02.GameObjects\UIObjects\UIHUD</Filter>
@@ -1834,7 +1840,7 @@
       <Filter>06.Event\Notify</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ShaderDebugger.cpp">
-      <Filter>10.GameManager\30.ImGui\ShaderDebugger</Filter>
+      <Filter>30.ImGui\ShaderDebugger</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DryGrass1.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Environments\Grass\DryGrass</Filter>
@@ -2423,6 +2429,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ScarletBlackBoard.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky_Scarlet.cpp">
+      <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

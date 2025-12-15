@@ -13,7 +13,7 @@ private:
 	virtual ~CLevel_Manager() = default;
 
 public:
-	HRESULT				Clear_LevelResource();
+	HRESULT				Clear_LevelResource(_bool bIsClearPrototype);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
 	void				Update(_float fTimeDelta);
 	HRESULT				Render();

@@ -105,6 +105,11 @@ HRESULT CUIPotion::Render()
 	return S_OK;
 }
 
+_float CUIPotion::Get_PotionPercent()
+{
+	return *m_iPotions / static_cast<_float>(*m_iMaxPotions);
+}
+
 HRESULT CUIPotion::Ready_Components()
 {
 	__super::Ready_Components();

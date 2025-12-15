@@ -29,19 +29,21 @@ public:
 public:
 	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 public:
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
-	HRESULT Initialize();
-	void	Update(_float fTimeDelta);
-	void	Render();
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	HRESULT				Initialize();
+	void				Update(_float fTimeDelta);
+	void				Render();
+
+	void				Clear_Render();
 
 #ifdef _DEBUG
-	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
-	void	Render_Debug();
+	HRESULT				Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT				Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
+	void				Render_Debug();
 
-	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
-	void   Set_DebugColliderVisible(_bool isVisible);
+	void				Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
+	void				Set_DebugColliderVisible(_bool isVisible);
 #endif
 	
 private:
