@@ -185,6 +185,4 @@ CGameObject* CBody_LinkAttackTester::Clone(void* pArg)
 void CBody_LinkAttackTester::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pShaderCom);
 }

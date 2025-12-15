@@ -386,7 +386,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.fbx",
+		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
