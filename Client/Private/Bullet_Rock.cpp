@@ -192,9 +192,9 @@ HRESULT CBullet_Rock::ADD_Components(BULLET_DESC& pDesc)
     m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->SetColliderHitType(HIT_TYPE(pDesc.iHitType));
 
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE(pDesc.iHitType));
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE(pDesc.iHitType));
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
 
 	return S_OK;
 }

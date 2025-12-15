@@ -38,10 +38,11 @@ void CUIPotionStack::Priority_Update(_float fTimeDelta)
 
 void CUIPotionStack::Update(_float fTimeDelta)
 {
-	m_fTargetFill = static_cast<_float>(dynamic_cast<CUIPotion*>(m_pParent)->Get_PotionCount()) / static_cast<_float>(dynamic_cast<CUIPotion*>(m_pParent)->Get_MaxPotionCount());
+	auto pPotionUI = static_cast<CUIPotion*>(m_pParent);
+	m_fTargetFill = pPotionUI->Get_PotionPercent();
+	m_vPotionUV.y = pPotionUI->Get_MaxPotionCount();
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
-
 	__super::Update(fTimeDelta);
 }
 
@@ -100,17 +101,9 @@ HRESULT CUIPotionStack::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
 		return E_FAIL;
-
-	_float2 vUV{};
-	vUV.x = 1.f;
-	vUV.y = static_cast<_float>(dynamic_cast<CUIPotion*>(m_pParent)->Get_MaxPotionCount());
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &m_vPotionUV, sizeof(_float2))))
 		return E_FAIL;
-
-	_float fFillAmount = m_fCurrentFill;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &m_fCurrentFill, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

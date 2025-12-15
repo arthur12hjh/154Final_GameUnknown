@@ -59,6 +59,11 @@ void CProb_Interaction::Finished_Interaction()
         m_eInterState = INTERACTION_STATE::DEFAULT;
 }
 
+void CProb_Interaction::Reset_Interaction()
+{
+    m_fInteractionDuration = false;
+}
+
 HRESULT CProb_Interaction::Begin_OverlapCallBack()
 {
     m_pGameInstance->ADD_Interaction(m_pInteractionCom);
@@ -79,7 +84,7 @@ void CProb_Interaction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionO
 
 _bool CProb_Interaction::IsInteractionEnable()
 {
-    return m_fInteractionDuration.x >= m_fInteractionDuration.y ? true : false;
+    return m_fInteractionDuration >= m_InteractionDesc->fInteractionTime ? true : false;
 }
 
 CGameObject* CProb_Interaction::Clone(void* pArg)

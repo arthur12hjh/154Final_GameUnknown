@@ -192,13 +192,20 @@ HRESULT CGameManager::Setting_PoolManager(_uint iLevelID)
 {
     return m_pPoolingManager->Setting_PoolManager(iLevelID);
 }
-CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
+
+HRESULT CGameManager::ADD_PoolManager(_uint iLevelID, _uint iProtoTypeLevel, const WCHAR* ProtoTypeName, void* pArg, const WCHAR* szPoolTag, _uint iCount)
 {
-    return m_pPoolingManager->SetActivePoolObject(iLevel, pLayerName, szPoolTag);
+    return m_pPoolingManager->ADD_PoolManager(iLevelID, iProtoTypeLevel, ProtoTypeName, pArg, szPoolTag, iCount);
 }
-void CGameManager::UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject)
+
+CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, _uint iProtoTypeLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
 {
-    m_pPoolingManager->UnActivePoolObject(szPoolTag, pObject);
+    return m_pPoolingManager->SetActivePoolObject(iLevel, iProtoTypeLevel, pLayerName, szPoolTag);
+}
+
+void CGameManager::UnActivePoolObject(_uint iLevelID, const WCHAR* szPoolTag, CGameObject* pObject)
+{
+    m_pPoolingManager->UnActivePoolObject(iLevelID, szPoolTag, pObject);
 }
 #pragma endregion
 

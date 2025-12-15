@@ -120,14 +120,26 @@ void CCollider::ADD_HitObject(CGameObject* pObject)
     }
 }
 
-void CCollider::ADD_IgnoreObject(HIT_TYPE eHitType)
+void CCollider::ADD_HitObjectType(HIT_TYPE eHitType)
+{
+    auto iter = m_IgnoreObject.find(eHitType);
+    if (iter != m_IgnoreObject.end())
+        m_IgnoreObject.erase(iter);
+}
+
+void CCollider::ADD_IgnoreObjectType(HIT_TYPE eHitType)
 {
     m_IgnoreObject.insert(eHitType);
 }
 
-void CCollider::ADD_OnlyHitObject(HIT_TYPE eHitType)
+void CCollider::ADD_OnlyHitObjectType(HIT_TYPE eHitType)
 {
     m_eOnlyHitType = eHitType;
+}
+
+void CCollider::Clear_HitObjectTypeList()
+{
+    m_IgnoreObject.clear();
 }
 
 void CCollider::CallFunction()

@@ -95,14 +95,14 @@ void CNayitba::Update(_float fTimeDelta)
 
 	/*	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
 			VisibleStatusUI(fTimeDelta);*/
-	}
+	} 
 
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
-	
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f) || m_pTargetCom->GetTarget())
 		m_pAIController->Update(fTimeDelta);
+
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
 		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
@@ -743,9 +743,9 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 	vCharacterPos += vCharacterLook * pSkillData->fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
-		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
-		return;
+	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
+	if(pHitBox)
+		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
 	m_iComboCount++;
 }
 

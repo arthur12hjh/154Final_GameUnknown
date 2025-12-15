@@ -97,7 +97,7 @@ HRESULT CInstance_Desert::Render()
 HRESULT CInstance_Desert::Ready_Components(const _tchar* PrototypeTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), PrototypeTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), PrototypeTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

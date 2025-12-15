@@ -174,6 +174,15 @@ CLight* CLight_Manager::Find_Light(_uint iIndex)
     return *iter;
 }
 
+void CLight_Manager::Clear_Light()
+{
+    for (auto& pLight : m_Lights)
+        Safe_Release(pLight);
+
+    Safe_Release(m_pDirectional);
+    m_Lights.clear();
+}
+
 void CLight_Manager::Clear_DeadLight()
 {
     for (auto iter = m_Lights.begin(); iter != m_Lights.end();)

@@ -24,8 +24,10 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	_int Get_PotionCount() { return static_cast<_int>(*m_iPotions); }
-	_int Get_MaxPotionCount() { return static_cast<_int>(*m_iMaxPotions); }
+	_int Get_PotionCount() { return *m_iPotions; }
+	_int Get_MaxPotionCount() { return *m_iMaxPotions; }
+
+	_float Get_PotionPercent();
 
 protected:
 	virtual HRESULT Ready_Components() override;

@@ -138,12 +138,9 @@ void CObject_Manager::Late_Update(_float fTimeDelta)
 void CObject_Manager::Clear(_uint iLevelIndex)
 {
 	for (auto& Pair : m_pLayers[iLevelIndex])
-	{		
 		Pair.second->Clear();
-		Safe_Release(Pair.second);
-	}
 
-	m_pLayers[iLevelIndex].clear();
+	m_iPreLevel = iLevelIndex;
 }
 
 void CObject_Manager::Clear_DeadObj()
@@ -153,8 +150,19 @@ void CObject_Manager::Clear_DeadObj()
 		for (auto& Pair : m_pLayers[i])
 		{
 			Pair.second->Clear_DeadObj();
+
+			if (-1 != m_iPreLevel && m_iPreLevel == i)
+				Safe_Release(Pair.second);
 		}
 	}
+
+	if (-1 != m_iPreLevel)
+	{
+		m_pLayers[m_iPreLevel].clear();
+		m_iPreLevel = -1;
+	}
+	
+
 }
 
 

@@ -33,7 +33,7 @@ HRESULT CBossController::Initialize(void* pArg)
         return E_FAIL;
 
     m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pBehaviorTree->GetBlackBoard());
-    m_pBlackBoard->SetAttackDelay(3.f);
+    m_pBlackBoard->SetAttackDelay(0.7f);
     return S_OK;
 }
 
@@ -96,14 +96,11 @@ void CBossController::Damage(void* pArg)
         if (CBossBlackBoard::BOSS_STATE::ATTACK == m_pBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정
-          
-
-            if (nullptr == pDamageSKillDesc)
+            if (nullptr == pDamageSKillDesc || nullptr == pAttackData)
                 return;
 
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
-                m_pBlackBoard->SetAttackDelay(1.5f);
                 if (0 >= m_pBlackBoard->GetBossInfo()->iCurrentStamina)
                 {
                     // 여기서 그로기 타임 주고 설정
@@ -111,6 +108,7 @@ void CBossController::Damage(void* pArg)
                     // 원작은 뒤로 물러나면서 들어가는거 같음
                     bIsHitAble = false;
                     m_pBlackBoard->EnterGroggy();
+                    pNayitba->SetThesholdAction(true);
                 }
                 else
                 {
@@ -138,7 +136,15 @@ void CBossController::Damage(void* pArg)
             }
         }
         else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
-            bIsHitAble = false;
+        {
+            if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
+                m_pBlackBoard->EnterExcution(true);
+            else
+            {
+                bIsHitAble = false;
+            }
+        }
+          
 
         if (bIsHitAble)
         {

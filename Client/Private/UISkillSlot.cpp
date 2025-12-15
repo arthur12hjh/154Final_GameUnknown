@@ -55,6 +55,12 @@ void CUISkillSlot::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);	
 
+	auto pSKillWrapper = static_cast<CUISkillWrapper*>(m_pParent);
+	m_iCharacterSkillIndex = pSKillWrapper ? pSKillWrapper->Get_SkillID(m_tSkillInfo.iSkillIndex) : -1;
+
+	auto pSkillData = m_pGameManager->Find_BetaSkillData(m_iCharacterSkillIndex);
+	m_iBetaGauge = nullptr != pSkillData ? pSkillData->iRequiredBetaGauge : 0;
+
 #ifdef _DEBUG
 #endif
 }
@@ -223,32 +229,32 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 
 	/*if (FAILED(m_pShaderCom->Bind_SRV("g_Texture2", nullptr)))
 		return E_FAIL;*/
-
-	if (static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex) != 0)
+	if (m_pParent)
 	{
-		bSkillUseable = true;
-		_uint iGauge = m_pGameManager->Find_BetaSkillData(static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex))->iRequiredBetaGauge;
+		if (m_iCharacterSkillIndex != 0)
+		{
+			bSkillUseable = true;
+			switch (m_iCharacterSkillIndex)
+			{
+			case 1004:
+			{
+				if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+					return E_FAIL;
+				break;
+			}
+			case 1005:
+			{
+				if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 1))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+					return E_FAIL;
+				break;
+			}
+			}
 
-		switch (static_cast<CUISkillWrapper*>(m_pParent)->Get_SkillID(m_tSkillInfo.iSkillIndex))
-		{
-		case 1004:
-		{
-			if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+			if (FAILED(m_pCostTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture4", (m_iBetaGauge / 4)))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
 				return E_FAIL;
-			break;
-		}
-		case 1005:
-		{
-			if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 1))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+			if (FAILED(m_pCostDecoTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture5", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
 				return E_FAIL;
-			break;
 		}
-		}
-
-		if (FAILED(m_pCostTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture4", (iGauge / 4)))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
-			return E_FAIL;
-		if (FAILED(m_pCostDecoTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture5", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
-			return E_FAIL;
 	}
 
 	_bool bUseTintColor = false;

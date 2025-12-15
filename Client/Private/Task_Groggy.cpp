@@ -53,6 +53,7 @@ CBehaviorNode::NODE_STATE CTask_Groggy::Update(_float fTimeDelta)
         {
             m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+            m_pOwner->SetThesholdAction(false);
             return NODE_STATE::COMPLETE;
         }
         }

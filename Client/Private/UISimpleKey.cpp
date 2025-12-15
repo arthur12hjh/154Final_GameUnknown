@@ -54,8 +54,10 @@ void CUISimpleKey::Update(_float fTimeDelta)
 		CProb_Interaction* pOwner = static_cast<CProb_Interaction*>(pInteraction->GetOwner());
 		if (pOwner)
 		{
+			m_pInteractionData = pOwner->Get_InterDesc();
+
 			m_eInterState = pOwner->Get_InterState();
-			m_fInteractionDuration = pOwner->Get_Duration();
+			m_fInteractionRatio = pOwner->Get_Ratio();
 	
 			if (m_eInterState != m_ePrevInterState)
 			{
@@ -132,35 +134,10 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	{
 		m_eInterState = INTERACTION_STATE::END;
 		m_ePrevInterState = INTERACTION_STATE::END;
+		m_pInteractionData = nullptr;
 	}
 
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_H))
-	{
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_9))
-			m_fInteractionDuration.x += fTimeDelta;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
-			m_fInteractionDuration.x = 0;
-	}*/
-
 	__super::Update(fTimeDelta);
-
-	if(m_fInteractionDuration.y > 0.f)
-		m_fCoolAmount = m_fInteractionDuration.x / m_fInteractionDuration.y;
-	
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_Y))
-	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
-			m_eInterState = INTERACTION_STATE::DEFAULT;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
-			m_eInterState = INTERACTION_STATE::CONTACT;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9))
-			m_eInterState = INTERACTION_STATE::ACTIVE;
-	}*/
-
-	/*if (dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom())
-	{
-		m_eInterState = dynamic_cast<CProb_Interaction*>(dynamic_cast<CUIWorldWrapper*>(m_pParent)->Get_InteractionCom()->GetOwner())->Get_InterState();
-	}*/
 }
 
 void CUISimpleKey::Late_Update(_float fTimeDelta)
@@ -230,7 +207,7 @@ HRESULT CUISimpleKey::Bind_ShaderResources()
 	
 	_bool bUseCoolTime = false;
 
-	if (m_fInteractionDuration.y > 0.f)
+	if (m_pInteractionData->fInteractionTime > 0.f)
 	{
 		bUseCoolTime = true;
 		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 1)))
@@ -252,7 +229,7 @@ HRESULT CUISimpleKey::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseCoolTime", &bUseCoolTime, sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolAmount", &m_fCoolAmount, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolAmount", &m_fInteractionRatio, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

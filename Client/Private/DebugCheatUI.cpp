@@ -74,9 +74,7 @@ HRESULT CDebugCheatUI::Render()
 void CDebugCheatUI::SetLevelMainCamera()
 {
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
-
     if (m_pSelectCamera)
     {
         auto pCameras = m_pGameInstance->GetAllCamera();
@@ -132,6 +130,18 @@ void CDebugCheatUI::DrawObjectDebug()
             return;
 
         pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(479.678f, 24.858f, 328.388f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
+    if (ImGui::Button("Teleport Player To Gigas"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(686.786f, 14.520f, 558.247f, 1.f));
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
         Safe_Release(pPlayer);
     }

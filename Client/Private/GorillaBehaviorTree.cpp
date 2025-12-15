@@ -26,7 +26,6 @@
 #include "Task_Theshold.h"
 #pragma endregion
 
-#include "Task_GorillaAttack.h"
 #pragma endregion
 
 CGorillaBehaviorTree::CGorillaBehaviorTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :

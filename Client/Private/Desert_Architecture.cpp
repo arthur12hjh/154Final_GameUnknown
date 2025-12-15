@@ -42,6 +42,7 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 		}
 	}*/
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
+		return S_OK;
 
 	return S_OK;
 }
@@ -99,7 +100,7 @@ HRESULT CDesert_Architecture::Render()
 HRESULT CDesert_Architecture::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
