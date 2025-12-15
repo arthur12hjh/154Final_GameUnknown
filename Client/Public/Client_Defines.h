@@ -9,7 +9,15 @@ namespace Client
 	const unsigned int			g_iWinSizeX = 1600;
 	const unsigned int			g_iWinSizeY = 900;
 
-	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, SCARLET, END };
+	enum class LEVEL 
+	{ 
+		STATIC,
+		LEVEL_PROB,
+		LOADING,
+		LOGO,
+		GAMEPLAY,
+		SCARLET,
+		END };
 }
 
 using namespace Client;

@@ -806,6 +806,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
+	m_pGameManager->Bind_GameCharacter(nullptr);
+
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);

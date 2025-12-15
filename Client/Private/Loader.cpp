@@ -258,9 +258,7 @@ HRESULT CLoader::Loading()
 
 		m_strMessage = TEXT("맵 로딩중.");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
-
+		
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA_Col(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertB(pArg); });
@@ -308,11 +306,12 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
-
-		
 	}
-
 	break;
+	case LEVEL::SCARLET:
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Building(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_Scarlet_Environment(pArg); });
+
 	}
 
 	LeaveCriticalSection(&m_CriticalSection);
@@ -1379,7 +1378,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Navigation");
 	pProtoDesc.pPrototype = CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation2.bin"));
@@ -1531,7 +1530,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	/* For.Prototype_Component_Model_Stone1 */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2064,17 +2063,7 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
-	/* For.Prototype_Component_VIBuffer_Terrain */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp"));
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain_Desert");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Desert/Terrain/Height2.bmp"));
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Cube");
@@ -2264,6 +2253,17 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 
+	/* For.Prototype_Component_VIBuffer_Terrain */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp"));
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain_Desert");
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Desert/Terrain/Height2.bmp"));
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_GameObject_DropComponent */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_DropComponent");
@@ -2279,7 +2279,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Canyon_1A */
@@ -2432,7 +2432,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertB(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -2533,7 +2533,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertC(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -2641,7 +2641,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertD(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -2794,7 +2794,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertE(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -2909,7 +2909,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertF(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* For.Prototype_Component_Model_Canyon_80A */
@@ -3008,7 +3008,7 @@ HRESULT CLoader::Loading_For_Desert_Building_Ruin(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	/* For.Prototype_Component_Model_Door_A */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -3200,7 +3200,7 @@ HRESULT CLoader::Loading_For_Desert_Building_Ruin_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	/* For.Prototype_Component_Model_Door_A */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -3392,7 +3392,7 @@ HRESULT CLoader::Loading_For_Desert_Building_Ruin_B(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -3557,7 +3557,7 @@ HRESULT CLoader::Loading_For_Desert_Building_Ruin_B_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -3722,7 +3722,7 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -3796,7 +3796,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Camp(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -3956,7 +3956,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Corpse_And_Container(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4120,7 +4120,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4235,7 +4235,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Fence_And_Ruin(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4318,7 +4318,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Vehicle_And_Wheel(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4417,7 +4417,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Building_And_Trash(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4500,7 +4500,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Sign_And_Crane(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4583,7 +4583,7 @@ HRESULT CLoader::Loading_For_Desert_Environment_Tree1(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4759,7 +4759,7 @@ HRESULT CLoader::Loading_For_Desert_Environment_Tree2(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4932,7 +4932,7 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -4981,7 +4981,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5098,7 +5098,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5182,7 +5182,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Canyon_1A */
@@ -5320,7 +5320,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertB_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5421,7 +5421,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertC_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5512,7 +5512,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertD_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5659,7 +5659,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertF_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* For.Prototype_Component_Model_Canyon_80A */
@@ -5757,7 +5757,7 @@ HRESULT CLoader::Loading_For_Desert_Bridge(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
@@ -5864,7 +5864,7 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
-	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 

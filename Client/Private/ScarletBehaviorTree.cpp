@@ -80,6 +80,7 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
         return E_FAIL;
 
     pRootSelect->Bind_BehaviorNode(CTask_Idle::Create(this));
+    m_pRootNode = pRootSelect;
     return S_OK;
 }
 
