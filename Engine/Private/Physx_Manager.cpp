@@ -110,7 +110,8 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 
             pTransform->Update_PreWorldMatrix();
 #ifdef _DEBUG
-            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
+            if(CRigidBody::RIGIDBODY_SHAPE::NONE != Pair.second->Get_Shape())
+                m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
 #endif
         }
 

@@ -177,8 +177,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		}
 	}
 
-	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
-	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
+	m_pObject_Manager->Clear_DeadObj(); // -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	m_pLight_Manager->Clear_DeadLight(); // -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	if (false == m_bIsPause)
 	{
@@ -186,7 +186,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
 
-		//Priority Update µð¹ö±×
+		//Priority Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] = GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
@@ -201,9 +201,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_pTimer_Manager->Update_Timer(fGameSpeed);
 	
 		m_pFrustum->Update();
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Frustum ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½.
+		m_pShadow->Update(fGameSpeed);
+
 		m_pCameraManager->Update(fGameSpeed);
 
-		//Update µð¹ö±×
+		//Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
@@ -218,7 +221,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pCameraManager->Late_Update(fGameSpeed);
 
-	//Late_Update µð¹ö±×
+	//Late_Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
@@ -229,7 +232,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pObject_Manager->Late_Update(fGameSpeed);
 #endif
 
-	//Ãæµ¹ ·ÎÁ÷ µð¹ö±×
+	//ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::COLLISION);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::COLLISION)] = GetLoopDurationTime(GAMELOOP_TYPE::COLLISION);
@@ -242,7 +245,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 
-	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ÇØ¼­ •û°í
+	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	
 
 	m_pRenderer->Update(fTimeDelta);
@@ -255,7 +258,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 HRESULT CGameInstance::Draw()
 {
-	//·£´õ ·ÎÁ÷ µð¹ö±×
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
@@ -289,7 +292,6 @@ void CGameInstance::Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype)
 	m_pPhysx_Manager->Clear();
 	m_pLight_Manager->Clear_Light();
 	m_pObject_Manager->Clear(iLevelIndex);
-	//Render_Clear();
 }
 
 _float CGameInstance::Random_Normal()
@@ -707,9 +709,9 @@ _float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* p
 
 #pragma region TARGET_MANAGER
 
-HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount)
 {
-	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor, iTextureCount);
 }
 
 HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag)
@@ -747,6 +749,16 @@ HRESULT CGameInstance::Clear_MRT(const _wstring& strMRTTag)
 	return m_pTarget_Manager->Clear_MRT(strMRTTag);
 }
 
+HRESULT CGameInstance::Change_DSV(ID3D11DepthStencilView* pDSV)
+{
+	return m_pTarget_Manager->Change_DSV(pDSV);
+}
+
+HRESULT CGameInstance::End_DSV()
+{
+	return m_pTarget_Manager->End_DSV();
+}
+
 
 #ifdef _DEBUG
 
@@ -767,7 +779,7 @@ HRESULT CGameInstance::Render_RT_Debug(const _wstring& strMRTTag, CShader* pShad
 #pragma region PICKING
 _bool CGameInstance::isPicking(_float3* pOut)
 {
-	// Æ÷Ä¿½º µé¾î°¬À»¶§¸¸ 
+	// ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½î°¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
 	return m_pPicking->isPicking(pOut);
 }
@@ -785,6 +797,21 @@ HRESULT CGameInstance::Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc)
 HRESULT CGameInstance::Bind_Shadow_Resource(CShader* pShader, const _char* pConstantName, D3DTS eType)
 {
 	return m_pShadow->Bind_Shader_Resource(pShader, pConstantName, eType);
+}
+
+HRESULT CGameInstance::Bind_Shader_Resource_Cascade(CShader* pShader, const _char* pConstantName, D3DTS eType)
+{
+	return m_pShadow->Bind_Shader_Resource_Cascade(pShader, pConstantName, eType);
+}
+
+HRESULT CGameInstance::Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2)
+{
+	return m_pShadow->Bind_Cascade_Ends(pShader, pConstantName, pConstantName2);
+}
+
+_float* CGameInstance::Get_CascadeEnds()
+{
+	return m_pShadow->Get_CascadeEnds();
 }
 
 #pragma endregion
@@ -816,7 +843,15 @@ _bool CGameInstance::isIn_DistanceFrustum(_vector vPoint, _float fDistance)
 	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
 }
 
+const _float4* CGameInstance::Get_FrustumWorldPoints() const
+{
+	return m_pFrustum->Get_WorldPoints();
+}
 
+const _float4* CGameInstance::Get_FrustumWorldRays() const
+{
+	return m_pFrustum->Get_WorldRays();
+}
 
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()

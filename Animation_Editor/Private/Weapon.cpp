@@ -60,7 +60,7 @@ void CWeapon::Update(_float fTimeDelta)
 
 void CWeapon::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG

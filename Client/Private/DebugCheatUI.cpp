@@ -134,6 +134,18 @@ void CDebugCheatUI::DrawObjectDebug()
         Safe_Release(pPlayer);
     }
 
+    if (ImGui::Button("Teleport Player To Gigas"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(686.786f, 14.520f, 558.247f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
     //12.10 서민석 - 테스트용 몬스터 소환로직
     //이건 나중에 치워도 될듯
     if (ImGui::Button("Spawn Monster Front"))

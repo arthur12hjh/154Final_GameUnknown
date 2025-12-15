@@ -1,10 +1,10 @@
 #pragma once
 
-/* °´Ã¼¸¦ »ý¼º½Ã¿¡ ±×·ÁÁ®¾ßÇÒ °´Ã¼¶ó¸é ¿ÀºêÁ§Æ® ¸Å´ÏÁ®¿¡µµ Ãß°¡ÇÏ°í, ·»´õ·¯¿¡µµ Ãß°¡ÇÑ´Ù.(x)*/
-/* ¸Å ÇÁ·¹ÀÓ´ç °´Ã¼¾È¿¡¼­ ±×·ÁÁ®¾ßÇÏ´Â°¡¸¦ ÆÇ´ÜÇÏ°í ±×·ÁÁ®¾ßÇÑ´Ù¶ó¸é ·»´õ·¯¿¡ µî·ÏÇÏ´Â ÀÛ¾÷À» ¼öÇàÇÑ´Ù. */
+/* ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï°ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.(x)*/
+/* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ ï¿½ï¿½Ã¼ï¿½È¿ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½Ï°ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 
-/* È­¸é¿¡ ±×·ÁÁ®¾ßÇÒ °´Ã¼µéÀ» ±×¸®´Â ¼ø¼­´ë·Î ºÐ·ùÇÏ¿© º¸°üÇÑ´Ù. */
-/* º¸°üÇÏ°í ÀÕ´Â °´Ã¼µéÀ» º¸°üÇÑ ¼ø¼­´ë·Î ·»´õÇÔ¼ö¸¦ È£ÃâÇØ ÁØ´Ù. ÄÁÅ×ÀÌ³Ê¸¦ Å¬¸®¾îÇØ¹ö¸°´Ù. */
+/* È­ï¿½é¿¡ ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð·ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Õ´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ì³Ê¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½. */
 #include "Base.h"
 
 NS_BEGIN(Engine)
@@ -41,7 +41,7 @@ public:
 	HRESULT				Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT				Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void				Render_Debug();
-
+	
 	void				Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
 	void				Set_DebugColliderVisible(_bool isVisible);
 #endif
@@ -53,7 +53,7 @@ private:
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-	ID3D11DepthStencilView*				m_pVolumetricDSV = { nullptr };
+	ID3D11DepthStencilView*				m_pCascadeShadowDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
@@ -67,7 +67,8 @@ private:
 	_bool								m_isVolumetric = { false };
 
 	_uint2								m_vScreenSize = {};
-	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
+	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤ï¿½ï¿½ 16384, 9216
+	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
 	
 	_bool								m_isBloom = { true };
 	_bool								m_isFog = { true };
@@ -75,6 +76,7 @@ private:
 	_bool								m_isHDR = { true };
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
+
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -86,6 +88,7 @@ private:
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
 	class CEmissive*					m_pEmissive = { nullptr };
+
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -97,7 +100,7 @@ private:
 	void		Render_MotionBlur();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
-	/* ±â		·ÏÀº Combined ÀÌÀü¿¡. */
+	/* ï¿½ï¿½		ï¿½ï¿½ï¿½ï¿½ Combined ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. */
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
@@ -112,8 +115,13 @@ private:
 private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
-	HRESULT		Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT		Ready_Shadow_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT		Ready_CascadeShadow_DepthStencilView(_uint iSizeX, _uint iSizeY, _uint iCSMLevel);
 	HRESULT		Bind_WVP_Matrices();
+
+	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
+
+	void		EndMarker(ID3D11DeviceContext* pContext);
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

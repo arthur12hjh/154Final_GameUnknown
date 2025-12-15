@@ -69,12 +69,6 @@ struct PS_OUT
     float4 vSpecDetail : SV_TARGET6;
 };
 
-struct PS_IN_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
-};
-
 struct PS_OUT_SHADOW
 {
     float4 vShadowLightDepth : SV_TARGET0;

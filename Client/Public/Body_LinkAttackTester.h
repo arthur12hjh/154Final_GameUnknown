@@ -37,9 +37,6 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	CShader* m_pShaderCom = { nullptr };
-
-private:
 
 	_uint				m_iAnimationIndex;
 

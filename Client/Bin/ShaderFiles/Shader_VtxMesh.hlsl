@@ -18,6 +18,10 @@ float g_fFar;
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
 
+// for cascade 
+matrix g_LightViewMatrix[5];
+matrix g_LightProjMatrix[5];
+
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
@@ -144,9 +148,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
+        VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 
     pass SKYBOX 

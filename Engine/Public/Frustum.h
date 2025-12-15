@@ -36,10 +36,12 @@ public:
 
 	_bool						isIn_LocalFrustum(_fvector vLocalPos, _float fRange);
 	_bool						isIn_DistanceFrustum(_vector vPoint, _float fDistance);
-
+	const _float4*				Get_WorldPoints() const { return m_vWorldPoints; }
+	const _float4*				Get_WorldRays() const { return m_vWorldRays; }
 private:
 	_float4						m_vOriginalPoints[8] = {};
 	_float4						m_vWorldPoints[8] = {};
+	_float4						m_vWorldRays[4] = {};
 
 	_float4						m_vWorldPlanes[6] = {};
 	_float4						m_vLocalPlanes[6] = {};
