@@ -18,7 +18,7 @@ public:
 	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
 
 	void Set_DebugColliderVisible(_bool bIsVisible);
-
+	void Clear();
 public:
 	HRESULT Initialize();
 	void	Render(class CShader* pShader);

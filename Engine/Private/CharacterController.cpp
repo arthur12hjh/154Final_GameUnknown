@@ -97,7 +97,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 
 void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 {
-	if (false == m_isActive)
+	if (false == m_tUserData.isActive)
 		return;
 	///* 이전 프레임의 위치 갱신. */
 	_float3 vPos;
@@ -108,7 +108,7 @@ void CCharacterController::Update_PrePxPosition(CTransform* pOwnerTransform)
 /* 캐릭터 컨트롤러는 시뮬레이션 말고 독자적으로 물리처리 해준다고 함..*/
 void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform* pOwnerTransform)
 {
-	if (nullptr == m_pController || false == m_isActive)
+	if (nullptr == m_pController || false == m_tUserData.isActive)
 		return;
 
 	PxVec3 vTargetDeltaMove = { 0.f, 0.f, 0.f };
