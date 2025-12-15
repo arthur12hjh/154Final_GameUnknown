@@ -25,8 +25,14 @@ inline float4 Calc_Shadow_CSM(float4 vColor, Texture2DArray ShadowTexure, vector
     // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
-    float fBias = 0.1f;
+    // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
+    float fBias = 0.00001f;
 
+    // 캐스케이드 밖이면 shadow 적용하지 않음
+    if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
+        return vColor;
+            
+    
     [unroll]
     for (int iX = -1; iX <= 1; ++iX)
     {
@@ -37,7 +43,6 @@ inline float4 Calc_Shadow_CSM(float4 vColor, Texture2DArray ShadowTexure, vector
             vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float3(vTexcoord + vOffset, iSlice));
             // 투영행렬까지만 곱했다면 w에 뷰스페이스 상의 z값 남아있을거고,
             // 그림자엔 Far로 정규화한 0~1사이 값인 뷰 스페이스 상의 z가 있으니까 얠 다시 far 곱해서 연산. 
-            // 이 안되네.. 직교라서..
             fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
         }
     }
