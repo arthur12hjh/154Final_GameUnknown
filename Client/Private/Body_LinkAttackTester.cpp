@@ -57,7 +57,7 @@ void CBody_LinkAttackTester::Update(_float fTimeDelta)
 void CBody_LinkAttackTester::Late_Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 
@@ -131,7 +131,7 @@ HRESULT CBody_LinkAttackTester::Render_Shadow()
 HRESULT CBody_LinkAttackTester::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Gorilla"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

@@ -4,6 +4,7 @@
 #include "BackGround.h"
 
 #include "Character.h"
+#include "Scarlet.h"
 #include "Dororong.h"
 #include "Gigas.h"
 #include "Extra.h"
@@ -15,6 +16,7 @@
 #include "StringHelper.h"
 #include "Grid.h"
 
+#include "Body_Scarlet.h"
 #include "Body_Character.h"
 #include "Face_Character.h"
 #include "Hair_Character.h"
@@ -70,7 +72,8 @@ HRESULT CLoader::Loading()
 	{
 	case LEVEL::EDITOR:
 	{
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}
@@ -232,6 +235,11 @@ HRESULT CLoader::Loading_For_Editor()
 		CGrid::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Body_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Scarlet"),
+		CBody_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Body_Character */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Character"),
 		CBody_Character::Create(m_pDevice, m_pContext))))
@@ -260,6 +268,11 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_GameObject_Body_Gigas */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Gigas"),
 		CBody_Gigas::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Scarlet"),
+		CScarlet::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Character */
@@ -336,6 +349,44 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
+	//	return E_FAIL;
+
+	//Desc->OnCompleted(this_thread::get_id());
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Scarlet(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+
+	string szFrontPath = "../Bin/Resources/Models/Character/Monster/Scarlet/Animation/";
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Scarlet_Body");
+	_matrix PreMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+
+	//                        		szPlayerTag, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin",
+	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Default.bin",
+	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Nikke06.bin",
+	//                        		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_63.bin",
+
+	vector<_wstring> szPartPrototypeTagList;
+	vector<string> szPartModelFilePathList;
+
+	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
+	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
+	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
+	//
+	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
+	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
+	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
+
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.fbx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
