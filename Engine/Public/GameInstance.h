@@ -155,7 +155,7 @@ public:
 #pragma endregion
 
 #pragma region TARGET_MANAGER
-	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount = 1);
 	HRESULT						Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
 	HRESULT						Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
@@ -163,6 +163,8 @@ public:
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
 	HRESULT						Bind_RenderTarget(const _wstring& strTargetTag, class CShader* pShader, const _char* pConstantName);
 	HRESULT						Clear_MRT(const _wstring& strMRTag);
+	HRESULT						Change_DSV(ID3D11DepthStencilView* pDSV);
+	HRESULT						End_DSV();
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
@@ -178,7 +180,11 @@ public:
 
 #pragma region SHADOW
 	HRESULT Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
-	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);	
+	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT Bind_Shader_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType );
+	HRESULT Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+
+	_float* Get_CascadeEnds();
 #pragma endregion
 
 #pragma region FRUSTUM
@@ -187,8 +193,8 @@ public:
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
 	_bool				isIn_DistanceFrustum(_vector vPoint, _float fDistance);
-
-
+	const _float4*		Get_FrustumWorldPoints() const;
+	const _float4*		Get_FrustumWorldRays() const;
 #ifdef _DEBUG
 	void				FrustomRender();
 #endif
