@@ -304,6 +304,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
 
 		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
 		hr = Loading_For_GamePlay();
@@ -616,6 +617,28 @@ HRESULT CLoader::Loading_For_GamePlay()
 	while (m_pGameInstance->IsWorkThread());
 	m_strMessage = TEXT("완료 되었습니다..");
 	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Scarlet(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
+	string szFrontPath = "../Bin/Resources/Models/Scarlet/Animation/";
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Scarlet_Body");
+	_matrix PreMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+
+	vector<_wstring> szPartPrototypeTagList;
+	vector<string> szPartModelFilePathList;
+
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
