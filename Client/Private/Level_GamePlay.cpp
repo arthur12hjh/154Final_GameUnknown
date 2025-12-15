@@ -161,6 +161,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
 	ShadowDesc.fNear = 0.1f;
 	ShadowDesc.fFar = 500.f;
+	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
 		return E_FAIL;

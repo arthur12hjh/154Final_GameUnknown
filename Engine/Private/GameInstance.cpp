@@ -195,6 +195,9 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_pTimer_Manager->Update_Timer(fGameSpeed);
 	
 		m_pFrustum->Update();
+		// 무조건 Frustum 업데이트 이후에 진행해야함.
+		m_pShadow->Update(fGameSpeed);
+
 		m_pCameraManager->Update(fGameSpeed);
 
 		//Update 디버그
@@ -696,9 +699,9 @@ _float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* p
 
 #pragma region TARGET_MANAGER
 
-HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount)
 {
-	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor, iTextureCount);
 }
 
 HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag)
@@ -734,6 +737,16 @@ HRESULT CGameInstance::Bind_RenderTarget(const _wstring& strTargetTag, CShader* 
 HRESULT CGameInstance::Clear_MRT(const _wstring& strMRTTag)
 {
 	return m_pTarget_Manager->Clear_MRT(strMRTTag);
+}
+
+HRESULT CGameInstance::Change_DSV(ID3D11DepthStencilView* pDSV)
+{
+	return m_pTarget_Manager->Change_DSV(pDSV);
+}
+
+HRESULT CGameInstance::End_DSV()
+{
+	return m_pTarget_Manager->End_DSV();
 }
 
 
@@ -776,6 +789,21 @@ HRESULT CGameInstance::Bind_Shadow_Resource(CShader* pShader, const _char* pCons
 	return m_pShadow->Bind_Shader_Resource(pShader, pConstantName, eType);
 }
 
+HRESULT CGameInstance::Bind_Shader_Resource_Cascade(CShader* pShader, const _char* pConstantName, D3DTS eType)
+{
+	return m_pShadow->Bind_Shader_Resource_Cascade(pShader, pConstantName, eType);
+}
+
+HRESULT CGameInstance::Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2)
+{
+	return m_pShadow->Bind_Cascade_Ends(pShader, pConstantName, pConstantName2);
+}
+
+_float* CGameInstance::Get_CascadeEnds()
+{
+	return m_pShadow->Get_CascadeEnds();
+}
+
 #pragma endregion
 
 #pragma region FRUSTUM
@@ -805,7 +833,15 @@ _bool CGameInstance::isIn_DistanceFrustum(_vector vPoint, _float fDistance)
 	return m_pFrustum->isIn_DistanceFrustum(vPoint, fDistance);
 }
 
+const _float4* CGameInstance::Get_FrustumWorldPoints() const
+{
+	return m_pFrustum->Get_WorldPoints();
+}
 
+const _float4* CGameInstance::Get_FrustumWorldRays() const
+{
+	return m_pFrustum->Get_WorldRays();
+}
 
 #ifdef _DEBUG
 void CGameInstance::FrustomRender()

@@ -41,7 +41,7 @@ public:
 	void	Render_Debug();
 
 	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
-	void   Set_DebugColliderVisible(_bool isVisible);
+	void	Set_DebugColliderVisible(_bool isVisible);
 #endif
 	
 private:
@@ -51,7 +51,7 @@ private:
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
 	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-	ID3D11DepthStencilView*				m_pVolumetricDSV = { nullptr };
+	ID3D11DepthStencilView*				m_pCascadeShadowDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
@@ -66,6 +66,7 @@ private:
 
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
+	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
 	
 	_bool								m_isBloom = { true };
 	_bool								m_isFog = { true };
@@ -73,6 +74,7 @@ private:
 	_bool								m_isHDR = { true };
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
+
 private:
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
@@ -84,6 +86,7 @@ private:
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
 	class CEmissive*					m_pEmissive = { nullptr };
+
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -110,8 +113,13 @@ private:
 private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
-	HRESULT		Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT		Ready_Shadow_DepthStencilView(_uint iSizeX, _uint iSizeY);
+	HRESULT		Ready_CascadeShadow_DepthStencilView(_uint iSizeX, _uint iSizeY, _uint iCSMLevel);
 	HRESULT		Bind_WVP_Matrices();
+
+	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
+
+	void		EndMarker(ID3D11DeviceContext* pContext);
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
