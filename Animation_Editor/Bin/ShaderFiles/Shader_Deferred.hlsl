@@ -391,11 +391,10 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     
     vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vVolumetric = g_VolumetricTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord);
     
     // vDiffuse * vShade + vSpecular;
-    Out.vBackBuffer = ((vShade + vSpecular) * vSSAO) + vVolumetric;
+    Out.vBackBuffer = ((vShade + vSpecular) * vSSAO);
     Out.vBloomScene = vShade;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
