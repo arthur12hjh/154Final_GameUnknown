@@ -158,6 +158,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
 	InstanceDesc.iNumInstance = 1;
 

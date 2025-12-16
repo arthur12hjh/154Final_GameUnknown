@@ -182,9 +182,9 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_Interaction(fTimeDelta);
 	Update_PotionUse(fTimeDelta);
 
-	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-	//	 Use_RushSkill();
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+		Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }

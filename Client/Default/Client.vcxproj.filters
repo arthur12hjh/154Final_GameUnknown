@@ -841,6 +841,9 @@
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack">
       <UniqueIdentifier>{8f680505-4586-43b4-8b12-7e144a98837f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIScript">
+      <UniqueIdentifier>{b108b214-7fa6-4ae7-b521-b92b3d3aa1ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1693,6 +1696,9 @@
     <ClInclude Include="..\public\Task_ScarletAttack.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIScript.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2514,6 +2520,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Task_ScarletAttack.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIScript.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

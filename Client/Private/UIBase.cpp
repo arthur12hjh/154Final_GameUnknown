@@ -399,7 +399,7 @@ void CUIBase::Update_Children(CUIBase* pObj)
 #ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
 		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
 		return E_FAIL;
 
@@ -727,7 +727,7 @@ HRESULT CUIBase::Broadcast_Event(const _wstring& szEventTag, const _wstring& szA
 	for (auto* pHandle : it->second)
 	{
 		if (!pHandle) continue;
- 		pHandle->Notify(pArg);
+  		pHandle->Notify(pArg);
 	}
 	return S_OK;
 }
@@ -757,7 +757,10 @@ void CUIBase::Free()
 	for (auto& EventHandle : m_pEventHandles)
 	{
 		for (auto& Event : EventHandle.second)
-			Safe_Release(Event);
+		{
+			m_pGameInstance->Remove_Event(EventHandle.first.c_str());
+			Safe_Release(Event); 
+		}
 		EventHandle.second.clear();
 	}
 	m_pEventHandles.clear();
