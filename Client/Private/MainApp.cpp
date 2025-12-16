@@ -23,6 +23,7 @@
 #include "EffectSRV.h"
 
 #include "Notify.h"
+#include "TriggerBox.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -187,6 +188,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Cursor/cursor_%d.png"), 4))))
 		return E_FAIL;
 	
+
+	/* For.Prototype_GameObject_TriggerBox */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		CTriggerBox::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
