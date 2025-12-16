@@ -43,6 +43,14 @@ void CUIBossName::Priority_Update(_float fTimeDelta)
 void CUIBossName::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NetworkDesc())
+	{
+		if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NetworkDesc()->szMonsterName == "Gigas")
+			m_iName = 0;
+		if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NetworkDesc()->szMonsterName == "Scarlet")
+			m_iName = 1;
+	}
 }
 
 void CUIBossName::Late_Update(_float fTimeDelta)
@@ -101,16 +109,7 @@ HRESULT CUIBossName::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
-	_uint iName = 0;
-
-	if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NetworkDesc())
-	{
-		if (dynamic_cast<CUIBossVitalWrapper*>(m_pParent)->Get_NetworkDesc()->szMonsterName == "Gigas")
-			iName = 0;
-	}
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", iName)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iName)))
 		return E_FAIL;
 
 	return S_OK;

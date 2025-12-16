@@ -11,6 +11,7 @@ CPlayer_VendingInteractionState::CPlayer_VendingInteractionState()
 
 void CPlayer_VendingInteractionState::Start(void* pArg, _float fBlendRatio)
 {
+    m_Desc->isInteracting = true;
     m_eState = PLAYER_STATE::VENDING_INTERACTION;
 
     m_pPlayer->Set_Animation("P_Eve_Interaction_VendingMachine", false, 1.2f);
@@ -33,6 +34,7 @@ PLAYER_TRANSITION_DESC CPlayer_VendingInteractionState::Update(_float fTimeDelta
 
 _float CPlayer_VendingInteractionState::End()
 {
+    m_Desc->isInteracting = false;
     return m_fNextBlendRatio;
 }
 

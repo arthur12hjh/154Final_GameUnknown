@@ -40,7 +40,7 @@ public:
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag, _float fDelay = 0.f);
 	void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
-	_bool Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	_bool Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag); // 해당하는 애니메이션이 끝나면 true반환
 
 	// World UI
 	HRESULT Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag,

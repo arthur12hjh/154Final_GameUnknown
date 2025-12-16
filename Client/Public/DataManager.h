@@ -62,6 +62,10 @@ private:
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 	HRESULT									LoadCameraAnimationData(void* pArg = nullptr);
 	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
+
+	// 한글 때문에 만듦
+	_wstring								UTF8ToWString(const string& str);
+
 public:
 	static CDataManager*					Create();
 	virtual void							Free() override;

@@ -158,7 +158,6 @@ HRESULT CItem::Begin_OverlapCallBack()
 HRESULT CItem::End_OverlapCallBack()
 {
 	__super::End_OverlapCallBack();
-	m_eInterState = INTERACTION_STATE::END;
 
 	return S_OK;
 }

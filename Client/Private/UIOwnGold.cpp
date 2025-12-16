@@ -66,9 +66,11 @@ void CUIOwnGold::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_bShow || m_iPrevOwnGold != *m_iOwnGold)
-	{
+	if (m_iPrevOwnGold != *m_iOwnGold)
 		m_bShow = true;
+
+	if (m_bShow)
+	{
 		m_fTimeAcc += fTimeDelta;
 		m_iPrevOwnGold = *m_iOwnGold;
 
@@ -86,8 +88,7 @@ void CUIOwnGold::Update(_float fTimeDelta)
 		if (m_fTimeAcc >= 0.f && m_tUIDesc.fAlpha <= 0.f)
 			m_bShow = false;
 	}
-
-	if (!m_bShow)
+	else
 	{
 		m_fTimeAcc = 0.f;
 		m_iPrevOwnGold = *m_iOwnGold;
@@ -110,10 +111,10 @@ HRESULT CUIOwnGold::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::OWNGOLD))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Bind_Resources()))
+	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render()))
+	if (FAILED(m_pVIBaseBufferCom->Render()))
 		return E_FAIL;
 
 	if (FAILED(RenderText()))
@@ -134,7 +135,7 @@ HRESULT CUIOwnGold::RenderText()
 
 	_float2 vPivot{
 		m_tUIDesc.fX + m_tUIDesc.fOffsetX + m_vTransOffset.x - (m_tUIDesc.fSizeX * 0.5f) + 40.f,
-		m_tUIDesc.fY + m_tUIDesc.fOffsetY + m_vTransOffset.y - (m_tUIDesc.fSizeY * 0.5f) + (fTextSize.y * 0.5f) + 3.f
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY + m_vTransOffset.y - (m_tUIDesc.fSizeY * 0.5f) + (fTextSize.y * 0.5f) - 2.f
 	};
 
 	_float2 vShadowPivot{
@@ -174,13 +175,18 @@ HRESULT CUIOwnGold::Ready_Components()
 	__super::Ready_Components();
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
+		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
 		return E_FAIL;
 
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Icon_Gold"),
 		TEXT("Com_Texture_UI_Icon_Gold"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Block"),
+		TEXT("Com_Texture_UI_Shadow_Block"), reinterpret_cast<CComponent**>(&m_pShadowTextureCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -197,6 +203,8 @@ HRESULT CUIOwnGold::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+		return E_FAIL;
+	if (FAILED(m_pShadowTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
 		return E_FAIL;
 
 	m_tUIDesc.m_tUIShaderDesc.fScale = m_tUIDesc.fSizeY / m_tUIDesc.fSizeX;
@@ -261,4 +269,7 @@ CGameObject* CUIOwnGold::Clone(void* pArg)
 void CUIOwnGold::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pVIBaseBufferCom);
+	Safe_Release(m_pShadowTextureCom);
 }

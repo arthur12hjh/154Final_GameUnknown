@@ -101,6 +101,13 @@ public:
 	void Set_Rent(_bool isRent) { m_isRent = isRent; }
 	_bool Get_Rent() const { return m_isRent; }
 
+	void SetAnimFinish(const _wstring& szAnimTag, _bool bFinish) {
+		m_AnimFinishStates[szAnimTag] = bFinish;
+		m_bAnimPlaying = !bFinish;
+	}
+
+	_bool IsAnimFinished(const _wstring& szAnimTag) const;
+
 #ifdef _DEBUG
 	void Render_Debug_Rect();
 #endif
@@ -118,7 +125,10 @@ protected:
 	vector<_wstring>						m_SubscribeEvents{}; // 내가 구독할 이벤트 목록
 
 	_bool					m_bFollowParent{ true };
-	_bool					m_bPlayingAnim{ false };
+	_bool					m_bPlayingAnim{ false }; // 일단 둔다
+
+	unordered_map<_wstring, _bool> m_AnimFinishStates;
+	_bool					m_bAnimPlaying{ false };
 
 	const _float3*			m_pTargetPos{nullptr};
 	_float3					m_vTargetPos{};
