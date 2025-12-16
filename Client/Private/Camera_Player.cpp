@@ -76,6 +76,7 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     _float3 vViewPoint = {};
 
     float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+	fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
     vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
 
     // 카메라와 ViewPoint 거리.
@@ -103,7 +104,7 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
 
     //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta * 0.9f, 0.0f);
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.5f);
     m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
 
     memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));

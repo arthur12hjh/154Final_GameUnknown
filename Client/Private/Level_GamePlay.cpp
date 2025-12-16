@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "Spawner.h"
 #include "AttackHitBox.h"
+#include "TriggerBox.h"
 #include "UIHUD.h"
 
 #include "SpriteParticle.h"
@@ -53,6 +54,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
@@ -465,6 +469,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
+{
+	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
+	pTriggerBoxDesc.iTriggerCode = 0;
+	pTriggerBoxDesc.eColType = COLLIDER::OBB;
+	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
+	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
+	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
+	pTriggerBoxDesc.fDelayTime = -1.f;
+
+	//  시네마틱 테스트용 트리거
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
 
 	return S_OK;

@@ -410,5 +410,27 @@ namespace Client
 		vector<CAMERA_TRACK_DESC>	BonePositionTrackList;				// 카메라본 위치 채널
 		vector<CAMERA_TRACK_DESC>	BoneRotationTrackList;				// 카메라본 각도 채널
 	}CAMERA_ANIMATION_DATA;
-	;
+	
+
+	// Cinematic 관련 데이터들
+	enum class CINEMATICNODE_STATE {ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, PLAY_SOUND, END };
+
+	typedef struct Cinematic_Node_Desc
+	{
+		CINEMATICNODE_STATE eState;
+		_float fTrackPosition;
+		char szObjectTag[MAX_PATH];
+		_uint iActiveIndex;
+	}CINEMATIC_NODE_DESC;
+
+	typedef struct Cinematic_Desc
+	{
+		_uint iCinematicID;
+		char szCinematicName[MAX_PATH];
+		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
+	}CINEMATIC_DESC;
+
+
+
+
 }

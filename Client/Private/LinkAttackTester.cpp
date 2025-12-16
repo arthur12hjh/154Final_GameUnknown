@@ -69,10 +69,17 @@ void CLinkAttackTester::Update(_float fTimeDelta)
 		m_fMoveTime += fTimeDelta;
 		_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
-		if (m_fMoveTime > 1.f && m_fMoveTime < 2.8f)
+		if (m_fMoveTime > 1.2f && m_fMoveTime < 2.8f)
 		{
-			_float fRatio = (m_fMoveTime - 1.f) / 1.8f;
-			_vector vPosition = XMVectorLerp(XMVectorSet(760.197f, 46.912f, 700.319f, 1.f), XMVectorSet(741.9f, 2.94f, 637.93f, 1.f), fRatio);
+			_float fRatio = (m_fMoveTime - 1.2f) / 1.6f;
+			_vector vPosition = XMVectorLerp(XMVectorSet(760.197f, 0.f, 700.319f, 1.f), XMVectorSet(741.9f, 0.f, 637.93f, 1.f), fRatio);
+			_float fHighestPoint = 60.f;
+			_float fTime = m_fMoveTime - 1.2f;
+
+			_float fPositionY = Lerp(46.912f, 0.5f, fRatio) + 4.f * fHighestPoint * fRatio * (1.f - fRatio);
+
+			vPosition = XMVectorSetY(vPosition, fPositionY);
+
 			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 		}
 
@@ -90,7 +97,7 @@ void CLinkAttackTester::Update(_float fTimeDelta)
 			else if (m_iAnimationSequence == 2)
 			{
 				m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
-				m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.f, 2.94f, 637.f, 1.f));
+				//m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.f, 2.94f, 637.f, 1.f));
 			}
 		}
 	}
