@@ -6071,6 +6071,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Shadow_Block */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Shadow_Block");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_UI_Panel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Panel");
 	pProtoDesc.pPrototype = CUIPanel::Create(m_pDevice, m_pContext);
@@ -6117,7 +6124,7 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 
 	/* For.Prototype_Component_UI_Texture_Boss_Name */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Boss_Name");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 2);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6504,6 +6511,13 @@ HRESULT CLoader::Loading_UI_For_World(void* pArg)
 	/* For.Prototype_Component_UI_Texture_Finish_Ring */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Finish_Ring");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Interaction_Lock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Lock");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Lock.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

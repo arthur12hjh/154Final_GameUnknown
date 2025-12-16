@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -228,27 +228,38 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 HRESULT CDataManager::LoadInteractionData(void* pArg)
 {
     THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-    vector<string> InterDataList;
-    InterDataList.reserve(1000);
+    Json InterDatas{};
 
-    CStringHelper::CSVRead("../../Client/Bin/DataFiles/InteractionData/InteractionData.csv", InterDataList);
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/InteractionData/InteractionData.json", InterDatas);
 
-    size_t iMaxSize = InterDataList.size();
-    for (auto i = 6; i < iMaxSize;)
+    for (auto& iter : InterDatas["Interactions"].items())
     {
-        INTERACTION_DATA InterDesc = {};
-        
-        InterDesc.iID = atoi(InterDataList[i++].c_str());
-        strcpy_s(InterDesc.szObjectTag, InterDataList[i++].c_str());
-        strcpy_s(InterDesc.szInteractionText, InterDataList[i++].c_str());
+        _uint id = stoi(iter.key());
 
-        InterDesc.vUIPivot.x = (_float)atof(InterDataList[i++].c_str());
-        InterDesc.vUIPivot.y = (_float)atof(InterDataList[i++].c_str());
-        InterDesc.vUIPivot.z = (_float)atof(InterDataList[i++].c_str());
-        InterDesc.fInteractionTime = (_float)atof(InterDataList[i++].c_str());
-        InterDesc.eType = INTERACTION_TYPE(atoi(InterDataList[i++].c_str()));
+        auto& jInfo = iter.value();
 
-        m_pInteractionDatas.emplace(InterDesc.iID, InterDesc);
+        INTERACTION_DATA desc{};
+        desc.iID = id;
+
+        // ë¬¸ìì—´ ë³€í™˜
+        {
+            string name = jInfo["Name"];
+            string text = jInfo["Text"];
+            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        }
+
+        desc.fInteractionTime = jInfo["CoolTime"];
+
+        // Pivot
+        desc.vUIPivot.x = jInfo["Pivot"]["x"];
+        desc.vUIPivot.y = jInfo["Pivot"]["y"];
+        desc.vUIPivot.z = jInfo["Pivot"]["z"];
+
+        // Type
+        desc.eType = (INTERACTION_TYPE)jInfo["Type"];
+
+        m_pInteractionDatas[id] = desc;
     }
 
     return S_OK;
@@ -292,15 +303,15 @@ HRESULT CDataManager::LoadSkillData()
 
 HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 {
-    //	- ¸ğµç ¾Ö´Ï¸ŞÀÌ¼Ç °ü·Ã ÀÌº¥Æ®¸¦ ´ã´çÇÏ´Â ANIM_NOTIFY
-    //  - ¸¦ ´ã°í ÀÖ´Â vector<ANIM_NOTIFY>
-    //  - µéÀ» ¾Ö´Ï¸ŞÀÌ¼Ç ÅÂ±×(_char*)·Î ±¸ºĞÁş´Â map
+    //	- ëª¨ë“  ì• ë‹ˆë©”ì´ì…˜ ê´€ë ¨ ì´ë²¤íŠ¸ë¥¼ ë‹´ë‹¹í•˜ëŠ” ANIM_NOTIFY
+    //  - ë¥¼ ë‹´ê³  ìˆëŠ” vector<ANIM_NOTIFY>
+    //  - ë“¤ì„ ì• ë‹ˆë©”ì´ì…˜ íƒœê·¸(_char*)ë¡œ êµ¬ë¶„ì§“ëŠ” map
 
-    // _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+    // _finddata_t : <io.h>ì—ì„œ ì œê³µí•˜ë©° íŒŒì¼ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
-    // jsonµµ µÇ·Á³ª ÀÌ°Å..
+    // _findfirst : <io.h>ì—ì„œ ì œê³µí•˜ë©° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ê²½ë¡œ ë‚´ì—ì„œ ê°€ì¥ ì²« ë²ˆì§¸ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜
+    // jsonë„ ë˜ë ¤ë‚˜ ì´ê±°..
     intptr_t handle = _findfirst64("../Bin/DataFiles/Animation/*.json*", &fd);
 
     if (handle == -1)
@@ -316,7 +327,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+        // ì•„ìŠ¤í‚¤ ì½”ë“œ ë¬¸ìì—´ì„ ìœ ë‹ˆì½”ë“œ ë¬¸ìì—´ë¡œ ë³€í™˜ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -392,7 +403,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         }
 
 
-        //_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
+        //_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, ë”ì´ìƒ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
@@ -404,25 +415,25 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 
 HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 {
-    //	- Ä«¸Ş¶ó ¾Ö´Ï¸ŞÀÌ¼Ç °ü¸®ÇÏ´Â µ¥ÀÌÅÍÆÄÀÏ
-    //  < Ä«¸Ş¶ó Data ÆÄÀÏ >
-    //      Ä«¸Ş¶ó ID
-    //      Ä«¸Ş¶ó ÇÃ·¡±×(º»ºÎÂø, ÀüÈ¯½Ã º¸°£¿©ºÎ µî)
-    //      ±âº» FOV
-    //      ±âº» Ä«¸Ş¶ó LookAt Æ÷ÀÎÆ®
-    //      Ä«¸Ş¶óº» ±âº» À§Ä¡(ÇÃ·¡±× È°¼º ½Ã)
-    //      Ä«¸Ş¶óº» ±âº» °¢µµ(ÇÃ·¡±× È°¼º ½Ã)
-    //      Ä«¸Ş¶óº» ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌ¸§
-    //      FOV Ã¤³Î
-    //      Ä«¸Ş¶ó LookAt Æ÷ÀÎÆ® Ã¤³Î
-    //      Ä«¸Ş¶óº» À§Ä¡ Ã¤³Î
-    //      Ä«¸Ş¶óº» °¢µµ Ã¤³Î
+    //	- ì¹´ë©”ë¼ ì• ë‹ˆë©”ì´ì…˜ ê´€ë¦¬í•˜ëŠ” ë°ì´í„°íŒŒì¼
+    //  < ì¹´ë©”ë¼ Data íŒŒì¼ >
+    //      ì¹´ë©”ë¼ ID
+    //      ì¹´ë©”ë¼ í”Œë˜ê·¸(ë³¸ë¶€ì°©, ì „í™˜ì‹œ ë³´ê°„ì—¬ë¶€ ë“±)
+    //      ê¸°ë³¸ FOV
+    //      ê¸°ë³¸ ì¹´ë©”ë¼ LookAt í¬ì¸íŠ¸
+    //      ì¹´ë©”ë¼ë³¸ ê¸°ë³¸ ìœ„ì¹˜(í”Œë˜ê·¸ í™œì„± ì‹œ)
+    //      ì¹´ë©”ë¼ë³¸ ê¸°ë³¸ ê°ë„(í”Œë˜ê·¸ í™œì„± ì‹œ)
+    //      ì¹´ë©”ë¼ë³¸ ì• ë‹ˆë©”ì´ì…˜ ì´ë¦„
+    //      FOV ì±„ë„
+    //      ì¹´ë©”ë¼ LookAt í¬ì¸íŠ¸ ì±„ë„
+    //      ì¹´ë©”ë¼ë³¸ ìœ„ì¹˜ ì±„ë„
+    //      ì¹´ë©”ë¼ë³¸ ê°ë„ ì±„ë„
 
 
-    // _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+    // _finddata_t : <io.h>ì—ì„œ ì œê³µí•˜ë©° íŒŒì¼ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
+    // _findfirst : <io.h>ì—ì„œ ì œê³µí•˜ë©° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ê²½ë¡œ ë‚´ì—ì„œ ê°€ì¥ ì²« ë²ˆì§¸ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜
     intptr_t handle = _findfirst64("../Bin/DataFiles/CameraData/*.json*", &fd);
 
     if (handle == -1)
@@ -438,7 +449,7 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+        // ì•„ìŠ¤í‚¤ ì½”ë“œ ë¬¸ìì—´ì„ ìœ ë‹ˆì½”ë“œ ë¬¸ìì—´ë¡œ ë³€í™˜ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -552,7 +563,7 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
         }
 
 
-        //_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
+        //_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, ë”ì´ìƒ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
@@ -573,7 +584,7 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
     case 1004:
         BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
-    //Å×½ºÆ® ¿ëÀ¸·Î 0 Ã³¸®
+    //í…ŒìŠ¤íŠ¸ ìš©ìœ¼ë¡œ 0 ì²˜ë¦¬
     case 1005:
         BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
@@ -585,6 +596,16 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
     m_pBetaSkills.emplace(iSkillID, BetaSkillDesc);
 
     return S_OK;
+}
+
+_wstring CDataManager::UTF8ToWString(const string& str)
+{
+    if (str.empty()) return {};
+
+    _uint size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+    _wstring result(size_needed - 1, 0); // null ì œì™¸
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
+    return result;
 }
 
 CDataManager* CDataManager::Create()

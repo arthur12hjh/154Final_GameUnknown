@@ -124,7 +124,7 @@ namespace Client
 
 		bool							isSuperArmor = { false };
 		bool							isLookFixed = { false };
-
+		bool							isInteracting = { false };
 		// 혹시 몰라서 플레이어 데스크에 떄려박앗습니다
 		// 플레이어의 락온모드 전환 거리
 		float							fLockOnDistance = { 30.f };
@@ -368,8 +368,8 @@ namespace Client
 	typedef struct Interaction_Data
 	{
 		_uint				iID;
-		char				szObjectTag[256];
-		char				szInteractionText[256];
+		_wstring			szObjectTag;
+		_wstring			szInteractionText;
 		_float3				vUIPivot;
 		_float				fInteractionTime;
 		INTERACTION_TYPE	eType;

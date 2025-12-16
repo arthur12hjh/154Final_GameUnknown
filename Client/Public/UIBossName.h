@@ -30,7 +30,7 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	
+	_uint m_iName{ 0 };
 
 public:
 	static CUIBossName* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

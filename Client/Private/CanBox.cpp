@@ -234,7 +234,7 @@ void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
         {
             m_pModelCom->Set_AnimationIndex(1, false);
 
-     /*     if (m_pEventHandle)
+            /* if (m_pEventHandle)
                 m_pEventHandle->Notify(nullptr);*/
             m_eInterState = INTERACTION_STATE::CONTACT;
         }

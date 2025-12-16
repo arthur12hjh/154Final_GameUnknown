@@ -1,0 +1,81 @@
+{
+    "Interactions": {
+        "0": {
+            "CoolTime": 0,
+            "Name": "아이템",
+            "Text": "얻기",
+            "Pivot": {
+                "x": 0,
+                "y": 3,
+                "z": 0
+            },
+            "Type": 0
+        },
+        "1": {
+            "CoolTime": 0,
+            "Name": "엘레베이터",
+            "Text": "작동하기",
+            "Pivot": {
+                "x": 0,
+                "y": 3,
+                "z": 0
+            },
+            "Type": 5
+        },
+        "2": {
+            "CoolTime": 0,
+            "Name": "의자",
+            "Text": "휴식",
+            "Pivot": {
+                "x": 0,
+                "y": 2,
+                "z": 0
+            },
+            "Type": 3
+        },
+        "3": {
+            "CoolTime": 0,
+            "Name": "벤딩머신",
+            "Text": "상점 이용",
+            "Pivot": {
+                "x": 1,
+                "y": 2,
+                "z": 0
+            },
+            "Type": 2
+        },
+        "4": {
+            "CoolTime": 1,
+            "Name": "문",
+            "Text": "열기",
+            "Pivot": {
+                "x": 0,
+                "y": 2,
+                "z": 0
+            },
+            "Type": 4
+        },
+        "5": {
+            "CoolTime": 1,
+            "Name": "상자",
+            "Text": "열기",
+            "Pivot": {
+                "x": 0,
+                "y": 2,
+                "z": 0
+            },
+            "Type": 1
+        },
+        "6": {
+            "CoolTime": 1,
+            "Name": "시체",
+            "Text": "조사하기",
+            "Pivot": {
+                "x": 0,
+                "y": 2,
+                "z": 0
+            },
+            "Type": 6
+        }
+    }
+}
