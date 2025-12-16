@@ -86,13 +86,12 @@ void CUISimpleKey::Update(_float fTimeDelta)
 
 		if (m_pTargetOwner && m_pTargetOwner->Get_InterDesc())
 		{
-			_float3 newPos{};
 			_float3 vPivot{ 0.f, 0.f, 0.f };
 
 			if (m_pTargetOwner->Get_InterDesc())
 				vPivot = m_pInterDesc.vUIPivot;
 
-			XMStoreFloat3(&newPos,
+			XMStoreFloat3(&m_vNewPivot,
 				XMVectorSet(
 					XMVectorGetX(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
 					XMVectorGetY(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
@@ -101,7 +100,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 				));
 
 			m_pParent = m_pTargetOwner;
-			m_pTargetPos = &newPos;
+			m_pTargetPos = &m_vNewPivot;
 
 			if (m_eInterState != INTERACTION_STATE::LOCK)
 				m_eVisibility = VISIBILITY::VISIBLE;
@@ -122,6 +121,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 		m_pTargetPos = nullptr;
 		m_pInterDesc = {};
 		m_eVisibility = VISIBILITY::HIDDEN;
+		m_vNewPivot = {0.f, 0.f, 0.f};
 
 		m_pTargetOwner = nullptr;
 

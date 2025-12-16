@@ -49,6 +49,7 @@ private:
 	const INTERACTION_DATA*			m_pInteractionData = { nullptr };
 	
 	_float							m_fInteractionRatio = {};
+	_float3							m_vNewPivot{};
 
 	INTERACTION_DATA m_pInterDesc{};
 

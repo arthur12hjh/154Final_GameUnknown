@@ -375,6 +375,12 @@ namespace Client
 		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
 
+	typedef struct Script_Data
+	{
+		_wstring			szScriptText;
+		_float4				vColor{ 1.f, 1.f, 1.f, 1.f };
+	}SCRIPT_DATA;
+
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
 	/// CameraAnimationID : 6글자로 되어있다.

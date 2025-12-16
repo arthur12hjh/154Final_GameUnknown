@@ -25,6 +25,7 @@ HRESULT CDataManager::Initalize()
 
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
 
     return S_OK;
 }
@@ -65,6 +66,15 @@ const INTERACTION_DATA* CDataManager::Get_InteractionData(_uint iID)
 {
     auto iter = m_pInteractionDatas.find(iID);
     if (iter == m_pInteractionDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const vector<SCRIPT_DATA>* CDataManager::Get_ScriptData(const _wstring& szScriptTag)
+{
+    auto iter = m_ScriptDatas.find(szScriptTag);
+    if (iter == m_ScriptDatas.end())
         return nullptr;
 
     return &iter->second;
@@ -298,12 +308,10 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // 문자열 변환
-        {
-            string name = jInfo["Name"];
-            string text = jInfo["Text"];
-            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
-        }
+        string name = jInfo["Name"];
+        string text = jInfo["Text"];
+        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -316,6 +324,44 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.eType = (INTERACTION_TYPE)jInfo["Type"];
 
         m_pInteractionDatas[id] = desc;
+    }
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadScriptData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json ScriptDatas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ScriptData/ScriptData.json", ScriptDatas);
+
+    for (auto& iter : ScriptDatas["ScriptData"].items())
+    {
+        string szKey = iter.key();
+
+        vector<SCRIPT_DATA> Scripts{};
+        for (auto& jInfo : iter.value())
+        {
+            SCRIPT_DATA desc{};
+
+            desc.szScriptText = UTF8ToWString(jInfo["szText"]);
+
+            if (jInfo.contains("vColor"))
+            {
+                desc.vColor.x = jInfo["vColor"][0];
+                desc.vColor.y = jInfo["vColor"][1];
+                desc.vColor.z = jInfo["vColor"][2];
+                desc.vColor.w = jInfo["vColor"][3];
+            }
+
+            Scripts.push_back(desc);
+        }
+
+        WCHAR szScriptKey[MAX_PATH]{};
+        CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
+
+        m_ScriptDatas[szScriptKey] = Scripts;
     }
 
     return S_OK;

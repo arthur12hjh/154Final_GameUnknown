@@ -193,6 +193,7 @@
 #include "UILockOn.h"
 #include "UIGetterQueue.h"
 #include "UIOwnGold.h"
+#include "UIScript.h"
 
 #pragma endregion
 
@@ -6246,7 +6247,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	//m_strMessage = TEXT("UI 로딩중 입니다..");
+	// 대화 스크립트
+	/* For.Prototype_GameObject_UI_Script */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Script");
+	pProtoDesc.pPrototype = CUIScript::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }

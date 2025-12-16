@@ -406,6 +406,7 @@
     <ClInclude Include="..\Public\UIMonsterShield.h" />
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
+    <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UISimpleKey.h" />
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UIButton.h" />
@@ -700,6 +701,7 @@
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
+    <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />
