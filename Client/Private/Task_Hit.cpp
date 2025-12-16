@@ -39,10 +39,8 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->bIsExcution())
 	{
-		if (nullptr == m_pHit_Data || m_pBlackBoard->IsAttackEnable())
+		if (m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
 		{
-			// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
-			// 확인하고 EFail;
 			m_pHit_Data = nullptr;
 			if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
 				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
@@ -55,7 +53,10 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 	{
 		m_pHit_Data = nullptr;
 		if (m_pBlackBoard->bIsExcution())
+		{
+			m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 			m_pBlackBoard->EnterExcution(false);
+		}
 
 		return NODE_STATE::COMPLETE;
 	}
@@ -109,7 +110,19 @@ void CTask_Hit::Refresh_HitMotion()
 		m_szAnimationName = pSkill_Data->szHitAnimationName;
 	}
 
-	m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
+	if (m_pBlackBoard->bIsExcution())
+	{
+		if (0 < pSkill_Data->iSkillDamage)
+		{
+			if(0 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
+				m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
+		}
+		else
+			m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
+	}
+	else
+		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
+
 	m_pBlackBoard->SetAttackData(nullptr);
 	m_pBlackBoard->SetHitData(nullptr);
 }

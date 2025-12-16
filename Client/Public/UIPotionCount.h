@@ -30,6 +30,9 @@ protected:
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
 
+private :
+	_uint					m_iPotionCount = {};
+
 public:
 	static CUIPotionCount* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

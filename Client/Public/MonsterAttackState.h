@@ -45,8 +45,8 @@ private :
 	_float										m_fDistance = {};
 	_float										m_fMoveAnimMaxRatio = {};
 
-	_float										m_fAttackPlayRate = {};
 	_float										m_fMoveSpeed = {};
+	_float										m_fPlayRatio = { 1.f };
 
 	function<void(_float)>						m_AttackCompletedFunc;
 

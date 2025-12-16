@@ -17,7 +17,12 @@ CLockonManager::CLockonManager()
 void CLockonManager::Bind_Player(CPlayer* pPlayer)
 {
     m_pPlayer = pPlayer;
-    m_pPlayerDesc = pPlayer->Get_Desc();
+
+    if (nullptr == m_pPlayer)
+        m_pPlayerDesc = nullptr;
+    else
+        m_pPlayerDesc = pPlayer->Get_Desc();
+
 }
 
 HRESULT CLockonManager::Initialize()
@@ -119,6 +124,9 @@ _vector CLockonManager::Get_LockOnPoint()
 
 void CLockonManager::Lockon(_float fTimeDelta)
 {
+    if (nullptr == m_pPlayer)
+        return;
+
     // 타겟 정보 업데이트 (bHasTarget, fCurrentMinDist 셋팅)
     Find_NearestTarget(fTimeDelta);
 

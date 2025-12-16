@@ -166,8 +166,8 @@ HRESULT CItem::End_OverlapCallBack()
 void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
-	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-		m_fInteractionDuration.x += fTimeDelta;
+	if (!IsInteractionEnable())
+		m_fInteractionDuration += fTimeDelta;
 
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
@@ -199,7 +199,7 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		Safe_Release(pHUD);
 
 		m_eInterState = INTERACTION_STATE::ACTIVE;
-		m_fInteractionDuration.x = 0.f;
+		m_fInteractionDuration = 0.f;
 		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 		Set_Dead(true);
 	}

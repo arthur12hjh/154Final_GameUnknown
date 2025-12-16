@@ -32,6 +32,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 		return E_FAIL;
 
 	/* 이 레벨을 구성하기위한 객체를 만든다. */
+	m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BackGround()))
@@ -73,10 +74,8 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro")))
 	{
-		m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
-
 		CLevel* pNewLevel = { nullptr };
-
+		m_pGameInstance->Clear_LevelResource();
 		switch (m_eNextLevelID)
 		{
 		case LEVEL::LOGO:
@@ -140,6 +139,7 @@ HRESULT CLevel_Loading::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_LoadingBlur"),
 		CUILoadingBlur::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	return S_OK;
 }

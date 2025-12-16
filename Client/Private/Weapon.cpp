@@ -345,9 +345,9 @@ HRESULT CWeapon::Ready_Components()
 	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::PLAYER);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
 
 	CTrail::TRAILHIGHLOW Traildesc{};
 	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);

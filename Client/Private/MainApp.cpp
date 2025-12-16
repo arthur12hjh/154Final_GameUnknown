@@ -61,7 +61,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::LOGO)))
+	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;		
 
 #ifdef _DEBUG

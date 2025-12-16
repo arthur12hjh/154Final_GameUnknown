@@ -40,9 +40,10 @@ private:
 
 	INTERACTION_STATE m_eInterState{ INTERACTION_STATE::DEFAULT };
 	INTERACTION_STATE m_ePrevInterState{ INTERACTION_STATE::END };
-
-	_float2	m_fInteractionDuration{0.f, 0.f};
-	_float m_fCoolAmount = 0.f;
+	const INTERACTION_DATA*			m_pInteractionData = { nullptr };
+	
+	_float							m_fInteractionRatio = {};
+	_float							m_fCoolAmount = 0.f;
 
 public:
 	static CUISimpleKey* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -32,6 +32,7 @@ public:
 
 protected:
 	_uint						m_iID = {};
+
 	class CGameInstance*		m_pGameInstance = { nullptr };
 
 	ID3D11Device*				m_pDevice = { nullptr };

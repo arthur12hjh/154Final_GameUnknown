@@ -43,6 +43,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
+	m_iNumLevels = EngineDesc.iNumLevels;
 	m_vScreenSize = { EngineDesc.iWinSizeX, EngineDesc.iWinSizeY };
 	m_vHalfScreenSize = { m_vScreenSize.x >> 1 , m_vScreenSize.y >> 1};
 
@@ -158,6 +159,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 
+	
+
 	if (m_bIsHitStopDurationTime)
 	{
 		m_iHitStopFrame.x++;
@@ -174,13 +177,16 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		}
 	}
 
+	m_pObject_Manager->Clear_DeadObj(); // -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	m_pLight_Manager->Clear_DeadLight(); // -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
 	if (false == m_bIsPause)
 	{
 		m_pInput_Device->UpdateKeyFrame();
 		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
 
-		//Priority Update µð¹ö±×
+		//Priority Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::PRIORITY);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::PRIORITY)] = GetLoopDurationTime(GAMELOOP_TYPE::PRIORITY);
@@ -195,12 +201,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_pTimer_Manager->Update_Timer(fGameSpeed);
 	
 		m_pFrustum->Update();
-		// ¹«Á¶°Ç Frustum ¾÷µ¥ÀÌÆ® ÀÌÈÄ¿¡ ÁøÇàÇØ¾ßÇÔ.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Frustum ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½.
 		m_pShadow->Update(fGameSpeed);
 
 		m_pCameraManager->Update(fGameSpeed);
 
-		//Update µð¹ö±×
+		//Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
@@ -215,7 +221,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pCameraManager->Late_Update(fGameSpeed);
 
-	//Late_Update µð¹ö±×
+	//Late_Update ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::LATE_UPDATE);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::LATE_UPDATE)] = GetLoopDurationTime(GAMELOOP_TYPE::LATE_UPDATE);
@@ -226,7 +232,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pObject_Manager->Late_Update(fGameSpeed);
 #endif
 
-	//Ãæµ¹ ·ÎÁ÷ µð¹ö±×
+	//ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::COLLISION);
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::COLLISION)] = GetLoopDurationTime(GAMELOOP_TYPE::COLLISION);
@@ -239,10 +245,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 
-
-	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ÇØ¼­ •û°í
-	m_pObject_Manager->Clear_DeadObj(); // -> Á×Àº °´Ã¼ ºüÁö°í
-	m_pLight_Manager->Clear_DeadLight(); // -> Á×Àº °´Ã¼ ºüÁö°í
+	m_pPhysx_Manager->Update(fGameSpeed); // isdead Ã¼Å©ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+	
 
 	m_pRenderer->Update(fTimeDelta);
 
@@ -254,7 +258,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 HRESULT CGameInstance::Draw()
 {
-	//·£´õ ·ÎÁ÷ µð¹ö±×
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef _DEBUG
 	ComputeLoopTime(GAMELOOP_TYPE::RENDER);
 	m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::RENDER)] = GetLoopDurationTime(GAMELOOP_TYPE::RENDER);
@@ -280,11 +284,14 @@ HRESULT CGameInstance::Draw()
 	return S_OK;
 }
 
-void CGameInstance::Clear_Resources(_uint iLevelIndex)
+void CGameInstance::Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype)
 {
-	m_pPrototype_Manager->Clear(iLevelIndex);
-	m_pObject_Manager->Clear(iLevelIndex);
+	if(bIsClearPrototype)
+		m_pPrototype_Manager->Clear(iLevelIndex);
+
 	m_pPhysx_Manager->Clear();
+	m_pLight_Manager->Clear_Light();
+	m_pObject_Manager->Clear(iLevelIndex);
 }
 
 _float CGameInstance::Random_Normal()
@@ -374,10 +381,7 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
 {
 	m_pCameraManager->Clear_Cameras();
-	if (bIsClearPrototypeData)
-		return m_pLevel_Manager->Clear_LevelResource();
-
-	return S_OK;
+	return  m_pLevel_Manager->Clear_LevelResource(bIsClearPrototypeData);
 }
 
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
@@ -480,6 +484,11 @@ HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
 {
 	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
+}
+
+void CGameInstance::Render_Clear()
+{
+	m_pRenderer->Clear_Render();
 }
 
 #ifdef _DEBUG
@@ -770,7 +779,7 @@ HRESULT CGameInstance::Render_RT_Debug(const _wstring& strMRTTag, CShader* pShad
 #pragma region PICKING
 _bool CGameInstance::isPicking(_float3* pOut)
 {
-	// Æ÷Ä¿½º µé¾î°¬À»¶§¸¸ 
+	// ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½î°¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
 	return m_pPicking->isPicking(pOut);
 }
@@ -1010,6 +1019,11 @@ const unordered_map<_wstring, CCamera*>* CGameInstance::GetAllCamera()
 }
 
 #pragma region Physx_Manager
+
+void CGameInstance::Physx_Clear()
+{
+	m_pPhysx_Manager->Clear();
+}
 
 PxControllerManager* CGameInstance::Get_PxCCTManager()
 {
