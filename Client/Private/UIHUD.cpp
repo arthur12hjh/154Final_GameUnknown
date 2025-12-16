@@ -58,13 +58,6 @@ void CUIHUD::Update(_float fTimeDelta)
 				if (pOwner->Get_InterDesc())
 					vPivot = pOwner->Get_InterDesc()->vUIPivot;
 
-				/* XMStoreFloat3(&newPos,
-					XMVectorSet(
-						Interactions[i]->Get_CenterPos().x + vPivot.x,
-						Interactions[i]->Get_CenterPos().y + vPivot.y,
-						Interactions[i]->Get_CenterPos().z + vPivot.z,
-						1.f
-					));*/
 				XMStoreFloat3(&newPos,
 					XMVectorSet(
 						XMVectorGetX(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
@@ -78,15 +71,6 @@ void CUIHUD::Update(_float fTimeDelta)
 				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(&newPos, false);
 				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::VISIBLE);
 				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(true);
-
-				if (Interactions[i] == m_pGameInstance->GetNearInteraction())
-				{
-					Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]);
-					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetParent(pOwner);
-					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_TargetPos(&newPos, false);
-					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetVisibility(VISIBILITY::VISIBLE);
-					m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_Rent(true);
-				}
 			}
 			else
 			{
@@ -105,19 +89,7 @@ void CUIHUD::Update(_float fTimeDelta)
 			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
 			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
 		}
-	}
-
-	if (!m_pGameInstance->GetNearInteraction() && !m_WorldUIs[TEXT("Pool_Simple_Interaction")].empty())
-	{
-		Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]);
-		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetParent(nullptr);
-		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_TargetPos(nullptr);
-		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->SetVisibility(VISIBILITY::HIDDEN);
-		m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Set_Rent(false);
-
-		for (auto& pChild : *m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Get_Children())
-			m_WorldUIs[TEXT("Pool_Simple_Interaction")][0]->Update_Children(pChild);
-	}
+	}		
 
 	__super::Update(fTimeDelta);
 

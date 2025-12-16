@@ -39,7 +39,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 		return E_FAIL;
 
 	Safe_AddRef(m_pGameManager);
-	
+
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
@@ -56,6 +56,9 @@ HRESULT CUIBase::Initialize(void* pArg)
 
 	if (FAILED(Ready_Events()))
 		return E_FAIL;
+
+	for (auto& AinmDesc : m_tOriginUIDesc.m_AnimTags)
+		m_AnimFinishStates[AinmDesc.first] = true;
 
 	return S_OK;
 }
@@ -401,6 +404,12 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CUIBase::IsAnimFinished(const _wstring& szAnimTag) const
+{
+	auto it = m_AnimFinishStates.find(szAnimTag);
+	return it != m_AnimFinishStates.end() && it->second;
 }
 
 void CUIBase::Render_Debug_Rect()
