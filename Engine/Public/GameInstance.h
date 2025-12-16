@@ -21,6 +21,8 @@ public:
 	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 	void Update_Engine(_float fTimeDelta);
 	HRESULT Draw();
+
+	void	Kill_Objects();
 	void Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype);
 
 	_float Random_Normal();
@@ -60,8 +62,9 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
-	HRESULT				Clear_LevelResource(_bool bIsClearPrototypeData = true);
+	HRESULT				Clear_LevelResource(_bool bIsClearProtoTypes = true);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
+	
 	_uint				GetCurrentLevelID();
 
 	// 이거 레퍼런스 카운트 증가합니다.
@@ -75,6 +78,7 @@ public:
 
 	const map<const _wstring, class CBase*>*	Get_Prototypes_InLevel(_uint iLevelIndex);
 	class CBase*								Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	_bool										bIsClearLevelResource(_uint iLevelID);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
@@ -93,7 +97,6 @@ public:
 	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
-	void				Render_Clear();
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);

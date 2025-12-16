@@ -72,8 +72,6 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 			SelectAttack();
 	}
 
-
-
 	return NODE_STATE::RUNNING;
 }
 

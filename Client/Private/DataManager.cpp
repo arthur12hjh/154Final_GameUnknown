@@ -20,6 +20,9 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadCameraAnimationData()))
         return E_FAIL;
 
+    if (FAILED(LoadCinematicData()))
+        return E_FAIL;
+
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
 
@@ -80,6 +83,15 @@ const CAMERA_ANIMATION_DATA* CDataManager::Find_CameraAnimationData(_uint iCamer
 {
     auto iter = m_CameraAnimationDatas.find(iCameraAnimationData);
     if (iter == m_CameraAnimationDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const CINEMATIC_DESC* CDataManager::Find_CinematicData(_uint iCinematicDataID)
+{
+    auto iter = m_CinematicDatas.find(iCinematicDataID);
+    if (iter == m_CinematicDatas.end())
         return nullptr;
 
     return &iter->second;
@@ -169,11 +181,55 @@ void CDataManager::Save_CameraAnimationData()
     }
 }
 
+void CDataManager::Save_CinematicData()
+{
+    if (m_CinematicDatas.size() == 0)
+        return;
+
+    for (auto& pData : m_CinematicDatas)
+    {
+        Json jArray = Json::array();
+        Json jData;
+
+        jData["iCinematicID"] = pData.first;
+        jData["szCinematicName"] = pData.second.szCinematicName;
+
+        for (auto& pMember : pData.second.CinematicNodeTrackList)
+        {
+            Json jMember;
+
+            jMember["eState"] = pMember.eState;
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["szObjectTag"] = pMember.szObjectTag;
+            jMember["iActiveIndex"] = pMember.iActiveIndex;
+
+            jData["CinematicNodeTrackList"].push_back(jMember);
+        }
+
+        jArray.push_back(jData);
+
+        _wstring szFilePath = TEXT("../../Client/Bin/DataFiles/CinematicData/");
+
+        szFilePath += to_wstring(pData.first);
+        szFilePath += TEXT(".json");
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+        CJsonParser::SaveJsonData(szPath, jArray);
+    }
+}
+
 #ifdef _DEBUG
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
 {
     return &m_CameraAnimationDatas;
+}
+
+map<_uint, CINEMATIC_DESC>* CDataManager::Get_CinematicDataMap()
+{
+    return &m_CinematicDatas;
 }
 
 #endif
@@ -564,6 +620,76 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 
         //_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, ë”ì´ìƒ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
+        iResult = _findnext64(handle, &fd);
+        Safe_Delete_Array(pFileName);
+    }
+
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadCinematicData(void* pArg)
+{
+    // _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+    _finddatai64_t  fd;
+
+    // _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
+    intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
+
+    if (handle == -1)
+        return S_OK;
+
+    int iResult = 0;
+
+    _wstring szFrontPath = TEXT("../Bin/DataFiles/CinematicData/");
+
+    while (iResult != -1)
+    {
+        int iLength = strlen(fd.name) + 1;
+        WCHAR* pFileName = new WCHAR[iLength];
+        ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
+
+        // ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+        MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
+
+        _wstring szFullPath = szFrontPath + pFileName;
+        _wstring szFilePath = pFileName;
+        Json jCinematic;
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFullPath.c_str(), szPath);
+
+        CJsonParser::ReadJsonData(szPath, jCinematic);
+
+        for (auto& pCinematic : jCinematic)
+        {
+            CINEMATIC_DESC CinematicData;
+
+            CinematicData.iCinematicID = pCinematic["iCinematicID"].get<_int>();
+
+            strcpy_s(CinematicData.szCinematicName, pCinematic["szCinematicName"].get<string>().c_str());
+
+
+            for (auto& pCinematicNodeTrack : pCinematic["CinematicNodeTrackList"])
+            {
+                CINEMATIC_NODE_DESC CinematicNodeDesc = {};
+
+                CinematicNodeDesc.eState = static_cast<CINEMATICNODE_STATE>(pCinematicNodeTrack["eState"].get<_int>());
+                CinematicNodeDesc.fTrackPosition = pCinematicNodeTrack["fTrackPosition"].get<_float>();
+
+                strcpy_s(CinematicNodeDesc.szObjectTag, pCinematicNodeTrack["szObjectTag"].get<string>().c_str());
+
+                CinematicNodeDesc.iActiveIndex = pCinematicNodeTrack["iActiveIndex"].get<_uint>();
+
+
+                CinematicData.CinematicNodeTrackList.push_back(CinematicNodeDesc);
+            }
+
+            m_CinematicDatas.emplace(CinematicData.iCinematicID, CinematicData);
+        }
+
+
+        //_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }

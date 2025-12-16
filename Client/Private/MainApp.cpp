@@ -23,6 +23,7 @@
 #include "EffectSRV.h"
 
 #include "Notify.h"
+#include "TriggerBox.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -188,6 +189,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 	
 
+	/* For.Prototype_GameObject_TriggerBox */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		CTriggerBox::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
 		CCamera_Free::Create(m_pDevice, m_pContext))))
@@ -299,8 +305,8 @@ void CMainApp::Free()
 	Safe_Release(m_pImGuiDebug);
 #endif
 
-	m_pGameInstance->Release_Engine();
-
-	Safe_Release(m_pGameInstance);	
 	Safe_Release(m_pGameManager);
+	m_pGameInstance->Release_Engine();
+	Safe_Release(m_pGameInstance);	
+	
 }
