@@ -919,32 +919,35 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	auto itLayer = m_pLayers.find(layerTag);
 	if (itLayer == m_pLayers.end()) return E_FAIL;
 
-	auto pObj = itLayer->second->Get_UserInterfaces()->find(szUITag);
+	if (itLayer->second->Get_UserInterfaces())
+	{
+		auto pObj = itLayer->second->Get_UserInterfaces()->find(szUITag);
 
-	if (pObj->second == nullptr)
-		return E_FAIL;
-
- 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
-
-	if (!pUIBase)
-		return E_FAIL;
-	Safe_AddRef(pUIBase);
-
-	auto& pool = m_WorldUIs[szPoolTag];
-   	pool.reserve(pool.size() + count);
-
-	for (_uint i = 0; i < count; ++i) {
- 		CUIBase* pUI = pUIBase->Clone_UI(this, i);
-		
-		if (!pUI)
+		if (pObj->second == nullptr)
 			return E_FAIL;
 
-		Reset_WorldUI_State(pUI);
-		pUI->SetVisibility(VISIBILITY::HIDDEN);
+		CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
 
-		pool.push_back(pUI);
+		if (!pUIBase)
+			return E_FAIL;
+		Safe_AddRef(pUIBase);
+
+		auto& pool = m_WorldUIs[szPoolTag];
+		pool.reserve(pool.size() + count);
+
+		for (_uint i = 0; i < count; ++i) {
+			CUIBase* pUI = pUIBase->Clone_UI(this, i);
+
+			if (!pUI)
+				return E_FAIL;
+
+			Reset_WorldUI_State(pUI);
+			pUI->SetVisibility(VISIBILITY::HIDDEN);
+
+			pool.push_back(pUI);
+		}
+		Safe_Release(pUIBase);
 	}
-	Safe_Release(pUIBase);
 
 	return S_OK;
 }
