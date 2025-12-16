@@ -157,6 +157,7 @@
     <ClInclude Include="..\Public\Dororong.h" />
     <ClInclude Include="..\Public\Extra.h" />
     <ClInclude Include="..\Public\Face_Character.h" />
+    <ClInclude Include="..\Public\Face_Scarlet.h" />
     <ClInclude Include="..\Public\Gigas.h" />
     <ClInclude Include="..\Public\Grid.h" />
     <ClInclude Include="..\Public\Hair_Character.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="..\Private\Dororong.cpp" />
     <ClCompile Include="..\Private\Extra.cpp" />
     <ClCompile Include="..\Private\Face_Character.cpp" />
+    <ClCompile Include="..\Private\Face_Scarlet.cpp" />
     <ClCompile Include="..\Private\Gigas.cpp" />
     <ClCompile Include="..\Private\Grid.cpp" />
     <ClCompile Include="..\Private\Hair_Character.cpp" />
