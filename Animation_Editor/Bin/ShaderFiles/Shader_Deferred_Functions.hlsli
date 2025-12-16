@@ -26,7 +26,7 @@ inline float4 Calc_Shadow_CSM(float4 vColor, Texture2DArray ShadowTexure, vector
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.00001f;
+    float fBias = 0.0002f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)

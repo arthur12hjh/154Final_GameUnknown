@@ -1,0 +1,58 @@
+#pragma once
+
+#include "Animation_Editor_Defines.h"
+#include "PartObject.h"
+
+NS_BEGIN(Engine)
+class CModel;
+class CShader;
+class CCollider;
+class CBone;
+NS_END
+
+NS_BEGIN(Animation_Editor)
+
+class CFace_Scarlet final : public CPartObject
+{
+
+public:
+	typedef struct tagFace_Scarlet_Desc : public CPartObject::PARTOBJECT_DESC
+	{
+		const _uint* pParentState = { nullptr };
+		void* pBodyPtr = { nullptr };
+	}FACE_SCARLET_DESC;
+private:
+	CFace_Scarlet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CFace_Scarlet(const CFace_Scarlet& Prototype);
+	virtual ~CFace_Scarlet() = default;
+
+public:
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Priority_Update(_float fTimeDelta) override;
+	virtual void Update(_float fTimeDelta) override;
+	virtual void Late_Update(_float fTimeDelta) override;
+	virtual HRESULT Render() override;
+	virtual HRESULT Render_Shadow() override;
+
+private:
+	CModel* m_pBodyModelCom = { nullptr };
+
+private:
+	const				_uint* m_pParentState = { nullptr };
+
+
+
+private:
+	HRESULT Ready_Components();
+	HRESULT Bind_ShaderResources();
+
+	HRESULT Bind_BoneToPartBody(void* pArg);
+
+public:
+	static CFace_Scarlet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg) override;
+	virtual void Free() override;
+};
+
+NS_END

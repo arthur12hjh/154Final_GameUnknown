@@ -7,7 +7,7 @@
 #include "Scarlet.h"
 
 #include "Body_Scarlet.h"
-//#include "Face_Scarlet.h"
+#include "Face_Scarlet.h"
 //#include "Hair_Scarlet.h"
 //#include "Weapon_Scarlet.h"
 #include "GameInstance.h"
@@ -179,6 +179,16 @@ HRESULT CScarlet::Ready_PartObjects()
 		return E_FAIL;
 
 	m_pPart_Body = dynamic_cast<CBody_Scarlet*>(Find_PartObject(TEXT("Part_Body")));
+
+	CFace_Scarlet::FACE_SCARLET_DESC FaceDesc{};
+	FaceDesc.pParentState = &m_iState;
+	FaceDesc.pParentTransform = m_pTransformCom;
+	FaceDesc.pBodyPtr = m_pPart_Body;
+
+	/* Part_Face */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Face_Scarlet"),
+		TEXT("Part_Face"), &FaceDesc)))
+		return E_FAIL;
 
 	//CBody_Scarlet* pPart_Body = dynamic_cast<CBody_Scarlet*>(Find_PartObject(TEXT("Part_Body")));
 
