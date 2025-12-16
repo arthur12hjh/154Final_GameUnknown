@@ -41,7 +41,7 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    if (nullptr == pPlayer)
+    if (nullptr != pPlayer)
         m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
 
     Safe_Release(pPlayer);
