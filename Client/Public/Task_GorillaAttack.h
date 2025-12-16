@@ -34,16 +34,12 @@ private :
 	_float								m_fMaxDelayTime = {};
 	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
-	_float3								m_fAttackMoveDir = {};
-	
-	_float								m_fLerpSpeed = {};
 
 	_float								m_fDir = {};
-	_float								m_fMoveSpeed = {};
+	_float								m_fLerpSpeed = {};
 
 	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
-	_float2								m_vLerpTime = { 0.f, 0.7f };
 	
 private :
 	_bool								SelectPattern();

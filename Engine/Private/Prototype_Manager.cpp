@@ -100,11 +100,11 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		if (FAILED(pModel->Import_Animations(static_cast<CModel*>(pAnimModel)->Get_AnimationList())))
 			return E_FAIL;
 
-		auto iter = m_pPrototypes->find(szPrototypeTag);
+		auto iter = m_pPrototypes[iLevelIndex].find(szPrototypeTag);
 
-		if (iter != m_pPrototypes->end())
+		if (iter != m_pPrototypes[iLevelIndex].end())
 		{
-			m_pPrototypes->erase(iter);
+			m_pPrototypes[iLevelIndex].erase(iter);
 			Safe_Release(pAnimModel);
 		}
 
@@ -169,6 +169,20 @@ void CPrototype_Manager::Clear(_uint iLevelIndex)
 CBase* CPrototype_Manager::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	return Find_Prototype(iLevelIndex, strPrototypeTag);
+}
+
+_bool CPrototype_Manager::bIsClearLevelResource(_uint iLevelID)
+{
+	if (0 > iLevelID || m_iNumLevels <= iLevelID)
+	{
+		MSG_BOX("Out Bound Level ID");
+		return false;
+	}
+
+	if (m_pPrototypes[iLevelID].empty())
+		return true;
+
+	return false;
 }
 
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)

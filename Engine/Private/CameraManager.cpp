@@ -129,7 +129,7 @@ _matrix CCameraManager::GetMainCameraWorldMatrix()
 const _float4x4* CCameraManager::GetMainCameraWorldMatrixPtr()
 {
     if (nullptr == m_pMainCamera)
-        return nullptr;
+        return CGameInstance::GetInstance()->GetIdentityMatrixPtr();
 
     return m_pMainCamera->GetTransform()->Get_WorldMatrixPtr();
 }
@@ -155,10 +155,25 @@ const _float4x4* CCameraManager::GetCameraWorldMatrixPtr(const WCHAR* szCameraTa
 void CCameraManager::Clear_Cameras()
 {
     Safe_Release(m_pMainCamera);
-
     for (auto& iter : m_pCameras)
-        Safe_Release(iter.second);
-    m_pCameras.clear();
+        iter.second->Set_Dead(true);
+}
+
+void CCameraManager::Clear_DeadCameras()
+{
+    for (auto iter = m_pCameras.begin(); iter != m_pCameras.end();)
+    {
+        if (iter->second->isDead())
+        {
+            if (m_pMainCamera == iter->second)
+                m_pMainCamera = nullptr;
+
+            Safe_Release(iter->second);
+            iter = m_pCameras.erase(iter);
+        }
+        else
+            iter++;
+    }
 }
 
 CCamera* CCameraManager::Find_Camera(const WCHAR* szCameraTag)

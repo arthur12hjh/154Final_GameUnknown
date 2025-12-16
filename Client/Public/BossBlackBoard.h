@@ -76,6 +76,7 @@ protected :
 	
 	// 스킬 구조체
 	const Character_Skill_Desc*			m_pAttack_Skill = { nullptr };
+
 	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 

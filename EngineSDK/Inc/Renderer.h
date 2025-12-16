@@ -35,8 +35,6 @@ public:
 	void				Update(_float fTimeDelta);
 	void				Render();
 
-	void				Clear_Render();
-
 #ifdef _DEBUG
 	HRESULT				Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT				Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);

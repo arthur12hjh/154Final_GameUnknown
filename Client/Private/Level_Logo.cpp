@@ -81,7 +81,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
-		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}

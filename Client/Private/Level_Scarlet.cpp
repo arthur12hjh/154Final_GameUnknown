@@ -51,8 +51,8 @@ HRESULT CLevel_Scarlet::Initialize()
 	/*if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;*/
 
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	Load_Map_Data();
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
@@ -76,6 +76,13 @@ void CLevel_Scarlet::Update(_float fTimeDelta)
 		m_isOverlay = false;
 	}
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
+	{
+		m_pGameInstance->Clear_Resources(ENUM_CLASS(LEVEL::LEVEL_PROB), true);
+		m_bChangeLevel = true;
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
+			return;
+	}
 
 }
 

@@ -159,8 +159,6 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	_float fGameSpeed = fTimeDelta * m_fTimeRatio;
 
-	
-
 	if (m_bIsHitStopDurationTime)
 	{
 		m_iHitStopFrame.x++;
@@ -177,9 +175,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		}
 	}
 
-	m_pObject_Manager->Clear_DeadObj(); // -> ���� ��ü ������
-	m_pLight_Manager->Clear_DeadLight(); // -> ���� ��ü ������
-
+	Kill_Objects();
 	if (false == m_bIsPause)
 	{
 		m_pInput_Device->UpdateKeyFrame();
@@ -284,14 +280,24 @@ HRESULT CGameInstance::Draw()
 	return S_OK;
 }
 
+void CGameInstance::Kill_Objects()
+{
+	m_pCameraManager->Clear_DeadCameras();
+	m_pObject_Manager->Clear_DeadObj();
+	m_pLight_Manager->Clear_DeadLight();
+}
+
 void CGameInstance::Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype)
 {
+
+
 	if(bIsClearPrototype)
 		m_pPrototype_Manager->Clear(iLevelIndex);
 
 	m_pPhysx_Manager->Clear();
 	m_pLight_Manager->Clear_Light();
 	m_pObject_Manager->Clear(iLevelIndex);
+	m_pInteract_Manager->SetInteractionBaseObject(nullptr);
 }
 
 _float CGameInstance::Random_Normal()
@@ -378,10 +384,10 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 
 #pragma region LEVEL_MANAGER
 
-HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearPrototypeData)
+HRESULT CGameInstance::Clear_LevelResource(_bool bIsClearProtoTypes)
 {
 	m_pCameraManager->Clear_Cameras();
-	return  m_pLevel_Manager->Clear_LevelResource(bIsClearPrototypeData);
+	return m_pLevel_Manager->Clear_LevelResource(bIsClearProtoTypes);
 }
 
 HRESULT CGameInstance::Change_Level(CLevel* pNewLevel)
@@ -426,6 +432,11 @@ const map<const _wstring, class CBase*>* CGameInstance::Get_Prototypes_InLevel(_
 CBase* CGameInstance::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	return m_pPrototype_Manager->Get_Prototype(iLevelIndex, strPrototypeTag);
+}
+
+_bool CGameInstance::bIsClearLevelResource(_uint iLevelID)
+{
+	return m_pPrototype_Manager->bIsClearLevelResource(iLevelID);
 }
 
 #pragma endregion
@@ -484,11 +495,6 @@ HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
 {
 	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
-}
-
-void CGameInstance::Render_Clear()
-{
-	m_pRenderer->Clear_Render();
 }
 
 #ifdef _DEBUG

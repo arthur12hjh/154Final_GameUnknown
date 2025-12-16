@@ -16,9 +16,10 @@
 
 // Action Node
 #pragma region Task
-#include "Task_Dead.h"
 #include "Task_Idle.h"
-#include "Task_Move.h"
+#include "Task_ScarletDead.h"
+#include "Task_ScarletMove.h"
+
 #include "Task_Groggy.h"
 #include "Task_Hit.h"
 #include "Task_Theshold.h"
@@ -79,7 +80,36 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
     if (nullptr == pRootSelect)
         return E_FAIL;
 
-    pRootSelect->Bind_BehaviorNode(CTask_Idle::Create(this));
+   
+
+    auto pBattleSelect = CSelectNode::Create(this);
+    if (nullptr == pBattleSelect)
+        return E_FAIL;
+
+    pBattleSelect->Bind_BehaviorNode(CDeco_FindTarget::Create(this));
+    // 여기 공격추가
+
+    pBattleSelect->Bind_BehaviorNode(CTask_ScarletMove::Create(this));
+
+    auto pHitReactionSelector = CSelectNode::Create(this);
+    if (nullptr == pHitReactionSelector)
+        return E_FAIL;
+
+    pHitReactionSelector->Bind_BehaviorNode(CTask_Theshold::Create(this));
+    pHitReactionSelector->Bind_BehaviorNode(CTask_Hit::Create(this));
+    pHitReactionSelector->Bind_BehaviorNode(CTask_Groggy::Create(this));
+
+    auto ActionSelect = CSelectNode::Create(this);
+    if (nullptr == pRootSelect)
+        return E_FAIL;
+    ActionSelect->Bind_BehaviorNode(CDeco_CheckAlive::Create(this, 10.f));
+    ActionSelect->Bind_BehaviorNode(pHitReactionSelector);
+    ActionSelect->Bind_BehaviorNode(pBattleSelect);
+    ActionSelect->Bind_BehaviorNode(CTask_Idle::Create(this));
+
+    pRootSelect->Bind_BehaviorNode(ActionSelect);
+    pRootSelect->Bind_BehaviorNode(CTask_ScarletDead::Create(this));
+
     m_pRootNode = pRootSelect;
     return S_OK;
 }
