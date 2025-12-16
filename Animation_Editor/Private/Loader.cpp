@@ -17,6 +17,7 @@
 #include "Grid.h"
 
 #include "Body_Scarlet.h"
+#include "Face_Scarlet.h"
 #include "Body_Character.h"
 #include "Face_Character.h"
 #include "Hair_Character.h"
@@ -240,6 +241,11 @@ HRESULT CLoader::Loading_For_Editor()
 		CBody_Scarlet::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Face_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Face_Scarlet"),
+		CFace_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Body_Character */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Character"),
 		CBody_Character::Create(m_pDevice, m_pContext))))
@@ -348,7 +354,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_24_TypeB.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_20.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
@@ -377,11 +383,11 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
 
-	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Scarlet"));
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
 	//
-	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/DogSSIBBAL.fbx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 

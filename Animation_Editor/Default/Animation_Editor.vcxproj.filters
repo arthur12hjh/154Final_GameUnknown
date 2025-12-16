@@ -119,6 +119,9 @@
     <Filter Include="02.GameObjects\Entity\Scarlet\Body_Scarlet">
       <UniqueIdentifier>{7450aabe-622a-4ac4-bc7b-8067519ecf1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet\Face_Scarlet">
+      <UniqueIdentifier>{f0bb8019-c94a-4adc-88bb-0f1640e4332d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -244,6 +247,9 @@
     <ClInclude Include="..\Public\Body_Scarlet.h">
       <Filter>02.GameObjects\Entity\Scarlet\Body_Scarlet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Face_Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet\Face_Scarlet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -353,6 +359,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_Scarlet.cpp">
       <Filter>02.GameObjects\Entity\Scarlet\Body_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Face_Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet\Face_Scarlet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

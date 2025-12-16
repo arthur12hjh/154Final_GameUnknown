@@ -33,6 +33,7 @@ private:
 
 
 	_float m_fLoadingTime = 0.f;
+	vector<_int> m_iTextureIndices;
 	_uint m_iTextureIndex = 0;
 
 private:
