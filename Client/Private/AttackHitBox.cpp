@@ -70,7 +70,9 @@ HRESULT CAttackHitBox::Initialize(const HIT_BOX_DESC& pArg)
 	m_pColliderCom->SetColliderHitType(pArg.eHitBoxType);
 	m_pColliderCom->ADD_IgnoreObjectType(pArg.eHitBoxType);
 
+#ifdef _DEBUG
 	m_bIsDelayDead = false;
+#endif
 	m_isDead = false;
 	return S_OK;
 }
@@ -242,7 +244,10 @@ void CAttackHitBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 void CAttackHitBox::ReturnObjectPool()
 {
 	static_cast<COBBCollider*>(m_pColliderCom)->ResetCollision();
+
+#ifdef _DEBUG
 	m_vDelayDead.x = m_vAliveTime.x = 0.f;
+#endif
 
 	auto pGameManager = CGameManager::GetInstance();
 	pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::STATIC), TEXT("Hit_Box"), this);

@@ -10,11 +10,11 @@ class CGameManager;
 
 struct Character_Skill_Desc;
 
-class CTask_GorillaAttack : public CTask
+class CTask_ScarletAttack : public CTask
 {
 protected:
-	CTask_GorillaAttack();
-	virtual ~CTask_GorillaAttack() = default;
+	CTask_ScarletAttack();
+	virtual ~CTask_ScarletAttack() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -22,7 +22,7 @@ public:
 	// 테스크의 성공유무반환
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
-private :
+private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	CGameManager*						m_pGameManager = { nullptr };
@@ -40,24 +40,17 @@ private :
 
 	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
-	
-private :
+
+private:
 	_bool								SelectPattern();
 
 	// 보스 패턴에 대한 정보
 #pragma region Boss Pattern
-	void								SelectAttack(_bool bIsForce = false);
-	void								CrushPattern();
-	void								MoveAttackPattern();
-	void								BackStepPattern();
-	//void								BboyStepPattern();
 
-	void								SelectRandomPattern(_bool bIsBeta = false);
 #pragma endregion
-
 	_bool								AttackMoveAction(_float fTimeDelta);
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
-	
+
 	void								AttackLerpMove(_float fTimeDelta);
 	void								AttackADDMove(_float fTimeDelta);
 
@@ -65,7 +58,7 @@ private :
 	void								ResetAttackTask(_bool bIsCoolTime = true);
 
 public:
-	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);
+	static	CTask_ScarletAttack*		Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

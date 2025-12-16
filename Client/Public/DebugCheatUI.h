@@ -26,6 +26,8 @@ public:
 	HRESULT						Render();
 
 	void						SetLevelMainCamera();
+	void						ResetLevelCamera();
+
 private:
 #ifdef _DEBUG
 	CGameManager*				m_pGameManager = nullptr;

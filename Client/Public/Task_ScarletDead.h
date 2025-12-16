@@ -6,11 +6,11 @@ NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
 
-class CTask_Dead : public CTask
+class CTask_ScarletDead : public CTask
 {
 protected:
-	CTask_Dead();
-	virtual ~CTask_Dead() = default;
+	CTask_ScarletDead();
+	virtual ~CTask_ScarletDead() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -24,8 +24,10 @@ private:
 	_float								m_fDeadEndTime = {};
 	_bool								m_bIsDeadEffect = { false };
 
+	
+
 public:
-	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
+	static	CTask_ScarletDead*			Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

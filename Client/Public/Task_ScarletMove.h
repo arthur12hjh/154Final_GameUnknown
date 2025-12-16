@@ -6,11 +6,11 @@ NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
 
-class CTask_Dead : public CTask
+class CTask_ScarletMove : public CTask
 {
 protected:
-	CTask_Dead();
-	virtual ~CTask_Dead() = default;
+	CTask_ScarletMove();
+	virtual ~CTask_ScarletMove() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -21,12 +21,20 @@ public:
 private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
-	_float								m_fDeadEndTime = {};
-	_bool								m_bIsDeadEffect = { false };
+
+	DIRECTION							m_eDirection = {};
+
+	_bool								m_bIsCaution = { false };
+
+	string								m_szAnimationName = {};
+	_float3								m_vMoveDir = {};
+	_float								m_fSpeed = {};
+
+private:
+	void								Refresh_MovePoint();
 
 public:
-	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
+	static	CTask_ScarletMove*			Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
-
 };
 NS_END

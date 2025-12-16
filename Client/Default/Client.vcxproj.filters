@@ -19,9 +19,6 @@
     <Filter Include="02.GameObjects\BackGround">
       <UniqueIdentifier>{045c1a1c-a8ed-4e5b-bc33-e5328ed48bf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles">
-      <UniqueIdentifier>{1af5be23-53fb-447f-a0ef-0a7b40e2652d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera">
       <UniqueIdentifier>{b544119c-56b8-4206-be74-8dc3959154b3}</UniqueIdentifier>
     </Filter>
@@ -43,18 +40,6 @@
     <Filter Include="99.Defines\GameStruct">
       <UniqueIdentifier>{6ab8c8b9-5402-4939-896e-b82f458230bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader">
-      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
-      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Point">
-      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
-      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects">
       <UniqueIdentifier>{ce60062b-bb86-4f43-9bbc-c1a57894613e}</UniqueIdentifier>
     </Filter>
@@ -67,20 +52,8 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
       <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\Instancing">
-      <UniqueIdentifier>{f8b20de2-8cd5-433e-a016-94086d9c516f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Instancing\Mesh">
-      <UniqueIdentifier>{09d5c7ba-d714-46b3-9a99-f26cf208c227}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Instancing\Point">
-      <UniqueIdentifier>{6b8d34e8-e1fe-4ba5-84ea-2b06f3953435}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\MousePointer">
       <UniqueIdentifier>{c4792628-69ea-4deb-b7fa-2c2c9c49c61d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Mouse">
-      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
       <UniqueIdentifier>{45be3ed5-b966-4eab-b64c-9f21bfa23ee2}</UniqueIdentifier>
@@ -90,9 +63,6 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
       <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\UI">
-      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects">
       <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
@@ -306,9 +276,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
       <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\00. Util">
-      <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
@@ -613,9 +580,6 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard">
       <UniqueIdentifier>{132802e6-6b05-484a-8b47-291aa6dea9e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Cull">
-      <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\Lift">
       <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
     </Filter>
@@ -810,6 +774,54 @@
     </Filter>
     <Filter Include="02.GameObjects\Actor\Scarlet_Sky">
       <UniqueIdentifier>{47e24dc7-8d2c-4dd4-b697-640438879649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{1af5be23-53fb-447f-a0ef-0a7b40e2652d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader">
+      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
+      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Point">
+      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
+      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Cull">
+      <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing">
+      <UniqueIdentifier>{f8b20de2-8cd5-433e-a016-94086d9c516f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Mesh">
+      <UniqueIdentifier>{09d5c7ba-d714-46b3-9a99-f26cf208c227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Point">
+      <UniqueIdentifier>{6b8d34e8-e1fe-4ba5-84ea-2b06f3953435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Mouse">
+      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\UI">
+      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\00. Util">
+      <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task">
+      <UniqueIdentifier>{0eff78c1-97b2-46d3-8395-09667d9ac9b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move">
+      <UniqueIdentifier>{cd8f848a-7fd3-4691-ae71-452f0420c5e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead">
+      <UniqueIdentifier>{e9bff9fd-8602-423e-8d80-7dac1e40887d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack">
+      <UniqueIdentifier>{8f680505-4586-43b4-8b12-7e144a98837f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1637,6 +1649,15 @@
     <ClInclude Include="..\public\Sky_Scarlet.h">
       <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletMove.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletDead.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletAttack.h">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2432,6 +2453,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky_Scarlet.cpp">
       <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletMove.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletDead.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@ public:
 	HRESULT					ADD_UI(const _wstring& _name, CImgBase* UI);
 	void					Remove_UI(const _wstring& _name, CImgBase* UI);
 
-	CImgBase* Find_UI(const _wstring& _name);
+	CImgBase*				Find_UI(const _wstring& _name);
 	void					ResetData();
 
 private:

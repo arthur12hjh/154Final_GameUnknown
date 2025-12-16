@@ -58,7 +58,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 	//	return E_FAIL;
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin");
 	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 
@@ -92,7 +92,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		m_pGameInstance->Clear_Resources(ENUM_CLASS(LEVEL::LEVEL_PROB), true);
+		
 		m_bChangeLevel = true;
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
@@ -330,9 +330,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -427,7 +427,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;*/
 
 	Desc.iMonsterID = 8;
-	Desc.vPosition = { 10.f, 1.f, 10.f };
+	Desc.vPosition = { 60.f, 1.f, 60.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;

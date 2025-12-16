@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "Task_Move.h"
+#include "Task_ScarletMove.h"
 
 #include "GameInstance.h"
 #include "BossBlackBoard.h"
 #include "BehaviorTree.h"
 #include "Nayitba.h"
 
-CTask_Move::CTask_Move() : CTask()
+CTask_ScarletMove::CTask_ScarletMove()
 {
 }
 
-HRESULT CTask_Move::Initialize_Prototype(CBehaviorTree* pOwnerTree)
+HRESULT CTask_ScarletMove::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
@@ -25,7 +25,7 @@ HRESULT CTask_Move::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	return S_OK;
 }
 
-CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
+CBehaviorNode::NODE_STATE CTask_ScarletMove::Update(_float fTimeDelta)
 {
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	if (CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
@@ -40,12 +40,14 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 		case DIRECTION::FRONT:
 			XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
 			break;
-
 		case DIRECTION::LEFT:
 			XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
 			break;
 		case DIRECTION::RIGHT:
 			XMStoreFloat3(&m_vMoveDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+			break;
+		case DIRECTION::BACK:
+			XMStoreFloat3(&m_vMoveDir, -1 * m_pOwner->GetTransform()->Get_State(STATE::LOOK));
 			break;
 		}
 
@@ -65,10 +67,16 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 			if (DIRECTION::FRONT != m_eDirection)
 				Refresh_MovePoint();
 		}
-		
+
 		if (fDistance < pNaytibaDefaultInfo->fAttackRange * 0.7f)
 		{
-			if(DIRECTION::FRONT == m_eDirection )
+			if (DIRECTION::FRONT == m_eDirection)
+				Refresh_MovePoint();
+		}
+
+		if (fDistance >= pNaytibaDefaultInfo->fAttackRange)
+		{
+			if (DIRECTION::BACK == m_eDirection)
 				Refresh_MovePoint();
 		}
 
@@ -84,26 +92,6 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
-		if (false == m_bIsCaution)
-		{
-			if (bIsFinished)
-			{
-				m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
-				m_iAnimSection++;
-				switch (m_iAnimSection)
-				{
-				case 1 :
-					m_szAnimationName += "_Run_L";
-					m_pOwner->Set_Animation(m_szAnimationName.c_str(), true);
-					break;
-				case 2:
-					m_szAnimationName += "_Run_E";
-					m_pOwner->Set_Animation(m_szAnimationName.c_str(), false);
-					m_iAnimSection = 0.f;
-					break;
-				}
-			}
-		}
 	}
 	else
 	{
@@ -114,7 +102,7 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 	return NODE_STATE::COMPLETE;
 }
 
-void CTask_Move::Refresh_MovePoint()
+void CTask_ScarletMove::Refresh_MovePoint()
 {
 	auto pNaytibaDefaultInfo = m_pBlackBoard->GetBossDefaultInfo();
 	m_pBlackBoard->SetTargetDistacne();
@@ -125,46 +113,50 @@ void CTask_Move::Refresh_MovePoint()
 	if (fDistance < fATKRange * 2.f)
 	{
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 0.5f;
 		if (40.f > fRandomIndex)
 		{
 			m_eDirection = DIRECTION::LEFT;
 			m_szAnimationName += "_Caution_Lw";
 			m_pOwner->Set_Animation(m_szAnimationName.c_str());
-			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
 		}
-		else
+		else if (80.f > fRandomIndex)
 		{
 			m_eDirection = DIRECTION::RIGHT;
 			m_szAnimationName += "_Caution_Rw";
 			m_pOwner->Set_Animation(m_szAnimationName.c_str());
-			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+		}
+		else
+		{
+			m_eDirection = DIRECTION::BACK;
+			m_szAnimationName += "_Caution_Bw";
+			m_pOwner->Set_Animation(m_szAnimationName.c_str());
 		}
 		m_bIsCaution = true;
 	}
 	else
 	{
 		// 여기서 달리기 하자
-		m_szAnimationName += "_Run_S";
+		m_szAnimationName += "_Run_L";
 		m_eDirection = DIRECTION::FRONT;
-		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false);
-		m_iAnimSection = 0;
+		m_pOwner->Set_Animation(m_szAnimationName.c_str());
+		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 2.f;
 		m_bIsCaution = false;
 	}
-	
 }
 
-CTask_Move* CTask_Move::Create(CBehaviorTree* pOwnerTree)
+CTask_ScarletMove* CTask_ScarletMove::Create(CBehaviorTree* pOwnerTree)
 {
-	CTask_Move* pTask_Move = new CTask_Move();
-	if (FAILED(pTask_Move->Initialize_Prototype(pOwnerTree)))
+	CTask_ScarletMove* pTask_ScarletMove = new CTask_ScarletMove();
+	if (FAILED(pTask_ScarletMove->Initialize_Prototype(pOwnerTree)))
 	{
-		Safe_Release(pTask_Move);
-		MSG_BOX("Create Fail : Task Move");
+		Safe_Release(pTask_ScarletMove);
+		MSG_BOX("Create Fail : Task ScarletMove");
 	}
-	return pTask_Move;
+	return pTask_ScarletMove;
 }
 
-void CTask_Move::Free()
+void CTask_ScarletMove::Free()
 {
 	__super::Free();
 

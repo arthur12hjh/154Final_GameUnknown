@@ -299,8 +299,8 @@ void CMainApp::Free()
 	Safe_Release(m_pImGuiDebug);
 #endif
 
-	m_pGameInstance->Release_Engine();
-
-	Safe_Release(m_pGameInstance);	
 	Safe_Release(m_pGameManager);
+	m_pGameInstance->Release_Engine();
+	Safe_Release(m_pGameInstance);	
+	
 }

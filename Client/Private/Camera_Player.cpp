@@ -41,8 +41,8 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    if (nullptr == pPlayer)
-        m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
+    //if (nullptr == pPlayer)
+    //    m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
 
     Safe_Release(pPlayer);
 
@@ -83,8 +83,10 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     
     // 플레이어 위치 받아오기.
     _float3 vPlayerPos = {};
-    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
+    if (nullptr == m_pPlayerTransform)
+        return;
 
+    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
     // 피벗 위치를 받아온다.
     _float3 vPivotPos = {};
     XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
