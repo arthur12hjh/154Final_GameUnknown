@@ -34,45 +34,237 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
+	
+	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
+		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
+	{
+		ResetAttackTask();
+		m_pBlackBoard->AccAttackDelay(fTimeDelta);
+		return NODE_STATE::FAIL;
+	}
+
+	// 일단 여기서 고릴라 공격에대한 이동 처리
+	m_pTarget = m_pBlackBoard->GetTarget();
+	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
+	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
+		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+	{
+		ResetAttackTask(false);
+		return NODE_STATE::RUNNING;
+	}
+
+	if (nullptr == m_pBlackBoard->GetAttackData())
+	{
+		if (false == SelectPattern())
+			return NODE_STATE::FAIL;
+	}
+
+	AttackActionAmount(fTimeDelta);
+	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
+	if (bIsFinished)
+	{
+		if (m_pSkillData.empty())
+		{
+			Compute_AttackCoolTime();
+			m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+			m_pBlackBoard->SetAttackData(nullptr);
+			return NODE_STATE::COMPLETE;
+		}
+		else
+			SelectAttackData();
+	}
+
 	return NODE_STATE::RUNNING;
 }
 
-_bool CTask_ScarletAttack::SelectPattern()
+void CTask_ScarletAttack::SelectAttackData()
 {
-	return _bool();
+	if (m_pSkillData.empty())
+		return;
+
+	auto pSkillData = m_pSkillData.front();
+	m_pSkillData.pop();
+
+	m_pBlackBoard->SetAttackData(pSkillData);
+	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.7f, 0.12f, true);
 }
 
-_bool CTask_ScarletAttack::AttackMoveAction(_float fTimeDelta)
+_bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
-	return _bool();
+	// 거리 기반으로
+	// ApproachAttackPattern or NormalAttackPattern 중에서 선택
+	// Hit 중에 패링 상태 공격으로 넘어왔을때 LinkAttackPattern을 재생
+
+	// 기본적인 패턴들 하는거
+	CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+	if (false == m_pBlackBoard->IsParryAttack())
+	{
+		m_pBlackBoard->SetTargetDistacne();
+		_float fDistance = m_pBlackBoard->GetTargetDistance();
+		_float fAttackRange = m_pBlackBoard->GetBossDefaultInfo()->fAttackRange;
+		if (fDistance <= fAttackRange)
+			ApproachAttackPattern();
+		else
+			NormalAttackPattern();
+	}
+	else
+	{
+		// 연계 패턴 
+		LinkAttackPattern();
+	}
+		
+	// 여기서 페이즈 2일때 그 패이즈에대한 공격 패턴 추가
+	if (CBossBlackBoard::BOSS_PAHSE::SECOND <= ePhase)
+	{
+		SecondPhaseSpecialAttack();
+	}
+	
+	return true;
+}
+
+void CTask_ScarletAttack::NormalAttackPattern()
+{
+	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+	if (70 >= fRandom)
+		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL)));
+	else
+		m_pSkillData.push(m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::BETA_SKILL)));
+
+	SelectAttackData();
+}
+
+void CTask_ScarletAttack::LinkAttackPattern()
+{
+}
+
+void CTask_ScarletAttack::ApproachAttackPattern()
+{
+	auto pSkill_Data = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::ALPHA_SKILL));
+	m_pSkillData.push(pSkill_Data);
+	if (24 == pSkill_Data->iSkillID)
+		m_pSkillData.push(m_pGameManager->Find_SkillData(25));
+
+	SelectAttackData();
+}
+
+void CTask_ScarletAttack::SecondPhaseSpecialAttack()
+{
+	// 여기서 기술 4개 연계해서 넣고 그다음 애니메이션 재생할 예정
+	m_pSkillData.push(m_pGameManager->Find_SkillData(36));
+	m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+	m_pSkillData.push(m_pGameManager->Find_SkillData(38));
+	m_pSkillData.push(m_pGameManager->Find_SkillData(39));
+
+	// 이거 4개 실행하고 성공실패 판단해서 Fail 인지 Success 인지 판단
+	SelectAttackData();
+}
+
+_bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
+{
+	// 블랙보드에서 선택된 타겟을 가져오고 거리가 가까우면 이녀석은 거리를 좁히는 이동은 하지않는다.
+	// 블랙 보드에서 거리를 받아와서 하자
+	auto pNaytibaStaticData = m_pOwner->GetStaticMonsterData();
+	if (nullptr == pNaytibaStaticData)
+		return false;
+
+	// 여기서 선택된 스킬에 대한 정보를 처리한다.
+	_bool  bIsMove{ false }, bIsLerpMove{ false };
+	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
+
+	// 플레이어와 몬스터의 거리기반으로 이동시키는 걸로하자 공격할때
+	// 타이밍에 맞춰서 최소거리 유지
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vTargetPos{}, vTempTargetPos{};
+	vTargetPos = vTempTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
+	_vector vReverseDir = -1 * vDir;
+
+	m_bIsLookAtPoint = true;
+	auto pAttackData = m_pBlackBoard->GetAttackData();
+	if (pAttackData)
+	{
+		switch (pAttackData->iSkillID)
+		{
+		
+		}
+	}
+
+
+	return true;
 }
 
 _bool CTask_ScarletAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
-	return _bool();
+	m_pBlackBoard->ClearAttackTimer();
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(1.5f, m_fMaxDelayTime));
+	return true;
 }
 
 void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 {
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fTimeDelta * m_fLerpSpeed);
+
+	if (m_bIsLookAtPoint)
+		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, 5.f);
+	else
+		LookAtPoint(fTimeDelta);
+
+	m_pOwner->GetTransform()->Set_State(STATE::POSITION, vLerpPos);
 }
 
 void CTask_ScarletAttack::AttackADDMove(_float fTimeDelta)
 {
+	m_pBlackBoard->SetTargetDistacne();
+	_float fDistance = m_pBlackBoard->GetTargetDistance();
+	auto pSkill_Data = m_pBlackBoard->GetAttackData();
+
+	if (nullptr == pSkill_Data || 1.f >= fDistance - pSkill_Data->fRange)
+		return;
+
+	_float fAnimPlayRatio = m_pOwner->Get_AnimationRatio();
+	_float fSpeed = m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed * (fDistance / pSkill_Data->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
+	fSpeed = Clamp<_float>(fSpeed, 0.f, 10.f);
+	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 {
+	_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{};
+	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
+
+	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
 }
 
 void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)
 {
+	if (bIsCoolTime)
+		Compute_AttackCoolTime(true);
+
+	while (!m_pSkillData.empty())
+		m_pSkillData.pop();
+
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)
 {
-	return nullptr;
+	CTask_ScarletAttack* pTask_ScarletAttack = new CTask_ScarletAttack();
+	if (FAILED(pTask_ScarletAttack->Initialize_Prototype(pOwnerTree)))
+	{
+		Safe_Release(pTask_ScarletAttack);
+		MSG_BOX("Create Fail : Task Scarlet Attack");
+	}
+	return pTask_ScarletAttack;
 }
 
 void CTask_ScarletAttack::Free()
 {
+	__super::Free();
+
+	Safe_Release(m_pBlackBoard);
 }

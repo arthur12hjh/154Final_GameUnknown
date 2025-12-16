@@ -270,8 +270,8 @@ void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
 	m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
 	m_pTransformCom->Set_Scale(XMLoadFloat3(&Desc.vScale));
-	
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+
 	m_iMonsterID = Desc.iMonsterID;
 	if (FAILED(Ready_CharacterData()))
 		return;

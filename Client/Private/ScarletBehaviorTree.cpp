@@ -19,6 +19,7 @@
 #include "Task_Idle.h"
 #include "Task_ScarletDead.h"
 #include "Task_ScarletMove.h"
+#include "Task_ScarletAttack.h"
 
 #include "Task_Groggy.h"
 #include "Task_Hit.h"
@@ -80,15 +81,19 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
     if (nullptr == pRootSelect)
         return E_FAIL;
 
-   
+    auto pAttackSelect = CSelectNode::Create(this);
+    if (nullptr == pAttackSelect)
+        return E_FAIL;
+    pAttackSelect->Bind_BehaviorNode(CDeco_AttackDelay::Create(this));
+    pAttackSelect->Bind_BehaviorNode(CTask_ScarletAttack::Create(this));
 
     auto pBattleSelect = CSelectNode::Create(this);
     if (nullptr == pBattleSelect)
         return E_FAIL;
 
     pBattleSelect->Bind_BehaviorNode(CDeco_FindTarget::Create(this));
-    // 여기 공격추가
 
+    pBattleSelect->Bind_BehaviorNode(pAttackSelect);
     pBattleSelect->Bind_BehaviorNode(CTask_ScarletMove::Create(this));
 
     auto pHitReactionSelector = CSelectNode::Create(this);

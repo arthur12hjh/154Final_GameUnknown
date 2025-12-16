@@ -88,11 +88,10 @@ public:
 #pragma endregion
 
 #pragma region Damage Logic
-	_bool					ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
+	_bool											ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
 
-
-
+	void											Release_GameMgr();
 
 private :
 	ID3D11Device*			m_pDevice = { nullptr };

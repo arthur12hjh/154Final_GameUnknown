@@ -181,6 +181,7 @@ namespace Client
 		BETA_SKILL,				// Beta Skill
 		ALPHA_SKILL,			// Alpha Skill
 		MIMESIS_SKILL,			// Mimesis Skill
+		SECOND_PHASE_SKILL,		// Seconde Phase Skill
 		END
 	};
 	

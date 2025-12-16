@@ -30,7 +30,6 @@ CMainApp::CMainApp()
 	, m_pGameManager { CGameManager::GetInstance() },
 	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
-	Safe_AddRef(m_pGameManager);
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -300,7 +299,7 @@ void CMainApp::Free()
 {
 	__super::Free();
 
-	CGameManager::DestroyInstance();
+	
 	m_pEffectSRV->DestroyInstance();
 
 	Safe_Release(m_pDevice);
@@ -309,9 +308,11 @@ void CMainApp::Free()
 #ifdef _DEBUG
 	Safe_Release(m_pImGuiDebug);
 #endif
+	
+	m_pGameManager->Release_GameMgr();
+	CGameManager::DestroyInstance();
 
-	Safe_Release(m_pGameManager);
 	m_pGameInstance->Release_Engine();
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
 	
 }

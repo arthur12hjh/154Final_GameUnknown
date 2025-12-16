@@ -28,6 +28,7 @@ private:
 	CGameManager*						m_pGameManager = { nullptr };
 	queue<const Character_Skill_Desc*>	m_pSkillData = { };
 
+	CGameObject*						m_pTarget = { nullptr };
 	_int								m_PrePatternIndex = {};
 	_int								m_CurPatternIndex = {};
 
@@ -42,13 +43,23 @@ private:
 	_bool								m_bIsAttackStartLerp = {};
 
 private:
-	_bool								SelectPattern();
-
 	// 보스 패턴에 대한 정보
 #pragma region Boss Pattern
+	void								SelectAttackData();
+	_bool								SelectPattern(_bool bIsRandom = true);
+
+	void								NormalAttackPattern();
+	void								LinkAttackPattern();
+	void								ApproachAttackPattern();
+
+#pragma region Phase2
+	void								SecondPhaseSpecialAttack();
+#pragma endregion
+
+
 
 #pragma endregion
-	_bool								AttackMoveAction(_float fTimeDelta);
+	_bool								AttackActionAmount(_float fTimeDelta);
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
 
 	void								AttackLerpMove(_float fTimeDelta);
