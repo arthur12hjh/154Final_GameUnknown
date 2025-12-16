@@ -240,95 +240,113 @@ HRESULT CLoader::Loading()
 
 	HRESULT		hr = {};
 
-	switch (m_eNextLevelID)
-	{
-	case LEVEL::LOGO:
-		hr = Loading_For_Logo();
+	
+	
+		switch (m_eNextLevelID)
+		{
+		case LEVEL::LOGO:
+			hr = Loading_For_Logo();
+			break;
+		case LEVEL::GAMEPLAY:
+		{
+			m_strMessage = TEXT("맵 로딩중.");
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
+
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertB(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertB_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertC(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertC_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertD(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertD_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertE(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertF(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertF_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Camp(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Corpse_And_Container(pArg); });
+			////m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Container_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Fence_And_Ruin(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Vehicle_And_Wheel(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Building_And_Trash(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Sign_And_Crane(pArg); });
+
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
+
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_Col(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B(pArg); });
+			//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B_Col(pArg); });
+
+			if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+			{
+				m_strMessage = TEXT("메시 로딩중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
+
+				m_strMessage = TEXT("셰이더 로딩중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
+
+				m_strMessage = TEXT("이펙트 로딩중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
+
+				m_strMessage = TEXT("인스턴싱중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
+
+				m_strMessage = TEXT("UI 로딩중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
+
+				m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
+				m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
+
+				hr = Loading_For_GamePlay();
+			}
+			else
+			{
+				while (m_pGameInstance->IsWorkThread());
+				m_strMessage = TEXT("완료 되었습니다..");
+				m_isFinished = true;
+				hr = S_OK;
+			}
+		}
 		break;
-	case LEVEL::GAMEPLAY:
-	{
-		m_strMessage = TEXT("메시 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
-
-		m_strMessage = TEXT("셰이더 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
-
-		m_strMessage = TEXT("이펙트 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
+		case LEVEL::SCARLET:
+		{
+			m_strMessage = TEXT("씨발 이런게 도파민 섹스지");
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet_SKY(pArg); });
 
 
-		m_strMessage = TEXT("맵 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
-		
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertB(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertB_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertC(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertC_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertD(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertD_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertE(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertF(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertF_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Camp(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Corpse_And_Container(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Container_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Fence_And_Ruin(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Vehicle_And_Wheel(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Building_And_Trash(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Sign_And_Crane(pArg); });
+			if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+				hr = Loading_For_Scarlet();
+			else
+			{
+				while (m_pGameInstance->IsWorkThread());
+				m_strMessage = TEXT("완료 되었습니다..");
+				m_isFinished = true;
+				hr = S_OK;
+			}
+		}
 
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
-		
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_Col(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B_Col(pArg); });
+		break;
+		}
 
-		m_strMessage = TEXT("인스턴싱중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
-
-		m_strMessage = TEXT("UI 로딩중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
-
-		m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
-
-		hr = Loading_For_GamePlay();
-	}
-	break;
-	case LEVEL::SCARLET:
-	{
-		m_strMessage = TEXT("씨발 이런게 도파민 섹스지");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet_SKY(pArg); });
-
-		
-		hr = Loading_For_Scarlet();
-		while (m_pGameInstance->IsWorkThread());
-		m_strMessage = TEXT("완료 되었습니다..");
-		m_isFinished = true;
-		
-	}
-		
-	break;
-	}
 
 	LeaveCriticalSection(&m_CriticalSection);
+
 
 	if (FAILED(hr))
 		return E_FAIL;
@@ -366,9 +384,11 @@ HRESULT CLoader::Loading_For_Logo()
 
 HRESULT CLoader::Loading_For_Scarlet()
 {
-	
-
 	Sleep(1000.f);
+
+	while (m_pGameInstance->IsWorkThread());
+	m_strMessage = TEXT("완료 되었습니다..");
+	m_isFinished = true;
 
 	return S_OK;
 }
@@ -616,6 +636,28 @@ HRESULT CLoader::Loading_For_GamePlay()
 	while (m_pGameInstance->IsWorkThread());
 	m_strMessage = TEXT("완료 되었습니다..");
 	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Scarlet(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
+	string szFrontPath = "../Bin/Resources/Models/Scarlet/Animation/";
+	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Scarlet_Body");
+	_matrix PreMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
+
+	vector<_wstring> szPartPrototypeTagList;
+	vector<string> szPartModelFilePathList;
+
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -2177,8 +2219,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
-
-	
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Cube");

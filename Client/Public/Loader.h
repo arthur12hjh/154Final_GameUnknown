@@ -46,6 +46,8 @@ private:
 private:
 	HRESULT Loading_For_Logo();
 
+	HRESULT Loading_For_Scarlet(void* pArg);
+
 #pragma region Scarlet
 	HRESULT	Loading_For_Scarlet();
 
@@ -54,7 +56,6 @@ private:
 	HRESULT Loading_For_Map_Scarlet_Environment(void* pArg);
 	HRESULT Loading_For_Map_Scarlet_Environment2(void* pArg);
 #pragma endregion
-
 
 #pragma region GamePlay
 	HRESULT Loading_For_GamePlay();
