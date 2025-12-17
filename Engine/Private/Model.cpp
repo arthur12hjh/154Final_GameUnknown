@@ -167,6 +167,31 @@ void CModel::Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix C
     pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
 }
 
+void CModel::Override_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
+
+    D3D11_BOX BoxDesc{};
+
+	_uint iStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+
+	BoxDesc.left = iIdx * iStride;
+	BoxDesc.right = BoxDesc.left + iStride;
+    BoxDesc.top = 0;
+    BoxDesc.bottom = 1;
+    BoxDesc.front = 0;
+    BoxDesc.back = 1;
+
+    COMPUTE_BONEMATRIX_OUT OutStruct = {};
+     XMStoreFloat4x4(&OutStruct.BoneCombinedTransformMatrix, CombinedMatrix);
+
+    m_pContext->UpdateSubresource(m_pOutSource, 0, &BoxDesc, &OutStruct, 0, 0);
+
+}
+
 void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
 {
     *pVIBuffer = m_Meshes[iMeshNum]->GetVIBuffer();
