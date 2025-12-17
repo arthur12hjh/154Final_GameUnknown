@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -308,10 +308,12 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // 문자열 변환
-        string name = jInfo["Name"];
-        string text = jInfo["Text"];
-        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        {
+            string name = jInfo["Name"];
+            string text = jInfo["Text"];
+            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        }
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -324,44 +326,6 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.eType = (INTERACTION_TYPE)jInfo["Type"];
 
         m_pInteractionDatas[id] = desc;
-    }
-
-    return S_OK;
-}
-
-HRESULT CDataManager::LoadScriptData(void* pArg)
-{
-    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
-    Json ScriptDatas{};
-
-    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ScriptData/ScriptData.json", ScriptDatas);
-
-    for (auto& iter : ScriptDatas["ScriptData"].items())
-    {
-        string szKey = iter.key();
-
-        vector<SCRIPT_DATA> Scripts{};
-        for (auto& jInfo : iter.value())
-        {
-            SCRIPT_DATA desc{};
-
-            desc.szScriptText = UTF8ToWString(jInfo["szText"]);
-
-            if (jInfo.contains("vColor"))
-            {
-                desc.vColor.x = jInfo["vColor"][0];
-                desc.vColor.y = jInfo["vColor"][1];
-                desc.vColor.z = jInfo["vColor"][2];
-                desc.vColor.w = jInfo["vColor"][3];
-            }
-
-            Scripts.push_back(desc);
-        }
-
-        WCHAR szScriptKey[MAX_PATH]{};
-        CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
-
-        m_ScriptDatas[szScriptKey] = Scripts;
     }
 
     return S_OK;
@@ -676,10 +640,10 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-    // _finddata_t : <io.h>���� �����ϸ� ���� ������ �����ϴ� ����ü
+   
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>���� �����ϸ� ����ڰ� ������ ��� ������ ���� ù ��° ������ ã�� �Լ�
+
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -695,7 +659,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // �ƽ�Ű �ڵ� ���ڿ��� �����ڵ� ���ڿ��� ��ȯ�����ִ� �Լ�
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -735,7 +698,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         }
 
 
-        //_findnext : <io.h>���� �����ϸ� ���� ��ġ�� ������ ã�� �Լ�, ���̻� ���ٸ� -1�� ����
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }

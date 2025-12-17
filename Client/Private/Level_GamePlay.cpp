@@ -85,6 +85,20 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	{
+		CNayitba::NAYITBA_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.vScale = { 1.f, 1.f, 1.f };
+
+		Desc.iMonsterID = 8;
+		Desc.vPosition = { 60.f, 1.f, 60.f };
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
+			return;
+
+	}
+
 	if (m_isOverlay && m_pHUD)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
@@ -409,14 +423,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 
 
-	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
-	pSapwnerDesc.bIsApplyTransform = true;
-	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
-	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
-	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
-		return E_FAIL;
+	//CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	//pSapwnerDesc.bIsApplyTransform = true;
+	//pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
+	//pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
+	//pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
+	//	return E_FAIL;
 
 	//  시네마틱 테스트용 모델임
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),

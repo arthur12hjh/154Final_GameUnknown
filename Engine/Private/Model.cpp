@@ -573,13 +573,15 @@ HRESULT CModel::Initialize_AnimationBufferResource()
     return S_OK;
 }
 
-HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
+HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName)
 {
     if (nullptr == pAnimations)
         return E_FAIL;
 
     for (auto& pAnimation : *pAnimations)
     {
+        pAnimation->Set_Name(szName);
+            
         Mapping_Animation(pAnimation);
 
         m_Animations.push_back(pAnimation);
@@ -1846,7 +1848,7 @@ HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
     m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
 
     m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
-        
+    
     return S_OK;
 }
 
