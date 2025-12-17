@@ -122,7 +122,7 @@ _float CGameObject::Get_Depth()
 
 void CGameObject::Set_Occlusion_Culling_Result(_bool isVisible)
 {
-	if (m_eVisibility == VISIBILITY::VISIBLE)
+	/*if (m_eVisibility == VISIBILITY::VISIBLE)
 	{
 		if (!isVisible)
 			m_eVisibility = VISIBILITY::HIDDEN;
@@ -131,7 +131,9 @@ void CGameObject::Set_Occlusion_Culling_Result(_bool isVisible)
 	{
 		if (isVisible)
 			m_eVisibility = VISIBILITY::VISIBLE;
-	}
+	}*/
+
+	m_eVisibility = isVisible ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN;
 }
 
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)

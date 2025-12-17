@@ -887,15 +887,11 @@ void CGameInstance::FrustomRender()
 
 HRESULT CGameInstance::Begin_Object_Query(CGameObject* pObject)
 {
-	m_pOcculusion->Begin_Object_Query(pObject);
-
-	return S_OK;
+	return m_pOcculusion->Begin_Object_Query(pObject);
 }
 HRESULT CGameInstance::End_Obejct_Query(CGameObject* pObject)
 {
-	m_pOcculusion->End_Obejct_Query(pObject);
-	
-	return S_OK;
+	return m_pOcculusion->End_Obejct_Query(pObject);
 }
 HRESULT CGameInstance::Get_Result(CGameObject* pObject, _bool* pIsVisible)
 {
