@@ -39,7 +39,7 @@ HRESULT CUIBase::Initialize(void* pArg)
 		return E_FAIL;
 
 	Safe_AddRef(m_pGameManager);
-	
+
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
@@ -56,6 +56,9 @@ HRESULT CUIBase::Initialize(void* pArg)
 
 	if (FAILED(Ready_Events()))
 		return E_FAIL;
+
+	for (auto& AinmDesc : m_tOriginUIDesc.m_AnimTags)
+		m_AnimFinishStates[AinmDesc.first] = true;
 
 	return S_OK;
 }
@@ -396,11 +399,17 @@ void CUIBase::Update_Children(CUIBase* pObj)
 #ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
 		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CUIBase::IsAnimFinished(const _wstring& szAnimTag) const
+{
+	auto it = m_AnimFinishStates.find(szAnimTag);
+	return it != m_AnimFinishStates.end() && it->second;
 }
 
 void CUIBase::Render_Debug_Rect()
@@ -718,7 +727,7 @@ HRESULT CUIBase::Broadcast_Event(const _wstring& szEventTag, const _wstring& szA
 	for (auto* pHandle : it->second)
 	{
 		if (!pHandle) continue;
- 		pHandle->Notify(pArg);
+  		pHandle->Notify(pArg);
 	}
 	return S_OK;
 }
@@ -748,7 +757,10 @@ void CUIBase::Free()
 	for (auto& EventHandle : m_pEventHandles)
 	{
 		for (auto& Event : EventHandle.second)
-			Safe_Release(Event);
+		{
+			m_pGameInstance->Remove_Event(EventHandle.first.c_str());
+			Safe_Release(Event); 
+		}
 		EventHandle.second.clear();
 	}
 	m_pEventHandles.clear();

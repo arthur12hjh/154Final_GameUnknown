@@ -40,6 +40,11 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
     ImGui::Begin("Cheat List", &bIsOpen);
 
+    if (m_pSelectCamera)
+    {
+        if (m_pSelectCamera->isDead())
+            m_pSelectCamera = nullptr;
+    }
     DrawObjectDebug();
     ImGui::Separator();
     DrawCameraDebug();
@@ -74,11 +79,14 @@ HRESULT CDebugCheatUI::Render()
 void CDebugCheatUI::SetLevelMainCamera()
 {
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
-
-    if (m_pSelectCamera)
+    if (nullptr == m_pSelectCamera || m_pSelectCamera->isDead())
     {
+        strcpy_s(m_szSelectCamera, "Not Find Main Camera");
+    }
+    else
+    {
+        Safe_Release(m_pSelectCamera);
         auto pCameras = m_pGameInstance->GetAllCamera();
         for (auto& iter : *pCameras)
         {
@@ -90,10 +98,15 @@ void CDebugCheatUI::SetLevelMainCamera()
             pFree_Camera->GetCameraLock(m_bIsCameraLock);
         }
     }
-    else
-    {
-        strcpy_s(m_szSelectCamera, "Not Find Main Camera");
-    }
+
+    
+#endif // _DEBUG
+}
+
+void CDebugCheatUI::ResetLevelCamera()
+{
+#ifdef _DEBUG
+    m_pSelectCamera = nullptr;
 #endif // _DEBUG
 }
 
@@ -132,6 +145,18 @@ void CDebugCheatUI::DrawObjectDebug()
             return;
 
         pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(479.678f, 24.858f, 328.388f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
+    if (ImGui::Button("Teleport Player To Gigas"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(686.786f, 14.520f, 558.247f, 1.f));
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
         Safe_Release(pPlayer);
     }
@@ -199,9 +224,9 @@ void CDebugCheatUI::DrawCameraDebug()
                 _float4x4 PrePosMatrix = {};
                 if (m_pSelectCamera != iter.second)
                 {
-                    Safe_Release(m_pSelectCamera);
                     m_pGameInstance->SetMainCamera(iter.first.c_str(), &PrePosMatrix);
                     m_pSelectCamera = m_pGameInstance->GetMainCamera();
+                    Safe_Release(m_pSelectCamera);
                 }
 
                 auto pFree_Camera = dynamic_cast<CCamera_Free*>(m_pSelectCamera);
@@ -378,7 +403,6 @@ void CDebugCheatUI::Free()
     __super::Free();
 
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     Safe_Release(m_pGameManager);
 #endif // _DEBUG
 }

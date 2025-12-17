@@ -110,7 +110,8 @@ void CPhysx_Manager::Update(_float fTimeDelta)
 
             pTransform->Update_PreWorldMatrix();
 #ifdef _DEBUG
-            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
+            if(CRigidBody::RIGIDBODY_SHAPE::NONE != Pair.second->Get_Shape())
+                m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
 #endif
         }
 
@@ -135,7 +136,19 @@ void CPhysx_Manager::TestSetting()
 
 void CPhysx_Manager::Clear()
 {
+    for (auto& RigidBodyPair : m_RigidBodies)
+    {
+        m_PxScene->removeActor(*RigidBodyPair.second->Get_PxRigidBody());
+        Safe_Release(RigidBodyPair.first);
+        Safe_Release(RigidBodyPair.second);
+    }
     m_RigidBodies.clear();
+
+    for (auto& CCTPair : m_CCTs)
+    {
+        Safe_Release(CCTPair.first);
+        Safe_Release(CCTPair.second);
+    }
 
     m_CCTs.clear();
 

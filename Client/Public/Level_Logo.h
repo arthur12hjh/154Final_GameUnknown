@@ -28,8 +28,7 @@ public:
 private:
 	CGameManager* m_pGameManager{ nullptr };
 	CChangeLevelEvent* m_pLevelChangeEvent{ nullptr };
-
-	_bool m_bChangeLevel{ false };
+	_bool						m_bChangeLevel = { false };
 	_bool m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 	
 public:

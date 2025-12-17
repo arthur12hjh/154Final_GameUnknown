@@ -45,8 +45,7 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 		}
 	}
 	
-	if (m_pBlackBoard->IsAttackEnable())
-		m_pBlackBoard->ClearAttackTimer();
+
 
 	return NODE_STATE::COMPLETE;
 }

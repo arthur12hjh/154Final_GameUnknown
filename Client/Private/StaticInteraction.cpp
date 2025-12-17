@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "UIBase.h"
+#include "GameManager.h"
 #include "Interaction_Component.h"
 
 CStaticInteraction::CStaticInteraction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -29,9 +30,18 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
     if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
+    if (nullptr == wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Corpse")))
+    {
+        if (FAILED(Ready_COL(*pDesc)))
+            return E_FAIL;
+    }
+
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
-    m_pRigidBody->Update_PxTransform(WorldMat);
+
+
+    if (m_pRigidBody)
+        m_pRigidBody->Update_PxTransform(WorldMat);
 
     return S_OK;
 }
@@ -42,7 +52,6 @@ void CStaticInteraction::Priority_Update(_float fTimeDelta)
 
 void CStaticInteraction::Update(_float fTimeDelta)
 {
-
 }
 
 void CStaticInteraction::Late_Update(_float fTimeDelta)
@@ -86,11 +95,11 @@ HRESULT CStaticInteraction::Render()
 HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
-    Com_Size.x *= 4.f;
-    Com_Size.z *= 4.f;
+    Com_Size.x *= 2.f;
+    Com_Size.z *= 2.f;
 
     /* Com_Model */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), Desc.szVIBuffer_PrototypeName,
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), Desc.szVIBuffer_PrototypeName,
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 
@@ -111,6 +120,17 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
+  
+
+    return S_OK;
+}
+
+HRESULT CStaticInteraction::Ready_COL(const PROB_INTERACTION_DESC& Desc)
+{
+    _float3 Com_Size = m_pTransformCom->Get_Scale();
+    Com_Size.x *= 2.f;
+    Com_Size.z *= 2.f;
+
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
     tUserData.szActorTag = TEXT("Static_Interaction");
@@ -139,17 +159,9 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 
     // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
     // 없으면 충돌 안됨
-    
-    // 일단 임시 예외처리 해둠
-    if(!(Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_1A") ||
-        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_1B") ||
-        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2A") ||
-        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2B") ||
-        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2C") ||
-        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_3A")))
-        m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
-    
+
+    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
     return S_OK;
 }
@@ -169,18 +181,31 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
 HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
     __super::Begin_OverlapCallBack();
+
+    // 임시 테스트
+    if (m_eInterState != INTERACTION_STATE::END)
+        m_eInterState = INTERACTION_STATE::DEFAULT;
+
     return S_OK;
 }
 
 void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-    if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-        m_fInteractionDuration.x += fTimeDelta;
+    // 여기서 플레이어 상태 처리 및 Lock 상태 관리
+    if (!IsInteractionEnable())
+        m_fInteractionDuration += fTimeDelta;
 
     if (INTERACTION_STATE::DEFAULT == m_eInterState)
     {
+        if (IsInteractionEnable())
+        {
+            m_eInterState = INTERACTION_STATE::CONTACT;
+        }
+    }
+    else if (INTERACTION_STATE::CONTACT == m_eInterState)
+    {
         m_eInterState = INTERACTION_STATE::ACTIVE;
-        m_fInteractionDuration.x = 0.f;
+        m_fInteractionDuration = 0.f;
     }
 }
 

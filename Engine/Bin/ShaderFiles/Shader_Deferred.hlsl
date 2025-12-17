@@ -497,16 +497,6 @@ PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
     return Out;
 }
 
-
-PS_OUT_BACKBUFFER PS_MAIN_OCCLUSION(PS_IN In)
-{
-    
-    PS_OUT_BACKBUFFER Out;
-    
-    Out.vBackBuffer = float4(0.f, 0.f, 0.f, 0.f);
-    return Out;
-}
-
 technique11 DefaultTechnique
 { 
     // idx 0 
@@ -617,12 +607,12 @@ technique11 DefaultTechnique
     // idx 10
     pass Occlusion
     {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_OCCLUSION();
+        PixelShader = NULL;
     }
 }
 

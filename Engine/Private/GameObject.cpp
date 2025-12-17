@@ -127,6 +127,11 @@ void CGameObject::Set_Occlusion_Culling_Result(_bool isVisible)
 		if (!isVisible)
 			m_eVisibility = VISIBILITY::HIDDEN;
 	}
+	else if (m_eVisibility == VISIBILITY::HIDDEN)
+	{
+		if (isVisible)
+			m_eVisibility = VISIBILITY::VISIBLE;
+	}
 }
 
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)

@@ -45,8 +45,6 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
-
-		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	}
 	else
 		int a = 10;
@@ -54,6 +52,11 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 void CLift_Platform::Update(_float fTimeDelta)
 {
+	//올라갈땐 Kinematic Move, 내려갈떈 Set Position으로
+	if(CLift_Platform::LIFT_PLATFORM_STATE::UPPER == m_ePlatform_State)
+		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), true);
+	else if (CLift_Platform::LIFT_PLATFORM_STATE::DOWN == m_ePlatform_State)
+		m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), false);
 }
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
@@ -110,29 +113,27 @@ _bool CLift_Platform::SetPlatformMove(LIFT_PLATFORM_STATE eState)
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
 		
 		// 여기서 위인지 아래인지
-		if (fDistance > 0.1f)
+		if (fDistance > 0.5f)
 		{
 			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
-			m_pRigidBody->Set_Ridable(true);
 		}
 		else
 			XMStoreFloat3(&m_vTargetPoint, vPlatformPos);
 	}
 		break;
-	case CLift_Platform::LIFT_PLATFORM_STATE::DWON:
+	case CLift_Platform::LIFT_PLATFORM_STATE::DOWN:
 	{
 		_vector vTargetPos = XMLoadFloat3(&m_vRootPos);
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
 
 		// 여기서 위인지 아래인지
-		if (fDistance > 0.1f)
+		if (fDistance > 0.5f)
 		{
 			XMStoreFloat3(&m_vTargetPoint, vTargetPos);
 			m_ePlatform_State = eState;
 			m_bIsPaltformMove = true;
-			m_pRigidBody->Set_Ridable(true);
 		}
 		else
 			XMStoreFloat3(&m_vTargetPoint, vPlatformPos);
@@ -149,15 +150,21 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 	_vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
 
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPlatformPos));
+
 	if (fDistance < 0.5f)
 	{
 		m_pRigidBody->Set_Ridable(false);
 		m_bIsPaltformMove = false;
+		return;
 	}
 
+	m_pRigidBody->Set_Ridable(true);
 	_vector vLerpPos = XMVectorLerp(vPlatformPos, vTargetPos, fTimeDelta * m_vLerpSpeed);
 	m_pTransformCom->Set_State(STATE::POSITION, vLerpPos);
 
+	PxVec3 vPreDelta = m_pRigidBody->Get_DeltaMove();
+
+	m_vPreDelta = _float3(vPreDelta.x, vPreDelta.y, vPreDelta.z);
 	_vector vDelta = vLerpPos - vPlatformPos;
 	m_pRigidBody->Set_DeltaMove(PxVec3(XMVectorGetX(vDelta), XMVectorGetY(vDelta), XMVectorGetZ(vDelta)));
 }
@@ -165,7 +172,7 @@ void CLift_Platform::LerpTargetPoint(_float fTimeDelta)
 HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -181,7 +188,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 	_wstring strComponentTag = pComponentTag;
 	strComponentTag += TEXT("_COL");
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), strComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
 		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
 		return E_FAIL;
 

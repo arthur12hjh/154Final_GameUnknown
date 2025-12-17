@@ -37,11 +37,11 @@ HRESULT CLinkAttackTester::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(720.f, 50.f, 580.f, 1.f));
-
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.9f, 46.912f, 637.93f, 1.f));
 	m_pBodyModelCom = static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")));
 
-	m_pBodyModelCom->Set_Animation("M_Gorilla_BattleIdle01", TRUE);
+	m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
 
 	m_pPlayer = m_pGameManager->GetGameCharacter();
 
@@ -51,23 +51,57 @@ HRESULT CLinkAttackTester::Initialize(void* pArg)
 void CLinkAttackTester::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
-
 }
 
 void CLinkAttackTester::Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
 	{
-		m_pBodyModelCom->Set_Animation("Hit_Sword_Normal_LinkAttack1", FALSE);
-
-		if (m_pPlayer->Get_GaraGorillaBone(this))
-			MSG_BOX("Failed to Find Bone : CLinkAttackTester/SC_LinkTarget");
+		m_bIsActive = TRUE;
+		m_iAnimationSequence = 0;
+		m_fMoveTime = 0.f;
+		m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
+		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));
 	}
 
-	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+	if (m_bIsActive)
+	{
+		m_fMoveTime += fTimeDelta;
+		_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
-	if(isFinished)
-		m_pBodyModelCom->Set_Animation("M_Gorilla_BattleIdle01", TRUE);
+		if (m_fMoveTime > 1.2f && m_fMoveTime < 2.8f)
+		{
+			_float fRatio = (m_fMoveTime - 1.2f) / 1.6f;
+			_vector vPosition = XMVectorLerp(XMVectorSet(760.197f, 0.f, 700.319f, 1.f), XMVectorSet(741.9f, 0.f, 637.93f, 1.f), fRatio);
+			_float fHighestPoint = 60.f;
+			_float fTime = m_fMoveTime - 1.2f;
+
+			_float fPositionY = Lerp(46.912f, 0.5f, fRatio) + 4.f * fHighestPoint * fRatio * (1.f - fRatio);
+
+			vPosition = XMVectorSetY(vPosition, fPositionY);
+
+			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+		}
+
+		if (isFinished)
+		{
+			++m_iAnimationSequence;
+			if (m_iAnimationSequence == 3)
+			{
+				m_bIsActive = FALSE;
+			}
+			else if (m_iAnimationSequence == 1)
+			{
+				m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_NA05_01", FALSE, 1.f, 0.12f, FALSE);
+			}
+			else if (m_iAnimationSequence == 2)
+			{
+				m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
+				//m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.f, 2.94f, 637.f, 1.f));
+			}
+		}
+	}
+
 
 	__super::Update(fTimeDelta);
 }
@@ -75,8 +109,11 @@ void CLinkAttackTester::Update(_float fTimeDelta)
 void CLinkAttackTester::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+	if (m_bIsActive)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, m_pPart_Body);
+	}
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);

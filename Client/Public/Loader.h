@@ -46,6 +46,18 @@ private:
 private:
 	HRESULT Loading_For_Logo();
 
+	HRESULT Loading_For_Scarlet(void* pArg);
+
+#pragma region Scarlet
+	HRESULT	Loading_For_Scarlet();
+
+	HRESULT	Loading_For_Scarlet_SKY(void* pArg);
+	HRESULT Loading_For_Map_Scarlet_Building(void* pArg);
+	HRESULT Loading_For_Map_Scarlet_Environment(void* pArg);
+	HRESULT Loading_For_Map_Scarlet_Environment2(void* pArg);
+#pragma endregion
+
+#pragma region GamePlay
 	HRESULT Loading_For_GamePlay();
 	HRESULT Loading_For_GamePlay_Player(void* pArg);
 	HRESULT Loading_For_GamePlay_Mesh(void* pArg);
@@ -55,9 +67,6 @@ private:
 	HRESULT Loading_For_GamePlay_Components(void* pArg);
 
 	HRESULT Loading_For_GamePlay_Map(void* pArg);
-
-	HRESULT Loading_For_GamePlay_Map_Scarlet_Building(void* pArg);
-	HRESULT Loading_For_GamePlay_Map_Scarlet_Environment(void* pArg);
 
 	HRESULT Loading_For_GamePlay_Map_DesertA(void* pArg);
 	HRESULT Loading_For_GamePlay_Map_DesertB(void* pArg);
@@ -92,6 +101,8 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertF_Col(void* pArg);
 	HRESULT Loading_For_Desert_Bridge(void* pArg);
 	HRESULT Loading_For_Desert_Bridge_Col(void* pArg);
+#pragma endregion
+
 
 //#pragma region Level_Scarlet
 //	HRESULT Loading_For_Scarlet_Mesh(void* pArg);

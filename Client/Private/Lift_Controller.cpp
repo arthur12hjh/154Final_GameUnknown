@@ -46,7 +46,6 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 	// 뭐야 찬빈햄도 여기서하네 나도 여기서할래
 	m_iPosition = pDesc->iPosition;
 
-	// 미안해요 형 걍 정수로 하죠 프로토타입끝나고 바꾸던가 아몰ㄹ아!
 	if(m_iPosition == 0)
 		m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 	else if(m_iPosition == 1)
@@ -92,19 +91,15 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
-	
-
-	
-
-	/*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-	}*/
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 }
 
@@ -157,7 +152,7 @@ void CLift_Controller::SetControllPlatform(CLift_Platform* pControllPlatform)
 HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -201,7 +196,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	_wstring strComponentTag = pComponentTag;
 	strComponentTag += TEXT("_COL");
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), strComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
 		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
 		return E_FAIL;
 
@@ -212,7 +207,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	// 세팅 방법 보고도 잘 이해 안되면 물어봐주세요 키네마틱, 다이나믹, 스태틱 세팅 중요해요
 	PxUserData tUserData;
 	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
-	tUserData.szActorTag = TEXT("Elevator_Actor");
+	tUserData.szActorTag = TEXT("Elevator_Controller");
 
 	// 리지드 바디 Desc 세팅. 
 	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
@@ -277,8 +272,8 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 
 void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-		m_fInteractionDuration.x += fTimeDelta;
+	if (!IsInteractionEnable())
+		m_fInteractionDuration += fTimeDelta;
 
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
@@ -299,7 +294,7 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 		}
 
-		m_fInteractionDuration.x = 0.f;
+		m_fInteractionDuration = 0.f;
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
 			m_pModelCom->Set_AnimationIndex(1, false);

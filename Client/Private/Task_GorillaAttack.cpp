@@ -34,10 +34,11 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
-	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState || 
+	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
 		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
 	{
 		ResetAttackTask();
+		m_pBlackBoard->AccAttackDelay(fTimeDelta);
 		return NODE_STATE::FAIL;
 	}
 
@@ -47,7 +48,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaAttack::Update(_float fTimeDelta)
 		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 	{
 		ResetAttackTask(false);
-		return NODE_STATE::FAIL;
+		return NODE_STATE::RUNNING;
 	}
 
 	if (nullptr == m_pBlackBoard->GetAttackData())
@@ -131,11 +132,11 @@ _bool CTask_GorillaAttack::SelectPattern()
 		}
 		bIsAttack = true;
 	}
-	else if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 2.0f)
+	else if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 3.0f)
 	{
 		SelectRandomPattern(true);
 	}
-	else if(fDistance >= m_pOwner->GetMonsterData().fAttackRange * 3.f)
+	else
 	{
 		m_PrePatternIndex = 0;
 		m_CurPatternIndex = 4;
@@ -464,7 +465,8 @@ _bool CTask_GorillaAttack::AttackMoveAction(_float fTimeDelta)
 
 _bool CTask_GorillaAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
-	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(2.5f, m_fMaxDelayTime));
+	m_pBlackBoard->ClearAttackTimer();
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(1.5f, m_fMaxDelayTime));
 	return true;
 }
 
@@ -490,9 +492,7 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 	if (nullptr == pSkill_Data)
 		return;
 
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
-	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
-
+	_float fAnimPlayRatio = m_pOwner->Get_AnimationRatio();
 	if (m_bIsLookAtPoint)
 		LookAtPoint(fTimeDelta);
 	if (1.f >= fDistance - pSkill_Data->fRange)

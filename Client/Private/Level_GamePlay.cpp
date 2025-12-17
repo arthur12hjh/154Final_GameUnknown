@@ -12,6 +12,8 @@
 #include "Lift_Platform.h"
 #include "Player.h"
 #include "Spawner.h"
+#include "AttackHitBox.h"
+#include "TriggerBox.h"
 #include "UIHUD.h"
 
 #include "SpriteParticle.h"
@@ -54,12 +56,16 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/DaeChanbin.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/DaeChanbin.bin");
 	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameManager = CGameManager::GetInstance();
-	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
+	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
+	pHitBoxDesc.eColType = COLLIDER::OBB;
+	pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
+	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
 
 	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -84,8 +90,9 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		m_pGameInstance->Clear_LevelResource();
-		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET))))
+		
+		m_bChangeLevel = true;
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 	}
 }
@@ -172,18 +179,18 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	CActor::ACTOR_DESC ProbDesc = {};
+	/*CActor::ACTOR_DESC ProbDesc = {};
 	ProbDesc.bIsApplyTransform = true;
-	ProbDesc.vScale = { 1.f, 1.f, 1.f };
+	ProbDesc.vScale = { 1.f, 1.f, 1.f };*/
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
+	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(0, 20),
+		ProbDesc.vPosition = { m_pGameInstance->Random(5, 20),
 							  0.3f,
-							   m_pGameInstance->Random(0, 20) };
+							   m_pGameInstance->Random(5, 20) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Prob_Destory"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
 	}
@@ -191,14 +198,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box2");
 	for (size_t i = 0; i < 5; i++)
 	{
-		ProbDesc.vPosition = { m_pGameInstance->Random(0, 50),
+		ProbDesc.vPosition = { m_pGameInstance->Random(5, 50),
 							  0.3f,
-							   m_pGameInstance->Random(0, 50) };
+							   m_pGameInstance->Random(5, 50) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Prob_Destory"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
 	InteractionDesc.bIsApplyTransform = true;
@@ -210,9 +217,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		InteractionDesc.vPosition = { 10.f * i,
 								1.f,
 							   //m_pGameInstance->Random(0, 50),
-							   m_pGameInstance->Random(0, 50) };
+							   m_pGameInstance->Random(5, 50) };
 	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_CanBox"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
@@ -221,15 +228,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
-		InteractionDesc.vPosition = { m_pGameInstance->Random(0, 50),
+		InteractionDesc.vPosition = { m_pGameInstance->Random(5, 50),
 							   0.f,
-							   m_pGameInstance->Random(0, 50) };
+							   m_pGameInstance->Random(5, 50) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Interaction_NonAnim"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
-	
+
 	InteractionDesc.iInteractionID = 3;
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Vending7A");
 	for (size_t i = 0; i < 5; i++)
@@ -238,19 +245,19 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 							   0.f,
 							   m_pGameInstance->Random(50, 100) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Interaction_NonAnim"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
 	}
 
-	ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
+	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
 	for (size_t i = 0; i < 5; i++)
 	{
 		ProbDesc.vPosition = { m_pGameInstance->Random(150, 200),
 							   0.3f,
 							   m_pGameInstance->Random(150, 200) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Destory"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Prob_Destory"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
 	}
@@ -262,10 +269,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 							   0.f,
 							   m_pGameInstance->Random(200, 250) };
 
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_Static"),
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Prob_Static"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
@@ -285,14 +292,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
 
-	CameraDesc.fSpeedPerSec = 15.f;
-	CameraDesc.fFov = XMConvertToRadians(45.0f);
-	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
-	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
-	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
+	//CameraDesc.fSpeedPerSec = 15.f;
+	//CameraDesc.fFov = XMConvertToRadians(45.0f);
+	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	//pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
+	//m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
 
-	CameraDesc.fSpeedPerSec = 15.f;
-	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	//CameraDesc.fSpeedPerSec = 15.f;
+	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("PlayerCamera"), static_cast<CCamera*>(pCamera));
@@ -306,7 +313,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain_Desert"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Terrain_Desert"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
@@ -317,13 +324,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Moon"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -333,7 +340,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 222.f, 50.f, 250.87f };
+	Desc.vPosition = { 222.f, 55.f, 222.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
@@ -399,26 +406,26 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 
 
-	/*CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
 	pSapwnerDesc.bIsApplyTransform = true;
 	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
 	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
 	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
-	//// 대부분 누수가 난다면 이새끼가 문제다 이새끼 주석처리해야한다반드시)
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-	//	return E_FAIL;
+	//  시네마틱 테스트용 모델임
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
+		return E_FAIL;
 
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	Desc.iMonsterID = 7;
-	Desc.vPosition = { 450.f, 1.f, 600.f };
+	Desc.iMonsterID = 8;
+	Desc.vPosition = { 60.f, 1.f, 60.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
@@ -452,11 +459,31 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_InteractionDot"), TEXT("UI_InteractionDot"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_Simple_Interaction"), TEXT("UI_Simple_Interaction"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;
+
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;*/
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
+{
+	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
+	pTriggerBoxDesc.iTriggerCode = 0;
+	pTriggerBoxDesc.eColType = COLLIDER::OBB;
+	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
+	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
+	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
+	pTriggerBoxDesc.fDelayTime = -1.f;
+
+	//  시네마틱 테스트용 트리거
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -473,7 +500,7 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-	/*if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
@@ -482,13 +509,13 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox"), true))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
 
 	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
 
 	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;*/
+	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	
 	ifs.close();
@@ -536,14 +563,14 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar
 		XMStoreFloat4(&Desc.vRotation, vRotation);
 		XMStoreFloat3(&Desc.vPosition, vPosition);
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 	}
 
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag, _bool bIsGamePlay)
 {
 	_uint iNumObjs = 0;
 	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
@@ -569,8 +596,18 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 		XMStoreFloat4(&Desc.vRotation, vRotation);
 		XMStoreFloat3(&Desc.vPosition, vPosition);
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
-			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+		HRESULT hr = {};
+		if (bIsGamePlay)
+		{
+			hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+				ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+		}
+		else
+		{
+			hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
+				ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+		}
+		
 	}
 
 	return S_OK;
@@ -605,7 +642,7 @@ HRESULT CLevel_GamePlay::Load_Lift_Controller_By_Layer(ifstream& ifs, const _tch
 		XMStoreFloat4(&Desc.vRotation, vRotation);
 		XMStoreFloat3(&Desc.vPosition, vPosition);
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 	}
 
@@ -639,7 +676,7 @@ HRESULT CLevel_GamePlay::Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar
 		XMStoreFloat4(&Desc.vRotation, vRotation);
 		XMStoreFloat3(&Desc.vPosition, vPosition);
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 	}
 
@@ -722,7 +759,7 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		FinalLoadDesc.iObjectID = pair.second.second;
 		FinalLoadDesc.pInstancingData = const_cast<vector<VTX_INSTANCE_MODEL>*>(&pair.second.first);
 
-		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY),
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB),
 			TEXT("Prototype_GameObject_Instance_Desert"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag,
 			&FinalLoadDesc);
@@ -792,5 +829,7 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 void CLevel_GamePlay::Free()
 {
+	m_pGameInstance->SetInteractionBaseObject(nullptr);
+
 	__super::Free();
 }

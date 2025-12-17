@@ -210,6 +210,9 @@ void COcclusion::Free()
         Safe_Release(pair.second);
     m_mapPermanentQueries.clear();
 
+    for (int i = 0; i < 2; ++i)
+        Safe_Release(m_pQueries[i]);
+
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pQuery);

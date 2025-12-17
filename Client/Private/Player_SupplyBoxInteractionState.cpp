@@ -14,6 +14,7 @@ CPlayer_SupplyBoxInteractionState::CPlayer_SupplyBoxInteractionState(void* pArg)
 
 void CPlayer_SupplyBoxInteractionState::Start(void* pArg, _float fBlendRatio)
 {
+    m_Desc->isInteracting = true;
     m_eState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
     m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
 
@@ -67,6 +68,8 @@ PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDel
 
 _float CPlayer_SupplyBoxInteractionState::End()
 {
+    m_Desc->isInteracting = false;
+
     return m_fNextBlendRatio;
 }
 

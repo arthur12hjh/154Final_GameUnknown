@@ -12,6 +12,7 @@ HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc, _float fDelay)
 	m_pTargetUI = pUI;
 	m_pTargetUI->Set_Anim_Playing(true);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
+	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
 	m_fDelayTime = fDelay;
 
 	return S_OK;
@@ -22,13 +23,20 @@ _bool CUIAnimInstance::Update(_float fTimeDelta)
 	m_AnimFinishs.clear();
 
 	for (auto& pTrackDesc : m_tUIAnimDesc.m_Tracks)
+	{
 		m_AnimFinishs.push_back(Play_Anim(&m_tUIAnimDesc, &pTrackDesc.second, fTimeDelta));
+	}
 
 	for (auto pAnimFinish : m_AnimFinishs)
 	{
 		if (pAnimFinish == false)
+		{
+			m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
 			return false;
+		}
 	}
+
+	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, true);
 
 	return true;
 }

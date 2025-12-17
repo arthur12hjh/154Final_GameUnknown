@@ -45,7 +45,9 @@ private:
 
 	_bool										m_bIsCaution = { false };
 	_float3										m_vMovePoint = {};
+
 	_float										m_fMoveSpeed = { 2.f };
+
 
 	// 목표 지점에 들어갔을떄
 	function<void(_float)>						m_OnMoveCompleted;

@@ -53,7 +53,14 @@ void CCanyon::Update(_float fTimeDelta)
 void CCanyon::Late_Update(_float fTimeDelta)
 {
     //if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	/*if (GetVisibility() == VISIBILITY::HIDDEN)
+		SetVisibility(VISIBILITY::VISIBLE);*/
+
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -75,7 +82,8 @@ HRESULT CCanyon::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
-
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

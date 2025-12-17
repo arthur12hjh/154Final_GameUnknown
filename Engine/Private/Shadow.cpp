@@ -159,39 +159,72 @@ void CShadow::Calc_CascadeMatrices()
 		XMStoreFloat4x4(&m_CasCadeTransformationViewMatrices[i], 
 			XMMatrixLookAtLH(XMLoadFloat4(&m_vCascadePositions[i]), vCenter, XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 
-		_float fMinZ = +FLT_MAX;
-		_float fMaxZ = -FLT_MAX;
+		_float fMinX = FLT_MAX, fMaxX = -FLT_MAX;
+		_float fMinY = FLT_MAX, fMaxY = -FLT_MAX;
+		_float fMinZ = FLT_MAX, fMaxZ = -FLT_MAX;
 
 		for (_uint j = 0; j < 4; ++j)
 		{
-			// near 4개
-			_vector vNearWorldSpace = XMLoadFloat4(&m_vCascadeNearCorner[i][j]);
-			_vector vNearLightSpace = XMVector3TransformCoord(vNearWorldSpace, XMLoadFloat4x4(&m_CasCadeTransformationViewMatrices[i]));
-			_float  fZ0 = XMVectorGetZ(vNearLightSpace);
+			_vector vNearWS = XMLoadFloat4(&m_vCascadeNearCorner[i][j]);
+			_vector vNearLS = XMVector3TransformCoord(vNearWS, XMLoadFloat4x4(&m_CasCadeTransformationViewMatrices[i]));
 
-			fMinZ = min(fMinZ, fZ0);
-			fMaxZ = max(fMaxZ, fZ0);
+			fMinX = min(fMinX, XMVectorGetX(vNearLS));
+			fMaxX = max(fMaxX, XMVectorGetX(vNearLS));
+			fMinY = min(fMinY, XMVectorGetY(vNearLS));
+			fMaxY = max(fMaxY, XMVectorGetY(vNearLS));
+			fMinZ = min(fMinZ, XMVectorGetZ(vNearLS));
+			fMaxZ = max(fMaxZ, XMVectorGetZ(vNearLS));
 
-			// far 4개
 			_vector vFarWS = XMLoadFloat4(&m_vCascadeFarCorner[i][j]);
 			_vector vFarLS = XMVector3TransformCoord(vFarWS, XMLoadFloat4x4(&m_CasCadeTransformationViewMatrices[i]));
-			_float  fZ1 = XMVectorGetZ(vFarLS);
 
-			fMinZ = min(fMinZ, fZ1);
-			fMaxZ = max(fMaxZ, fZ1);
+			fMinX = min(fMinX, XMVectorGetX(vFarLS));
+			fMaxX = max(fMaxX, XMVectorGetX(vFarLS));
+			fMinY = min(fMinY, XMVectorGetY(vFarLS));
+			fMaxY = max(fMaxY, XMVectorGetY(vFarLS));
+			fMinZ = min(fMinZ, XMVectorGetZ(vFarLS));
+			fMaxZ = max(fMaxZ, XMVectorGetZ(vFarLS));
 		}
 
-		_float fZPad = 30.f;
-		fMinZ -= fZPad;
-		fMaxZ += fZPad;
+		_float fPadding = 10.f;
+		fMinZ -= fPadding;
+		fMaxZ += fPadding;
+		fMinX -= fPadding; 
+		fMaxX += fPadding;
+		fMinY -= fPadding; 
+		fMaxY += fPadding;
 
 		// 예외처리 
-		if (fMinZ < 0.f) fMinZ = 0.f;
+		if (fMinZ < 0.f) fMinZ = 0.1f;
+		if (fMaxX <= fMinX) fMaxX = fMinX + 1.f;
+		if (fMaxY <= fMinY) fMaxY = fMinY + 1.f;
 		if (fMaxZ <= fMinZ) fMaxZ = fMinZ + 1.f;
+
+
+		_float fShadowResX = 2048.f; // 보통 2048
+		_float fShadowResY = 2048.f; // 보통 2048 (정사각 텍스처면 X=Y)
+
+		_float fExtentX = fMaxX - fMinX;
+		_float fExtentY = fMaxY - fMinY;
+
+		// 안전장치
+		if (fExtentX <= 0.f) fExtentX = 1.f;
+		if (fExtentY <= 0.f) fExtentY = 1.f;
+
+		_float fTexelSizeX = fExtentX / fShadowResX;
+		_float fTexelSizeY = fExtentY / fShadowResY;
+
+		// min을 텍셀 단위로 양자화
+		fMinX = floorf(fMinX / fTexelSizeX) * fTexelSizeX;
+		fMinY = floorf(fMinY / fTexelSizeY) * fTexelSizeY;
+
+		// max는 extent로 재구성(프레임마다 extent는 유지, 이동만 스냅)
+		fMaxX = fMinX + fExtentX;
+		fMaxY = fMinY + fExtentY;
 
 		// Proj 행렬 생성
 		XMStoreFloat4x4(&m_CasCadeTransformationProjMatrices[i],
-			XMMatrixOrthographicLH(fRadius * 2.0f, fRadius * 2.0f, fMinZ, fMaxZ));
+			XMMatrixOrthographicOffCenterLH(fMinX, fMaxX, fMinY, fMaxY, fMinZ, fMaxZ));
 	}
 }
 

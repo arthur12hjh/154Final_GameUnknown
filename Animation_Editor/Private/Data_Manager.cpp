@@ -199,13 +199,10 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
             m_AnimationNotifyDatas.emplace(szAnimTag, AnimationNotifyList);
         }
 
-
         //_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
-
-    
 
     return S_OK;
 }

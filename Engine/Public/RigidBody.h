@@ -18,7 +18,7 @@
 		//kinetic은 DYNAMIC의 flag로서 설정됨. 
 		enum class RIGIDBODY_TYPE	{ DYNAMIC, KINEMATIC, STATIC, END };
 		// 볼록다각형은 로직이 많이 달라서 일단 보류.
-		enum class RIGIDBODY_SHAPE	{ BOX, SPHERE, CAPSULE, PLANE, TRIANGLE, END };
+		enum class RIGIDBODY_SHAPE	{ BOX, SPHERE, CAPSULE, PLANE, TRIANGLE, NONE, END };
 
 	public:
 		typedef struct tagRigidBodyDesc
@@ -43,6 +43,7 @@
 			PxU32           iCollisionMask = { 0xFFFFFFFF };
 			_bool			isQuery = { true };
 			_bool			isSyncByPhysx = { false };
+			_bool			isCreateShape = { true };
 		} RIGIDBODY_DESC;
 
 	private:
@@ -77,8 +78,9 @@
 
 	public:
 		/* 리지드 바디 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함. */
-		void Update_PxTransform(_fmatrix vWorldMatrix);
+		void Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarget = false);
 		void Add_Impulse(_vector vDir, _float fPower);
+
 	private:
 		/* RigidActor -> RigidBody & RigidStatic */
 		/* RigidBody -> RigidDynamic & RigidArticulationLink */
@@ -100,7 +102,7 @@
 		PxVec3			m_vDeltaMove = { 0.f, 0.f, 0.f };
 		_bool			m_isRidable = { false };
 		_bool			m_isSyncByPhysx = { false };
-		//_bool			m_isUpdatable = { true };
+
 	private:
 		HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);
 		HRESULT Ready_PxShape(RIGIDBODY_DESC* pDesc);

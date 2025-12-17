@@ -14,6 +14,7 @@ struct Naytiba_Desc;
 class CBossBlackBoard abstract : public CBlackBoard
 {
 public:
+	enum class BOSS_PAHSE { FIRST, SECOND, THIRD, END };
 	enum class BOSS_STATE
 	{
 		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, DEAD, END
@@ -43,6 +44,10 @@ public:
 	_float								GetTargetDistance() { return m_fTargetDistance; }
 
 	void								SetCurState(BOSS_STATE eState);
+
+	void								Set_BossPhase(BOSS_PAHSE ePhase);
+	const BOSS_PAHSE&					Get_BossPhase() { return m_eBossPhase; }
+
 	const BOSS_STATE&					GetCurState() { return m_eCurState; }
 	const BOSS_STATE&					GetPreState() const { return m_ePreState; }
 
@@ -68,6 +73,10 @@ public:
 	void								SetAttackData(const Character_Skill_Desc* pAttack_Data);
 	const Character_Skill_Desc*			GetAttackData();
 
+	void								SetParryAttack();
+	void								ResetParryAttack();
+	_bool								IsParryAttack() { return m_bIsParryAttack; }
+
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 
@@ -76,14 +85,18 @@ protected :
 	
 	// 스킬 구조체
 	const Character_Skill_Desc*			m_pAttack_Skill = { nullptr };
+
 	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
 	_bool								m_bIsExcution = { false };
+	_bool								m_bIsParryAttack = { false };
+
 	_float								m_fTargetDistance = {};
 	_float2								m_fAttackDelay = {};
 	_float2								m_vGroggyTime = { 0.f, 4.0f };
 
+	BOSS_PAHSE							m_eBossPhase = { BOSS_PAHSE::FIRST };
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };
 

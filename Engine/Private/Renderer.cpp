@@ -170,6 +170,20 @@ HRESULT CRenderer::Initialize()
 	m_pColliderRenderer = CColliderRenderer::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pColliderRenderer)
 		return E_FAIL;
+
+	D3D11_RASTERIZER_DESC rsDesc = {};
+	rsDesc.FillMode = D3D11_FILL_SOLID;
+	rsDesc.CullMode = D3D11_CULL_BACK;
+	rsDesc.FrontCounterClockwise = FALSE;
+	rsDesc.DepthClipEnable = TRUE;
+
+	rsDesc.DepthBias = -10;
+	rsDesc.DepthBiasClamp = 0.0f;
+	rsDesc.SlopeScaledDepthBias = -1.0f;
+
+	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))
+		return E_FAIL;
+
 #endif
 
     return S_OK;
@@ -421,13 +435,13 @@ void CRenderer::Render()
 	Render_Priority();
 	Render_Shadow();
 	Render_NonBlend();
+	Render_Occlusion();
 	Render_LightAcc();
 
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
 		return;
 
 	Render_Combined();
-	Render_Occlusion();
 	Render_NonLight();
 	Render_Blend();
 
@@ -592,7 +606,6 @@ void CRenderer::Render_Occlusion()
 
 	OutputDebugStringA(szDebugString);
 
-
 	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
 	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
 		return;
@@ -605,6 +618,10 @@ void CRenderer::Render_Occlusion()
 		return;
 
 	m_pOcclusionVIBuffer->Bind_Resources();
+
+	ID3D11RasterizerState* pOldRS = nullptr;
+	m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
+	m_pContext->RSSetState(m_pRS_OcclusionQuery);
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
 	{
@@ -632,6 +649,8 @@ void CRenderer::Render_Occlusion()
 	}
 	m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
 
+	m_pContext->RSSetState(pOldRS);
+	Safe_Release(pOldRS);
 }
 
 void CRenderer::Render_NonBlend()
@@ -1072,6 +1091,7 @@ void CRenderer::Free()
 	Safe_Release(m_pEmissive);
 	Safe_Release(m_pOcclusionShader);
 	Safe_Release(m_pOcclusionVIBuffer);
+	Safe_Release(m_pRS_OcclusionQuery);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

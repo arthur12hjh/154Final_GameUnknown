@@ -162,6 +162,14 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
     return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
+_float CModel::Get_AnimationRatio()
+{
+    if (-1 == m_iCurrentAnimIndex)
+        return 0.f;
+
+    return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition();
+}
+
 void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
 {
     m_isRootMotionUpdated = isRootMotionUpdated;
@@ -221,6 +229,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
 }
 
 void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
+
 {
     m_isRootMotionUpdated = isRootMotionUpdated;
 

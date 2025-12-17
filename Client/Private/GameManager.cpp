@@ -113,6 +113,11 @@ const CAMERA_ANIMATION_DATA* CGameManager::Find_CameraAnimationData(_uint iCamer
     return m_pDataManager->Find_CameraAnimationData(iCameraAnimationData);
 }
 
+const vector<SCRIPT_DATA>* CGameManager::Get_ScriptData(const _wstring& szScriptTag)
+{
+    return m_pDataManager->Get_ScriptData(szScriptTag);
+}
+
 
 #ifdef _DEBUG
 
@@ -192,13 +197,20 @@ HRESULT CGameManager::Setting_PoolManager(_uint iLevelID)
 {
     return m_pPoolingManager->Setting_PoolManager(iLevelID);
 }
-CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
+
+HRESULT CGameManager::ADD_PoolManager(_uint iLevelID, _uint iProtoTypeLevel, const WCHAR* ProtoTypeName, void* pArg, const WCHAR* szPoolTag, _uint iCount)
 {
-    return m_pPoolingManager->SetActivePoolObject(iLevel, pLayerName, szPoolTag);
+    return m_pPoolingManager->ADD_PoolManager(iLevelID, iProtoTypeLevel, ProtoTypeName, pArg, szPoolTag, iCount);
 }
-void CGameManager::UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject)
+
+CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, _uint iProtoTypeLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
 {
-    m_pPoolingManager->UnActivePoolObject(szPoolTag, pObject);
+    return m_pPoolingManager->SetActivePoolObject(iLevel, iProtoTypeLevel, pLayerName, szPoolTag);
+}
+
+void CGameManager::UnActivePoolObject(_uint iLevelID, const WCHAR* szPoolTag, CGameObject* pObject)
+{
+    m_pPoolingManager->UnActivePoolObject(iLevelID, szPoolTag, pObject);
 }
 #pragma endregion
 
@@ -226,6 +238,11 @@ _bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& i
 }
 #pragma endregion
 
+void CGameManager::Release_GameMgr()
+{
+    Safe_Release(m_pPoolingManager);
+}
+
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     m_pDevice = pDevice;
@@ -248,7 +265,6 @@ void CGameManager::Free()
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
     Safe_Release(m_pShaderManager);
-    Safe_Release(m_pPoolingManager);
     
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
