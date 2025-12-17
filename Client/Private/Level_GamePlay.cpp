@@ -309,14 +309,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
 
-	//CameraDesc.fSpeedPerSec = 15.f;
-	//CameraDesc.fFov = XMConvertToRadians(45.0f);
-	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
-	//pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
-	//m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
 
-	//CameraDesc.fSpeedPerSec = 15.f;
-	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(60.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("PlayerCamera"), static_cast<CCamera*>(pCamera));
