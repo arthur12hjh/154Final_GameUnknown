@@ -95,7 +95,6 @@ void CPonyTail_Player::Update(_float fTimeDelta)
 //	
 //	m_pJointChain->Update(fTimeDelta);
 //#endif
-
 }
 
 void CPonyTail_Player::Late_Update(_float fTimeDelta)
