@@ -57,6 +57,7 @@ private:
     _float  ReadFloat(ifstream& fileBinaryStream);
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
+
 private:
     const   _float4x4* m_pParentWorldMat = { nullptr };
     const   _float4x4* m_pParentMat = { nullptr };
@@ -67,6 +68,7 @@ private:
     vector<CPointParticle*> m_pPointParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
     vector<CSpriteUVEffect*> m_pSpriteEffects;
+
 public:
     static  CEffect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile);
     virtual CGameObject* Clone(void* pArg) override;

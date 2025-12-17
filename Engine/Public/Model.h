@@ -145,7 +145,7 @@ public:
 
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
-	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
+	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName);
 	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
 	HRESULT Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList);
 	// </end>

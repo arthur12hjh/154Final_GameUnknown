@@ -411,7 +411,7 @@ namespace Client
 		_float3						vBaseCameraPivot;					// 기본 카메라 LookAt 포인트
 		_float3						vBaseBonePosition;					// 카메라본 기본 위치(플래그 활성 시)
 		_float3						vBaseBoneRotation;					// 카메라본 기본 각도(플래그 활성 시)
-		char						szCameraAnimationName[MAX_PATH];	// 카메라본 애니메이션 이름
+		_char						szCameraAnimationName[MAX_PATH];	// 카메라본 애니메이션 이름
 		vector<CAMERA_TRACK_DESC>	FOVTrackList;						// FOV 채널
 		vector<CAMERA_TRACK_DESC>	PivotTrackList;						// 카메라 LookAt 포인트 채널
 		vector<CAMERA_TRACK_DESC>	BonePositionTrackList;				// 카메라본 위치 채널
@@ -426,18 +426,14 @@ namespace Client
 	{
 		CINEMATICNODE_STATE eState;
 		_float fTrackPosition;
-		char szObjectTag[MAX_PATH];
+		_char szObjectTag[MAX_PATH];
 		_uint iActiveIndex;
 	}CINEMATIC_NODE_DESC;
 
 	typedef struct Cinematic_Desc
 	{
 		_uint iCinematicID;
-		char szCinematicName[MAX_PATH];
+		_char szCinematicName[MAX_PATH];
 		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
 	}CINEMATIC_DESC;
-
-
-
-
 }

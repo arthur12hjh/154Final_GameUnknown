@@ -20,12 +20,12 @@
 
 
 CCinematicModel_Eve::CCinematicModel_Eve(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CCharacter{ pDevice, pContext }
+	: CCinematicObject(pDevice, pContext)
 {
 }
 
 CCinematicModel_Eve::CCinematicModel_Eve(const CCinematicModel_Eve& Prototype)
-	: CCharacter{ Prototype }
+	: CCinematicObject(Prototype)
 {
 }
 

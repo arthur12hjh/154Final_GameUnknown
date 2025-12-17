@@ -13,7 +13,46 @@ inline float BayerDither(float2 pixelPos)
     return (v + 0.5f) / 16.0f; // 0 ~ 1 사이 값
 }
 
-inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition)
+inline float4 Calc_Shadow_CSM(float4 vColor, Texture2DArray ShadowTexure, vector vLightClip, uint iSlice, float fFar)
+{
+    float fSum = 0.0f;
+    
+    float2 vTexcoord;
+    
+    vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
+    vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
+
+    // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
+    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
+
+    // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
+    float fBias = 0.0002f;
+
+    // 캐스케이드 밖이면 shadow 적용하지 않음
+    if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
+        return vColor;
+            
+    
+    [unroll]
+    for (int iX = -1; iX <= 1; ++iX)
+    {
+        [unroll]
+        for (int iY = -1; iY <= 1; ++iY)
+        {
+            float2 vOffset = float2(iX, iY) * vTexel;
+            vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float3(vTexcoord + vOffset, iSlice));
+            // 투영행렬까지만 곱했다면 w에 뷰스페이스 상의 z값 남아있을거고,
+            // 그림자엔 Far로 정규화한 0~1사이 값인 뷰 스페이스 상의 z가 있으니까 얠 다시 far 곱해서 연산. 
+            fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
+        }
+    }
+
+    fSum /= 9.0f;
+    vColor *= lerp(1.0f, 0.6f, fSum);
+    return vColor;
+}
+
+inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vPosition, float fFar)
 { 
     float2 vTexcoord;
     vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
@@ -29,7 +68,7 @@ inline float4 Calc_Shadow(float4 vBackBuffer, texture2D ShadowTexture, vector vP
         for (int y = -1; y <= 1; ++y)
         {
             float2 offset = float2(x, y) * fTexelSize;
-            float fShadowDepth = ShadowTexture.Sample(DefaultSampler, vTexcoord + offset).x * 500.0f;
+            float fShadowDepth = ShadowTexture.Sample(DefaultSampler, vTexcoord + offset).x * fFar;
             fSum += (vPosition.w - 0.1f > fShadowDepth) ? 1.0f : 0.0f;
         }
     }

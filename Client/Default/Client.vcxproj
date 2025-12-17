@@ -166,9 +166,11 @@
     <ClInclude Include="..\Public\Camera_Action.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
+    <ClInclude Include="..\Public\CinematicMaker.h" />
     <ClInclude Include="..\Public\CinematicModel_Eve.h" />
     <ClInclude Include="..\Public\CinematicModel_Gorilla.h" />
     <ClInclude Include="..\Public\CinematicModel_Scarlet.h" />
+    <ClInclude Include="..\Public\CinematicObject.h" />
     <ClInclude Include="..\Public\Cinematic_Manager.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
@@ -446,9 +448,11 @@
     <ClCompile Include="..\Private\Camera_Action.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
+    <ClCompile Include="..\Private\CinematicMaker.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Eve.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Gorilla.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Scarlet.cpp" />
+    <ClCompile Include="..\Private\CinematicObject.cpp" />
     <ClCompile Include="..\Private\Cinematic_Manager.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />

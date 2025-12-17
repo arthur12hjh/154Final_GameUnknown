@@ -59,7 +59,6 @@ HRESULT CCameraActionInserter::Render()
 void CCameraActionInserter::WriteCameraActionDesc()
 {
 #ifdef _DEBUG
-
     static CAMERA_ANIMATION_DATA tCameraData{};
     static _int iSelectedTrackType = 0;    // 0=FOV, 1=Pivot, 2=BonePos, 3=BoneRot
 

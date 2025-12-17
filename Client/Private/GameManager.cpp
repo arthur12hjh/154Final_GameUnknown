@@ -7,6 +7,7 @@
 #include "LockonManager.h"
 #include "ShaderManager.h"
 #include "PoolingManager.h"
+#include "Cinematic_Manager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
@@ -38,6 +39,10 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     if (nullptr == m_pPoolingManager)
         return E_FAIL;
 
+    m_pCinematicManager = CCinematicManager::Create();
+    if (nullptr == m_pCinematicManager)
+        return E_FAIL;
+
     return S_OK;
 }
 
@@ -45,6 +50,9 @@ void CGameManager::Update(_float fTimeDelta)
 {
     if(nullptr != m_pShaderManager)
         m_pShaderManager->Update(fTimeDelta);
+
+    if(nullptr != m_pCinematicManager)
+        m_pCinematicManager->Update(fTimeDelta);
 }
 
 void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
@@ -118,6 +126,11 @@ const vector<SCRIPT_DATA>* CGameManager::Get_ScriptData(const _wstring& szScript
     return m_pDataManager->Get_ScriptData(szScriptTag);
 }
 
+const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
+{
+    return m_pDataManager->Find_CinematicData(iCinematicIndex);
+}
+
 
 #ifdef _DEBUG
 
@@ -126,10 +139,20 @@ map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
     return m_pDataManager->Get_CameraAnimationMap();
 }
 
+map<_uint, CINEMATIC_DESC>* CGameManager::Get_CinematicDataMap()
+{
+    return m_pDataManager->Get_CinematicDataMap();
+}
+
 
 void CGameManager::Save_CameraAnimationData()
 {
     m_pDataManager->Save_CameraAnimationData();
+}
+
+void CGameManager::Save_CinematicData()
+{
+    m_pDataManager->Save_CinematicData();
 }
 
 #endif
@@ -236,6 +259,10 @@ _bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& i
 
     return true;
 }
+HRESULT CGameManager::Play_Cinematic(_uint iCinematicID)
+{
+    return m_pCinematicManager->Play_Cinematic(iCinematicID);
+}
 #pragma endregion
 
 void CGameManager::Release_GameMgr()
@@ -265,6 +292,8 @@ void CGameManager::Free()
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
     Safe_Release(m_pShaderManager);
+    Safe_Release(m_pPoolingManager);
+    Safe_Release(m_pCinematicManager);
     
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
