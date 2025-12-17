@@ -23,11 +23,6 @@
 #include "PlayerFSM.h"
 #include "PlayerState.h"
 
-// 이거 보이면 지워주셈
-#include "LinkAttackTester.h"
-#include "Body_LinkAttackTester.h"
-#include "CameraBone_Player.h"
-// </>
  
 #include "Prob_Interaction.h"
  
@@ -182,9 +177,9 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_Interaction(fTimeDelta);
 	Update_PotionUse(fTimeDelta);
 
-	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-	//	 Use_RushSkill();
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+		Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -271,34 +266,6 @@ _int CPlayer::GetSkillDataID()
 	return m_iSkillID;
 }
 
-HRESULT CPlayer::Get_GaraGorillaBone(CLinkAttackTester* pObject)
-{
-	const _float4x4* pSocketMatrix = pObject->Get_PartObject(TEXT("Part_Body"))->Get_BoneMatrixPtr("SC_LinkTarget");
-
-	if (nullptr == pSocketMatrix)
-		return E_FAIL;
-
-	PLAYER_TRANSITION_DESC Desc{};
-	Desc.isChangeMode = FALSE;
-	Desc.eNextState = PLAYER_STATE::TEST_STATE;
-
-	SOCKETMATRIX_DESC SocketMatrixDesc;
-	SocketMatrixDesc.pParentTransformMatrix = pObject->GetTransform()->Get_WorldMatrixPtr();
-	SocketMatrixDesc.pSocketMatrix = pSocketMatrix;
-
-	Desc.pArg = &SocketMatrixDesc;
-
-	if (m_pWeapon)
-	{
-		m_iSkillID = -1;
-		m_pWeapon->EnableCollider(false);
-	}
-
-	m_pFSM->Handle_Transition(Desc);
-
-	return S_OK;
-}
-
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
@@ -356,6 +323,10 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
+	// 바디가 생성 되자마자 세팅.
+	// 이래야 다른 파트오브젝트에서 바디를 참조 가능하지 ㅇㅇ
+	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
@@ -409,9 +380,6 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 
 	m_pCameraBone = static_cast<CCameraBone_Player*>(Find_PartObject(TEXT("Part_CameraBone")));
-
-	Import_ModelPtr();
-	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	return S_OK;
 }

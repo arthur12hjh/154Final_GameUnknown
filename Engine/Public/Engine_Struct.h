@@ -486,6 +486,13 @@ namespace Engine
 		float* fHDRExposure;
 		bool* isHDR;
 	} HDR_DESC;
+
+	typedef struct tagJointChainDesc {
+		float fAngularDampimg;
+		float fLinearDamping;
+		float fMaxAngularVelocity;
+		float fMaxDepenetrationVelocity;
+	} JOINT_CHAIN_DESC;
 #pragma endregion
 }
 

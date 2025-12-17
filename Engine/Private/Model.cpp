@@ -133,12 +133,38 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
     return (*iter)->Get_CombinedTransformationMatrixPtr();
 }
 
+const _float4x4* CModel::Get_LocalBoneMatrixPtr(const _char* pBoneName)
+{
+    AddCount_PartialBone(pBoneName);
+
+    auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+        {
+            if (true == pBone->Compare_Name(pBoneName))
+                return true;
+
+            return false;
+        });
+
+    if (m_Bones.end() == iter)
+        return nullptr;
+
+    return (*iter)->Get_TransformationMatrixPtr();
+}
+
 void CModel::Attach_CombinedTransformationMatrix()
 {
     for (auto& pBone : m_Bones)
     {
         pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
     }
+}
+
+void CModel::Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];    
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
 }
 
 void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
@@ -886,6 +912,8 @@ HRESULT CModel::Initialize(void* pArg)
         if (FAILED(Ready_ComputeShader()))
             return E_FAIL;
     }
+
+    Attach_CombinedTransformationMatrix();
 
     return S_OK;
 }

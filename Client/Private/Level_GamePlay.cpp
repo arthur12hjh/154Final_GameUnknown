@@ -50,8 +50,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -59,16 +59,16 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
 	pHitBoxDesc.eColType = COLLIDER::OBB;
 	pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
-	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
 
 	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -409,14 +409,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 
 
 
-	/*CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
 	pSapwnerDesc.bIsApplyTransform = true;
 	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
 	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
 	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	//  시네마틱 테스트용 모델임
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
@@ -467,6 +467,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
 		return E_FAIL;
+
+	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;*/
 
 	return S_OK;
 }

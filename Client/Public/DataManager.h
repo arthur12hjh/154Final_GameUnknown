@@ -22,6 +22,8 @@ public :
 
 	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
 
+	const vector<SCRIPT_DATA>*			Get_ScriptData(const _wstring& szScriptTag);
+
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
 	const CAMERA_ANIMATION_DATA*			Find_CameraAnimationData(_uint iCameraAnimationData);
@@ -61,10 +63,13 @@ private:
 	// 시네마틱 전용 데이터
 	map<_uint, CINEMATIC_DESC>							m_CinematicDatas = {};
 
+	// 대화 스크립트 데이터
+	unordered_map<_wstring, vector<SCRIPT_DATA>>					m_ScriptDatas = {};
 
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
 	HRESULT									LoadInteractionData(void* pArg);
+	HRESULT									LoadScriptData(void* pArg);
 	HRESULT									LoadSkillData();
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 	HRESULT									LoadCameraAnimationData(void* pArg = nullptr);

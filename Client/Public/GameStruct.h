@@ -181,6 +181,7 @@ namespace Client
 		BETA_SKILL,				// Beta Skill
 		ALPHA_SKILL,			// Alpha Skill
 		MIMESIS_SKILL,			// Mimesis Skill
+		SECOND_PHASE_SKILL,		// Seconde Phase Skill
 		END
 	};
 	
@@ -374,6 +375,12 @@ namespace Client
 		_float				fInteractionTime;
 		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
+
+	typedef struct Script_Data
+	{
+		_wstring			szScriptText;
+		_float4				vColor{ 1.f, 1.f, 1.f, 1.f };
+	}SCRIPT_DATA;
 
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///

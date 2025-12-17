@@ -17,7 +17,6 @@
 
 #endif
 #include "Model.h"
-#include "RigidBody.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
 #include "EffectSRV.h"
@@ -30,7 +29,6 @@ CMainApp::CMainApp()
 	, m_pGameManager { CGameManager::GetInstance() },
 	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
-	Safe_AddRef(m_pGameManager);
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -76,6 +74,13 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	// 윈도우 메시지 처리 등...
+	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplDX11_NewFrame();
+	ImGui::NewFrame();
+#endif
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
 		m_bIsMouseLock = !m_bIsMouseLock;
 
@@ -90,6 +95,9 @@ void CMainApp::Update(_float fTimeDelta)
 	m_pImGuiDebug->Update(fTimeDelta);
 #endif
 
+#ifdef _DEBUG
+	ImGui::EndFrame();
+#endif
 }
 
 HRESULT CMainApp::Render()
@@ -158,6 +166,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
 	InstanceDesc.iNumInstance = 1;
 
@@ -213,6 +226,12 @@ HRESULT CMainApp::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_JointChain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_JointChain"),
+		CJointChain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_Component_CharacterController */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
@@ -295,7 +314,7 @@ void CMainApp::Free()
 {
 	__super::Free();
 
-	CGameManager::DestroyInstance();
+	
 	m_pEffectSRV->DestroyInstance();
 
 	Safe_Release(m_pDevice);
@@ -304,9 +323,11 @@ void CMainApp::Free()
 #ifdef _DEBUG
 	Safe_Release(m_pImGuiDebug);
 #endif
+	
+	m_pGameManager->Release_GameMgr();
+	CGameManager::DestroyInstance();
 
-	Safe_Release(m_pGameManager);
 	m_pGameInstance->Release_Engine();
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
 	
 }

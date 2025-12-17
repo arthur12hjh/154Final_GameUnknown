@@ -47,6 +47,7 @@ public :
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
+	const vector<SCRIPT_DATA>*		Get_ScriptData(const _wstring& szScriptTag);
 
 #ifdef _DEBUG
 	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
@@ -87,11 +88,10 @@ public:
 #pragma endregion
 
 #pragma region Damage Logic
-	_bool					ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
+	_bool											ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
 
-
-
+	void											Release_GameMgr();
 
 private :
 	ID3D11Device*			m_pDevice = { nullptr };

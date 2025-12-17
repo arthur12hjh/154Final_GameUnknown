@@ -25,6 +25,7 @@ HRESULT CDataManager::Initalize()
 
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
 
     return S_OK;
 }
@@ -65,6 +66,15 @@ const INTERACTION_DATA* CDataManager::Get_InteractionData(_uint iID)
 {
     auto iter = m_pInteractionDatas.find(iID);
     if (iter == m_pInteractionDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const vector<SCRIPT_DATA>* CDataManager::Get_ScriptData(const _wstring& szScriptTag)
+{
+    auto iter = m_ScriptDatas.find(szScriptTag);
+    if (iter == m_ScriptDatas.end())
         return nullptr;
 
     return &iter->second;
@@ -298,12 +308,10 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // ë¬¸ìì—´ ë³€í™˜
-        {
-            string name = jInfo["Name"];
-            string text = jInfo["Text"];
-            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
-        }
+        string name = jInfo["Name"];
+        string text = jInfo["Text"];
+        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -316,6 +324,44 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.eType = (INTERACTION_TYPE)jInfo["Type"];
 
         m_pInteractionDatas[id] = desc;
+    }
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadScriptData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json ScriptDatas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ScriptData/ScriptData.json", ScriptDatas);
+
+    for (auto& iter : ScriptDatas["ScriptData"].items())
+    {
+        string szKey = iter.key();
+
+        vector<SCRIPT_DATA> Scripts{};
+        for (auto& jInfo : iter.value())
+        {
+            SCRIPT_DATA desc{};
+
+            desc.szScriptText = UTF8ToWString(jInfo["szText"]);
+
+            if (jInfo.contains("vColor"))
+            {
+                desc.vColor.x = jInfo["vColor"][0];
+                desc.vColor.y = jInfo["vColor"][1];
+                desc.vColor.z = jInfo["vColor"][2];
+                desc.vColor.w = jInfo["vColor"][3];
+            }
+
+            Scripts.push_back(desc);
+        }
+
+        WCHAR szScriptKey[MAX_PATH]{};
+        CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
+
+        m_ScriptDatas[szScriptKey] = Scripts;
     }
 
     return S_OK;
@@ -630,10 +676,10 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-    // _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+    // _finddata_t : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
+    // _findfirst : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -649,7 +695,7 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+        // ï¿½Æ½ï¿½Å° ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -689,7 +735,7 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         }
 
 
-        //_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
+        //_findnext : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½, ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ -1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }

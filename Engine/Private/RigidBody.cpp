@@ -25,6 +25,8 @@ HRESULT CRigidBody::Initialize(void* pArg)
 {
 	RIGIDBODY_DESC* pDesc = static_cast<RIGIDBODY_DESC*>(pArg);
 		
+	m_isSimulateSync = pDesc->isSimulateSync;
+
 	if (FAILED(Ready_PxMaterial(pDesc)))
 		return E_FAIL;
 	

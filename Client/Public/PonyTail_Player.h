@@ -8,6 +8,8 @@ class CModel;
 class CShader;
 class CCollider;
 class CBone;
+class CRigidBody;
+class CJointChain;
 NS_END
 
 NS_BEGIN(Client)
@@ -35,14 +37,28 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
+	class CGameManager* m_pGameManager = { nullptr };
 	CModel* m_pBodyModelCom = { nullptr };
 
+	class CJointChain* m_pJointChain = { nullptr };
+	//피직스로 흔들리는 연산을 해주기 위함.
+	class CRigidBody* m_pHairRoot = { nullptr };
+	vector<pair<_wstring ,class CRigidBody*>> m_HairLinks = {};
+
+	const _float4x4* m_pHairRootBone = { nullptr };
+	JOINT_CHAIN_DESC* m_tRootDesc = { nullptr };
+	JOINT_CHAIN_DESC* m_tLinkDesc = { nullptr };
+	_int			 m_iBoneJointCount = 2;
 
 private:
 	HRESULT Ready_Components();
+	HRESULT Ready_HairJoints();
+	HRESULT Ready_RootHair();
+	HRESULT Ready_ChildHair();
 	HRESULT Bind_ShaderResources();
-
 	HRESULT Bind_BoneToPartBody(void* pArg);
+
+	void Sync_BonesByJoint();
 
 public:
 	static CPonyTail_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
