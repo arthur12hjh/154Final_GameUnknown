@@ -331,6 +331,44 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
     return S_OK;
 }
 
+HRESULT CDataManager::LoadScriptData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json ScriptDatas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ScriptData/ScriptData.json", ScriptDatas);
+
+    for (auto& iter : ScriptDatas["ScriptData"].items())
+    {
+        string szKey = iter.key();
+
+        vector<SCRIPT_DATA> Scripts{};
+        for (auto& jInfo : iter.value())
+        {
+            SCRIPT_DATA desc{};
+
+            desc.szScriptText = UTF8ToWString(jInfo["szText"]);
+
+            if (jInfo.contains("vColor"))
+            {
+                desc.vColor.x = jInfo["vColor"][0];
+                desc.vColor.y = jInfo["vColor"][1];
+                desc.vColor.z = jInfo["vColor"][2];
+                desc.vColor.w = jInfo["vColor"][3];
+            }
+
+            Scripts.push_back(desc);
+        }
+
+        WCHAR szScriptKey[MAX_PATH]{};
+        CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
+
+        m_ScriptDatas[szScriptKey] = Scripts;
+    }
+
+    return S_OK;
+}
+
 HRESULT CDataManager::LoadSkillData()
 {
     vector<string> SkillDataList;
