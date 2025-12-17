@@ -195,7 +195,7 @@ void CShadow::Calc_CascadeMatrices()
 		fMaxY += fPadding;
 
 		// 예외처리 
-		if (fMinZ < 0.f) fMinZ = 0.1f;
+		if (fMinZ < 0.f) fMinZ = 0.f;
 		if (fMaxX <= fMinX) fMaxX = fMinX + 1.f;
 		if (fMaxY <= fMinY) fMaxY = fMinY + 1.f;
 		if (fMaxZ <= fMinZ) fMaxZ = fMinZ + 1.f;
