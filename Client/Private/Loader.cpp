@@ -646,7 +646,9 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
 	string szFrontPath = "../Bin/Resources/Models/Scarlet/Animation/";
+
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Scarlet_Body");
+
 	_matrix PreMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 
 	vector<_wstring> szPartPrototypeTagList;
@@ -805,7 +807,22 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	
 	
 
+	
+	/* For.Prototype_Component_Model_Scarlet_Weapon */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Weapon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Weapon.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Scarlet_Scabbard */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Scabbard");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Scabbard.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);

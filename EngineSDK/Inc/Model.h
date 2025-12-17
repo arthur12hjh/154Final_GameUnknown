@@ -178,6 +178,7 @@ public:
 
 	virtual HRESULT Render(_uint iMeshIndex);
 
+
 public:
 	std::function<void(const _char*)> AnimationChanged;
 
