@@ -47,7 +47,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 	// 이것도 경로, 확장자명 유연하게 바꿔야하는데 일단 이 함수 쓸 객체가 플레이어 밖에 없으니까 냅둔다.
 	_char szPath[MAX_PATH];
 	strcpy_s(szPath, strSkeletalPath.c_str());
-	const _char szEXT[MAX_PATH] = "*.binx*";
+	const _char szEXT[MAX_PATH] = "*.fbx*";
 	
 	strcat_s(szPath, szEXT);
 	intptr_t handle = _findfirst64(szPath, &fd);
