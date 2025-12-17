@@ -149,10 +149,6 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Volumetric"), 450.0f, 150.0f, 300.f, 300.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SSSAO"), 750.0f, 150.0f, 300.f, 300.f)))
-		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SpecDetail"), 750.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
 
@@ -196,9 +192,6 @@ void CRenderer::Update(_float fTimeDelta)
 	// SSAO 토글.
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
 		m_isSSAO = !m_isSSAO;
-	// 볼류메트릭 토글.
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F10))
-		m_isVolumetric = !m_isVolumetric;
 
 	m_pRadialBlur->Update(fTimeDelta);
 }
@@ -232,13 +225,9 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Emissive */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
-	/* Target_SSSAO */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSSAO"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
 	/* Target_SpecDetail */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SpecDetail"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-
 
 	/* MRT_LightAcc */
 	/* Target_Shade */
@@ -249,20 +238,23 @@ HRESULT CRenderer::Ready_RenderTargets()
 		return E_FAIL;
 
 	/* Target_Shadow. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Shadow"), m_vShadowMapSize.x, m_vShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	if (FAILED(Ready_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
+	if (FAILED(Ready_Shadow_DepthStencilView(m_vShadowMapSize.x, m_vShadowMapSize.y)))
 		return E_FAIL;
+
+	/* Target_CascadeShadow */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_CascadeShadow"), m_vCascadeShadowMapSize.x, m_vCascadeShadowMapSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 0.f, 0.f, 0.f), CASCADE_LEVEL)))
+		return E_FAIL;
+	if (FAILED(Ready_CascadeShadow_DepthStencilView(m_vCascadeShadowMapSize.x, m_vCascadeShadowMapSize.y, CASCADE_LEVEL)))
+		return E_FAIL;
+
 	/* Target_ToneMapping */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ToneMapping"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 
 	/* Target_Velocity */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Velocity"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
-		return E_FAIL;
-
-	/* Target_Volumetric */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Volumetric"), m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -298,12 +290,11 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
 		return E_FAIL;
 
-	/* MRT_Volumetric */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Volumetric"), TEXT("Target_Volumetric"))))
-		return E_FAIL;
-
 	/* MRT_Shadow */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+	// 일반 그림자는 일단 꺼준다.
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_CascadeShadow"))))
 		return E_FAIL;
 
 	/* MRT_ToneMapping */
@@ -313,6 +304,86 @@ HRESULT CRenderer::Ready_MRTs()
 	/* MRT_Velocity */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Velocity"), TEXT("Target_Velocity"))))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Ready_Shadow_DepthStencilView(_uint iSizeX, _uint iSizeY)
+{
+	if (nullptr == m_pDevice)
+		return E_FAIL;
+
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	/* 깊이 버퍼의 픽셀은 백버퍼의 픽셀과 갯수가 동일해야만 깊이 텍스트가 가능해진다. */
+	/* 픽셀의 수가 다르면 아에 렌더링을 못함. */
+	TextureDesc.Width = iSizeX;
+	TextureDesc.Height = iSizeY;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT /* 정적 */;
+	/* 추후에 어떤 용도로 바인딩 될 수 있는 View타입의 텍스쳐를 만들기위한 Texture2D입니까? */
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pShadowDSV)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Ready_CascadeShadow_DepthStencilView(_uint iSizeX, _uint iSizeY, _uint iCSMLevel)
+{
+	if (nullptr == m_pDevice)
+		return E_FAIL;
+
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	/* 깊이 버퍼의 픽셀은 백버퍼의 픽셀과 갯수가 동일해야만 깊이 텍스트가 가능해진다. */
+	/* 픽셀의 수가 다르면 아에 렌더링을 못함. */
+	TextureDesc.Width = iSizeX;
+	TextureDesc.Height = iSizeY;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = iCSMLevel;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT /* 정적 */;
+	/* 추후에 어떤 용도로 바인딩 될 수 있는 View타입의 텍스쳐를 만들기위한 Texture2D입니까? */
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC DsvDesc = {};
+
+	DsvDesc.Format = TextureDesc.Format;
+	DsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+	DsvDesc.Texture2DArray.FirstArraySlice = 0;
+	DsvDesc.Texture2DArray.MipSlice = 0;
+	DsvDesc.Texture2DArray.ArraySize = iCSMLevel;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, &DsvDesc, &m_pCascadeShadowDSV)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
 
 	return S_OK;
 }
@@ -344,11 +415,11 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 
 void CRenderer::Render()
 {
+	Update_Occlusion_Visibility();
 	Bind_WVP_Matrices();
 
 	Render_Priority();
 	Render_Shadow();
-	Render_Occlusion();
 	Render_NonBlend();
 	Render_LightAcc();
 
@@ -356,6 +427,7 @@ void CRenderer::Render()
 		return;
 
 	Render_Combined();
+	Render_Occlusion();
 	Render_NonLight();
 	Render_Blend();
 
@@ -375,6 +447,9 @@ void CRenderer::Render()
 #ifdef _DEBUG
 	Render_Debug();
 #endif
+
+	m_pGameInstance->SwapFrame();
+
 }
 
 const _float4x4* CRenderer::Get_Renderer_Matrix(D3DTS eType)
@@ -432,6 +507,7 @@ void* CRenderer::Get_HDR_Desc()
 	return &m_HDRDesc;
 }
 
+
 void CRenderer::Render_Priority()
 {
 	/* Diffuse + Normal */
@@ -454,10 +530,18 @@ void CRenderer::Render_Priority()
 
 void CRenderer::Render_Shadow()
 {
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pShadowDSV)))
+	BeginMarker(m_pContext, TEXT("SHADOW TEST RENDEr"));
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow"), m_pCascadeShadowDSV)))
+		return;
+	
+	if(FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
 		return;
 
-	Set_ScreenSize(m_vShadowMapSize.x, m_vShadowMapSize.y);
+	if (FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
+		return;
+
+	Set_ScreenSize(m_vCascadeShadowMapSize.x, m_vCascadeShadowMapSize.y);
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::SHADOW)])
 	{
@@ -466,13 +550,15 @@ void CRenderer::Render_Shadow()
 
 		Safe_Release(pRenderObject);
 	}
-
+	
 	m_RenderObjects[ENUM_CLASS(RENDER::SHADOW)].clear();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 
 	Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
+
+	EndMarker(m_pContext);
 }
 
 void CRenderer::Render_MotionBlur()
@@ -497,11 +583,26 @@ void CRenderer::Render_MotionBlur()
 
 void CRenderer::Render_Occlusion()
 {
-	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+	_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
 
-	m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
-	m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
-	m_pOcclusionShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+	_char szDebugString[256];
+
+	snprintf(szDebugString, sizeof(szDebugString),
+		"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
+
+	OutputDebugStringA(szDebugString);
+
+
+	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
+		return;
+
+	const _float4x4* pProjMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", pProjMatrix)))
+		return;
+
+	if (FAILED(m_pOcclusionShader->Begin(0)))
+		return;
 
 	m_pOcclusionVIBuffer->Bind_Resources();
 
@@ -511,21 +612,38 @@ void CRenderer::Render_Occlusion()
 		{
 			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
 
-			if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", pCollider->Get_WorldMatrixPtr())))
-				continue;
-			
-			if (FAILED(m_pOcclusionShader->Begin(0)))
-				continue;
+			if (nullptr != pCollider)
+			{
+				if (FAILED(m_pGameInstance->Begin_Object_Query(pRenderObject)))
+					continue;
 
-			m_pOcclusionVIBuffer->Render();
+				const _float4x4* pWorldMatrix = pCollider->Get_WorldMatrixPtr();
+
+				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", pWorldMatrix)))
+					continue;
+
+				m_pOcclusionVIBuffer->Render();
+
+				m_pGameInstance->End_Obejct_Query(pRenderObject);
+			}
 		}
-	}
 
+		Safe_Release(pRenderObject);
+	}
 	m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
+
 }
 
 void CRenderer::Render_NonBlend()
 {
+
+	_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
+	_uint iRenderedCount = 0;
+
+	_char szDebugString[256];
+
+	
+
 	/* Diffuse + Normal */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return;
@@ -533,7 +651,13 @@ void CRenderer::Render_NonBlend()
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
 	{
 		if (nullptr != pRenderObject)
-			pRenderObject->Render();
+		{
+			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				pRenderObject->Render();
+				iRenderedCount++;
+			}
+		}
 
 		Safe_Release(pRenderObject);
 	}
@@ -542,6 +666,10 @@ void CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+
+	snprintf(szDebugString, sizeof(szDebugString),
+		"Frame Render Count (NONBLEND Group): Total %u, Rendered %u\n", iNonBlendCount, iRenderedCount);
+	OutputDebugStringA(szDebugString);
 }
 
 
@@ -574,41 +702,38 @@ void CRenderer::Render_LightAcc()
 	//SSAO 차폐 연산.
 	m_pSSAO->Render(m_pVIBuffer, TEXT("Target_Depth"), TEXT("Target_Normal"), TEXT("NON_USE"));
 
-	if (false == m_isVolumetric)
-	{
-		m_pGameInstance->Clear_MRT(TEXT("MRT_Volumetric"));
-		return;
-	}
+	/*
+	//볼메는 서비스 종료다...
+	//Set_ScreenSize(m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f);
 
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Volumetric"), m_pVolumetricDSV)))
-		return;
+	//for (_uint i = 0; i < CASCADE_LEVEL; ++i)
+	//{
+	//	if (FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShader, "g_LightViewMatrix", D3DTS::VIEW, i)))
+	//		return;
+	//	if (FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShader, "g_LightProjMatrix", D3DTS::PROJ, i)))
+	//		return;
+	//}
 
-	Set_ScreenSize(m_vScreenSize.x / 4.f, m_vScreenSize.y / 4.f);
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
+	//	return;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightViewMatrix", D3DTS::VIEW)))
-		return;
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShader, "g_LightProjMatrix", D3DTS::PROJ)))
-		return;
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
+	//	return;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
-		return;
+	//m_pShader->Bind_RawValue("g_fDensity", &m_fDensity, sizeof(_float));
+	//m_pShader->Bind_RawValue("g_fStepSize", &m_fStepSize, sizeof(_float));
+	//m_pShader->Bind_RawValue("g_fVolumetricG", &m_fVolumetricG, sizeof(_float));
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
-		return;
+	//m_pVIBuffer->Bind_Resources();
 
-	m_pShader->Bind_RawValue("g_fDensity", &m_fDensity, sizeof(_float));
-	m_pShader->Bind_RawValue("g_fStepSize", &m_fStepSize, sizeof(_float));
-	m_pShader->Bind_RawValue("g_fVolumetricG", &m_fVolumetricG, sizeof(_float));
+	//if (FAILED(m_pGameInstance->Render_VolumetricLights(m_pShader, m_pVIBuffer)))
+	//	return;
 
-	m_pVIBuffer->Bind_Resources();
+	//if (FAILED(m_pGameInstance->End_MRT()))
+	//	return;
 
-	if (FAILED(m_pGameInstance->Render_VolumetricLights(m_pShader, m_pVIBuffer)))
-		return;
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return;
-
-	Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
+	//Set_ScreenSize(m_vScreenSize.x, m_vScreenSize.y);
+	*/
 }
 
 void CRenderer::Render_Combined()
@@ -621,10 +746,12 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
 		return;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Shadow"), m_pShader, "g_ShadowTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_CascadeShadow"), m_pShader, "g_CascadeShadowTexture")))
 		return;
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Volumetric"), m_pShader, "g_VolumetricTexture")))
-		return; 
+	if (FAILED(m_pGameInstance->Bind_Cascade_Ends(m_pShader, "g_fCascadeEnds0", "g_fCascadeEnds1")))
+		return;
+	//if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT(""), m_pShader, "g_ShadowTexture")))
+	//	return;
 
 
 	if (false == m_isSSAO)
@@ -633,10 +760,14 @@ void CRenderer::Render_Combined()
 	if (FAILED(m_pSSAO->Bind_RenderTarget(m_pShader, "g_SSAOTexture")))
 		return;
 
+	BeginMarker(m_pContext, TEXT("########## Combine Render"));
+
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::COMBINED));
 
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
+
+	EndMarker(m_pContext);
 }
 
 void CRenderer::Render_NonLight()
@@ -784,6 +915,21 @@ void CRenderer::Render_UI()
 	m_RenderObjects[ENUM_CLASS(RENDER::UI)].clear();
 }
 
+void CRenderer::Update_Occlusion_Visibility()
+{
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
+	{
+		_bool isVisible = true;
+
+		if (FAILED(m_pGameInstance->Get_Result(pRenderObject, &isVisible)))
+		{
+			isVisible = false;
+		}
+
+		pRenderObject->Set_Occlusion_Culling_Result(isVisible);
+	}
+}
+
 #ifdef _DEBUG
 
 void CRenderer::Render_Debug()
@@ -817,8 +963,6 @@ void CRenderer::Render_Debug()
 
 	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
 		return;
-	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Volumetric"), m_pShader, m_pVIBuffer)))
-	//	return;
 
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
 		return;
@@ -847,53 +991,6 @@ void CRenderer::Set_DebugColliderVisible(_bool isVisible)
 }
 #endif
 
-HRESULT CRenderer::Ready_DepthStencilView(_uint iSizeX, _uint iSizeY)
-{
-	if (nullptr == m_pDevice)
-		return E_FAIL;
-
-	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-	D3D11_TEXTURE2D_DESC	TextureDesc;
-	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-
-	/* 깊이 버퍼의 픽셀은 백버퍼의 픽셀과 갯수가 동일해야만 깊이 텍스트가 가능해진다. */
-	/* 픽셀의 수가 다르면 아에 렌더링을 못함. */
-	TextureDesc.Width = iSizeX;
-	TextureDesc.Height = iSizeY;
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
-	TextureDesc.Usage = D3D11_USAGE_DEFAULT /* 정적 */;
-	/* 추후에 어떤 용도로 바인딩 될 수 있는 View타입의 텍스쳐를 만들기위한 Texture2D입니까? */
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/
-	TextureDesc.CPUAccessFlags = 0;
-	TextureDesc.MiscFlags = 0;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pShadowDSV)))
-		return E_FAIL;
-
-	Safe_Release(pDepthStencilTexture);
-
-	TextureDesc.Width = m_vScreenSize.x / 4.f;
-	TextureDesc.Height = m_vScreenSize.y / 4.f;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pVolumetricDSV)))
-		return E_FAIL;
-
-	Safe_Release(pDepthStencilTexture);
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Bind_WVP_Matrices()
 {
 	CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
@@ -908,6 +1005,26 @@ HRESULT CRenderer::Bind_WVP_Matrices()
 	m_pShader->Bind_RawValue("g_fStepSize", &m_fStepSize, sizeof(_float));
 
 	return S_OK;
+}
+
+void CRenderer::BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name)
+{
+	ID3DUserDefinedAnnotation* pAnnotation = nullptr;
+	if (SUCCEEDED(pContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&pAnnotation)))
+	{
+		pAnnotation->BeginEvent(name);
+		pAnnotation->Release();
+	}
+}
+
+void CRenderer::EndMarker(ID3D11DeviceContext* pContext)
+{
+	ID3DUserDefinedAnnotation* pAnnotation = nullptr;
+	if (SUCCEEDED(pContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&pAnnotation)))
+	{
+		pAnnotation->EndEvent();
+		pAnnotation->Release();
+	}
 }
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -935,7 +1052,7 @@ void CRenderer::Free()
 	}
 
 	Safe_Release(m_pShadowDSV);
-	Safe_Release(m_pVolumetricDSV);
+	Safe_Release(m_pCascadeShadowDSV);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pVIBuffer);
 	

@@ -21,6 +21,8 @@ namespace Engine
 #define PHYSX_TERRAIN   (1 << 7)
 #define PHYSX_CUSTOM_3  (1 << 8)
 
+#define CASCADE_LEVEL 5
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG

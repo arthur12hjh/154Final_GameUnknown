@@ -79,9 +79,6 @@
     <Filter Include="02.GameObjects\UIObjects\MousePointer">
       <UniqueIdentifier>{c4792628-69ea-4deb-b7fa-2c2c9c49c61d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\Mouse">
-      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
       <UniqueIdentifier>{45be3ed5-b966-4eab-b64c-9f21bfa23ee2}</UniqueIdentifier>
     </Filter>
@@ -798,6 +795,12 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX">
       <UniqueIdentifier>{632fb142-8635-4cd8-b1c0-1eecc5f61f7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIOwnGold">
+      <UniqueIdentifier>{2398c82f-654f-42be-9953-8459ef90941b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Point\Mouse">
+      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1613,6 +1616,9 @@
     <ClInclude Include="..\Public\UIBetaFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIOwnGold.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2397,6 +2403,9 @@
     <ClCompile Include="..\Private\UIBetaFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UIOwnGold.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
@@ -2430,7 +2439,7 @@
       <Filter>97.ShaderFiles\Instancing\Point</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
-      <Filter>97.ShaderFiles\Mouse</Filter>
+      <Filter>97.ShaderFiles\Instancing\Point\Mouse</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>

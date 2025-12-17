@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Canyon.h"
 #include "GameInstance.h"
+#include "Camera.h"
 
 CCanyon::CCanyon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CActor{ pDevice, pContext }
@@ -25,8 +26,9 @@ HRESULT CCanyon::Initialize(void* pArg)
 	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
     SetCullingCollider(pDesc->iObjectID);
 
-    _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    m_pCullingCollider->UpdateColiision(worldMatrix);
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+    
 
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
@@ -57,41 +59,33 @@ void CCanyon::Update(_float fTimeDelta)
 
 void CCanyon::Late_Update(_float fTimeDelta)
 {
-   /* if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-    {
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);*/
-
-
-	/*if (!IsFrustomCulling())
+	/*if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_bIsPrevVisibility = false;
-		return;
+		m_bVisible = false;
+		return; 
 	}*/
 
-	_bool bIsCurrentVisibility = false;
+	CCamera* pMainCamera = m_pGameInstance->GetMainCamera();
+	CCamera* pPlayerCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
 
-	HRESULT hr = m_pGameInstance->Get_Result(&bIsCurrentVisibility);
+	/*if (GetVisibility() == VISIBILITY::HIDDEN)
+		SetVisibility(VISIBILITY::VISIBLE);
 
-	if (hr == S_OK)
-		m_bIsPrevVisibility = bIsCurrentVisibility;
-	else
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);*/
+
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
+	if (GetVisibility() == VISIBILITY::VISIBLE)
 	{
-		m_bIsPrevVisibility = false;
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
 
 
-	if (m_bIsPrevVisibility)
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-
-	m_pGameInstance->Begin_Query();
-	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-	m_pGameInstance->End_Query();
-
 #ifdef _DEBUG
-        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-    
 }
 
 HRESULT CCanyon::Render()

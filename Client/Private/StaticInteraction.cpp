@@ -139,8 +139,17 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 
     // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
     // 없으면 충돌 안됨
-    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+    
+    // 일단 임시 예외처리 해둠
+    if(!(Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_1A") ||
+        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_1B") ||
+        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2A") ||
+        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2B") ||
+        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_2C") ||
+        Desc.szVIBuffer_PrototypeName == TEXT("Prototype_Component_Model_Corpse_3A")))
+        m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
+    
 
     return S_OK;
 }

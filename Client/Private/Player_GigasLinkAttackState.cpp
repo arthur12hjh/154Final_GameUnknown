@@ -25,7 +25,7 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
 
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
-  
+    
     return S_OK;
 }
 
@@ -91,6 +91,7 @@ _float CPlayer_GigasLinkAttackState::End()
 {
     m_Desc->isSuperArmor = false;
     m_Desc->pPlayerController->Set_Active(true);
+    m_Desc->pLinkAttackTarget = nullptr;
 
     return m_fNextBlendRatio;
 }

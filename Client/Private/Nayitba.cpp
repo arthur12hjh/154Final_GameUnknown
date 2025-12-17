@@ -166,6 +166,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	{
 		m_bIsTheshold = false;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+		m_pCCT->Set_Active(false);
 	}
 
 	VisibleStatusUI(0.f);

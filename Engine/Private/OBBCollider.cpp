@@ -44,6 +44,8 @@ void COBBCollider::UpdateColiision(_matrix WorldMatrix)
 {
     m_bIsHit = false;
     m_OriginOrientBox->Transform(*m_Bounding, WorldMatrix);
+
+    XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 }
 
 _bool COBBCollider::Intersect(COLLIDER eType, CCollider* pTarget)

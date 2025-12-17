@@ -435,8 +435,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
 
-	m_PlayerDesc.iCurrentPotions = 3;
-	m_PlayerDesc.iMaxPotions = 3;
+	m_PlayerDesc.iCurrentPotions = 5;
+	m_PlayerDesc.iMaxPotions = 5;
 
 	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;
@@ -453,6 +453,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.pPlayerController  = m_pCCT;
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
+
+	m_PlayerDesc.iOwnGold			= 0;
 
 	return S_OK;
 }

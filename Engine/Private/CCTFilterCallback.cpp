@@ -1,15 +1,15 @@
 #include "CCTFilterCallback.h"
 
-DefaultCCTFilterCallback::DefaultCCTFilterCallback()
+CCTFilterCallback::CCTFilterCallback()
 {
 }
 
-DefaultCCTFilterCallback* DefaultCCTFilterCallback::Create()
+CCTFilterCallback*::CCTFilterCallback::Create()
 {
-    return new DefaultCCTFilterCallback();
+    return new CCTFilterCallback();
 }
 
-void DefaultCCTFilterCallback::Free()
+void CCTFilterCallback::Free()
 {
     __super::Free();
 }
