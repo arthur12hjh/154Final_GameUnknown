@@ -94,7 +94,7 @@ void CLoader::Output()
 	SetWindowText(g_hWnd, m_strMessage.c_str());
 }
 
-HRESULT CLoader::Loading_For_Editor()
+HRESULT CLoader::Loading_For_Editor()	
 {
 	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
 
