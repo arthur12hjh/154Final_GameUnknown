@@ -255,6 +255,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
 }
 
 void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
+
 {
     m_isRootMotionUpdated = isRootMotionUpdated;
 

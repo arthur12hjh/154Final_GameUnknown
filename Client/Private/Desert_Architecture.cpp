@@ -60,11 +60,11 @@ void CDesert_Architecture::Update(_float fTimeDelta)
 
 void CDesert_Architecture::Late_Update(_float fTimeDelta)
 {
-	//if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-	//m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 

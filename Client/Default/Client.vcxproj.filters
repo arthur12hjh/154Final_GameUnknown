@@ -847,6 +847,9 @@
     <Filter Include="30.ImGui\CinematicMaker">
       <UniqueIdentifier>{c6d3e68e-ab06-43b7-b4d3-821fe58c35f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Point\Mouse">
+      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2568,7 +2571,7 @@
       <Filter>97.ShaderFiles\Instancing\Point</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
-      <Filter>97.ShaderFiles\Mouse</Filter>
+      <Filter>97.ShaderFiles\Instancing\Point\Mouse</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>

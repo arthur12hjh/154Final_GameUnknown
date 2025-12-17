@@ -39,7 +39,6 @@ void CDesert_Tree::Update(_float fTimeDelta)
 
 void CDesert_Tree::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
