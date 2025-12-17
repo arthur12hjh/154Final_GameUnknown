@@ -844,6 +844,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIScript">
       <UniqueIdentifier>{b108b214-7fa6-4ae7-b521-b92b3d3aa1ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="30.ImGui\CinematicMaker">
+      <UniqueIdentifier>{c6d3e68e-ab06-43b7-b4d3-821fe58c35f1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="97.ShaderFiles\Instancing\Point\Mouse">
       <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
@@ -1651,9 +1654,6 @@
     <ClInclude Include="..\public\Task_Dead.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CameraActionInserter.h">
-      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\EffectSRV.h">
       <Filter>03.Effects</Filter>
     </ClInclude>
@@ -1671,9 +1671,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Sky_Scarlet.h">
       <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CameraActionInserter.h">
-      <Filter>30.ImGui\CameraInserter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TriggerBox.h">
       <Filter>02.GameObjects\TriggerBox</Filter>
@@ -1701,6 +1698,16 @@
     </ClInclude>
     <ClInclude Include="..\Public\UIScript.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h" />
+    <ClInclude Include="..\Public\CinematicMaker.h">
+      <Filter>30.ImGui\CinematicMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicObject.h">
+      <Filter>02.GameObjects\CinematicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h">
+      <Filter>30.ImGui\CameraInserter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2476,9 +2483,6 @@
     <ClCompile Include="..\private\Task_Dead.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CameraActionInserter.cpp">
-      <Filter>10.GameManager\30.ImGui\CameraInserter</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EffectSRV.cpp">
       <Filter>03.Effects</Filter>
     </ClCompile>
@@ -2496,9 +2500,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky_Scarlet.cpp">
       <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CameraActionInserter.cpp">
-      <Filter>30.ImGui\CameraInserter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TriggerBox.cpp">
       <Filter>02.GameObjects\TriggerBox</Filter>
@@ -2526,6 +2527,16 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIScript.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
+    <ClCompile Include="..\Private\CinematicMaker.cpp">
+      <Filter>30.ImGui\CinematicMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicObject.cpp">
+      <Filter>02.GameObjects\CinematicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp">
+      <Filter>30.ImGui\CameraInserter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

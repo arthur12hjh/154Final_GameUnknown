@@ -124,7 +124,7 @@ HRESULT CLift_Body::Ready_Components(const _tchar* pComponentTag)
 	RigidBodyDesc.fMass = { 0.3f };
 	// TRIANGLE로 세팅하고 충돌용 메시 작업하는거니까, 충돌용 메시 넣어줘야돼요 
 	// TRIANGLE 타입이 아닌 (충돌용 메시가 아닌) 녀석들은 굳이 안넣어줘도 됩니다.
-	RigidBodyDesc.pColModel = m_pColModelCom;
+	RigidBodyDesc.pColModel = m_pModelCom;
 
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

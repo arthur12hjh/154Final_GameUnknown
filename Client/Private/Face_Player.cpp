@@ -137,6 +137,9 @@ void CFace_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
+
+	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
@@ -232,6 +235,33 @@ HRESULT CFace_Player::Ready_Components()
 		TEXT("Com_SSSAO"), reinterpret_cast<CComponent**>(&m_pSpecDetailTextureCom))))
 		return E_FAIL;
 
+	//PxUserData tUserData;
+	//tUserData.szActorTag = TEXT("Face");
+
+	////리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	//CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	//// 콜라이더 모양
+	//RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+
+	//// 충돌처리를 할지말지 
+	//// DYNAMIC : 충돌 
+	//// KINEMATIC : 충돌 X
+	//RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+
+	//RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	//RigidBodyDesc.tUserData = tUserData;
+	//RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	//RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
+	//RigidBodyDesc.fMass = { 0.3f };
+	//RigidBodyDesc.isQuery = { false };
+	///* Com_RigidBody */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	//	return E_FAIL;
+
+	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
+	// 없으면 충돌 안됨
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
 	return S_OK;
 }
@@ -293,4 +323,5 @@ void CFace_Player::Free()
 
 	Safe_Release(m_pSpecDetailTextureCom);
 	Safe_Release(m_pSSSAOCom);
+	Safe_Release(m_pRigidBody);
 }

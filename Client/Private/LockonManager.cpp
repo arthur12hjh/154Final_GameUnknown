@@ -87,7 +87,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         m_pPlayerDesc->HasTarget = true;
         m_pPlayerDesc->fCurrentMinDist = fMinDist;
         m_fCurrentMinDist = fMinDist;
-        m_isLock = true; 
+        m_isLock = true;
 
         //보스 락온중인지 체크
         if (m_pTarget->GetStaticMonsterData()->eNaytiba_Type == NAYTIBA_TYPE::ELITE ||
@@ -96,6 +96,11 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         else
             m_pPlayerDesc->isBossLock = false;
     }
+    else
+    {
+        m_pPlayerDesc->HasTarget = false;
+    }
+
 
     return m_pPlayerDesc->HasTarget;
 }

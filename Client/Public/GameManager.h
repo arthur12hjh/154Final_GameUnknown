@@ -18,6 +18,7 @@ class CDataManager;
 class CLockonManager;
 class CShaderManager;
 class CPoolingManager;
+class CCinematicManager;
 
 class CGameManager final : public CBase
 {
@@ -48,10 +49,13 @@ public :
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
 	const vector<SCRIPT_DATA>*		Get_ScriptData(const _wstring& szScriptTag);
+	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
 #ifdef _DEBUG
-	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
-	void							Save_CameraAnimationData();
+	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
+	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
+	void								Save_CameraAnimationData();
+	void								Save_CinematicData();
 #endif
 #pragma endregion
 
@@ -91,6 +95,11 @@ public:
 	_bool											ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent = 0.7f);
 #pragma endregion
 
+#pragma region CINEMATIC_MANAGER
+	HRESULT					Play_Cinematic(_uint iCinematicID);
+#pragma endregion
+
+
 	void											Release_GameMgr();
 
 private :
@@ -103,6 +112,7 @@ private :
 	CLockonManager*			m_pLockonManager = { nullptr };
 	CShaderManager*			m_pShaderManager = { nullptr };
 	CPoolingManager*		m_pPoolingManager = { nullptr };
+	CCinematicManager*		m_pCinematicManager = { nullptr };
 	
 	class CPlayer*			m_pPlayer = { nullptr };
 private :

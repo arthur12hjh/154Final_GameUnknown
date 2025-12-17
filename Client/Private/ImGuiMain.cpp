@@ -40,10 +40,6 @@ HRESULT CImGuiMain::Initialize()
 void CImGuiMain::Update(_float fTimeDelta)
 {
 #ifdef _DEBUG
-	// 윈도우 메시지 처리 등...
-	ImGui_ImplWin32_NewFrame();
-	ImGui_ImplDX11_NewFrame();
-	ImGui::NewFrame();
 
 	ImGui::Begin("Debug Tool", nullptr, m_ImGuiWindowFlags);
 	CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
@@ -104,7 +100,6 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();
-	ImGui::EndFrame();
 #endif
 }
 

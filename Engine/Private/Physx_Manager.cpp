@@ -102,16 +102,19 @@ void CPhysx_Manager::Update(_float fTimeDelta)
             CTransform* pTransform = Pair.first->GetTransform();
             PxTransform pPxTransform = Pair.second->Get_PxTransform();
 
-            const PxVec3& vPxPosition = pPxTransform.p;
-            pTransform->Set_State(STATE::POSITION, XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.f));
+            if (true == Pair.second->isSimulateSync())
+            {
+                const PxVec3& vPxPosition = pPxTransform.p;
+                pTransform->Set_State(STATE::POSITION, XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.f));
+            
+                const PxQuat& vPxRotation = pPxTransform.q;
+                pTransform->Rotation(vPxRotation.x, vPxRotation.y, vPxRotation.z, vPxRotation.w);
 
-            const PxQuat& vPxRotation = pPxTransform.q;
-            pTransform->Rotation(vPxRotation.x, vPxRotation.y, vPxRotation.z, vPxRotation.w);
+                pTransform->Update_PreWorldMatrix();
+            }
 
-            pTransform->Update_PreWorldMatrix();
 #ifdef _DEBUG
-            if(CRigidBody::RIGIDBODY_SHAPE::NONE != Pair.second->Get_Shape())
-                m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
+            m_pGameInstance->Add_PhysxGeometry(Pair.first, Pair.second->Get_PxRigidBody(), Pair.second->Get_PxShape());
 #endif
         }
 

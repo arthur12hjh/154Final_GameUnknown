@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Character.h"
+#include "CinematicObject.h"
 #include "ClientStruct.h"
 
 NS_BEGIN(Engine)
@@ -10,7 +10,7 @@ NS_END
 NS_BEGIN(Client)
 class CWeapon;
 
-class CCinematicModel_Eve final : public CCharacter
+class CCinematicModel_Eve final : public CCinematicObject
 {
 private:
 	CCinematicModel_Eve(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

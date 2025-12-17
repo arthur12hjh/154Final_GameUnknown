@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -308,10 +308,12 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // 문자열 변환
-        string name = jInfo["Name"];
-        string text = jInfo["Text"];
-        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        {
+            string name = jInfo["Name"];
+            string text = jInfo["Text"];
+            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        }
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -676,10 +678,10 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-    // _finddata_t : <io.h>���� �����ϸ� ���� ������ �����ϴ� ����ü
+   
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>���� �����ϸ� ����ڰ� ������ ��� ������ ���� ù ��° ������ ã�� �Լ�
+
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -695,7 +697,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // �ƽ�Ű �ڵ� ���ڿ��� �����ڵ� ���ڿ��� ��ȯ�����ִ� �Լ�
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -735,7 +736,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         }
 
 
-        //_findnext : <io.h>���� �����ϸ� ���� ��ġ�� ������ ã�� �Լ�, ���̻� ���ٸ� -1�� ����
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }

@@ -85,10 +85,13 @@ public:
 	_uint Get_AnimationKeyFrameIndex() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
-
+	const _float4x4* Get_LocalBoneMatrixPtr(const _char* pBoneName);
 	// 더 이상 쓰지 않음.
+	//누구맘대로누구맘대로누구맘대로누구맘대로누구맘대로누구맘대로누구맘대로누구맘대로
 	void Attach_CombinedTransformationMatrix();
 
+	// 피직스 본 매핑을 위함.
+	void Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix);
 	// GPU 스키닝을 위한 ID3D11Buffer 전달함수
 	ID3D11Buffer* Get_BoneMatrixGPUBuffer() { return m_pOutSource; }
 
@@ -142,7 +145,7 @@ public:
 
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
-	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations);
+	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName);
 	HRESULT Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag = nullptr, _bool bIsSaved = FALSE);
 	HRESULT Change_BoneTag(const _char* szAfterBoneTag, const vector<string>& szTargetTagList);
 	// </end>
