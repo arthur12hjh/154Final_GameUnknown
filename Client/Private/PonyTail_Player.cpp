@@ -379,6 +379,8 @@ void CPonyTail_Player::Sync_BonesByJoint()
 		//본매핑콱시팔바로피직스정상화역시정상화는대재훈
 		m_pBodyModelCom->Set_CombinedTransformationMatrix(pBoneName,
 			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()));
+
+		Safe_Delete_Array(pBoneName);
 	}
 }
 
