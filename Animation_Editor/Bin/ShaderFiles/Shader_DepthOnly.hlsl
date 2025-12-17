@@ -33,7 +33,7 @@ VS_OUT VS_MAIN(VS_IN In)
 /* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
 float4 PS_MAIN(VS_OUT In) : SV_TARGET
 {
-    return float4(0.f, 0.f, 0.f, 1.f);
+    return float4(1.f, 0.f, 0.f, 1.f);
 
 }
 
@@ -41,7 +41,7 @@ technique11 DefaultTechnique
 { 
     pass DepthOnly
     {
-        //SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

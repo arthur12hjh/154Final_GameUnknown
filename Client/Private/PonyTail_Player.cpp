@@ -95,7 +95,6 @@ void CPonyTail_Player::Update(_float fTimeDelta)
 //	
 //	m_pJointChain->Update(fTimeDelta);
 //#endif
-
 }
 
 void CPonyTail_Player::Late_Update(_float fTimeDelta)
@@ -377,8 +376,8 @@ void CPonyTail_Player::Sync_BonesByJoint()
 		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
 
 		//본매핑콱시팔바로피직스정상화역시정상화는대재훈
-		m_pBodyModelCom->Set_CombinedTransformationMatrix(pBoneName,
-			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()));
+		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName,
+			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_CombinedWorldMatrix)));
 
 		Safe_Delete_Array(pBoneName);
 	}

@@ -597,14 +597,14 @@ void CRenderer::Render_MotionBlur()
 
 void CRenderer::Render_Occlusion()
 {
-	/*_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
+	_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
 
 	_char szDebugString[256];
 
 	snprintf(szDebugString, sizeof(szDebugString),
 		"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
 
-	OutputDebugStringA(szDebugString);*/
+	OutputDebugStringA(szDebugString);
 
 	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
 	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
@@ -667,10 +667,10 @@ void CRenderer::Render_Occlusion()
 void CRenderer::Render_NonBlend()
 {
 
-	/*_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
+	_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
 	_uint iRenderedCount = 0;
 
-	_char szDebugString[256];*/
+	_char szDebugString[256];
 
 	/* Diffuse + Normal */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
@@ -683,7 +683,7 @@ void CRenderer::Render_NonBlend()
 			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
 			{
 				pRenderObject->Render();
-				//iRenderedCount++;
+				iRenderedCount++;
 			}
 		}
 
@@ -695,9 +695,9 @@ void CRenderer::Render_NonBlend()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 
-	/*snprintf(szDebugString, sizeof(szDebugString),
+	snprintf(szDebugString, sizeof(szDebugString),
 		"Frame Render Count (NONBLEND Group): Total %u, Rendered %u\n", iNonBlendCount, iRenderedCount);
-	OutputDebugStringA(szDebugString);*/
+	OutputDebugStringA(szDebugString);
 }
 
 

@@ -31,9 +31,7 @@ public:
 private :
 	CModel* m_pModelCom = { nullptr };
 
-	_bool m_bVisible = { false };
-	_bool m_bHasOcclusionQuery = { false };
-	_float m_fCheckTick = { 0.f };
+	_bool m_bIsOccluder = true;
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

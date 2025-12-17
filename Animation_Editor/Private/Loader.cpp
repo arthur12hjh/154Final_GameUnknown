@@ -94,7 +94,7 @@ void CLoader::Output()
 	SetWindowText(g_hWnd, m_strMessage.c_str());
 }
 
-HRESULT CLoader::Loading_For_Editor()
+HRESULT CLoader::Loading_For_Editor()	
 {
 	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
 
@@ -158,6 +158,18 @@ HRESULT CLoader::Loading_For_Editor()
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Banacle"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Scarlet_Weapon */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Weapon"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Weapon.fbx", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Scarlet_Scabbard */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Scabbard"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Scabbard.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Map_Village_Mou */
@@ -387,7 +399,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
 	//
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.fbx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.binx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 

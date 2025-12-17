@@ -270,19 +270,19 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Vehicle_And_Wheel(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Building_And_Trash(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Sign_And_Crane(pArg); });
-		//
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
-		//
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi_Col(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge_Col(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_Col(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B_Col(pArg); });
+		
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
+		
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Archi_Col(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Bridge_Col(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_Col(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Building_Ruin_B_Col(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 		{
@@ -646,7 +646,9 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
 	string szFrontPath = "../Bin/Resources/Models/Scarlet/Animation/";
+
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Scarlet_Body");
+
 	_matrix PreMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 
 	vector<_wstring> szPartPrototypeTagList;
@@ -804,8 +806,21 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 	
 	
+	/* For.Prototype_Component_Model_Scarlet_Weapon */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Weapon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Weapon.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
-
+	/* For.Prototype_Component_Model_Scarlet_Scabbard */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Scabbard");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Scabbard.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);

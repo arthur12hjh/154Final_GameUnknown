@@ -90,8 +90,8 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
     // �ǹ� ��ġ�� �޾ƿ´�.
     _float3 vPivotPos = {};
-    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
-    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) +XMLoadFloat3(&m_vPivot));
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
+    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
     vPivotPos.x += fPitchRatio * -1.6f;
     vPivotPos.y += fPitchRatio * 2.f;
 
@@ -107,7 +107,7 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
 
     //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 1.f);
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
     m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
 
     memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));

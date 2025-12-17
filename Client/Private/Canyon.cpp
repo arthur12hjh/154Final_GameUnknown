@@ -42,6 +42,22 @@ HRESULT CCanyon::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+    m_bIsOccluder = true;
+
+    // 개큰거
+    if ((m_iObjectID >= 67 && m_iObjectID <= 79) || m_iObjectID == 75)
+    {
+        m_bIsOccluder = false;
+    }
+    // 작은거
+    else if (m_iObjectID == 2 || m_iObjectID == 4 || m_iObjectID == 6 ||
+        (m_iObjectID >= 8 && m_iObjectID <= 11) || (m_iObjectID >= 13 && m_iObjectID <= 16) ||
+        (m_iObjectID >= 25 && m_iObjectID <= 32) || m_iObjectID == 42 ||
+        (m_iObjectID >= 60 && m_iObjectID <= 64))
+    {
+        m_bIsOccluder = false;
+    }
+
     //m_pRigidBody->Update_PxTransform(worldMatrix);
 	return S_OK;
 }
@@ -61,18 +77,26 @@ void CCanyon::Late_Update(_float fTimeDelta)
 {
 	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		SetVisibility(VISIBILITY::HIDDEN);
+		
 		return;
 	}
 
-    /*if (GetVisibility() == VISIBILITY::VISIBLE)
+   /* if ((m_iObjectID >= 67 && m_iObjectID <= 79))
     {
         m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    }
+    else
+    {
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
     }*/
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-    
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+    /*if (m_bIsOccluder)
+    {*/
+        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+    //}
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -81,6 +105,9 @@ void CCanyon::Late_Update(_float fTimeDelta)
 
 HRESULT CCanyon::Render()
 {
+   /* if (m_eVisibility == VISIBILITY::HIDDEN)
+        return S_OK;*/
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

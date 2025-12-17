@@ -33,7 +33,7 @@ VS_OUT VS_MAIN(VS_IN In)
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
 float4 PS_MAIN(VS_OUT In) : SV_TARGET
 {
-    return float4(1.f, 0.f, 0.f, 1.f);
+    return float4(0.f, 0.f, 0.f, 1.f);
 
 }
 
