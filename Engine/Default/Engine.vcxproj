@@ -229,6 +229,7 @@ popd</Command>
     <ClInclude Include="..\Public\Input_Device.h" />
     <ClInclude Include="..\Public\Interaction_Component.h" />
     <ClInclude Include="..\Public\Interaction_Manager.h" />
+    <ClInclude Include="..\Public\JointChain.h" />
     <ClInclude Include="..\public\JsonParser.h" />
     <ClInclude Include="..\Public\Layer.h" />
     <ClInclude Include="..\Public\Level.h" />
@@ -346,6 +347,7 @@ popd</Command>
     <ClCompile Include="..\Private\Input_Device.cpp" />
     <ClCompile Include="..\Private\Interaction_Component.cpp" />
     <ClCompile Include="..\Private\Interaction_Manager.cpp" />
+    <ClCompile Include="..\Private\JointChain.cpp" />
     <ClCompile Include="..\private\JsonParser.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />

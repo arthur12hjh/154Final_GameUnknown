@@ -17,7 +17,6 @@
 
 #endif
 #include "Model.h"
-#include "RigidBody.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
 #include "EffectSRV.h"
@@ -75,6 +74,13 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	// 윈도우 메시지 처리 등...
+	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplDX11_NewFrame();
+	ImGui::NewFrame();
+#endif
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
 		m_bIsMouseLock = !m_bIsMouseLock;
 
@@ -89,6 +95,9 @@ void CMainApp::Update(_float fTimeDelta)
 	m_pImGuiDebug->Update(fTimeDelta);
 #endif
 
+#ifdef _DEBUG
+	ImGui::EndFrame();
+#endif
 }
 
 HRESULT CMainApp::Render()
@@ -217,6 +226,12 @@ HRESULT CMainApp::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_JointChain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_JointChain"),
+		CJointChain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_Component_CharacterController */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
