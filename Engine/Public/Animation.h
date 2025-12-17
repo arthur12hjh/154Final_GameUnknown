@@ -52,6 +52,8 @@ public:
 			iKeyFrameIndex = 0;
 	}
 
+	void Set_Name(_char* szName) { strcpy_s(m_szName, szName); }
+
 	void Set_BoneToChannelMappingLists(const vector<_int>& vBoneMappinglists) { m_BoneToChannelMappingLists = vBoneMappinglists; }
 	const vector<_int>& Get_BoneToChannelMappingLists() const { return m_BoneToChannelMappingLists; }
 

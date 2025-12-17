@@ -66,9 +66,17 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	m_pOcclusionShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DepthOnly.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	if (nullptr == m_pOcclusionShader)
+		return E_FAIL;
+
 	/* 직교용 렉트 하나 생성. */
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
+		return E_FAIL;
+
+	m_pOcclusionVIBuffer = CVIBuffer_Cube::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pOcclusionVIBuffer)
 		return E_FAIL;
 
 	/* 직교용 월드 뷰 투영 세팅 */
@@ -162,6 +170,20 @@ HRESULT CRenderer::Initialize()
 	m_pColliderRenderer = CColliderRenderer::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pColliderRenderer)
 		return E_FAIL;
+
+	D3D11_RASTERIZER_DESC rsDesc = {};
+	rsDesc.FillMode = D3D11_FILL_SOLID;
+	rsDesc.CullMode = D3D11_CULL_BACK;
+	rsDesc.FrontCounterClockwise = FALSE;
+	rsDesc.DepthClipEnable = TRUE;
+
+	rsDesc.DepthBias = -10;
+	rsDesc.DepthBiasClamp = 0.0f;
+	rsDesc.SlopeScaledDepthBias = -1.0f;
+
+	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))
+		return E_FAIL;
+
 #endif
 
     return S_OK;
@@ -407,11 +429,13 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 
 void CRenderer::Render()
 {
+	Update_Occlusion_Visibility();
 	Bind_WVP_Matrices();
 
 	Render_Priority();
 	Render_Shadow();
 	Render_NonBlend();
+	Render_Occlusion();
 	Render_LightAcc();
 
 	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Scene"))))
@@ -437,6 +461,9 @@ void CRenderer::Render()
 #ifdef _DEBUG
 	Render_Debug();
 #endif
+
+	m_pGameInstance->SwapFrame();
+
 }
 
 const _float4x4* CRenderer::Get_Renderer_Matrix(D3DTS eType)
@@ -493,6 +520,7 @@ void* CRenderer::Get_HDR_Desc()
 
 	return &m_HDRDesc;
 }
+
 
 void CRenderer::Render_Priority()
 {
@@ -567,8 +595,74 @@ void CRenderer::Render_MotionBlur()
 		return;
 }
 
+void CRenderer::Render_Occlusion()
+{
+	_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
+
+	_char szDebugString[256];
+
+	snprintf(szDebugString, sizeof(szDebugString),
+		"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
+
+	OutputDebugStringA(szDebugString);
+
+	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
+		return;
+
+	const _float4x4* pProjMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", pProjMatrix)))
+		return;
+
+	if (FAILED(m_pOcclusionShader->Begin(0)))
+		return;
+
+	m_pOcclusionVIBuffer->Bind_Resources();
+
+	ID3D11RasterizerState* pOldRS = nullptr;
+	m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
+	m_pContext->RSSetState(m_pRS_OcclusionQuery);
+
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
+	{
+		if (nullptr != pRenderObject)
+		{
+			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
+
+			if (nullptr != pCollider)
+			{
+				if (FAILED(m_pGameInstance->Begin_Object_Query(pRenderObject)))
+					continue;
+
+				const _float4x4* pWorldMatrix = pCollider->Get_WorldMatrixPtr();
+
+				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", pWorldMatrix)))
+					continue;
+
+				m_pOcclusionVIBuffer->Render();
+
+				m_pGameInstance->End_Obejct_Query(pRenderObject);
+			}
+		}
+
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
+
+	m_pContext->RSSetState(pOldRS);
+	Safe_Release(pOldRS);
+}
+
 void CRenderer::Render_NonBlend()
 {
+
+	_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
+	_uint iRenderedCount = 0;
+
+	_char szDebugString[256];
+
+	
+
 	/* Diffuse + Normal */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return;
@@ -576,7 +670,13 @@ void CRenderer::Render_NonBlend()
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
 	{
 		if (nullptr != pRenderObject)
-			pRenderObject->Render();
+		{
+			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				pRenderObject->Render();
+				iRenderedCount++;
+			}
+		}
 
 		Safe_Release(pRenderObject);
 	}
@@ -585,7 +685,12 @@ void CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+
+	snprintf(szDebugString, sizeof(szDebugString),
+		"Frame Render Count (NONBLEND Group): Total %u, Rendered %u\n", iNonBlendCount, iRenderedCount);
+	OutputDebugStringA(szDebugString);
 }
+
 
 void CRenderer::Render_LightAcc()
 {
@@ -829,6 +934,21 @@ void CRenderer::Render_UI()
 	m_RenderObjects[ENUM_CLASS(RENDER::UI)].clear();
 }
 
+void CRenderer::Update_Occlusion_Visibility()
+{
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
+	{
+		_bool isVisible = true;
+
+		if (FAILED(m_pGameInstance->Get_Result(pRenderObject, &isVisible)))
+		{
+			isVisible = false;
+		}
+
+		pRenderObject->Set_Occlusion_Culling_Result(isVisible);
+	}
+}
+
 #ifdef _DEBUG
 
 void CRenderer::Render_Debug()
@@ -969,6 +1089,9 @@ void CRenderer::Free()
 	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pSSAO);
 	Safe_Release(m_pEmissive);
+	Safe_Release(m_pOcclusionShader);
+	Safe_Release(m_pOcclusionVIBuffer);
+	Safe_Release(m_pRS_OcclusionQuery);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

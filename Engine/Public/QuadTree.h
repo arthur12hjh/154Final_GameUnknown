@@ -25,7 +25,7 @@ private:
 	CQuadTree* m_pNeighbors[NEIGHBOR_END] = { nullptr, nullptr, nullptr, nullptr };
 
 private:
-	_bool isDraw(class CGameInstance* pGameInstance, const _float3* pVertexPositions);
+	_bool isDraw(_fvector vCamPosition, const _float3* pVertexPositions);
 
 
 public:

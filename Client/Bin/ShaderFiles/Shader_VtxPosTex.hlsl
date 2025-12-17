@@ -136,7 +136,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
     
     if (Out.vColor.a == 0.f)
         discard;
-    /* g,b,a 성분은 0으로 밀고 */
+    /* g,b,a 성분은 0으로 밀어준다. */
     Out.vColor.ba = 0.f;
     /* 거리 기반으로 디스토션 할 객체 중점으로부터의 거리 구해냄. */
     /* 중점이라면 r은 1, 중점에서의 거리가 멀수록 1에서 r 성분의 크기가 줄어드는 형태. */

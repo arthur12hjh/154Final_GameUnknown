@@ -116,7 +116,7 @@ inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, textur
     
     float4 vResult = SceneTexture.Sample(MirrorSampler, vCenteredUV);
 
-    // 원래 색과 섞어.
+    // 원래 색과 섞음.
     //float fFade = (vDistortion.r > 0.0f) ? 1.0f : 0.0f;
     //vResult.rgb = lerp(vScene.rgb, vResult.rgb, 0.8f * fFade);
     

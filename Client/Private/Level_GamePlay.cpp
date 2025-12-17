@@ -41,8 +41,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
  		return E_FAIL;
@@ -84,6 +84,20 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	{
+		CNayitba::NAYITBA_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.vScale = { 1.f, 1.f, 1.f };
+
+		Desc.iMonsterID = 8;
+		Desc.vPosition = { 60.f, 1.f, 60.f };
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
+			return;
+
+	}
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -295,14 +309,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	auto pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("FreeCamera"), static_cast<CCamera*>(pCamera));
 
-	//CameraDesc.fSpeedPerSec = 15.f;
-	//CameraDesc.fFov = XMConvertToRadians(45.0f);
-	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
-	//pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
-	//m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
 
-	//CameraDesc.fSpeedPerSec = 15.f;
-	//CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(60.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("PlayerCamera"), static_cast<CCamera*>(pCamera));
@@ -343,7 +358,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 720.f, 10.f, 580.f};
+	Desc.vPosition = { 222.f, 55.f, 222.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
@@ -408,7 +423,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;*/
 
 
-
 	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
 	pSapwnerDesc.bIsApplyTransform = true;
 	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
@@ -432,8 +446,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
-
-		
 
 	return S_OK;
 }
