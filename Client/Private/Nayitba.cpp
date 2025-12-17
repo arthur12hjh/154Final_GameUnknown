@@ -13,6 +13,11 @@
 #include "AttackHitBox.h"
 #include "Bullet.h"
 
+#pragma region PartObject
+#include "NaytibaLeftWeaponPart.h"
+#include "NaytibaRightWeaponPart.h"
+#pragma endregion
+
 #pragma region Component
 #include "Notify.h"
 #include "TargetComponent.h"
@@ -542,7 +547,34 @@ HRESULT CNayitba::ADD_PartObjects()
 	BodyDesc.fSpeedPerSec = 5.f;
 	if(FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"), TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
+
 	Import_ModelPtr();
+
+	if (strcmp("None", m_pInitMonsterInfo->szLeftWeaponPrototypeName))
+	{
+		CNaytibaLeftWeaponPart::WEAPON_DESC LWeaponDesc = { };
+		LWeaponDesc.pParentTransform = m_pTransformCom;
+		LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szLeftBoneName);
+		LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szLeftWeaponPrototypeName, LWeaponDesc.szWeaponModelPrototype);
+		LWeaponDesc.fSpeedPerSec = 5.f;
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
+			return E_FAIL;
+	}
+
+	if (strcmp("None", m_pInitMonsterInfo->szRightWeaponPrototypeName))
+	{
+		CNaytibaRightWeaponPart::WEAPON_DESC RWeaponDesc = { };
+		RWeaponDesc.pParentTransform = m_pTransformCom;
+		RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szRightBoneName);
+		RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
+		RWeaponDesc.fSpeedPerSec = 5.f;
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
+			return E_FAIL;
+	}
+
+	
 
 	return S_OK;
 }

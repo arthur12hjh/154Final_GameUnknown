@@ -14,6 +14,16 @@ HRESULT CScarletBlackBoard::Initialize(void* pArg)
     return S_OK;
 }
 
+void CScarletBlackBoard::SetEntarnceAttack(_bool bIsflag)
+{
+	m_bIsEntarnceAttack = bIsflag;
+}
+
+_bool CScarletBlackBoard::bIsEnableEntarnceAttack()
+{
+	return m_bIsEntarnceAttack;
+}
+
 CScarletBlackBoard* CScarletBlackBoard::Create(void* pArg)
 {
 	CScarletBlackBoard* pScarlet_BlackBoard = new CScarletBlackBoard();

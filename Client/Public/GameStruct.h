@@ -212,6 +212,7 @@ namespace Client
 		char						szHitAnimationName[256];	// Hit Anim Name
 		char						szLinkBoneName[256];
 
+
 		// SKill Damage
 		long long					iSkillDamage;				// 스킬 데미지
 
@@ -254,6 +255,13 @@ namespace Client
 
 		char				szAnimationName[256];
 		char				szMonsterName[256];
+
+		char				szLeftWeaponPrototypeName[256];
+		char				szLeftBoneName[256];
+
+		char				szRightWeaponPrototypeName[256];
+		char				szRightBoneName[256];
+
 		NAYTIBA_TYPE		eNaytiba_Type;
 		AI_TYPE				eAI_Type;
 
