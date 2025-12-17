@@ -99,6 +99,7 @@ namespace Engine
 		PRIORITY,
 		SHADOW,
 		MOTIONBLUR,
+		OCCLUSION,
 		NONBLEND,
 		NONLIGHT,
 		BLUR,
@@ -128,5 +129,7 @@ namespace Engine
 	enum class NAVI_LINE		{ AB, BC, CA, END };
 
 	enum CHANNELID				{ BGM, EFFECT, EFFECT2, END };
+
+	enum class CAMERA_ROLE		{ MAIN, DEBUG, END };
 }
 #endif // Engine_Enum_h__

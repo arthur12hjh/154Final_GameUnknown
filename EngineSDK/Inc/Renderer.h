@@ -56,6 +56,9 @@ private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
 
+	class CShader*						m_pOcclusionShader = { nullptr };
+	class CVIBuffer_Cube*				m_pOcclusionVIBuffer = { nullptr };
+
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 	VOLUMETRIC_DESC						m_VolumetricDesc = {};
@@ -74,6 +77,8 @@ private:
 	_bool								m_isHDR = { true };
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
+
+	ID3D11RasterizerState*				m_pRS_OcclusionQuery = { nullptr };
 
 private:
 	class CBlur*						m_pBlur = { nullptr };
@@ -96,9 +101,9 @@ private:
 	void		Render_Priority();
 	void		Render_Shadow();
 	void		Render_MotionBlur();
+	void		Render_Occlusion();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
-	/* ��		���� Combined ������. */
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
@@ -109,6 +114,8 @@ private:
 	void		ToneMapping();
 	void		Render_BackBuffer();
 	void		Render_UI();
+
+	void		Update_Occlusion_Visibility();
 
 private:
 	HRESULT		Ready_RenderTargets();
@@ -121,6 +128,7 @@ private:
 
 	void		EndMarker(ID3D11DeviceContext* pContext);
 
+	ID3D11DepthStencilState* m_pDSS_DepthNonWrite = { nullptr };
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free();

@@ -164,6 +164,7 @@ public:
 	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount = 1);
 	HRESULT						Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
 	HRESULT						Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
+	HRESULT						Begin_MRT_NoClear(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						End_MRT();
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
@@ -171,6 +172,7 @@ public:
 	HRESULT						Clear_MRT(const _wstring& strMRTag);
 	HRESULT						Change_DSV(ID3D11DepthStencilView* pDSV);
 	HRESULT						End_DSV();
+	ID3D11DepthStencilView*		Get_DSV();
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
@@ -205,6 +207,14 @@ public:
 	void				FrustomRender();
 #endif
 
+#pragma endregion
+
+
+#pragma region Occlusion
+	HRESULT							Begin_Object_Query(class CGameObject* pObejct);
+	HRESULT							End_Obejct_Query(class CGameObject* pObject);
+	HRESULT							Get_Result(class CGameObject* pObject, _bool* pIsVisible);
+	void							SwapFrame();
 #pragma endregion
 
 #pragma region Sound Manager
@@ -374,6 +384,7 @@ private:
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
+	class COcclusion*				m_pOcculusion = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };

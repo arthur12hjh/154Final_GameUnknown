@@ -8,6 +8,7 @@
 NS_BEGIN(Engine)
 class CModel;
 class CCollider;
+class CCamera;
 NS_END
 
 NS_BEGIN(Client)
@@ -29,6 +30,10 @@ public:
 
 private :
 	CModel* m_pModelCom = { nullptr };
+
+	_bool m_bVisible = { false };
+	_bool m_bHasOcclusionQuery = { false };
+	_float m_fCheckTick = { 0.f };
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

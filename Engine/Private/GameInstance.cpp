@@ -16,6 +16,7 @@
 #include "Renderer.h"
 #include "PipeLine.h"
 #include "Frustum.h"
+#include "Occlusion.h"
 #include "ThreadPool.h"
 #include "CameraManager.h"
 #include "Level.h"
@@ -60,6 +61,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 		return E_FAIL;
 
 	m_pFrustum = CFrustum::Create(*ppDevice, *ppContext);
+
+	m_pOcculusion = COcclusion::Create(*ppDevice, *ppContext);
+	if (nullptr == m_pOcculusion)
+		return E_FAIL;
+
 #ifdef _DEBUG
 	m_pLight_Manager = CLight_Manager::Create(*ppDevice, *ppContext);
 #else
@@ -730,6 +736,11 @@ HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilVi
 	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV);
 }
 
+HRESULT CGameInstance::Begin_MRT_NoClear(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+{
+	return m_pTarget_Manager->Begin_MRT_NoClear(strMRTTag, pDSV);
+}
+
 HRESULT CGameInstance::Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
 {
 	return m_pTarget_Manager->Load_MRT(strMRTTag, pDSV);
@@ -763,6 +774,11 @@ HRESULT CGameInstance::Change_DSV(ID3D11DepthStencilView* pDSV)
 HRESULT CGameInstance::End_DSV()
 {
 	return m_pTarget_Manager->End_DSV();
+}
+
+ID3D11DepthStencilView* CGameInstance::Get_DSV()
+{
+	return m_pTarget_Manager->Get_Original_DSV();
 }
 
 
@@ -865,7 +881,30 @@ void CGameInstance::FrustomRender()
 	return m_pFrustum->FrustomRender();
 }
 #endif // _DEBUG
+#pragma endregion
 
+#pragma region Occlusion
+
+HRESULT CGameInstance::Begin_Object_Query(CGameObject* pObject)
+{
+	m_pOcculusion->Begin_Object_Query(pObject);
+
+	return S_OK;
+}
+HRESULT CGameInstance::End_Obejct_Query(CGameObject* pObject)
+{
+	m_pOcculusion->End_Obejct_Query(pObject);
+	
+	return S_OK;
+}
+HRESULT CGameInstance::Get_Result(CGameObject* pObject, _bool* pIsVisible)
+{
+	return m_pOcculusion->Get_Result(pObject, pIsVisible);
+}
+void CGameInstance::SwapFrame()
+{
+	m_pOcculusion->SwapFrame();
+}
 #pragma endregion
 
 #pragma region Sound Manager
@@ -1267,6 +1306,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pFrustum);
+	Safe_Release(m_pOcculusion);
 	Safe_Release(m_pCameraManager);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);

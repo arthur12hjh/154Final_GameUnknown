@@ -30,9 +30,18 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
     if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
+    if (nullptr == wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Corpse")))
+    {
+        if (FAILED(Ready_COL(*pDesc)))
+            return E_FAIL;
+    }
+
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
-    m_pRigidBody->Update_PxTransform(WorldMat);
+
+
+    if (m_pRigidBody)
+        m_pRigidBody->Update_PxTransform(WorldMat);
 
     return S_OK;
 }
@@ -111,6 +120,17 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
+  
+
+    return S_OK;
+}
+
+HRESULT CStaticInteraction::Ready_COL(const PROB_INTERACTION_DESC& Desc)
+{
+    _float3 Com_Size = m_pTransformCom->Get_Scale();
+    Com_Size.x *= 2.f;
+    Com_Size.z *= 2.f;
+
     PxUserData tUserData;
     // 밀려야하는 애들은 이키워드로 세팅
     tUserData.szActorTag = TEXT("Static_Interaction");
@@ -139,8 +159,9 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 
     // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
     // 없으면 충돌 안됨
-    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
+
+    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
     return S_OK;
 }

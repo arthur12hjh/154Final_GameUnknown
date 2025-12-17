@@ -61,6 +61,8 @@ public:
 	const COLLIDER&			GetCollierType() const { return m_eType; }
 	const HIT_TYPE&			GetCollierHitType() const { return m_eHitType; }
 
+	const _float4x4*		Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
+
 protected:
 	COLLIDER					m_eType = {};
 	HIT_TYPE					m_eHitType = {};
@@ -73,6 +75,8 @@ protected:
 
 	set<HIT_TYPE>				m_IgnoreObject;
 	_bool						m_bIsHit = false;
+
+	_float4x4					m_WorldMatrix = { };
 
 	function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> m_BeginHitFunc = nullptr;
 	function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> m_OverlapHitFunc = nullptr;
