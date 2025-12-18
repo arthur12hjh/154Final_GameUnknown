@@ -63,16 +63,11 @@ HRESULT CLevel_AnimationEditor::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	SHADOW_LIGHT_DESC		ShadowDesc{};
-	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
-	ShadowDesc.vAt = _float4(5.f, 5.f, 5.f, 1.f);
-	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
-	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
+
+	CASCADE_SHADOW_DESC		ShadowDesc{};
 	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
-	ShadowDesc.fNear = 0.1f;
-	ShadowDesc.fFar = 500.f;
-	
-	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(ShadowDesc)))
 		return E_FAIL;
 
 	return S_OK;

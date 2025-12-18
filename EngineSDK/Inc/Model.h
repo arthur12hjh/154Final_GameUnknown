@@ -92,6 +92,7 @@ public:
 
 	// 피직스 본 매핑을 위함.
 	void Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix);
+	void Override_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix);
 	// GPU 스키닝을 위한 ID3D11Buffer 전달함수
 	ID3D11Buffer* Get_BoneMatrixGPUBuffer() { return m_pOutSource; }
 
@@ -142,6 +143,8 @@ public:
 
 	HRESULT Initialize_AnimationIndexMap();
 	HRESULT Initialize_AnimationBufferResource();
+
+	HRESULT Release_AnimationChannel();
 
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.

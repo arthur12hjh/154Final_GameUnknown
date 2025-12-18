@@ -152,10 +152,10 @@ HRESULT CPonyTail_Player::Render_Shadow()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -376,8 +376,8 @@ void CPonyTail_Player::Sync_BonesByJoint()
 		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
 
 		//본매핑콱시팔바로피직스정상화역시정상화는대재훈
-		m_pBodyModelCom->Set_CombinedTransformationMatrix(pBoneName,
-			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()));
+		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName,
+			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_CombinedWorldMatrix)));
 
 		Safe_Delete_Array(pBoneName);
 	}

@@ -15,8 +15,11 @@ HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
 	{
 		Safe_Release(m_pCurrentLevel);
 	}
+	//넘어가기 직전에 그림자 구워줌.
+	m_pGameInstance->Bake_StaticShadow();
 	
 	m_pCurrentLevel = pNewLevel;
+	
 	return S_OK;
 }
 
