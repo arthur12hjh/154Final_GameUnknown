@@ -595,6 +595,22 @@ HRESULT CModel::Initialize_AnimationBufferResource()
         m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
     }        
 
+    Release_AnimationChannel();
+
+    return S_OK;
+}
+
+HRESULT CModel::Release_AnimationChannel()
+{
+    // 나중에 활성 메모리 부족하면 작업해야함
+    //for (auto& pAnim : m_Animations)
+    //{
+    //    auto pChannels = pAnim->Get_vChannels();
+    //    for (auto& pChannel : *pChannels)
+    //        Safe_Release(pChannel);
+    //
+    //    pChannels->clear();
+    //}
 
     return S_OK;
 }

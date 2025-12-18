@@ -35,6 +35,8 @@ HRESULT CNaytibaRightWeaponPart::Initialize(void* pArg)
 	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
+	m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f));
+
 	return S_OK;
 }
 
