@@ -583,8 +583,6 @@ void CRenderer::Render_Occlusion()
 	if (FAILED(m_pOcclusionShader->Begin(0)))
 		return;
 
-	m_pOcclusionVIBuffer->Bind_Resources();
-
 	ID3D11RasterizerState* pOldRS = nullptr;
 	m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
 	m_pContext->RSSetState(m_pRS_OcclusionQuery);
@@ -593,6 +591,12 @@ void CRenderer::Render_Occlusion()
 	{
 		if (nullptr != pRenderObject)
 		{
+			if (pRenderObject->Get_Depth() < 100.f)
+			{
+				Safe_Release(pRenderObject);
+				continue;
+			}
+
 			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
 
 			if (nullptr != pCollider)
@@ -602,10 +606,23 @@ void CRenderer::Render_Occlusion()
 
 				const _float4x4* pWorldMatrix = pCollider->Get_WorldMatrixPtr();
 
-				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", pWorldMatrix)))
+
+				_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
+				_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
+
+				_vector vPos = matWorld.r[3];
+
+				matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				matWorld = matWorld * XMMatrixScaling(0.7f, 0.7f, 0.7f);
+
+				matWorld.r[3] = vPos;
+
+				XMStoreFloat4x4(&WorldMatrix, matWorld);
+
+				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 					continue;
 
-				m_pOcclusionVIBuffer->Render();
+				pCollider->Render();
 
 				m_pGameInstance->End_Obejct_Query(pRenderObject);
 			}

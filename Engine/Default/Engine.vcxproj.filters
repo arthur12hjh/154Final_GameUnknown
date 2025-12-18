@@ -151,6 +151,9 @@
     <ClInclude Include="..\public\BlendObject.h">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Shadow.h">
+      <Filter>01.Utility\11.Shadow</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
@@ -370,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\JointChain.h">
       <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Frustum.h">
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CascadeShadow.h">
       <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
