@@ -43,7 +43,10 @@
 
 #include "MonsterFSM.h"
 #include "Nayitba.h"
+
 #include "NayitbaPartBody.h"
+#include "NaytibaLeftWeaponPart.h"
+#include "NaytibaRightWeaponPart.h"
 
 #include "Spawner.h"
 #include "MonsterController.h"
@@ -776,6 +779,20 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Nayitba_Left_Weapon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Nayitba_Left_Weapon");
+	pProtoDesc.pPrototype = CNaytibaLeftWeaponPart::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Nayitba_Right_Weapon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Nayitba_Right_Weapon");
+	pProtoDesc.pPrototype = CNaytibaRightWeaponPart::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_ORM");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/005_A_TAoRM.dds"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -805,9 +822,8 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 	
-	
 	/* For.Prototype_Component_Model_Scarlet_Weapon */
-	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Weapon");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Weapon.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -815,7 +831,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Scarlet_Scabbard */
-	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Scabbard");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Weapon/CH_M_Scarlet_Scabbard.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

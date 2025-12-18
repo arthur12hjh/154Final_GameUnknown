@@ -850,6 +850,15 @@
     <Filter Include="97.ShaderFiles\Instancing\Point\Mouse">
       <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\PartBody\Weapon">
+      <UniqueIdentifier>{f0a04bef-67c4-4396-a34b-80b0e8a2cdb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\PartBody\Weapon\Left">
+      <UniqueIdentifier>{7dd434c6-44f2-4690-b439-48d7bf14eff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Naytiba\PartBody\Weapon\Right">
+      <UniqueIdentifier>{d7e8c404-b1b6-483f-a653-a780c3b13e15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1709,6 +1718,12 @@
     <ClInclude Include="..\Public\CameraActionInserter.h">
       <Filter>30.ImGui\CameraInserter</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NaytibaRightWeaponPart.h">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaLeftWeaponPart.h">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Left</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2537,6 +2552,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CameraActionInserter.cpp">
       <Filter>30.ImGui\CameraInserter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Left</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
