@@ -355,6 +355,11 @@ void CPhysx_Manager::Free()
 
     m_CCTs.clear();
     
+    if (nullptr != m_pHeightField)
+    {
+        m_pHeightField->release();
+        m_pHeightField = nullptr;
+    }
 
     for (auto& Terrain : m_pTerrains)
     {
