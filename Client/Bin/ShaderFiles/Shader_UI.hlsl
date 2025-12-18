@@ -62,6 +62,8 @@ float g_fRotation = 0.f;
 
 bool g_isActive = false;
 
+float2 g_vTransOffset = { 0.f, 0.f };
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -965,6 +967,7 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
     float2 KeyUv = In.vTexcoord;
     float baseScale = 0.25f;
     float4 cooltime = 0.f;
+    float4 locked = 0.f;
     
     //float4 Color = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -995,12 +998,15 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
         float mask = CoolMask(In.vTexcoord, g_fCoolAmount);
         cooltime *= mask;
         //cooltime.a *= 1.25f;
+        //cooltime.a = g_Alpha;
     }
     
     float4 result = key;
     result = lerp(result, cooltime, cooltime.a);
+    result.a *= g_Alpha;
     
     Out.vColor = result;
+    
     
     return Out;
 }
@@ -1252,6 +1258,33 @@ PS_OUT PS_LOCKON(PS_IN In)
 
 /*------------------[E_LOCKON]----------------*/
 
+/*------------------[S_OWNGOLD]----------------*/
+
+PS_OUT PS_OWNGOLD(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float2 ScaleUV = In.vTexcoord;
+    ScaleUV -= float2(0.f, (0.5f + g_vTransOffset.y));
+    ScaleUV.x /= g_fScale;
+    ScaleUV += float2(0.f, (0.5f + g_vTransOffset.y));
+        
+    float4 Icon = g_Texture0.Sample(ClampSampler, ScaleUV);
+    float4 Shadow = g_Texture1.Sample(DefaultSampler, uv);
+        
+    float4 Color = Shadow * g_Alpha;
+    Color = lerp(Color, Icon, Icon.a);
+    
+    Out.vColor = Color * g_Alpha;
+    //Out.vColor.a = g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_OWNGOLD]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1484,5 +1517,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LOCKON();
+    }
+
+    pass OWNGOLD // 22
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OWNGOLD();
     }
 }

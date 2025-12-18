@@ -3,6 +3,21 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
+#define CASCADE_LEVEL 5
+
+struct GS_OUT_SHADOW
+{
+    float4 vPosition : SV_Position;
+    float4 vProjPos : TEXCOORD0; 
+    uint iSlice : SV_RenderTargetArrayIndex;
+};
+
+struct PS_IN_SHADOW
+{
+    float4 vPosition : SV_Position;
+    float4 vProjPos : TEXCOORD0;
+    uint iSlice : SV_RenderTargetArrayIndex;
+};
 
 float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
                    float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)

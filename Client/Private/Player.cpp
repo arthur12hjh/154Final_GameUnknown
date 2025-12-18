@@ -182,24 +182,24 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_Interaction(fTimeDelta);
 	Update_PotionUse(fTimeDelta);
 
-	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	// if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-	//	 Use_RushSkill();
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+		Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta); 
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CPlayer::Render()
@@ -454,6 +454,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
+	m_PlayerDesc.iOwnGold			= 0;
+
 	return S_OK;
 }
 
@@ -539,7 +541,6 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
 		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
-
 		if (nullptr == pInteractionCom)
 			return;
 
@@ -582,6 +583,16 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		case INTERACTION_STATE::END:
 			break;
 		}
+	}
+	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		if (nullptr == pInteractionCom)
+			return;
+
+		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+		if (0.f < pInteractionObject->Get_InterDesc()->fInteractionTime)
+			pInteractionObject->Reset_Interaction();
 	}
 }
 
@@ -762,9 +773,9 @@ void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 	vCharacterPos += vCharacterLook * pSkillData->fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
-		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
-		return;
+	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
+	if(pHitBox)
+		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -795,6 +806,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
+	m_pGameManager->Bind_GameCharacter(nullptr);
+
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);

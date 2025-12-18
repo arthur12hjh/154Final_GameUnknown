@@ -149,6 +149,7 @@
     <ClInclude Include="..\Public\Body_Dororong.h" />
     <ClInclude Include="..\Public\Body_Extra.h" />
     <ClInclude Include="..\Public\Body_Gigas.h" />
+    <ClInclude Include="..\Public\Body_Scarlet.h" />
     <ClInclude Include="..\Public\Camera_AnimationEditor.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Character_Manager.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="..\Public\Dororong.h" />
     <ClInclude Include="..\Public\Extra.h" />
     <ClInclude Include="..\Public\Face_Character.h" />
+    <ClInclude Include="..\Public\Face_Scarlet.h" />
     <ClInclude Include="..\Public\Gigas.h" />
     <ClInclude Include="..\Public\Grid.h" />
     <ClInclude Include="..\Public\Hair_Character.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\ModelTerrain.h" />
     <ClInclude Include="..\Public\PonyTail_Character.h" />
+    <ClInclude Include="..\Public\Scarlet.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Tool_Manager.h" />
     <ClInclude Include="..\Public\Weapon.h" />
@@ -189,6 +192,7 @@
     <ClCompile Include="..\Private\Body_Dororong.cpp" />
     <ClCompile Include="..\Private\Body_Extra.cpp" />
     <ClCompile Include="..\Private\Body_Gigas.cpp" />
+    <ClCompile Include="..\Private\Body_Scarlet.cpp" />
     <ClCompile Include="..\Private\Camera_AnimationEditor.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\Character_Manager.cpp" />
@@ -196,6 +200,7 @@
     <ClCompile Include="..\Private\Dororong.cpp" />
     <ClCompile Include="..\Private\Extra.cpp" />
     <ClCompile Include="..\Private\Face_Character.cpp" />
+    <ClCompile Include="..\Private\Face_Scarlet.cpp" />
     <ClCompile Include="..\Private\Gigas.cpp" />
     <ClCompile Include="..\Private\Grid.cpp" />
     <ClCompile Include="..\Private\Hair_Character.cpp" />
@@ -234,6 +239,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelTerrain.cpp" />
     <ClCompile Include="..\Private\PonyTail_Character.cpp" />
+    <ClCompile Include="..\Private\Scarlet.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Tool_Manager.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />

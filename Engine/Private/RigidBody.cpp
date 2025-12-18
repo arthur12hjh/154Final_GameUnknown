@@ -24,12 +24,17 @@ HRESULT CRigidBody::Initialize_Prototype()
 HRESULT CRigidBody::Initialize(void* pArg)
 {
 	RIGIDBODY_DESC* pDesc = static_cast<RIGIDBODY_DESC*>(pArg);
-
+		
 	if (FAILED(Ready_PxMaterial(pDesc)))
 		return E_FAIL;
 	
-	if (FAILED(Ready_PxShape(pDesc)))
-		return E_FAIL;
+	if (RIGIDBODY_SHAPE::NONE != pDesc->eRigidBodyShape)
+	{
+		if (FAILED(Ready_PxShape(pDesc)))
+			return E_FAIL;
+	}
+	else
+		m_eShape = RIGIDBODY_SHAPE::NONE;
 
 	if (FAILED(Ready_PxRigidBody(pDesc)))
 		return E_FAIL;
@@ -37,7 +42,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
     return S_OK;
 }
 
-void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
+void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarget)
 {
 	if (true == m_isSyncByPhysx)
 	{
@@ -47,9 +52,9 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix)
 	}
 	else
 	{
-		//if (RIGIDBODY_TYPE::KINEMATIC == m_eType)
-		//	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
-		//else
+		if (RIGIDBODY_TYPE::KINEMATIC == m_eType && true == isKinematicTarget)
+			static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+		else
 			m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 	}
 }
@@ -245,8 +250,12 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 		break;
 	}
 
+	//Shape 생성하지 않으면 여기서 멈추고 끝낸다.
+	if (RIGIDBODY_SHAPE::NONE == m_eShape)
+		return S_OK;
+
 	//트라이앵글은 예외처리 해준다.
-	if (m_eShape == RIGIDBODY_SHAPE::TRIANGLE)
+	if (RIGIDBODY_SHAPE::TRIANGLE == m_eShape)
 	{
 		for (auto& pShape : m_TriangleShapes)
 		{

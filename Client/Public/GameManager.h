@@ -47,6 +47,7 @@ public :
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
+	const vector<SCRIPT_DATA>*		Get_ScriptData(const _wstring& szScriptTag);
 
 #ifdef _DEBUG
 	map<_uint, CAMERA_ANIMATION_DATA>* Get_CameraAnimationMap();
@@ -81,8 +82,9 @@ public:
 
 #pragma region Pool Manager
 	HRESULT											Setting_PoolManager(_uint iLevelID);
-	CGameObject*									SetActivePoolObject(_uint iLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag);
-	void											UnActivePoolObject(const WCHAR* szPoolTag, CGameObject* pObject);
+	HRESULT											ADD_PoolManager(_uint iLevelID, _uint iProtoTypeLevel, const WCHAR* ProtoTypeName, void* pArg, const WCHAR* szPoolTag, _uint iCount);
+	CGameObject*									SetActivePoolObject(_uint iLevel, _uint iProtoTypeLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag);
+	void											UnActivePoolObject(_uint iLevelID, const WCHAR* szPoolTag, CGameObject* pObject);
 #pragma endregion
 
 #pragma region Damage Logic

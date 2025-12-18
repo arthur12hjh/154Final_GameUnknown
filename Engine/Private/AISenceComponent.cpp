@@ -149,12 +149,12 @@ void CAISenceComponent::SetTraceHitType(HIT_TYPE eHitType)
 
 void CAISenceComponent::ADD_SenceIgnoreTraceObject(HIT_TYPE eHitType)
 {
-	m_pTargetSearchCol->ADD_IgnoreObject(eHitType);
+	m_pTargetSearchCol->ADD_IgnoreObjectType(eHitType);
 }
 
 void CAISenceComponent::ADD_SenceOnlyTraceObject(HIT_TYPE eHitType)
 {
-	m_pTargetSearchCol->ADD_OnlyHitObject(eHitType);
+	m_pTargetSearchCol->ADD_OnlyHitObjectType(eHitType);
 }
 
 HRESULT CAISenceComponent::ADD_Components()

@@ -8,7 +8,10 @@ float4 g_vFogColor;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
-matrix g_LightViewMatrix, g_LightProjMatrix;
+
+matrix g_LightViewMatrix[5];
+matrix g_LightProjMatrix[5];
+
 texture2D g_Texture;
 vector g_vCamPosition;
 float g_fDensity;
@@ -26,11 +29,10 @@ texture2D g_ShadowTexture;
 texture2D g_SSAOTexture;
 texture2D g_SSSAOTexture;
 
-texture2D g_BlackBlendTexture;
-texture2D g_BlurFinalTexture;
+texture2D g_BlurFinalTexture; 
 texture2D g_GlowFinalTexture;
-texture2D g_GlowBloomTexture;
-texture2D g_MetaballTexture;
+texture2D g_BlurWeightTexture;
+texture2D g_GlowWeightTexture;
 texture2D g_EmissiveFinalTexture;
 
 texture2D g_DistortionTexture;
@@ -41,6 +43,17 @@ texture2D g_VolumetricTexture;
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
 
+Texture2DArray g_CascadeShadowTexture;
+float g_fCascadeEnds[6] = { 
+    0.1f,
+	10.0f,
+	20.0f,
+	40.f,
+	100.f,
+	500.f,
+};
+
+
 vector g_vLightDir;
 vector g_vLightPos;
 vector g_vLightDiffuse;
@@ -50,6 +63,7 @@ float g_fLightRange;
 float g_fFalloff;
 float g_fTheta;
 float g_fPhi;
+
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -75,9 +89,6 @@ PS_OUT_BACKBUFFER PS_MAIN_DEBUG(PS_IN In)
     return Out;   
 }
 
-//---------------------------------------------------
-// MAIN
-//---------------------------------------------------
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
@@ -353,64 +364,7 @@ PS_OUT_LIGHT PS_MAIN_VOLUMETRIC_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
     
-    vector vPosition;
-    vector vShadowPosition;
-    vector vDepth = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    vPosition.x = In.vTexcoord.x * 2.f - 1.f;
-    vPosition.y = In.vTexcoord.y * -2.f + 1.f;
-    vPosition.z = vDepth.x;
-    vPosition.w = 1.f;
-    float fViewZ = vDepth.y * g_fFar;
-    
-    vPosition *= fViewZ;
-
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-    
-    vector vRayFromCamera = normalize(vPosition - g_vCamPosition);
-    
-    float fEnd = length(vPosition.xyz - g_vCamPosition.xyz);
-    fEnd = min(fEnd, 100.f);
-    
-    float fT = 0.f;
-    float fTrans = 1.f;
-    float3 vResult = float3(0.f, 0.f, 0.f);
-    
-    float g = g_fVolumetricG;
-    float LdotV = dot(normalize(g_vLightDir.xyz) * -1.f, vRayFromCamera.xyz);
-    float fPhase = (1.0f - g * g) / (pow(1.0f + g * g - 2.0f * g * LdotV, 1.5f));
-    
-    int iCount = 0;
-    
-    while (fT < fEnd && fTrans > 0.01f && iCount < 64)
-    {
-        float3 vSamplePos = g_vCamPosition.xyz + vRayFromCamera.xyz * fT;
-
-        vector vShadowPosition = mul(vector(vSamplePos, 1.f), g_LightViewMatrix);
-        vShadowPosition = mul(vShadowPosition, g_LightProjMatrix);
-        
-        float2 vShadowUV;
-        vShadowUV.x = ((vShadowPosition.x / vShadowPosition.w) * 0.5f + 0.5f);
-        vShadowUV.y = ((vShadowPosition.y / vShadowPosition.w) * -0.5f + 0.5f);
-
-        float fShadowMapDepth = g_ShadowTexture.Sample(DefaultSampler, vShadowUV).r * g_fFar;
-        float fCurrentDepth = vShadowPosition.w;
-
-        float fBias = 0.05f;
-        float fShadow = (fCurrentDepth - fBias > fShadowMapDepth) ? 1.0f : 0.0f;
-        float fVisibility = 1.0f - fShadow;
-
-        fTrans *= exp(-g_fDensity * g_fStepSize);
-        
-        float3 vInScatter = g_vLightDiffuse * g_fDensity * fPhase * fVisibility;
-
-        vResult += vInScatter * fTrans * g_fStepSize;
-        fT += g_fStepSize;
-        iCount++;
-    }
-    
-    Out.vShade = float4(vResult, 1.f);
+    Out.vShade = float4(0.f, 0.f, 0.f, 0.f);
     Out.vSpecular = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -437,15 +391,19 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     
     vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vVolumetric = g_VolumetricTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vSSAO = g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord);
     
     // vDiffuse * vShade + vSpecular;
-    Out.vBackBuffer = ((vShade + vSpecular) * vSSAO) + vVolumetric;
+    Out.vBackBuffer = ((vShade + vSpecular) * vSSAO);
     Out.vBloomScene = vShade;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * g_fFar;
+    int iIdx = 0;
+
+    [unroll]
+    for (uint i = 0; i < 5; ++i)
+        iIdx += (fViewZ >= g_fCascadeEnds[i + 1]);
     
     vector vPosition;
     
@@ -454,6 +412,7 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
+   
     
     // 로컬위치 * 월드 * 뷰 * 투영 
     // w 나누기 상쇄.
@@ -465,12 +424,12 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     // 로컬위치 * 월드   
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
-    vPosition = mul(vPosition, g_LightViewMatrix);
-    vPosition = mul(vPosition, g_LightProjMatrix);
+    vPosition = mul(vPosition, g_LightViewMatrix[iIdx]);
+    vPosition = mul(vPosition, g_LightProjMatrix[iIdx]);
     
     //그림자 연산
-    Out.vBackBuffer = Calc_Shadow(Out.vBackBuffer, g_ShadowTexture, vPosition);
-    Out.vBloomScene = Calc_Shadow(Out.vBloomScene, g_ShadowTexture, vPosition);
+    Out.vBackBuffer = Calc_Shadow_CSM(Out.vBackBuffer, g_CascadeShadowTexture, vPosition, iIdx, g_fFar);
+    Out.vBloomScene = Calc_Shadow_CSM(Out.vBloomScene, g_CascadeShadowTexture, vPosition, iIdx, g_fFar);
     
     return Out;
 }
@@ -491,18 +450,19 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     
     
-    float4 vBlack = g_BlackBlendTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 vBlur = saturate(Calc_Blur(g_BlurFinalTexture, In.vTexcoord));
-    float4 vGlow = saturate(Calc_Glow(g_GlowFinalTexture, In.vTexcoord));
-    float4 vGlowBloom = saturate(Calc_Glow(g_GlowBloomTexture, In.vTexcoord));
-    float4 vMetaball = saturate(Calc_Glow(g_MetaballTexture, In.vTexcoord));
+    //vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
+    //vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
+    //fBlurAlpha.r = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
+    //fBlurAlpha.g = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).g + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).g);
+    vector fBlur;
+    fBlur.rgb = Calc_Blur(g_BlurFinalTexture, In.vTexcoord).rgb / (Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
+    fBlur.a = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
+    vector fGlow;
+    fGlow.rgb = Calc_Glow(g_GlowFinalTexture, In.vTexcoord).rgb / (Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
+    fGlow.a = saturate(Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
     
-    
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vBlack.a) + vBlack.rgb * vBlack.a;
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vMetaball.a) + vMetaball.rgb * vMetaball.a;
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vGlow.a) + vGlow.rgb * vGlow.a;
-    Out.vBackBuffer.rgb += vGlowBloom.rgb * vGlowBloom.a;
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vBlur.a) + vBlur.rgb * vBlur.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fGlow.a) + saturate(fGlow.rgb) * fGlow.a;
     
     return Out;
 }

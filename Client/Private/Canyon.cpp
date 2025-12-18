@@ -99,7 +99,7 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
     _float3 vColliderSize = pCullingCollider->GetBounding().Extents;
 
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -119,7 +119,7 @@ HRESULT CCanyon::Ready_Col(const _tchar* pComponentTag)
 	strComponentTag += TEXT("_COL");
 
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), strComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
 		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
 		return E_FAIL;
 

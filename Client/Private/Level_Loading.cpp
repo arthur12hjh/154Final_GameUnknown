@@ -3,6 +3,7 @@
 
 #include "Loader.h"
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
@@ -13,7 +14,12 @@
 #include "UIWrapper.h"
 #include "UIImage.h"
 #include "UIText.h"
+#include "UIScript.h"
 #include "UILoadingBlur.h"
+
+#ifdef _DEBUG
+#include "ImGuiManager.h"
+#endif // _DEBUG
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -31,12 +37,15 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 	if (nullptr == m_pLoader)
 		return E_FAIL;
 
+	m_pGameInstance->Clear_Resources(ENUM_CLASS(LEVEL::LEVEL_PROB), true);
+	m_pGameInstance->Clear_LevelResource(bIsResetProtoTypes);
+
 	/* 이 레벨을 구성하기위한 객체를 만든다. */
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BackGround()))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -73,10 +82,9 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro")))
 	{
-		m_pGameInstance->Clear_LevelResource(m_bIsProtoTypes);
+		m_pGameInstance->Clear_LevelResource();
 
 		CLevel* pNewLevel = { nullptr };
-
 		switch (m_eNextLevelID)
 		{
 		case LEVEL::LOGO:
@@ -89,7 +97,6 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			pNewLevel = CLevel_Scarlet::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		}
-
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
 			return;
 	}
@@ -137,9 +144,14 @@ HRESULT CLevel_Loading::Ready_Prototypes()
 		CUIImage::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_Script"),
+		CUIScript::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_LoadingBlur"),
 		CUILoadingBlur::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -157,6 +169,19 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 		return E_FAIL;
 
 	pUIHUD->Set_Show_Debug_Rect(false);
+
+	CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
+	
+	if (!pScript)
+		return E_FAIL;
+
+	auto pGameManager = CGameManager::GetInstance();
+
+	if (!pGameManager)
+		return E_FAIL;
+
+	pScript->Set_Script(*pGameManager->Get_ScriptData(TEXT("Loading")));
+	Safe_Release(pGameManager);
 
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
 

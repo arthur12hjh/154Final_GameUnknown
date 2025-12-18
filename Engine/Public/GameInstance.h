@@ -21,7 +21,9 @@ public:
 	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 	void Update_Engine(_float fTimeDelta);
 	HRESULT Draw();
-	void Clear_Resources(_uint iLevelIndex);
+
+	void	Kill_Objects();
+	void Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype);
 
 	_float Random_Normal();
 	_float Random(_float fMin, _float fMax);
@@ -60,8 +62,9 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
-	HRESULT				Clear_LevelResource(_bool bIsClearPrototypeData = true);
+	HRESULT				Clear_LevelResource(_bool bIsClearProtoTypes = true);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
+	
 	_uint				GetCurrentLevelID();
 
 	// 이거 레퍼런스 카운트 증가합니다.
@@ -69,11 +72,13 @@ public:
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
-	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
-	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
-	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
-	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
-	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	HRESULT										Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
+	HRESULT										Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
+	class CBase*								Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+
+	const map<const _wstring, class CBase*>*	Get_Prototypes_InLevel(_uint iLevelIndex);
+	class CBase*								Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	_bool										bIsClearLevelResource(_uint iLevelID);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
@@ -88,10 +93,11 @@ public:
 #pragma endregion
 
 #pragma region RENDERER
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
-	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
-	void	Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
@@ -155,7 +161,7 @@ public:
 #pragma endregion
 
 #pragma region TARGET_MANAGER
-	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount = 1);
 	HRESULT						Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
 	HRESULT						Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
@@ -163,6 +169,8 @@ public:
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
 	HRESULT						Bind_RenderTarget(const _wstring& strTargetTag, class CShader* pShader, const _char* pConstantName);
 	HRESULT						Clear_MRT(const _wstring& strMRTag);
+	HRESULT						Change_DSV(ID3D11DepthStencilView* pDSV);
+	HRESULT						End_DSV();
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
@@ -178,7 +186,11 @@ public:
 
 #pragma region SHADOW
 	HRESULT Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
-	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);	
+	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT Bind_Shader_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType );
+	HRESULT Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+
+	_float* Get_CascadeEnds();
 #pragma endregion
 
 #pragma region FRUSTUM
@@ -187,8 +199,8 @@ public:
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
 	_bool				isIn_DistanceFrustum(_vector vPoint, _float fDistance);
-
-
+	const _float4*		Get_FrustumWorldPoints() const;
+	const _float4*		Get_FrustumWorldRays() const;
 #ifdef _DEBUG
 	void				FrustomRender();
 #endif
@@ -272,6 +284,7 @@ public:
 #pragma endregion
 
 #pragma region Physx_Manager
+	void		Physx_Clear();
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
 	PxScene*	Get_PxScene();
@@ -387,7 +400,7 @@ private:
 	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
-
+	_uint							m_iNumLevels = {};
 #pragma endregion
 
 #pragma region FPS

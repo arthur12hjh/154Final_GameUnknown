@@ -2,7 +2,7 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,S
 1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,1,0,11
 2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,4,3,139
 3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,1,0,11
-4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,2,11
+4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,3,2,11
 5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,1,2,11
 6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,1,2,11
 7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,1,11
@@ -13,6 +13,7 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,S
 12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,4,1,138
 13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,5,3,11
 14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,136
+21,M_Scarlet_BattlIdle01,None,None,0,0,"0,0,0",0,1,1,136
 511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",2,4,0,11
 512,M_Beholder_Swing,None,None,12,5,"1,1,2",1,4,0,1
 513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",1,4,0,8

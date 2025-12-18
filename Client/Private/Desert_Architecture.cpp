@@ -42,6 +42,7 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 		}
 	}*/
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
+		return S_OK;
 
 	return S_OK;
 }
@@ -99,7 +100,7 @@ HRESULT CDesert_Architecture::Render()
 HRESULT CDesert_Architecture::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -141,8 +142,8 @@ HRESULT CDesert_Architecture::Ready_Col(const _tchar* pComponentTag)
 
 	// 충돌처리를 할지말지 
 	// DYNAMIC : 충돌 
-	// KINEMATIC : 충돌 X
-	// STATIC : 충돌 O, 대신 고정되어 있음.
+	// KINEMATIC : 충돌 O, 제한적으로 움직일 방법이 있음.
+	// STATIC : 충돌 O, 대신 고정되어 있음. 아예 절대 못움직임 (지형같은거)
 	// ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 
 	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;

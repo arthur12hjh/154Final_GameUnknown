@@ -250,10 +250,13 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_bIsMimesis)
 	{
-		CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-		AttackStateDesc.pTarget = pTarget;
-		AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-		m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+		if (fDistance <= m_pOwnerData->fAttackRange)
+		{
+			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+			AttackStateDesc.pTarget = pTarget;
+			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+		}
 	}
 	else
 	{

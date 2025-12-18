@@ -34,6 +34,7 @@ private:
 	_float m_fCurrentFill = 1.0f;   // 현재 값
 	_float m_fTargetFill = 1.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
+	_float2 m_vPotionUV = { 1.f, 1.f };
 
 public:
 	static CUIPotionStack* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

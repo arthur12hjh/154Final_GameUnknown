@@ -60,6 +60,12 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 
 		vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vTempOwnerPos));
+		if (fDistance > pNaytibaDefaultInfo->fAttackRange * 2.5f)
+		{
+			if (DIRECTION::FRONT != m_eDirection)
+				Refresh_MovePoint();
+		}
+		
 		if (fDistance < pNaytibaDefaultInfo->fAttackRange * 0.7f)
 		{
 			if(DIRECTION::FRONT == m_eDirection )
@@ -119,7 +125,7 @@ void CTask_Move::Refresh_MovePoint()
 	if (fDistance < fATKRange * 2.f)
 	{
 		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-		if (50 > fRandomIndex)
+		if (40.f > fRandomIndex)
 		{
 			m_eDirection = DIRECTION::LEFT;
 			m_szAnimationName += "_Caution_Lw";

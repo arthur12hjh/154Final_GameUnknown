@@ -157,7 +157,7 @@ void CLift_Controller::SetControllPlatform(CLift_Platform* pControllPlatform)
 HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), pComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -201,7 +201,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	_wstring strComponentTag = pComponentTag;
 	strComponentTag += TEXT("_COL");
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), strComponentTag,
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
 		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
 		return E_FAIL;
 
@@ -277,8 +277,8 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 
 void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-		m_fInteractionDuration.x += fTimeDelta;
+	if (!IsInteractionEnable())
+		m_fInteractionDuration += fTimeDelta;
 
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
@@ -299,7 +299,7 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 		}
 
-		m_fInteractionDuration.x = 0.f;
+		m_fInteractionDuration = 0.f;
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
 			m_pModelCom->Set_AnimationIndex(1, false);

@@ -166,6 +166,10 @@
     <ClInclude Include="..\Public\Camera_Action.h" />
     <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
+    <ClInclude Include="..\Public\CinematicModel_Eve.h" />
+    <ClInclude Include="..\Public\CinematicModel_Gorilla.h" />
+    <ClInclude Include="..\Public\CinematicModel_Scarlet.h" />
+    <ClInclude Include="..\Public\Cinematic_Manager.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -247,8 +251,11 @@
     <ClInclude Include="..\Public\PlayerFSM.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\Public\RimLight.h" />
+    <ClInclude Include="..\public\ScarletBehaviorTree.h" />
+    <ClInclude Include="..\public\ScarletBlackBoard.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
+    <ClInclude Include="..\public\Sky_Scarlet.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -355,6 +362,9 @@
     <ClInclude Include="..\public\StoneWall2.h" />
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\public\Task_Dead.h" />
+    <ClInclude Include="..\public\Task_ScarletAttack.h" />
+    <ClInclude Include="..\public\Task_ScarletDead.h" />
+    <ClInclude Include="..\public\Task_ScarletMove.h" />
     <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
@@ -372,6 +382,7 @@
     <ClInclude Include="..\Public\Top_Roof.h" />
     <ClInclude Include="..\public\TrailData.h" />
     <ClInclude Include="..\Public\TrailEffect.h" />
+    <ClInclude Include="..\Public\TriggerBox.h" />
     <ClInclude Include="..\Public\UIActionEvent.h" />
     <ClInclude Include="..\Public\UIAnimInstance.h" />
     <ClInclude Include="..\Public\UIAnimManager.h" />
@@ -386,6 +397,7 @@
     <ClInclude Include="..\Public\UIBossStaminaFX.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
+    <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
     <ClInclude Include="..\Public\UILockOn.h" />
@@ -394,6 +406,7 @@
     <ClInclude Include="..\Public\UIMonsterShield.h" />
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
+    <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UISimpleKey.h" />
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
     <ClInclude Include="..\Public\UIButton.h" />
@@ -433,6 +446,10 @@
     <ClCompile Include="..\Private\Camera_Action.cpp" />
     <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
+    <ClCompile Include="..\Private\CinematicModel_Eve.cpp" />
+    <ClCompile Include="..\Private\CinematicModel_Gorilla.cpp" />
+    <ClCompile Include="..\Private\CinematicModel_Scarlet.cpp" />
+    <ClCompile Include="..\Private\Cinematic_Manager.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -514,8 +531,11 @@
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\Private\RimLight.cpp" />
+    <ClCompile Include="..\private\ScarletBehaviorTree.cpp" />
+    <ClCompile Include="..\private\ScarletBlackBoard.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
+    <ClCompile Include="..\private\Sky_Scarlet.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
@@ -638,6 +658,9 @@
     <ClCompile Include="..\private\StoneWall2.cpp" />
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp" />
+    <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
+    <ClCompile Include="..\private\Task_ScarletDead.cpp" />
+    <ClCompile Include="..\private\Task_ScarletMove.cpp" />
     <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
@@ -655,6 +678,7 @@
     <ClCompile Include="..\Private\Top_Roof.cpp" />
     <ClCompile Include="..\private\TrailData.cpp" />
     <ClCompile Include="..\Private\TrailEffect.cpp" />
+    <ClCompile Include="..\Private\TriggerBox.cpp" />
     <ClCompile Include="..\Private\UIActionEvent.cpp" />
     <ClCompile Include="..\Private\UIAnimInstance.cpp" />
     <ClCompile Include="..\Private\UIAnimManager.cpp" />
@@ -668,6 +692,7 @@
     <ClCompile Include="..\Private\UIBossStamina.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
+    <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\Private\UILockOn.cpp" />
@@ -676,6 +701,7 @@
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
+    <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\Private\UIButton.cpp" />

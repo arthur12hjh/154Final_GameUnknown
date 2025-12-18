@@ -23,6 +23,7 @@
 #include "EffectSRV.h"
 
 #include "Notify.h"
+#include "TriggerBox.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -61,7 +62,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::LOGO)))
+	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;		
 
 	ShowCursor(FALSE);
@@ -90,7 +91,6 @@ void CMainApp::Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pImGuiDebug->Update(fTimeDelta);
 #endif
-
 
 }
 
@@ -160,6 +160,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
 	InstanceDesc.iNumInstance = 1;
 
@@ -190,6 +195,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Cursor/cursor_%d.png"), 4))))
 		return E_FAIL;
 	
+
+	/* For.Prototype_GameObject_TriggerBox */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		CTriggerBox::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
@@ -302,8 +312,8 @@ void CMainApp::Free()
 	Safe_Release(m_pImGuiDebug);
 #endif
 
-	m_pGameInstance->Release_Engine();
-
-	Safe_Release(m_pGameInstance);	
 	Safe_Release(m_pGameManager);
+	m_pGameInstance->Release_Engine();
+	Safe_Release(m_pGameInstance);	
+	
 }

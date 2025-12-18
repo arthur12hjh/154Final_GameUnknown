@@ -33,6 +33,11 @@ HRESULT CUISkillWrapperLineFX::Initialize(void* pArg)
 void CUISkillWrapperLineFX::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (m_tUIDesc.fAlpha <= 0.f)
+		m_eVisibility = VISIBILITY::HIDDEN;
+	else
+		m_eVisibility = VISIBILITY::VISIBLE;
 }
 
 void CUISkillWrapperLineFX::Update(_float fTimeDelta)

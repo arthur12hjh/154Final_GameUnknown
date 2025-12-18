@@ -28,6 +28,8 @@ public:
 public:
 	HRESULT					Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight);
 	CLight*					Find_Light(_uint iIndex);
+	
+	void					Clear_Light();
 	void					Clear_DeadLight();
 
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);

@@ -6,6 +6,8 @@
 #include "Effect.h"
 #include "UIHUD.h"
 #include "UIGetterQueue.h"
+#include "GameManager.h"
+#include "Player.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -19,9 +21,6 @@ CItem::CItem(const CItem& Prototype) :
 
 HRESULT CItem::Initialize_Prototype()
 {
-
-
-
 	return S_OK;
 }
 
@@ -159,7 +158,6 @@ HRESULT CItem::Begin_OverlapCallBack()
 HRESULT CItem::End_OverlapCallBack()
 {
 	__super::End_OverlapCallBack();
-	m_eInterState = INTERACTION_STATE::END;
 
 	return S_OK;
 }
@@ -167,8 +165,8 @@ HRESULT CItem::End_OverlapCallBack()
 void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
-	if (m_fInteractionDuration.x <= m_fInteractionDuration.y)
-		m_fInteractionDuration.x += fTimeDelta;
+	if (!IsInteractionEnable())
+		m_fInteractionDuration += fTimeDelta;
 
 	if (INTERACTION_STATE::DEFAULT == m_eInterState)
 	{
@@ -188,12 +186,19 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 				WCHAR pText[MAX_PATH] = {};
 				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
 				pGetterQueue->Insert_Queue(pText);
+
+				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+				if (pPlayer)
+					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+
+				Safe_Release(pPlayer);
 			}
 		}
 		Safe_Release(pHUD);
 
 		m_eInterState = INTERACTION_STATE::ACTIVE;
-		m_fInteractionDuration.x = 0.f;
+		m_fInteractionDuration = 0.f;
 		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 		Set_Dead(true);
 	}

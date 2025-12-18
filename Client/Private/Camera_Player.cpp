@@ -32,19 +32,19 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     m_pPlayerTransform = m_pGameManager->Get_PlayerDesc()->pPlayerTransform;
 
     CPlayer* pPlayer = m_pGameManager->GetGameCharacter();
-
+    
     m_fRotateX = 0.f;
     m_fRotateY = 90.f;
 
-    m_fDistance = 10.f;
-
-    m_fLookMagnification = { 1.f };
-    m_fUpMagnification = { 5.f };
-
-    Safe_Release(pPlayer);
+    m_fDistance = 12.f;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+
+    if (nullptr != pPlayer)
+        m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
+
+    Safe_Release(pPlayer);
 
     return S_OK;
 }
@@ -53,51 +53,61 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
 
     /*
-    1. ÇÃ·¹ÀÌ¾î ¾î²² À§¿¡ »¡°£»ö Pivot PositionÀ» Á¤ÇØµÎ°í,
-    2. Ä«¸Þ¶óÀÇ À§Ä¡¿Í PivotPosition »çÀÌÀÇ ¹æÇâ º¤ÅÍ¸¦ ±¸ÇØ ÆÄ¶õ»ö Á¡(View Point)¸¦ ¸¸µé°Å¾ß.
-    3. Ä«¸Þ¶ó´Â View Point·ÎºÎÅÍ ÀÏÁ¤ °Å¸®¸¸Å­ °Å¸®¸¦ µÎ°í ¹Ù¶óº¼°Å¾ß.
-    4. View Point´Â Pitch°¡ XM_PIDIV2¿¡ °¡±î¿öÁú ¼ö·Ï ¸Ö¾îÁú°Å¶ó, Ä«¸Þ¶ó ¿ª½Ã ÀÌ¿¡ ¸ÂÃß¾î ÇÃ·¹ÀÌ¾î°¡ °¡±î¿öÁú°Å¾ß
+    1. ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½î²² ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Pivot Positionï¿½ï¿½ ï¿½ï¿½ï¿½ØµÎ°ï¿½,
+    2. Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ PivotPosition ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ ï¿½ï¿½(View Point)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¾ï¿½.
+    3. Ä«ï¿½Þ¶ï¿½ï¿½ View Pointï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½Å­ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½Î°ï¿½ ï¿½Ù¶óº¼°Å¾ï¿½.
+    4. View Pointï¿½ï¿½ Pitchï¿½ï¿½ XM_PIDIV2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Å¶ï¿½, Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ß¾ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½
     */
 
     _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
     _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
 
-    // 1) °¢µµ °»½Å (Yaw / Pitch ºÐ¸®)
+    // 1) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Yaw / Pitch ï¿½Ð¸ï¿½)
     m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
     m_fYaw = XMScalarModAngle(m_fYaw);
 
     m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
 
-    // »ó´Ü ÃÖ´ë°¢µµ  
+    // ï¿½ï¿½ï¿½ ï¿½Ö´ë°¢ï¿½ï¿½  
     _float fPitchLimit = XM_PIDIV2 - 0.2f;
     if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
     if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
 
-    // ÇÃ·¹ÀÌ¾î À§Ä¡ ¹Þ¾Æ¿À±â.
-    _float3 vPlayerPos = {};
-    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
-
-    // ÇÇ¹þ À§Ä¡¸¦ ¹Þ¾Æ¿Â´Ù.
-    _float3 vPivotPos = {};
-    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVectorSet(1.f, 5.f, 0.f, 0.f));
-
-    // ViewPoint¸¦ ±¸ÇÏ±â À§ÇÑ ¹æÇâº¤ÅÍ
-    _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
-
     _float3 vViewPoint = {};
-    XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
 
     float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+	fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
     vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
 
-    // Ä«¸Þ¶ó¿Í ViewPoint °Å¸®. ¾ó¸¶°¡ ³ªÀ¸·Á³ª~?
+    // Ä«ï¿½Þ¶ï¿½ï¿½ ViewPoint ï¿½Å¸ï¿½.
     _float fCamDist = m_fDistance;
+    
+    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ä¡ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½.
+    _float3 vPlayerPos = {};
+    if (nullptr == m_pPlayerTransform)
+        return;
+
+    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
+    // ï¿½Ç¹ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Þ¾Æ¿Â´ï¿½.
+    _float3 vPivotPos = {};
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+    vPivotPos.x += fPitchRatio * -1.6f;
+    vPivotPos.y += fPitchRatio * 2.f;
+
+    // ViewPointï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½âº¤ï¿½ï¿½
+    _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
+
+    XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
+
+    if (fPitchRatio > 0.5)
+        fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
 
     _float3 vCamPos = {};
-    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * fCamDist);
+    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
 
-    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-    m_pTransformCom->LookAt(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f));
+    //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.5f);
+    m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
 
     memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
 
@@ -134,7 +144,7 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
 
 void CCamera_Player::Update(_float fTimeDelta)
 {
-    //Ä«¸Þ¶ó ½¦ÀÌÅ·À» À§ÇØ¼­ ºÎ¸ð Update È£Ãâ. 
+    //Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Î¸ï¿½ Update È£ï¿½ï¿½. 
     //__super::Update(fTimeDelta);
 }
 
@@ -188,7 +198,7 @@ void CCamera_Player::Free()
     _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
     _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
 
-    // È¸ÀüÇÒ º¤ÅÍ¿Í °¢µµ
+    // È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     _vector  StartVector = XMVectorSet(0.f, 5.f, -6.0f, 0.f);
 
     m_fRotateX += XMConvertToRadians(fMouseMoveX * 90.f);
@@ -197,7 +207,7 @@ void CCamera_Player::Free()
     m_fRotateY += XMConvertToRadians(fMouseMoveY * 45.f);
     m_fRotateY = XMScalarModAngle(m_fRotateY);
 
-    // ¶óµð¾È Á¦ÇÑ ( -90  ~ +90 + ¿©±â¿¡ Ä³¸¯ÅÍÀÇ Look º¤ÅÍ±îÁö. )
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ( -90  ~ +90 + ï¿½ï¿½ï¿½â¿¡ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Look ï¿½ï¿½ï¿½Í±ï¿½ï¿½ï¿½. )
     _float fLimit = XMConvertToRadians(15.f);
 
     if (m_fRotateY > fLimit)

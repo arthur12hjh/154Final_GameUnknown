@@ -45,7 +45,12 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	// _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
 	// 이것도 경로, 확장자명 유연하게 바꿔야하는데 일단 이 함수 쓸 객체가 플레이어 밖에 없으니까 냅둔다.
-	intptr_t handle = _findfirst64("../Bin/Resources/Models/Character/PC/Eve/Animation/*.binx*", &fd);
+	_char szPath[MAX_PATH];
+	strcpy_s(szPath, strSkeletalPath.c_str());
+	const _char szEXT[MAX_PATH] = "*.binx*";
+	
+	strcat_s(szPath, szEXT);
+	intptr_t handle = _findfirst64(szPath, &fd);
 
 	if (handle == -1)
 		return S_OK;
@@ -95,11 +100,11 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		if (FAILED(pModel->Import_Animations(static_cast<CModel*>(pAnimModel)->Get_AnimationList())))
 			return E_FAIL;
 
-		auto iter = m_pPrototypes->find(szPrototypeTag);
+		auto iter = m_pPrototypes[iLevelIndex].find(szPrototypeTag);
 
-		if (iter != m_pPrototypes->end())
+		if (iter != m_pPrototypes[iLevelIndex].end())
 		{
-			m_pPrototypes->erase(iter);
+			m_pPrototypes[iLevelIndex].erase(iter);
 			Safe_Release(pAnimModel);
 		}
 
@@ -164,6 +169,20 @@ void CPrototype_Manager::Clear(_uint iLevelIndex)
 CBase* CPrototype_Manager::Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	return Find_Prototype(iLevelIndex, strPrototypeTag);
+}
+
+_bool CPrototype_Manager::bIsClearLevelResource(_uint iLevelID)
+{
+	if (0 > iLevelID || m_iNumLevels <= iLevelID)
+	{
+		MSG_BOX("Out Bound Level ID");
+		return false;
+	}
+
+	if (m_pPrototypes[iLevelID].empty())
+		return true;
+
+	return false;
 }
 
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)

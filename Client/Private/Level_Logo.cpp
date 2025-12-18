@@ -55,12 +55,18 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (!m_bLevelTransitioning
-		&& (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE)))
+	if (!m_bLevelTransitioning)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
 		m_bLevelTransitioning = true;
 	}
+
+	/*if (!m_bLevelTransitioning
+		&& (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE)))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
+		m_bLevelTransitioning = true;
+	}*/
 
 	if ((m_bLevelTransitioning || m_bChangeLevel)
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro")))
@@ -75,7 +81,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
-		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}

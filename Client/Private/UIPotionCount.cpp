@@ -39,6 +39,8 @@ void CUIPotionCount::Priority_Update(_float fTimeDelta)
 void CUIPotionCount::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+	
+	m_iPotionCount = (nullptr == m_pParent ? 0 : static_cast<CUIPotion*>(m_pParent)->Get_PotionCount());
 }
 
 void CUIPotionCount::Late_Update(_float fTimeDelta)
@@ -97,7 +99,7 @@ HRESULT CUIPotionCount::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", dynamic_cast<CUIPotion*>(m_pParent)->Get_PotionCount())))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iPotionCount)))
 		return E_FAIL;
 
 	return S_OK;

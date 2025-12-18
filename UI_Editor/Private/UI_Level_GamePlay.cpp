@@ -35,6 +35,12 @@ HRESULT CUI_Level_GamePlay::Initialize()
 void CUI_Level_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+
+	if (m_isOverlay && m_pHUD)
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		m_isOverlay = false;
+	}
 }
 
 HRESULT CUI_Level_GamePlay::Render()

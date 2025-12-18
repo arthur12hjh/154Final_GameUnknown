@@ -124,7 +124,7 @@ namespace Client
 
 		bool							isSuperArmor = { false };
 		bool							isLookFixed = { false };
-
+		bool							isInteracting = { false };
 		// 혹시 몰라서 플레이어 데스크에 떄려박앗습니다
 		// 플레이어의 락온모드 전환 거리
 		float							fLockOnDistance = { 30.f };
@@ -158,6 +158,9 @@ namespace Client
 
 		bool   isLinkAttackAvailable = { true };
 		class CNayitba* pLinkAttackTarget = { nullptr };
+
+		// 골드
+		int iOwnGold{ 0 };
 	}PLAYER_DESC;
 
 	// 스킬 구조체
@@ -352,7 +355,7 @@ namespace Client
 	}DEFAULT_DAMAGE_DESC;
 
 	//인터랙션 타입.
-	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, END };
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, CORPSE, END };
 	//인터랙션 상태(상호작용 중, 닿았는지 등)
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
@@ -365,11 +368,18 @@ namespace Client
 	typedef struct Interaction_Data
 	{
 		_uint				iID;
-		char				szObjectTag[256];
-		char				szInteractionText[256];
+		_wstring			szObjectTag;
+		_wstring			szInteractionText;
 		_float3				vUIPivot;
+		_float				fInteractionTime;
 		INTERACTION_TYPE	eType;
 	}INTERACTION_DATA;
+
+	typedef struct Script_Data
+	{
+		_wstring			szScriptText;
+		_float4				vColor{ 1.f, 1.f, 1.f, 1.f };
+	}SCRIPT_DATA;
 
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
@@ -406,5 +416,27 @@ namespace Client
 		vector<CAMERA_TRACK_DESC>	BonePositionTrackList;				// 카메라본 위치 채널
 		vector<CAMERA_TRACK_DESC>	BoneRotationTrackList;				// 카메라본 각도 채널
 	}CAMERA_ANIMATION_DATA;
-	;
+	
+
+	// Cinematic 관련 데이터들
+	enum class CINEMATICNODE_STATE {ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, PLAY_SOUND, END };
+
+	typedef struct Cinematic_Node_Desc
+	{
+		CINEMATICNODE_STATE eState;
+		_float fTrackPosition;
+		char szObjectTag[MAX_PATH];
+		_uint iActiveIndex;
+	}CINEMATIC_NODE_DESC;
+
+	typedef struct Cinematic_Desc
+	{
+		_uint iCinematicID;
+		char szCinematicName[MAX_PATH];
+		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
+	}CINEMATIC_DESC;
+
+
+
+
 }

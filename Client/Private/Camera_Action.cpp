@@ -50,11 +50,6 @@ HRESULT CCamera_Action::Initialize(void* pArg)
 
 void CCamera_Action::Priority_Update(_float fTimeDelta)
 {
-    if (false == m_pGameInstance->IsMainCamera(this))
-        return;
-
-    m_fCurrentAnimationTime += fTimeDelta;
-
     _vector vFOVPosition;
     _vector vPivotPosition = XMVectorSet(0.f, 0.f, 0.f, 0.f);
     
@@ -115,8 +110,6 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         }
     }
 
-   
-
     _matrix SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
     _matrix TransformMatrix;
     for (size_t i = 0; i < 3; i++)
@@ -132,7 +125,13 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
 
     m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + vPivotPosition);
 
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
+
     __super::Bind_Matrices(fTimeDelta);
+
+    m_fCurrentAnimationTime += fTimeDelta;
+
 }
 
 void CCamera_Action::Update(_float fTimeDelta)

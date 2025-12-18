@@ -54,11 +54,13 @@ void CFrustum::Update()
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
 	_matrix		matPV = ProjMatrixInverse * ViewMatrixInverse;
+
 	for (size_t i = 0; i < 8; i++)
 	{
 		XMStoreFloat4(&m_vWorldPoints[i], 
 			XMVector3TransformCoord(XMLoadFloat4(&m_vOriginalPoints[i]), matPV));
 	}
+
 	auto pMainCamera = m_pGameInstance->GetMainCamera();
 	if (pMainCamera)
 	{
@@ -72,7 +74,18 @@ void CFrustum::Update()
 		XMStoreFloat3(&m_vCamPos, pCamWorldMat.r[3]);
 	}
 
+
+	// 캐스케이드 연산을 위해 벡터 연산.
+	// Near -> Far로 향하는 모서리 4개의 벡터를 계산함.
+	for (_uint i = 0; i < 4; ++i)
+	{
+		XMStoreFloat4(&m_vWorldRays[i], 
+			XMLoadFloat4(&m_vWorldPoints[i + 4]) - XMLoadFloat4(&m_vWorldPoints[i]));
+	}
+
+
 	Make_Planes(m_vWorldPoints, m_vWorldPlanes);
+
 	Safe_Release(pMainCamera);
 }
 

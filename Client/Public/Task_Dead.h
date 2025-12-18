@@ -22,7 +22,7 @@ private:
 	CNayitba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	_float								m_fDeadEndTime = {};
-	_bool										m_bIsDeadEffect = { false };
+	_bool								m_bIsDeadEffect = { false };
 
 public:
 	static	CTask_Dead*					Create(CBehaviorTree* pOwnerTree);
