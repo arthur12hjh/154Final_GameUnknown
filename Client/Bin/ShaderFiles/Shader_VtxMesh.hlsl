@@ -41,9 +41,9 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
+VS_OUT_STATIC_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
-    VS_OUT_SHADOW Out;
+    VS_OUT_STATIC_SHADOW Out;
 
     matrix matWV, matWVP;
     
@@ -122,11 +122,11 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     return Out;
 }
 
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
+PS_OUT_STATIC_SHADOW PS_MAIN_SHADOW(PS_IN_STATIC_SHADOW In)
 {
-    PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
+    PS_OUT_STATIC_SHADOW Out = (PS_OUT_STATIC_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = In.vProjPos.w / g_fFar;
+    Out.vShadowLightDepth.x = In.vProjPos.z / In.vProjPos.w;
     
     return Out;
 }
@@ -145,12 +145,12 @@ technique11 DefaultTechnique
 
     pass Shadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
     pass SKYBOX 

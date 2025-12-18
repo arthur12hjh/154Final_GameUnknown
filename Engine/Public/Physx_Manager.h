@@ -76,6 +76,8 @@ private:
 	/* 리지드 바디 객체들 보관용 */
 	vector<pair<class CGameObject*, CRigidBody*>> m_RigidBodies = {};
 	class CGameInstance* m_pGameInstance = { nullptr };
+	PxHeightField* m_pHeightField = { nullptr };
+
 public:
 	static CPhysx_Manager* Create();
 	virtual void Free() override;

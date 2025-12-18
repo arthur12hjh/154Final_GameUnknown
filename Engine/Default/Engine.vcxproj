@@ -181,6 +181,7 @@ popd</Command>
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\BoxCollider.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\Public\CascadeShadow.h" />
     <ClInclude Include="..\Public\CCTQueryFilterCallback.h" />
     <ClInclude Include="..\public\CinemaTrack.h" />
     <ClInclude Include="..\public\CameraManager.h" />
@@ -264,13 +265,13 @@ popd</Command>
     <ClInclude Include="..\public\SelectNode.h" />
     <ClInclude Include="..\public\Service.h" />
     <ClInclude Include="..\public\Shader.h" />
-    <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\SphereCollider.h" />
     <ClInclude Include="..\public\SquenceNode.h" />
     <ClInclude Include="..\Public\SSAO.h" />
     <ClInclude Include="..\public\State.h" />
     <ClInclude Include="..\public\StateMachine.h" />
+    <ClInclude Include="..\Public\StaticShadow.h" />
     <ClInclude Include="..\Public\StringHelper.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\public\Task.h" />
@@ -307,6 +308,7 @@ popd</Command>
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\BoxCollider.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\Private\CascadeShadow.cpp" />
     <ClCompile Include="..\Private\CCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\private\CinemaTrack.cpp" />
     <ClCompile Include="..\private\CameraManager.cpp" />
@@ -381,13 +383,13 @@ popd</Command>
     <ClCompile Include="..\private\SelectNode.cpp" />
     <ClCompile Include="..\private\Service.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
-    <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\SphereCollider.cpp" />
     <ClCompile Include="..\private\SquenceNode.cpp" />
     <ClCompile Include="..\Private\SSAO.cpp" />
     <ClCompile Include="..\private\State.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
+    <ClCompile Include="..\Private\StaticShadow.cpp" />
     <ClCompile Include="..\Private\StringHelper.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Task.cpp" />
