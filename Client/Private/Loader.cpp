@@ -1193,26 +1193,26 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
-	/* For.Prototype_Component_Effect_Slash */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
+	///* For.Prototype_Component_Effect_Slash */
+	//PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
+	//PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
+	//Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_SheildBreak_Yellow */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SheildBreak_Yellow");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SheildBreakYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Power_Blue */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Power_Blue");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/PowerBlue.binx");
+	/* For.Prototype_Component_Effect_Power_Yellow */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Power_Yellow");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/PowerYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 
-	/* For.Prototype_Component_Effect_Hit_Spark */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
+	///* For.Prototype_Component_Effect_Hit_Spark */
+	//PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
+	//PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
+	//Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Slash_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Spark");

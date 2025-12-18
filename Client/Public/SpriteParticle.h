@@ -74,6 +74,9 @@ public:
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisBillboard;
+		_bool				bisAngleBillboard;
+		_bool				bisStart;
+		_bool				bisAnimation;
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
@@ -110,6 +113,7 @@ private:
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_float			m_fLength = {};
+	_uint			m_iRenderCount = {};
 	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;

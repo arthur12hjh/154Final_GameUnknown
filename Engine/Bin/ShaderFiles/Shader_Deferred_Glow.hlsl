@@ -9,8 +9,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_GlowTexture;
-texture2D g_WeightTexture;
-texture2D g_WeightFinalTexture;
+texture2D g_GlowPowerTexture;
 
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -28,122 +27,81 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-PS_OUT_GLOW_X PS_MAIN_GLOW_X(PS_IN In)
+PS_OUT_BLUR PS_MAIN_GLOW_X(PS_IN In)
 {
-    PS_OUT_GLOW_X Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight;
-    float vsize;
-    for (int i = -6; i < 7; ++i)
-    {
-        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX * 2;
-        vTexcoord.y = In.vTexcoord.y;
-        
-        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
-        vsize += g_fWeights[i + 6];
-
-    }
-    
-    Out.vGlowX = vColor / vsize;
-    Out.vGlowX.rgb *= 5;
-    
-    Out.vWeight = vWeight / vsize;
-    return Out;
-}
-
-PS_OUT_GLOW_FINAL PS_MAIN_GLOW_FINAL(PS_IN In)
-{
-    PS_OUT_GLOW_FINAL Out;
-    float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight;
-    float vsize;
-    
-    for (int i = -6; i < 7; ++i)
-    {
-        vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY * 2;
-        
-        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
-        vsize += g_fWeights[i + 6];
-    }
-    vColor /= vsize;
-    
-    float farFactor = vWeight.b * vWeight.g;
-    Out.vGlowY = vColor;
-    Out.vGlowY.rgb *= farFactor;
-    Out.vWeight = vWeight / vsize;
-    return Out;
-}
-
-PS_OUT_GLOW_FINAL PS_MAIN_GLOW_REAL_FINAL(PS_IN In)
-{
-    PS_OUT_GLOW_FINAL Out;
-    Out.vGlowY = g_GlowTexture.Sample(ClampSampler, In.vTexcoord) * 6;
-    Out.vWeight = g_WeightTexture.Sample(ClampSampler, In.vTexcoord);
-    return Out;
-}
-
-PS_OUT_GLOW_X PS_MAIN_CLEAN_GLOW_X(PS_IN In)
-{
-    PS_OUT_GLOW_X Out;
-    
-    float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight;
-    float vsize;
+    float4 vColor = 0.f;
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
-        vsize += g_fWeights[i + 6];
+        vSize += g_fWeights[i + 6];
 
     }
-    
-    Out.vGlowX = vColor / vsize;
-    Out.vGlowX.rgb *= 5;
-    
-    Out.vWeight = vWeight / vsize;
+
+    Out.vBlur = vColor / vSize * 2;
     return Out;
 }
 
-PS_OUT_GLOW_FINAL PS_MAIN_CLEAN_GLOW_FINAL(PS_IN In)
+PS_OUT_BLUR PS_MAIN_GLOW_FINAL(PS_IN In)
 {
-    PS_OUT_GLOW_FINAL Out;
+    PS_OUT_BLUR Out;
     float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight;
-    float vsize;
-    if (0 >= g_WeightFinalTexture.Sample(ClampSampler, In.vTexcoord).g)
-        discard;
+    float4 vColor = 0.f;
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
     
         vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
-        vsize += g_fWeights[i + 6];
+        vSize += g_fWeights[i + 6];
     }
-    vColor /= vsize;
-    
-    Out.vGlowY = vColor;
-    Out.vWeight = vWeight / vsize;
+    vColor /= vSize;
+    float3 color = g_GlowPowerTexture.Sample(ClampSampler, In.vTexcoord).rgb;
+    if (0.7 < max(color.r, max(color.g, color.b)))
+        vColor.rgb += max((g_GlowPowerTexture.Sample(ClampSampler, In.vTexcoord).rgb * 6) - vColor.rgb, 0);
+    if (0 >= vColor.a)
+        discard;
+    Out.vBlur = vColor;
     return Out;
 }
 
-PS_OUT_GLOW_FINAL PS_MAIN_CLEAN(PS_IN In)
+PS_OUT_BLUR PS_MAIN_GLOW_CORE(PS_IN In)
 {
-    PS_OUT_GLOW_FINAL Out;
-    Out.vGlowY = g_GlowTexture.Sample(ClampSampler, In.vTexcoord);
-    Out.vWeight = g_WeightTexture.Sample(ClampSampler, In.vTexcoord);
+    PS_OUT_BLUR Out;
+    float2 vTexcoord;
+    float4 vColor = g_GlowTexture.Sample(ClampSampler, In.vTexcoord);
+    if (0 >= vColor.a)
+    {
+        //for (int i = -1; i < 2; ++i)
+        //{
+        //    vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
+        //    for (int j = -1; j < 2; ++j)
+        //    {
+        //        vTexcoord.y = In.vTexcoord.y + (float) j / g_iWinSizeY;
+        //        vColor = g_GlowTexture.Sample(ClampSampler, vTexcoord);
+        //        if (0 < vColor.a)
+        //        {
+        //            if (1 == abs(i))
+        //                vColor.a *= 0.5;
+        //            if (1 == abs(j))
+        //                vColor.a *= 0.5;
+        //            break;
+        //        }
+        //    }
+        //    if (0 < vColor.a)
+        //        break;
+        //}
+        if (0 >= vColor.a)
+            discard;
+    }
+    Out.vBlur = float4(saturate(vColor.rgb * 6), vColor.a);
     return Out;
 }
 
@@ -170,43 +128,13 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_GLOW_FINAL();
     }
     // idx 2
-    pass Glow_Real_Final
+    pass Glow_Core
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_GLOW_REAL_FINAL();
-    }
-    // idx 3
-    pass Clean_Glow_X
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_CLEAN_GLOW_X();
-    }
-    // idx 4
-    pass Clean_Glow_Final
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_CLEAN_GLOW_FINAL();
-    }
-    // idx 5
-    pass Clean
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_CLEAN();
+        PixelShader = compile ps_5_0 PS_MAIN_GLOW_CORE();
     }
 }

@@ -65,7 +65,7 @@ _bool CPlayer::Use_BetaSkill(_uint iSkillID)
 
 			if (iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			{
-				m_PlayerDesc.iCurrentBetaEnergy -= iGauge;
+				//m_PlayerDesc.iCurrentBetaEnergy -= iGauge;
 				m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::USE;
 
 				return true;
@@ -303,11 +303,11 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
-	{
+	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	//{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
-	}
+	//}
 }
 
 HRESULT CPlayer::Ready_Components()

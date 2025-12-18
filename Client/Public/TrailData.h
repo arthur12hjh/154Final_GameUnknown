@@ -52,7 +52,7 @@ public:
 private:
 	CTexture* m_pTexture[3] = {};
 	TRAIL_DATA			m_tData;
-	_uint				m_iCount = {};
+	_uint				m_iRenderCount = {};
 	RENDER				m_eRender = {};
 	class CTrailEffect* m_pTrail;
 

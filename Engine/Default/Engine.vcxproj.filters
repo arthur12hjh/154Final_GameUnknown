@@ -371,6 +371,12 @@
     <ClInclude Include="..\Public\CCTFilterCallback.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Metaball.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BlackBlend.h">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -714,6 +720,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CCTFilterCallback.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Metaball.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlackBlend.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1131,6 +1143,18 @@
     <Filter Include="01.Utility\18.StateMachine\State">
       <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball">
+      <UniqueIdentifier>{180f516f-7eaf-4de5-9575-117f900c3ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball\ShaderFile">
+      <UniqueIdentifier>{f0e40dd1-9b36-4177-b17b-97eb68e86f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend">
+      <UniqueIdentifier>{7bc44496-e53c-4af5-8dc8-fc8a7500163f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile">
+      <UniqueIdentifier>{f77c7811-60e3-4e74-95e3-8a42b1975797}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1177,6 +1201,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_CombinedMatrices.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Metaball.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

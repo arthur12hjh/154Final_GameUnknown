@@ -2,7 +2,7 @@
 
 #include "Tool_Effect_Defines.h"
 #include "VIBuffer_Point_Instance.h"
-#include "GameObject.h"
+#include "BlendObject.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Point_Instance;
@@ -13,7 +13,7 @@ NS_END
 
 NS_BEGIN(Tool_Effect)
 
-class CSpriteParticle final : public CGameObject
+class CSpriteParticle final : public CBlendObject
 {
 public:
 	struct PointConstBufferData
@@ -75,6 +75,9 @@ public:
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisBillboard;
+		_bool				bisAngleBillboard;
+		_bool				bisStart;
+		_bool				bisAnimation;
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
@@ -125,6 +128,7 @@ private:
 	_bool			m_bisLoop = {};
 	_bool			m_bisSpectrum = { false };
 	_bool			m_bisStop = { false };
+	_uint			m_iRenderCount = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER	m_eRender = {};
 

@@ -40,7 +40,7 @@ void CLift_Body::Update(_float fTimeDelta)
 
 void CLift_Body::Late_Update(_float fTimeDelta)
 {
-	if(m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+//	if(m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 

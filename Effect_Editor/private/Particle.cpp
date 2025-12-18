@@ -115,43 +115,29 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
 	Set_Texture(2, m_tData.szDissolveTexture.c_str());
 
+
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 8:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 
@@ -192,43 +178,29 @@ void CParticle::Update(PARTICLE_DATA tData)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
+
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 8:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 

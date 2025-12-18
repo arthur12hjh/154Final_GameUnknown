@@ -378,6 +378,8 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.iNumInstance = 100;
     tSpriteParticleData.iSelectRender = 3;
     tSpriteParticleData.bisBillboard = true;
+    tSpriteParticleData.bisAngleBillboard = false;
+    tSpriteParticleData.bisStart = false;
     tSpriteParticleData.bisLoop = true;
     tSpriteParticleData.bisSphere = false;
     tSpriteParticleData.bisCircle = false;
@@ -644,65 +646,65 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt(fileBinaryStream, pMesh->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pMesh->Get_Data().iSelectRender);
     }
-    WriteInt(fileBinaryStream, m_pParticles.size());
-    for (auto pParticle : m_pParticles) {
-
-
-        char szImageFile[MAX_PATH] = {};
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szCS.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-
-        WriteInt(fileBinaryStream, pParticle->Get_Data().fSizeDiagrams.size());
-        for (auto fSizeDiagram : pParticle->Get_Data().fSizeDiagrams) {
-            WriteFloat3(fileBinaryStream, fSizeDiagram);
-        }
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fGravityDiagram);
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fPosition);
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fColor);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fCenter);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fPivot);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRange);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRotation);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fTurnPower);
-        
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fCircle);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
-    }
+    //WriteInt(fileBinaryStream, m_pParticles.size());
+    //for (auto pParticle : m_pParticles) {
+    //
+    //
+    //    char szImageFile[MAX_PATH] = {};
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szCS.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //
+    //    WriteInt(fileBinaryStream, pParticle->Get_Data().fSizeDiagrams.size());
+    //    for (auto fSizeDiagram : pParticle->Get_Data().fSizeDiagrams) {
+    //        WriteFloat3(fileBinaryStream, fSizeDiagram);
+    //    }
+    //    WriteFloat4(fileBinaryStream, pParticle->Get_Data().fGravityDiagram);
+    //    WriteFloat4(fileBinaryStream, pParticle->Get_Data().fPosition);
+    //    WriteFloat4(fileBinaryStream, pParticle->Get_Data().fColor);
+    //    WriteFloat3(fileBinaryStream, pParticle->Get_Data().fCenter);
+    //    WriteFloat3(fileBinaryStream, pParticle->Get_Data().fPivot);
+    //    WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRange);
+    //    WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRotation);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fTurnPower);
+    //    
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUV);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSpeed);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSize);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUV);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSpeed);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSize);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUV);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSpeed);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
+    //    WriteFloat2(fileBinaryStream, pParticle->Get_Data().fCircle);
+    //    WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
+    //    WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
+    //    WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
+    //    WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
+    //    WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
+    //    WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
+    //    WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
+    //    WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
+    //    WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
+    //    WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
+    //    WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
+    //    WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
+    //}
     WriteInt(fileBinaryStream, m_pSpriteParticles.size());
     for (auto pSpriteParticle : m_pSpriteParticles) {
 
@@ -760,35 +762,38 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisAngleBillboard);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisStart);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisAnimation);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisCircle);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSpectrum);
     }
-    WriteInt(fileBinaryStream, m_pSprites.size());
-    for (auto pSprite : m_pSprites) {
-        char szImageFile[MAX_PATH] = {};
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szNormalTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fPosition);
-        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fColor);
-        WriteFloat2(fileBinaryStream, pSprite->Get_Data().fSize);
-        WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
-        WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
-        WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
-        WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
-    }
+    //WriteInt(fileBinaryStream, m_pSprites.size());
+    //for (auto pSprite : m_pSprites) {
+    //    char szImageFile[MAX_PATH] = {};
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szNormalTexture.c_str(), _TRUNCATE);
+    //    WriteString(fileBinaryStream, szImageFile);
+    //    memset(szImageFile, 0, sizeof(szImageFile));
+    //
+    //    WriteFloat4(fileBinaryStream, pSprite->Get_Data().fPosition);
+    //    WriteFloat4(fileBinaryStream, pSprite->Get_Data().fColor);
+    //    WriteFloat2(fileBinaryStream, pSprite->Get_Data().fSize);
+    //    WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
+    //    WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
+    //    WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
+    //    WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
+    //    WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
+    //}
     return S_OK;
 }
 
@@ -879,70 +884,70 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_pMeshs.push_back(pMeshEffect);
         m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
     }
-    _int iParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iParticleCount; ++i) {
-        _char* szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szMaskTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDiffuseTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDissolveTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szCS = szTemp;
-        Safe_Delete(szTemp);
-        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
-        ParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
-            ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
-        }
-        ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
-
-        ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
-        ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
-
-        ParticleDesc.iBegin = ReadInt(fileBinaryStream);
-        ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
-
-        ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
-        ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
-        ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
-        CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
-        pParticle->Initialize(nullptr);
-
-        pParticle->Set_Components(ParticleDesc);
-        pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
-        m_iSelectParticle = m_pParticles.size();
-        m_pParticles.push_back(pParticle);
-        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
-    }
+    //_int iParticleCount = ReadInt(fileBinaryStream);
+    //for (_uint i = 0; i < iParticleCount; ++i) {
+    //    _char* szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szMaskTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szDiffuseTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szDissolveTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szCS = szTemp;
+    //    Safe_Delete(szTemp);
+    //    _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+    //    ParticleDesc.fSizeDiagrams.clear();
+    //    for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+    //        ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+    //    }
+    //    ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
+    //
+    //    ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
+    //
+    //    ParticleDesc.iBegin = ReadInt(fileBinaryStream);
+    //    ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
+    //    ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+    //
+    //    ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
+    //    CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
+    //    pParticle->Initialize(nullptr);
+    //
+    //    pParticle->Set_Components(ParticleDesc);
+    //    pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+    //    m_iSelectParticle = m_pParticles.size();
+    //    m_pParticles.push_back(pParticle);
+    //    m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+    //}
     _int iSpriteParticleCount = ReadInt(fileBinaryStream);
     for (_uint i = 0; i < iSpriteParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
@@ -997,6 +1002,9 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
        SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
        SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisAngleBillboard = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisStart = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisAnimation = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
@@ -1011,37 +1019,37 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_pSpriteParticles.push_back(pParticle);
         m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
     }
-    _int iSpriteCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteCount; ++i) {
-        _char* szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szMaskTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szDiffuseTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szNormalTexture = szTemp;
-        Safe_Delete(szTemp);
-
-        SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
-        SpriteDesc.iUV = ReadInt2(fileBinaryStream);
-        SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
-        SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
-        SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
-
-
-        CSpriteEffect* pSprite = CSpriteEffect::Create(m_pDevice, m_pContext);
-        pSprite->Initialize(nullptr);
-
-        pSprite->Set_Components(SpriteDesc);
-        pSprite->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
-        m_iSelectSprite = m_pSprites.size();
-        m_pSprites.push_back(pSprite);
-        m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
-    }
+    //_int iSpriteCount = ReadInt(fileBinaryStream);
+    //for (_uint i = 0; i < iSpriteCount; ++i) {
+    //    _char* szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szMaskTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szDiffuseTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szNormalTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //
+    //    SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
+    //    SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
+    //    SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
+    //    SpriteDesc.iUV = ReadInt2(fileBinaryStream);
+    //    SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
+    //    SpriteDesc.iBegin = ReadInt(fileBinaryStream);
+    //    SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+    //    SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
+    //
+    //
+    //    CSpriteEffect* pSprite = CSpriteEffect::Create(m_pDevice, m_pContext);
+    //    pSprite->Initialize(nullptr);
+    //
+    //    pSprite->Set_Components(SpriteDesc);
+    //    pSprite->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+    //    m_iSelectSprite = m_pSprites.size();
+    //    m_pSprites.push_back(pSprite);
+    //    m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
+    //}
     return S_OK;
 }
 
@@ -1581,30 +1589,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     szRender = "NONLIGHT";
                     break;
                 case 2:
-                    szRender = "BLUR";
+                    szRender = "BLEND";
                     break;
                 case 3:
-                    szRender = "EFFECT BLEND";
+                    szRender = "BLUR";
                     break;
                 case 4:
-                    szRender = "CLEAN GLOW";
+                    szRender = "GLOW";
                     break;
                 case 5:
-                    szRender = "GLOW";
+                    szRender = "METABALL";
                     break;
                 case 6:
                     szRender = "DISTORTION";
                     break;
-                case 7:
-                    szRender = "BLEND";
-                    break;
-                case 8:
-                    szRender = "WATER";
-                    break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 0; i <= 8; ++i) {
+                    for (_uint i = 0; i <= 6; ++i) {
                         _bool sel = i == m_tParticleData.iSelectRender;
                         switch (i) {
                         case 0:
@@ -1614,25 +1616,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                             szRender = "NONLIGHT";
                             break;
                         case 2:
-                            szRender = "BLUR";
+                            szRender = "BLEND";
                             break;
                         case 3:
-                            szRender = "EFFECT BLEND";
+                            szRender = "BLUR";
                             break;
                         case 4:
-                            szRender = "CLEAN GLOW";
+                            szRender = "GLOW";
                             break;
                         case 5:
-                            szRender = "GLOW";
+                            szRender = "METABALL";
                             break;
                         case 6:
                             szRender = "DISTORTION";
-                            break;
-                        case 7:
-                            szRender = "BLEND";
-                            break;
-                        case 8:
-                            szRender = "WATER";
                             break;
                         }
                         if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2044,30 +2040,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     szRender = "NONLIGHT";
                     break;
                 case 2:
-                    szRender = "BLUR";
+                    szRender = "BLEND";
                     break;
                 case 3:
-                    szRender = "EFFECT BLEND";
+                    szRender = "BLUR";
                     break;
                 case 4:
-                    szRender = "CLEAN GLOW";
+                    szRender = "GLOW";
                     break;
                 case 5:
-                    szRender = "GLOW";
+                    szRender = "METABALL";
                     break;
                 case 6:
                     szRender = "DISTORTION";
                     break;
-                case 7:
-                    szRender = "BLEND";
-                    break;
-                case 8:
-                    szRender = "WATER";
-                    break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 0; i <= 8; ++i) {
+                    for (_uint i = 0; i <= 6; ++i) {
                         _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.iSelectRender);
                         switch (i)
                         {
@@ -2078,25 +2068,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                             szRender = "NONLIGHT";
                             break;
                         case 2:
-                            szRender = "BLUR";
+                            szRender = "BLEND";
                             break;
                         case 3:
-                            szRender = "EFFECT BLEND";
+                            szRender = "BLUR";
                             break;
                         case 4:
-                            szRender = "CLEAN GLOW";
+                            szRender = "GLOW";
                             break;
                         case 5:
-                            szRender = "GLOW";
+                            szRender = "METABALL";
                             break;
                         case 6:
                             szRender = "DISTORTION";
-                            break;
-                        case 7:
-                            szRender = "BLEND";
-                            break;
-                        case 8:
-                            szRender = "WATER";
                             break;
                         }
                         if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2133,8 +2117,11 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::EndCombo();
                 }
                 ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fParticleSize), 0.1f, 0.f, 100.f);
-                ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
+                    ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
+                    ImGui::Checkbox("AngleBillboard", &m_tSpriteParticleData.bisAngleBillboard);
+                ImGui::Checkbox("CoreStart", &m_tSpriteParticleData.bisStart);
                 ImGui::Checkbox("Spectrum", &m_tSpriteParticleData.bisSpectrum);
+                ImGui::Checkbox("Animation", &m_tSpriteParticleData.bisAnimation);
                 if(!m_tSpriteParticleData.bisCircle)
                     ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
                 if (!m_tSpriteParticleData.bisSphere)
@@ -2311,30 +2298,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 szRender = "NONLIGHT";
                 break;
             case 2:
-                szRender = "BLUR";
+                szRender = "BLEND";
                 break;
             case 3:
-                szRender = "EFFECT BLEND";
+                szRender = "BLUR";
                 break;
             case 4:
-                szRender = "CLEAN GLOW";
+                szRender = "GLOW";
                 break;
             case 5:
-                szRender = "GLOW";
+                szRender = "METABALL";
                 break;
             case 6:
                 szRender = "DISTORTION";
                 break;
-            case 7:
-                szRender = "BLEND";
-                break;
-            case 8:
-                szRender = "WATER";
-                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 8; ++i) {
+                for (_uint i = 0; i <= 6; ++i) {
                     _bool sel = i == m_tMeshData.iSelectRender;
                     switch (i)
                     {
@@ -2345,25 +2326,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         szRender = "NONLIGHT";
                         break;
                     case 2:
-                        szRender = "BLUR";
+                        szRender = "BLEND";
                         break;
                     case 3:
-                        szRender = "EFFECT BLEND";
+                        szRender = "BLUR";
                         break;
                     case 4:
-                        szRender = "CLEAN GLOW";
+                        szRender = "GLOW";
                         break;
                     case 5:
-                        szRender = "GLOW";
+                        szRender = "METABALL";
                         break;
                     case 6:
                         szRender = "DISTORTION";
-                        break;
-                    case 7:
-                        szRender = "BLEND";
-                        break;
-                    case 8:
-                        szRender = "WATER";
                         break;
                     }
                         if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2575,30 +2550,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 szRender = "NONLIGHT";
                 break;
             case 2:
-                szRender = "BLUR";
+                szRender = "BLEND";
                 break;
             case 3:
-                szRender = "EFFECT BLEND";
+                szRender = "BLUR";
                 break;
             case 4:
-                szRender = "CLEAN GLOW";
+                szRender = "GLOW";
                 break;
             case 5:
-                szRender = "GLOW";
+                szRender = "METABALL";
                 break;
             case 6:
                 szRender = "DISTORTION";
                 break;
-            case 7:
-                szRender = "BLEND";
-                break;
-            case 8:
-                szRender = "WATER";
-                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 8; ++i) {
+                for (_uint i = 0; i <= 6; ++i) {
                     _bool sel = i == ENUM_CLASS(m_tSpriteData.iSelectRender);
                     switch (i)
                     {
@@ -2609,25 +2578,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         szRender = "NONLIGHT";
                         break;
                     case 2:
-                        szRender = "BLUR";
+                        szRender = "BLEND";
                         break;
                     case 3:
-                        szRender = "EFFECT BLEND";
+                        szRender = "BLUR";
                         break;
                     case 4:
-                        szRender = "CLEAN GLOW";
+                        szRender = "GLOW";
                         break;
                     case 5:
-                        szRender = "GLOW";
+                        szRender = "METABALL";
                         break;
                     case 6:
                         szRender = "DISTORTION";
-                        break;
-                    case 7:
-                        szRender = "BLEND";
-                        break;
-                    case 8:
-                        szRender = "WATER";
                         break;
                     }
                     if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2752,30 +2715,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 szRender = "NONLIGHT";
                 break;
             case 2:
-                szRender = "BLUR";
+                szRender = "BLEND";
                 break;
             case 3:
-                szRender = "EFFECT BLEND";
+                szRender = "BLUR";
                 break;
             case 4:
-                szRender = "CLEAN GLOW";
+                szRender = "GLOW";
                 break;
             case 5:
-                szRender = "GLOW";
+                szRender = "METABALL";
                 break;
             case 6:
                 szRender = "DISTORTION";
                 break;
-            case 7:
-                szRender = "BLEND";
-                break;
-            case 8:
-                szRender = "WATER";
-                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 8; ++i) {
+                for (_uint i = 0; i <= 6; ++i) {
 
                     _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
                     switch (i)
@@ -2787,25 +2744,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         szRender = "NONLIGHT";
                         break;
                     case 2:
-                        szRender = "BLUR";
+                        szRender = "BLEND";
                         break;
                     case 3:
-                        szRender = "EFFECT BLEND";
+                        szRender = "BLUR";
                         break;
                     case 4:
-                        szRender = "CLEAN GLOW";
+                        szRender = "GLOW";
                         break;
                     case 5:
-                        szRender = "GLOW";
+                        szRender = "METABALL";
                         break;
                     case 6:
                         szRender = "DISTORTION";
-                        break;
-                    case 7:
-                        szRender = "BLEND";
-                        break;
-                    case 8:
-                        szRender = "WATER";
                         break;
                     }
                     if (ImGui::Selectable(szRender.c_str(), sel))
@@ -3029,35 +2980,6 @@ void CParticle_Setting::WriteString(ofstream& fileBinaryStream, _char* pStr)
     fileBinaryStream.write(pStr, iStringLength);
 }
 
-void CParticle_Setting::WriteRENDER(ofstream& fileBinaryStream, RENDER vTmp)
-{
-    _int iRenderType;
-    switch (vTmp)
-    {
-    case Engine::RENDER::NONBLEND:
-        iRenderType = 0;
-        break;
-    case Engine::RENDER::NONLIGHT:
-        iRenderType = 1;
-        break;
-    case Engine::RENDER::BLUR:
-        iRenderType = 2;
-        break;
-    case Engine::RENDER::GLOW:
-        iRenderType = 3;
-        break;
-    case Engine::RENDER::DISTORTION:
-        iRenderType = 4;
-        break;
-    case Engine::RENDER::BLEND:
-        iRenderType = 5;
-        break;
-    default:
-        iRenderType = 6;
-    }
-    fileBinaryStream.write((_char*)&iRenderType, sizeof(_int));
-}
-
 void CParticle_Setting::WriteInt(ofstream& fileBinaryStream, _int vTmp)
 {
     fileBinaryStream.write((_char*)&vTmp, sizeof(_int));
@@ -3103,28 +3025,6 @@ _char* CParticle_Setting::ReadString(ifstream& fileBinaryStream)
 
     sz[iStringLength] = '\0';
     return sz;
-}
-
-RENDER CParticle_Setting::ReadRENDER(ifstream& fileBinaryStream)
-{
-    _int iValue;
-    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
-    switch (iValue)
-    {
-    case 0:
-        return RENDER::NONBLEND;
-    case 1:
-        return RENDER::NONLIGHT;
-    case 2:
-        return RENDER::BLUR;
-    case 3:
-        return RENDER::GLOW;
-    case 4:
-        return RENDER::DISTORTION;
-    case 5:
-        return RENDER::BLEND;
-    }
-    return RENDER::UI;
 }
 
 _int CParticle_Setting::ReadInt(ifstream& fileBinaryStream)

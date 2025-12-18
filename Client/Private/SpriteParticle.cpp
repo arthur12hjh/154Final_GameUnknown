@@ -30,39 +30,24 @@ HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPoint
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 8:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
@@ -166,6 +151,7 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
 
 }
 
@@ -174,8 +160,8 @@ HRESULT CSpriteParticle::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(m_tData.iBegin);
-
+	m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount);
+	m_iRenderCount++;
 	m_pVIBufferCom->Bind_Resources();
 
 	m_pVIBufferCom->Render();
@@ -293,9 +279,15 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
+	_int iBillboard = 0;
+	iBillboard += m_tData.bisBillboard ? 1 : 0;
+	iBillboard += m_tData.bisAngleBillboard ? 2 : 0;
+	iBillboard += m_tData.bisStart ? 4 : 0;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iBillboard", &iBillboard, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisAnimation", &m_tData.bisAnimation, sizeof(_bool))))
 		return E_FAIL;
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))

@@ -31,7 +31,6 @@ public:
     virtual HRESULT    Render() override;
     virtual void    Free() override;
     void    WriteString(ofstream& fileBinaryStream, _char* pStr);
-    void    WriteRENDER(ofstream& fileBinaryStream, RENDER vTmp);
     void    WriteInt(ofstream& fileBinaryStream, _int vTmp);
     void    WriteFloat4(ofstream& fileBinaryStream, _float4 vTmp);
     void    WriteFloat3(ofstream& fileBinaryStream, _float3 vTmp);
@@ -40,7 +39,6 @@ public:
     void    WriteInt2(ofstream& fileBinaryStream, _int2 vTmp);
     void    WriteBool(ofstream& fileBinaryStream, _bool vTmp);
     _char*  ReadString(ifstream& fileBinaryStream);
-    RENDER    ReadRENDER(ifstream& fileBinaryStream);
     _int    ReadInt(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);

@@ -176,65 +176,65 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext, &MeshDesc);
         m_pMeshEffects.push_back(pMeshEffect);
     }
-    _int iParticleCount = ReadInt(fileBinaryStream);
-    for (_int i = 0; i < iParticleCount; ++i) {
-        _char* szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szMaskTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDiffuseTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDissolveTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szCS = szTemp;
-        Safe_Delete(szTemp);
-        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
-        ParticleDesc.fSizeDiagrams.clear();
-        for (_int j = 0; j < iSizeDiagramCount; ++j) {
-            ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
-        }
-        ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
-
-        ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
-        ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
-
-        ParticleDesc.iBegin = ReadInt(fileBinaryStream);
-        ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
-
-        ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
-        ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
-        ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
-
-        CPointParticle* pParticle = CPointParticle::Create(m_pDevice, m_pContext, &ParticleDesc);
-        m_pPointParticles.push_back(pParticle);
-    }
+    //_int iParticleCount = ReadInt(fileBinaryStream);
+    //for (_int i = 0; i < iParticleCount; ++i) {
+    //    _char* szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szMaskTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szDiffuseTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szDissolveTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    ParticleDesc.szCS = szTemp;
+    //    Safe_Delete(szTemp);
+    //    _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+    //    ParticleDesc.fSizeDiagrams.clear();
+    //    for (_int j = 0; j < iSizeDiagramCount; ++j) {
+    //        ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+    //    }
+    //    ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
+    //    ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
+    //    ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
+    //
+    //    ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
+    //    ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+    //    ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
+    //
+    //    ParticleDesc.iBegin = ReadInt(fileBinaryStream);
+    //    ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
+    //    ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
+    //
+    //    ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+    //    ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
+    //
+    //    CPointParticle* pParticle = CPointParticle::Create(m_pDevice, m_pContext, &ParticleDesc);
+    //    m_pPointParticles.push_back(pParticle);
+    //}
     _int iSpriteParticleCount = ReadInt(fileBinaryStream);
     for (_int i = 0; i < iSpriteParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
@@ -289,6 +289,9 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+        SpriteParticleDesc.bisAngleBillboard = ReadBool(fileBinaryStream);
+        SpriteParticleDesc.bisStart = ReadBool(fileBinaryStream);
+        SpriteParticleDesc.bisAnimation = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
@@ -297,29 +300,29 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext, &SpriteParticleDesc);
         m_pSpriteParticles.push_back(pParticle);
     }
-    _int iSpriteCount = ReadInt(fileBinaryStream);
-    for (_int i = 0; i < iSpriteCount; ++i) {
-        _char* szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szMaskTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szDiffuseTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szNormalTexture = szTemp;
-        Safe_Delete(szTemp);
-
-        SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
-        SpriteDesc.iUV = ReadInt2(fileBinaryStream);
-        SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
-        SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
-        SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
-        CSpriteUVEffect* pSprite = CSpriteUVEffect::Create(m_pDevice, m_pContext, &SpriteDesc);
-        m_pSpriteEffects.push_back(pSprite);
-    }
+    //_int iSpriteCount = ReadInt(fileBinaryStream);
+    //for (_int i = 0; i < iSpriteCount; ++i) {
+    //    _char* szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szMaskTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szDiffuseTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //    szTemp = ReadString(fileBinaryStream);
+    //    SpriteDesc.szNormalTexture = szTemp;
+    //    Safe_Delete(szTemp);
+    //
+    //    SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
+    //    SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
+    //    SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
+    //    SpriteDesc.iUV = ReadInt2(fileBinaryStream);
+    //    SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
+    //    SpriteDesc.iBegin = ReadInt(fileBinaryStream);
+    //    SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
+    //    SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
+    //    CSpriteUVEffect* pSprite = CSpriteUVEffect::Create(m_pDevice, m_pContext, &SpriteDesc);
+    //    m_pSpriteEffects.push_back(pSprite);
+    //}
     return S_OK;
 }
 

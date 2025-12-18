@@ -61,11 +61,11 @@ void CLift_Platform::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif // _DEBUG
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-	{
+	//if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	//{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		// 얜 움직이니까 업데이트 해줘야합니다
-	}
+//	}
 }
 
 HRESULT CLift_Platform::Render()

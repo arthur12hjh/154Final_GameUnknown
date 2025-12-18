@@ -55,7 +55,7 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive"), m_pShader, "g_EmissiveTexture")))
 		return E_FAIL;
 
-	m_pShader->Begin(2);
+	m_pShader->Begin(1);
 	pVIBuffer->Bind_Resources();
 	pVIBuffer->Render();
 
@@ -69,7 +69,7 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_X"), m_pShader, "g_EmissiveTexture")))
 		return E_FAIL;
 
-	m_pShader->Begin(3);
+	m_pShader->Begin(2);
 	pVIBuffer->Bind_Resources();
 	pVIBuffer->Render();
 
