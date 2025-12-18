@@ -556,6 +556,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		LWeaponDesc.pParentTransform = m_pTransformCom;
 		LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szLeftBoneName);
 		LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//LWeaponDesc.vRotation = {(90.f), (-90.f), (0.f), 1.f};
+		//LWeaponDesc.vRotation = {XMConvertToRadians(90.f), XMConvertToRadians(-90.f), XMConvertToRadians(0.f), 1.f};
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szLeftWeaponPrototypeName, LWeaponDesc.szWeaponModelPrototype);
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
@@ -568,6 +570,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		RWeaponDesc.pParentTransform = m_pTransformCom;
 		RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szRightBoneName);
 		RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//RWeaponDesc.vRotation = { (90.f), (-81.5f), (0.f), 1.f };
+		//RWeaponDesc.vRotation = { XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f), 1.f };
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
 		RWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))

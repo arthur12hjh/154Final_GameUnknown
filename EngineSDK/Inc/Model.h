@@ -144,6 +144,8 @@ public:
 	HRESULT Initialize_AnimationIndexMap();
 	HRESULT Initialize_AnimationBufferResource();
 
+	HRESULT Release_AnimationChannel();
+
 	// <모델의 기존 값들을 변경하는 함수들>
 	// Import_Animations를 제외하면, 나머지는 binx에 저장된다.
 	HRESULT Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName);
