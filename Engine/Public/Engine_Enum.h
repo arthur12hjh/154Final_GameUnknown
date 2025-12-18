@@ -119,7 +119,11 @@ namespace Engine
 		//톤 매핑
 		TONE_MAPPING, 
 		//진짜 렌더타겟으로 넘기기
-		FINAL
+		FINAL,
+		SPOT,
+		OCCLUSION,
+		SHADOW_BLUR_X,
+		COMBINE_SHADOW
 	};
 
 	
