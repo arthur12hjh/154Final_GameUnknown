@@ -49,14 +49,6 @@ HRESULT CCanyon::Initialize(void* pArg)
     {
         m_bIsOccluder = false;
     }
-    // ÀÛÀº°Å
-    else if (m_iObjectID == 2 || m_iObjectID == 4 || m_iObjectID == 6 ||
-        (m_iObjectID >= 8 && m_iObjectID <= 11) || (m_iObjectID >= 13 && m_iObjectID <= 16) ||
-        (m_iObjectID >= 25 && m_iObjectID <= 32) || m_iObjectID == 42 ||
-        (m_iObjectID >= 60 && m_iObjectID <= 64))
-    {
-        m_bIsOccluder = false;
-    }
 
     //m_pRigidBody->Update_PxTransform(worldMatrix);
 	return S_OK;
@@ -81,22 +73,15 @@ void CCanyon::Late_Update(_float fTimeDelta)
 		return;
 	}
 
-   /* if ((m_iObjectID >= 67 && m_iObjectID <= 79))
-    {
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    }
-    else
-    {
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-    }*/
-
+    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    //m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+   
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-    /*if (m_bIsOccluder)
-    {*/
+    if (m_bIsOccluder)
+    {
         m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-    //}
+    }
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -418,7 +403,7 @@ void CCanyon::SetCullingCollider(_uint iObjectID)
         break;
 	case 67: case 68: case 69: case 70: case 71: case 72:
 	case 73: case 74: case 76: case 77: case 78: case 79:
-		pCullingCollider->SetCollision({ 0.f, 333.33f, 0.f }, {}, { 500, 500, 500 });
+		pCullingCollider->SetCollision({ 0.f, 333.33f, 0.f }, {}, { 800, 500, 800 });
 		break;
 	case 75:
 		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 6, 1, 6 });

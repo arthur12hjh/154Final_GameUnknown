@@ -625,6 +625,12 @@ void CRenderer::Render_Occlusion()
 	{
 		if (nullptr != pRenderObject)
 		{
+			if (pRenderObject->Get_Depth() < 100.f)
+			{
+				Safe_Release(pRenderObject);
+				continue;
+			}
+
 			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
 
 			if (nullptr != pCollider)
@@ -641,7 +647,7 @@ void CRenderer::Render_Occlusion()
 				_vector vPos = matWorld.r[3];
 
 				matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
+				matWorld = matWorld * XMMatrixScaling(0.7f, 0.7f, 0.7f);
 
 				matWorld.r[3] = vPos;
 
