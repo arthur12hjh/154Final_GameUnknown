@@ -161,6 +161,7 @@
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
     <ClInclude Include="..\public\Bullet_Rock.h" />
+    <ClInclude Include="..\public\Bullet_Scarlet.h" />
     <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Action.h" />
@@ -291,7 +292,7 @@
     <ClInclude Include="..\public\DebugHierarchy.h" />
     <ClInclude Include="..\public\DebugProfiler.h" />
     <ClInclude Include="..\Public\Deco_AttackDelay.h" />
-    <ClInclude Include="..\Public\Deco_PhaseChange.h" />
+    <ClInclude Include="..\Public\Deco_BossPhase.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
@@ -365,6 +366,7 @@
     <ClInclude Include="..\public\StoneWall1.h" />
     <ClInclude Include="..\public\StoneWall2.h" />
     <ClInclude Include="..\Public\TargetComponent.h" />
+    <ClInclude Include="..\public\Task_CutScene.h" />
     <ClInclude Include="..\public\Task_Dead.h" />
     <ClInclude Include="..\public\Task_ScarletAttack.h" />
     <ClInclude Include="..\public\Task_ScarletDead.h" />
@@ -445,6 +447,7 @@
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
     <ClCompile Include="..\private\Bullet_Rock.cpp" />
+    <ClCompile Include="..\private\Bullet_Scarlet.cpp" />
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Action.cpp" />
@@ -573,7 +576,7 @@
     <ClCompile Include="..\private\DebugHierarchy.cpp" />
     <ClCompile Include="..\private\DebugProfiler.cpp" />
     <ClCompile Include="..\Private\Deco_AttackDelay.cpp" />
-    <ClCompile Include="..\Private\Deco_PhaseChange.cpp" />
+    <ClCompile Include="..\Private\Deco_BossPhase.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
@@ -665,6 +668,7 @@
     <ClCompile Include="..\private\StoneWall1.cpp" />
     <ClCompile Include="..\private\StoneWall2.cpp" />
     <ClCompile Include="..\Private\TargetComponent.cpp" />
+    <ClCompile Include="..\private\Task_CutScene.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp" />
     <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
     <ClCompile Include="..\private\Task_ScarletDead.cpp" />

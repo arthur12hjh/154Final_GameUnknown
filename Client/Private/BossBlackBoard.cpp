@@ -146,6 +146,13 @@ void CBossBlackBoard::ResetParryAttack()
     m_bIsParryAttack = false;
 }
 
+void CBossBlackBoard::Reset_State()
+{
+    m_pAttack_Skill = nullptr;
+    m_bIsHit = false;
+
+}
+
 void CBossBlackBoard::Free()
 {
     __super::Free();

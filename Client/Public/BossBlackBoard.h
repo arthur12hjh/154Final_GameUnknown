@@ -17,7 +17,7 @@ public:
 	enum class BOSS_PAHSE { FIRST, SECOND, THIRD, END };
 	enum class BOSS_STATE
 	{
-		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, DEAD, END
+		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, CUTSCENE, DEAD, END
 	};
 
 	typedef struct BossBlackBoardDesc
@@ -77,6 +77,7 @@ public:
 	void								ResetParryAttack();
 	_bool								IsParryAttack() { return m_bIsParryAttack; }
 
+	void								Reset_State();
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 

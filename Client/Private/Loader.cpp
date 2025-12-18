@@ -37,6 +37,7 @@
 
 #pragma region Bullet
 #include "Bullet_Rock.h"
+#include "Bullet_Scarlet.h"
 #pragma endregion
 
 #pragma region Monster
@@ -913,8 +914,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-	
 
 	/* For.Prototype_Component_Model_BanacleA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
@@ -2394,6 +2393,12 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_ScarletBullet_Rock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ScarletBullet");
+	pProtoDesc.pPrototype = CBullet_Scarlet::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
