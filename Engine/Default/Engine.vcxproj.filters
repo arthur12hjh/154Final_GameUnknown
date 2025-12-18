@@ -154,6 +154,9 @@
     <ClInclude Include="..\public\Shadow.h">
       <Filter>01.Utility\11.Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Frustum.h">
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\QuadTree.h">
       <Filter>01.Utility\03.Components\VIBuffer\Terrain\QuadTree</Filter>
     </ClInclude>
@@ -374,6 +377,12 @@
     <ClInclude Include="..\public\Frustum.h">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CascadeShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -507,9 +516,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BlendObject.cpp">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Shadow.cpp">
-      <Filter>01.Utility\11.Shadow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
@@ -721,6 +727,12 @@
     <ClCompile Include="..\Private\JointChain.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\CascadeShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StaticShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -761,9 +773,6 @@
     </Filter>
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{ccaab4a9-3a94-4a6f-b842-d75b1077b29a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\11.Shadow">
-      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -1139,6 +1148,15 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\JointChain">
       <UniqueIdentifier>{11243410-6763-4796-bbd3-8c11003bc23e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow">
+      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Cascade">
+      <UniqueIdentifier>{c607e44e-dc43-41de-99f3-9b81687c8b85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Static">
+      <UniqueIdentifier>{f0688259-fb7c-4352-8239-3ab3ba4cf4a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

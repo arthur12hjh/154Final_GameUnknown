@@ -4,7 +4,7 @@
 
 NS_BEGIN(Client)
 class CNayitba;
-class CBossBlackBoard;
+class CScarletBlackBoard;
 class CGorillaBehaviorTree;
 class CGameManager;
 
@@ -24,7 +24,7 @@ public:
 
 private:
 	CNayitba*							m_pOwner = { nullptr };
-	CBossBlackBoard*					m_pBlackBoard = { nullptr };
+	CScarletBlackBoard*					m_pBlackBoard = { nullptr };
 	CGameManager*						m_pGameManager = { nullptr };
 	queue<const Character_Skill_Desc*>	m_pSkillData = { };
 
@@ -50,9 +50,11 @@ private:
 
 	void								NormalAttackPattern();
 	void								LinkAttackPattern();
-	void								ApproachAttackPattern();
+
+	void								EntranceAttack();
 
 #pragma region Phase2
+	void								SecondPhaseNormalAttack();
 	void								SecondPhaseSpecialAttack();
 #pragma endregion
 

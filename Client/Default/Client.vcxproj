@@ -214,6 +214,8 @@
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
+    <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
+    <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
@@ -496,6 +498,8 @@
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
+    <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
+    <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />

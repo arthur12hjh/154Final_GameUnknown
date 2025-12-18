@@ -10,6 +10,13 @@ private:
 
 	virtual		HRESULT					Initialize(void* pArg);
 
+public :
+	void								SetEntarnceAttack(_bool bIsflag);
+	_bool								bIsEnableEntarnceAttack();
+
+private :
+	_bool								m_bIsEntarnceAttack = { true };
+
 public:
 	static		CScarletBlackBoard*		Create(void* pArg);
 	virtual		void					Free() override;

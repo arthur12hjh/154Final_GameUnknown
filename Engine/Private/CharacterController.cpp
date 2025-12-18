@@ -150,7 +150,7 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 	ControllerFilter.mCCTFilterCallback = static_cast<CCTFilterCallback*>(m_pCCTFilterCallback);
 
 	PxExtendedVec3 vPrevPos = m_pController->getFootPosition();
-	PxU32 ResultFlag = m_pController->move(MoveSum, 0.f, fTimeDelta, ControllerFilter);
+	PxU32 ResultFlag = m_pController->move(MoveSum, 0.001f, fTimeDelta, ControllerFilter);
 	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
 	m_vPrePosition = PxVec3((float)vNewPos.x, (float)vNewPos.y, (float)vNewPos.z);
 	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));

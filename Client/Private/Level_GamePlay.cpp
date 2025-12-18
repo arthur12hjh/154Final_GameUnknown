@@ -107,7 +107,6 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		
 		m_bChangeLevel = true;
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
@@ -132,6 +131,10 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
+
+	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
+	//Load_Light_Data();
+
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -143,52 +146,17 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-
-	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	//Load_Light_Data();
-
-	/*LIGHT_DESC			LightDesc{};
-
-	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-	/*LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
+	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(30.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	STATIC_SHADOW_DESC		StaticShadowDesc{};
+	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fNear = 0.1f;
+	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-
-	SHADOW_LIGHT_DESC		ShadowDesc{};
-	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
-	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
-	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
-	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
-	ShadowDesc.fNear = 0.1f;
-	ShadowDesc.fFar = 500.f;
-	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -334,8 +302,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Terrain_Desert"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
-
-
 
 	return S_OK;
 }
