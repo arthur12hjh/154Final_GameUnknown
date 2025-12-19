@@ -24,28 +24,29 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 	if (m_pBlackBoard->bIsExcution())
 		return NODE_STATE::FAIL;
 
-	m_pBlackBoard->SetTargetDistacne();
-	_float fDistance = m_pBlackBoard->GetTargetDistance();
-	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
-	
-	auto pState = m_pBlackBoard->GetCurState();
-	if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
+	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
-		if (false == m_pBlackBoard->IsAttackEnable())
+		m_pBlackBoard->SetTargetDistacne();
+		_float fDistance = m_pBlackBoard->GetTargetDistance();
+		_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
+
+		auto pState = m_pBlackBoard->GetCurState();
+		if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
 		{
-			return NODE_STATE::FAIL;
-		}
-		else if (fDistance > fATKRange * 4.f)
-		{
-			if (m_pBlackBoard->IsAttackEnable())
+			if (false == m_pBlackBoard->IsAttackEnable())
 			{
-				m_pBlackBoard->ClearAttackTimer();
-				return NODE_STATE::COMPLETE;
+				return NODE_STATE::FAIL;
+			}
+			else if (fDistance > fATKRange * 4.f)
+			{
+				if (m_pBlackBoard->IsAttackEnable())
+				{
+					m_pBlackBoard->ClearAttackTimer();
+					return NODE_STATE::COMPLETE;
+				}
 			}
 		}
 	}
-	
-
 
 	return NODE_STATE::COMPLETE;
 }

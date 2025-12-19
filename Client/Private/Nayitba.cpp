@@ -218,6 +218,9 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	case CNotify::SHOOT_PROJECTILE:
 		ShootProjectile(pNotify);
 		break;
+	case CNotify::ACTIVE_PHYSX_COLLISION:
+		EnablePhysxController(pNotify->iNumData01);
+		break;
 	}
 
 	return S_OK;
@@ -359,6 +362,11 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 void CNayitba::SetThesholdAction(_bool bIsTheshold)
 {
 	m_bIsTheshold = bIsTheshold;
+}
+
+void CNayitba::EnablePhysxController(_bool bEnable)
+{
+	m_pCCT->Set_CCTCollision(bEnable);
 }
 
 _bool CNayitba::bIsHitReaction()
@@ -830,7 +838,7 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	else
 		pBulletDesc.vScale = pNotify->vNotifyScale;
 
-	if ("" == pNotify->szNotifyArg03)
+	if ("" != pNotify->szNotifyArg03)
 		pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	else
 		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
