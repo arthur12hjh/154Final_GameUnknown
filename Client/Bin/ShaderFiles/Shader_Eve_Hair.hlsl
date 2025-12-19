@@ -210,15 +210,13 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
     vMtrlDiffuse.a = vMtrlOpacity.r;
-    
-    if (vMtrlDiffuse.a == 0.f)
+    if (vMtrlDiffuse.a < 0.1f)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
-    //Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
@@ -231,14 +229,13 @@ PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
     vMtrlDiffuse.a = vMtrlOpacity.r;
-    
-    if (vMtrlDiffuse.a <= 0.4f)
+    if (vMtrlDiffuse.a < 0.1f)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
-    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
     
     return Out;
