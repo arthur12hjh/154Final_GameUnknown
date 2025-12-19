@@ -53,16 +53,16 @@ void CBossBlackBoard::Set_BossPhase(BOSS_PAHSE ePhase)
 
 void CBossBlackBoard::Set_PlayCutScene()
 {
-    m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second = true;
+    m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second.bIsCutScene = true;
 }
 
 _bool CBossBlackBoard::Is_PlayPhaseChangeCutScene()
 {
     _uint iPhaseIndex = ENUM_CLASS(m_eBossPhase);
-    if (0 > iPhaseIndex || m_BossDefualtInfo->iNumPhase)
+    if (0 > iPhaseIndex || iPhaseIndex >= m_BossDefualtInfo->iNumPhase)
         return true;
 
-    return  m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second;
+    return  m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second.bIsCutScene;
 }
 
 _uint CBossBlackBoard::Get_NumBossPhases()
@@ -77,6 +77,11 @@ _float CBossBlackBoard::Get_CurrentPhaseLitmitPercent()
         return 0.f;
 
     return   m_ChangePhaseRatio[iPhaseIndex].first;
+}
+
+_bool CBossBlackBoard::IsLastPhase()
+{
+    return ENUM_CLASS(m_eBossPhase) == m_BossDefualtInfo->iNumPhase - 1 ? true : false;
 }
 
 void CBossBlackBoard::SetHitData(const Default_Damage_Desc* pDamageData)
@@ -137,6 +142,32 @@ _bool CBossBlackBoard::ExitGroggy()
         return true;
 
     return false;
+}
+
+void CBossBlackBoard::SetPhaseLastAttack(_bool bIsFlag)
+{
+    _uint iPhaseIndex = ENUM_CLASS(m_eBossPhase);
+    if (0 > iPhaseIndex || iPhaseIndex >= m_BossDefualtInfo->iNumPhase)
+        return;
+
+    if (bIsFlag)
+    {
+        m_bIsPhaseLastAttack = bIsFlag;
+        m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack = false;
+    }
+    else
+    {
+        m_bIsPhaseLastAttack = bIsFlag;
+    }
+}
+
+_bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
+{
+    _uint iPhaseIndex = ENUM_CLASS(m_eBossPhase);
+    if (0 > iPhaseIndex || iPhaseIndex >= m_BossDefualtInfo->iNumPhase)
+        return false;
+
+    return   m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack;
 }
 
 void CBossBlackBoard::EnterExcution(_bool bIsExcution)

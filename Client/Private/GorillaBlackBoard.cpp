@@ -10,7 +10,10 @@ HRESULT CGorillaBlackBoard::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_ChangePhaseRatio.emplace_back(make_pair(0.01f, false));
+	PHASE_CHANGE_DESC Phase_Desc = {};
+	Phase_Desc.bIsCutScene = false;
+	Phase_Desc.bIsLastAttack = false;
+	m_ChangePhaseRatio.emplace_back(0.01f, Phase_Desc);
 	return S_OK;
 }
 

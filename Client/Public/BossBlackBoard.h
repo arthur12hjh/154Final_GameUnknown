@@ -20,6 +20,12 @@ public:
 		IDLE, ATTACK, HIT, MOVE, GROGGY, THESHOLD, CUTSCENE, DEAD, END
 	};
 
+	typedef struct PhaseChangeDesc
+	{
+		_bool				bIsCutScene;
+		_bool				bIsLastAttack;
+	}PHASE_CHANGE_DESC;
+
 	typedef struct BossBlackBoardDesc
 	{
 		CGameObject*					pOwner;
@@ -53,6 +59,7 @@ public:
 	_float								Get_CurrentPhaseLitmitPercent();
 
 	const BOSS_PAHSE&					Get_BossPhase() { return m_eBossPhase; }
+	_bool								IsLastPhase();
 
 	const BOSS_STATE&					GetCurState() { return m_eCurState; }
 	const BOSS_STATE&					GetPreState() const { return m_ePreState; }
@@ -68,7 +75,12 @@ public:
 
 	void								AccGroggyTime(_float fTimeDelta);
 	void								EnterGroggy();
+	
 	_bool								ExitGroggy();
+
+	void								SetPhaseLastAttack(_bool bIsFlag);
+	_bool								IsCurrentPhaseLastAttackAction();
+	_bool								IsPhaseLastAttack() { return m_bIsPhaseLastAttack; }
 
 	void								EnterExcution(_bool bIsExcution);
 	_bool								bIsExcution() { return m_bIsExcution; }
@@ -97,6 +109,7 @@ protected :
 	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
+	_bool								m_bIsPhaseLastAttack = { false };
 	_bool								m_bIsExcution = { false };
 	_bool								m_bIsParryAttack = { false };
 
@@ -104,8 +117,8 @@ protected :
 	_float2								m_fAttackDelay = {};
 	_float2								m_vGroggyTime = { 0.f, 4.0f };
 
-	BOSS_PAHSE							m_eBossPhase = { BOSS_PAHSE::FIRST };
-	vector<pair<_float, _bool>>			m_ChangePhaseRatio = {};
+	BOSS_PAHSE									m_eBossPhase = { BOSS_PAHSE::FIRST };
+	vector<pair<_float, PHASE_CHANGE_DESC>>		m_ChangePhaseRatio;
 
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };

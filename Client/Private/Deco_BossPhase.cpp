@@ -29,26 +29,36 @@ CBehaviorNode::NODE_STATE CDeco_BossPhase::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 	CBossBlackBoard::BOSS_STATE eBossState = m_pBlackBoard->GetCurState();
 
-	if (CBossBlackBoard::BOSS_STATE::CUTSCENE != eBossState)
+	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
-		_float CurrentHealthRatio = (_float)m_pBlackBoard->GetBossInfo()->iCurrentHealth / (_float)m_iBossMaxHealth;
-		if (CurrentHealthRatio <= m_pBlackBoard->Get_CurrentPhaseLitmitPercent())
+		if (CBossBlackBoard::BOSS_STATE::CUTSCENE != eBossState)
 		{
-			// 페이즈 전환 컷씬 재생
-			if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
+			_float CurrentHealthRatio = (_float)m_pBlackBoard->GetBossInfo()->iCurrentHealth / (_float)m_iBossMaxHealth;
+			if (CurrentHealthRatio <= m_pBlackBoard->Get_CurrentPhaseLitmitPercent())
 			{
-				// 컷씬끝나고 페이즈 세팅해야할거같음
-				//m_pBlackBoard->Set_BossPhase(CBossBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
+				if (false == m_pBlackBoard->IsCurrentPhaseLastAttackAction())
+				{
+					// 페이즈 전환 컷씬 재생
+					if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
+					{
+						// 컷씬끝나고 페이즈 세팅해야할거같음
+						//m_pBlackBoard->Set_BossPhase(CBossBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
 
-				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::CUTSCENE);
-				m_pBlackBoard->Set_PlayCutScene();
+						m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::CUTSCENE);
+						m_pBlackBoard->Set_PlayCutScene();
+					}
+				}
+				else
+				{
+					m_pBlackBoard->SetPhaseLastAttack(true);
+				}
 			}
 		}
-	}
 
-	// 컷씬이 재생되어야하고 처음 페이즈가 바뀌었다면 이때 재생해야할것
-	if (CBossBlackBoard::BOSS_STATE::CUTSCENE == m_pBlackBoard->GetCurState())
-		return NODE_STATE::COMPLETE;
+		// 컷씬이 재생되어야하고 처음 페이즈가 바뀌었다면 이때 재생해야할것
+		if (CBossBlackBoard::BOSS_STATE::CUTSCENE == m_pBlackBoard->GetCurState())
+			return NODE_STATE::COMPLETE;
+	}
 
 	return NODE_STATE::FAIL;
 }

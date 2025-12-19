@@ -68,8 +68,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
 	pHitBoxDesc.eColType = COLLIDER::OBB;
-	pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
-	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+	//pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
+	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
 
 	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -355,33 +355,42 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 	//
-	//Desc.iMonsterID = 3;
-	//{
-	//	for (_uint i = 0; i < 10; ++i)
-	//	{
-	//		Desc.vPosition = { 15.f * i, 1.f, 105.f};
-	//		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//			return E_FAIL;
-	//	}
-	//	
-	//
-	//}
+	Desc.iMonsterID = 3;
+	{
+		for (_uint i = 0; i < 10; ++i)
+		{
+			Desc.vPosition = { 15.f * i, 1.f, 105.f};
+			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+				return E_FAIL;
+		}
+	}
+
+	Desc.iMonsterID = 7;
+	{
+		for (_uint i = 0; i < 10; ++i)
+		{
+			Desc.vPosition = { 15.f * i, 1.f, 105.f };
+			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+				return E_FAIL;
+		}
+	}
 	
-	//Desc.iMonsterID = 4;
-	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	//Desc.bIsSuperMonster = true;
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	/*Desc.iMonsterID = 4;
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	Desc.bIsSuperMonster = true;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
 
 
-	//Desc.iMonsterID = 4;
-	//Desc.bIsSuperMonster = true;
-	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	Desc.iMonsterID = 5;
+	Desc.bIsSuperMonster = true;
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;*/
 
 	/*Desc.iMonsterID = 6;
 	Desc.vPosition = { 350.f, 1.f, 600.f };
@@ -408,11 +417,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	//Desc.iMonsterID = 8;
-	//Desc.vPosition = { 1000.f, 1.f, 1000.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	/*Desc.iMonsterID = 8;
+	Desc.vPosition = { 1000.f, 1.f, 1000.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
