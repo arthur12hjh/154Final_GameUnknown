@@ -1,0 +1,32 @@
+[
+    {
+        "CinematicNodeTrackList": [
+            {
+                "eState": 1,
+                "fTrackPosition": 0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },
+	{
+                "eState": 3,
+                "fTrackPosition": 0,
+                "iActiveIndex": 1112,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
+	{
+                "eState": 3,
+                "fTrackPosition": 3.6,
+                "iActiveIndex": 1113,
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
+            },
+	{
+                "eState": 1,
+                "fTrackPosition": 4.4509999752044678,
+                "iActiveIndex": 0,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
+            }
+        ],
+        "iCinematicID": 124,
+        "szCinematicName": "GorillaEnterTest02"
+    }
+]

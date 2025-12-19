@@ -126,10 +126,10 @@ HRESULT CPonyTail_Player::Render()
 	{
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 
