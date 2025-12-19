@@ -46,6 +46,12 @@ public:
 	void								SetCurState(BOSS_STATE eState);
 
 	void								Set_BossPhase(BOSS_PAHSE ePhase);
+	void								Set_PlayCutScene();
+
+	_bool								Is_PlayPhaseChangeCutScene();
+	_uint								Get_NumBossPhases();
+	_float								Get_CurrentPhaseLitmitPercent();
+
 	const BOSS_PAHSE&					Get_BossPhase() { return m_eBossPhase; }
 
 	const BOSS_STATE&					GetCurState() { return m_eCurState; }
@@ -78,6 +84,7 @@ public:
 	_bool								IsParryAttack() { return m_bIsParryAttack; }
 
 	void								Reset_State();
+
 protected :
 	CGameObject*						m_pTarget = { nullptr };
 
@@ -98,6 +105,8 @@ protected :
 	_float2								m_vGroggyTime = { 0.f, 4.0f };
 
 	BOSS_PAHSE							m_eBossPhase = { BOSS_PAHSE::FIRST };
+	vector<pair<_float, _bool>>			m_ChangePhaseRatio = {};
+
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };
 

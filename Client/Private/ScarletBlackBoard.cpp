@@ -11,6 +11,9 @@ HRESULT CScarletBlackBoard::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+	m_ChangePhaseRatio.emplace_back(make_pair(0.5f, false));
+	m_ChangePhaseRatio.emplace_back(make_pair(0.01f, false));
+
     return S_OK;
 }
 

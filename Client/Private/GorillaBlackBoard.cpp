@@ -10,6 +10,7 @@ HRESULT CGorillaBlackBoard::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_ChangePhaseRatio.emplace_back(make_pair(0.01f, false));
 	return S_OK;
 }
 

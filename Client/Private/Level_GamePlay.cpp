@@ -390,14 +390,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;*/
 
 
-	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	/*CSpawner::SPAWNER_DESC pSapwnerDesc = {};
 	pSapwnerDesc.bIsApplyTransform = true;
 	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
 	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
 	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	//  시네마틱 테스트용 모델임
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
@@ -408,11 +408,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	Desc.iMonsterID = 8;
-	Desc.vPosition = { 60.f, 1.f, 60.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 8;
+	//Desc.vPosition = { 1000.f, 1.f, 1000.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

@@ -71,6 +71,15 @@ void CBossController::Damage(void* pArg)
     const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
     const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
+    _float fLimitPercent = m_pBlackBoard->Get_CurrentPhaseLitmitPercent();
+    _float fCurHealthRatio = pNayitba->GetMonsterData().iCurrentHealth / pNayitba->GetStaticMonsterData()->iMaxHealth;
+
+    if (fLimitPercent > fCurHealthRatio)
+    {
+        _float RecoveryHealth = (pNayitba->GetStaticMonsterData()->iMaxHealth * fLimitPercent)- pNayitba->GetMonsterData().iCurrentHealth;
+        pNayitba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_HP, RecoveryHealth);
+    }
+
     if (10 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // ÀÌ°Å Á×´Â¸ð¼Ç ³ª¿È Á×À¸¸é 
@@ -151,7 +160,6 @@ void CBossController::Damage(void* pArg)
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
             m_pBlackBoard->SetHitData(pDamageDesc);
         }
-            
     }
 }
 

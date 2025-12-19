@@ -366,7 +366,7 @@ void CNayitba::SetThesholdAction(_bool bIsTheshold)
 
 void CNayitba::EnablePhysxController(_bool bEnable)
 {
-	m_pCCT->Set_Active(bEnable);
+	m_pCCT->Set_CCTCollision(bEnable);
 }
 
 _bool CNayitba::bIsHitReaction()

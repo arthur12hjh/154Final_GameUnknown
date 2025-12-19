@@ -51,6 +51,34 @@ void CBossBlackBoard::Set_BossPhase(BOSS_PAHSE ePhase)
     m_eBossPhase = ePhase;
 }
 
+void CBossBlackBoard::Set_PlayCutScene()
+{
+    m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second = true;
+}
+
+_bool CBossBlackBoard::Is_PlayPhaseChangeCutScene()
+{
+    _uint iPhaseIndex = ENUM_CLASS(m_eBossPhase);
+    if (0 > iPhaseIndex || m_BossDefualtInfo->iNumPhase)
+        return true;
+
+    return  m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second;
+}
+
+_uint CBossBlackBoard::Get_NumBossPhases()
+{
+    return m_BossDefualtInfo->iNumPhase;
+}
+
+_float CBossBlackBoard::Get_CurrentPhaseLitmitPercent()
+{
+    _uint iPhaseIndex = ENUM_CLASS(m_eBossPhase);
+    if (0 > iPhaseIndex || iPhaseIndex >= m_BossDefualtInfo->iNumPhase)
+        return 0.f;
+
+    return   m_ChangePhaseRatio[iPhaseIndex].first;
+}
+
 void CBossBlackBoard::SetHitData(const Default_Damage_Desc* pDamageData)
 {
     if (nullptr == pDamageData)
