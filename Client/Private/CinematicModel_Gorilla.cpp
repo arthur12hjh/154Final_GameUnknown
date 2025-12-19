@@ -118,6 +118,7 @@ void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 		return;
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -128,6 +129,17 @@ void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 
 HRESULT CCinematicModel_Gorilla::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
 	return S_OK;
 }
 
@@ -229,7 +241,7 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 		else if (m_iAnimationSequence == 2)
 		{
 			m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.f, 2.94f, 637.f, 1.f));
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(743.f, 2.94f, 635.f, 1.f));
 		}
 	}
 

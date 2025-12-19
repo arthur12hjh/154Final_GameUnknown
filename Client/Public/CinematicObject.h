@@ -33,7 +33,6 @@ public:
 protected:
 	_wstring m_szObjectTag;
 
-	_bool m_bIsActive = FALSE;
 	_int m_iCinematicCode = -1;
 
 public:

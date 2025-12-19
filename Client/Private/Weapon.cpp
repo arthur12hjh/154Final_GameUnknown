@@ -191,12 +191,15 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CWeapon::Render()
 {
+	if (false == isVisible())
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

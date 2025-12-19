@@ -94,7 +94,18 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 6.799999952316284,
+                "fTrackPosition": 7.299999952316284,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 7.799999952316284,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     60.0,

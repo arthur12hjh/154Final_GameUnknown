@@ -52,6 +52,14 @@ public:
 		m_eVisibility = eVisiblility;
 	}
 
+	void SetActive(_bool bIsActive) {
+		m_bIsActive = bIsActive;
+	}
+
+	void SetActive() {
+		m_bIsActive = !m_bIsActive;
+	}
+
 	const VISIBILITY&								GetVisibility() { return m_eVisibility;	}
 	CTransform*										GetTransform() { return m_pTransformCom; }
 
@@ -88,6 +96,7 @@ protected:
 
 	_bool										m_isDead = { false };
 	_bool										m_bIsPrevVisibility = { true };
+	_bool										m_bIsActive = { true };
 
 	map<const _wstring, class CComponent*>		m_Components;
 	_int										m_iOcclusionCooldown = 0;

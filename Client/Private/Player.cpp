@@ -150,6 +150,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pColliderCom->SetOwner(this);
 
+	SetVisibility(VISIBILITY::VISIBLE);
+
 	return S_OK;
 }
 
@@ -188,7 +190,11 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if (m_bIsActive == TRUE)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -199,6 +205,17 @@ void CPlayer::Late_Update(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
 	return S_OK;
 }
 

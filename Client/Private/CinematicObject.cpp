@@ -24,6 +24,8 @@ HRESULT CCinematicObject::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_bIsActive = FALSE;
+
 	return S_OK;
 }
 

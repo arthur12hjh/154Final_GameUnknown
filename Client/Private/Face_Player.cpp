@@ -140,7 +140,7 @@ void CFace_Player::Late_Update(_float fTimeDelta)
 
 	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 

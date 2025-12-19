@@ -138,6 +138,11 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		if (m_bIsActive == TRUE)
+		{
+			m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+			m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+		}
 		__super::Late_Update(fTimeDelta);
 
 #ifdef _DEBUG
@@ -149,6 +154,17 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 HRESULT CNayitba::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CNayitba::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
 	return S_OK;
 }
 
