@@ -34,6 +34,9 @@ public:
 
 	void		Set_Distance(_float fDistance) { m_fDistance = fDistance; }
 
+	void		Set_Pivot(_vector vPivot);
+	void		Reset_Pivot() { m_vPivot = { 1.5f, 4.f, 0.f }; }
+
 
 private:
 	class CGameManager*			m_pGameManager = { nullptr };

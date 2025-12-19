@@ -90,8 +90,8 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
     // �ǹ� ��ġ�� �޾ƿ´�.
     _float3 vPivotPos = {};
-    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
-    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
     vPivotPos.x += fPitchRatio * -1.6f;
     vPivotPos.y += fPitchRatio * 2.f;
 
@@ -156,6 +156,11 @@ void CCamera_Player::Late_Update(_float fTimeDelta)
 HRESULT CCamera_Player::Render()
 {
     return S_OK;
+}
+
+void CCamera_Player::Set_Pivot(_vector vPivot)
+{
+	XMStoreFloat3(&m_vPivot, vPivot);   
 }
 
 CCamera_Player* CCamera_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -35,11 +35,11 @@ HRESULT CBullet_Rock::Initialize(void* pArg)
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 
-		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
-		EffectDesc.pWorldMatrix = nullptr;
+	EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+	EffectDesc.pWorldMatrix = nullptr;
 
-		EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
-		EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+	EffectDesc.fRot = _float3(0, 0, 0);
 	EffectDesc.fSize = 0.4f;
 	EffectDesc.iFloor = 0;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"),

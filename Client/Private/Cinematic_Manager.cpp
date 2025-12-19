@@ -241,6 +241,20 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::DEACTIVE_CAMERA:
             
             break;
+        case CINEMATICNODE_STATE::FADE_IN:
+        {
+			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));
+            Safe_Release(pHUD);
+            break;
+        }
+        case CINEMATICNODE_STATE::FADE_OUT:
+        {
+			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+            Safe_Release(pHUD);
+            break;
+        }
         case CINEMATICNODE_STATE::PLAY_SOUND:
 
             break;

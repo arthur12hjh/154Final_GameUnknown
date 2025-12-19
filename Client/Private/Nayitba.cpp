@@ -823,7 +823,8 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
+	pBulletDesc.vScale = pNotify->vNotifyScale;
+	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
 		pBulletDesc.vScale = {1.f, 1.f, 1.f};
 	else
