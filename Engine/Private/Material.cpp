@@ -52,6 +52,29 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 				{
 					strcpy_s(szEXT, ".dds");
 				}
+				else
+				{
+					//_tchar szMsg[MAX_PATH * 2] = {};
+					//_tchar szDDSPath[MAX_PATH] = {};
+					//
+					//MultiByteToWideChar(
+					//	CP_ACP,
+					//	0,
+					//	strDDSTexturePath,
+					//	-1,
+					//	szDDSPath,
+					//	MAX_PATH
+					//);
+					//
+					//swprintf_s(
+					//	szMsg,
+					//	L"제가 png 이미지는 쓰지 말라고 전해드렸습니다.\n%s",
+					//	szDDSPath
+					//);
+					//
+					//MessageBoxW(nullptr, szMsg, L"System Message", MB_OK);
+
+				}
 			}
 
 			strcpy_s(szTextureFilePath, szDrive);

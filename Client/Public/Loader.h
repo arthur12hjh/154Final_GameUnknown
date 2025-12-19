@@ -119,6 +119,7 @@ private:
 	HRESULT Loading_UI_For_Combat_HUD_Vitals(void* pArg);
 	HRESULT Loading_UI_For_Combat_HUD_Skills(void* pArg);
 	HRESULT Loading_UI_For_World(void* pArg);
+	HRESULT Loading_UI_For_Popup(void* pArg);
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

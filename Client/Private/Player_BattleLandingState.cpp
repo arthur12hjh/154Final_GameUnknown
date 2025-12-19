@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 
 CPlayer_BattleLandingState::CPlayer_BattleLandingState()
+	: CPlayerState{}
 {
 }
 
@@ -26,7 +27,10 @@ PLAYER_TRANSITION_DESC CPlayer_BattleLandingState::Update(_float fTimeDelta)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
 		fAnimationRatio >= 0.75f)
+	{
+		//°É¾î
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
+	}
 	
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))

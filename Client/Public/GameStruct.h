@@ -397,6 +397,17 @@ namespace Client
 		_float4				vColor{ 1.f, 1.f, 1.f, 1.f };
 	}SCRIPT_DATA;
 
+	typedef struct Script_Desc
+	{
+		_wstring szScriptTag{};
+		_wstring szAnimTag{};
+		_bool bCanControl{ false };
+		_float2 vInitOffset{ 0.f, 0.f };
+		vector<SCRIPT_DATA> Scripts;
+	}SCRIPT_DESC;
+
+
+
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
 	/// CameraAnimationID : 6글자로 되어있다.
@@ -435,7 +446,17 @@ namespace Client
 
 
 	// Cinematic 관련 데이터들
-	enum class CINEMATICNODE_STATE { ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, DEACTIVE_CHARACTER, DEACTIVE_CAMERA, PLAY_SOUND, END };
+	enum class CINEMATICNODE_STATE { 
+		ACTIVE_CINEOBJ,			// 0 
+		PLAY_CINEOBJ,			// 1
+		ACTIVE_CHARACTER,		// 2
+		ACTIVE_CAMERA,			// 3
+		DEACTIVE_CHARACTER,		// 4
+		DEACTIVE_CAMERA,		// 5
+		FADE_IN,				// 6
+		FADE_OUT,				// 7
+		PLAY_SOUND,				// 8
+		END };
 
 	typedef struct Cinematic_Node_Desc
 	{

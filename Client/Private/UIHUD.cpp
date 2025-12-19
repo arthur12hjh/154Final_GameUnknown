@@ -368,8 +368,20 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			pDesc.Get_UI_Text_Desc()->vColor.z,
 			pDesc.Get_UI_Text_Desc()->vColor.w
 		};
-		//jObj["isHasTextDesc"] = pDesc.m_isHasTextDesc;
 		jObj["TextDesc"] = TextDesc;
+	}
+
+	if (pDesc.Get_UI_Popup_Desc())
+	{
+		Json jPopupDesc;
+
+		jPopupDesc["fPosX"] = pDesc.Get_UI_Popup_Desc()->fPosX;
+		jPopupDesc["fPosY"] = pDesc.Get_UI_Popup_Desc()->fPosY;
+		jPopupDesc["fSizeX"] = pDesc.Get_UI_Popup_Desc()->fSizeX;
+		jPopupDesc["fSizeY"] = pDesc.Get_UI_Popup_Desc()->fSizeY;
+		jPopupDesc["isDimed"] = pDesc.Get_UI_Popup_Desc()->isDimed;
+
+		jObj["PopupDesc"] = jPopupDesc;
 	}
 
 	const auto* children = pUI->Get_Children();
@@ -593,6 +605,20 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			Desc.Set_UI_Text_Desc(TextDesc);
 		}
 
+		if (pUIObject.contains("PopupDesc"))
+		{
+			UI_POPUP_DESC PopupDesc{};
+			Json jDesc = pUIObject["PopupDesc"];
+			
+			PopupDesc.fPosX = jDesc["fPosX"].get<_float>();
+			PopupDesc.fPosY = jDesc["fPosY"].get<_float>();
+			PopupDesc.fSizeX = jDesc["fSizeX"].get<_float>();
+			PopupDesc.fSizeY = jDesc["fSizeY"].get<_float>();
+			PopupDesc.isDimed = jDesc["isDimed"].get<_bool>();
+
+			Desc.Set_UI_Popup_Desc(PopupDesc);
+		}
+
 		CGameObject* pUI = nullptr;
 
 		if (FAILED(Add_UserInterface(Desc.iLevel, Desc.szProtoTag.c_str(), Desc.szLayerTag.c_str(), Desc.szUITag.c_str(), &pUI, &Desc)))
@@ -812,6 +838,20 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		};
 
 		Desc.Set_UI_Text_Desc(TextDesc);
+	}
+
+	if (jData.contains("PopupDesc"))
+	{
+		UI_POPUP_DESC PopupDesc{};
+		Json jDesc = jData["PopupDesc"];
+
+		PopupDesc.fPosX = jDesc["fPosX"].get<_float>();
+		PopupDesc.fPosY = jDesc["fPosY"].get<_float>();
+		PopupDesc.fSizeX = jDesc["fSizeX"].get<_float>();
+		PopupDesc.fSizeY = jDesc["fSizeY"].get<_float>();
+		PopupDesc.isDimed = jDesc["isDimed"].get<_bool>();
+
+		Desc.Set_UI_Popup_Desc(PopupDesc);
 	}
 
 	CGameObject* pUI = nullptr;

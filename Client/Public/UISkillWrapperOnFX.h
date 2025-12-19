@@ -4,9 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
-class CTexture;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
@@ -31,11 +28,6 @@ protected:
 	virtual HRESULT Bind_ShaderResources() override;
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
-
-private:
-	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = nullptr;
-
-	_float m_fTimeAcc = 0.f;
 
 public:
 	static CUISkillWrapperOnFX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

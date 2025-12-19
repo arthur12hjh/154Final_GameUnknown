@@ -22,7 +22,7 @@ public :
 
 	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
 
-	const vector<SCRIPT_DATA>*				Get_ScriptData(const _wstring& szScriptTag);
+	const SCRIPT_DESC*						Get_ScriptData(const _wstring& szScriptTag);
 
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
@@ -64,7 +64,7 @@ private:
 	map<_uint, CINEMATIC_DESC>							m_CinematicDatas = {};
 
 	// 대화 스크립트 데이터
-	unordered_map<_wstring, vector<SCRIPT_DATA>>					m_ScriptDatas = {};
+	unordered_map<_wstring, SCRIPT_DESC>					m_ScriptDatas = {};
 
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
