@@ -7,7 +7,7 @@ NS_BEGIN(Client)
 class CPlayer_JumpState final : public CPlayerState
 {
 private:
-	CPlayer_JumpState();
+	CPlayer_JumpState(_bool isSprintJump = false);
 	virtual ~CPlayer_JumpState() = default;
 
 public:
@@ -19,8 +19,11 @@ public:
 
 private:
 	_float	m_fDegree = { 0.f };
+	_float  m_fScaleFactor = { 1.f };
 	_bool   m_isLanding = { false };
+	_bool   m_isSprintJump = { false };
 	PLAYER_BATTLEWALK_DESC m_NextStateDesc;
+
 public:
 	static	CPlayer_JumpState* Create(void* pArg);
 	virtual	void			   Free() override;

@@ -265,9 +265,6 @@
     <Filter Include="02.GameObjects\Character\Player\01. FSM">
       <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\01. FSM\Base">
-      <UniqueIdentifier>{4642f57f-bd5b-40b0-8187-b409ac58061f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\CCTHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
     </Filter>
@@ -468,9 +465,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster">
       <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
       <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
@@ -1368,9 +1362,6 @@
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
       <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClInclude>
@@ -1735,6 +1726,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Bullet_Scarlet.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2217,9 +2211,6 @@
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
       <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClCompile>
@@ -2576,6 +2567,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Scarlet.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

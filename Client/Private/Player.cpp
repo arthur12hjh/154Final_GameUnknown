@@ -219,6 +219,14 @@ HRESULT CPlayer::Render_Shadow()
 	return S_OK;
 }
 
+HRESULT CPlayer::Render_MotionBlur()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_MotionBlur();
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
