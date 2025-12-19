@@ -193,7 +193,7 @@ HRESULT CRenderer::Initialize()
 	rsDesc.CullMode = D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise = FALSE;
 	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.DepthBias = 1000;
+	rsDesc.DepthBias = -500;
 	rsDesc.DepthBiasClamp = 0.0f;
 	rsDesc.SlopeScaledDepthBias = 1.0f;
 	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))
@@ -595,7 +595,7 @@ void CRenderer::Render_Occlusion()
 	{
 		if (nullptr != pRenderObject)
 		{
-			if (pRenderObject->Get_Depth() < 20.f)
+			if (pRenderObject->Get_Depth() < 200.f)
 			{
 				Safe_Release(pRenderObject);
 				continue;
@@ -614,12 +614,12 @@ void CRenderer::Render_Occlusion()
 				_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
 				_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
 
-				_vector vPos = matWorld.r[3];
+				//_vector vPos = matWorld.r[3];
 
-				matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
+				//matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				//matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
 
-				matWorld.r[3] = vPos;
+				//matWorld.r[3] = vPos;
 
 				XMStoreFloat4x4(&WorldMatrix, matWorld);
 
