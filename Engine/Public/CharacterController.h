@@ -56,6 +56,7 @@ public:
 	void		  Set_Riding(_bool isRiding, class CTransform* pTransform = nullptr, class CRigidBody* pRigidBody = nullptr);
 	void		  Set_Active(_bool bFlag) { m_tUserData.isActive = bFlag; }
 	void		  Set_Position(_vector vPosition);
+	void		  Set_CCTCollision(_bool bFlag) { m_tUserData.isCollisionCCTToCCT = bFlag; }
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
