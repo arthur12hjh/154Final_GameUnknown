@@ -96,7 +96,8 @@ public:
 #pragma endregion
 
 #pragma region CINEMATIC_MANAGER
-	HRESULT					Play_Cinematic(_uint iCinematicID);
+	HRESULT						Play_Cinematic(_uint iCinematicID);
+	HRESULT						Load_Level_CinematicObjectData(const _char* szFilePath);
 #pragma endregion
 
 

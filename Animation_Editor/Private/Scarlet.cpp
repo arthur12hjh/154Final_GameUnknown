@@ -9,7 +9,8 @@
 #include "Body_Scarlet.h"
 #include "Face_Scarlet.h"
 //#include "Hair_Scarlet.h"
-//#include "Weapon_Scarlet.h"
+#include "Weapon_Scarlet.h"
+#include "Scabbard_Scarlet.h"
 #include "GameInstance.h"
 
 CScarlet::CScarlet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -188,6 +189,28 @@ HRESULT CScarlet::Ready_PartObjects()
 	/* Part_Face */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Face_Scarlet"),
 		TEXT("Part_Face"), &FaceDesc)))
+		return E_FAIL;
+
+	CBody_Scarlet* pPart_Body = dynamic_cast<CBody_Scarlet*>(Find_PartObject(TEXT("Part_Body")));
+
+	CWeapon_Scarlet::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pParentState = &m_iState;
+	WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("Weapon");
+	WeaponDesc.pParentTransform = m_pTransformCom;
+
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon_Scarlet"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
+		return E_FAIL;
+
+	CScabbard_Scarlet::SCABBARD_DESC	ScabbardDesc{};
+	ScabbardDesc.pParentState = &m_iState;
+	ScabbardDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SC_AssistWeapon");
+	ScabbardDesc.pParentTransform = m_pTransformCom;
+
+	/* Part_Scabbard */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Scabbard_Scarlet"),
+		TEXT("Part_Scabbard"), &ScabbardDesc)))
 		return E_FAIL;
 
 	//CBody_Scarlet* pPart_Body = dynamic_cast<CBody_Scarlet*>(Find_PartObject(TEXT("Part_Body")));

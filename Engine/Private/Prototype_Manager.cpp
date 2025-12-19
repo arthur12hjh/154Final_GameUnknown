@@ -58,7 +58,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 	int iResult = 0;
 
 	// 먼저 뼈대 모델. 즉 기반이 되는 모델을 만든다.
-	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag,
+	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag, 
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;
 
@@ -128,7 +128,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	pModel->Initialize_AnimationIndexMap();
 	pModel->Initialize_AnimationBufferResource();
-
+	pModel->Release_AnimationChannel();
 
 	_findclose(handle);
 

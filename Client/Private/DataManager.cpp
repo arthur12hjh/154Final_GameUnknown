@@ -452,7 +452,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 
         for (auto& pAnim : jAnim)
         {
-            WCHAR szText[MAX_PATH];
+            _tchar szText[MAX_PATH];
             _wstring szAnimTag;
 
             vector<ANIM_NOTIFY> AnimationNotifyList;

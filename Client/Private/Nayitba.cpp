@@ -556,6 +556,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		LWeaponDesc.pParentTransform = m_pTransformCom;
 		LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szLeftBoneName);
 		LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//LWeaponDesc.vRotation = {(90.f), (-90.f), (0.f), 1.f};
+		//LWeaponDesc.vRotation = {XMConvertToRadians(90.f), XMConvertToRadians(-90.f), XMConvertToRadians(0.f), 1.f};
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szLeftWeaponPrototypeName, LWeaponDesc.szWeaponModelPrototype);
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
@@ -568,6 +570,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		RWeaponDesc.pParentTransform = m_pTransformCom;
 		RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szRightBoneName);
 		RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//RWeaponDesc.vRotation = { (90.f), (-81.5f), (0.f), 1.f };
+		//RWeaponDesc.vRotation = { XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f), 1.f };
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
 		RWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
@@ -797,15 +801,26 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
+	
 	// 돌 오브젝트 만들어서
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	pBulletDesc.vScale = pNotify->vNotifyScale;
-	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+
+	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
+		pBulletDesc.vScale = {1.f, 1.f, 1.f};
+	else
+		pBulletDesc.vScale = pNotify->vNotifyScale;
+
+	if ("" == pNotify->szNotifyArg03)
+		pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+	else
+		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
+
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	pBulletDesc.iBulletType = pNotify->iNumData04;
 	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);

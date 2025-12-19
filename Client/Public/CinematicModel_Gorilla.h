@@ -32,12 +32,21 @@ public:
 
 	virtual HRESULT		Render() override;
 
+	virtual HRESULT ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
+	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
+
 private:
-	CCollider* m_pColliderCom = { nullptr };
+	_float		m_fMoveTime = 0.f;
+	_int		m_iAnimationSequence = 0;
+
 
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+
+	HRESULT Initialize_Cinematic_GorillaMeet();
+
+	HRESULT Play_Cinematic_GorillaMeet(_float fTimeDelta);
 
 
 public:

@@ -14,11 +14,16 @@ CCinematicObject::CCinematicObject(const CCinematicObject& Prototype)
 
 HRESULT CCinematicObject::Initialize_Prototype()
 {
+
+
 	return S_OK;
 }
 
 HRESULT CCinematicObject::Initialize(void* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

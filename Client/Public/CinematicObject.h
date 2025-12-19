@@ -25,10 +25,16 @@ public:
 	virtual HRESULT		Initialize_Prototype() override;
 	virtual HRESULT		Initialize(void* pArg) override;
 
+	virtual HRESULT ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc) { m_bIsActive = TRUE; return S_OK; }
+	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc) { m_bIsActive = TRUE; m_iCinematicCode = CinematicNodeDesc.iActiveIndex; return S_OK; }
+
 	_wstring Get_ObjectTag() const { return m_szObjectTag; }
 
 protected:
 	_wstring m_szObjectTag;
+
+	_bool m_bIsActive = FALSE;
+	_int m_iCinematicCode = -1;
 
 public:
 	static CCinematicObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

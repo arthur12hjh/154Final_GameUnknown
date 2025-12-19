@@ -36,9 +36,10 @@ private:
 	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
 
-	_float								m_fDir = {};
+	_float3								m_vDir = {};
 	_float								m_fLerpSpeed = {};
 
+	_float								m_fAnimationSpeed = {1.5f};
 	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
 
@@ -55,7 +56,8 @@ private:
 
 #pragma region Phase2
 	void								SecondPhaseNormalAttack();
-	void								SecondPhaseSpecialAttack();
+
+	void								SecondPhaseAttack();
 #pragma endregion
 
 
@@ -65,7 +67,7 @@ private:
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
 
 	void								AttackLerpMove(_float fTimeDelta);
-	void								AttackADDMove(_float fTimeDelta);
+	void								AttackADDMove(_float fTimeDelta, _float fSpeed);
 
 	void								LookAtPoint(_float fTimeDelta);
 	void								ResetAttackTask(_bool bIsCoolTime = true);

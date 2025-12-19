@@ -8,12 +8,15 @@ struct Character_Skill_Desc;
 class CBullet abstract : public CPartObject
 {
 public:
+	enum class BULLET_TYPE { PROJECTILE, HITSCAN, END };
+
 	typedef struct Bullet_Desc : public PARTOBJECT_DESC
 	{
 		const _float4x4*		pSocketMatrix = { nullptr };
 
 		_uint					iSkillID;
 		_uint					iHitType;
+		_uint					iBulletType;
 		_float3					vTargetPoint;
 	}BULLET_DESC;
 
@@ -35,6 +38,7 @@ public:
 
 protected :
 	const	_float4x4*				m_pSocketMatrix = { nullptr };
+	BULLET_TYPE						m_eBulletType = { BULLET_TYPE::END };
 
 	CModel*							m_pModelCom = { nullptr };
 	CCollider*						m_pColliderCom = { nullptr };
@@ -45,6 +49,7 @@ protected :
 	_float3							m_vTargetPoint = {};
 
 	_float							m_fSpeed = {};
+	_uint2							m_iHitScanFrameIndex = {};
 	_bool							m_bIsAttachment = { true };
 
 protected :

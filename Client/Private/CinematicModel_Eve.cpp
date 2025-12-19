@@ -20,12 +20,12 @@
 
 
 CCinematicModel_Eve::CCinematicModel_Eve(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CCinematicObject(pDevice, pContext)
+	: CCinematicObject{ pDevice, pContext }
 {
 }
 
 CCinematicModel_Eve::CCinematicModel_Eve(const CCinematicModel_Eve& Prototype)
-	: CCinematicObject(Prototype)
+	: CCinematicObject{ Prototype }
 {
 }
 
@@ -60,7 +60,7 @@ void CCinematicModel_Eve::Activate_PartObject_Collider(const _wstring& strPartTa
 HRESULT CCinematicModel_Eve::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 {
 	CNotify::NOTIFY_TYPE NotiType = CNotify::NOTIFY_TYPE(iNotiType);
-	
+
 	return S_OK;
 }
 
@@ -71,13 +71,17 @@ HRESULT CCinematicModel_Eve::Initialize_Prototype()
 
 HRESULT CCinematicModel_Eve::Initialize(void* pArg)
 {
+	CCinematicObject::CINEMATICOBJECT_DESC* pDesc = (CCinematicObject::CINEMATICOBJECT_DESC*)pArg;
+
+	m_szObjectTag = pDesc->szObjectTag;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_PartObjects()))
+	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Components()))
+	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
@@ -87,22 +91,36 @@ HRESULT CCinematicModel_Eve::Initialize(void* pArg)
 
 void CCinematicModel_Eve::Priority_Update(_float fTimeDelta)
 {
+	if (m_bIsActive == FALSE)
+		return;
+
 	m_pTransformCom->Update_PreWorldMatrix();
-	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 
 	__super::Priority_Update(fTimeDelta);
 }
 
 void CCinematicModel_Eve::Update(_float fTimeDelta)
 {
+	if (m_bIsActive == FALSE)
+		return;
+
 	__super::Update(fTimeDelta);
+
+	switch (m_iCinematicCode)
+	{
+	case 0: // 고릴라 만남 시네마틱
+		Play_Cinematic_GorillaMeet(fTimeDelta);
+		break;
+	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CCinematicModel_Eve::Late_Update(_float fTimeDelta)
 {
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	if (m_bIsActive == FALSE)
+		return;
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
@@ -117,6 +135,28 @@ HRESULT CCinematicModel_Eve::Render()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Eve::ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
+{
+	//m_bIsActive = TRUE;
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
+{
+	m_bIsActive = TRUE;
+
+	if (m_iCinematicCode == -1)
+		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
+
+	if (m_iCinematicCode == 0) // 고릴라 만남 시네마틱
+	{
+		Initialize_Cinematic_GorillaMeet();
+	}
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Eve::Ready_Components()
 {
 	/* Com_Collider_AABB */
@@ -127,28 +167,6 @@ HRESULT CCinematicModel_Eve::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
-
-	/* Com_CCT */
-	CCharacterController::CCT_DESC Desc;
-	PxUserData tUserData;
-	tUserData.szActorTag = TEXT("CinematicModel_Eve_CCT");
-
-	Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
-	Desc.tUserData = tUserData;
-	Desc.vSize = _float3(2.5f, 2.5f, 0.f);
-	XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
-	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
-	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
-	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
-	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
-	Desc.iCollisionGroup = PHYSX_CCT;
-	Desc.iCollisionMask &= ~(PHYSX_CUSTOM_3);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
-		return E_FAIL;
-
-	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 
 	return S_OK;
 }
@@ -162,6 +180,10 @@ HRESULT CCinematicModel_Eve::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
+	// 바디가 생성 되자마자 세팅.
+	// 이래야 다른 파트오브젝트에서 바디를 참조 가능하지 ㅇㅇ
+	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
@@ -204,8 +226,31 @@ HRESULT CCinematicModel_Eve::Ready_PartObjects()
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
 
-	Import_ModelPtr();
-	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_EVE_01", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(760.197f, 2.022f, 700.319f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		m_bIsActive = FALSE;
+		m_iCinematicCode = -1;
+	}
 
 	return S_OK;
 }

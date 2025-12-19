@@ -83,6 +83,7 @@ private:
 	HRESULT Load_Monster_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 
+	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
 
 	HRESULT Load_Light_Data();
 	_float	m_fTime = 10;

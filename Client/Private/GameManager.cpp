@@ -263,6 +263,10 @@ HRESULT CGameManager::Play_Cinematic(_uint iCinematicID)
 {
     return m_pCinematicManager->Play_Cinematic(iCinematicID);
 }
+HRESULT CGameManager::Load_Level_CinematicObjectData(const _char* szFilePath)
+{
+    return m_pCinematicManager->Load_Level_CinematicObjectData(szFilePath);
+}
 #pragma endregion
 
 void CGameManager::Release_GameMgr()
