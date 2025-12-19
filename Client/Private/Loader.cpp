@@ -261,7 +261,7 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("맵 로딩중.");
+		m_strMessage = TEXT("Loading Map Resource");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
 
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
@@ -299,26 +299,26 @@ HRESULT CLoader::Loading()
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 		{
-			m_strMessage = TEXT("메시 로딩중.");
+			m_strMessage = TEXT("Loading Mesh");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
-			m_strMessage = TEXT("셰이더 로딩중.");
+			m_strMessage = TEXT("Loading Shader");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
-			m_strMessage = TEXT("이펙트 로딩중.");
+			m_strMessage = TEXT("Loading Effect");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
-			m_strMessage = TEXT("인스턴싱중.");
+			m_strMessage = TEXT("Loading Instancing");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
-			m_strMessage = TEXT("UI 로딩중.");
+			m_strMessage = TEXT("Loading UI");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
 
-			m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
+			m_strMessage = TEXT("Player Hide and Seek with King JaeHoon");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
@@ -327,7 +327,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -335,7 +335,7 @@ HRESULT CLoader::Loading()
 	break;
 	case LEVEL::SCARLET:
 	{
-		m_strMessage = TEXT("씨발 이런게 도파민 섹스지");
+		m_strMessage = TEXT("Yeah Fuck U It Just Fucking Sex And Dopamine");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
@@ -347,7 +347,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -388,7 +388,7 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료..");
+	m_strMessage = TEXT("Loading Complete");
 
 	m_isFinished = true;
 	return S_OK;
@@ -399,7 +399,7 @@ HRESULT CLoader::Loading_For_Scarlet()
 	Sleep(1000.f);
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료 되었습니다..");
+	m_strMessage = TEXT("Loading Complete");
 	m_isFinished = true;
 
 	return S_OK;

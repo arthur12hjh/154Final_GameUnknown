@@ -51,10 +51,11 @@ HRESULT COcclusion::Get_Result(CGameObject* pObject, _bool* pIsVisible)
     const _uint iPrevFrame = (m_iFrameIndex + 1) % 2;
 
     auto iter = m_QueryData[iPrevFrame].m_mapQueries.find(pObject);
+    
     if (iter == m_QueryData[iPrevFrame].m_mapQueries.end())
     {
         *pIsVisible = true;
-        pObject->Set_Occlusion_CoolDown(0);
+        //pObject->Set_Occlusion_CoolDown(0);
         return S_OK;
     }
 
@@ -75,14 +76,15 @@ HRESULT COcclusion::Get_Result(CGameObject* pObject, _bool* pIsVisible)
             *pIsVisible = true;
             pObject->Set_Occlusion_CoolDown(0);
 
-            return S_OK;
+            //return S_OK;
         }
         else
         {
             _int iCurrentCooldown = pObject->Get_Occlusion_CoolDown() + 1;
             pObject->Set_Occlusion_CoolDown(iCurrentCooldown);
-
-            const _int COOLDOWN_THRESHOLD = 10; 
+            
+            *pIsVisible = (iCurrentCooldown >= 10) ? false : true;
+            /*const _int COOLDOWN_THRESHOLD = 10; 
 
             if (iCurrentCooldown >= COOLDOWN_THRESHOLD)
             {
@@ -91,15 +93,17 @@ HRESULT COcclusion::Get_Result(CGameObject* pObject, _bool* pIsVisible)
             else
             {
                 *pIsVisible = true; 
-            }
-            return S_OK;
+            }*/
+            //return S_OK;
             
         }
+        return S_OK;
     }
 
     else if (S_FALSE == hr)
     {
-        *pIsVisible = true;
+        //*pIsVisible = true;
+        *pIsVisible = (pObject->GetVisibility() == VISIBILITY::VISIBLE);
         return S_FALSE;
     }
 

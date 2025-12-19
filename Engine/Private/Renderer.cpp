@@ -185,18 +185,20 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pColliderRenderer)
 		return E_FAIL;
 
+#endif
+
 	D3D11_RASTERIZER_DESC rsDesc = {};
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rsDesc.FillMode = D3D11_FILL_SOLID;
-	rsDesc.CullMode = D3D11_CULL_BACK;
+	rsDesc.CullMode = D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise = FALSE;
 	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.DepthBias = -10;
+	rsDesc.DepthBias = 1000;
 	rsDesc.DepthBiasClamp = 0.0f;
-	rsDesc.SlopeScaledDepthBias = -1.0f;
+	rsDesc.SlopeScaledDepthBias = 1.0f;
 	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))
 		return E_FAIL;
 
-#endif
     return S_OK;
 }
 
@@ -587,11 +589,13 @@ void CRenderer::Render_Occlusion()
 	m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
 	m_pContext->RSSetState(m_pRS_OcclusionQuery);
 
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
 	{
 		if (nullptr != pRenderObject)
 		{
-			if (pRenderObject->Get_Depth() < 100.f)
+			if (pRenderObject->Get_Depth() < 20.f)
 			{
 				Safe_Release(pRenderObject);
 				continue;
@@ -613,7 +617,7 @@ void CRenderer::Render_Occlusion()
 				_vector vPos = matWorld.r[3];
 
 				matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				matWorld = matWorld * XMMatrixScaling(0.7f, 0.7f, 0.7f);
+				matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
 
 				matWorld.r[3] = vPos;
 
@@ -622,7 +626,7 @@ void CRenderer::Render_Occlusion()
 				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 					continue;
 
-				pCollider->Render();
+				pCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
 
 				m_pGameInstance->End_Obejct_Query(pRenderObject);
 			}
