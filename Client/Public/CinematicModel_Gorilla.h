@@ -31,6 +31,7 @@ public:
 	virtual void		Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT		Render() override;
+	virtual HRESULT		Render_Shadow() override;
 
 	virtual HRESULT ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);

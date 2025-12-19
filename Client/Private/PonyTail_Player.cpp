@@ -105,7 +105,7 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 	m_pHairRoot->Update_PxTransform(
 		XMLoadFloat4x4(m_pHairRootBone) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	
 #ifdef _DEBUG

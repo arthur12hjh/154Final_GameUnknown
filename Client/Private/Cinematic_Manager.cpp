@@ -210,7 +210,12 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             m_CinematicObjectsMap.find(strObjectName)->second->PlayCinematicObject(CinematicNodeDesc);
             break;
         case CINEMATICNODE_STATE::ACTIVE_CHARACTER:
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
 
+            for (auto& pObject : *m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szText))
+            {
+				pObject->SetActive(TRUE);
+            }
             break;
         case CINEMATICNODE_STATE::ACTIVE_CAMERA:
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
@@ -224,6 +229,17 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 			m_ActionCameraMap.find(strObjectName)->second->Initialize_CameraAnimationData(CinematicNodeDesc.iActiveIndex);
 
             Safe_Release(pCamera);
+            break;
+        case CINEMATICNODE_STATE::DEACTIVE_CHARACTER:
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+
+            for (auto& pObject : *m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szText))
+            {
+                pObject->SetActive(FALSE);
+            }
+            break;
+        case CINEMATICNODE_STATE::DEACTIVE_CAMERA:
+            
             break;
         case CINEMATICNODE_STATE::PLAY_SOUND:
 
