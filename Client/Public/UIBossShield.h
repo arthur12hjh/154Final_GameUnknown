@@ -4,8 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
-class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -32,9 +30,7 @@ protected:
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
 
-private:	
-	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = nullptr;
-
+private:
 	LONGLONG* m_iMaxShield = nullptr;        // ÃÖ´ë °ª
 	LONGLONG* m_iCurrentShield = nullptr;
 

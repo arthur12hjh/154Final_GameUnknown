@@ -397,6 +397,17 @@ namespace Client
 		_float4				vColor{ 1.f, 1.f, 1.f, 1.f };
 	}SCRIPT_DATA;
 
+	typedef struct Script_Desc
+	{
+		_wstring szScriptTag{};
+		_wstring szAnimTag{};
+		_bool bCanControl{ false };
+		_float2 vInitOffset{ 0.f, 0.f };
+		vector<SCRIPT_DATA> Scripts;
+	}SCRIPT_DESC;
+
+
+
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
 	/// CameraAnimationID : 6글자로 되어있다.

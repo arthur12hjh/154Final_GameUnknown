@@ -99,41 +99,6 @@ void CUIBetaFX::Update(_float fTimeDelta)
 		m_isActive = false;
 		m_iPrevGroup = m_iCurrentGroup;
 	}
-	
-
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_B))
-	{
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_7))
-		{
-			m_fTimeAcc += fTimeDelta;
-			m_tUIDesc.fAlpha = 1.f;
-
-			if (!m_isActive && m_tUIDesc.m_tUIShaderDesc.fScale > 0.5f)
-			{
-				m_tUIDesc.m_tUIShaderDesc.fScale -= m_fTimeAcc;
-				m_tUIDesc.fRotation += XMConvertToRadians(360.f) * (fTimeDelta * 2.f);
-
-				if (m_tUIDesc.fRotation >= XM_2PI)
-					m_tUIDesc.fRotation -= XM_2PI;
-			}
-			else
-				m_isActive = true;
-
-			if (m_isActive && m_tUIDesc.m_tUIShaderDesc.fGlowIntensity <= 1.f)
-				m_tUIDesc.m_tUIShaderDesc.fGlowIntensity += m_fTimeAcc;
-			else if(m_isActive && m_tUIDesc.m_tUIShaderDesc.fGlowIntensity > 1.f)
-				m_tUIDesc.fAlpha = 0.f;
-		}
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
-		{
-			m_tUIDesc.m_tUIShaderDesc.fScale = 1.f;
-			m_tUIDesc.fRotation = 0.f;
-			m_tUIDesc.m_tUIShaderDesc.fGlowIntensity = 0.f;
-			m_tUIDesc.fAlpha = 0.f;
-			m_fTimeAcc = 0.f;
-			m_isActive = false;
-		}
-	}*/
 }
 
 void CUIBetaFX::Late_Update(_float fTimeDelta)
@@ -151,10 +116,10 @@ HRESULT CUIBetaFX::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::BETA_FX))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -169,8 +134,8 @@ HRESULT CUIBetaFX::Ready_Components()
 	__super::Ready_Components();
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_Texture */
@@ -272,6 +237,4 @@ CGameObject* CUIBetaFX::Clone(void* pArg)
 void CUIBetaFX::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pVIBaseBufferCom);
 }

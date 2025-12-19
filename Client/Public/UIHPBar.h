@@ -4,8 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
-class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -36,8 +34,6 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	CVIBuffer_Rect_Instance* m_pVIBaseBuffer = nullptr;
-
 	LONGLONG* m_iMaxHp = nullptr;        // 최대 값
 	LONGLONG* m_iCurrentHp = nullptr;        // 최대 값
 

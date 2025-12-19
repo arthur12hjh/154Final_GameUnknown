@@ -113,10 +113,10 @@ HRESULT CUIBeta::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::BETA))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -130,9 +130,9 @@ HRESULT CUIBeta::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBaseBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBuffer))))
+	/* Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_Texture_Beta */
@@ -192,11 +192,6 @@ HRESULT CUIBeta::Execute(const UI_EVENT_DESC& EventDesc)
 	return S_OK;
 }
 
-//HRESULT CUIBeta::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
-//{
-//	return S_OK;
-//}
-
 void CUIBeta::CallbackEvent(void* pArg)
 {
 }
@@ -236,6 +231,6 @@ void CUIBeta::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pVIGlowBufferCom);
 	Safe_Release(m_pFXTexture);
-	Safe_Release(m_pVIBaseBuffer);
 }

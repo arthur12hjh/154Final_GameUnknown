@@ -48,7 +48,7 @@ public :
 	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
 	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
-	const vector<SCRIPT_DATA>*		Get_ScriptData(const _wstring& szScriptTag);
+	const SCRIPT_DESC*				Get_ScriptData(const _wstring& szScriptTag);
 	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
 #ifdef _DEBUG

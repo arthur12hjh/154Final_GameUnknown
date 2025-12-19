@@ -524,6 +524,10 @@ HRESULT CUIBase::Ready_Events()
 
 HRESULT CUIBase::Initialize_ShaderResources()
 {
+	_float2 atlasCount = { 0, 0 };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_AtlasCount", &atlasCount, sizeof(_float2))))
+		return E_FAIL;
+
 	_float fAlpha{ 1.f };
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))

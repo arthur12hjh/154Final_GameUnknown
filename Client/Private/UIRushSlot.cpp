@@ -134,10 +134,10 @@ HRESULT CUIRushSlot::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::RUSH_SLOT))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 	if (m_tRushInfo.iSkillState != ENUM_CLASS(SKILL_STATE::DEFAULT))
@@ -158,12 +158,12 @@ HRESULT CUIRushSlot::Ready_Components()
 	__super::Ready_Components();
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIGlowBuffer"), reinterpret_cast<CComponent**>(&m_pVIGlowBufferCom))))
 		return E_FAIL;
 
@@ -347,6 +347,5 @@ void CUIRushSlot::Free()
 	Safe_Release(m_pGlowTextureCom);
 	Safe_Release(m_pGlowTextureCom2);
 	Safe_Release(m_pRushGlowTextureCom);
-	Safe_Release(m_pVIBaseBufferCom);
 	Safe_Release(m_pVIGlowBufferCom);
 }

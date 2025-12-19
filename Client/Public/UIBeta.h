@@ -4,7 +4,7 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
+class CVIBuffer_Rect;
 class CTexture;
 NS_END
 
@@ -40,9 +40,7 @@ protected:
 private:
 	HRESULT Bind_GlowShaderResources();
 
-	CVIBuffer_Rect_Instance* m_pVIBaseBuffer = { nullptr };
-	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };
-	
+	CVIBuffer_Rect* m_pVIGlowBufferCom = { nullptr };
 	CTexture* m_pFXTexture{ nullptr };
 
 	_float m_fCurrentFill = 0.5f;   // ÇöÀç °ª
