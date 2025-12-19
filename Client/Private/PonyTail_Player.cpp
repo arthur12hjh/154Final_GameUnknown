@@ -225,7 +225,7 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 	RootDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::NONE;
 	RootDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 	RootDesc.tUserData.szActorTag = TEXT("HairRoot");
-	RootDesc.vSize = _float3(0.f, 0.f, 0.f);
+	RootDesc.vSize = _float3(0.05f, 0.05f, 0.f);
 	RootDesc.fMass = { 0.f };
 	RootDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
@@ -244,14 +244,14 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 
 	// 첫 노드(다이나믹 구) - 원점이 B02에 있어야 함
 	CRigidBody::RIGIDBODY_DESC LinkDesc;
-	LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::SPHERE;   // 핵심: SPHERE
+	LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;   // 핵심: SPHERE
 	LinkDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 	LinkDesc.tUserData.szActorTag = TEXT("HairNode_01");
 	LinkDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
 
 	XMStoreFloat4x4(&LinkDesc.StartWorldMatrix, B02World);
 
-	LinkDesc.vSize = _float3(0.1f, 0.f, 0.f); // SPHERE는 x만 반지름으로 씀
+	LinkDesc.vSize = _float3(0.05f, 0.05f, 0.f); // SPHERE는 x만 반지름으로 씀
 	LinkDesc.fMass = { 0.05f };
 
 	LinkDesc.iCollisionGroup = PHYSX_CUSTOM_3;
@@ -304,16 +304,15 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		_matrix B01World = XMLoadFloat4x4(pBoneB01) * OwnerWorld;
 		_matrix B02World = XMLoadFloat4x4(pBoneB02) * OwnerWorld;
 
-		// 첫 노드(다이나믹 구) - 원점이 B02에 있어야 함
 		CRigidBody::RIGIDBODY_DESC LinkDesc;
-		LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::SPHERE;   // 핵심: SPHERE
+		LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;   // 핵심: SPHERE
 		LinkDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 		LinkDesc.tUserData.szActorTag = TEXT("HairNode_01");
 		LinkDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
 
 		XMStoreFloat4x4(&LinkDesc.StartWorldMatrix, B02World);
 
-		LinkDesc.vSize = _float3(0.1f, 0.f, 0.f); // SPHERE는 x만 반지름으로 씀
+		LinkDesc.vSize = _float3(0.05f, 0.05f, 0.f); // SPHERE는 x만 반지름으로 씀
 		LinkDesc.fMass = { 0.05f };
 
 		LinkDesc.iCollisionGroup = PHYSX_CUSTOM_3;
@@ -364,24 +363,116 @@ HRESULT CPonyTail_Player::Bind_BoneToPartBody(void* pArg)
 
 void CPonyTail_Player::Sync_BonesByJoint()
 {
-	//01은 루트.
-	// m_pHairLink에서 가져와서 Ab-TL-HairB02부턴 리지드바디 세팅
-	// TEXT("Ab-TL-HairB0")
-	// 해봐야 1대1 대응, 아니면 중간 본 자르는 정도니까.. 
-	// 아직 럴프는 안들어갔는데 일단 ㄱㄱ..
+	_matrix matOwnerWorld = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+
+	// OwnerWorld scale 제거 (회전/역행렬 안정화)
+	_vector vOwnerS, vOwnerR, vOwnerT;
+	XMMatrixDecompose(&vOwnerS, &vOwnerR, &vOwnerT, matOwnerWorld);
+	_matrix matOwnerNoScale = XMMatrixAffineTransformation(
+		XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorZero(), vOwnerR, vOwnerT);
+	_matrix matOwnerNoScaleInv = XMMatrixInverse(nullptr, matOwnerNoScale);
+
+	// 최초 1회: 오프셋/스케일 캐시 준비
+	if (false == m_isHairBindInit)
+	{
+		m_vecHairActorToBone.resize(m_HairLinks.size());
+		m_vecHairBoneScale.resize(m_HairLinks.size());
+
+		_uint iCount = 0;
+		for (auto& Pair : m_HairLinks)
+		{
+			_wstring strBoneName = Pair.first;
+			_char* pBoneName = new _char[strBoneName.length() + 1];
+			CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
+
+			// 본 레스트(모델 공간)에서 scale 저장
+			_matrix matBoneBase = XMLoadFloat4x4(m_pBodyModelCom->Get_BoneMatrixPtr(pBoneName));
+			_vector vBoneS, vBoneR2, vBoneT2;
+			XMMatrixDecompose(&vBoneS, &vBoneR2, &vBoneT2, matBoneBase);
+
+			_float3 s;
+			XMStoreFloat3(&s, vBoneS);
+			m_vecHairBoneScale[iCount] = s;
+
+			// 본 레스트 월드(OwnerNoScale 기준)
+			_matrix matBoneRestWorld = matBoneBase * matOwnerNoScale;
+			PxTransform tBoneRestWorld = PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(matBoneRestWorld));
+
+			// 액터 레스트 월드(생성 직후라면 거의 동일하지만, 캡슐 축 보정/래퍼축 차이 때문에 offset 필요할 수 있음)
+			PxTransform tActorRestWorld = Pair.second->Get_PxTransform();
+
+			// ActorNow * (ActorRest^-1 * BoneRest) = BoneNow
+			m_vecHairActorToBone[iCount] = tActorRestWorld.getInverse() * tBoneRestWorld;
+
+			Safe_Delete_Array(pBoneName);
+			++iCount;
+		}
+
+		m_isHairBindInit = true;
+	}
+
+	// 매 프레임 적용
+	_uint iCount = 0;
 	for (auto& Pair : m_HairLinks)
-	{	
+	{
 		_wstring strBoneName = Pair.first;
 		_char* pBoneName = new _char[strBoneName.length() + 1];
 		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
 
-		//본매핑콱시팔바로피직스정상화역시정상화는대재훈
-		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName,
-			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_CombinedWorldMatrix)));
+		PxTransform tActorNow = Pair.second->Get_PxTransform();
+		PxTransform tBoneWorld = tActorNow * m_vecHairActorToBone[iCount];
+
+		_matrix matBoneModelNoScale =
+			m_pGameInstance->Convert_PxTransform_ToMatrix(tBoneWorld) *
+			matOwnerNoScaleInv;
+
+		// 회전/이동만 추출해서, 스케일은 레스트로 복원
+		_vector vS, vR, vT;
+		XMMatrixDecompose(&vS, &vR, &vT, matBoneModelNoScale);
+
+		_float3 sc = m_vecHairBoneScale[iCount];
+		_vector vScale = XMVectorSet(sc.x, sc.y, sc.z, 0.f);
+
+		_matrix matNew = XMMatrixAffineTransformation(vScale, XMVectorZero(), vR, vT);
+
+		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName, matNew);
 
 		Safe_Delete_Array(pBoneName);
+		++iCount;
+	}
+
+	// 보간 파트는 네 기존 그대로
+	if (2 == m_iBoneJointCount)
+	{
+		for (_int i = 3; i <= 7; i += 2)
+		{
+			_wstring ResultBoneName = TEXT("Ab-TL-HairB0") + to_wstring(i);
+			_char* pResultBoneName = new _char[ResultBoneName.length() + 1];
+			CStringHelper::ConvertWideToUTF(ResultBoneName.c_str(), pResultBoneName);
+
+			_wstring SourLerpBone = TEXT("Ab-TL-HairB0") + to_wstring(i - 1);
+			_char* pSourLerpBone = new _char[SourLerpBone.length() + 1];
+			CStringHelper::ConvertWideToUTF(SourLerpBone.c_str(), pSourLerpBone);
+
+			_wstring DestLerpBone = TEXT("Ab-TL-HairB0") + to_wstring(i + 1);
+			_char* pDestLerpBone = new _char[DestLerpBone.length() + 1];
+			CStringHelper::ConvertWideToUTF(DestLerpBone.c_str(), pDestLerpBone);
+
+			m_pBodyModelCom->Override_CombinedTransformationMatrix(
+				pResultBoneName,
+				m_pGameInstance->Lerp_Matrix(
+					XMLoadFloat4x4(m_pBodyModelCom->Get_BoneMatrixPtr(pSourLerpBone)),
+					XMLoadFloat4x4(m_pBodyModelCom->Get_BoneMatrixPtr(pDestLerpBone)),
+					0.5f));
+
+			Safe_Delete_Array(pResultBoneName);
+			Safe_Delete_Array(pSourLerpBone);
+			Safe_Delete_Array(pDestLerpBone);
+		}
 	}
 }
+
+
 
 CPonyTail_Player* CPonyTail_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
