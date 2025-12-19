@@ -46,8 +46,10 @@ private:
 	HRESULT Ready_PartObjects();
 
 	HRESULT Initialize_Cinematic_GorillaMeet();
+	HRESULT Initialize_Cinematic_GorillaFinish();
 
 	HRESULT Play_Cinematic_GorillaMeet(_float fTimeDelta);
+	HRESULT Play_Cinematic_GorillaFinish(_float fTimeDelta);
 
 
 public:

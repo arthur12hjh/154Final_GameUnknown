@@ -280,12 +280,12 @@ HRESULT CMainApp::Ready_Mouse()
 
 	// 이브 대가리 SSSAO & SpecDetail 적용 테스트 코드. 혹시 지우고 싶으면 말씀좀
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SSSAO"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_SSSAO.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_SSSAO.dds"), 1))))
 		return E_FAIL;
 
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_S.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_S.dds"), 1))))
 		return E_FAIL;
 
 	return S_OK;
