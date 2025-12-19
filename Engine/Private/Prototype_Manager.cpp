@@ -58,7 +58,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 	int iResult = 0;
 
 	// 먼저 뼈대 모델. 즉 기반이 되는 모델을 만든다.
-	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag,
+	if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, strPrototypeTag, 
 		CModel::Create(pDevice, pContext, MODEL_TYPE::ANIM, pModelFilePath, PreTransformMatrix))))
 		return E_FAIL;
 
@@ -79,6 +79,9 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 		// 아스키 코드 문자열을 유니코드 문자열로 변환시켜주는 함수
 		MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
+		_char		szAnimationTag[MAX_PATH] = {};
+		_splitpath_s(fd.name, nullptr, 0, nullptr, 0, szAnimationTag, MAX_PATH, nullptr, 0);
+
 		string szFullPath = strSkeletalPath + fd.name;
 		string szFullTag = "Prototype_Component_Model_";
 		szFullTag += fd.name;
@@ -97,7 +100,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 			CModel::Create(pDevice, pContext, MODEL_TYPE::ANIMONLY, szFullPath.c_str()), &pAnimModel)))
 			return E_FAIL;
 
-		if (FAILED(pModel->Import_Animations(static_cast<CModel*>(pAnimModel)->Get_AnimationList())))
+		if (FAILED(pModel->Import_Animations(static_cast<CModel*>(pAnimModel)->Get_AnimationList(), szAnimationTag)))
 			return E_FAIL;
 
 		auto iter = m_pPrototypes[iLevelIndex].find(szPrototypeTag);
@@ -125,7 +128,7 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 
 	pModel->Initialize_AnimationIndexMap();
 	pModel->Initialize_AnimationBufferResource();
-
+	pModel->Release_AnimationChannel();
 
 	_findclose(handle);
 

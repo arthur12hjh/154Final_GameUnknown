@@ -28,6 +28,7 @@ public:
 	_float Random_Normal();
 	_float Random(_float fMin, _float fMax);
 
+	_matrix Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio);
 #pragma region GRAPHIC_DEVICE
 public:
 	void Render_Begin(const _float4* pClearColor);
@@ -98,6 +99,18 @@ public:
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 
+	HRESULT				Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
+	HRESULT				Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
+	HRESULT				Bind_Shadow_Resource_Static(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT				Bind_Shadow_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT				Bind_CascadeEnds(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+	_float*				Get_CascadeEnds();
+	//정적으로 그림자를 구워낼 녀석들한테 추가해야 그림자를 구워줍니다.. 진미.
+	HRESULT Add_StaticShadowObject(class CGameObject* pGameObject);
+	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
+	// 딴데서 실행하면 레고삼킴
+	HRESULT Bake_StaticShadow();
+
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
@@ -110,6 +123,11 @@ public:
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
 	void*  Get_HDR_Desc();
+	void*  Get_Cascade_Desc();
+	//RenderDoc 전용
+	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
+	//RenderDoc 전용
+	void		EndMarker(ID3D11DeviceContext* pContext);
 #endif
 
 #pragma endregion
@@ -164,6 +182,7 @@ public:
 	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount = 1);
 	HRESULT						Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
 	HRESULT						Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
+	HRESULT						Begin_MRT_NoClear(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						End_MRT();
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
@@ -171,6 +190,7 @@ public:
 	HRESULT						Clear_MRT(const _wstring& strMRTag);
 	HRESULT						Change_DSV(ID3D11DepthStencilView* pDSV);
 	HRESULT						End_DSV();
+	ID3D11DepthStencilView*		Get_DSV();
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
@@ -182,15 +202,6 @@ public:
 #pragma region PICKING
 	_bool						isPicking(_float3* pOut);
 	const POINT&				GetMousePoint();
-#pragma endregion
-
-#pragma region SHADOW
-	HRESULT Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
-	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);
-	HRESULT Bind_Shader_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType );
-	HRESULT Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
-
-	_float* Get_CascadeEnds();
 #pragma endregion
 
 #pragma region FRUSTUM
@@ -205,6 +216,14 @@ public:
 	void				FrustomRender();
 #endif
 
+#pragma endregion
+
+
+#pragma region Occlusion
+	HRESULT							Begin_Object_Query(class CGameObject* pObejct);
+	HRESULT							End_Obejct_Query(class CGameObject* pObject);
+	HRESULT							Get_Result(class CGameObject* pObject, _bool* pIsVisible);
+	void							SwapFrame();
 #pragma endregion
 
 #pragma region Sound Manager
@@ -372,8 +391,8 @@ private:
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CFont_Manager*			m_pFont_Manager = { nullptr };
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
-	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
+	class COcclusion*				m_pOcculusion = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };

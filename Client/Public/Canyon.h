@@ -8,6 +8,7 @@
 NS_BEGIN(Engine)
 class CModel;
 class CCollider;
+class CCamera;
 NS_END
 
 NS_BEGIN(Client)
@@ -27,8 +28,12 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	virtual HRESULT Render_Shadow() override;
+
 private :
 	CModel* m_pModelCom = { nullptr };
+
+	_bool m_bIsOccluder = true;
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);

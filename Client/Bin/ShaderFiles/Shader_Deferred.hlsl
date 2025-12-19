@@ -9,6 +9,8 @@ float4 g_vFogColor;
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
+matrix g_StaticLightViewMatrix;
+matrix g_StaticLightProjMatrix;
 matrix g_LightViewMatrix[5];
 matrix g_LightProjMatrix[5];
 
@@ -26,6 +28,7 @@ texture2D g_DepthTexture;
 texture2D g_SpecularTexture;
 texture2D g_ORMTexture;
 texture2D g_ShadowTexture;
+texture2D g_StaticShadowTexture;
 texture2D g_SSAOTexture;
 texture2D g_SSSAOTexture;
 
@@ -39,11 +42,14 @@ texture2D g_EmissiveFinalTexture;
 texture2D g_DistortionTexture;
 texture2D g_FogTexture;
 texture2D g_BloomTexture;
+texture2D g_BloomSceneTexture;
 texture2D g_VolumetricTexture;
 
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
 
+texture2D g_ShadowBlurXTexture;
+texture2D g_ShadowAreaTexture; 
 Texture2DArray g_CascadeShadowTexture;
 float g_fCascadeEnds[6] = { 
     0.1f,
@@ -425,12 +431,21 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     // 로컬위치 * 월드   
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
-    vPosition = mul(vPosition, g_LightViewMatrix[iIdx]);
-    vPosition = mul(vPosition, g_LightProjMatrix[iIdx]);
+    vector vCascadePos, vStaticPos;
+    
+    vCascadePos = mul(vPosition, g_LightViewMatrix[iIdx]);
+    vCascadePos = mul(vCascadePos, g_LightProjMatrix[iIdx]);
+    
+    vStaticPos = mul(vPosition, g_StaticLightViewMatrix);
+    vStaticPos = mul(vStaticPos, g_StaticLightProjMatrix);
     
     //그림자 연산
-    Out.vBackBuffer = Calc_Shadow_CSM(Out.vBackBuffer, g_CascadeShadowTexture, vPosition, iIdx, g_fFar);
-    Out.vBloomScene = Calc_Shadow_CSM(Out.vBloomScene, g_CascadeShadowTexture, vPosition, iIdx, g_fFar);
+    float fCSMFactor = Calc_Shadow_CSM(g_CascadeShadowTexture, vCascadePos, iIdx);
+    float fShadowFactor = Calc_Shadow(g_StaticShadowTexture, vStaticPos);
+    
+    float fFinalFactor = min(fCSMFactor, fShadowFactor);
+    
+    Out.fShadow = fFinalFactor;
     
     return Out;
 }
@@ -498,6 +513,52 @@ PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
     return Out;
 }
 
+PS_OUT_SHADOW_BLUR_X PS_MAIN_SHADOW_BLUR_X(PS_IN In)
+{
+    PS_OUT_SHADOW_BLUR_X Out;
+    
+    float2 vTexcoord;
+    float  fFactor = 0;
+    float fWeightSum = 0;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x + i / (float)g_iWinSizeX;
+        vTexcoord.y = In.vTexcoord.y;
+        
+        fFactor += g_fWeights[i + 6] * g_ShadowAreaTexture.Sample(ClampSampler, vTexcoord).x;
+        fWeightSum += g_fWeights[i + 6];
+    }
+    
+    Out.vBackBuffer = fFactor / fWeightSum;
+    
+    return Out;
+}
+
+PS_OUT_COMBINED_SHADOW PS_MAIN_COMBINE_SHADOW(PS_IN In)
+{
+    PS_OUT_COMBINED_SHADOW Out;
+    
+    float2 vTexcoord;
+    float  fShadowFactor = 0;
+    float  fWeightSum = 0;
+    
+    for (int i = -6; i < 7; ++i)
+    {
+        vTexcoord.x = In.vTexcoord.x;
+        vTexcoord.y = In.vTexcoord.y + i / (float)g_iWinSizeY;
+        
+        fShadowFactor += g_fWeights[i + 6] * g_ShadowBlurXTexture.Sample(ClampSampler, vTexcoord).x;
+        fWeightSum += g_fWeights[i + 6];
+    }
+    
+    fShadowFactor = fShadowFactor / fWeightSum;
+    
+    Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord) * fShadowFactor;
+    Out.vBloomScene = g_BloomSceneTexture.Sample(DefaultSampler, In.vTexcoord) * fShadowFactor;
+    
+    return Out;
+}
 
 technique11 DefaultTechnique
 { 
@@ -604,6 +665,37 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SPOT();
+    }
+
+    // idx 10
+    pass Occlusion
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = NULL;
+    }
+    // idx 11 
+    pass ShadowBlurX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW_BLUR_X();
+    }
+    // idx 12
+    pass Combine_Shadow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_COMBINE_SHADOW();
     }
 }
 

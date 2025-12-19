@@ -46,6 +46,11 @@ void CBossBlackBoard::SetCurState(BOSS_STATE eState)
     m_eCurState = eState;
 }
 
+void CBossBlackBoard::Set_BossPhase(BOSS_PAHSE ePhase)
+{
+    m_eBossPhase = ePhase;
+}
+
 void CBossBlackBoard::SetHitData(const Default_Damage_Desc* pDamageData)
 {
     if (nullptr == pDamageData)
@@ -128,6 +133,24 @@ void CBossBlackBoard::SetAttackData(const Character_Skill_Desc* pAttack_Data)
 const Character_Skill_Desc* CBossBlackBoard::GetAttackData()
 {
     return m_pAttack_Skill;
+}
+
+void CBossBlackBoard::SetParryAttack()
+{
+    m_bIsParryAttack = true;
+    m_fAttackDelay.x = m_fAttackDelay.y + 0.1f;
+}
+
+void CBossBlackBoard::ResetParryAttack()
+{
+    m_bIsParryAttack = false;
+}
+
+void CBossBlackBoard::Reset_State()
+{
+    m_pAttack_Skill = nullptr;
+    m_bIsHit = false;
+
 }
 
 void CBossBlackBoard::Free()

@@ -135,6 +135,7 @@ void CTriggerBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 	if (m_iTriggerCode)
 	{
 		// 게임매니저에서 시네마틱 실행
+ 		CGameManager::GetInstance()->Play_Cinematic(static_cast<_uint>(m_iTriggerCode));
 	}
 		
 	m_isDead = true;

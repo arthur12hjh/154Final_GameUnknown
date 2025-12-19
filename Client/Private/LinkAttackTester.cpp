@@ -61,7 +61,7 @@ void CLinkAttackTester::Update(_float fTimeDelta)
 		m_iAnimationSequence = 0;
 		m_fMoveTime = 0.f;
 		m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
-		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));
+		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));      
 	}
 
 	if (m_bIsActive)

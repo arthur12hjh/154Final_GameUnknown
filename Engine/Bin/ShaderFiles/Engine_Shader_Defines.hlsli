@@ -1,21 +1,13 @@
-
 vector g_vMtrlDiffuse = 1.f;
 vector g_vMtrlAmbient = 1.f;
 vector g_vMtrlSpecular = 1.f;
 
+#define MIP_BIAS 3.f
 
 struct BoneTransformMatrix
 {
     row_major float4x4 BoneLocalTransformMatrix;
     row_major float4x4 BoneCombinedTransformMatrix;
-};
-
-sampler NormalSampler = sampler_state
-{
-    Filter = ANISOTROPIC; // 또는 MIN_MAG_ANISOTROPIC_MIP_LINEAR 등
-    MaxAnisotropy = 4; // 4~8 정도부터 테스트
-    AddressU = wrap;
-    AddressV = wrap;
 };
 
 sampler AnisoTropy_BLUR_Sampler = sampler_state // 밉맵이 있어야 의미가 있음
@@ -25,10 +17,18 @@ sampler AnisoTropy_BLUR_Sampler = sampler_state // 밉맵이 있어야 의미가 있음
     AddressU = wrap;
     AddressV = wrap;
     AddressW = wrap;
-    MipLodBias = 1.f; // 밉맵 레벨 +1시켜서 의도적으로 뭉갬
+    MipLodBias = 4.f; // 밉맵 레벨 +1시켜서 의도적으로 뭉갬
     MinLOD = 0;
     MaxLOD = 0xFFFFFFFF;
     ComparisonFunc = ALWAYS;
+};
+
+sampler NormalSampler = sampler_state
+{
+    Filter = ANISOTROPIC; // 또는 MIN_MAG_ANISOTROPIC_MIP_LINEAR 등
+    AddressU = wrap;
+    AddressV = wrap;
+    MaxAnisotropy = 16;
 };
 
 sampler ClampSampler = sampler_state

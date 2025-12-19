@@ -44,6 +44,7 @@
 			_bool			isQuery = { true };
 			_bool			isSyncByPhysx = { false };
 			_bool			isCreateShape = { true };
+			_bool			isSimulateSync = { true };
 		} RIGIDBODY_DESC;
 
 	private:
@@ -61,8 +62,9 @@
 		PxShape* Get_PxShape() { return m_pShape; }
 		RIGIDBODY_TYPE Get_Type() { return m_eType; }
 		RIGIDBODY_SHAPE Get_Shape() { return m_eShape; }
-
+		_bool isSimulateSync() { return m_isSimulateSync; }
 		void Set_DeltaMove(PxVec3 vDelta) { m_vDeltaMove = vDelta; }
+		PxTransform Get_ShapeLocalPose() const { return m_ShapeLocalPose; }
 
 		PxVec3 Get_DeltaMove() 
 		{ 
@@ -102,6 +104,8 @@
 		PxVec3			m_vDeltaMove = { 0.f, 0.f, 0.f };
 		_bool			m_isRidable = { false };
 		_bool			m_isSyncByPhysx = { false };
+		_bool			m_isSimulateSync = { true };
+		PxTransform		m_ShapeLocalPose = { PxTransform(PxIdentity) };
 
 	private:
 		HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);

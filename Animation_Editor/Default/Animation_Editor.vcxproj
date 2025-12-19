@@ -176,10 +176,12 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\ModelTerrain.h" />
     <ClInclude Include="..\Public\PonyTail_Character.h" />
+    <ClInclude Include="..\Public\Scabbard_Scarlet.h" />
     <ClInclude Include="..\Public\Scarlet.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Tool_Manager.h" />
     <ClInclude Include="..\Public\Weapon.h" />
+    <ClInclude Include="..\Public\Weapon_Scarlet.h" />
     <ClInclude Include="Animation_Editor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -239,10 +241,12 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelTerrain.cpp" />
     <ClCompile Include="..\Private\PonyTail_Character.cpp" />
+    <ClCompile Include="..\Private\Scabbard_Scarlet.cpp" />
     <ClCompile Include="..\Private\Scarlet.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Tool_Manager.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
+    <ClCompile Include="..\Private\Weapon_Scarlet.cpp" />
     <ClCompile Include="Animation_Editor.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

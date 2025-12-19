@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -253,7 +253,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-    for (auto i = 19; i < iMaxSize;)
+    for (auto i = 23; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
@@ -262,6 +262,11 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
         strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szMonsterName, BossDataList[i++].c_str());
         
+        strcpy_s(BossDesc.szLeftWeaponPrototypeName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szLeftBoneName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szRightWeaponPrototypeName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szRightBoneName, BossDataList[i++].c_str());
+
         BossDesc.eNaytiba_Type = NAYTIBA_TYPE(atoi(BossDataList[i++].c_str()));
         BossDesc.eAI_Type = AI_TYPE(atoi(BossDataList[i++].c_str()));
 
@@ -308,10 +313,12 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // 문자열 변환
-        string name = jInfo["Name"];
-        string text = jInfo["Text"];
-        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        {
+            string name = jInfo["Name"];
+            string text = jInfo["Text"];
+            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        }
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -445,7 +452,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 
         for (auto& pAnim : jAnim)
         {
-            WCHAR szText[MAX_PATH];
+            _tchar szText[MAX_PATH];
             _wstring szAnimTag;
 
             vector<ANIM_NOTIFY> AnimationNotifyList;
@@ -676,10 +683,10 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-    // _finddata_t : <io.h>���� �����ϸ� ���� ������ �����ϴ� ����ü
+   
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>���� �����ϸ� ����ڰ� ������ ��� ������ ���� ù ��° ������ ã�� �Լ�
+
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -695,7 +702,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // �ƽ�Ű �ڵ� ���ڿ��� �����ڵ� ���ڿ��� ��ȯ�����ִ� �Լ�
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -735,7 +741,6 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         }
 
 
-        //_findnext : <io.h>���� �����ϸ� ���� ��ġ�� ������ ã�� �Լ�, ���̻� ���ٸ� -1�� ����
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }

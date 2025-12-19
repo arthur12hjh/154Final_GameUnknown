@@ -12,6 +12,7 @@
 #include "Deco_CheckAlive.h"
 #include "Deco_FindTarget.h"
 #include "Deco_AttackDelay.h"
+#include "Deco_BossPhase.h"
 #pragma endregion
 
 // Action Node
@@ -19,6 +20,8 @@
 #include "Task_Idle.h"
 #include "Task_ScarletDead.h"
 #include "Task_ScarletMove.h"
+#include "Task_ScarletAttack.h"
+#include "Task_CutScene.h"
 
 #include "Task_Groggy.h"
 #include "Task_Hit.h"
@@ -80,15 +83,19 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
     if (nullptr == pRootSelect)
         return E_FAIL;
 
-   
+    auto pAttackSelect = CSelectNode::Create(this);
+    if (nullptr == pAttackSelect)
+        return E_FAIL;
+    pAttackSelect->Bind_BehaviorNode(CDeco_AttackDelay::Create(this));
+    pAttackSelect->Bind_BehaviorNode(CTask_ScarletAttack::Create(this));
 
     auto pBattleSelect = CSelectNode::Create(this);
     if (nullptr == pBattleSelect)
         return E_FAIL;
 
     pBattleSelect->Bind_BehaviorNode(CDeco_FindTarget::Create(this));
-    // 여기 공격추가
 
+    pBattleSelect->Bind_BehaviorNode(pAttackSelect);
     pBattleSelect->Bind_BehaviorNode(CTask_ScarletMove::Create(this));
 
     auto pHitReactionSelector = CSelectNode::Create(this);
@@ -100,13 +107,25 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
     pHitReactionSelector->Bind_BehaviorNode(CTask_Groggy::Create(this));
 
     auto ActionSelect = CSelectNode::Create(this);
-    if (nullptr == pRootSelect)
+    if (nullptr == ActionSelect)
         return E_FAIL;
-    ActionSelect->Bind_BehaviorNode(CDeco_CheckAlive::Create(this, 10.f));
+    ActionSelect->Bind_BehaviorNode(CDeco_CheckAlive::Create(this, 1.f));
     ActionSelect->Bind_BehaviorNode(pHitReactionSelector);
     ActionSelect->Bind_BehaviorNode(pBattleSelect);
     ActionSelect->Bind_BehaviorNode(CTask_Idle::Create(this));
 
+    auto pCutSceneNode = CSelectNode::Create(this);
+    if (nullptr == pCutSceneNode)
+        return E_FAIL;
+
+    vector<pair<_float, _bool>> iChangePhase = {};
+    iChangePhase.emplace_back(make_pair(0.5f, false));
+    iChangePhase.emplace_back(make_pair(0.01f, false));
+
+    pCutSceneNode->Bind_BehaviorNode(CDeco_BossPhase::Create(this, iChangePhase));
+    pCutSceneNode->Bind_BehaviorNode(CTask_CutScene::Create(this));
+
+    pRootSelect->Bind_BehaviorNode(pCutSceneNode);
     pRootSelect->Bind_BehaviorNode(ActionSelect);
     pRootSelect->Bind_BehaviorNode(CTask_ScarletDead::Create(this));
 

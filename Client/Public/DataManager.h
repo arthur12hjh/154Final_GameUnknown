@@ -22,7 +22,7 @@ public :
 
 	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
 
-	const vector<SCRIPT_DATA>*			Get_ScriptData(const _wstring& szScriptTag);
+	const vector<SCRIPT_DATA>*				Get_ScriptData(const _wstring& szScriptTag);
 
 	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
 

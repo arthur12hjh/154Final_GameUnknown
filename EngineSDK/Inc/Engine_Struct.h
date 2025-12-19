@@ -63,14 +63,16 @@ namespace Engine
 		float				fPhi;				/* ½ºÆ÷Æ® ±¤¿øÀÇ ¹Ù±ùÂÊ ¿ø»ÔÀÇ °¢µµ */
 	}LIGHT_DESC;
 
-	typedef struct tagShadowLight
+	typedef struct tagStaticShadowLight
 	{
-		XMFLOAT4		vEye, vAt;
-		float			fNear, fFar, fFovy, fAspect;
+		XMFLOAT4		vAt;
+		float			fNear, fFar;
+	} STATIC_SHADOW_DESC;
 
-		//for cascade
+	typedef struct tagCascadeShadowLight
+	{
 		XMFLOAT4		vDir;
-	}SHADOW_LIGHT_DESC;
+	} CASCADE_SHADOW_DESC;
 
 	typedef struct tagVertexPosition
 	{
@@ -486,6 +488,13 @@ namespace Engine
 		float* fHDRExposure;
 		bool* isHDR;
 	} HDR_DESC;
+
+	typedef struct tagJointChainDesc {
+		float fAngularDampimg;
+		float fLinearDamping;
+		float fMaxAngularVelocity;
+		float fMaxDepenetrationVelocity;
+	} JOINT_CHAIN_DESC;
 #pragma endregion
 }
 

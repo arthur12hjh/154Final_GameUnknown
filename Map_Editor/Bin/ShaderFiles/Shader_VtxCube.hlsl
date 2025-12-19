@@ -2,7 +2,7 @@
 
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-textureCUBE g_Texture;
+textureCUBE g_Texture2D;
 
 
 /* ¡§¡° Ω¶¿Ã¥ı : */
@@ -63,7 +63,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vColor = g_Texture2D.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;   
 }

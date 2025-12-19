@@ -371,11 +371,17 @@
     <ClInclude Include="..\Public\CCTFilterCallback.h">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Metaball.h">
-      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    <ClInclude Include="..\Public\JointChain.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BlackBlend.h">
-      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    <ClInclude Include="..\public\Frustum.h">
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CascadeShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -510,9 +516,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BlendObject.cpp">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Shadow.cpp">
-      <Filter>01.Utility\11.Shadow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
@@ -721,11 +724,14 @@
     <ClCompile Include="..\Private\CCTFilterCallback.cpp">
       <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Metaball.cpp">
-      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    <ClCompile Include="..\Private\JointChain.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BlackBlend.cpp">
-      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    <ClCompile Include="..\Private\CascadeShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StaticShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -767,9 +773,6 @@
     </Filter>
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{ccaab4a9-3a94-4a6f-b842-d75b1077b29a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\11.Shadow">
-      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -1143,17 +1146,17 @@
     <Filter Include="01.Utility\18.StateMachine\State">
       <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball">
-      <UniqueIdentifier>{180f516f-7eaf-4de5-9575-117f900c3ffb}</UniqueIdentifier>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\JointChain">
+      <UniqueIdentifier>{11243410-6763-4796-bbd3-8c11003bc23e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball\ShaderFile">
-      <UniqueIdentifier>{f0e40dd1-9b36-4177-b17b-97eb68e86f00}</UniqueIdentifier>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow">
+      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend">
-      <UniqueIdentifier>{7bc44496-e53c-4af5-8dc8-fc8a7500163f}</UniqueIdentifier>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Cascade">
+      <UniqueIdentifier>{c607e44e-dc43-41de-99f3-9b81687c8b85}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile">
-      <UniqueIdentifier>{f77c7811-60e3-4e74-95e3-8a42b1975797}</UniqueIdentifier>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Static">
+      <UniqueIdentifier>{f0688259-fb7c-4352-8239-3ab3ba4cf4a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1202,11 +1205,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_CombinedMatrices.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Metaball.hlsl">
-      <Filter>01.Utility\05.Renderer\Deferred\Metaball\ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl">
-      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile</Filter>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DepthOnly.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

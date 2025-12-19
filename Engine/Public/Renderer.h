@@ -1,10 +1,11 @@
 #pragma once
 
-/* ��ü�� �����ÿ� �׷������� ��ü��� ������Ʈ �Ŵ������� �߰��ϰ�, ���������� �߰��Ѵ�.(x)*/
-/* �� �����Ӵ� ��ü�ȿ��� �׷������ϴ°��� �Ǵ��ϰ� �׷������Ѵٶ�� �������� ����ϴ� �۾��� �����Ѵ�. */
+/* 객체를 생성시에 그려져야할 객체라면 오브젝트 매니져에도 추가하고, 렌더러에도 추가한다.(x)*/
+/* 매 프레임당 객체안에서 그려져야하는가를 판단하고 그려져야한다라면 렌더러에 등록하는 작업을 수행한다. */
 
-/* ȭ�鿡 �׷������� ��ü���� �׸��� ������� �з��Ͽ� �����Ѵ�. */
-/* �����ϰ� �մ� ��ü���� ������ ������� �����Լ��� ȣ���� �ش�. �����̳ʸ� Ŭ�����ع�����. */
+/* 화면에 그려져야할 객체들을 그리는 순서대로 분류하여 보관한다. */
+/* 보관하고 잇는 객체들을 보관한 순서대로 렌더함수를 호출해 준다. 컨테이너를 클리어해버린다. */
+
 #include "Base.h"
 
 NS_BEGIN(Engine)
@@ -25,14 +26,35 @@ public:
 	void*	Get_MotionBlur_Desc();
 	void*   Get_Volumetric_Desc();
 	void*	Get_HDR_Desc();
+	void*	Get_Cascade_Desc();
 
 public:
+	HRESULT	Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
+	HRESULT	Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
+	HRESULT	Bind_Shadow_Resource_Static(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT	Bind_Shadow_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT	Bind_CascadeEnds(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+	_float* Get_CascadeEnds();
+	//정적으로 그림자를 구워낼 녀석들한테 추가해야 그림자를 구워줍니다.. 진미.
+	HRESULT Add_StaticShadowObject(class CGameObject* pGameObject);
+	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
+	// 딴데서 실행하면 레고삼킴
+	HRESULT Bake_StaticShadow();
+public:
 	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+
+#ifdef _DEBUG
+	//RenderDoc 전용
+	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
+	//RenderDoc 전용
+	void		EndMarker(ID3D11DeviceContext* pContext);
+#endif
 public:
 	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	HRESULT				Initialize();
 	void				Update(_float fTimeDelta);
+	void				Update_Shadow(_float fTimeDelta); 
 	void				Render();
 
 #ifdef _DEBUG
@@ -50,11 +72,12 @@ private:
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
-	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-	ID3D11DepthStencilView*				m_pCascadeShadowDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
+
+	class CShader*						m_pOcclusionShader = { nullptr };
+	class CVIBuffer_Cube*				m_pOcclusionVIBuffer = { nullptr };
 
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
@@ -65,7 +88,7 @@ private:
 	_bool								m_isVolumetric = { false };
 
 	_uint2								m_vScreenSize = {};
-	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 Ȥ�� 16384, 9216
+	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 혹은 16384, 9216
 	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
 	
 	_bool								m_isBloom = { true };
@@ -75,7 +98,11 @@ private:
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
 
+	ID3D11RasterizerState*				m_pRS_OcclusionQuery = { nullptr };
+
 private:
+	class CCascadeShadow*				m_pCascadeShadow = { nullptr };
+	class CStaticShadow*				m_pStaticShadow = { nullptr };
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
 	class CMetaball*					m_pMetaball = { nullptr };
@@ -98,30 +125,23 @@ private:
 	void		Render_Priority();
 	void		Render_Shadow();
 	void		Render_MotionBlur();
+	void		Render_Occlusion();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
-	/* ��		���� Combined ������. */
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
 	void		Render_Deferred();
 	void		Render_ScreenDeferred();
-
-
 	void		ToneMapping();
 	void		Render_BackBuffer();
 	void		Render_UI();
 
+	void		Update_Occlusion_Visibility();
 private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
-	HRESULT		Ready_Shadow_DepthStencilView(_uint iSizeX, _uint iSizeY);
-	HRESULT		Ready_CascadeShadow_DepthStencilView(_uint iSizeX, _uint iSizeY, _uint iCSMLevel);
 	HRESULT		Bind_WVP_Matrices();
-
-	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
-
-	void		EndMarker(ID3D11DeviceContext* pContext);
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -37,6 +37,7 @@ void CActor::Update(_float fTimeDelta)
 
 void CActor::Late_Update(_float fTimeDelta)
 {
+    __super::Late_Update(fTimeDelta);
 }
 
 HRESULT CActor::Render()

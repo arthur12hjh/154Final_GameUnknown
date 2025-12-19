@@ -26,6 +26,8 @@ HRESULT CDeco::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
 	return S_OK;
 }
 
@@ -39,8 +41,11 @@ void CDeco::Update(_float fTimeDelta)
 
 void CDeco::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CDeco::Render()
@@ -136,6 +141,12 @@ HRESULT CDeco::Ready_Components(const _tchar* pComponentTag)
 	//// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	//// 없으면 충돌 안됨
 	//m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+
+	_float3 Com_Size = m_pTransformCom->Get_Scale();
+	Com_Size.x *= 2.f;
+	Com_Size.z *= 2.f;
+
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
 
 	return S_OK;
 }

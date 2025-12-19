@@ -492,9 +492,7 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 	if (nullptr == pSkill_Data)
 		return;
 
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
-	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
-
+	_float fAnimPlayRatio = m_pOwner->Get_AnimationRatio();
 	if (m_bIsLookAtPoint)
 		LookAtPoint(fTimeDelta);
 	if (1.f >= fDistance - pSkill_Data->fRange)

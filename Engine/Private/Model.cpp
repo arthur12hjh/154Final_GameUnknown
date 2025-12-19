@@ -133,12 +133,63 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
     return (*iter)->Get_CombinedTransformationMatrixPtr();
 }
 
+const _float4x4* CModel::Get_LocalBoneMatrixPtr(const _char* pBoneName)
+{
+    AddCount_PartialBone(pBoneName);
+
+    auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+        {
+            if (true == pBone->Compare_Name(pBoneName))
+                return true;
+
+            return false;
+        });
+
+    if (m_Bones.end() == iter)
+        return nullptr;
+
+    return (*iter)->Get_TransformationMatrixPtr();
+}
+
 void CModel::Attach_CombinedTransformationMatrix()
 {
     for (auto& pBone : m_Bones)
     {
         pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
     }
+}
+
+void CModel::Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];    
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
+}
+
+void CModel::Override_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
+
+    D3D11_BOX BoxDesc{};
+
+	_uint iStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+
+	BoxDesc.left = iIdx * iStride;
+	BoxDesc.right = BoxDesc.left + iStride;
+    BoxDesc.top = 0;
+    BoxDesc.bottom = 1;
+    BoxDesc.front = 0;
+    BoxDesc.back = 1;
+
+    COMPUTE_BONEMATRIX_OUT OutStruct = {};
+     XMStoreFloat4x4(&OutStruct.BoneCombinedTransformMatrix, CombinedMatrix);
+
+    m_pContext->UpdateSubresource(m_pOutSource, 0, &BoxDesc, &OutStruct, 0, 0);
+
 }
 
 void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
@@ -229,6 +280,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
 }
 
 void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
+
 {
     m_isRootMotionUpdated = isRootMotionUpdated;
 
@@ -543,17 +595,35 @@ HRESULT CModel::Initialize_AnimationBufferResource()
         m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
     }        
 
+    Release_AnimationChannel();
 
     return S_OK;
 }
 
-HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
+HRESULT CModel::Release_AnimationChannel()
+{
+    // 나중에 활성 메모리 부족하면 작업해야함
+    //for (auto& pAnim : m_Animations)
+    //{
+    //    auto pChannels = pAnim->Get_vChannels();
+    //    for (auto& pChannel : *pChannels)
+    //        Safe_Release(pChannel);
+    //
+    //    pChannels->clear();
+    //}
+
+    return S_OK;
+}
+
+HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName)
 {
     if (nullptr == pAnimations)
         return E_FAIL;
 
     for (auto& pAnimation : *pAnimations)
     {
+        pAnimation->Set_Name(szName);
+            
         Mapping_Animation(pAnimation);
 
         m_Animations.push_back(pAnimation);
@@ -886,6 +956,8 @@ HRESULT CModel::Initialize(void* pArg)
         if (FAILED(Ready_ComputeShader()))
             return E_FAIL;
     }
+
+    Attach_CombinedTransformationMatrix();
 
     return S_OK;
 }
@@ -1818,7 +1890,7 @@ HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
     m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
 
     m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
-        
+    
     return S_OK;
 }
 

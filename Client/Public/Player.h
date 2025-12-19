@@ -44,15 +44,13 @@ public:
 	virtual void		Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT		Render() override;
+	virtual HRESULT		Render_Shadow() override;
 	virtual HRESULT		Damaged(void* pArg) override;
 	virtual void		RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 
 
 	void				SetSkillDataID(_uint iSkillID);
 	_int				GetSkillDataID();
-
-	// 존나가라. 나중에 반드시 수정할 것
-	HRESULT Get_GaraGorillaBone(class CLinkAttackTester* pObject);
 
 public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
@@ -89,7 +87,7 @@ private:
 	void Update_LinkAttack(_float fTimeDelta);
 
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
-	
+
 	void CreateHitBox(const AnimNotify* pNotify);
 
 

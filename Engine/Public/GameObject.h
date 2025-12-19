@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CTransform;
 class CCollider;
+class CVIBuffer;
 
 class ENGINE_DLL CGameObject abstract : public CBase
 {
@@ -51,6 +52,14 @@ public:
 		m_eVisibility = eVisiblility;
 	}
 
+	void SetActive(_bool bIsActive) {
+		m_bIsActive = bIsActive;
+	}
+
+	void SetActive() {
+		m_bIsActive = !m_bIsActive;
+	}
+
 	const VISIBILITY&								GetVisibility() { return m_eVisibility;	}
 	CTransform*										GetTransform() { return m_pTransformCom; }
 
@@ -64,6 +73,10 @@ public:
 	_float											Get_Depth();
 	CCollider*										GetCullingCollider() { return m_pCullingCollider; }
 	const map<const _wstring, class CComponent*>*	GetAllComponents() { return &m_Components; }
+
+	void										Set_Occlusion_Culling_Result(_bool isVisible);
+	void										Set_Occlusion_CoolDown(_int iCoolDown) { m_iOcclusionCooldown = iCoolDown; }
+	_int										Get_Occlusion_CoolDown() const { return m_iOcclusionCooldown; }
 
 protected:
 	int											m_iObjectID;
@@ -82,8 +95,11 @@ protected:
 	CCollider*									m_pCullingCollider = { nullptr };
 
 	_bool										m_isDead = { false };
+	_bool										m_bIsPrevVisibility = { true };
+	_bool										m_bIsActive = { true };
 
 	map<const _wstring, class CComponent*>		m_Components;
+	_int										m_iOcclusionCooldown = 0;
 
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, 
