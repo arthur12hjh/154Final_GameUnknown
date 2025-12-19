@@ -27,7 +27,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
 	{
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false, 1.2f);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false, 1.7);
 		m_isBackStep = true;
 	}
 	else
@@ -50,7 +50,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 		vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
 
 		m_Desc->pPlayerTransform->Change_Look(vCameraLook);
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.2f);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.7f);
 	}
 }
 
@@ -60,9 +60,9 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
 	if(true == m_isBackStep && fAnimationRatio < 0.33f)
-		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.35f);
+		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.8f);
 	else if(false == m_isBackStep && fAnimationRatio < 0.33f)
-		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.35f);
+		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.8f);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
 		fAnimationRatio >= m_fMaxRatio)
