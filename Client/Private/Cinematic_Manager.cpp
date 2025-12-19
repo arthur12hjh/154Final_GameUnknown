@@ -158,7 +158,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
             auto pObject = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), strObjectName, &CinematicModelDesc);
 
             m_CinematicObjectsMap.emplace(strObjectName, static_cast<CCinematicObject*>(pObject));
-            Safe_AddRef(pObject);
+            //Safe_AddRef(pObject);
         }
         else if (static_cast<CINEMATICOBJECT_TYPE>(pLevelCinematicObject["eType"].get<_int>()) == CINEMATICOBJECT_TYPE::ACTIONCAMERA)
         {
@@ -177,7 +177,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
             m_pGameInstance->Add_Camera(strObjectName.c_str(), static_cast<CCamera*>(pCamera));
 
             m_ActionCameraMap.emplace(strObjectName, static_cast<CCamera_Action*>(pCamera));
-            Safe_AddRef(pCamera);
+            //Safe_AddRef(pCamera);
         }
     }
 
