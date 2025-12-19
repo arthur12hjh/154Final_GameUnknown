@@ -45,6 +45,7 @@ public:
 
 	virtual HRESULT		Render() override;
 	virtual HRESULT		Render_Shadow() override;
+	virtual HRESULT		Render_MotionBlur() override;
 	virtual HRESULT		Damaged(void* pArg) override;
 	virtual void		RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 

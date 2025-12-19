@@ -39,6 +39,10 @@ typedef struct tagParryStateDesc {
 	_bool isImmediate = { false };
 } PLAYER_PARRY_DESC;
 
+typedef struct tagJumpStateDesc {
+	_bool isSprintJump = { false };
+} PLAYER_JUMP_DESC;
+
 class CPlayerState abstract : public CBase
 {
 protected:

@@ -20,6 +20,10 @@ float4 g_vRimLightColor;
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
 
+// for cascade 
+matrix g_LightViewMatrix[CASCADE_LEVEL];
+matrix g_LightProjMatrix[CASCADE_LEVEL];
+
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 
@@ -65,29 +69,22 @@ VS_OUT VS_MAIN(VS_IN In)
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
-    
-    float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
-    
-    // CPU와 동일한 행렬 순서
+
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
-    
-    matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
+
+    matrix BoneMatrix =
+        MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
-    /* 스키닝 */
-    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
-   
-    matrix matWV, matWVP;
-    
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-    
-    Out.vPosition = mul(vPosition, matWVP);
-    Out.vProjPos = Out.vPosition;
+
+    float4 vSkinnedLocal = mul(float4(In.vPosition, 1.f), BoneMatrix);
+
+    // 월드까지만
+    Out.vPosition = mul(vSkinnedLocal, g_WorldMatrix);
 
     return Out;
 }
@@ -187,7 +184,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = In.vProjPos.w / 500.0f;
+    Out.vShadowLightDepth.x = In.vProjPos.z / In.vProjPos.w;
     
     return Out;
 }
@@ -241,6 +238,35 @@ PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
     return Out;
 }
 
+[maxvertexcount(CASCADE_LEVEL * 3)]
+void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT_SHADOW> OutStream)
+{
+    //CASCADE LEVEL 순회하면서 한번에 찍게 하기
+    [unroll]
+    for (uint iCount = 0; iCount < CASCADE_LEVEL; ++iCount)
+    {
+        matrix matLightVP = mul(g_LightViewMatrix[iCount], g_LightProjMatrix[iCount]);
+
+        GS_OUT_SHADOW Out;
+
+        // 정점 3개당 삼각형 하나로 
+        // 취급해서 세팅해주기
+        [unroll]
+        for (int iTri = 0; iTri < 3; ++iTri)
+        {
+            float4 vClip = mul(InTri[iTri].vPosition, matLightVP);
+
+            Out.vPosition = vClip;
+            Out.vProjPos = vClip;
+            Out.iSlice = iCount;
+
+            OutStream.Append(Out);
+        }
+
+        OutStream.RestartStrip();
+    }
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -259,9 +285,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
+        GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
     // 림 라이트 켠 버전

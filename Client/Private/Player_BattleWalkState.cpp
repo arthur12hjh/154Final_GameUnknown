@@ -15,7 +15,7 @@ void CPlayer_BattleWalkState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK;
 
-      m_isRunStart = true;
+    m_isRunStart = true;
 
     //Jump Run Start∑Œ Ω√¿€.
     if (true == m_isEvading && true == m_isLanding)
