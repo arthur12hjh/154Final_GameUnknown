@@ -178,6 +178,40 @@ void COBBCollider::SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtent
     m_OriginOrientBox->Orientation = vQuaternion;
 }
 
+HRESULT COBBCollider::Render_Face(_float4 vColor)
+{
+    __super::Render(vColor);
+
+    m_pBatch->Begin();
+    _float3 vCorners[8];
+    m_Bounding->GetCorners(vCorners);
+
+    static const _uint indices[] =
+    {
+        0, 1, 2, 2, 3, 0, // Front
+        4, 5, 6, 6, 7, 4, // Back
+        4, 5, 1, 1, 0, 4, // Left
+        3, 2, 6, 6, 7, 3, // Right
+        1, 5, 6, 6, 2, 1, // Top
+        4, 0, 3, 3, 7, 4  // Bottom
+    };
+
+    _vector vColorVec = XMLoadFloat4(&vColor);
+
+    for (_uint i = 0; i < 36; i += 3)
+    {
+        VertexPositionColor v1(XMLoadFloat3(&vCorners[indices[i]]), vColorVec);
+        VertexPositionColor v2(XMLoadFloat3(&vCorners[indices[i+1]]), vColorVec);
+        VertexPositionColor v3(XMLoadFloat3(&vCorners[indices[i+2]]), vColorVec);
+
+        m_pBatch->DrawTriangle(v1, v2, v3);
+    }
+
+    m_pBatch->End();
+
+    return S_OK;
+}
+
 #ifdef _DEBUG
 HRESULT COBBCollider::Render()
 {

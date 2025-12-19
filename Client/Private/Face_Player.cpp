@@ -140,7 +140,7 @@ void CFace_Player::Late_Update(_float fTimeDelta)
 
 	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 
@@ -165,10 +165,10 @@ HRESULT CFace_Player::Render()
 
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 

@@ -58,6 +58,7 @@ public:
 	_bool		  Get_Active() { return m_tUserData.isActive; }
 
 	void		  Set_Position(_vector vPosition);
+	void		  Set_CCTCollision(_bool bFlag) { m_tUserData.isCollisionCCTToCCT = bFlag; }
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

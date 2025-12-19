@@ -1,4 +1,4 @@
-#include "pch.h"
+	#include "pch.h"
 #include "Level_GamePlay.h"
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -62,6 +62,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -116,7 +117,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 HRESULT CLevel_GamePlay::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
+	SetWindowText(g_hWnd, TEXT("Game Play Level"));
 #else
 	SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
 #endif // _DEBUG
@@ -455,7 +456,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 {
 	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
-	pTriggerBoxDesc.iTriggerCode = 0;
+	pTriggerBoxDesc.iTriggerCode = 124;
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
 	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
 	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
@@ -481,22 +482,22 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
-	
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox"), true))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
-	
-	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
-	
-	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
+	//
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+	//
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
+	//
+	//if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	//if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	
 	ifs.close();
@@ -750,6 +751,22 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 			return E_FAIL;
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Level_CinematicObjectData(const _char* szFilePath)
+{
+	/*
+	* == 오할? =====
+		1. CinematicData_Desert.json으로 Level_GamePlay등에서 모델 + 카메라 생성하는거 제작
+		2. 그거 Cinematic_Manager에서 등록하는 기능 제작
+		3. 일단 모델만 불러와서 한번 실행해보기
+		4. 이후 카메라 잡기
+	*/
+
+	CGameManager::GetInstance()->Load_Level_CinematicObjectData(szFilePath);
+
 
 	return S_OK;
 }

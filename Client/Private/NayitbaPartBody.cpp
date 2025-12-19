@@ -128,8 +128,8 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
             TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
         }
     }
-   // m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+   //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+   //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
     _float fCamDist = XMVectorGetX(
         XMVector3Length(

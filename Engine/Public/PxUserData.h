@@ -8,6 +8,7 @@ NS_BEGIN(Engine)
 typedef struct tagPxUserData {
 	wstring szActorTag = {};
 	_bool isCCT = { false };
+	_bool isCollisionCCTToCCT = { true };
 	_bool isActive = { true };
 	void* pHitActor = { nullptr };
 	class CTransform* pActorTransform = { nullptr };

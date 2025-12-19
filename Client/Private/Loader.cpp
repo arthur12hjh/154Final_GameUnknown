@@ -57,8 +57,17 @@
 #include "GorillaBehaviorTree.h"
 #include "ScarletBehaviorTree.h"
 
+#pragma endregion
+
+#pragma region CinematicModel
+
 #include "LinkAttackTester.h"
 #include "Body_LinkAttackTester.h"
+
+#include "CinematicModel_Gorilla.h"
+#include "CinematicModel_Eve.h"
+#include "CinematicModel_Scarlet.h"
+
 
 #pragma endregion
 
@@ -252,7 +261,7 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("맵 로딩중.");
+		m_strMessage = TEXT("Loading Map Resource");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
 
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
@@ -290,26 +299,26 @@ HRESULT CLoader::Loading()
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 		{
-			m_strMessage = TEXT("메시 로딩중.");
+			m_strMessage = TEXT("Loading Mesh");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
-			m_strMessage = TEXT("셰이더 로딩중.");
+			m_strMessage = TEXT("Loading Shader");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
-			m_strMessage = TEXT("이펙트 로딩중.");
+			m_strMessage = TEXT("Loading Effect");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
-			m_strMessage = TEXT("인스턴싱중.");
+			m_strMessage = TEXT("Loading Instancing");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
-			m_strMessage = TEXT("UI 로딩중.");
+			m_strMessage = TEXT("Loading UI");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
 
-			m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
+			m_strMessage = TEXT("Player Hide and Seek with King JaeHoon");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
@@ -318,7 +327,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -326,7 +335,7 @@ HRESULT CLoader::Loading()
 	break;
 	case LEVEL::SCARLET:
 	{
-		m_strMessage = TEXT("씨발 이런게 도파민 섹스지");
+		m_strMessage = TEXT("YeahS~  It Just Fucking Sex And Dopamine");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
@@ -338,7 +347,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -379,7 +388,7 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료..");
+	m_strMessage = TEXT("Loading Complete");
 
 	m_isFinished = true;
 	return S_OK;
@@ -390,7 +399,7 @@ HRESULT CLoader::Loading_For_Scarlet()
 	Sleep(1000.f);
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료 되었습니다..");
+	m_strMessage = TEXT("Loading Complete");
 	m_isFinished = true;
 
 	return S_OK;
@@ -490,21 +499,21 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
 
-	// 크리스마스
-	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
-		return E_FAIL;
-
-	//// 오피스 스타일
+	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
 	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 	//	return E_FAIL;
-	//
-	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(3, TEXTURE_TYPE::ORSS,
-	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
-	//	"g_ORSSTexture", TRUE);
+
+	// 오피스 스타일
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		return E_FAIL;
+	
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(3, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
+		"g_ORSSTexture", TRUE);
 
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
@@ -619,10 +628,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	/* For.Prototype_GameObject_LinkAttackTester */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+#pragma region CINEMATIC_MODEL
+
+	/* For.Prototype_GameObject_CinematicModel_Gorilla */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Gorilla"),
+		CCinematicModel_Gorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_CinematicModel_Eve */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Eve"),
+		CCinematicModel_Eve::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#pragma endregion
 
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
@@ -643,7 +661,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;*/
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료 되었습니다..");
+	m_strMessage = TEXT("Loading Complete");
 	m_isFinished = true;
 
 	return S_OK;

@@ -105,7 +105,7 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 	m_pHairRoot->Update_PxTransform(
 		XMLoadFloat4x4(m_pHairRootBone) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	
 #ifdef _DEBUG
@@ -126,10 +126,10 @@ HRESULT CPonyTail_Player::Render()
 	{
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 
@@ -202,6 +202,9 @@ HRESULT CPonyTail_Player::Ready_HairJoints()
 	if (FAILED(Ready_ChildHair()))
 		return E_FAIL;
 
+	if (FAILED(Ready_HairBoneMapping()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -225,7 +228,7 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 	RootDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::NONE;
 	RootDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 	RootDesc.tUserData.szActorTag = TEXT("HairRoot");
-	RootDesc.vSize = _float3(0.f, 0.f, 0.f);
+	RootDesc.vSize = _float3(0.05f, 0.05f, 0.f);
 	RootDesc.fMass = { 0.f };
 	RootDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
@@ -244,14 +247,14 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 
 	// 첫 노드(다이나믹 구) - 원점이 B02에 있어야 함
 	CRigidBody::RIGIDBODY_DESC LinkDesc;
-	LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::SPHERE;   // 핵심: SPHERE
+	LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;   // 핵심: SPHERE
 	LinkDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 	LinkDesc.tUserData.szActorTag = TEXT("HairNode_01");
 	LinkDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
 
 	XMStoreFloat4x4(&LinkDesc.StartWorldMatrix, B02World);
 
-	LinkDesc.vSize = _float3(0.1f, 0.f, 0.f); // SPHERE는 x만 반지름으로 씀
+	LinkDesc.vSize = _float3(0.05f, 0.05f, 0.f); // SPHERE는 x만 반지름으로 씀
 	LinkDesc.fMass = { 0.05f };
 
 	LinkDesc.iCollisionGroup = PHYSX_CUSTOM_3;
@@ -270,6 +273,62 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 	m_pJointChain->Add_Joint(pHairLink);
 
 	m_HairLinks.push_back(make_pair(TEXT("Ab-TL-HairB02"), pHairLink));
+
+	return S_OK;
+}
+
+HRESULT CPonyTail_Player::Ready_HairBoneMapping()
+{
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	_matrix matOwnerWorld = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+
+	_vector vOwnerS, vOwnerR, vOwnerT;
+	XMMatrixDecompose(&vOwnerS, &vOwnerR, &vOwnerT, matOwnerWorld);
+	vOwnerR = XMQuaternionNormalize(vOwnerR);
+
+	_matrix matOwnerNoScale = XMMatrixAffineTransformation(
+		XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorZero(), vOwnerR, vOwnerT);
+
+	if (m_HairLinks.empty())
+		return S_OK;
+
+	if (false == m_isHairBindInit)
+	{
+		m_vecHairActorToBone.resize(m_HairLinks.size());
+		m_vecHairBoneScale.resize(m_HairLinks.size());
+
+		_uint iCount = 0;
+		for (auto& Pair : m_HairLinks)
+		{
+			_wstring strBoneName = Pair.first;
+			_char* pBoneName = new _char[strBoneName.length() + 1];
+			CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
+
+			_matrix matBoneBase = XMLoadFloat4x4(m_pBodyModelCom->Get_BoneMatrixPtr(pBoneName));
+
+			_vector vBoneS, vBoneR2, vBoneT2;
+			XMMatrixDecompose(&vBoneS, &vBoneR2, &vBoneT2, matBoneBase);
+
+			_float3 s;
+			XMStoreFloat3(&s, vBoneS);
+			m_vecHairBoneScale[iCount] = s;
+
+			_matrix matBoneRestWorld = matBoneBase * matOwnerNoScale;
+			PxTransform tBoneRestWorld(m_pGameInstance->Convert_Matrix_ToPxTransform(matBoneRestWorld));
+
+			PxTransform tActorRestWorld = Pair.second->Get_PxTransform();
+			PxTransform tShapeRestWorld = tActorRestWorld * Pair.second->Get_ShapeLocalPose();
+
+			m_vecHairActorToBone[iCount] = tShapeRestWorld.getInverse() * tBoneRestWorld;
+
+			Safe_Delete_Array(pBoneName);
+			++iCount;
+		}
+
+		m_isHairBindInit = true;
+	}
 
 	return S_OK;
 }
@@ -304,16 +363,15 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		_matrix B01World = XMLoadFloat4x4(pBoneB01) * OwnerWorld;
 		_matrix B02World = XMLoadFloat4x4(pBoneB02) * OwnerWorld;
 
-		// 첫 노드(다이나믹 구) - 원점이 B02에 있어야 함
 		CRigidBody::RIGIDBODY_DESC LinkDesc;
-		LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::SPHERE;   // 핵심: SPHERE
+		LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;   // 핵심: SPHERE
 		LinkDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 		LinkDesc.tUserData.szActorTag = TEXT("HairNode_01");
 		LinkDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
 
 		XMStoreFloat4x4(&LinkDesc.StartWorldMatrix, B02World);
 
-		LinkDesc.vSize = _float3(0.1f, 0.f, 0.f); // SPHERE는 x만 반지름으로 씀
+		LinkDesc.vSize = _float3(0.05f, 0.05f, 0.f); // SPHERE는 x만 반지름으로 씀
 		LinkDesc.fMass = { 0.05f };
 
 		LinkDesc.iCollisionGroup = PHYSX_CUSTOM_3;
@@ -364,22 +422,41 @@ HRESULT CPonyTail_Player::Bind_BoneToPartBody(void* pArg)
 
 void CPonyTail_Player::Sync_BonesByJoint()
 {
-	//01은 루트.
-	// m_pHairLink에서 가져와서 Ab-TL-HairB02부턴 리지드바디 세팅
-	// TEXT("Ab-TL-HairB0")
-	// 해봐야 1대1 대응, 아니면 중간 본 자르는 정도니까.. 
-	// 아직 럴프는 안들어갔는데 일단 ㄱㄱ..
+	_matrix matOwnerWorld = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+
+	_vector vOwnerS, vOwnerR, vOwnerT;
+	XMMatrixDecompose(&vOwnerS, &vOwnerR, &vOwnerT, matOwnerWorld);
+
+	_matrix matOwnerNoScale = XMMatrixAffineTransformation(
+		XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorZero(), XMQuaternionNormalize(vOwnerR), vOwnerT);
+	_matrix matOwnerNoScaleInv = XMMatrixInverse(nullptr, matOwnerNoScale);
+
+	_uint iCount = 0;
 	for (auto& Pair : m_HairLinks)
-	{	
+	{
 		_wstring strBoneName = Pair.first;
 		_char* pBoneName = new _char[strBoneName.length() + 1];
 		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
 
-		//본매핑콱시팔바로피직스정상화역시정상화는대재훈
-		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName,
-			m_pGameInstance->Convert_PxTransform_ToMatrix(Pair.second->Get_PxTransform()) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_CombinedWorldMatrix)));
+		PxTransform tActorNow = Pair.second->Get_PxTransform();
+		PxTransform tShapeNow = tActorNow * Pair.second->Get_ShapeLocalPose();
+		PxTransform tBoneWorld = tShapeNow * m_vecHairActorToBone[iCount];
+
+		_matrix matBoneModelNoScale =
+			m_pGameInstance->Convert_PxTransform_ToMatrix(tBoneWorld) * matOwnerNoScaleInv;
+
+		_vector vS, vR, vT2;
+		XMMatrixDecompose(&vS, &vR, &vT2, matBoneModelNoScale);
+
+		_float3 sc = m_vecHairBoneScale[iCount];
+		_vector vScale = XMVectorSet(sc.x, sc.y, sc.z, 0.f);
+
+		_matrix matNew = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionNormalize(vR), vT2);
+
+		m_pBodyModelCom->Override_CombinedTransformationMatrix(pBoneName, matNew);
 
 		Safe_Delete_Array(pBoneName);
+		++iCount;
 	}
 }
 
