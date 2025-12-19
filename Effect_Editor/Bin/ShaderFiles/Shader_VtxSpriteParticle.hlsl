@@ -318,7 +318,6 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
     }
 }
 
-
 [maxvertexcount(6)]
 void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_OUT> OutStream)
 {
@@ -630,6 +629,64 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         OutStream.Append(Out[3]);
         OutStream.RestartStrip();
     }
+}
+
+[maxvertexcount(6)]
+void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
+{
+    GS_WEIGHT_OUT Out[4];
+    float3 vR;
+    float3 vL;
+        float t = In[0].vLifeTime.x / In[0].vLifeTime.y;
+        float fSize = (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(0)) * 100
+     + (-2 * pow(t, 3) + 3 * pow(t, 2)) * 180
+     + (pow(t, 3) - pow(t, 2)) * tan(radians(0)) * 100;
+    
+    float angle = radians(g_fAngle + fSize);
+    float s = sin(angle);
+    float c = cos(angle);
+    float3 vRight = -normalize(g_CamMatrix._11_12_13);
+    float3 vUp = normalize(g_CamMatrix._21_22_23);
+    
+    float3 vRightRot = vRight * c + vUp * s;
+    float3 vLookRot = vUp * c - vRight * s;
+    
+    vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+    vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
+    Out[0].vTexcoord = float2(0.f, 0.f);
+    Out[0].vLifeTime = In[0].vLifeTime;
+    Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    
+    Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
+    Out[1].vTexcoord = float2(1.f, 0.f);
+    Out[1].vLifeTime = In[0].vLifeTime;
+    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    
+    Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
+    Out[2].vTexcoord = float2(1.f, 1.f);
+    Out[2].vLifeTime = In[0].vLifeTime;
+    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    
+    Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
+    Out[3].vTexcoord = float2(0.f, 1.f);
+    Out[3].vLifeTime = In[0].vLifeTime;
+    Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+    Out[0].vSeed = In[0].vSeed;
+    Out[1].vSeed = In[0].vSeed;
+    Out[2].vSeed = In[0].vSeed;
+    Out[3].vSeed = In[0].vSeed;
+    
+    OutStream.Append(Out[0]);
+    OutStream.Append(Out[1]);
+    OutStream.Append(Out[2]);
+    OutStream.RestartStrip();
+    
+    OutStream.Append(Out[0]);
+    OutStream.Append(Out[2]);
+    OutStream.Append(Out[3]);
+    OutStream.RestartStrip();
 }
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
@@ -1512,6 +1569,83 @@ PS_NONLIGHT_OUT PS_BLUEMASK(PS_WEIGHT_IN In)
     return Out;
 }
 
+PS_NONLIGHT_OUT PS_GLOW_NULL(PS_NONLIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    discard;
+    return Out;
+}
+/* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
+PS_NONLIGHT_OUT PS_ROTATION_GLOW(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * g_fDissolveUVSpeed.x);
+    //Out.vDiffuse.a = saturate(pow(Out.vDiffuse.a * 2, 2));
+    
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = lerp(0.3, 0.5, saturate(exp(-linearDepth * 20)));
+    if (0.1 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
+PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * g_fDissolveUVSpeed.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
 BlendState BS_Dust
 {
     BlendEnable[0] = true;
@@ -1748,5 +1882,55 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_BLUEMASK();
+    }
+    // idx 21
+    pass Glow_Null
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_GLOW_NULL();
+    }
+    // idx 22
+    pass DSS_Glow_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_GLOW_BLOOM();
+    }
+    // idx 23
+    pass Glow_Rotation
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
+        PixelShader = compile ps_5_0 PS_ROTATION_GLOW();
+    }
+    // idx 24
+    pass Glow_Bloom_Rotation
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
+        PixelShader = compile ps_5_0 PS_ROTATION_GLOW_BLOOM();
+    }
+    // idx 25
+    pass DSS_Noise_Distortion
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_NOISE_DISTORTION();
     }
 }

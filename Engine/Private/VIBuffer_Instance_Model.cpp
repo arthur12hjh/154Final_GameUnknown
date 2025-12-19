@@ -29,7 +29,7 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_iNumInstance = pDesc->iNumInstance;
-	m_iInstanceStride = sizeof(VTX_INSTANCE_MODEL);
+	m_iInstanceStride = sizeof(VTX_INSTANCE_MODEL_PARTICLE);
 	m_iNumIndexPerInstance = 6;
 
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
@@ -39,12 +39,13 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 	m_InstanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_InstanceBufferDesc.MiscFlags = 0;
 
-	m_pInstanceVertices = new VTX_INSTANCE_MODEL[m_iNumInstance];
-	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_MODEL) * m_iNumInstance);
+	m_pInstanceVertices = new VTX_INSTANCE_MODEL_PARTICLE[m_iNumInstance];
+	ZeroMemory(m_pInstanceVertices, sizeof(VTX_INSTANCE_MODEL_PARTICLE) * m_iNumInstance);
 
 	_matrix			ScaleMatrix = XMMatrixScaling(1.f, 1.f, 1.f);
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
+		_float			fScale = m_pGameInstance->Random(pDesc->vSize.x, pDesc->vSize.y);
 		_matrix			RotationY = XMMatrixRotationY(XMConvertToRadians(m_pGameInstance->Random(0.f, 360.f)));
 		_matrix			TransformMatrix = XMMatrixTranslation(m_pGameInstance->Random(pDesc->vCenter.x - pDesc->vRange.x * 0.5f, pDesc->vCenter.x + pDesc->vRange.x * 0.5f),
 															  m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
@@ -55,6 +56,13 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 		XMStoreFloat4(&m_pInstanceVertices[i].vUp, vWorldMat.r[1]);
 		XMStoreFloat4(&m_pInstanceVertices[i].vLook, vWorldMat.r[2]);
 		XMStoreFloat4(&m_pInstanceVertices[i].vTranslation, vWorldMat.r[3]);
+		m_pInstanceVertices[i].vRoot = m_pInstanceVertices[i].vTranslation;
+		m_pInstanceVertices[i].vStart = m_pInstanceVertices[i].vTranslation;
+		m_pInstanceVertices[i].vLifeTime = _float2(0, m_pGameInstance->Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y));
+		if (m_bIsLoop)
+			m_pInstanceVertices[i].vLifeTime.x = -m_pGameInstance->Random(0, pDesc->vLifeTime.y);
+		m_pInstanceVertices[i].vSpeeds.x = m_pGameInstance->Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
+		m_pInstanceVertices[i].vSize = fScale;
 	}
 
 	m_InstanceInitialDesc.pSysMem = m_pInstanceVertices;

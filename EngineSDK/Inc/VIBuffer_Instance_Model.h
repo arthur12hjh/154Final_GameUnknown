@@ -13,7 +13,20 @@ public:
 		const char*						pModelFilePath;
 		_matrix							PreModelMatrix;
 		//나중에 리타겟팅 해야하면 리타겟팅하는거 추가
+		_float2							vLifeTime;
+		_float2							vSpeed;
 	}MODEL_INSTANCE_DESC;
+
+	typedef struct tagModelInstance_Particle final : public VTX_INSTANCE_MODEL
+	{
+		_float2		vLifeTime;
+
+		_float4x4	WorldMat = {};
+		_float4	vRoot;
+		_float4	vStart;
+		_float2 vSpeeds;
+		_float	vSize;
+	}VTX_INSTANCE_MODEL_PARTICLE;
 
 public:
 
@@ -30,10 +43,10 @@ public:
 	HRESULT								Bind_MatrialTexture(CShader* pShader, _uint iMeshIndex, const _char* pConstantName, aiTextureType eTextureType, _uint TextureIndex);
 	_uint								GetModelNumMeshes();
 	_uint								Get_NumInstance() const { return m_iNumInstance; }
-	VTX_INSTANCE_MODEL*					Get_InstanceVertices() const { return m_pInstanceVertices; }
+	VTX_INSTANCE_MODEL_PARTICLE*					Get_InstanceVertices() const { return m_pInstanceVertices; }
 
 private:
-	VTX_INSTANCE_MODEL*					m_pInstanceVertices = { nullptr };
+	VTX_INSTANCE_MODEL_PARTICLE*					m_pInstanceVertices = { nullptr };
 	CModel*								m_pModel = nullptr;
 		
 	_float3								m_vPivot = {};

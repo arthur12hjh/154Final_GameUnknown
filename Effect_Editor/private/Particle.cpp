@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Particle.h"
 
+#include "Camera.h"
 #include "GameInstance.h"
 
 CParticle::CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -42,11 +43,11 @@ void CParticle::Update(_float fTimeDelta)
 	if (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
 	}
-
+	
 	_float4x4 CombinedWorldMatrix;
 	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
-
+	
 	if (m_tData.bisSpectrum) {
 		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
 		m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
@@ -73,14 +74,48 @@ void CParticle::Late_Update(_float fTimeDelta)
 
 HRESULT CParticle::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
+	//if (FAILED(Bind_ShaderResources()))
+	//	return E_FAIL;
+
+
+	//if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	//	return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(m_tData.iBegin);
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
 
-	m_pVIBufferCom->Bind_Resources();
+	auto pCamera = m_pGameInstance->GetMainCamera();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_CamFar", &pCamera->GetCameraInfo().fFar, sizeof(_float))))
+		return E_FAIL;
+	Safe_Release(pCamera);
 
-	m_pVIBufferCom->Render();
+
+	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+			return E_FAIL;
+
+		if (FAILED(m_pVIBufferCom->Render(i)))
+			return E_FAIL;
+	}
+
+
+	//m_pShaderCom->Begin(m_tData.iBegin);
+	//
+	//m_pVIBufferCom->Bind_Resources();
+	//
+	//m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -92,18 +127,22 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pSizeDiagramSRV);
-	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+
+	const char* pModelFilePath;
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = tData.iNumInstance;
 	Desc.vCenter = tData.fCenter;
-	Desc.vPivot = tData.fPivot;
 	Desc.vRange = tData.fRange;
 	Desc.vSize = tData.fSize;
 	Desc.vLifeTime = tData.fLifeTime;
 	Desc.vSpeed = tData.fSpeed;
 	Desc.isLoop = tData.bisLoop;
-	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	Desc.pModelFilePath = "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx";
+	Desc.PreModelMatrix = XMMatrixIdentity();
+
+	m_pVIBufferCom = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_DESC::Elements, VTX_NONEANIM_INSTANCE_DESC::iNumElements);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
@@ -151,15 +190,15 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	BufferDesc.StructureByteStride = sizeof(_float3);
 	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
+	
 	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
 	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
-
+	
 	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
 		return;
-
-
-
+	
+	
+	
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -167,7 +206,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
 		return;
-
+	
 	Safe_Release(pBuffer);
 	Ready_ComputeShader();
 }
@@ -367,8 +406,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Input & Output Base Buffer
 	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
 	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
+	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE);
 	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
@@ -384,8 +423,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Read Buffer
 	D3D11_BUFFER_DESC ReadBufferDesc = {};
 	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE) * iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Point_Instance::VTX_INSTANCE_VERTEX_PARTICLE);
+	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE);
 	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 
 	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pReadSource)))

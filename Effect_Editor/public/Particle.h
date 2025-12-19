@@ -4,7 +4,7 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Point_Instance;
+class CVIBuffer_Instance_Model;
 class CComputeShader;
 class CTexture;
 class CShader;
@@ -98,7 +98,7 @@ public:
 	void Play();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
-	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
+	CVIBuffer_Instance_Model* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};

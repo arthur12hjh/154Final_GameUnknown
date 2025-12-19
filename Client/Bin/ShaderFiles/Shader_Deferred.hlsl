@@ -29,10 +29,11 @@ texture2D g_ShadowTexture;
 texture2D g_SSAOTexture;
 texture2D g_SSSAOTexture;
 
-texture2D g_BlurFinalTexture; 
+texture2D g_BlackBlendTexture;
+texture2D g_BlurFinalTexture;
 texture2D g_GlowFinalTexture;
-texture2D g_BlurWeightTexture;
-texture2D g_GlowWeightTexture;
+texture2D g_GlowBloomTexture;
+texture2D g_MetaballTexture;
 texture2D g_EmissiveFinalTexture;
 
 texture2D g_DistortionTexture;
@@ -449,20 +450,20 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     //안개 합성.
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     
+
     
-    //vector fBlurColor = Calc_Blur(g_BlurFinalTexture, In.vTexcoord) + Calc_Glow(g_GlowFinalTexture, In.vTexcoord);
-    //vector fBlurAlpha = Calc_Blur(g_BlurWeightTexture, In.vTexcoord) + Calc_Glow(g_GlowWeightTexture, In.vTexcoord);
-    //fBlurAlpha.r = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
-    //fBlurAlpha.g = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).g + Calc_Glow(g_GlowWeightTexture, In.vTexcoord).g);
-    vector fBlur;
-    fBlur.rgb = Calc_Blur(g_BlurFinalTexture, In.vTexcoord).rgb / (Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
-    fBlur.a = saturate(Calc_Blur(g_BlurWeightTexture, In.vTexcoord).r);
-    vector fGlow;
-    fGlow.rgb = Calc_Glow(g_GlowFinalTexture, In.vTexcoord).rgb / (Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
-    fGlow.a = saturate(Calc_Glow(g_GlowWeightTexture, In.vTexcoord).r);
+    float4 vBlack = g_BlackBlendTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vBlur = saturate(Calc_Blur(g_BlurFinalTexture, In.vTexcoord));
+    float4 vGlow = saturate(Calc_Glow(g_GlowFinalTexture, In.vTexcoord));
+    float4 vGlowBloom = saturate(Calc_Glow(g_GlowBloomTexture, In.vTexcoord));
+    float4 vMetaball = saturate(Calc_Glow(g_MetaballTexture, In.vTexcoord));
     
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fBlur.a) + saturate(fBlur.rgb) * fBlur.a;
-    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - fGlow.a) + saturate(fGlow.rgb) * fGlow.a;
+    
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vBlack.a) + vBlack.rgb * vBlack.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vMetaball.a) + vMetaball.rgb * vMetaball.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vGlow.a) + vGlow.rgb * vGlow.a;
+    Out.vBackBuffer.rgb += vGlowBloom.rgb * vGlowBloom.a;
+    Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vBlur.a) + vBlur.rgb * vBlur.a;
     
     return Out;
 }

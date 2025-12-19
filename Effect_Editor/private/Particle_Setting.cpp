@@ -1812,16 +1812,16 @@ void CParticle_Setting::Update(_float fTimeDelta)
             {
             case 0:
             {
-                m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
-                CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-                Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
-                Desc.vCenter = m_tSpriteParticleData.fCenter;
-                Desc.vPivot = m_tSpriteParticleData.fPivot;
-                Desc.vRange = m_tSpriteParticleData.fRange;
-                Desc.vSize = m_tSpriteParticleData.fSize;
-                Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
-                Desc.vSpeed = m_tSpriteParticleData.fSpeed;
-                Desc.isLoop = m_tSpriteParticleData.bisLoop;
+                //m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+                //CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+                //Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
+                //Desc.vCenter = m_tSpriteParticleData.fCenter;
+                //Desc.vPivot = m_tSpriteParticleData.fPivot;
+                //Desc.vRange = m_tSpriteParticleData.fRange;
+                //Desc.vSize = m_tSpriteParticleData.fSize;
+                //Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
+                //Desc.vSpeed = m_tSpriteParticleData.fSpeed;
+                //Desc.isLoop = m_tSpriteParticleData.bisLoop;
                 _float4 fGravity = m_tSpriteParticleData.fGravityDiagram;
                 vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
                 _float fDelayTime = m_tSpriteParticleData.fDelayTime;
@@ -1976,48 +1976,48 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
 
-                if (Desc.iNumInstance != m_tSpriteParticleData.iNumInstance ||
-                    Desc.vCenter.x != m_tSpriteParticleData.fCenter.x ||
-                    Desc.vCenter.y != m_tSpriteParticleData.fCenter.y ||
-                    Desc.vCenter.z != m_tSpriteParticleData.fCenter.z ||
-                    Desc.vPivot.x != m_tSpriteParticleData.fPivot.x ||
-                    Desc.vPivot.y != m_tSpriteParticleData.fPivot.y ||
-                    Desc.vPivot.z != m_tSpriteParticleData.fPivot.z ||
-                    Desc.vRange.x != m_tSpriteParticleData.fRange.x ||
-                    Desc.vRange.y != m_tSpriteParticleData.fRange.y ||
-                    Desc.vRange.z != m_tSpriteParticleData.fRange.z ||
-                    Desc.vSize.x != m_tSpriteParticleData.fSize.x ||
-                    Desc.vSize.y != m_tSpriteParticleData.fSize.y ||
-                    Desc.vLifeTime.x != m_tSpriteParticleData.fLifeTime.x ||
-                    Desc.vLifeTime.y != m_tSpriteParticleData.fLifeTime.y ||
-                    Desc.vSpeed.x != m_tSpriteParticleData.fSpeed.x ||
-                    Desc.vSpeed.y != m_tSpriteParticleData.fSpeed.y ||
-                    Desc.isLoop != m_tSpriteParticleData.bisLoop ||
-                    fGravity.x != m_tSpriteParticleData.fGravityDiagram.x ||
-                    fGravity.y != m_tSpriteParticleData.fGravityDiagram.y ||
-                    fGravity.z != m_tSpriteParticleData.fGravityDiagram.z ||
-                    fGravity.w != m_tSpriteParticleData.fGravityDiagram.w ||
-                    fDelayTime != m_tSpriteParticleData.fDelayTime ||
-                    fSizeDiagrams.size() != m_tSpriteParticleData.fSizeDiagrams.size()) {
-                    Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
-                    Desc.vCenter = m_tSpriteParticleData.fCenter;
-                    Desc.vPivot = m_tSpriteParticleData.fPivot;
-                    Desc.vRange = m_tSpriteParticleData.fRange;
-                    Desc.vSize = m_tSpriteParticleData.fSize;
-                    Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
-                    Desc.vSpeed = m_tSpriteParticleData.fSpeed;
-                    Desc.isLoop = m_tSpriteParticleData.bisLoop;
-                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
-                }
-                else if (fSizeDiagrams.size() == m_tSpriteParticleData.fSizeDiagrams.size()) {
-                    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
-                        if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
-                            fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
-                            fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
-                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
-                        }
-                    }
-                }
+                //if (Desc.iNumInstance != m_tSpriteParticleData.iNumInstance ||
+                //    Desc.vCenter.x != m_tSpriteParticleData.fCenter.x ||
+                //    Desc.vCenter.y != m_tSpriteParticleData.fCenter.y ||
+                //    Desc.vCenter.z != m_tSpriteParticleData.fCenter.z ||
+                //    Desc.vPivot.x != m_tSpriteParticleData.fPivot.x ||
+                //    Desc.vPivot.y != m_tSpriteParticleData.fPivot.y ||
+                //    Desc.vPivot.z != m_tSpriteParticleData.fPivot.z ||
+                //    Desc.vRange.x != m_tSpriteParticleData.fRange.x ||
+                //    Desc.vRange.y != m_tSpriteParticleData.fRange.y ||
+                //    Desc.vRange.z != m_tSpriteParticleData.fRange.z ||
+                //    Desc.vSize.x != m_tSpriteParticleData.fSize.x ||
+                //    Desc.vSize.y != m_tSpriteParticleData.fSize.y ||
+                //    Desc.vLifeTime.x != m_tSpriteParticleData.fLifeTime.x ||
+                //    Desc.vLifeTime.y != m_tSpriteParticleData.fLifeTime.y ||
+                //    Desc.vSpeed.x != m_tSpriteParticleData.fSpeed.x ||
+                //    Desc.vSpeed.y != m_tSpriteParticleData.fSpeed.y ||
+                //    Desc.isLoop != m_tSpriteParticleData.bisLoop ||
+                //    fGravity.x != m_tSpriteParticleData.fGravityDiagram.x ||
+                //    fGravity.y != m_tSpriteParticleData.fGravityDiagram.y ||
+                //    fGravity.z != m_tSpriteParticleData.fGravityDiagram.z ||
+                //    fGravity.w != m_tSpriteParticleData.fGravityDiagram.w ||
+                //    fDelayTime != m_tSpriteParticleData.fDelayTime ||
+                //    fSizeDiagrams.size() != m_tSpriteParticleData.fSizeDiagrams.size()) {
+                //    Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
+                //    Desc.vCenter = m_tSpriteParticleData.fCenter;
+                //    Desc.vPivot = m_tSpriteParticleData.fPivot;
+                //    Desc.vRange = m_tSpriteParticleData.fRange;
+                //    Desc.vSize = m_tSpriteParticleData.fSize;
+                //    Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
+                //    Desc.vSpeed = m_tSpriteParticleData.fSpeed;
+                //    Desc.isLoop = m_tSpriteParticleData.bisLoop;
+                //    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                //}
+                //else if (fSizeDiagrams.size() == m_tSpriteParticleData.fSizeDiagrams.size()) {
+                //    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
+                //        if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
+                //            fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
+                //            fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
+                //            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                //        }
+                //    }
+                //}
             }
             break;
             case 1:
