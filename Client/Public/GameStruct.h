@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "CharacterController.h"
 
-using namespace std; 
+using namespace std;
 
 namespace Engine
 {
@@ -18,10 +18,17 @@ namespace Client
 #define iFLAG_INTERPOLATION_NONE		0
 #define iFLAG_INTERPOLATION_LERP		(1 << 0)
 
-#define iFLAG_CAMERA_DEFAULTPOSTION		0
-#define iFLAG_CAMERA_ATTACKBONE			(1 << 0)
-#define iFLAG_CAMERA_MOVEDIRECT			(1 << 1)
-#define iFLAG_CAMERA_MOVELERP			(1 << 2)
+
+#define iFLAG_CAMERA_SOURCE_BONE        (1 << 0)
+#define iFLAG_CAMERA_SOURCE_WORLD       (1 << 1)
+#define iFLAG_CAMERA_SOURCE_TARGET      (1 << 2)
+
+#define iFLAG_CAMERA_MOVEDIRECT         (1 << 8)
+#define iFLAG_CAMERA_MOVELERP           (1 << 9)
+
+#define iFLAG_CAMERA_LOOKAT_PIVOT       (1 << 16)
+#define iFLAG_CAMERA_LOOKAT_TARGET      (1 << 17)
+
 
 	enum class RECOVERY_TYPE
 	{
@@ -52,7 +59,7 @@ namespace Client
 		long long		iMaxHealth;
 		long long		iMaxShield;
 		long long		iMaxBetaEnergy;
-		
+
 		long long		iAttackPoint;
 		long long		iShieldAttackPoint;
 
@@ -64,20 +71,20 @@ namespace Client
 
 	// 인게임에서 실질적으로 사용되는 캐릭터 구조체
 	enum class PLAYER_MODE { IDLE, BATTLE, LOCKON, END };
-	enum class PLAYER_STATE { 
-		IDLE, WALK_START, WALK, WALK_END, JUMP,LIGHT_ATTACK, 
+	enum class PLAYER_STATE {
+		IDLE, WALK_START, WALK, WALK_END, JUMP, LIGHT_ATTACK,
 		EVADE, LANDING, SPRINT, SPRINT_END,
 
 		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
 
 		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
-		
+
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
 		AERIAL_ATTACK, //미구현
 
 		GIGAS_LINKATTACK,
-		
+
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
 		//여기에 상태들 다 Enum화 해서 올려놔야해.
@@ -175,7 +182,7 @@ namespace Client
 	};
 
 	// Skill Type
-	enum class SKILL_TYPE { 
+	enum class SKILL_TYPE {
 		DEFAULT_SKILL,			// Default Attack
 		INTERACTION_SKILL,		// Interaction Skill
 		BETA_SKILL,				// Beta Skill
@@ -184,21 +191,21 @@ namespace Client
 		SECOND_PHASE_SKILL,		// Seconde Phase Skill
 		END
 	};
-	
+
 	// enum class 비트 연산 지원안해서 바꿈
 	enum SKILL_PROPERTY : UINT8
 	{
 		// Bit Mask ex 
 		// All Property : 31
 		// Parry & Eavde : 3
-		PARRYABLE				= 0b00000001, // 1  <- 패링가능
-		EVADEABLE				= 0b00000010, // 2  <- 회피 가능
-		BLINKABLE				= 0b00000100, // 4  <- 블링크 가능
-		SUPERARMOR				= 0b00001000, // 8  <- 슈퍼아머
-		EXCUTION				= 0b00010000, // 16 <- 처형
-		GUARD					= 0b00100000, // 32 <- 가드
-		PARRY					= 0b01000000, // 64 <- 패링
-		IGNORE_GUARDBREAK		= 0b10000000, // 128 <- 가드 파괴
+		PARRYABLE = 0b00000001, // 1  <- 패링가능
+		EVADEABLE = 0b00000010, // 2  <- 회피 가능
+		BLINKABLE = 0b00000100, // 4  <- 블링크 가능
+		SUPERARMOR = 0b00001000, // 8  <- 슈퍼아머
+		EXCUTION = 0b00010000, // 16 <- 처형
+		GUARD = 0b00100000, // 32 <- 가드
+		PARRY = 0b01000000, // 64 <- 패링
+		IGNORE_GUARDBREAK = 0b10000000, // 128 <- 가드 파괴
 		END
 	};
 
@@ -234,7 +241,7 @@ namespace Client
 		// Property
 		//		PARRYABLE, EVADEABLE, BLINKALBE, SUPERARMOR...
 		SKILL_PROPERTY				eProPerty;					// 스킬 속성
- 
+
 	} CHARACTER_SKILL_DESC;
 
 	typedef struct tagPlayerBetaSkillDesc : public CHARACTER_SKILL_DESC
@@ -246,7 +253,7 @@ namespace Client
 	// 몬스터 구조체
 	// 인게임용
 	// ELITE, ELDER가 보스
-	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END};
+	enum class NAYTIBA_TYPE { MINION, WARRIOR, ELITE, ELDER, END };
 	enum class AI_TYPE { PASSIVE, AGGRESSIVE, DEFENSIVE, END };
 	typedef struct Naytiba_NetWork_Desc
 	{
@@ -300,7 +307,7 @@ namespace Client
 
 		NAYTIBA_STATE		eNaytibaState;
 		COMBAT_ATTRIBUTE	eCombatAttribute;
-		vector<const CHARACTER_SKILL_DESC *>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
+		vector<const CHARACTER_SKILL_DESC*>	iAttackList[ENUM_CLASS(SKILL_TYPE::END)];
 	}NAYTIBA_DESC;
 
 	// 만약에 공격 타입같은거도 나눌거면 여기서 나눠서 사용하세요
@@ -338,7 +345,7 @@ namespace Client
 	{
 		ITEM_TYPE					eType;
 		_uint						iItemID;
-		
+
 		// 타입에 따라서 달라지는 데이터입니다.
 		// 이거 타입별로 캐스팅 다르게 해주세요
 		// 일단 임시로 두개만해뒀는데 다른건 매번 추가해 주세요
@@ -350,17 +357,17 @@ namespace Client
 
 	typedef struct Default_Damage_Desc
 	{
-		CGameObject*		pAttacker;
+		CGameObject* pAttacker;
 		_float3				vHitPoint;
 		_float3				vHitDir;
 
 		_float4x4			vHitWorldMatrix;
-		
+
 		_float3				vImpactDir;
 		_float				fImpactForce;
 		_bool				bIsHitMotion;
 
-		const void*			pSkillData;
+		const void* pSkillData;
 	}DEFAULT_DAMAGE_DESC;
 
 	//인터랙션 타입.
@@ -425,10 +432,10 @@ namespace Client
 		vector<CAMERA_TRACK_DESC>	BonePositionTrackList;				// 카메라본 위치 채널
 		vector<CAMERA_TRACK_DESC>	BoneRotationTrackList;				// 카메라본 각도 채널
 	}CAMERA_ANIMATION_DATA;
-	
+
 
 	// Cinematic 관련 데이터들
-	enum class CINEMATICNODE_STATE {ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, PLAY_SOUND, END };
+	enum class CINEMATICNODE_STATE { ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, PLAY_SOUND, END };
 
 	typedef struct Cinematic_Node_Desc
 	{
@@ -444,4 +451,16 @@ namespace Client
 		_char szCinematicName[MAX_PATH];
 		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
 	}CINEMATIC_DESC;
+
+	enum class CINEMATICOBJECT_TYPE { CINEMATICOBJECT, ACTIONCAMERA, END };
+
+	typedef struct Level_CinematicObject_Desc
+	{
+		_char szObjectTag[MAX_PATH];
+		CINEMATICOBJECT_TYPE eType;
+		_float3 vPosition;
+		_float4 vRotation;
+		_float3 vScale;
+	}LEVEL_CINEMATICOBJECT_DESC;
+
 }

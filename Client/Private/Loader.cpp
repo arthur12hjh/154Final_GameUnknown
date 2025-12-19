@@ -57,8 +57,17 @@
 #include "GorillaBehaviorTree.h"
 #include "ScarletBehaviorTree.h"
 
+#pragma endregion
+
+#pragma region CinematicModel
+
 #include "LinkAttackTester.h"
 #include "Body_LinkAttackTester.h"
+
+#include "CinematicModel_Gorilla.h"
+#include "CinematicModel_Eve.h"
+#include "CinematicModel_Scarlet.h"
+
 
 #pragma endregion
 
@@ -619,10 +628,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	/* For.Prototype_GameObject_LinkAttackTester */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+#pragma region CINEMATIC_MODEL
+
+	/* For.Prototype_GameObject_CinematicModel_Gorilla */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Gorilla"),
+		CCinematicModel_Gorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_CinematicModel_Eve */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Eve"),
+		CCinematicModel_Eve::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#pragma endregion
 
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
