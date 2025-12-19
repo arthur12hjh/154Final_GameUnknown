@@ -62,6 +62,7 @@ public:
 	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(_bool bIsTheshold);
+	void									EnablePhysxController(_bool bEnable);
 
 	_bool									bIsHitReaction();
 	_bool									bIsThesholdAction() { return m_bIsTheshold; }

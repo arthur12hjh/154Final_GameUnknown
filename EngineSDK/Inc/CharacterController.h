@@ -55,6 +55,8 @@ public:
  	_bool		  Get_Gravity() { return m_isGravity; }
 	void		  Set_Riding(_bool isRiding, class CTransform* pTransform = nullptr, class CRigidBody* pRigidBody = nullptr);
 	void		  Set_Active(_bool bFlag) { m_tUserData.isActive = bFlag; }
+	_bool		  Get_Active() { return m_tUserData.isActive; }
+
 	void		  Set_Position(_vector vPosition);
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -84,7 +86,6 @@ private:
 	PxVec3				 m_vPrePosition = { 0.f, 0.f, 0.f };
 	PxVec3				 m_vPosition = { 0.f, 0.f, 0.f };
 	PxUserData			 m_tUserData = {};
-
 
 	_bool				 m_isGravity = { false };
 	_float				 m_fGravityTimeAcc = { 0.f }; 

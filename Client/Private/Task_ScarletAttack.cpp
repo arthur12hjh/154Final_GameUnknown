@@ -141,7 +141,7 @@ void CTask_ScarletAttack::NormalAttackPattern()
 	}
 	else if (23 == pSkill_Data->iSkillID)
 	{
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange)
+		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.3f)
 			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
 	}
 	else if (25 == pSkill_Data->iSkillID || 26 == pSkill_Data->iSkillID)
@@ -586,6 +586,66 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 			}
 		}
 		break;
+		case 34: // PhaseChagne1L_Attack1
+		{
+			// Length : 63
+			// Move Frame : 18 ~ 40
+			if (0.28f <= fAnimationRatio && 0.63f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.63f;
+
+				if (0.29f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+				m_fLerpSpeed = 5.f;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 35: // PhaseChagne1L_Attack2
+		{
+			// Length : 87
+			// Move Frame : 0 ~ 40
+			if (0.46f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.46f;
+
+				if (0.1f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+				m_fLerpSpeed = 5.f;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 36: // PhaseChagne1L_Attack3
+		{
+			// Length : 117
+			// Move Frame : 18 ~ 40
+			if (0.15f <= fAnimationRatio && 0.34f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.34f;
+
+				if (0.18f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+				m_fLerpSpeed = 5.f;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 37: // PhaseChagne1L_Attack4
+		{
+			// Length : 153
+			// Move Frame : 0 ~ 20
+			if (0.13f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.13;
+
+				if (0.05f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+				m_fLerpSpeed = 5.f;
+				bIsLerpMove = true;
+			}
+		}
+		break;
 		case 38: // BlinkShot1
 		{
 			// Length : 78
@@ -641,7 +701,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				// Move Frame : 60 ~ 70
 				m_fMoveAnimMaxRatio = 0.35f;
 				if (0.29f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir * 13.f);
 				m_fLerpSpeed = 7.f;
 				bIsLerpMove = true;
 			}
@@ -784,6 +844,22 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 		case 50: // Move SideR
 		{
 			// Length : 54
+			// Move Frame : 5 ~ 45
+			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.83f;
+
+				if (0.14f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
+				m_fLerpSpeed = 2.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 51: // PhaseChange2_Attack
+		{
+			// Length : 132
 			// Move Frame : 5 ~ 45
 			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
 			{
