@@ -21,12 +21,12 @@
                 "szUITag": "UI_GetterQueue"
             },
             {
-                "fAlpha": 1.0,
+                "fAlpha": 0.0,
                 "fOffsetX": 640.0,
                 "fOffsetY": -400.0,
                 "fRotation": 0.0,
                 "fSizeX": 160.0,
-                "fSizeY": 50.0,
+                "fSizeY": 40.0,
                 "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 10,

@@ -4,8 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
-class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -30,9 +28,6 @@ protected:
 	virtual HRESULT Bind_ShaderResources() override;
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
-
-private:
-	CVIBuffer_Rect_Instance* m_pVIBaseBuffer{ nullptr };
 
 public:
 	static CUILoadingBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

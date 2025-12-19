@@ -16,6 +16,7 @@ Texture2D g_DepthTexture;
 vector g_Color = 1.f;
 
 float2 g_UIPosition;
+float2 g_UIOffset;
 float2 g_UISize;
 vector g_UIDebugLineColor;
 
@@ -64,6 +65,11 @@ bool g_isActive = false;
 
 float2 g_vTransOffset = { 0.f, 0.f };
 
+float2 g_AtlasCount = { 0.f, 0.f };
+float2 g_AtlasIndex = { 0.f, 0.f };
+
+float2 g_vWindowSize = { 1600.f, 900.f };
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -81,23 +87,16 @@ BlendState BS_Additive
     RenderTargetWriteMask[0] = 0x0F; // RGBA 쓰기 가능
 };
 
-BlendState BS_AddAlpha
-{
-    BlendEnable[0] = true;
-    SrcBlend = SRC_ALPHA;
-    DestBlend = INV_SRC_ALPHA;
-    BlendOp = ADD;
-    SrcBlendAlpha = ONE;
-    DestBlendAlpha = ZERO;
-    BlendOpAlpha = ADD;
-};
-
 /*------------------[S_DEBUG]---------------*/
 
 struct VS_IN
 {
     float3 vPosition : POSITION;
     float2 vTexcoord : TEXCOORD0;
+    
+    float4 vUVAtlasSize : TEXCOORD1;
+    float4 vUVAtlasOffset : TEXCOORD2;
+    float4 vAtlasIndex : TEXCOORD3;
 };
 
 struct VS_OUT
@@ -109,22 +108,59 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
-    
+  
     /* In.vPosition * 월드 * 뷰 * 투영 */    
     //float4x4 == matrix
     matrix matWV, matWVP;
-    
+  
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-    
+  
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    
-    /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
-    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */     
+  
     Out.vTexcoord = In.vTexcoord;
-    
+      
     return Out;
 }
+
+VS_OUT VS_INSTANCE_MAIN(VS_IN In)
+{
+    VS_OUT Out;
+
+    float3 pos = In.vPosition.xyz;
+    
+    if (In.vUVAtlasSize.z != 0.f && In.vUVAtlasSize.w != 0)
+        pos.xy *= In.vUVAtlasSize.zw;
+    
+    pos.xy += In.vUVAtlasOffset.zw;
+    
+    // Position    
+    float4 worldPos = mul(float4(pos, 1.f), g_WorldMatrix);
+    float4 viewPos = mul(worldPos, g_ViewMatrix);
+    Out.vPosition = mul(viewPos, g_ProjMatrix);
+
+    // Local UV
+    float2 uvScale = In.vUVAtlasSize.xy;
+    float2 uvOffset = In.vUVAtlasOffset.xy;
+
+    if (uvScale.x == 0.f && uvScale.y == 0.f)
+    {
+        uvScale = float2(1.f, 1.f);
+        uvOffset = float2(0.f, 0.f);
+    }
+
+    float2 localUV = In.vTexcoord * uvScale + uvOffset;
+
+    // Atlas UV
+    float2 atlasCount = max(g_AtlasCount.xy, float2(1.f, 1.f));
+    float2 tileSize = 1.f / atlasCount;
+    float2 tileMin = In.vAtlasIndex.xy * tileSize;
+    
+    Out.vTexcoord = tileMin + localUV * tileSize;
+
+    return Out;
+}
+
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
@@ -1285,6 +1321,108 @@ PS_OUT PS_OWNGOLD(PS_IN In)
 
 /*------------------[E_OWNGOLD]----------------*/
 
+/*------------------[S_POPUP]----------------*/
+
+PS_OUT PS_POPUP(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float4 Dim = 0.f;
+    float4 Color = 0.f;
+    
+    float2 CombineShadowSize = (g_UISize * 1.1f);
+    
+    float2 PopupScaleUV = In.vTexcoord;
+    PopupScaleUV -= float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+    PopupScaleUV /= CombineShadowSize / g_vWindowSize;
+    PopupScaleUV += float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+      
+    float4 Popup = g_Texture1.Sample(ClampSampler, PopupScaleUV);
+    
+    //float2 Inner0ScaleUV = In.vTexcoord;
+    //Inner0ScaleUV -= float2((1410.f / 1600.f), (350.f / 900.f));
+    //Inner0ScaleUV.x /= (320.f / 1600.f);
+    //Inner0ScaleUV.y /= (80.f / 900.f);
+    //Inner0ScaleUV += float2((1410.f / 1600.f), (350.f / 900.f));
+    
+    //float4 Inner0 = g_Texture2.Sample(ClampSampler, Inner0ScaleUV);
+    
+    //float2 Inner1ScaleUV = In.vTexcoord;
+    //Inner1ScaleUV -= float2((1410.f / 1600.f), (550.f / 900.f));
+    //Inner1ScaleUV.x /= (320.f / 1600.f);
+    //Inner1ScaleUV.y /= (200.f / 900.f);
+    //Inner1ScaleUV += float2((1410.f / 1600.f), (550.f / 900.f));
+    
+    //float4 Inner1 = g_Texture2.Sample(ClampSampler, Inner1ScaleUV);
+    
+    //float2 IconsScaleUV = In.vTexcoord;
+    //IconsScaleUV -= float2((1400.f / 1600.f), (350.f / 900.f));
+    //IconsScaleUV.x /= (300.f / 1600.f);
+    //IconsScaleUV.y /= (60.f / 900.f);
+    //IconsScaleUV += float2((1400.f / 1600.f), (350.f / 900.f));
+    
+    //////float4 Answer = g_Texture4.Sample(ClampSampler, AnswerScaleUV);
+    
+    //////if (AnswerScaleUV.x > g_fFillAmount)
+    //////    Answer = float4(0.f, 0.f, 0.f, 0.f);
+    
+    //float4 Icons = g_Texture3.Sample(ClampSampler, IconsScaleUV);
+    
+    if(g_isActive)
+    {
+        Dim = g_Texture0.Sample(DefaultSampler, uv);
+        Color = lerp(Color, Dim, Dim.a * 0.25f);
+    }
+    
+    Color = lerp(Color, Popup, Popup.a * 2.f);
+    //Color = lerp(Color, Inner0, Inner0.a);
+    ////Color = lerp(Color, Icons, Icons.a);
+    //Color = lerp(Color, Inner1, Inner1.a);
+    
+    Out.vColor = Color * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_POPUP]----------------*/
+
+/*------------------[S_COSTUME_BUTTONS]----------------*/
+
+PS_OUT PS_COSTUME_BUTTONS(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 BG = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    float4 Button = g_Texture1.Sample(DefaultSampler, In.vTexcoord * float2(4.f, 3.f));
+    
+    float4 Color = BG;
+    
+    Color = lerp(Color, Button, Button.a);
+    
+    Out.vColor = Color;
+    
+    return Out;
+}
+
+/*------------------[E_COSTUME_BUTTONS]----------------*/
+
+/*------------------[S_ANSWER_ICONS]----------------*/
+
+PS_OUT PS_ATLAS(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Icons = g_Texture0.Sample(ClampSampler, In.vTexcoord);
+    
+    Out.vColor = Icons;
+    
+    return Out;
+}
+
+/*------------------[E_ANSWER_ICONS]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1527,5 +1665,35 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_OWNGOLD();
+    }
+
+    pass POPUP // 23
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_POPUP();
+    }
+
+    pass COSTUME_BUTTONS // 24
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COSTUME_BUTTONS();
+    }
+
+    pass ATLAS // 25
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_ATLAS();
     }
 }

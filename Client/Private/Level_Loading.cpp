@@ -180,7 +180,7 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 	if (!pGameManager)
 		return E_FAIL;
 
-	pScript->Set_Script(*pGameManager->Get_ScriptData(TEXT("Loading")));
+	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
 	Safe_Release(pGameManager);
 
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
