@@ -87,7 +87,7 @@ void CPlayerCCTHitReporter::onShapeHit(const PxControllerShapeHit& HitInfo)
 
 /* 다른 컨트롤러와 부딪혔을 때. */
 void CPlayerCCTHitReporter::onControllerHit(const PxControllersHit& hit)
-{
+{               
 }
 
 /* 정확히 모름.. 공부좀 해볼게요. */

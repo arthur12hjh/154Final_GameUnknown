@@ -28,6 +28,7 @@ public:
 	_float Random_Normal();
 	_float Random(_float fMin, _float fMax);
 
+	_matrix Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio);
 #pragma region GRAPHIC_DEVICE
 public:
 	void Render_Begin(const _float4* pClearColor);

@@ -311,6 +311,22 @@ _float CGameInstance::Random(_float fMin, _float fMax)
 	return fMin + Random_Normal() * (fMax - fMin);	
 }
 
+_matrix CGameInstance::Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio)
+{
+	_vector vSourScale, vSourRotation, vSourTranslation;
+	_vector vDestScale, vDestRotation, vDestTranslation;
+
+
+	XMMatrixDecompose(&vSourScale, &vSourRotation, &vSourTranslation, SourMatrix);
+	XMMatrixDecompose(&vDestScale, &vDestRotation, &vDestTranslation, DestMatrix);
+
+	_vector vResultScale = XMVectorLerp(vSourScale, vDestScale, fRatio);
+	_vector vResultRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
+	_vector vResultTranslation = XMVectorLerp(vSourTranslation, vDestTranslation, fRatio);
+
+	return 	XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultRotation, vResultTranslation);
+}
+
 #pragma region GRAPHIC_DEVICE
 
 void CGameInstance::Render_Begin(const _float4* pClearColor)

@@ -17,10 +17,16 @@ public:
 
 	HRESULT Set_Root(class CRigidBody* pRigidBody);
 	HRESULT Add_Joint(class CRigidBody* pRigidBody);
+	HRESULT Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, const PxTransform& tLocalPose);
 
 	void* Get_RootDesc() { return &m_tRootDesc; }
 	void* Get_JointDesc() { return &m_tJointDesc; }
-
+	PxJoint* Get_PxJoint(_uint iIdx) { 
+		if (iIdx > m_Joints.size() - 1) 
+			return nullptr;
+		
+		return m_Joints[iIdx];
+	}
 #ifdef _DEBUG
 public:
 	void Update(_float fTimeDelta);
