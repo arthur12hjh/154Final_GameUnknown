@@ -161,7 +161,7 @@ HRESULT CUISkillSlot::Ready_Components()
 
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
+		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
 		return E_FAIL;
 
 	/* Com_VIBuffer */

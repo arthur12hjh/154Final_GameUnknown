@@ -3,6 +3,7 @@
 
 #include "UI_Loader.h"
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "UI_Level_Logo.h"
 #include "UI_Level_GamePlay.h"
@@ -13,6 +14,7 @@
 #include "UIImage.h"
 #include "UIText.h"
 #include "UILoadingBlur.h"
+#include "UIScript.h"
 
 CUI_Level_Loading::CUI_Level_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
@@ -137,6 +139,10 @@ HRESULT CUI_Level_Loading::Ready_Prototypes()
 		CUILoadingBlur::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_Script"),
+		CUIScript::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -151,6 +157,19 @@ HRESULT CUI_Level_Loading::Ready_Layer_BackGround()
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
 		return E_FAIL;
+
+	CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
+
+	if (!pScript)
+		return E_FAIL;
+
+	auto pGameManager = CGameManager::GetInstance();
+
+	if (!pGameManager)
+		return E_FAIL;
+
+	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
+	Safe_Release(pGameManager);
 
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
 

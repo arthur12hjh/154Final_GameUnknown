@@ -24,6 +24,8 @@
 #include "Notify.h"
 #include "TriggerBox.h"
 
+#include "UIInstanceBuffer.h"
+
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 	, m_pGameManager { CGameManager::GetInstance() },
@@ -179,6 +181,14 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &InstanceDesc))))
 		return E_FAIL;
 
+	CUIInstanceBuffer::UI_INSTANCE_DESC UIInstanceDesc{};
+	UIInstanceDesc.iNumInstance = 1;
+
+	/* For.Prototype_Component_UI_Instance_Buffer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
+		CUIInstanceBuffer::Create(m_pDevice, m_pContext, &UIInstanceDesc))))
+		return E_FAIL;
+
 #pragma region Shader
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
@@ -187,7 +197,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Shader_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTX_POSTEX_UI_INSTANCE::Elements, VTX_POSTEX_UI_INSTANCE::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_Point */

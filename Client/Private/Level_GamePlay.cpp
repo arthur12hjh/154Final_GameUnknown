@@ -15,6 +15,7 @@
 #include "AttackHitBox.h"
 #include "TriggerBox.h"
 #include "UIHUD.h"
+#include "UIScript.h"
 
 #include "SpriteParticle.h"
 
@@ -447,8 +448,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
 		return E_FAIL;
 
-	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
-		return E_FAIL;*/
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;
+
+	/*CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+	if (!pScript)
+		return E_FAIL;
+
+	auto pGameManager = CGameManager::GetInstance();
+
+	if (!pGameManager)
+		return E_FAIL;
+
+	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("TestScript")));
+	Safe_Release(pGameManager);*/
 
 	return S_OK;
 }

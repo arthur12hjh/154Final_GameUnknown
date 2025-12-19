@@ -121,7 +121,7 @@ const CAMERA_ANIMATION_DATA* CGameManager::Find_CameraAnimationData(_uint iCamer
     return m_pDataManager->Find_CameraAnimationData(iCameraAnimationData);
 }
 
-const vector<SCRIPT_DATA>* CGameManager::Get_ScriptData(const _wstring& szScriptTag)
+const SCRIPT_DESC* CGameManager::Get_ScriptData(const _wstring& szScriptTag)
 {
     return m_pDataManager->Get_ScriptData(szScriptTag);
 }

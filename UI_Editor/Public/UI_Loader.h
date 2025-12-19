@@ -56,6 +56,7 @@ private:
 
 	HRESULT Loading_UI_For_Combat_HUD_Vitals();
 	HRESULT Loading_UI_For_Combat_HUD_Skills();
+	HRESULT Loading_UI_For_Popups();
 	HRESULT Loading_UI_For_World();
 
 public:

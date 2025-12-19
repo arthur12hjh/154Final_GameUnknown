@@ -16,13 +16,36 @@ CUI_Level_GamePlay::CUI_Level_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContex
 
 HRESULT CUI_Level_GamePlay::Initialize()
 {
+	LIGHT_DESC			LightDesc{};
+
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
+
+	SHADOW_LIGHT_DESC		ShadowDesc{};
+	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
+	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
+	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
+	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
+	ShadowDesc.fNear = 0.1f;
+	ShadowDesc.fFar = 500.f;
+	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+
+	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
 		return E_FAIL;
 
 	/*auto pGameCharacter = m_pGameInstance->GetMainCamera();
@@ -95,12 +118,18 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
 		return E_FAIL;
 
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CUI_Level_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 

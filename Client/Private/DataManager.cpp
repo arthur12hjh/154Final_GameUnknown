@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -71,7 +71,7 @@ const INTERACTION_DATA* CDataManager::Get_InteractionData(_uint iID)
     return &iter->second;
 }
 
-const vector<SCRIPT_DATA>* CDataManager::Get_ScriptData(const _wstring& szScriptTag)
+const SCRIPT_DESC* CDataManager::Get_ScriptData(const _wstring& szScriptTag)
 {
     auto iter = m_ScriptDatas.find(szScriptTag);
     if (iter == m_ScriptDatas.end())
@@ -345,21 +345,27 @@ HRESULT CDataManager::LoadScriptData(void* pArg)
 
     for (auto& iter : ScriptDatas["ScriptData"].items())
     {
+        SCRIPT_DESC ScriptDesc{};
+
+        Json Value = iter.value();
+
         string szKey = iter.key();
 
         vector<SCRIPT_DATA> Scripts{};
-        for (auto& jInfo : iter.value())
+        for (auto& jInfo : Value["Scripts"].items())
         {
             SCRIPT_DATA desc{};
 
-            desc.szScriptText = UTF8ToWString(jInfo["szText"]);
+            Json jScript = jInfo.value();
 
-            if (jInfo.contains("vColor"))
+            desc.szScriptText = UTF8ToWString(jScript["szText"]);
+
+            if (jScript.contains("vColor"))
             {
-                desc.vColor.x = jInfo["vColor"][0];
-                desc.vColor.y = jInfo["vColor"][1];
-                desc.vColor.z = jInfo["vColor"][2];
-                desc.vColor.w = jInfo["vColor"][3];
+                desc.vColor.x = jScript["vColor"][0];
+                desc.vColor.y = jScript["vColor"][1];
+                desc.vColor.z = jScript["vColor"][2];
+                desc.vColor.w = jScript["vColor"][3];
             }
 
             Scripts.push_back(desc);
@@ -368,7 +374,27 @@ HRESULT CDataManager::LoadScriptData(void* pArg)
         WCHAR szScriptKey[MAX_PATH]{};
         CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
 
-        m_ScriptDatas[szScriptKey] = Scripts;
+        ScriptDesc.Scripts = Scripts;
+        ScriptDesc.szScriptTag = szScriptKey;
+
+        if (Value.contains("szAnimTag"))
+        {
+            string szAnimTag = Value["szAnimTag"];
+            WCHAR szText[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(szAnimTag.c_str(), szText);
+            ScriptDesc.szAnimTag = szText;
+        }
+
+        if (Value.contains("bCanControl"))
+            ScriptDesc.bCanControl = Value["bCanControl"];
+
+        if (Value.contains("vInitOffset"))
+        {
+            ScriptDesc.vInitOffset.x = Value["vInitOffset"][0];
+            ScriptDesc.vInitOffset.y = Value["vInitOffset"][1];
+        }
+
+        m_ScriptDatas[szScriptKey] = ScriptDesc;
     }
 
     return S_OK;

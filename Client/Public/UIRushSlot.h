@@ -4,7 +4,7 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
+class CVIBuffer_Rect;
 class CTexture;
 NS_END
 
@@ -43,8 +43,7 @@ private:
 
 	_bool m_bRushActiveOn{ false };
 
-	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom = { nullptr };
-	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom = { nullptr };
+	CVIBuffer_Rect* m_pVIGlowBufferCom = { nullptr };
 	CTexture* m_pTextureCom2 = { nullptr };
 	CTexture* m_pCoolTimeTextureCom = { nullptr };
 	CTexture* m_pShadowTextureCom = { nullptr };

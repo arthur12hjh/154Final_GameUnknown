@@ -167,12 +167,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Client\Private\Actor.cpp" />
+    <ClCompile Include="..\..\Client\Private\AttackHitBox.cpp" />
     <ClCompile Include="..\..\Client\Private\BoxOpenEvent.cpp" />
     <ClCompile Include="..\..\Client\Private\Bullet.cpp" />
     <ClCompile Include="..\..\Client\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\..\Client\Private\Camera_Action.cpp" />
     <ClCompile Include="..\..\Client\Private\CanBox.cpp" />
     <ClCompile Include="..\..\Client\Private\Character.cpp" />
+    <ClCompile Include="..\..\Client\Private\Cinematic_Manager.cpp" />
     <ClCompile Include="..\..\Client\Private\DataManager.cpp" />
     <ClCompile Include="..\..\Client\Private\DropComponent.cpp" />
     <ClCompile Include="..\..\Client\Private\Effect.cpp" />
@@ -251,11 +253,14 @@
     <ClCompile Include="..\..\Client\Private\UIBossStaminaFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
+    <ClCompile Include="..\..\Client\Private\UICostumePuzzleAnswer.cpp" />
+    <ClCompile Include="..\..\Client\Private\UICostumePuzzleButtons.cpp" />
     <ClCompile Include="..\..\Client\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHUD.cpp" />
     <ClCompile Include="..\..\Client\Private\UIImage.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\..\Client\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\..\Client\Private\UILockOn.cpp" />
@@ -267,10 +272,12 @@
     <ClCompile Include="..\..\Client\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIPopup.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotion.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotionStack.cpp" />
     <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIScript.cpp" />
     <ClCompile Include="..\..\Client\Private\UIShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp" />
