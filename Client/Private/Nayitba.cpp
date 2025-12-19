@@ -801,15 +801,26 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
+	
 	// 돌 오브젝트 만들어서
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	pBulletDesc.vScale = pNotify->vNotifyScale;
-	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+
+	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
+		pBulletDesc.vScale = {1.f, 1.f, 1.f};
+	else
+		pBulletDesc.vScale = pNotify->vNotifyScale;
+
+	if ("" == pNotify->szNotifyArg03)
+		pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+	else
+		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
+
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	pBulletDesc.iBulletType = pNotify->iNumData04;
 	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
