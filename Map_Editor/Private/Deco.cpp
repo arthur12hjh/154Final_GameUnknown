@@ -46,7 +46,6 @@ void CDeco::Update(_float fTimeDelta)
 
 void CDeco::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 

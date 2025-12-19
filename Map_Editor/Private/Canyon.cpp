@@ -52,15 +52,21 @@ void CCanyon::Update(_float fTimeDelta)
 
 void CCanyon::Late_Update(_float fTimeDelta)
 {
-    //if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-        //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
 
-	/*if (GetVisibility() == VISIBILITY::HIDDEN)
-		SetVisibility(VISIBILITY::VISIBLE);*/
+	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		return;
+	}
+
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -137,161 +143,210 @@ HRESULT CCanyon::Bind_ShaderResources()
 
 void CCanyon::SetCullingCollider(_uint iObjectID)
 {
-    auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
 	switch (iObjectID)
 	{
 	case 1:
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 3, 3, 32 });
+		// Size Y: 3, Center Y: 3 * 0.72 = 2.16
+		pCullingCollider->SetCollision({ 0.f, 2.16f, 0.f }, {}, { 3, 3, 32 });
 		break;
 	case 2: case 9: case 10: case 13: case 14: case 16:
 	case 30: case 62: case 63:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 3, 2, 2 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 3, 2, 2 });
 		break;
 	case 3:
-		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 13, 13, 3 });
+		// Size Y: 13, Center Y: 13 * 0.72 = 9.36
+		pCullingCollider->SetCollision({ 0.f, 9.36f, 0.f }, {}, { 13, 13, 3 });
 		break;
 	case 4: case 8: case 11: case 15: case 25:
 	case 28: case 31: case 32: case 64:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 2, 2, 2 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 2, 2, 2 });
 		break;
 	case 5:
-		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 10, 5, 4 });
+		// Size Y: 5, Center Y: 5 * 0.72 = 3.6
+		pCullingCollider->SetCollision({ 0.f, 3.6f, 0.f }, {}, { 10, 5, 4 });
 		break;
 	case 6: case 44:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 4, 2, 1 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 4, 2, 1 });
 		break;
 	case 7:
-		pCullingCollider->SetCollision({ 0.f, 43.33f, 0.f }, {}, { 18, 65, 18 });
+		// Size Y: 65, Center Y: 65 * 0.72 = 46.8
+		pCullingCollider->SetCollision({ 0.f, 46.8f, 0.f }, {}, { 18, 65, 18 });
 		break;
 	case 12:
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 4, 3, 4 });
+		// Size Y: 3, Center Y: 3 * 0.72 = 2.16
+		pCullingCollider->SetCollision({ 0.f, 2.16f, 0.f }, {}, { 4, 3, 4 });
 		break;
 	case 17:
-		pCullingCollider->SetCollision({ 0.f, 4.67f, 0.f }, {}, { 15, 7, 7 });
+		// Size Y: 7, Center Y: 7 * 0.72 = 5.04
+		pCullingCollider->SetCollision({ 0.f, 5.04f, 0.f }, {}, { 15, 7, 7 });
 		break;
 	case 18:
-		pCullingCollider->SetCollision({ 0.f, 9.33f, 0.f }, {}, { 11, 14, 11 });
+		// Size Y: 14, Center Y: 14 * 0.72 = 10.08
+		pCullingCollider->SetCollision({ 0.f, 10.08f, 0.f }, {}, { 11, 14, 11 });
 		break;
 	case 19:
-		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 13, 13, 5 });
+		// Size Y: 13, Center Y: 13 * 0.72 = 9.36
+		pCullingCollider->SetCollision({ 0.f, 9.36f, 0.f }, {}, { 13, 13, 5 });
 		break;
 	case 20:
-		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 14, 5, 4 });
+		// Size Y: 5, Center Y: 5 * 0.72 = 3.6
+		pCullingCollider->SetCollision({ 0.f, 3.6f, 0.f }, {}, { 14, 5, 4 });
 		break;
 	case 21:
-		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 18, 4, 8 });
+		// Size Y: 4, Center Y: 4 * 0.72 = 2.88
+		pCullingCollider->SetCollision({ 0.f, 2.88f, 0.f }, {}, { 18, 4, 8 });
 		break;
 	case 22:
-		pCullingCollider->SetCollision({ 0.f, 23.33f, 0.f }, {}, { 12, 35, 9 });
+		// Size Y: 35, Center Y: 35 * 0.72 = 25.2
+		pCullingCollider->SetCollision({ 0.f, 25.2f, 0.f }, {}, { 12, 35, 9 });
 		break;
 	case 23:
-		pCullingCollider->SetCollision({ 0.f, 16.67f, 0.f }, {}, { 22, 25, 10 });
+		// Size Y: 25, Center Y: 25 * 0.72 = 18.0
+		pCullingCollider->SetCollision({ 0.f, 18.0f, 0.f }, {}, { 22, 25, 10 });
 		break;
 	case 24:
-		pCullingCollider->SetCollision({ 0.f, 15.33f, 0.f }, {}, { 35, 23, 10 });
+		// Size Y: 23, Center Y: 23 * 0.72 = 16.56
+		pCullingCollider->SetCollision({ 0.f, 16.56f, 0.f }, {}, { 35, 23, 10 });
 		break;
 	case 26: case 27:
-		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 4, 1, 4 });
+		// Size Y: 1, Center Y: 1 * 0.72 = 0.72
+		pCullingCollider->SetCollision({ 0.f, 0.72f, 0.f }, {}, { 4, 1, 4 });
 		break;
 	case 29:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 3, 2, 3 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 3, 2, 3 });
 		break;
 	case 33:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 4, 2, 3 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 4, 2, 3 });
 		break;
 	case 34:
-		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 5, 4, 5 });
+		// Size Y: 4, Center Y: 4 * 0.72 = 2.88
+		pCullingCollider->SetCollision({ 0.f, 2.88f, 0.f }, {}, { 5, 4, 5 });
 		break;
 	case 35: case 47:
-		pCullingCollider->SetCollision({ 0.f, 13.33f, 0.f }, {}, { 55, 20, 30 });
+		// Size Y: 20, Center Y: 20 * 0.72 = 14.4
+		pCullingCollider->SetCollision({ 0.f, 14.4f, 0.f }, {}, { 55, 20, 30 });
 		break;
 	case 36:
-		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 62, 18, 30 });
+		// Size Y: 18, Center Y: 18 * 0.72 = 12.96
+		pCullingCollider->SetCollision({ 0.f, 12.96f, 0.f }, {}, { 62, 18, 30 });
 		break;
 	case 37:
-		pCullingCollider->SetCollision({ 0.f, 20.67f, 0.f }, {}, { 58, 31, 15 });
+		// Size Y: 31, Center Y: 31 * 0.72 = 22.32
+		pCullingCollider->SetCollision({ 0.f, 22.32f, 0.f }, {}, { 58, 31, 15 });
 		break;
 	case 38:
-		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 15, 18, 8 });
+		// Size Y: 18, Center Y: 18 * 0.72 = 12.96
+		pCullingCollider->SetCollision({ 0.f, 12.96f, 0.f }, {}, { 15, 18, 8 });
 		break;
 	case 39:
-		pCullingCollider->SetCollision({ 0.f, 22.67f, 0.f }, {}, { 50, 34, 40 });
+		// Size Y: 34, Center Y: 34 * 0.72 = 24.48
+		pCullingCollider->SetCollision({ 0.f, 24.48f, 0.f }, {}, { 50, 34, 40 });
 		break;
 	case 40:
-		pCullingCollider->SetCollision({ 0.f, 5.33f, 0.f }, {}, { 15, 8, 10 });
+		// Size Y: 8, Center Y: 8 * 0.72 = 5.76
+		pCullingCollider->SetCollision({ 0.f, 5.76f, 0.f }, {}, { 15, 8, 10 });
 		break;
 	case 41:
-		pCullingCollider->SetCollision({ 0.f, 26.67f, 0.f }, {}, { 25, 40, 40 });
+		// Size Y: 40, Center Y: 40 * 0.72 = 28.8
+		pCullingCollider->SetCollision({ 0.f, 28.8f, 0.f }, {}, { 25, 40, 40 });
 		break;
 	case 42:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 2, 2, 1 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 2, 2, 1 });
 		break;
 	case 43:
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 5, 3, 2 });
+		// Size Y: 3, Center Y: 3 * 0.72 = 2.16
+		pCullingCollider->SetCollision({ 0.f, 2.16f, 0.f }, {}, { 5, 3, 2 });
 		break;
 	case 45:
-		pCullingCollider->SetCollision({ 0.f, 12.0f, 0.f }, {}, { 60, 18, 25 });
+		// Size Y: 18, Center Y: 18 * 0.72 = 12.96
+		pCullingCollider->SetCollision({ 0.f, 12.96f, 0.f }, {}, { 60, 18, 25 });
 		break;
 	case 46:
-		pCullingCollider->SetCollision({ 0.f, 3.33f, 0.f }, {}, { 18, 5, 23 });
+		// Size Y: 5, Center Y: 5 * 0.72 = 3.6
+		pCullingCollider->SetCollision({ 0.f, 3.6f, 0.f }, {}, { 18, 5, 23 });
 		break;
 	case 48:
-		pCullingCollider->SetCollision({ 0.f, 10.0f, 0.f }, {}, { 15, 15, 10 });
+		// Size Y: 15, Center Y: 15 * 0.72 = 10.8
+		pCullingCollider->SetCollision({ 0.f, 10.8f, 0.f }, {}, { 15, 15, 10 });
 		break;
 	case 49:
-		pCullingCollider->SetCollision({ 0.f, 13.33f, 0.f }, {}, { 20, 20, 13 });
+		// Size Y: 20, Center Y: 20 * 0.72 = 14.4
+		pCullingCollider->SetCollision({ 0.f, 14.4f, 0.f }, {}, { 20, 20, 13 });
 		break;
 	case 50:
-		pCullingCollider->SetCollision({ 0.f, 10.0f, 0.f }, {}, { 30, 15, 18 });
+		// Size Y: 15, Center Y: 15 * 0.72 = 10.8
+		pCullingCollider->SetCollision({ 0.f, 10.8f, 0.f }, {}, { 30, 15, 18 });
 		break;
 	case 51:
-		pCullingCollider->SetCollision({ 0.f, 16.67f, 0.f }, {}, { 35, 25, 15 });
+		// Size Y: 25, Center Y: 25 * 0.72 = 18.0
+		pCullingCollider->SetCollision({ 0.f, 18.0f, 0.f }, {}, { 35, 25, 15 });
 		break;
 	case 52:
-		pCullingCollider->SetCollision({ 0.f, 18.67f, 0.f }, {}, { 28, 28, 17 });
+		// Size Y: 28, Center Y: 28 * 0.72 = 20.16
+		pCullingCollider->SetCollision({ 0.f, 20.16f, 0.f }, {}, { 28, 28, 17 });
 		break;
 	case 53:
-		pCullingCollider->SetCollision({ 0.f, 8.0f, 0.f }, {}, { 105, 12, 45 });
+		// Size Y: 12, Center Y: 12 * 0.72 = 8.64
+		pCullingCollider->SetCollision({ 0.f, 8.64f, 0.f }, {}, { 105, 12, 45 });
 		break;
 	case 54:
-		pCullingCollider->SetCollision({ 0.f, 5.33f, 0.f }, {}, { 20, 8, 10 });
+		// Size Y: 8, Center Y: 8 * 0.72 = 5.76
+		pCullingCollider->SetCollision({ 0.f, 5.76f, 0.f }, {}, { 20, 8, 10 });
 		break;
 	case 55:
-		pCullingCollider->SetCollision({ 0.f, 4.0f, 0.f }, {}, { 28, 6, 10 });
+		// Size Y: 6, Center Y: 6 * 0.72 = 4.32
+		pCullingCollider->SetCollision({ 0.f, 4.32f, 0.f }, {}, { 28, 6, 10 });
 		break;
 	case 56:
-		pCullingCollider->SetCollision({ 0.f, 1.33f, 0.f }, {}, { 25, 2, 7 });
+		// Size Y: 2, Center Y: 2 * 0.72 = 1.44
+		pCullingCollider->SetCollision({ 0.f, 1.44f, 0.f }, {}, { 25, 2, 7 });
 		break;
 	case 57:
-		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 22, 4, 7 });
+		// Size Y: 4, Center Y: 4 * 0.72 = 2.88
+		pCullingCollider->SetCollision({ 0.f, 2.88f, 0.f }, {}, { 22, 4, 7 });
 		break;
 	case 58:
-		pCullingCollider->SetCollision({ 0.f, 2.67f, 0.f }, {}, { 25, 4, 10 });
+		// Size Y: 4, Center Y: 4 * 0.72 = 2.88
+		pCullingCollider->SetCollision({ 0.f, 2.88f, 0.f }, {}, { 25, 4, 10 });
 		break;
 	case 59:
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 15, 3, 8 });
+		// Size Y: 3, Center Y: 3 * 0.72 = 2.16
+		pCullingCollider->SetCollision({ 0.f, 2.16f, 0.f }, {}, { 15, 3, 8 });
 		break;
 	case 60:
-		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 4, 1, 1 });
+		// Size Y: 1, Center Y: 1 * 0.72 = 0.72
+		pCullingCollider->SetCollision({ 0.f, 0.72f, 0.f }, {}, { 4, 1, 1 });
 		break;
 	case 61:
-		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 3, 1, 1 });
+		// Size Y: 1, Center Y: 1 * 0.72 = 0.72
+		pCullingCollider->SetCollision({ 0.f, 0.72f, 0.f }, {}, { 3, 1, 1 });
 		break;
 	case 65:
-		pCullingCollider->SetCollision({ 0.f, 8.0f, 0.f }, {}, { 8, 12, 8 });
+		// Size Y: 12, Center Y: 12 * 0.72 = 8.64
+		pCullingCollider->SetCollision({ 0.f, 8.64f, 0.f }, {}, { 8, 12, 8 });
 		break;
 	case 66:
-		pCullingCollider->SetCollision({ 0.f, 8.67f, 0.f }, {}, { 15, 13, 6 });
+		// Size Y: 13, Center Y: 13 * 0.72 = 9.36
+		pCullingCollider->SetCollision({ 0.f, 9.36f, 0.f }, {}, { 15, 13, 6 });
 		break;
 	case 67: case 68: case 69: case 70: case 71: case 72:
 	case 73: case 74: case 76: case 77: case 78: case 79:
-		pCullingCollider->SetCollision({ 0.f, 333.33f, 0.f }, {}, { 1000, 500, 1000 });
+		// Size Y: 500, Center Y: 500 * 0.72 = 360
+		pCullingCollider->SetCollision({ 0.f, 360.f, 0.f }, {}, { 1000, 500, 1000 });
 		break;
 	case 75:
-		pCullingCollider->SetCollision({ 0.f, 0.67f, 0.f }, {}, { 6, 1, 6 }); 
+		// Size Y: 1, Center Y: 1 * 0.72 = 0.72
+		pCullingCollider->SetCollision({ 0.f, 0.72f, 0.f }, {}, { 6, 1, 6 });
 		break;
 	}
-
+	
 }
 
 _uint CCanyon::Object_Number(const _tchar* pComponentTag)
