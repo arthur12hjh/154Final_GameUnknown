@@ -4,8 +4,10 @@
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_BattleSprintState::CPlayer_BattleSprintState()
+CPlayer_BattleSprintState::CPlayer_BattleSprintState(_bool isLanding, _bool isEvading )
     : CPlayerState{}
+    , m_isEvading{ isEvading }
+    , m_isLanding{ isLanding }
 {
 }
 
@@ -13,7 +15,11 @@ void CPlayer_BattleSprintState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::SPRINT;
     m_isSprintStart = true;
-    m_pPlayer->Set_Animation("Proto_Battle_Sprint_Start", false, 1.2f, 0.05f);
+
+    if(false == m_isLanding)
+        m_pPlayer->Set_Animation("Proto_Battle_Sprint_Start", false, 1.2f, 0.05f);
+    else if (true == m_isLanding)
+        m_pPlayer->Set_Animation("proto_Battle_jump_Sprint_Short", false, 1.2f, 0.05f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
@@ -77,8 +83,12 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
     m_Desc->pPlayerTransform->Change_Look(vResult);
 
 
-
     if (true == m_isSprintStart && 0.9f <= fAnimationRatio) //|| (true == m_isChangingDir && fDot <= 5.f))
+    {
+        m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 0.12f);
+        m_isSprintStart = false;
+    }
+    else if ((true == m_isSprintStart && true == m_isLanding) && (22.f/30.f) <= fAnimationRatio)
     {
         m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 0.12f);
         m_isSprintStart = false;
@@ -89,7 +99,16 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
     //if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
     //    m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+    {
+        PLAYER_JUMP_DESC Desc;
+        Desc.isSprintJump = true;
+
+        m_tNextState.eNextState = PLAYER_STATE::JUMP;
+        m_tNextState.pArg = &Desc;
+    }
+     
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
@@ -117,7 +136,17 @@ _float CPlayer_BattleSprintState::End()
 
 CPlayer_BattleSprintState* CPlayer_BattleSprintState::Create(void* pArg)
 {
-    return new CPlayer_BattleSprintState();
+    _bool isLanding = { false };
+    _bool isEvade = { false };
+
+    if (nullptr != pArg)
+    {
+        PLAYER_BATTLEWALK_DESC* pDesc = static_cast<PLAYER_BATTLEWALK_DESC*>(pArg);
+        isEvade = pDesc->isEvade;
+        isLanding = pDesc->isLand;
+    }
+
+    return new CPlayer_BattleSprintState(isLanding, isEvade);
 }
 
 void CPlayer_BattleSprintState::Free()

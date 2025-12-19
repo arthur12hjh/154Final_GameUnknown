@@ -26,7 +26,7 @@ void CPlayer_BetaChargingSlashState::Start(void* pArg, _float fBlendRatio)
     m_Desc->isLookFixed = true;
     m_Desc->isSuperArmor = true;
 
-    m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false, 1.2f);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_Charging", false, 1.4f);
     m_isStartCharge = true;
 }
 
@@ -37,7 +37,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
 
     if (true == isAnimFinished && true == m_isStartCharge)
     {
-        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop", true, 1.2f);
+        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex_ChargingLoop", true, 1.4f);
         m_isLoopCharge = true;
         m_isStartCharge = false;
     }
@@ -50,7 +50,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
     {
         // 플레이어의 충격량.
         m_pPlayer->Set_ImpactForce(10.f * fAnimationRatio);
-        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 1.5f);
+        m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 3.f);
         m_pGameInstance->Active_RadialBlur(0.5f, 10.f, 0.3f);
         m_pGameInstance->Shake_Camera(0.5f, 0.5f);
 
