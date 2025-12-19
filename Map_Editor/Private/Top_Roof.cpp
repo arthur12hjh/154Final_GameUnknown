@@ -69,8 +69,11 @@ void CTop_Roof::Update(_float fTimeDelta)
 
 void CTop_Roof::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
 }
 
 HRESULT CTop_Roof::Render()
