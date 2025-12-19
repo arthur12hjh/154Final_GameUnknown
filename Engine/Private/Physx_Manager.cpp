@@ -291,15 +291,26 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 
 PxTransform CPhysx_Manager::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 {
-    /* 월드매트릭스 PxTransform으로 변경. */
-    _vector vScale, vRotation, vPos;
+    _vector vTrans= WorldMatrix.r[3];
 
-    XMMatrixDecompose(&vScale ,&vRotation, &vPos, WorldMatrix);
+    _vector vRight = XMVector3Normalize(WorldMatrix.r[0]);
+    _vector vUp = XMVector3Normalize(WorldMatrix.r[1]);
 
-    PxVec3 vPxPosition = PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos));
-    PxQuat vPxQuaternion = PxQuat(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
+    vUp = XMVector3Normalize(vUp - vRight * XMVectorGetX(XMVector3Dot(vRight, vUp)));
+    _vector vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
+    vUp = XMVector3Cross(vLook, vRight);
 
-    return PxTransform(vPxPosition, vPxQuaternion);
+    _matrix Result = XMMatrixIdentity();
+    Result.r[0] = vRight;
+    Result.r[1] = vUp;
+    Result.r[2] = vLook;
+
+    _vector vRotation = XMQuaternionNormalize(XMQuaternionRotationMatrix(Result));
+
+    PxVec3 p(XMVectorGetX(vTrans), XMVectorGetY(vTrans), XMVectorGetZ(vTrans));
+    PxQuat pq(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
+
+    return PxTransform(p, pq);
 }
 
 _matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
