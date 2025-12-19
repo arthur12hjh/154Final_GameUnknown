@@ -74,10 +74,10 @@ HRESULT CCinematicModel_Gorilla::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_PartObjects()))
+	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Components()))
+	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
@@ -87,6 +87,9 @@ HRESULT CCinematicModel_Gorilla::Initialize(void* pArg)
 
 void CCinematicModel_Gorilla::Priority_Update(_float fTimeDelta)
 {
+	if (m_bIsActive == FALSE)
+		return;
+
 	m_pTransformCom->Update_PreWorldMatrix();
 
 	__super::Priority_Update(fTimeDelta);
@@ -94,14 +97,28 @@ void CCinematicModel_Gorilla::Priority_Update(_float fTimeDelta)
 
 void CCinematicModel_Gorilla::Update(_float fTimeDelta)
 {
+	if (m_bIsActive == FALSE)
+		return;
+
 	__super::Update(fTimeDelta);
+
+	switch (m_iCinematicCode)
+	{
+	case 0: // 고릴라 만남 시네마틱
+		Play_Cinematic_GorillaMeet(fTimeDelta);
+		break;
+	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 {
+	if (m_bIsActive == FALSE)
+		return;
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -112,6 +129,39 @@ void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 
 HRESULT CCinematicModel_Gorilla::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
+{
+	//m_bIsActive = TRUE;
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
+{
+	m_bIsActive = TRUE;
+
+	if(m_iCinematicCode == -1)
+		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
+
+	if (m_iCinematicCode == 0) // 고릴라 만남 시네마틱
+	{
+		Initialize_Cinematic_GorillaMeet();
+	}
+
 	return S_OK;
 }
 
@@ -141,6 +191,59 @@ HRESULT CCinematicModel_Gorilla::Ready_PartObjects()
 	Import_ModelPtr();
 
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaMeet()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.9f, 46.912f, 637.93f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (m_fMoveTime > 1.2f && m_fMoveTime < 2.8f)
+	{
+		_float fRatio = (m_fMoveTime - 1.2f) / 1.6f;
+		_vector vPosition = XMVectorLerp(XMVectorSet(760.197f, 0.f, 700.319f, 1.f), XMVectorSet(741.9f, 0.f, 637.93f, 1.f), fRatio);
+		_float fHighestPoint = 60.f;
+		_float fTime = m_fMoveTime - 1.2f;
+
+		_float fPositionY = Lerp(46.912f, 0.5f, fRatio) + 4.f * fHighestPoint * fRatio * (1.f - fRatio);
+
+		vPosition = XMVectorSetY(vPosition, fPositionY);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+	}
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 3)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_NA05_01", FALSE, 1.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(743.f, 2.94f, 635.f, 1.f));
+		}
+	}
 
 	return S_OK;
 }

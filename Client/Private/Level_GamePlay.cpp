@@ -1,4 +1,4 @@
-#include "pch.h"
+	#include "pch.h"
 #include "Level_GamePlay.h"
 #include "GameInstance.h"
 #include "GameManager.h"
@@ -59,9 +59,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -85,19 +86,19 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	{
-		CNayitba::NAYITBA_DESC Desc = {};
-		Desc.bIsApplyTransform = true;
-		Desc.vScale = { 1.f, 1.f, 1.f };
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	//{
+	//	CNayitba::NAYITBA_DESC Desc = {};
+	//	Desc.bIsApplyTransform = true;
+	//	Desc.vScale = { 1.f, 1.f, 1.f };
 
-		Desc.iMonsterID = 8;
-		Desc.vPosition = { 60.f, 1.f, 60.f };
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
-			return;
+	//	Desc.iMonsterID = 8;
+	//	Desc.vPosition = { 60.f, 1.f, 60.f };
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
+	//		return;
 
-	}
+	//}
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -107,7 +108,6 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		
 		m_bChangeLevel = true;
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
@@ -117,7 +117,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 HRESULT CLevel_GamePlay::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
+	SetWindowText(g_hWnd, TEXT("Game Play Level"));
 #else
 	SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
 #endif // _DEBUG
@@ -132,6 +132,10 @@ void CLevel_GamePlay::FontRender()
 
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
+
+	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
+	//Load_Light_Data();
+
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -143,52 +147,17 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-
-	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	//Load_Light_Data();
-
-	/*LIGHT_DESC			LightDesc{};
-
-	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-	/*LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
+	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(30.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	STATIC_SHADOW_DESC		StaticShadowDesc{};
+	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fNear = 0.1f;
+	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-
-	SHADOW_LIGHT_DESC		ShadowDesc{};
-	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
-	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
-	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
-	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
-	ShadowDesc.fNear = 0.1f;
-	ShadowDesc.fFar = 500.f;
-	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -335,8 +304,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
 
-
-
 	return S_OK;
 }
 
@@ -433,9 +400,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	//  시네마틱 테스트용 모델임
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -489,7 +456,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 {
 	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
-	pTriggerBoxDesc.iTriggerCode = 0;
+	pTriggerBoxDesc.iTriggerCode = 124;
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
 	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
 	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
@@ -515,22 +482,22 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Building_Ruin"), TEXT("Layer_Building_Ruin")))) return S_OK;
 	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Canyon"), TEXT("Layer_Canyon")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
-	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
-
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox"), true))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
-
-	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
-
-	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
-	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Lift_Body"), TEXT("Layer_Lift_Body")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Iron_Floor"), TEXT("Layer_Iron_Floor")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Deco"), TEXT("Layer_Deco")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Desert_Tree"), TEXT("Layer_Desert_Tree")))) return S_OK;
+	//if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Architecture"), TEXT("Layer_Architecture")))) return S_OK;
+	//
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	//if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
+	//
+	//if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
+	//
+	//if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
+	//if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 
 	
 	ifs.close();
@@ -710,6 +677,7 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Format(std::ifstream& ifs, const _t
 
 		CNayitba::NAYITBA_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
 		//Desc.vScale = { 1.f, 1.f, 1.f };
 		Desc.iMonsterID = info.iMonsterId;
 
@@ -784,6 +752,22 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 			return E_FAIL;
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Level_CinematicObjectData(const _char* szFilePath)
+{
+	/*
+	* == 오할? =====
+		1. CinematicData_Desert.json으로 Level_GamePlay등에서 모델 + 카메라 생성하는거 제작
+		2. 그거 Cinematic_Manager에서 등록하는 기능 제작
+		3. 일단 모델만 불러와서 한번 실행해보기
+		4. 이후 카메라 잡기
+	*/
+
+	CGameManager::GetInstance()->Load_Level_CinematicObjectData(szFilePath);
+
 
 	return S_OK;
 }

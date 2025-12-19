@@ -21,7 +21,6 @@
 #include "CameraManager.h"
 #include "Level.h"
 #include "Picking.h"
-#include "Shadow.h"
 #include "Physx_Manager.h"
 #include "BinParser.h"
 #include "Interaction_Manager.h"
@@ -118,10 +117,6 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11De
 	if (nullptr == m_pPicking)
 		return E_FAIL;
 
-	m_pShadow = CShadow::Create();
-	if (nullptr == m_pShadow)
-		return E_FAIL;
-
 	m_pInteract_Manager = CInteraction_Manager::Create();
 	if (nullptr == m_pInteract_Manager)
 		return E_FAIL;
@@ -204,7 +199,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	
 		m_pFrustum->Update();
 		// ������ Frustum ������Ʈ ���Ŀ� �����ؾ���.
-		m_pShadow->Update(fGameSpeed);
+		m_pRenderer->Update_Shadow(fGameSpeed);
 
 		m_pCameraManager->Update(fGameSpeed);
 
@@ -314,6 +309,22 @@ _float CGameInstance::Random_Normal()
 _float CGameInstance::Random(_float fMin, _float fMax)
 {
 	return fMin + Random_Normal() * (fMax - fMin);	
+}
+
+_matrix CGameInstance::Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio)
+{
+	_vector vSourScale, vSourRotation, vSourTranslation;
+	_vector vDestScale, vDestRotation, vDestTranslation;
+
+
+	XMMatrixDecompose(&vSourScale, &vSourRotation, &vSourTranslation, SourMatrix);
+	XMMatrixDecompose(&vDestScale, &vDestRotation, &vDestTranslation, DestMatrix);
+
+	_vector vResultScale = XMVectorLerp(vSourScale, vDestScale, fRatio);
+	_vector vResultRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
+	_vector vResultTranslation = XMVectorLerp(vSourTranslation, vDestTranslation, fRatio);
+
+	return 	XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultRotation, vResultTranslation);
 }
 
 #pragma region GRAPHIC_DEVICE
@@ -503,6 +514,16 @@ void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _flo
 	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
 }
 
+HRESULT CGameInstance::Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc)
+{
+	return m_pRenderer->Ready_CascadeShadow_Light(Desc);
+}
+
+HRESULT CGameInstance::Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc)
+{
+	return m_pRenderer->Ready_StaticShadow_Light(Desc);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
@@ -557,6 +578,21 @@ void* CGameInstance::Get_Volumetric_Desc()
 void* CGameInstance::Get_HDR_Desc()
 {
 	return m_pRenderer->Get_HDR_Desc();
+}
+
+void* CGameInstance::Get_Cascade_Desc()
+{
+	return m_pRenderer->Get_Cascade_Desc();
+}
+
+void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
+{
+	m_pRenderer->BeginMarker(pContext, pName);
+}
+
+void CGameInstance::EndMarker(ID3D11DeviceContext* pContext)
+{
+	m_pRenderer->EndMarker(pContext);
 }
 
 #endif
@@ -811,29 +847,34 @@ const POINT& CGameInstance::GetMousePoint()
 	return m_pPicking->GetMousePoint();
 }
 
-HRESULT CGameInstance::Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc)
+HRESULT CGameInstance::Bind_Shadow_Resource_Static(CShader* pShader, const _char* pConstantName, D3DTS eType)
 {
-	return m_pShadow->Ready_Shadow_Light(Desc);
+	return m_pRenderer->Bind_Shadow_Resource_Static(pShader, pConstantName, eType);
 }
 
-HRESULT CGameInstance::Bind_Shadow_Resource(CShader* pShader, const _char* pConstantName, D3DTS eType)
+HRESULT CGameInstance::Bind_Shadow_Resource_Cascade(CShader* pShader, const _char* pConstantName, D3DTS eType)
 {
-	return m_pShadow->Bind_Shader_Resource(pShader, pConstantName, eType);
+	return m_pRenderer->Bind_Shadow_Resource_Cascade(pShader, pConstantName, eType);
 }
 
-HRESULT CGameInstance::Bind_Shader_Resource_Cascade(CShader* pShader, const _char* pConstantName, D3DTS eType)
+HRESULT CGameInstance::Bind_CascadeEnds(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2)
 {
-	return m_pShadow->Bind_Shader_Resource_Cascade(pShader, pConstantName, eType);
-}
-
-HRESULT CGameInstance::Bind_Cascade_Ends(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2)
-{
-	return m_pShadow->Bind_Cascade_Ends(pShader, pConstantName, pConstantName2);
+	return m_pRenderer->Bind_CascadeEnds(pShader, pConstantName, pConstantName2);
 }
 
 _float* CGameInstance::Get_CascadeEnds()
 {
-	return m_pShadow->Get_CascadeEnds();
+	return m_pRenderer->Get_CascadeEnds();
+}
+
+HRESULT CGameInstance::Add_StaticShadowObject(CGameObject* pGameObject)
+{
+	return m_pRenderer->Add_StaticShadowObject(pGameObject);
+}
+
+HRESULT CGameInstance::Bake_StaticShadow()
+{
+	return m_pRenderer->Bake_StaticShadow();
 }
 
 #pragma endregion
@@ -887,15 +928,11 @@ void CGameInstance::FrustomRender()
 
 HRESULT CGameInstance::Begin_Object_Query(CGameObject* pObject)
 {
-	m_pOcculusion->Begin_Object_Query(pObject);
-
-	return S_OK;
+	return m_pOcculusion->Begin_Object_Query(pObject);
 }
 HRESULT CGameInstance::End_Obejct_Query(CGameObject* pObject)
 {
-	m_pOcculusion->End_Obejct_Query(pObject);
-	
-	return S_OK;
+	return m_pOcculusion->End_Obejct_Query(pObject);
 }
 HRESULT CGameInstance::Get_Result(CGameObject* pObject, _bool* pIsVisible)
 {
@@ -1308,7 +1345,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pOcculusion);
 	Safe_Release(m_pCameraManager);
-	Safe_Release(m_pShadow);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pFont_Manager);

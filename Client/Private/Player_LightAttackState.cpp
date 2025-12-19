@@ -21,7 +21,7 @@ void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;
 
-    m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
+    m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
     m_pPlayer->SetSkillDataID(1000);
     m_fLimitProgress = 0.10f;
@@ -76,7 +76,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         {
         case COMBO::LIGHT_ATTACK1:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
-            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_02_Root", false, 1.75f);
+            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_02_Root", false, 1.95f);
             m_pPlayer->SetSkillDataID(1001);
             m_eCombo = COMBO::LIGHT_ATTACK2;
             m_fLimitProgress = 0.13f;
@@ -84,7 +84,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
         case COMBO::LIGHT_ATTACK2:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
-            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_03_Root", false, 1.2f);
+            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_03_Root", false, 1.4f);
             m_pPlayer->SetSkillDataID(1002);
             m_eCombo = COMBO::LIGHT_ATTACK3;
             m_fLimitProgress = 0.12f;
@@ -92,7 +92,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
         case COMBO::LIGHT_ATTACK3:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
-            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_04_Root", false, 1.2f);
+            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_04_Root", false, 1.4f);
             m_pPlayer->SetSkillDataID(1003);
             m_eCombo = COMBO::LIGHT_ATTACK4;
             m_fLimitProgress = 0.25f;
@@ -100,7 +100,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
         case COMBO::LIGHT_ATTACK4:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
-            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.2f);
+            m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
            
             m_pPlayer->SetSkillDataID(1000);
             m_eCombo = COMBO::LIGHT_ATTACK1;

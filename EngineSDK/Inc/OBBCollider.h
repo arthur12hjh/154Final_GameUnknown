@@ -29,6 +29,7 @@ public:
 
 	void							SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtents);
 	const 	BoundingOrientedBox&	GetOrizinBounding() { return *m_OriginOrientBox; }
+	HRESULT							Render_Face(_float4 vColor);
 
 #ifdef _DEBUG
 	virtual HRESULT					Render() override;

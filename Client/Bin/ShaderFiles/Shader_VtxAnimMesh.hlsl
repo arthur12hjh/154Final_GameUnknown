@@ -1,5 +1,4 @@
 #include "Client_Shader_Utils.hlsli"
-#include "Client_Shader_Utils.hlsli"
 #include "Client_Shader_VtxAnimMesh_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;

@@ -41,9 +41,9 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
+VS_OUT_STATIC_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
-    VS_OUT_SHADOW Out;
+    VS_OUT_STATIC_SHADOW Out;
 
     matrix matWV, matWVP;
     
@@ -55,6 +55,36 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 
     return Out;
 }
+
+[maxvertexcount(CASCADE_LEVEL * 3)]
+void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT_SHADOW> OutStream)
+{
+    //CASCADE LEVEL 순회하면서 한번에 찍게 하기
+    [unroll]
+    for (uint iCount = 0; iCount < CASCADE_LEVEL; ++iCount)
+    {
+        matrix matLightVP = mul(g_LightViewMatrix[iCount], g_LightProjMatrix[iCount]);
+
+        GS_OUT_SHADOW Out;
+
+        // 정점 3개당 삼각형 하나로 
+        // 취급해서 세팅해주기
+        [unroll]
+        for (int iTri = 0; iTri < 3; ++iTri)
+        {
+            float4 vClip = mul(InTri[iTri].vPosition, matLightVP);
+
+            Out.vPosition = vClip;
+            Out.vProjPos = vClip;
+            Out.iSlice = iCount;
+
+            OutStream.Append(Out);
+        }
+
+        OutStream.RestartStrip();
+    }
+}
+
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
@@ -122,17 +152,42 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     return Out;
 }
 
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
+PS_OUT_STATIC_SHADOW PS_MAIN_SHADOW(PS_IN_STATIC_SHADOW In)
+{
+    PS_OUT_STATIC_SHADOW Out = (PS_OUT_STATIC_SHADOW) 0;
+    
+    Out.vShadowLightDepth.x = In.vProjPos.z / In.vProjPos.w;
+    
+    return Out;
+}
+
+VS_OUT_SHADOW VS_MAIN_CASCADE_SHADOW(VS_IN In)
+{
+    VS_OUT_STATIC_SHADOW Out;
+
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    Out.vPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+
+    return Out;
+}
+
+PS_OUT_SHADOW PS_MAIN_CASCADE_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT_SHADOW Out = (PS_OUT_SHADOW) 0;
     
-    Out.vShadowLightDepth.x = In.vProjPos.w / g_fFar;
+    Out.vShadowLightDepth.x = In.vProjPos.z / In.vProjPos.w;
     
     return Out;
 }
 
 technique11 DefaultTechnique
 { 
+    // idx 0
     pass Default
     {
         SetRasterizerState(RS_Default);
@@ -142,17 +197,17 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
+    // idx 1
     pass Shadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
-
+    // idx 2
     pass SKYBOX 
     {
         SetRasterizerState(RS_Cull_None); 
@@ -162,7 +217,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN(); 
     }
-
+    // idx 3 
     pass Blend
     {
         SetRasterizerState(RS_Default);
@@ -172,7 +227,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
+    // idx 4 
     pass Emissive
     {
         SetRasterizerState(RS_Default);
@@ -182,7 +237,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
-    
+    // idx 5
     pass MOON
     {
         SetRasterizerState(RS_Default);
@@ -192,5 +247,14 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MOON();
     }
-
+    // idx 6
+    pass CascadeShadow
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CASCADE_SHADOW();
+        GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
+        PixelShader = compile ps_5_0 PS_MAIN_CASCADE_SHADOW();
+    }
 }

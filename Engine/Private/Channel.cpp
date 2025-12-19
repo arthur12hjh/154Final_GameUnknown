@@ -135,5 +135,6 @@ void CChannel::Free()
 	__super::Free();
 
 	m_KeyFrames.clear();
+	m_KeyFrames.shrink_to_fit();
 	
 }

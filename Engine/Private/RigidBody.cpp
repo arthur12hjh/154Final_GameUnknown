@@ -221,6 +221,18 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 	m_tUserData.pWord0 = &pDesc->iCollisionGroup;
 	m_tUserData.pWord1 = &pDesc->iCollisionMask;
 
+	//Ä¸½¶ÀÏ‹ž È¸Àü½ÃÄÑÁÖÀÚ.
+	if (RIGIDBODY_SHAPE::CAPSULE == m_eShape && nullptr != m_pShape)
+	{
+		PxTransform localPose(PxIdentity);
+		localPose.q = PxQuat(PxPi * 0.5f, PxVec3(0.f, 0.f, 1.f));
+
+		localPose.p = PxVec3(0.f, 0.f, 0.f);
+
+		m_ShapeLocalPose = localPose;
+		m_pShape->setLocalPose(localPose);
+	}
+
 	return S_OK;
 }
 

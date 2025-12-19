@@ -63,14 +63,16 @@ namespace Engine
 		float				fPhi;				/* 스포트 광원의 바깥쪽 원뿔의 각도 */
 	}LIGHT_DESC;
 
-	typedef struct tagShadowLight
+	typedef struct tagStaticShadowLight
 	{
-		XMFLOAT4		vEye, vAt;
-		float			fNear, fFar, fFovy, fAspect;
+		XMFLOAT4		vAt;
+		float			fNear, fFar;
+	} STATIC_SHADOW_DESC;
 
-		//for cascade
+	typedef struct tagCascadeShadowLight
+	{
 		XMFLOAT4		vDir;
-	}SHADOW_LIGHT_DESC;
+	} CASCADE_SHADOW_DESC;
 
 	typedef struct tagVertexPosition
 	{

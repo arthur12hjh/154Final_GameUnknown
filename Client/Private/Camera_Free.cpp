@@ -47,6 +47,11 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 	if (false == m_pGameInstance->IsMainCamera(this))
 		return;
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE))
+	{
+		m_bIsLock[1] = !m_bIsLock[1];
+	}
+
 	m_fMouseSensor = 0.1f;
 	if(m_pGameInstance->IsMainCamera(this))
 	{
@@ -73,6 +78,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 					if (pInterraction)
 						pInterraction->Action_InteractionEvent(fTimeDelta, this);
 				}
+
 			}
 
 			if (false == m_bIsLock[1])

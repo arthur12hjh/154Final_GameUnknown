@@ -128,8 +128,8 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
             TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
         }
     }
-   // m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+   //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+   //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
     _float fCamDist = XMVectorGetX(
         XMVector3Length(
@@ -189,10 +189,10 @@ HRESULT CNayitbaPartBody::Render_Shadow()
     if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
         return E_FAIL;
 
-    if (FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
         return E_FAIL;
 
-    if (FAILED(m_pGameInstance->Bind_Shader_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
         return E_FAIL;
 
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();

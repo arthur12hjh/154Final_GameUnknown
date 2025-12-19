@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Loader.h"
 
 #include "SpriteEffect.h"
@@ -37,6 +37,7 @@
 
 #pragma region Bullet
 #include "Bullet_Rock.h"
+#include "Bullet_Scarlet.h"
 #pragma endregion
 
 #pragma region Monster
@@ -56,8 +57,17 @@
 #include "GorillaBehaviorTree.h"
 #include "ScarletBehaviorTree.h"
 
+#pragma endregion
+
+#pragma region CinematicModel
+
 #include "LinkAttackTester.h"
 #include "Body_LinkAttackTester.h"
+
+#include "CinematicModel_Gorilla.h"
+#include "CinematicModel_Eve.h"
+#include "CinematicModel_Scarlet.h"
+
 
 #pragma endregion
 
@@ -251,7 +261,7 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::GAMEPLAY:
 	{
-		m_strMessage = TEXT("맵 로딩중.");
+		m_strMessage = TEXT("Loading Map Resource");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map(pArg); });
 
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Map_DesertA(pArg); });
@@ -273,7 +283,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Vehicle_And_Wheel(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Building_And_Trash(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Sign_And_Crane(pArg); });
-
+		
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
@@ -289,26 +299,26 @@ HRESULT CLoader::Loading()
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 		{
-			m_strMessage = TEXT("메시 로딩중.");
+			m_strMessage = TEXT("Loading Mesh");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Mesh(pArg); });
 
-			m_strMessage = TEXT("셰이더 로딩중.");
+			m_strMessage = TEXT("Loading Shader");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Shader(pArg); });
 
-			m_strMessage = TEXT("이펙트 로딩중.");
+			m_strMessage = TEXT("Loading Effect");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Effect(pArg); });
 
-			m_strMessage = TEXT("인스턴싱중.");
+			m_strMessage = TEXT("Loading Instancing");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_InstanceMesh(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Components(pArg); });
 
-			m_strMessage = TEXT("UI 로딩중.");
+			m_strMessage = TEXT("Loading UI");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_GamePlay_Level(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Vitals(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Combat_HUD_Skills(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_World(pArg); });
 
-			m_strMessage = TEXT("플레이어가 재훈이형 잡으러 가는중.");
+			m_strMessage = TEXT("Player Hide and Seek with King JaeHoon");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 
@@ -317,7 +327,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -325,7 +335,7 @@ HRESULT CLoader::Loading()
 	break;
 	case LEVEL::SCARLET:
 	{
-		m_strMessage = TEXT("씨발 이런게 도파민 섹스지");
+		m_strMessage = TEXT("YeahS~  It Just Fucking Sex And Dopamine");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
@@ -337,7 +347,7 @@ HRESULT CLoader::Loading()
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
-			m_strMessage = TEXT("완료 되었습니다..");
+			m_strMessage = TEXT("Loading Complete");
 			m_isFinished = true;
 			hr = S_OK;
 		}
@@ -378,7 +388,7 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료..");
+	m_strMessage = TEXT("Loading Complete");
 
 	m_isFinished = true;
 	return S_OK;
@@ -389,7 +399,7 @@ HRESULT CLoader::Loading_For_Scarlet()
 	Sleep(1000.f);
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료 되었습니다..");
+	m_strMessage = TEXT("Loading Complete");
 	m_isFinished = true;
 
 	return S_OK;
@@ -414,8 +424,8 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
-
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Texture_Sky_Scarlet */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky_Scarlet");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/T_Sky_RockyHills.dds"), 1);
@@ -489,14 +499,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
 
+	//// 크리스마스
+	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
+	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
+	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+	//	return E_FAIL;
+
+	// 오피스 스타일
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_20_TypeC.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
-
 	
-	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(1, TEXTURE_TYPE::ORSS,
-		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/CH_EVE_BaseBody_V02_F1_ORSS.dds",
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(3, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
 		"g_ORSSTexture", TRUE);
 
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
@@ -612,10 +628,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	/* For.Prototype_GameObject_LinkAttackTester */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+#pragma region CINEMATIC_MODEL
+
+	/* For.Prototype_GameObject_CinematicModel_Gorilla */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Gorilla"),
+		CCinematicModel_Gorilla::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_CinematicModel_Eve */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Eve"),
+		CCinematicModel_Eve::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#pragma endregion
 
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
@@ -636,7 +661,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;*/
 
 	while (m_pGameInstance->IsWorkThread());
-	m_strMessage = TEXT("완료 되었습니다..");
+	m_strMessage = TEXT("Loading Complete");
 	m_isFinished = true;
 
 	return S_OK;
@@ -658,7 +683,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<string> szPartModelFilePathList;
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body.binx",
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test01.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
@@ -894,10 +919,10 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 	vector<string> szTargetTagList;
 	szTargetTagList.push_back("Haed");
-
+	
 	CModel* pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
 	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
-
+	
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	/* For.Prototype_Component_Model_Minion11 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Minion11");
@@ -905,7 +930,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
+	
 	/* For.Prototype_Component_Model_Bullet_Rock1 */
 	PreTransformMatrix = XMMatrixScaling(0.015f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bullet_Rock1");
@@ -914,8 +939,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	
-
 	/* For.Prototype_Component_Model_BanacleA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
@@ -923,10 +946,10 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
+	
 	szTargetTagList.clear();
 	szTargetTagList.push_back("Haed001_end");
-
+	
 	pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
 	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 
@@ -942,7 +965,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 	
-
+	
 	/* For.Prototype_Component_Model_StatueB */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
@@ -2394,6 +2417,12 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_ScarletBullet_Rock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_ScarletBullet");
+	pProtoDesc.pPrototype = CBullet_Scarlet::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");

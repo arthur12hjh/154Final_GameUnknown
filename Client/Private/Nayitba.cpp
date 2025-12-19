@@ -138,6 +138,11 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+		if (m_bIsActive == TRUE)
+		{
+			m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+			m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+		}
 		__super::Late_Update(fTimeDelta);
 
 #ifdef _DEBUG
@@ -149,6 +154,17 @@ void CNayitba::Late_Update(_float fTimeDelta)
 
 HRESULT CNayitba::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CNayitba::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
 	return S_OK;
 }
 
@@ -275,7 +291,7 @@ void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
 	m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
 	m_pTransformCom->Set_Scale(XMLoadFloat3(&Desc.vScale));
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	m_pCCT->Set_Position(XMVectorSetW(XMLoadFloat3(&Desc.vPosition), 1.f));
 
 	m_iMonsterID = Desc.iMonsterID;
 	if (FAILED(Ready_CharacterData()))
@@ -556,6 +572,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		LWeaponDesc.pParentTransform = m_pTransformCom;
 		LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szLeftBoneName);
 		LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//LWeaponDesc.vRotation = {(90.f), (-90.f), (0.f), 1.f};
+		//LWeaponDesc.vRotation = {XMConvertToRadians(90.f), XMConvertToRadians(-90.f), XMConvertToRadians(0.f), 1.f};
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szLeftWeaponPrototypeName, LWeaponDesc.szWeaponModelPrototype);
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
@@ -568,6 +586,8 @@ HRESULT CNayitba::ADD_PartObjects()
 		RWeaponDesc.pParentTransform = m_pTransformCom;
 		RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szRightBoneName);
 		RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+		//RWeaponDesc.vRotation = { (90.f), (-81.5f), (0.f), 1.f };
+		//RWeaponDesc.vRotation = { XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f), 1.f };
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
 		RWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
@@ -797,15 +817,26 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
+	
 	// 돌 오브젝트 만들어서
 	// 행렬 받고 붙여놨다가 특정 이벤트때 처리한다.
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
-	pBulletDesc.vScale = pNotify->vNotifyScale;
-	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+
+	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
+		pBulletDesc.vScale = {1.f, 1.f, 1.f};
+	else
+		pBulletDesc.vScale = pNotify->vNotifyScale;
+
+	if ("" == pNotify->szNotifyArg03)
+		pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
+	else
+		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
+
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
+	pBulletDesc.iBulletType = pNotify->iNumData04;
 	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);

@@ -162,6 +162,12 @@ void CPhysx_Manager::Clear()
     }
 
     m_pTerrains.clear();
+
+    if (nullptr != m_pHeightField)
+    {
+        m_pHeightField->release();
+        m_pHeightField = nullptr;
+    }
 }
 
 HRESULT CPhysx_Manager::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterController* pCCT)
@@ -205,6 +211,12 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     //예외 처리
     if (nullptr == pTerrainVIBuffer)
         return E_FAIL;
+
+    if (nullptr != m_pHeightField)
+    {
+        m_pHeightField->release();
+        m_pHeightField = nullptr;
+    }
 
     _uint iNumVerticesX = pTerrainVIBuffer->Get_NumVerticesX();
     _uint iNumVerticesZ = pTerrainVIBuffer->Get_NumVerticesZ();
@@ -269,7 +281,8 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     
     m_pTerrains.push_back(hfActor);
 
-    pHeightField->release();
+    m_pHeightField = pHeightField;
+    //pHeightField->release();
     Safe_Delete_Array(pHeightData);
     Safe_Delete_Array(pSamples);
 
@@ -278,15 +291,26 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 
 PxTransform CPhysx_Manager::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 {
-    /* 월드매트릭스 PxTransform으로 변경. */
-    _vector vScale, vRotation, vPos;
+    _vector vTrans= WorldMatrix.r[3];
 
-    XMMatrixDecompose(&vScale ,&vRotation, &vPos, WorldMatrix);
+    _vector vRight = XMVector3Normalize(WorldMatrix.r[0]);
+    _vector vUp = XMVector3Normalize(WorldMatrix.r[1]);
 
-    PxVec3 vPxPosition = PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos));
-    PxQuat vPxQuaternion = PxQuat(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
+    vUp = XMVector3Normalize(vUp - vRight * XMVectorGetX(XMVector3Dot(vRight, vUp)));
+    _vector vLook = XMVector3Normalize(XMVector3Cross(vRight, vUp));
+    vUp = XMVector3Cross(vLook, vRight);
 
-    return PxTransform(vPxPosition, vPxQuaternion);
+    _matrix Result = XMMatrixIdentity();
+    Result.r[0] = vRight;
+    Result.r[1] = vUp;
+    Result.r[2] = vLook;
+
+    _vector vRotation = XMQuaternionNormalize(XMQuaternionRotationMatrix(Result));
+
+    PxVec3 p(XMVectorGetX(vTrans), XMVectorGetY(vTrans), XMVectorGetZ(vTrans));
+    PxQuat pq(XMVectorGetX(vRotation), XMVectorGetY(vRotation), XMVectorGetZ(vRotation), XMVectorGetW(vRotation));
+
+    return PxTransform(p, pq);
 }
 
 _matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
@@ -342,6 +366,11 @@ void CPhysx_Manager::Free()
 
     m_CCTs.clear();
     
+    if (nullptr != m_pHeightField)
+    {
+        m_pHeightField->release();
+        m_pHeightField = nullptr;
+    }
 
     for (auto& Terrain : m_pTerrains)
     {
