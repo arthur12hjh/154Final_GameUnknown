@@ -95,7 +95,14 @@ HRESULT CJointChain::Add_Joint(CRigidBody* pRigidBody)
     // 월드 축: 부모->자식 방향(조인트 기준축)
     PxVec3 WorldAnchorAxis = vDir;
     // 프레임을 월드 기준으로 세팅 (localFrame0/1 자동 계산)
-    PxSetJointGlobalFrame(*pJoint, &WorldAnchor, &WorldAnchorAxis);
+    PxVec3 WorldAixs = vDir;
+    PxVec3 WorldUp = PxVec3(0.f, 1.f, 0.f);
+
+    if (PxAbs(WorldUp.dot(WorldAixs)) > 0.95f)
+        WorldUp = PxVec3(0.f, 0.f, 1.f);
+
+    // axis(X), normal(Y)까지 같이 고정
+    PxSetJointGlobalFrame(*pJoint, &WorldAnchor, &WorldAixs);
 
     if (!pJoint)
         return E_FAIL;
@@ -142,7 +149,7 @@ HRESULT CJointChain::Add_Joint(CRigidBody* pRigidBody)
     pJoint->setConstraintFlag(PxConstraintFlag::eCOLLISION_ENABLED, false);
 
     pJoint->setInvMassScale0(0.f);
-    pJoint->setInvInertiaScale0(0.2f);
+    pJoint->setInvInertiaScale0(0.f);
     pJoint->setInvMassScale1(1.0f);
     pJoint->setInvInertiaScale1(1.0f);
 

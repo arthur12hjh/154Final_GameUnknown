@@ -114,7 +114,6 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 		m_pShape = m_pPxPhysics->createShape(PxCapsuleGeometry(m_vSize.x, m_vSize.y), *m_pMaterial, true, ShapeFlags);
 		m_pShape->setSimulationFilterData(Filter);
 		m_pShape->setQueryFilterData(Filter);
-		m_pShape->setLocalPose(PxTransform(PxVec3(0.f), PxQuat(PxHalfPi, PxVec3(0.f, 0.f, 1.f))));
 		break;
 
 	/* 구는 x부분만 반지름으로 사용. */
@@ -221,6 +220,18 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
  	m_tUserData = pDesc->tUserData;
 	m_tUserData.pWord0 = &pDesc->iCollisionGroup;
 	m_tUserData.pWord1 = &pDesc->iCollisionMask;
+
+	//캡슐일떈 회전시켜주자.
+	if (RIGIDBODY_SHAPE::CAPSULE == m_eShape && nullptr != m_pShape)
+	{
+		PxTransform localPose(PxIdentity);
+		localPose.q = PxQuat(PxPi * 0.5f, PxVec3(0.f, 0.f, 1.f));
+
+		localPose.p = PxVec3(0.f, 0.f, 0.f);
+
+		m_ShapeLocalPose = localPose;
+		m_pShape->setLocalPose(localPose);
+	}
 
 	return S_OK;
 }

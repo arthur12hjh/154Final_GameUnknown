@@ -57,6 +57,7 @@ private:
 	HRESULT Ready_Components();
 	HRESULT Ready_HairJoints();
 	HRESULT Ready_RootHair();
+	HRESULT Ready_HairBoneMapping();
 	HRESULT Ready_ChildHair();
 	HRESULT Bind_ShaderResources();
 	HRESULT Bind_BoneToPartBody(void* pArg);
