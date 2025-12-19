@@ -35,6 +35,7 @@ public:
 
 	virtual HRESULT					Render() override;
 	virtual void					RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
+	virtual void					Attack_Interaction(void* pArg = nullptr);
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();

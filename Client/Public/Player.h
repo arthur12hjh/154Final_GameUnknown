@@ -48,7 +48,7 @@ public:
 	virtual HRESULT		Render_MotionBlur() override;
 	virtual HRESULT		Damaged(void* pArg) override;
 	virtual void		RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
-
+	virtual void		Attack_Interaction(void* pArg = nullptr);
 
 	void				SetSkillDataID(_uint iSkillID);
 	_int				GetSkillDataID();
