@@ -83,19 +83,7 @@ HRESULT COcclusion::Get_Result(CGameObject* pObject, _bool* pIsVisible)
             _int iCurrentCooldown = pObject->Get_Occlusion_CoolDown() + 1;
             pObject->Set_Occlusion_CoolDown(iCurrentCooldown);
             
-            *pIsVisible = (iCurrentCooldown >= 10) ? false : true;
-            /*const _int COOLDOWN_THRESHOLD = 10; 
-
-            if (iCurrentCooldown >= COOLDOWN_THRESHOLD)
-            {
-                *pIsVisible = false;
-            }
-            else
-            {
-                *pIsVisible = true; 
-            }*/
-            //return S_OK;
-            
+            *pIsVisible = (iCurrentCooldown >= 10) ? false : true;          
         }
         return S_OK;
     }

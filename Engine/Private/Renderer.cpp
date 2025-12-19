@@ -193,7 +193,7 @@ HRESULT CRenderer::Initialize()
 	rsDesc.CullMode = D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise = FALSE;
 	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.DepthBias = 1000;
+	rsDesc.DepthBias = -1;
 	rsDesc.DepthBiasClamp = 0.0f;
 	rsDesc.SlopeScaledDepthBias = 1.0f;
 	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))
@@ -574,70 +574,70 @@ void CRenderer::Render_Occlusion()
 
 	//OutputDebugStringA(szDebugString);
 
-	//const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
-	//if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
-	//	return;
+	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
+		return;
 
-	//const _float4x4* pProjMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ);
-	//if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", pProjMatrix)))
-	//	return;
+	const _float4x4* pProjMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ);
+	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ProjMatrix", pProjMatrix)))
+		return;
 
-	//if (FAILED(m_pOcclusionShader->Begin(0)))
-	//	return;
+	if (FAILED(m_pOcclusionShader->Begin(0)))
+		return;
 
-	//ID3D11RasterizerState* pOldRS = nullptr;
-	//m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
-	//m_pContext->RSSetState(m_pRS_OcclusionQuery);
+	ID3D11RasterizerState* pOldRS = nullptr;
+	m_pContext->RSGetState(&pOldRS); // 기존 RS 백업
+	m_pContext->RSSetState(m_pRS_OcclusionQuery);
 
-	//m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
-	//{
-	//	if (nullptr != pRenderObject)
-	//	{
-	//		if (pRenderObject->Get_Depth() < 20.f)
-	//		{
-	//			Safe_Release(pRenderObject);
-	//			continue;
-	//		}
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)])
+	{
+		if (nullptr != pRenderObject)
+		{
+			if (pRenderObject->Get_Depth() < 200.f)
+			{
+				Safe_Release(pRenderObject);
+				continue;
+			}
 
-	//		COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
+			COBBCollider* pCollider = static_cast<COBBCollider*>(pRenderObject->GetCullingCollider());
 
-	//		if (nullptr != pCollider)
-	//		{
-	//			if (FAILED(m_pGameInstance->Begin_Object_Query(pRenderObject)))
-	//				continue;
+			if (nullptr != pCollider)
+			{
+				if (FAILED(m_pGameInstance->Begin_Object_Query(pRenderObject)))
+					continue;
 
-	//			const _float4x4* pWorldMatrix = pCollider->Get_WorldMatrixPtr();
+				const _float4x4* pWorldMatrix = pCollider->Get_WorldMatrixPtr();
 
 
-	//			_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
-	//			_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
+				_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
+				_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
 
-	//			_vector vPos = matWorld.r[3];
+				//_vector vPos = matWorld.r[3];
 
-	//			matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-	//			matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
+				//matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				//matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
 
-	//			matWorld.r[3] = vPos;
+				//matWorld.r[3] = vPos;
 
-	//			XMStoreFloat4x4(&WorldMatrix, matWorld);
+				XMStoreFloat4x4(&WorldMatrix, matWorld);
 
-	//			if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
-	//				continue;
+				if (FAILED(m_pOcclusionShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+					continue;
 
-	//			pCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
+				pCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
 
-	//			m_pGameInstance->End_Obejct_Query(pRenderObject);
-	//		}
-	//	}
+				m_pGameInstance->End_Obejct_Query(pRenderObject);
+			}
+		}
 
-	//	Safe_Release(pRenderObject);
-	//}
-	//m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].clear();
 
-	//m_pContext->RSSetState(pOldRS);
-	//Safe_Release(pOldRS);
+	m_pContext->RSSetState(pOldRS);
+	Safe_Release(pOldRS);
 }
 
 void CRenderer::Render_NonBlend()
