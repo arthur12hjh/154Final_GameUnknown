@@ -565,14 +565,14 @@ void CRenderer::Render_MotionBlur()
 
 void CRenderer::Render_Occlusion()
 {
-	_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
-	// 나중에 지워주세요
-	_char szDebugString[256];
+	//_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
+	//// 나중에 지워주세요
+	//_char szDebugString[256];
 
-	snprintf(szDebugString, sizeof(szDebugString),
-		"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
+	//snprintf(szDebugString, sizeof(szDebugString),
+	//	"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
 
-	OutputDebugStringA(szDebugString);
+	//OutputDebugStringA(szDebugString);
 
 	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
 	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
@@ -733,8 +733,8 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pStaticShadow->Bind_Shader_Resource(m_pShader, "g_StaticLightProjMatrix", D3DTS::PROJ)))
 		return;
-	if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
-		return;
+	//if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
+	//	return;
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));

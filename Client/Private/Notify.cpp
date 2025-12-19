@@ -120,7 +120,6 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case Client::CNotify::SET_TRANSFORM:
 		return Notify_Set_Transform(AnimNotify);
 		break;
-		break;
 	case CNotify::ACTIVE_PARTOBJECT_COLLISION:
 		return Notify_Active_PartObject_Collision(AnimNotify);
 		break;
@@ -132,6 +131,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 		break;
 	case CNotify::SHOOT_PROJECTILE:
 		return Notify_Shoot_Projectile(AnimNotify);
+		break;
+	case CNotify::ACTIVE_PHYSX_COLLISION:
+		return m_pCharacter->CallNotify(CNotify::ACTIVE_PHYSX_COLLISION, &AnimNotify);
 		break;
 	case CNotify::PLAY_CINEMATIC:
 		return Notify_Play_Cinematic(AnimNotify);
@@ -152,6 +154,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Active_SFX")					return ACTIVE_SFX;
 	if (szNotifyTag == "Play_Sound")					return PLAY_SOUND;
 	if (szNotifyTag == "Active_Collision")				return ACTIVE_COLLISION;
+	if (szNotifyTag == "Active_PhysxCollision")			return ACTIVE_PHYSX_COLLISION;
 	if (szNotifyTag == "Set_Transform")					return SET_TRANSFORM;
 	if (szNotifyTag == "Active_PartObjectCollision")	return ACTIVE_PARTOBJECT_COLLISION; 
 	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;

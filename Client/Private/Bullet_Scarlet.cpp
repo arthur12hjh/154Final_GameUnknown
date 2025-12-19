@@ -30,6 +30,20 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
+	switch (m_eBulletType)
+	{
+	case BULLET_TYPE::PROJECTILE:
+		Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
+		break;
+	case BULLET_TYPE::HITSCAN:
+	{
+		m_iHitScanFrameIndex.x++;
+		if (m_iHitScanFrameIndex.y <= m_iHitScanFrameIndex.x)
+			Set_Dead(true);
+	}
+	break;
+	}
+
 	/*CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
@@ -100,10 +114,15 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 	{
 	case BULLET_TYPE::PROJECTILE:
 	{
-		_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
-		vOwnerPos.m128_f32[1] = vTargetPoint.m128_f32[1] = 0.f;
+		Update_BulletCombinedMatrix();
+		_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
 
-		XMStoreFloat3(&m_vProjectileDir, XMVector3Normalize(vTargetPoint - vOwnerPos));
+		_vector vLook = m_pParent->GetTransform()->Get_State(STATE::LOOK);
+		_vector vStartPos = CombinedMatrix.r[3] + vLook * 5.f;
+
+		m_pTransformCom->Set_State(STATE::POSITION, vStartPos);
+		vTargetPoint.m128_f32[1] += 2.f;
+		XMStoreFloat3(&m_vProjectileDir, XMVector3Normalize(vTargetPoint - vStartPos));
 		m_fSpeed = fSpeed;
 	}
 		break;
@@ -113,6 +132,7 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 	}
 		break;
 	}
+	m_bIsAttachment = false;
 }
 
 HRESULT CBullet_Scarlet::ADD_Components(BULLET_DESC& pDesc)
