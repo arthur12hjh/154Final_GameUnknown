@@ -5,7 +5,6 @@
 #include "BlendObject.h"
 #include "UIObject.h"
 #include "GameInstance.h"
-#include "Occlusion.h"
 
 #include "ColliderRenderer.h"
 

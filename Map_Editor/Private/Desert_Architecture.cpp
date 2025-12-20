@@ -33,7 +33,7 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
-	//m_iObjectID = Object_Number(m_ComponentTag);
+	m_iObjectID = Object_Number(m_ComponentTag);
 
 	return S_OK;
 }
@@ -44,9 +44,9 @@ void CDesert_Architecture::Priority_Update(_float fTimeDelta)
 
 void CDesert_Architecture::Update(_float fTimeDelta)
 {
-	//SetCullingCollider(m_iObjectID);
-	//_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-	//m_pCullingCollider->UpdateColiision(worldMatrix);
+	SetCullingCollider(m_iObjectID);
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
 void CDesert_Architecture::Late_Update(_float fTimeDelta)
@@ -119,23 +119,50 @@ void CDesert_Architecture::SetCullingCollider(_uint iObjectID)
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
 	switch (iObjectID)
 	{
-	case 1:
-		pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 4, 2, 7 });
+	case 1: // Ruin_7A (20, 30, 35)
+		pCullingCollider->SetCollision({ -5.f, 21.f, -15.f }, {}, { 20.f, 30.f, 35.f });
 		break;
-	case 2:
-		pCullingCollider->SetCollision({ 0.f, 3.f, 3.5f }, {}, { 4, 5, 7 });
+	case 2: // Ruin_7B (30, 15, 25)
+		pCullingCollider->SetCollision({ -20.f, 10.5f, -10.f }, {}, { 30.f, 15.f, 25.f });
 		break;
-	case 3:
-		pCullingCollider->SetCollision({ 0.f, 1.8f, 1.5f }, {}, { 10, 3, 3 });
+	case 3: // Ruin_7C (12, 25, 12)
+		pCullingCollider->SetCollision({ 0.f, 23.f, 0.f }, {}, { 12.f, 25.f, 12.f });
 		break;
-	case 4:
-		pCullingCollider->SetCollision({ 0.f, 1.2f, 1.5f }, {}, { 2, 2, 3 });
+	case 4: // Ruin_7D (18, 8, 5)
+		pCullingCollider->SetCollision({ 0.f, 4.f, 0.f }, {}, { 18.f, 8.f, 5.f });
 		break;
-	case 5:
-		pCullingCollider->SetCollision({ 0.f, 108.f, 22.5f }, {}, { 60, 180, 45 });
+	case 5: // Ruin_7E (4, 6, 4)
+		pCullingCollider->SetCollision({ 0.f, 4.2f, 0.f }, {}, { 4.f, 6.f, 4.f });
 		break;
-	case 6:
-		pCullingCollider->SetCollision({ 0.f, 0.6f, 1.f }, {}, { 4, 1, 2 });
+	case 6: // Bridge_4A (10, 65, 30)
+		pCullingCollider->SetCollision({ 0.f, 40.f, 0.f }, {}, { 10.f, 65.f, 30.f });
+		break;
+	case 7: // Bridge_4B (50, 65, 30)
+		pCullingCollider->SetCollision({ 30.f, 45.5f, 0.f }, {}, { 40.f, 65.f, 30.f });
+		break;
+	case 8: // Bridge_4D (30, 80, 30)
+		pCullingCollider->SetCollision({ 0.f, 45.f, 0.f }, {}, { 30.f, 80.f, 30.f });
+		break;
+	case 9: // Bridge_4L (40, 120, 150)
+		pCullingCollider->SetCollision({ -10.f, -90.f, 100.f }, {}, { 40.f, 120.f, 150.f });
+		break;
+	case 10: // Bridge_4M (70, 70, 80)
+		pCullingCollider->SetCollision({ 0.f, 30.f, -100.f }, {}, { 70.f, 80.f, 80.f });
+		break;
+	case 11: // Bridge_4N (30, 10, 5)
+		pCullingCollider->SetCollision({ -35.f, 40.f, -70.f }, {}, { 30.f, 10.f, 5.f });
+		break;
+	case 12: // Bridge_5 (50, 60, 50)
+		pCullingCollider->SetCollision({ 0.f, -10.f, 0.f }, {}, { 50.f, 60.f, 50.f });
+		break;
+	case 13: // Bridge_6 (60, 110, 100)
+		pCullingCollider->SetCollision({ 0.f, 65.f, 0.f }, {}, { 60.f, 110.f, 100.f });
+		break;
+	case 14: // Bridge_14A (6, 8, 25)
+		pCullingCollider->SetCollision({ 0.f, 5.6f, 0.f }, {}, { 6.f, 8.f, 25.f });
+		break;
+	case 15: // Bridge_14B (6, 5, 20)
+		pCullingCollider->SetCollision({ 0.f, 3.5f, 0.f }, {}, { 6.f, 5.f, 20.f });
 		break;
 	}
 
@@ -147,26 +174,34 @@ _uint CDesert_Architecture::Object_Number(const _tchar* pComponentTag)
 		return 0;
 
 	const _tchar* pLastUnderscore = wcsrchr(pComponentTag, L'_');
-
 	if (pLastUnderscore == nullptr || *(pLastUnderscore + 1) == L'\0')
 		return 0;
 
 	const _tchar* pSuffix = pLastUnderscore + 1;
 
-	if (wcscmp(pSuffix, TEXT("A")) == 0)
-		return 1;
-	else if (wcscmp(pSuffix, TEXT("B")) == 0)
-		return 2;
-	else if (wcscmp(pSuffix, TEXT("C")) == 0)
-		return 3;
-	else if (wcscmp(pSuffix, TEXT("D")) == 0)
-		return 4;
-	else if (wcscmp(pSuffix, TEXT("E")) == 0)
-		return 5;
-	else if (wcscmp(pSuffix, TEXT("F")) == 0)
-		return 6;
-	else
-		return 0;
+	// 1. Ruin 시리즈 (1 ~ 5)
+	if (wcsstr(pComponentTag, TEXT("Ruin"))) {
+		if (!wcscmp(pSuffix, TEXT("7A"))) return 1;
+		if (!wcscmp(pSuffix, TEXT("7B"))) return 2;
+		if (!wcscmp(pSuffix, TEXT("7C"))) return 3;
+		if (!wcscmp(pSuffix, TEXT("7D"))) return 4;
+		if (!wcscmp(pSuffix, TEXT("7E"))) return 5;
+	}
+	// 2. Bridge 시리즈 (6 ~ 15)
+	else if (wcsstr(pComponentTag, TEXT("Bridge"))) {
+		if (!wcscmp(pSuffix, TEXT("4A"))) return 6;
+		if (!wcscmp(pSuffix, TEXT("4B"))) return 7;
+		if (!wcscmp(pSuffix, TEXT("4D"))) return 8;
+		if (!wcscmp(pSuffix, TEXT("4L"))) return 9;
+		if (!wcscmp(pSuffix, TEXT("4M"))) return 10;
+		if (!wcscmp(pSuffix, TEXT("4N"))) return 11;
+		if (!wcscmp(pSuffix, TEXT("5")))  return 12;
+		if (!wcscmp(pSuffix, TEXT("6")))  return 13;
+		if (!wcscmp(pSuffix, TEXT("14A"))) return 14;
+		if (!wcscmp(pSuffix, TEXT("14B"))) return 15;
+	}
+
+	return 0;
 }
 
 CDesert_Architecture* CDesert_Architecture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
