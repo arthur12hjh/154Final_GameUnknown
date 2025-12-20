@@ -1028,6 +1028,43 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_iCurrentAnimIndex >= m_iNumAnimations)
         return false;
 
+
+    const _uint iNumBones = (_uint)m_Bones.size();
+
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
+            {
+                _int iBoneIndex = BoneCountIndex.first;
+
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
+            }
+
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
+
+
+    // 루트모션 적용
+    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
+    {
+        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
+        Apply_RootMotion(pTransform, fRootMotionMagnification);
+    }
+
+
     // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
@@ -1070,41 +1107,6 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     }
 
     Bind_ComputeShader(fScaledDeltaTime);
-
-    const _uint iNumBones = (_uint)m_Bones.size();
-
-    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
-        {
-            COMPUTE_BONEMATRIX_OUT* pOut = 
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
-
-            for (auto& BoneCountIndex : m_PartialBoneCountMap)
-            {
-                _int iBoneIndex = BoneCountIndex.first;
-
-                m_Bones[iBoneIndex]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
-
-                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
-            }
-
-            m_pContext->Unmap(m_pOutReadBack, 0);
-        }
-    }
-
-
-    // 루트모션 적용
-    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
-    {
-        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
-        Apply_RootMotion(pTransform, fRootMotionMagnification);
-    }
 
 
     return m_isFinish;
@@ -1294,7 +1296,7 @@ HRESULT CModel::Ready_ComputeShader()
 
     D3D11_BUFFER_DESC PreBoneBufferDesc = {};
     PreBoneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+    PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * m_Bones.size();
     PreBoneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     PreBoneBufferDesc.CPUAccessFlags = 0;
     PreBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
@@ -1349,13 +1351,13 @@ HRESULT CModel::Ready_ComputeShader()
     // 첫 번째로, Bone을 넣어주자
     {
         TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
+        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * m_Bones.size();
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-        vector<COMPUTE_BONEINFO> vBoneInfos(iNumData);
-        for (_uint i = 0; i < iNumData; ++i)
+        vector<COMPUTE_BONEINFO> vBoneInfos(m_Bones.size());
+        for (_uint i = 0; i < m_Bones.size(); ++i)
         {
             if (i >= m_Bones.size())
             {
@@ -1375,12 +1377,12 @@ HRESULT CModel::Ready_ComputeShader()
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
 
-        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, m_Bones.size())))
             return E_FAIL;
 
         Safe_AddRef(pBuffer);
 
-        if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+        if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, m_Bones.size())))
             return E_FAIL;
 
     }
@@ -1480,7 +1482,7 @@ HRESULT CModel::Ready_ComputeShader()
 
             D3D11_BUFFER_DESC FirstDesc{};
             FirstDesc.Usage = D3D11_USAGE_DEFAULT;
-            FirstDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+            FirstDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
             FirstDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
             FirstDesc.CPUAccessFlags = 0;
             FirstDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -1498,14 +1500,14 @@ HRESULT CModel::Ready_ComputeShader()
                 return E_FAIL;
 
             // CComputeShader 쪽 INPUT 버퍼 목록에 추가
-            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, iNumBones)))
             {
                 Safe_Release(pBuffer);
                 return E_FAIL;
             }
 
             // CComputeShader 쪽 INPUT 버퍼 목록에 추가
-            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pLerpBuffer)))
+            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pLerpBuffer, iNumBones)))
             {
                 Safe_Release(pLerpBuffer);
                 return E_FAIL;
@@ -1513,7 +1515,7 @@ HRESULT CModel::Ready_ComputeShader()
 
             D3D11_BUFFER_DESC SecondDesc{};
             SecondDesc.Usage = D3D11_USAGE_DEFAULT;
-            SecondDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+            SecondDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
             SecondDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
             SecondDesc.CPUAccessFlags = 0;
             SecondDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -1527,7 +1529,7 @@ HRESULT CModel::Ready_ComputeShader()
                 return E_FAIL;
 
             // CComputeShader 쪽 INPUT 버퍼 목록에 추가
-            if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pSecondBuffer)))
+            if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pSecondBuffer, iNumBones)))
             {
                 Safe_Release(pBuffer);
                 return E_FAIL;
@@ -1537,7 +1539,7 @@ HRESULT CModel::Ready_ComputeShader()
             // 끝난줄 알았지? Out도 세팅해주자
             {
                 TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
                 TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
                 TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -1548,12 +1550,12 @@ HRESULT CModel::Ready_ComputeShader()
                 if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &outSub, &m_pOutSource)))
                     return E_FAIL;
 
-                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource, iNumBones)))
                     return E_FAIL;
 
                 Safe_AddRef(m_pOutSource);
 
-                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource, iNumBones)))
                     return E_FAIL;
             }
 
@@ -1590,7 +1592,7 @@ HRESULT CModel::Ready_ComputeShader()
 
     D3D11_BUFFER_DESC readbackDesc = {};
     readbackDesc.Usage = D3D11_USAGE_STAGING;
-    readbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+    readbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * m_Bones.size();
     readbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
     readbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
     readbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
