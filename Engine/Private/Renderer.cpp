@@ -192,7 +192,7 @@ HRESULT CRenderer::Initialize()
 	rsDesc.CullMode = D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise = FALSE;
 	rsDesc.DepthClipEnable = TRUE;
-	rsDesc.DepthBias = -500;
+	rsDesc.DepthBias = -1;
 	rsDesc.DepthBiasClamp = 0.0f;
 	rsDesc.SlopeScaledDepthBias = 1.0f;
 	if (FAILED(m_pDevice->CreateRasterizerState(&rsDesc, &m_pRS_OcclusionQuery)))

@@ -138,6 +138,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::PLAY_CINEMATIC:
 		return Notify_Play_Cinematic(AnimNotify);
 		break;
+	case CNotify::ATTACK_INTERACTION:
+		return m_pCharacter->CallNotify(CNotify::ATTACK_INTERACTION, &AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -159,6 +162,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Active_PartObjectCollision")	return ACTIVE_PARTOBJECT_COLLISION; 
 	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;
 	if (szNotifyTag == "Spawn_Object")					return SPAWN_OBJECT;
+	if (szNotifyTag == "Attack_Interaction")			return ATTACK_INTERACTION;
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
 

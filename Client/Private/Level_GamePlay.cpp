@@ -51,8 +51,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -62,15 +62,15 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
-	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
 	pHitBoxDesc.eColType = COLLIDER::OBB;
-	//pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
-	//pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
+	pGameManager->ADD_PoolManager(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_AttackHitBox"), &pHitBoxDesc, TEXT("Hit_Box"), 300);
+	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::GAMEPLAY));
 
 	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -356,7 +356,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 	//
-	Desc.iMonsterID = 3;
+	/*Desc.iMonsterID = 3;
 	{
 		for (_uint i = 0; i < 10; ++i)
 		{
@@ -377,7 +377,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 				return E_FAIL;
 		}
 	}
-	
+	*/
 	/*Desc.iMonsterID = 4;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	Desc.bIsSuperMonster = true;
@@ -418,11 +418,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	/*Desc.iMonsterID = 8;
+	Desc.iMonsterID = 8;
 	Desc.vPosition = { 1000.f, 1.f, 1000.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	return S_OK;
 }
