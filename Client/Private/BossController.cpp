@@ -97,7 +97,7 @@ void CBossController::Damage(void* pArg)
         else
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::THESHOLD);
     }
-    else
+    else if(false == m_pBlackBoard->IsPhaseLastAttack())
     {
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
