@@ -111,11 +111,12 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 
 #endif
-	Sync_BonesByJoint();
 }
 
 HRESULT CPonyTail_Player::Render()
 {
+	Sync_BonesByJoint();
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

@@ -28,9 +28,6 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)
     _vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
     _bool isWalking = { false };
 
-
-    m_fDegree = 0.f;
-
     if ((true == m_isEvading || true == m_isLanding) && true == isAnimFinished)
     {
         m_pPlayer->Set_Animation("Proto_Jog", true, 1.2f, 0.12f);
@@ -38,51 +35,32 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)
         m_isLanding = false;
     }
 
+    m_fRadian = 0.f;
+
+    _float fDirX{}, fDirY{};
+
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-    {
+        fDirY += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+        fDirY -= 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        fDirX += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+        fDirX -= 1.f;
+
+    //walking false 처리
+    if (!(0.f == fDirX && 0.f == fDirY))
         isWalking = true;
 
-        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-            m_fDegree -= 90.f;
+    m_fRadian = atan2f(fDirX, fDirY);
 
-        else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-            m_fDegree += 90.f;
-    }
-
-    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-    {
-        m_fDegree += 180.f;
-        isWalking = true;
-
-        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-            m_fDegree += 90.f;
-
-        else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-            m_fDegree -= 90.f;
-    }
-
-    else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-    {
-        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-        {
-            m_fDegree -= 90.f;
-
-            isWalking = true;
-        }
-
-        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-        {
-            m_fDegree += 90.f;
-            isWalking = true;
-        }
-    }
-
-    _matrix matRot = XMMatrixRotationY(XMConvertToRadians(m_fDegree));
+    _matrix matRot = XMMatrixRotationY(m_fRadian);
     vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
 
     // A나 D를 누르면 카메라 벡터를 기준으로 좌우로 움직이게끔 세팅.
     _vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
-    _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.1f);
+
+    _vector vResult = XMVectorLerp(vPlayerLook, vCameraLook, 0.15f);
     m_Desc->pPlayerTransform->Change_Look(vResult);
 
     //내적 연산결과
@@ -107,7 +85,7 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkState::Update(_float fTimeDelta)
     else if (false == isWalking)
         m_tNextState.eNextState = PLAYER_STATE::WALK_END;
     // 이동은 제일 마지막에.
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.1f);
 
     return m_tNextState;
 }

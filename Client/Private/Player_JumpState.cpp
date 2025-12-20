@@ -20,7 +20,7 @@ void CPlayer_JumpState::Start(void* pArg, _float fBlendRatio)
 
 	if (true == m_isSprintJump)
 	{
-		m_fScaleFactor = 2.f;
+		m_fScaleFactor = 1.7f;
 		m_Desc->pPlayerController->Set_Gravity(true, 20.f);
 	}
 

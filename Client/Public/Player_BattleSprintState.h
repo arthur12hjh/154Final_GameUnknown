@@ -21,7 +21,14 @@ private:
 	_bool   m_isLanding = { false };
 	_bool   m_isEvading = { false };
 	_bool   m_isSprintStart = { false };
-	_float  m_fDegree = { 0.f };
+	_float  m_fRadian = { 0.f };
+	_bool   m_isTurnLocked = { false };
+	_bool   m_isTurning = { false };
+	_bool   m_isAlreadyTurned = { false };
+	_bool   m_isMovable = { true };
+
+	_uint  m_iNoInputFrameCount = { 0 };
+	_float4 m_vLastMoveLook = {};
 
 public:
 	static	CPlayer_BattleSprintState* Create(void* pArg);

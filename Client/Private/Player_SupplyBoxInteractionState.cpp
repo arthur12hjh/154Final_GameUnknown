@@ -8,6 +8,7 @@
 #include "GameInstance.h"
 
 CPlayer_SupplyBoxInteractionState::CPlayer_SupplyBoxInteractionState(void* pArg)
+    : CPlayerState{}
 {
     m_pInteractionCom = static_cast<CInteraction_Component*>(pArg);
 }
