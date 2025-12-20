@@ -17,22 +17,22 @@ void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.2f);
 		m_eDirection = EVADE_DIR::STRAIGHT;
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Left", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Left", false, 1.2f);
 		m_eDirection = EVADE_DIR::LEFT;
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Right", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Right", false, 1.2f);
 		m_eDirection = EVADE_DIR::RIGHT;
 	}
 	else
 	{
-		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false, 1.2f);
 		m_eDirection = EVADE_DIR::BACKWARD;
 	}
 }
@@ -48,23 +48,23 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 	{
 	case EVADE_DIR::STRAIGHT:
 		if (fAnimationRatio <= 0.3f)
-			m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.5f);
+			m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.6f);
 		break;
 	case EVADE_DIR::LEFT:
 		if (fAnimationRatio <= 0.3f)
-			m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 1.5f);
+			m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 1.6f);
 		break;
 	case EVADE_DIR::RIGHT:
 		if (fAnimationRatio <= 0.3f)
-			m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 1.5f);
+			m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 1.6f);
 		break;
 	case EVADE_DIR::BACKWARD:
 		if (fAnimationRatio <= 0.3f)
-			m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.5f);
+			m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.6f);
 		break;
 	}
 
-	if (fAnimationRatio > 0.45f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+	if (fAnimationRatio > 0.4f && (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
@@ -72,6 +72,10 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
 		m_tNextStateDesc.isEvade = true;
 		m_tNextState.pArg = &m_tNextStateDesc;
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+			m_tNextState.eNextState = PLAYER_STATE::SPRINT;
+
 	}
 	else if (fAnimationRatio > 0.45f && m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 		m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;

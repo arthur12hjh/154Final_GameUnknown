@@ -39,6 +39,11 @@
 #include "UILockOn.h"
 #include "UIGetterQueue.h"
 #include "UIOwnGold.h"
+#include "UIScript.h"
+
+#include "UIPopup.h"
+#include "UICostumePuzzleAnswer.h"
+#include "UICostumePuzzleButtons.h"
 
 #pragma endregion
 
@@ -226,6 +231,9 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	if (FAILED(Loading_UI_For_World()))
 		return E_FAIL;
 
+	if (FAILED(Loading_UI_For_Popups()))
+		return E_FAIL;
+
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Overlay"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1))))
@@ -276,6 +284,10 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Image"),
 		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Script"),
+		CUIScript::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_UI_Texture_Boss_Vital_Shadow */
@@ -385,16 +397,16 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sky"),
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Model_Sky"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Sky1 */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky1"),
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Sky1"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 1))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
@@ -656,6 +668,77 @@ HRESULT CUI_Loader::Loading_UI_For_Combat_HUD_Skills()
 	return S_OK;
 }
 
+HRESULT CUI_Loader::Loading_UI_For_Popups()
+{
+	// ÆË¾÷
+	/* For.Prototype_Component_UI_Texture_PopupBG */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
+		TEXT("Com_Texture_UI_PopupBG"), TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Popup_Inner_Frame */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.png"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
+		TEXT("Com_Texture_UI_Popup_Inner_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.png"), 2);
+	
+	/* For.Prototype_Component_UI_Texture_Costume_Puzzle_Button */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Costume_Puzzle_Button"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.png"), 4))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Button"),
+		TEXT("Com_Texture_UI_Puzzle_Button"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.png"), 4);
+	
+	/* For.Prototype_Component_UI_Texture_Suit_Icon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.png"), 12))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
+		TEXT("Com_Texture_UI_Suit_Icon"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.png"), 12);
+	
+	/* For.Prototype_Component_UI_Texture_Suit_Icons */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icons"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icons"),
+		TEXT("Com_Texture_UI_Suit_Icons"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.png"), 1);
+
+	/* For.Prototype_Component_UI_Texture_Puzzle_Answer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Answer"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Answer"),
+		TEXT("Com_Texture_UI_Puzzle_Answer"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1);
+
+	/*=================================================================================================================*/
+
+	/* For.Prototype_GameObject_UI_Popup */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Popup"),
+		CUIPopup::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Costume_Puzzle_Answer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Answer"),
+		CUICostumePuzzleAnswer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Costume_Puzzle_Buttons */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Buttons"),
+		CUICostumePuzzleButtons::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CUI_Loader::Loading_UI_For_World()
 {
 	/* For.Prototype_Component_UI_Texture_LockOn */
@@ -690,6 +773,14 @@ HRESULT CUI_Loader::Loading_UI_For_World()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Ball"),
 		TEXT("Com_Texture_UI_Shadow_Ball"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.png"), 1);
 	
+	/* For.Prototype_Component_UI_Texture_Shadow_Block */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Block"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Block"),
+		TEXT("Com_Texture_UI_Shadow_Block"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.png"), 1);
+
 	/* For.Prototype_Component_UI_Texture_Finish_Ring */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Finish_Ring"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.png"), 1))))

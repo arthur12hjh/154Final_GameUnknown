@@ -107,6 +107,9 @@ void CCinematicModel_Gorilla::Update(_float fTimeDelta)
 	case 0: // 고릴라 만남 시네마틱
 		Play_Cinematic_GorillaMeet(fTimeDelta);
 		break;
+	case 1: // 고릴라 처형 시네마틱
+		Play_Cinematic_GorillaFinish(fTimeDelta);
+		break;
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -157,9 +160,14 @@ HRESULT CCinematicModel_Gorilla::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 	if(m_iCinematicCode == -1)
 		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
 
-	if (m_iCinematicCode == 0) // 고릴라 만남 시네마틱
+	switch (m_iCinematicCode)
 	{
+	case 0: // 고릴라 만남 시네마틱
 		Initialize_Cinematic_GorillaMeet();
+		break;
+	case 1: // 고릴라 처형 시네마틱
+		Initialize_Cinematic_GorillaFinish();
+		break;
 	}
 
 	return S_OK;
@@ -207,6 +215,18 @@ HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaMeet()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaFinish()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("M_Gorilla_Finish02_v02_w01_export_nonbreak", FALSE, 2.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
@@ -243,6 +263,26 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 			m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
 			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(743.f, 2.94f, 635.f, 1.f));
 		}
+	}
+
+	if (m_fMoveTime > 7.9f)
+	{
+		m_bIsActive = FALSE;
+		m_iCinematicCode = -1;
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaFinish(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		m_bIsActive = FALSE;
+		m_iCinematicCode = -1;
 	}
 
 	return S_OK;

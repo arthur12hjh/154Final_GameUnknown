@@ -39,6 +39,10 @@ typedef struct tagParryStateDesc {
 	_bool isImmediate = { false };
 } PLAYER_PARRY_DESC;
 
+typedef struct tagJumpStateDesc {
+	_bool isSprintJump = { false };
+} PLAYER_JUMP_DESC;
+
 class CPlayerState abstract : public CBase
 {
 protected:
@@ -69,6 +73,12 @@ protected:
 	PLAYER_STATE   m_eState = { PLAYER_STATE::STATE_END };
 	struct Player_Desc* m_Desc = { nullptr };
 	_float m_fNextBlendRatio = { 0.12f };
+
+protected:
+	//x 성분이 look, y 성분이 right 기준.
+	// (1,1) 이라면 look + right 방향으로 나아가게 처리해줌
+	// 함수 내부에서 노멀라이즈만 처리해서 세팅해주고.
+	_vector Calc_PlayerDirection(_vector vDir);
 
 public:
 	virtual	void					Free() override;

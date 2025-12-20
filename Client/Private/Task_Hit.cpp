@@ -30,6 +30,10 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 	// 이거 비헤비어 밖에서 데미지 처리가 이루어지는데 
 	// 비헤비어 안에서 애니메이션을 재생해야하네?
 	// 아니지 이거 BlackBoard 접근해서 처리하자
+	auto pTarget = m_pBlackBoard->GetTarget();
+	if (nullptr == pTarget)
+		return NODE_STATE::FAIL;
+
 	auto pHit_Data = m_pBlackBoard->GetHitData();
 	if (pHit_Data)
 	{
@@ -39,7 +43,7 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->bIsExcution())
 	{
-		if (m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
+		if (m_pBlackBoard->IsPhaseLastAttack() || m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
 		{
 			m_pHit_Data = nullptr;
 			if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())

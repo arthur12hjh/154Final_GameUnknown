@@ -111,6 +111,9 @@ void CCinematicModel_Eve::Update(_float fTimeDelta)
 	case 0: // 고릴라 만남 시네마틱
 		Play_Cinematic_GorillaMeet(fTimeDelta);
 		break;
+	case 1: // 고릴라 처형 시네마틱
+		Play_Cinematic_GorillaFinish(fTimeDelta);
+		break;
 	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -161,9 +164,14 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 	if (m_iCinematicCode == -1)
 		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
 
-	if (m_iCinematicCode == 0) // 고릴라 만남 시네마틱
+	switch (m_iCinematicCode)
 	{
-		Initialize_Cinematic_GorillaMeet();
+		case 0: // 고릴라 만남 시네마틱
+			Initialize_Cinematic_GorillaMeet();
+			break;
+		case 1: // 고릴라 처형 시네마틱
+			Initialize_Cinematic_GorillaFinish();
+			break;
 	}
 
 	return S_OK;
@@ -253,7 +261,33 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("Eve_Gorilla_Finish01_v05_w01_export_fixA_recode_w01", FALSE, 2.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 609.569f, 1.f));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		m_bIsActive = FALSE;
+		m_iCinematicCode = -1;
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);

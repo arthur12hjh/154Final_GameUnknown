@@ -41,6 +41,19 @@ _float CPlayerState::End()
 	return m_fNextBlendRatio;
 }
 
+_vector CPlayerState::Calc_PlayerDirection(_vector vDir)
+{
+	_vector vPlayerLook = m_Desc->pPlayerTransform->Get_State(STATE::LOOK);
+	_vector vPlayerRight = m_Desc->pPlayerTransform->Get_State(STATE::RIGHT);
+
+	vPlayerLook = XMVectorSetY(vPlayerLook, 0.f);
+	vPlayerRight = XMVectorSetY(vPlayerRight, 0.f);
+
+	_vector vPlayerDir = (vPlayerLook + vPlayerRight) * XMVector2Normalize(vDir);
+
+	return vPlayerDir;
+}
+
 void CPlayerState::Free()
 {
 	__super::Free();

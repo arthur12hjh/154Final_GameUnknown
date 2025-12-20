@@ -152,7 +152,6 @@ HRESULT CVIBuffer_Rect_Instance::Initialize(void* pArg)
 
 HRESULT CVIBuffer_Rect_Instance::Bind_Resources()
 {
-	 //m_pContext->CopyResource(m_pVBInstance, m_pResourceBuffer[m_bFlag ? 0 : 1]);
 	__super::Bind_Resources();
 	return S_OK;
 }

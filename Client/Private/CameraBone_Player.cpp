@@ -158,7 +158,7 @@ void CCameraBone_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(&m_ParentTransformMatrix));
 
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	//m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);

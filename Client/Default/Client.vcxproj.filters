@@ -265,9 +265,6 @@
     <Filter Include="02.GameObjects\Character\Player\01. FSM">
       <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\01. FSM\Base">
-      <UniqueIdentifier>{4642f57f-bd5b-40b0-8187-b409ac58061f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\CCTHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
     </Filter>
@@ -468,9 +465,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster">
       <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
       <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
@@ -825,6 +819,27 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\PartBody\Weapon\Right">
       <UniqueIdentifier>{d7e8c404-b1b6-483f-a653-a780c3b13e15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPopup">
+      <UniqueIdentifier>{3075a1a2-b433-493f-bbd9-0e29da8a0b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIInstanceBuffer">
+      <UniqueIdentifier>{bdabd5dd-8ac9-488a-a0c1-d56af5f8c771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle">
+      <UniqueIdentifier>{0df933ee-7371-40fc-918a-e776650dd2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle">
+      <UniqueIdentifier>{4c51194a-b4e2-4a82-8400-0649f15b05fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer">
+      <UniqueIdentifier>{a689b038-39d2-49bc-bc1e-6d598b379168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons">
+      <UniqueIdentifier>{3153c664-d690-41f0-aa9c-a6f78d3a255a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint">
+      <UniqueIdentifier>{6efd9ad8-2dcf-464e-b458-2c7c578bda03}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\CutScene">
       <UniqueIdentifier>{e217fbfe-57a0-4b0a-aff5-68e728ea900c}</UniqueIdentifier>
@@ -1368,9 +1383,6 @@
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
       <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClInclude>
@@ -1714,7 +1726,6 @@
     <ClInclude Include="..\Public\UIScript.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\CinematicMaker.h">
       <Filter>30.ImGui\CinematicMaker</Filter>
     </ClInclude>
@@ -1730,11 +1741,32 @@
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h">
       <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Left</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIPopup.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIInstanceBuffer.h">
+      <Filter>02.GameObjects\UIObjects\UIInstanceBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleAnswer.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleButtons.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Task_CutScene.h">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\CutScene</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bullet_Scarlet.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2217,9 +2249,6 @@
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
       <Filter>02.GameObjects\AttackHitBox</Filter>
     </ClCompile>
@@ -2555,7 +2584,9 @@
     <ClCompile Include="..\Private\UIScript.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CameraActionInserter.cpp" />
+    <ClCompile Include="..\Private\UIPopup.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPopup</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\CinematicMaker.cpp">
       <Filter>30.ImGui\CinematicMaker</Filter>
     </ClCompile>
@@ -2571,11 +2602,29 @@
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp">
       <Filter>02.GameObjects\Character\Naytiba\PartBody\Weapon\Left</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UIInstanceBuffer.cpp">
+      <Filter>02.GameObjects\UIObjects\UIInstanceBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleAnswer.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleButtons.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Task_CutScene.cpp">
       <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\CutScene</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Scarlet.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

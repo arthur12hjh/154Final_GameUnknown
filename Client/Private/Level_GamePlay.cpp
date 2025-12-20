@@ -15,6 +15,7 @@
 #include "AttackHitBox.h"
 #include "TriggerBox.h"
 #include "UIHUD.h"
+#include "UIScript.h"
 
 #include "SpriteParticle.h"
 
@@ -153,7 +154,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 		return E_FAIL;
 
 	STATIC_SHADOW_DESC		StaticShadowDesc{};
-	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fFar = 2000.f;
 	StaticShadowDesc.fNear = 0.1f;
 	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
@@ -355,33 +356,42 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 	//	return E_FAIL;
 	//
-	//Desc.iMonsterID = 3;
-	//{
-	//	for (_uint i = 0; i < 10; ++i)
-	//	{
-	//		Desc.vPosition = { 15.f * i, 1.f, 105.f};
-	//		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//			return E_FAIL;
-	//	}
-	//	
-	//
-	//}
-	
-	//Desc.iMonsterID = 4;
-	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	//Desc.bIsSuperMonster = true;
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	/*Desc.iMonsterID = 3;
+	{
+		for (_uint i = 0; i < 10; ++i)
+		{
+			Desc.vPosition = { 15.f * i, 1.f, 105.f};
+			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+				return E_FAIL;
+		}
+	}
+
+	Desc.iMonsterID = 7;
+	{
+		for (_uint i = 0; i < 10; ++i)
+		{
+			Desc.vPosition = { 15.f * i, 1.f, 105.f };
+			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+				return E_FAIL;
+		}
+	}
+	*/
+	/*Desc.iMonsterID = 4;
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	Desc.bIsSuperMonster = true;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
 
 
-	//Desc.iMonsterID = 4;
-	//Desc.bIsSuperMonster = true;
-	//Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
+	Desc.iMonsterID = 5;
+	Desc.bIsSuperMonster = true;
+	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;*/
 
 	/*Desc.iMonsterID = 6;
 	Desc.vPosition = { 350.f, 1.f, 600.f };
@@ -390,14 +400,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;*/
 
 
-	CSpawner::SPAWNER_DESC pSapwnerDesc = {};
+	/*CSpawner::SPAWNER_DESC pSapwnerDesc = {};
 	pSapwnerDesc.bIsApplyTransform = true;
 	pSapwnerDesc.vScale = { 100.f, 1.f, 100.f };
 	pSapwnerDesc.eType = CSpawner::SPAWNER_TYPE::TRIGGER;
 	pSapwnerDesc.vPosition = { 350.f, 1.f, 600.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Spawner"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	//  시네마틱 테스트용 모델임
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
@@ -409,7 +419,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		return E_FAIL;*/
 
 	Desc.iMonsterID = 8;
-	Desc.vPosition = { 60.f, 1.f, 60.f };
+	Desc.vPosition = { 1000.f, 1.f, 1000.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
@@ -427,7 +437,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	SetHUD(pUIHUD);
 	pUIHUD->Set_Show_Debug_Rect(false);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat")))) 
 		return E_FAIL;
 	
 	pUIHUD->Anim_Play(TEXT("Layer_Combat"), TEXT("Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
@@ -447,8 +457,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
 		return E_FAIL;
 
-	/*if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
-		return E_FAIL;*/
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;
+
+	/*CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+	if (!pScript)
+		return E_FAIL;
+
+	auto pGameManager = CGameManager::GetInstance();
+
+	if (!pGameManager)
+		return E_FAIL;
+
+	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("TestScript")));
+	Safe_Release(pGameManager);*/
 
 	return S_OK;
 }
@@ -680,7 +703,6 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Format(std::ifstream& ifs, const _t
 		Desc.bIsQuaternion = true;
 		//Desc.vScale = { 1.f, 1.f, 1.f };
 		Desc.iMonsterID = info.iMonsterId;
-
 
 		_vector vScale = {};
 		_vector vRotation = {};

@@ -538,6 +538,27 @@
     <ClCompile Include="..\..\Client\Private\UIOwnGold.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIScript.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\AttackHitBox.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIPopup.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Cinematic_Manager.cpp">
+      <Filter>999. CPP From Client\02. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UICostumePuzzleAnswer.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIInstanceBuffer.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UICostumePuzzleButtons.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

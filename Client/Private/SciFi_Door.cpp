@@ -5,6 +5,9 @@
 #include "GameManager.h"
 #include "Interaction_Component.h"
 
+#include "UIHUD.h"
+#include "UIScript.h"
+
 CSciFi_Door::CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProb_Interaction{ pDevice, pContext }
 {
@@ -48,7 +51,20 @@ void CSciFi_Door::Update(_float fTimeDelta)
 		if (INTERACTION_STATE::ACTIVE == m_eInterState)
 		{
 			if (m_pModelCom->Play_Animation(fTimeDelta))
+			{
 				m_eInterState = INTERACTION_STATE::DEFAULT;
+
+				// [JU]스크립트 테스트 입니다
+				CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+				CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+				if (!pScript)
+					return;
+
+				pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("TestScript")));
+				Safe_Release(pHUD);
+			}
 		}
 		else
 		{

@@ -1,44 +1,47 @@
 ﻿{
     "ScriptData": {
-        "TestScript": [
-            {
-                "szText": "테스트0"
-            },
-            {
-                "szText": "테스트1",
-                "vColor": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ]
-            },
-            {
-                "szText": "테스트2"
-            },
-            {
-                "szText": "테스트3"
-            }
-        ],
-        "Loading": [
-            {
-                "szText": "그럴 리가 없고, 그럴 수도 없다"
-            },
-            {
-                "szText": "재훈이형처럼 연애합시다",
-                "vColor": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ]
-            },
-            {
-                "szText": "정의훈쌤! 짱짱맨! >.<"
-            },
-            {
-                "szText": "재훈햄의 여자친구 흑련과 테무산 이브는 인게임에서 만날수있습니다."
-            }
-        ]
+        "Loading": {
+            "szAnimTag": "Loading",
+            "bCanControl": true,
+            "Scripts": [
+                {
+                    "szText": "그럴 리가 없고, 그럴 수도 없다"
+                },
+                {
+                    "szText": "재훈이형처럼 연애합시다",
+                    "vColor": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                },
+                {
+                    "szText": "정의훈쌤! 짱짱맨! >.<"
+                },
+                {
+                    "szText": "재훈햄의 여자친구 흑련과 테무산 이브는 인게임에서 만날수있습니다."
+                },
+                 {
+                "szText": "쥬신에사는 작은 하마는 API 시연회를 지나 SR을 지나 3D개인폴을지나 \n 아직도 작은 장난감을 찾고있습니다 도와주세요."
+                }
+            ]
+        },
+        "TestScript": {
+            "szAnimTag": "Default",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "Scripts": [
+                {
+                    "szText": "문이 잠겨있다.."
+                },
+                {
+                    "szText": "시체를 뒤져볼까?"
+                }
+            ]
+        }
     }
 }

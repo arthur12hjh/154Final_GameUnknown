@@ -60,6 +60,8 @@ void CCanyon::Late_Update(_float fTimeDelta)
 		return;
 	}
 
+
+
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
@@ -67,7 +69,7 @@ void CCanyon::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
-
+	
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
@@ -91,7 +93,7 @@ HRESULT CCanyon::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(1)))
+		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 

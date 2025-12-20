@@ -76,7 +76,7 @@ HRESULT CLoader::Loading()
 	case LEVEL::EDITOR:
 	{
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}
@@ -160,6 +160,12 @@ HRESULT CLoader::Loading_For_Editor()
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Banacle"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Cinematic_Gorilla */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Scarlet_Weapon */

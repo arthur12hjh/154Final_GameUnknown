@@ -10,7 +10,16 @@ namespace Tool_UI
 	const unsigned int			g_iHalfWinSizeX = 800;
 	const unsigned int			g_iHalfWinSizeY = 450;
 
-	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, END };
+	enum class LEVEL
+	{
+		STATIC,
+		LOADING,
+		LOGO,
+		GAMEPLAY,
+		SCARLET,
+		LEVEL_PROB,
+		END
+	};
 }
 
 using namespace Tool_UI;

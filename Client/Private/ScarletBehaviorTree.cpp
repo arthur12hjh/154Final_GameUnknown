@@ -118,11 +118,7 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
     if (nullptr == pCutSceneNode)
         return E_FAIL;
 
-    vector<pair<_float, _bool>> iChangePhase = {};
-    iChangePhase.emplace_back(make_pair(0.5f, false));
-    iChangePhase.emplace_back(make_pair(0.01f, false));
-
-    pCutSceneNode->Bind_BehaviorNode(CDeco_BossPhase::Create(this, iChangePhase));
+    pCutSceneNode->Bind_BehaviorNode(CDeco_BossPhase::Create(this));
     pCutSceneNode->Bind_BehaviorNode(CTask_CutScene::Create(this));
 
     pRootSelect->Bind_BehaviorNode(pCutSceneNode);

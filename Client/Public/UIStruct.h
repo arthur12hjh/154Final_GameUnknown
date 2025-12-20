@@ -1,25 +1,24 @@
 ﻿#pragma once
 #include "Engine_Defines.h"
 #include "UIObject.h"
-#include <vector>
 
 namespace Client
 {
-
 	enum class UI_SHADER_PASS {
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
 		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
 		SKILL_SLOT_GLOW, RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE, SKILL_WRAPPER_ON_FX,
 		LOADING_BLUR, SIMPLE_KEY, INTERACTION_FX, INTERACTION_FX_GLOW, STAMINA,
-		STAMINA_FX, LOCKON, OWNGOLD
+		STAMINA_FX, LOCKON, OWNGOLD, POPUP, COSTUME_BUTTONS,
+		ATLAS
 	};
 
 	typedef struct tagSkillInfoDesc
 	{
-		_int		iSkillIndex{ -1 };
-		_uint		iSkillID{ 0 };
-		_uint		iPrevSkillState{ 0 };
-		_uint		iSkillState{ 0 };
+		int					iSkillIndex{ -1 };
+		unsigned int		iSkillID{ 0 };
+		unsigned int		iPrevSkillState{ 0 };
+		unsigned int		iSkillState{ 0 };
 	}UI_SKILL_INFO_DESC;
 
 	typedef struct tagUIEventArg {
@@ -38,6 +37,14 @@ namespace Client
 		_wstring szActionTag{};
 		void* pData = nullptr;
 	}UI_EVENT_ARG_DESC;
+
+	typedef struct tagUIPopupDesc {
+		float fSizeX{ 0.f };
+		float fSizeY{ 0.f };
+		float fPosX{ 0.f };
+		float fPosY{ 0.f };
+		bool isDimed{ true };
+	}UI_POPUP_DESC;
 
 	typedef struct tagUIShader {
 		bool bUseUV{ false };
@@ -168,6 +175,8 @@ namespace Client
 		map<wstring, wstring> m_AnimTags{}; // 애니메이션 태그, 프리팹 이름
 		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // 이벤트 태그, 이벤트 구조체
 
+		bool m_isHasPopupDesc{ false };
+		UI_POPUP_DESC m_tUIPopupDesc{};
 	public:
 		// 텍스트
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
@@ -187,6 +196,16 @@ namespace Client
 
 		UI_TEXTURE_DESC* Get_UI_Texture_Desc() {
 			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
+		}
+
+		// 팝업
+		void Set_UI_Popup_Desc(const UI_POPUP_DESC& Desc) {
+			m_isHasPopupDesc = true;
+			m_tUIPopupDesc = Desc;
+		}
+
+		UI_POPUP_DESC* Get_UI_Popup_Desc() {
+			return m_isHasPopupDesc ? &m_tUIPopupDesc : nullptr;
 		}
 
 		// 이벤트
@@ -236,4 +255,24 @@ namespace Client
 		}
 
 	}UIBASE_DESC;
+
+	typedef struct tagVertexUIInstance
+	{
+		XMFLOAT4			vUVAtlasSize;
+		XMFLOAT4			vUVAtlasOffset;
+		XMFLOAT4			vAtlasIndex;
+	}VTX_INSTANCE_DESC;
+
+	typedef struct tagVertexPosTexInstanceParticleDesc
+	{
+		static constexpr unsigned int					iNumElements = { 5 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		};
+	}VTX_POSTEX_UI_INSTANCE;
 }

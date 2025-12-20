@@ -21,13 +21,20 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-    {
+
+    _float fDirX{}, fDirY{};
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+        fDirY += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+        fDirY -= 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        fDirX += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+        fDirX -= 1.f;
+
+    //walking false Ã³¸®
+    if (!(0.f == fDirX && 0.f == fDirY))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
-    }
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
@@ -48,7 +55,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio *  4.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 6.f), 0.f), nullptr);
 
     return m_tNextState;
 }

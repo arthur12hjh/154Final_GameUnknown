@@ -238,6 +238,14 @@ HRESULT CPlayer::Render_Shadow()
 	return S_OK;
 }
 
+HRESULT CPlayer::Render_MotionBlur()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_MotionBlur();
+
+	return S_OK;
+}
+
 HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
@@ -290,6 +298,14 @@ void CPlayer::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 	default :
 		return;
 	}
+}
+
+void CPlayer::Attack_Interaction(void* pArg)
+{
+	ATK_INTERACTION_DESC* pATK_Interaction_Desc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+
+	// 일단 데이터는 넘겨놨습니다.
+	// 내일 노티 작업 할 예정 금방 넣어드릴듯
 }
 
 void CPlayer::SetSkillDataID(_uint iSkillID)

@@ -7,7 +7,7 @@ NS_BEGIN(Client)
 class CPlayer_BattleSprintState final : public CPlayerState
 {
 private:
-	CPlayer_BattleSprintState();
+	CPlayer_BattleSprintState(_bool isLanding = false, _bool isEvading = false);
 	virtual ~CPlayer_BattleSprintState() = default;
 
 public:
@@ -18,8 +18,17 @@ public:
 	virtual _float End() override;
 
 private:
-	_bool m_isSprintStart = { false };
-	_float m_fDegree = { 0.f };
+	_bool   m_isLanding = { false };
+	_bool   m_isEvading = { false };
+	_bool   m_isSprintStart = { false };
+	_float  m_fRadian = { 0.f };
+	_bool   m_isTurnLocked = { false };
+	_bool   m_isTurning = { false };
+	_bool   m_isAlreadyTurned = { false };
+	_bool   m_isMovable = { true };
+
+	_uint  m_iNoInputFrameCount = { 0 };
+	_float4 m_vLastMoveLook = {};
 
 public:
 	static	CPlayer_BattleSprintState* Create(void* pArg);

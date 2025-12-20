@@ -19,8 +19,10 @@ public:
 
 private:
 	_bool m_isSprintStart = { false };
+	_bool m_isRunning = { false };
 	_float m_fDegree = { 0.f };
 	PLAYER_DIRECTION m_eDirection = { PLAYER_DIRECTION::END };
+
 public:
 	static	CPlayer_LockonSprintState* Create(void* pArg);
 	virtual	void			   Free() override;

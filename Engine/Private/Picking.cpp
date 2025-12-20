@@ -48,11 +48,11 @@ void CPicking::Update()
 	GetCursorPos(&m_ptMouse);
 	ScreenToClient(m_hWnd, &m_ptMouse);
 
-	m_pGameInstance->Copy_RenderTarget(TEXT("Target_Depth"), m_pTexture2D);
-	D3D11_MAPPED_SUBRESOURCE		SubResource{};
-	m_pContext->Map(m_pTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
-	memcpy(m_pPixels, SubResource.pData, sizeof(_float4) * m_iNumPixels);
-	m_pContext->Unmap(m_pTexture2D, 0);	
+	//m_pGameInstance->Copy_RenderTarget(TEXT("Target_Depth"), m_pTexture2D);
+	//D3D11_MAPPED_SUBRESOURCE		SubResource{};
+	//m_pContext->Map(m_pTexture2D, 0, D3D11_MAP_READ_WRITE, 0, &SubResource);
+	//memcpy(m_pPixels, SubResource.pData, sizeof(_float4) * m_iNumPixels);
+	//m_pContext->Unmap(m_pTexture2D, 0);	
 
 
 }

@@ -238,6 +238,8 @@
     <ClInclude Include="..\Public\Player_BattleLandingState.h" />
     <ClInclude Include="..\Public\Player_GigasLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
+    <ClInclude Include="..\Public\Player_LockonSprintEndState.h" />
+    <ClInclude Include="..\Public\Player_LockonSprintState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
     <ClInclude Include="..\Public\Player_ParryEndState.h" />
@@ -402,7 +404,10 @@
     <ClInclude Include="..\Public\UIBossStamina.h" />
     <ClInclude Include="..\Public\UIBossStaminaFX.h" />
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
+    <ClInclude Include="..\Public\UICostumePuzzleAnswer.h" />
+    <ClInclude Include="..\Public\UICostumePuzzleButtons.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
+    <ClInclude Include="..\Public\UIInstanceBuffer.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -412,6 +417,7 @@
     <ClInclude Include="..\Public\UIMonsterShield.h" />
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
+    <ClInclude Include="..\Public\UIPopup.h" />
     <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UISimpleKey.h" />
     <ClInclude Include="..\Public\UISkillWrapperLineFX.h" />
@@ -525,6 +531,8 @@
     <ClCompile Include="..\Private\Player_BattleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
+    <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp" />
+    <ClCompile Include="..\Private\Player_LockonSprintState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_ParryEndState.cpp" />
@@ -703,7 +711,10 @@
     <ClCompile Include="..\Private\UIBossShield.cpp" />
     <ClCompile Include="..\Private\UIBossStamina.cpp" />
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
+    <ClCompile Include="..\Private\UICostumePuzzleAnswer.cpp" />
+    <ClCompile Include="..\Private\UICostumePuzzleButtons.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
+    <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
@@ -713,6 +724,7 @@
     <ClCompile Include="..\Private\UIMonsterShield.cpp" />
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
+    <ClCompile Include="..\Private\UIPopup.cpp" />
     <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperLineFX.cpp" />
