@@ -47,6 +47,7 @@ public:
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 	virtual void							RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 	virtual void							PlayDeadEffect();
+	virtual void							Attack_Interaction(void* pArg = nullptr);
 
 	_uint									GetMonsterID();
 	CGameObject*							GetTarget();
@@ -63,6 +64,7 @@ public:
 	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(_bool bIsTheshold);
+	void									EnablePhysxController(_bool bEnable);
 
 	_bool									bIsHitReaction();
 	_bool									bIsThesholdAction() { return m_bIsTheshold; }
@@ -120,6 +122,7 @@ private :
 	void									CreateHitBox(const AnimNotify* pNotify);
 	void									SpawnObject(const AnimNotify* pNotify);
 	void									ShootProjectile(const AnimNotify* pNotify);
+	void									Attack_Interaction(const AnimNotify* pNotify);
 #pragma endregion
 
 #pragma region Damage Logic

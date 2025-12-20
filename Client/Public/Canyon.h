@@ -34,7 +34,7 @@ private :
 	CModel* m_pModelCom = { nullptr };
 
 	_bool m_bIsOccluder = true;
-
+	_bool m_bRender = false;
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Ready_Col(const _tchar* pComponentTag);
