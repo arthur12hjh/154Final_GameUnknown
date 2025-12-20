@@ -48,7 +48,7 @@ PLAYER_TRANSITION_DESC CPlayer_IdleWalkEndState::Update(_float fTimeDelta)
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 20.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 12.f), 0.f), nullptr);
 
     if(fAnimationRatio >= 0.2f && fAnimationRatio <= 0.45f)
         m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * fAnimationRatio * 0.15f, nullptr);
