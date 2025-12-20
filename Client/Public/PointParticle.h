@@ -4,8 +4,9 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Point_Instance;
+class CVIBuffer_Instance_Model;
 class CComputeShader;
+class CModel;
 class CTexture;
 class CShader;
 NS_END
@@ -20,6 +21,7 @@ public:
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
+		_float4			vRotation;
 		_float4			fTimeDelta;
 		_float2			fCircle;
 		_float2			fTurnPower;
@@ -28,6 +30,7 @@ public:
 	};
 	typedef struct PointParticleData
 	{
+		string				szModel = {};
 		string				szMaskTexture;
 		string				szDiffuseTexture;
 		string				szDissolveTexture;
@@ -42,6 +45,7 @@ public:
 		_float3				fPivot;
 		_float3				fRange;
 		_float3				fRotation;
+		_float3				fMeshRotation;
 
 		_float2				fSize;
 		_float2				fLifeTime;
@@ -68,7 +72,6 @@ public:
 		_int				iBegin;
 		_int				iNumInstance;
 		_int				iSelectRender;
-		_bool				bisBillboard;
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
@@ -93,7 +96,7 @@ public:
 	void    End();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
-	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
+	CVIBuffer_Instance_Model* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
@@ -102,10 +105,12 @@ private:
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 	POINT_PARTICLE_DATA	m_tData;
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_int			m_iRenderCount = {};
 	_float			m_fTime = {};
 	_float			m_fLength = {};
 	_float4x4		m_CombinedWorldMatrix = {};

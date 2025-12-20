@@ -60,7 +60,7 @@ _bool CPlayer::Use_BetaSkill(_uint iSkillID)
 
 			if (iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			{
-				//m_PlayerDesc.iCurrentBetaEnergy -= iGauge;
+				m_PlayerDesc.iCurrentBetaEnergy -= iGauge;
 				m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::USE;
 
 				return true;
@@ -151,6 +151,25 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pColliderCom->SetOwner(this);
 
 	SetVisibility(VISIBILITY::VISIBLE);
+
+
+
+	const _float4x4* pWorldMatrix = GetTransform()->Get_WorldMatrixPtr();
+
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	EffectDesc.fRotationPerSec = 1.f;
+	EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = pWorldMatrix;
+		EffectDesc.pWorldMatrix = nullptr;
+
+	EffectDesc.vPos = XMVectorSet(0,0,0, 1);
+	EffectDesc.fRot = _float3(0,0,0);
+	EffectDesc.fSize = 0.8f;
+
+	static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
 
 	return S_OK;
 }
@@ -287,11 +306,11 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
 
-	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
-	//{
+	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
-	//}
+	}
 }
 
 HRESULT CPlayer::Ready_Components()

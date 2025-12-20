@@ -47,6 +47,13 @@ struct PS_OUT_COMBINED
 {
     float4 vBackBuffer : SV_TARGET0;
     float4 vBloomScene : SV_TARGET1;
+    float  fShadow     : SV_TARGET2;
+};
+
+struct PS_OUT_COMBINED_SHADOW
+{
+    float4 vBackBuffer : SV_TARGET0;
+    float4 vBloomScene : SV_TARGET1;
 };
 
 struct PS_OUT_LIGHT
@@ -58,6 +65,11 @@ struct PS_OUT_LIGHT
 struct PS_OUT_BLUR
 {
     float4 vBlur : SV_TARGET0;
+};
+
+struct PS_OUT_SHADOW_BLUR_X
+{
+    float vBackBuffer : SV_TARGET0;
 };
 
 struct PS_OUT_FOG

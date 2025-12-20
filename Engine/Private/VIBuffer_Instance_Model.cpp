@@ -18,17 +18,18 @@ CVIBuffer_Instance_Model::CVIBuffer_Instance_Model(const CVIBuffer_Instance_Mode
 HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pInstanceDesc)
 {
 	const MODEL_INSTANCE_DESC* pDesc = static_cast<const MODEL_INSTANCE_DESC*>(pInstanceDesc);
-	m_pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM,
-							pDesc->pModelFilePath,
-							pDesc->PreModelMatrix);
+	//m_pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM,
+	//						pDesc->pModelFilePath,
+	//						pDesc->PreModelMatrix);
 
-	if (nullptr == m_pModel)
-		return E_FAIL;
+	//if (nullptr == m_pModel)
+	//	return E_FAIL;
 
 	m_iNumVertexBuffers = 2;
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_iNumInstance = pDesc->iNumInstance;
+	m_bIsLoop = pDesc->isLoop;
 	m_iInstanceStride = sizeof(VTX_INSTANCE_MODEL_PARTICLE);
 	m_iNumIndexPerInstance = 6;
 

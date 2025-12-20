@@ -153,24 +153,4 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();
     }
-    // idx 3
-    pass Smok_X
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SMOK_X();
-    }
-    // idx 4
-    pass Smok_Final
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SMOK_FINAL();
-    }
 }

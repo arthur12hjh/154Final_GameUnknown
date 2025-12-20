@@ -84,6 +84,7 @@ VS_OUT VS_MAIN(VS_IN In)
                         + (pow(t, 3) - pow(t, 2)) * tan(radians(fOutTime.z)) * (fOutTime.x - fInTime.x) * 100;
             vPosition.xyz *= fSize;
         }
+
         Out.vPosition = mul(vector(vPosition, 1.f), matWVP);
         Out.vTexcoord = In.vTexcoord;
         Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
@@ -287,12 +288,12 @@ PS_NONLIGHT_OUT PS_HIT_BLOOM(PS_IN In)
 }
 
 technique11 DefaultTechnique
-{
+{ 
     pass Normal
     {
         SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();

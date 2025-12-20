@@ -21,6 +21,7 @@ public:
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
+		_float4			vRotation;
 		_float4			fTimeDelta;
 		_float2			fCircle;
 		_float2			fTurnPower;

@@ -57,7 +57,6 @@ private:
     CParticle::PARTICLE_DATA m_tParticleData;
     CSpriteParticle::SPRITE_PARTICLE_DATA m_tSpriteParticleData;
     CMeshEffect::MESH_DATA m_tMeshData;
-    CSpriteEffect::SPRITE_DATA m_tSpriteData;
     CTrailData::TRAIL_DATA    m_tTrailData;
     CTransform* m_pTransform = nullptr;
     vector<string> m_ImageFiles[4];
@@ -70,7 +69,6 @@ private:
     vector<CParticle*> m_pParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
     vector<CMeshEffect*> m_pMeshs;
-    vector<CSpriteEffect*> m_pSprites;
     vector<CTrailData*> m_pTrailDatas;
     CTrailEffect* m_pTrailEffect;
     _char m_SaveFile[128] = "SaveEffect";
@@ -85,7 +83,6 @@ private:
     _uint       m_iSelectEffect = { 0 };
     _uint       m_iSelectTrailEffect = { 0 };
     _int       m_iShaderBegine = { 0 };
-    _int       m_iSelectSprite = { 0 };
     _bool       m_bisPause = true;
     _bool       m_bisReplay = false;
     string      m_szCS;
@@ -96,8 +93,6 @@ private:
     void    Delete_SpriteParticle();
     void    Add_MeshEffect();
     void    Delete_MeshEffect();
-    void    Add_SpriteEffect();
-    void    Delete_SpriteEffect();
     void    Add_TrailEffectData();
     void    Delete_TrailEffectData();
 public:

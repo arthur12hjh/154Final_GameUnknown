@@ -1211,6 +1211,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
+	/* For.Prototype_Component_Shader_VtxSpriteParticle */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshParticle");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_PARTICLE_DESC::Elements, VTX_NONEANIM_INSTANCE_PARTICLE_DESC::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
+
 	/* For.Prototype_Component_Shader_VtxTrail */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
@@ -1375,6 +1381,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_Effect_Rock_Hit */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Rock_Hit");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/RockHit.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sakura");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sakura.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	
@@ -2335,18 +2346,18 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 100;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(50.f, 5.f, 50.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.bin";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Instance_Model_Dororong");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	//CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
+	//ModelDesc.iNumInstance = 100;
+	//ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	//ModelDesc.vRange = _float3(50.f, 5.f, 50.f);
+	//ModelDesc.pModelFilePath = "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.bin";
+	//ModelDesc.PreModelMatrix = PreTransformMatrix;
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Instance_Model_Dororong");
+	//pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 
 	

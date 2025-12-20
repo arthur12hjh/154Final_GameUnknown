@@ -14,7 +14,7 @@ CPointParticle::CPointParticle(const CPointParticle& Prototype)
 	m_eRender{Prototype.m_eRender}
 {
 	m_eTeam = Prototype.m_eTeam;
-	m_pVIBufferCom = dynamic_cast<CVIBuffer_Point_Instance*>(Prototype.m_pVIBufferCom->Clone(nullptr));
+	m_pVIBufferCom = dynamic_cast<CVIBuffer_Instance_Model*>(Prototype.m_pVIBufferCom->Clone(nullptr));
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
 
@@ -25,51 +25,35 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 8:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
-	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pPointParticleData->iNumInstance;
 	Desc.vCenter = pPointParticleData->fCenter;
-	Desc.vPivot = pPointParticleData->fPivot;
 	Desc.vRange = pPointParticleData->fRange;
 	Desc.vSize = pPointParticleData->fSize;
 	Desc.vLifeTime = pPointParticleData->fLifeTime;
 	Desc.vSpeed = pPointParticleData->fSpeed;
 	Desc.isLoop = pPointParticleData->bisLoop;
-	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Desc);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
@@ -85,6 +69,8 @@ HRESULT CPointParticle::Initialize(void* pArg)
 	//m_pVIBufferCom->Initialize(nullptr);
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	Safe_AddRef(m_pModelCom);
+	m_pVIBufferCom->Set_Model(m_pModelCom);
 	
 
 	ID3D11Buffer* pBuffer = nullptr;
@@ -166,6 +152,7 @@ void CPointParticle::Late_Update(_float fTimeDelta)
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
 }
 
 HRESULT CPointParticle::Render()
@@ -173,12 +160,35 @@ HRESULT CPointParticle::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(m_tData.iBegin);
+	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
+	if (0 == m_tData.iBegin + m_iRenderCount) {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+				return E_FAIL;
 
-	m_pVIBufferCom->Bind_Resources();
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+				return E_FAIL;
 
-	m_pVIBufferCom->Render();
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+				return E_FAIL;
 
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+	else {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+
+	m_iRenderCount++;
 	return S_OK;
 }
 
@@ -225,9 +235,15 @@ HRESULT CPointParticle::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
 		TEXT("Com_DissolveTexture"), reinterpret_cast<CComponent**>(&m_pTexture[2]))))
 		return E_FAIL;
+	memset(sztPrototype, 0, sizeof(sztPrototype));
+
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szModel.c_str(), strlen(m_tData.szModel.c_str()), sztPrototype, 256);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), sztPrototype,
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxPointParticle"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMeshParticle"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 	return S_OK;
@@ -235,6 +251,8 @@ HRESULT CPointParticle::Ready_Components()
 
 HRESULT CPointParticle::Bind_ShaderResources()
 {
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+
 	if (m_tData.bisSpectrum) {
 		_float4x4 world = m_CombinedWorldMatrix;
 		world._41 = 0;
@@ -252,45 +270,47 @@ HRESULT CPointParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
 		return E_FAIL;
 
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
-		return E_FAIL;
-
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
 		return E_FAIL;
+
+	if (m_tData.iBegin != 0) {
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+			return E_FAIL;
+
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSpeed", &m_tData.fMaskUVSpeed, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUVSize", &m_tData.fMaskUVSize, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUV", &m_tData.fDiffuseUV, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSpeed", &m_tData.fDiffuseUVSpeed, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDiffuseUVSize", &m_tData.fDiffuseUVSize, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUV", &m_tData.fDissolveUV, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &m_tData.fDissolveUVSpeed, sizeof(_float2))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &m_tData.fDissolveUVSize, sizeof(_float2))))
+			return E_FAIL;
+
+		if (FAILED(m_pTexture[0]->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pTexture[1]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pTexture[2]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", 0)))
+			return E_FAIL;
+	}
+
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
@@ -318,6 +338,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f };
+	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), 0);
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
@@ -461,6 +482,7 @@ void CPointParticle::Free()
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pSizeDiagramSRV);
+	Safe_Release(m_pModelCom);
 
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);

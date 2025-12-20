@@ -44,6 +44,7 @@ public:
 	_uint								GetModelNumMeshes();
 	_uint								Get_NumInstance() const { return m_iNumInstance; }
 	VTX_INSTANCE_MODEL_PARTICLE*					Get_InstanceVertices() const { return m_pInstanceVertices; }
+	void								Set_Model(CModel* pModel) { m_pModel = pModel; }
 
 private:
 	VTX_INSTANCE_MODEL_PARTICLE*					m_pInstanceVertices = { nullptr };
