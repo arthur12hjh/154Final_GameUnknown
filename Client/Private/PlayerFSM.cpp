@@ -26,6 +26,8 @@
 #include "Player_IdleLandingState.h"
 #include "Player_LockonEvadeState.h"
 #include "Player_BattleEvadeState.h"
+#include "Player_LockonSprintState.h"
+#include "Player_LockonSprintEndState.h"
 #include "Player_HitState.h"
 //¹«±â ³Ö/»Ì
 #include "Player_DrawHairpin.h"
@@ -160,7 +162,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		{
 		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintState::Create(tDesc.pArg);
-		case PLAYER_MODE::LOCKON: return nullptr;
+		case PLAYER_MODE::LOCKON: return CPlayer_LockonSprintState::Create(tDesc.pArg);
 		}
 		break;
 
@@ -169,7 +171,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		{
 		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintEndState::Create(tDesc.pArg);
-		case PLAYER_MODE::LOCKON: return nullptr ;
+		case PLAYER_MODE::LOCKON: return CPlayer_LockonSprintEndState::Create(tDesc.pArg);
 		}
 		break;
 	
