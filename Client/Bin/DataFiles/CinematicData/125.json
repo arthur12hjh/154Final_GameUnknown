@@ -1,0 +1,25 @@
+[
+    {
+        "CinematicNodeTrackList": [
+            {
+                "eState": 7,
+                "fTrackPosition": 0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
+                "eState": 1,
+                "fTrackPosition": 0,
+                "iActiveIndex": 1,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },{
+                "eState": 1,
+                "fTrackPosition": 0,
+                "iActiveIndex": 1,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
+            }
+        ],
+        "iCinematicID": 125,
+        "szCinematicName": "GorillaFinishTest02"
+    }
+]

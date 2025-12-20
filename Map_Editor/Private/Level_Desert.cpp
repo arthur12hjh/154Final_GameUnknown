@@ -73,39 +73,25 @@ HRESULT CLevel_Desert::Ready_Lights()
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	/*LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
+	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
+		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-	/*
-	LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(30.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	STATIC_SHADOW_DESC		StaticShadowDesc{};
+	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fNear = 0.1f;
+	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-
-	CASCADE_SHADOW_DESC		ShadowDesc{};
-	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(ShadowDesc)))
+	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
 
 	return S_OK;

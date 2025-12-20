@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 
 #include "SpriteEffect.h"
@@ -688,7 +688,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<string> szPartModelFilePathList;
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test01.binx",
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test02.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
@@ -868,6 +868,22 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Scarlet_Dummy_A */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Dummy_A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Dummy/Scarlet_Dummy_A.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Scarlet_Dummy_B */
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Dummy_B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Dummy/Scarlet_Dummy_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f);
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
@@ -931,7 +947,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	/* For.Prototype_Component_Model_Minion11 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Minion11");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Minion/11/Minion11.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Minion/11/Minion11.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -947,7 +963,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	/* For.Prototype_Component_Model_BanacleA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

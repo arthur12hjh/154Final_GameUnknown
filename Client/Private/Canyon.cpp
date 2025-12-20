@@ -63,7 +63,11 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 void CCanyon::Update(_float fTimeDelta)
 {
 
-
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+    {
+        if (m_bRender == true) m_bRender = false;
+        else m_bRender = true;
+    }
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)
@@ -73,8 +77,6 @@ void CCanyon::Late_Update(_float fTimeDelta)
 		return;
 	}
 
-    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    //m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
    
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -82,6 +84,8 @@ void CCanyon::Late_Update(_float fTimeDelta)
     {
         m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
     }
+
+   
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -92,6 +96,12 @@ HRESULT CCanyon::Render()
 {
    /* if (m_eVisibility == VISIBILITY::HIDDEN)
         return S_OK;*/
+   
+    if(m_bRender == true && m_iObjectID == 39)
+    {
+        COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+        pObbCollider->Render_Face(_float4(0.f, 0.f, 1.f, 1.f));
+    }
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -338,7 +348,7 @@ void CCanyon::SetCullingCollider(_uint iObjectID)
         break;
     case 39:
         // Size: {60.0, 40.8, 48.0}, Center Y: 40.8 * 0.75 = 30.6
-        pCullingCollider->SetCollision({ 0.f, 30.6f, 0.f }, {}, { 60.f, 40.8f, 48.f });
+        pCullingCollider->SetCollision({ 0.f, 30.6f, 0.f }, {}, { 57.f, 40.8f, 40.f });
         break;
     case 40:
         // Size: {18.0, 9.6, 12.0}, Center Y: 9.6 * 0.75 = 7.2

@@ -218,6 +218,12 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	case CNotify::SHOOT_PROJECTILE:
 		ShootProjectile(pNotify);
 		break;
+	case CNotify::ACTIVE_PHYSX_COLLISION:
+		EnablePhysxController(pNotify->iNumData01);
+		break;
+	case CNotify::ATTACK_INTERACTION:
+		Attack_Interaction(pNotify);
+		break;
 	}
 
 	return S_OK;
@@ -274,6 +280,14 @@ void CNayitba::PlayDeadEffect()
 
 	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
 	pNaytibaPartBody->Play_DeadEffect();
+}
+
+void CNayitba::Attack_Interaction(void* pArg)
+{
+	ATK_INTERACTION_DESC* pATK_Interaction_Desc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+
+	// 이제 플레이어 반응에 맞춰서 나도 반응 할수있다.
+
 }
 
 _uint CNayitba::GetMonsterID()
@@ -359,6 +373,11 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 void CNayitba::SetThesholdAction(_bool bIsTheshold)
 {
 	m_bIsTheshold = bIsTheshold;
+}
+
+void CNayitba::EnablePhysxController(_bool bEnable)
+{
+	m_pCCT->Set_CCTCollision(bEnable);
 }
 
 _bool CNayitba::bIsHitReaction()
@@ -823,13 +842,14 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	CBullet::BULLET_DESC pBulletDesc = {};
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
-
+	pBulletDesc.vScale = pNotify->vNotifyScale;
+	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
 		pBulletDesc.vScale = {1.f, 1.f, 1.f};
 	else
 		pBulletDesc.vScale = pNotify->vNotifyScale;
 
-	if ("" == pNotify->szNotifyArg03)
+	if ("" != pNotify->szNotifyArg03)
 		pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	else
 		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
@@ -856,6 +876,22 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 		iter->Shoot_Projectile(vTargetPos, 10000.f);
 
 	m_pBulletList.clear();
+}
+
+void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
+{
+	auto pTarget = m_pTargetCom->GetTarget();
+	if (nullptr == pTarget || nullptr == pNotify)
+		return;
+
+	// 여기서 타겟에게 Attack Interaction을 넘겨준다.
+	ATK_INTERACTION_DESC  ATK_InteractionDesc = {};
+	ATK_InteractionDesc.eInteraction_Type = ATK_INTERACTION_TYPE(pNotify->iNumData01);
+	ATK_InteractionDesc.iFrameCnt = pNotify->iNumData02;
+
+	// 필요하면 작업하면 됩니다.
+	ATK_InteractionDesc.pArg = nullptr;
+	static_cast<CCharacter*>(pTarget)->Attack_Interaction(&ATK_InteractionDesc);
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

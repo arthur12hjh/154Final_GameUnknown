@@ -2,6 +2,12 @@
     {
         "CinematicNodeTrackList": [
             {
+                "eState": 7,
+                "fTrackPosition": 0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
                 "eState": 1,
                 "fTrackPosition": 0,
                 "iActiveIndex": 0,
@@ -44,8 +50,20 @@
                 "szObjectTag": "Layer_Player"
             },
 	{
+                "eState": 6,
+                "fTrackPosition": 12.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
+                "eState": 7,
+                "fTrackPosition": 12.3,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
                 "eState": 2,
-                "fTrackPosition": 15.0,
+                "fTrackPosition": 12.3,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Monster"
             }

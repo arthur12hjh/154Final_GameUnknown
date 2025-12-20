@@ -446,7 +446,17 @@ namespace Client
 
 
 	// Cinematic 관련 데이터들
-	enum class CINEMATICNODE_STATE { ACTIVE_CINEOBJ, PLAY_CINEOBJ, ACTIVE_CHARACTER, ACTIVE_CAMERA, DEACTIVE_CHARACTER, DEACTIVE_CAMERA, PLAY_SOUND, END };
+	enum class CINEMATICNODE_STATE { 
+		ACTIVE_CINEOBJ,			// 0 
+		PLAY_CINEOBJ,			// 1
+		ACTIVE_CHARACTER,		// 2
+		ACTIVE_CAMERA,			// 3
+		DEACTIVE_CHARACTER,		// 4
+		DEACTIVE_CAMERA,		// 5
+		FADE_IN,				// 6
+		FADE_OUT,				// 7
+		PLAY_SOUND,				// 8
+		END };
 
 	typedef struct Cinematic_Node_Desc
 	{
@@ -463,8 +473,22 @@ namespace Client
 		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
 	}CINEMATIC_DESC;
 
-	enum class CINEMATICOBJECT_TYPE { CINEMATICOBJECT, ACTIONCAMERA, END };
+	// 특정 상호작용에 대한 타입
+	enum class ATK_INTERACTION_TYPE { PERFECT_DOGE, BLINK, REPULSE, END};
+	typedef struct Attack_Interaction_Desc
+	{
+		// 공격에대한 상호작용을 하기위해 넘어 오는 구조체
+		ATK_INTERACTION_TYPE	eInteraction_Type;
 
+		// 판정 시간( 프레임 단위로 판정한다. )
+		_uint					iFrameCnt;
+
+		// 필요한경우 pArg 넘겨서 받아오기
+		// 근데 이거 노티라서 노티넘겨줄거같긴함
+		void*					pArg;
+	}ATK_INTERACTION_DESC;
+
+	enum class CINEMATICOBJECT_TYPE { CINEMATICOBJECT, ACTIONCAMERA, END };
 	typedef struct Level_CinematicObject_Desc
 	{
 		_char szObjectTag[MAX_PATH];

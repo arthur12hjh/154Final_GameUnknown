@@ -45,7 +45,7 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,S
 49,M_Scarlet_MoveSideL,None,None,0,0,"0,0,0",0,1,4,136
 50,M_Scarlet_MoveSideR,None,None,0,0,"0,0,0",0,1,4,136
 51,M_Scarlet_PhaseChange2_Attack,None,None,20,4,"1, 1, 2",0,1,4,136
-52,M_Scarlet_Stinger,None,None,20,4,"1, 1, 2",0,1,4,136
+52,M_Scarlet_Stinger,None,None,20,4,"1, 1, 2",0,1,0,136
 511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",2,4,0,11
 512,M_Beholder_Swing,None,None,12,5,"1,1,2",1,4,0,1
 513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",1,4,0,8

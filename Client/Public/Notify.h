@@ -13,8 +13,8 @@ class CNotify final : public CComponent
 {
 public:
     enum NOTIFY_TYPE { PLAY_SFX, ACTIVE_SFX,
-                       PLAY_SOUND, ACTIVE_COLLISION,
-                       SET_TRANSFORM, ACTIVE_PARTOBJECT_COLLISION,
+                       PLAY_SOUND, ACTIVE_COLLISION, ACTIVE_PHYSX_COLLISION,
+                       ATTACK_INTERACTION, SET_TRANSFORM, ACTIVE_PARTOBJECT_COLLISION,
                        HIT_REACTION, SPAWN_OBJECT, SET_RATIO,
                        SHOOT_PROJECTILE, PLAY_CINEMATIC, END };
 
