@@ -72,6 +72,10 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
 		m_tNextStateDesc.isEvade = true;
 		m_tNextState.pArg = &m_tNextStateDesc;
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+			m_tNextState.eNextState = PLAYER_STATE::SPRINT;
+
 	}
 	else if (fAnimationRatio > 0.45f && m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 		m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;

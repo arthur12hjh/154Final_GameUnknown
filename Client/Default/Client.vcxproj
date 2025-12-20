@@ -238,6 +238,8 @@
     <ClInclude Include="..\Public\Player_BattleLandingState.h" />
     <ClInclude Include="..\Public\Player_GigasLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
+    <ClInclude Include="..\Public\Player_LockonSprintEndState.h" />
+    <ClInclude Include="..\Public\Player_LockonSprintState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
     <ClInclude Include="..\Public\Player_LockonEvadeState.h" />
     <ClInclude Include="..\Public\Player_ParryEndState.h" />
@@ -529,6 +531,8 @@
     <ClCompile Include="..\Private\Player_BattleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
+    <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp" />
+    <ClCompile Include="..\Private\Player_LockonSprintState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
     <ClCompile Include="..\Private\Player_LockonEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_ParryEndState.cpp" />

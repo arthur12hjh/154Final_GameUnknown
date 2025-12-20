@@ -1762,6 +1762,12 @@
     <ClInclude Include="..\Public\PlayerFSM.h">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2613,6 +2619,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerFSM.cpp">
       <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

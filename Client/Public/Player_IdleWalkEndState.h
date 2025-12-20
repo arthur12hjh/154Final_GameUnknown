@@ -22,6 +22,8 @@ private:
 	_bool	m_isLanding = { false };
 	_bool	m_isEvading = { false };
 	_bool	m_isRunStart = { false };
+	_float  m_fNoInputTimer = { 0.f };
+
 public:
 	static	CPlayer_IdleWalkEndState* Create(void* pArg);
 	virtual	void			   Free() override;

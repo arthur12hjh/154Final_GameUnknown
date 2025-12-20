@@ -18,7 +18,7 @@ public:
 	virtual _float End() override;
 
 private:
-	_float	m_fDegree = { 0.f };
+	_float	m_fRadian = { 0.f };
 	_bool	m_isLanding = { false };
 	_bool	m_isEvading = { false };
 	_bool	m_isRunStart = { false };

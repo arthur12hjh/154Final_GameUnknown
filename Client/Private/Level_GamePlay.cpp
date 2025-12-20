@@ -154,7 +154,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 		return E_FAIL;
 
 	STATIC_SHADOW_DESC		StaticShadowDesc{};
-	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fFar = 2000.f;
 	StaticShadowDesc.fNear = 0.1f;
 	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
