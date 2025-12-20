@@ -15,6 +15,7 @@ texture2D g_DepthTexture;
 float g_fFocusDistance;
 float g_fMaxRange;
 float g_fIntensity;
+float g_fTimeIntensity;
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -57,12 +58,10 @@ PS_OUT_BACKBUFFER PS_MAIN_DOF(PS_IN In)
     
     float2 vTexcoord;
     float4 vBlurColor = 0.f;
+    float fNoneBlurRange = 5.0f;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    if (vDepthDesc.r == 0 && vDepthDesc.g == 1 && vDepthDesc.b == 0 && vDepthDesc.a == 0)
-        return Out;
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
     
     for (int i = -6; i < 7; ++i)
     {
@@ -78,9 +77,9 @@ PS_OUT_BACKBUFFER PS_MAIN_DOF(PS_IN In)
     float fViewZ = vDepthDesc.y * g_fFar;
     vector vPosition;
 
-    float fBlurAmount = saturate(abs(fViewZ - g_fFocusDistance) / g_fMaxRange);
+    float fBlurAmount = saturate((abs(fViewZ - g_fFocusDistance) - fNoneBlurRange) / g_fMaxRange);
     
-    Out.vBackBuffer = lerp(Out.vBackBuffer, vBlurColor, fBlurAmount * g_fIntensity);
+    Out.vBackBuffer = lerp(Out.vBackBuffer, vBlurColor, fBlurAmount * g_fIntensity * g_fTimeIntensity);
     
     return Out;
 }

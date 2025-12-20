@@ -11,7 +11,11 @@ private:
 	virtual ~CDepthofField() = default;
 
 public:
-	void Set_Active();
+	//FocusDistance -> 가장 먼저
+	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
+	void Set_DoFInfo(_float fFocusDistance);
+	void Set_Active(_bool bFlag, _float fLerpTime);
+	void Update(_float fTimeDelta);
 	virtual void* Get_Desc() override;
 public:
 	virtual HRESULT Initialize() override;
@@ -31,6 +35,8 @@ private:
 	_float m_fFocusDistance = { 20.f };
 	_float m_fMaxRange = { 20.f };
 	_float m_fIntensity = { 1.f };
+	_float m_fTimeAcc = { 0.f };
+	_float m_fLerpTime = { 0.f };
 
 public:
 	static CDepthofField* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
