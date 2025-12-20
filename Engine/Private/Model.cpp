@@ -1028,6 +1028,33 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_iCurrentAnimIndex >= m_iNumAnimations)
         return false;
 
+    const _uint iNumBones = (_uint)m_Bones.size();
+
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
+            {
+                _int iBoneIndex = BoneCountIndex.first;
+
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
+            }
+
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
+
     // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
@@ -1070,33 +1097,6 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     }
 
     Bind_ComputeShader(fScaledDeltaTime);
-
-    const _uint iNumBones = (_uint)m_Bones.size();
-
-    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
-        {
-            COMPUTE_BONEMATRIX_OUT* pOut = 
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
-
-            for (auto& BoneCountIndex : m_PartialBoneCountMap)
-            {
-                _int iBoneIndex = BoneCountIndex.first;
-
-                m_Bones[iBoneIndex]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
-
-                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
-            }
-
-            m_pContext->Unmap(m_pOutReadBack, 0);
-        }
-    }
 
 
     // 루트모션 적용
@@ -1759,19 +1759,19 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
         _uint iIndex = 0; // 상수버퍼(전역변수)
         m_pCombinedMatrixComputeShaderCom->Bind_ConstBuffer(1, &iIndex);
     }
-
-
+    
+    
     m_pCombinedMatrixComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pOutSource);
     {
         _uint iInputIndices[2] = { 0, 1}; // Local,LerpMatrix, 
         m_pCombinedMatrixComputeShaderCom->Bind_InputBuffer(2, iInputIndices);
     }
-
+    
     {
         _uint iInputIndices[2] = { 0, 1 };
         m_pCombinedMatrixComputeShaderCom->Bind_OutputBuffer(2, iInputIndices);
     }
-
+    
     m_pCombinedMatrixComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
 
     // 데이터 가져오는거
