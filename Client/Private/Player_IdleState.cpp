@@ -18,7 +18,7 @@ void CPlayer_IdleState::Start(void* pArg, _float fBlendRatio)
 
 PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
 {
-   // m_pPlayer->Play_Animation(fTimeDelta);
+    m_pPlayer->Play_Animation(fTimeDelta);
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
     {

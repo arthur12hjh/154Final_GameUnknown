@@ -114,10 +114,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				m_pSkillData.push(m_pGameManager->Find_SkillData(20));
+				SelectAttackData();
+				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
-				else
-					NormalAttackPattern();
+				else*/
+					//NormalAttackPattern();
 			}
 			else
 			{
