@@ -46,6 +46,10 @@ HRESULT CAttackHitBox::Initialize(void* pArg)
 	if (FAILED(Ready_Components(*pHit_BoxDesc)))
 		return E_FAIL;
 
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+	m_pColliderCom->UpdateColiision(worldMatrix);
 	return S_OK;
 }
 
@@ -69,6 +73,10 @@ HRESULT CAttackHitBox::Initialize(const HIT_BOX_DESC& pArg)
 
 	m_pColliderCom->SetColliderHitType(pArg.eHitBoxType);
 	m_pColliderCom->ADD_IgnoreObjectType(pArg.eHitBoxType);
+	
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+	m_pColliderCom->UpdateColiision(worldMatrix);
 
 #ifdef _DEBUG
 	m_bIsDelayDead = false;
@@ -86,10 +94,7 @@ void CAttackHitBox::Update(_float fTimeDelta)
 #ifdef _DEBUG
 	if (!m_bIsDelayDead)
 	{
-		_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-
-		m_pCullingCollider->UpdateColiision(worldMatrix);
-		m_pColliderCom->UpdateColiision(worldMatrix);
+		
 
 		m_vAliveTime.x += fTimeDelta;
 		if (m_vAliveTime.x > m_vAliveTime.y)

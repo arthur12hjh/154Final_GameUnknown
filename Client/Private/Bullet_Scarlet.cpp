@@ -30,20 +30,7 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-	switch (m_eBulletType)
-	{
-	case BULLET_TYPE::PROJECTILE:
-		Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
-		break;
-	case BULLET_TYPE::HITSCAN:
-	{
-		m_iHitScanFrameIndex.x++;
-		if (m_iHitScanFrameIndex.y <= m_iHitScanFrameIndex.x)
-			Set_Dead(true);
-	}
-	break;
-	}
-
+	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
 	/*CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
@@ -75,7 +62,7 @@ void CBullet_Scarlet::Update(_float fTimeDelta)
 	case BULLET_TYPE::HITSCAN:
 	{
 		m_iHitScanFrameIndex.x++;
-		if (m_iHitScanFrameIndex.y <= m_iHitScanFrameIndex.x)
+		if (50 <= m_iHitScanFrameIndex.x)
 			Set_Dead(true);
 	}
 	break;
@@ -128,6 +115,7 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 		break;
 	case BULLET_TYPE::HITSCAN:
 	{
+		vTargetPoint.m128_f32[1] += 2.f;
 		m_pTransformCom->Set_State(STATE::POSITION, vTargetPoint);
 	}
 		break;
