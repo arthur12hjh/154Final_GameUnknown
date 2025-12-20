@@ -114,12 +114,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				m_pSkillData.push(m_pGameManager->Find_SkillData(20));
-				SelectAttackData();
-				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				//m_pSkillData.push(m_pGameManager->Find_SkillData(20));
+				//SelectAttackData();
+				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
-				else*/
-					//NormalAttackPattern();
+				else
+					NormalAttackPattern();
 			}
 			else
 			{
@@ -882,6 +882,70 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 		}
 		break;
 		case 51: // PhaseChange2_Attack
+		{
+			// Length : 132
+			// Move Frame : 5 ~ 45
+			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.83f;
+
+				if (0.14f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
+				m_fLerpSpeed = 2.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 52: // Stinger
+		{
+			// Length : 132
+			// Move Frame : 5 ~ 45
+			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.83f;
+
+				if (0.14f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
+				m_fLerpSpeed = 2.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 53: // AreaCombo
+		{
+			// Length : 132
+			// Move Frame : 5 ~ 45
+			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.83f;
+
+				if (0.14f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
+				m_fLerpSpeed = 2.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 54: // AreaSlash
+		{
+			// Length : 132
+			// Move Frame : 5 ~ 45
+			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
+			{
+				m_fMoveAnimMaxRatio = 0.83f;
+
+				if (0.14f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
+				m_fLerpSpeed = 2.f;
+				m_bIsLookAtPoint = false;
+				bIsLerpMove = true;
+			}
+		}
+		break;
+		case 55: // AreaSlash2
 		{
 			// Length : 132
 			// Move Frame : 5 ~ 45
