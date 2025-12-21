@@ -539,6 +539,11 @@ HRESULT CGameInstance::Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc)
 	return m_pRenderer->Ready_StaticShadow_Light(Desc);
 }
 
+void* CGameInstance::Get_Cascade_Desc()
+{
+	return m_pRenderer->Get_Cascade_Desc();
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
@@ -595,10 +600,7 @@ void* CGameInstance::Get_HDR_Desc()
 	return m_pRenderer->Get_HDR_Desc();
 }
 
-void* CGameInstance::Get_Cascade_Desc()
-{
-	return m_pRenderer->Get_Cascade_Desc();
-}
+
 
 void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
 {

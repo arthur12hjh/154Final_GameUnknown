@@ -78,6 +78,8 @@ public:
 	void										Set_Occlusion_CoolDown(_int iCoolDown) { m_iOcclusionCooldown = iCoolDown; }
 	_int										Get_Occlusion_CoolDown() const { return m_iOcclusionCooldown; }
 
+	_bool										Get_Occluder_Disabled() { return m_bIsOccluderDisabled; }
+
 protected:
 	int											m_iObjectID;
 	OBJECT_TEAM									m_eTeam = { OBJECT_TEAM::END };
@@ -100,6 +102,8 @@ protected:
 
 	map<const _wstring, class CComponent*>		m_Components;
 	_int										m_iOcclusionCooldown = 0;
+	_bool										m_bIsOccluderDisabled = { false };	// true	 : 가려지기만 하는애들
+																					// false : 가려지고 가리기도 함
 
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, 

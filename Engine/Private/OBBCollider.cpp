@@ -180,8 +180,9 @@ void COBBCollider::SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtent
 
 HRESULT COBBCollider::Render_Face(_float4 vColor)
 {
+#ifdef _DEBUG
     __super::Render(vColor);
-
+#endif // _DEBUG
     m_pBatch->Begin();
     _float3 vCorners[8];
     m_Bounding->GetCorners(vCorners);

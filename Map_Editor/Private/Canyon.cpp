@@ -60,11 +60,6 @@ void CCanyon::Late_Update(_float fTimeDelta)
 		return;
 	}
 
-
-
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
