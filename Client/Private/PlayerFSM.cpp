@@ -48,8 +48,8 @@
 //상호작용 공격들
 #include "Player_LockonJustEvadeState.h"
 #include "Player_RepulseState.h"
-#include "Player_BlinkAttackState.h"
-
+#include "Player_BlinkState.h" // 블링크 시작 
+#include "Player_BlinkAttackState.h" // 이동 & 블링크 공격
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -335,7 +335,22 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::LOCKON: return CPlayer_RepulseState::Create(tDesc.pArg);
 		}
 		break;
-
+	case PLAYER_STATE::BLINK_START:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return nullptr; //return CPlayer_BlinkState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_BlinkState::Create(tDesc.pArg);
+		}
+		break;
+	case PLAYER_STATE::BLINK_ATTACK:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return nullptr; //return CPlayer_BlinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_BlinkAttackState::Create(tDesc.pArg);
+		}
+		break;
 	// 테스트 스테이트는 제일 아래
 	//case PLAYER_STATE::TEST_STATE:
 	//	switch (m_pPlayerDesc->ePlayerMode)
@@ -462,7 +477,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 		}
 	}
 
-	// 락온 토글 입력 처리
+	// 락온 토글 처리
 	if (m_pPlayerDesc->isRequestLockonToggle)
 	{
 		//락온 거리보다 짧다면
