@@ -73,6 +73,7 @@ PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDel
 _float CPlayer_SupplyBoxInteractionState::End()
 {
     m_Desc->isInteracting = false;
+    m_Desc->isInvincible = false;
 
     return m_fNextBlendRatio;
 }

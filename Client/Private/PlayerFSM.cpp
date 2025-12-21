@@ -45,6 +45,10 @@
 #include "Player_CorpseInteractionState.h"
 //링크 어택
 #include "Player_GigasLinkAttackState.h"
+//상호작용 공격들
+#include "Player_LockonJustEvadeState.h"
+#include "Player_RepulseState.h"
+#include "Player_BlinkAttackState.h"
 
 
 CPlayerFSM::CPlayerFSM() 
@@ -186,24 +190,24 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 	case PLAYER_STATE::EVADE:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE:   
-			if (m_pCurrentState->Get_State() == PLAYER_STATE::EVADE)
-				return CPlayer_BattleEvadeState::Create(tDesc.pArg);
-			else
-				return CPlayer_IdleWalkState::Create(tDesc.pArg);
 
+		case PLAYER_MODE::IDLE:	return nullptr;
+			//if (m_pCurrentState->Get_State() == PLAYER_STATE::EVADE)
+			//	return CPlayer_BattleEvadeState::Create(tDesc.pArg);
+			//else
+			//	return CPlayer_IdleWalkState::Create(tDesc.pArg);
 		case PLAYER_MODE::BATTLE: 
-			if (m_pCurrentState->Get_State() == PLAYER_STATE::EVADE)
-				return CPlayer_BattleWalkState::Create(tDesc.pArg);
-			else
-				return CPlayer_BattleEvadeState::Create(tDesc.pArg);
+			//if (m_pCurrentState->Get_State() == PLAYER_STATE::EVADE)
+			//	return CPlayer_BattleWalkState::Create(tDesc.pArg);
+			//else
+			return CPlayer_BattleEvadeState::Create(tDesc.pArg);
 
 		case PLAYER_MODE::LOCKON: 
-			if (m_pCurrentState->Get_State() == PLAYER_STATE::EVADE)
-				return CPlayer_LockonWalkState::Create(tDesc.pArg);
+			//락온 상태일때, Just Evade를 쓸 수 있다면
+			if (ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType)
+				return CPlayer_LockonJustEvadeState::Create(tDesc.pArg);
 			else
 				return CPlayer_LockonEvadeState::Create(tDesc.pArg);
-
 		}
 		break;
 
@@ -263,7 +267,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 	case PLAYER_STATE::PARRY_SUCCESS:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_ParrySuccessState::Create(tDesc.pArg);
 		case PLAYER_MODE::LOCKON: return CPlayer_ParrySuccessState::Create(tDesc.pArg);
 		}
@@ -272,7 +276,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 	case PLAYER_STATE::PARRY_END:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_ParryEndState::Create(tDesc.pArg);
 		case PLAYER_MODE::LOCKON: return CPlayer_ParryEndState::Create(tDesc.pArg);
 		}
@@ -281,7 +285,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 	case PLAYER_STATE::PARRY_GUARD:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
-		case PLAYER_MODE::IDLE: nullptr;
+		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_ParryGuardState::Create(tDesc.pArg);
 		case PLAYER_MODE::LOCKON: return CPlayer_ParryGuardState::Create(tDesc.pArg);
 		}
@@ -303,11 +307,9 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 #ifdef _DEBUG
 		case PLAYER_MODE::BATTLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
 #else
-		case PLAYER_MODE::BATTLE: nullptr;
+		case PLAYER_MODE::BATTLE: return nullptr;
 #endif
-
-
-		case PLAYER_MODE::LOCKON: nullptr;
+		case PLAYER_MODE::LOCKON: return nullptr;
 		}
 		break;
 
@@ -319,11 +321,21 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 #ifdef _DEBUG
 		case PLAYER_MODE::BATTLE: return CPlayer_CorpseInteractionState::Create(tDesc.pArg);
 #else
-		case PLAYER_MODE::BATTLE: nullptr;
+		case PLAYER_MODE::BATTLE: return nullptr;
 #endif
-		case PLAYER_MODE::LOCKON: nullptr;
+		case PLAYER_MODE::LOCKON: return nullptr;
 		}
 		break;
+
+	case PLAYER_STATE::REPULSE:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return nullptr;
+		case PLAYER_MODE::BATTLE: return CPlayer_RepulseState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_RepulseState::Create(tDesc.pArg);
+		}
+		break;
+
 	// 테스트 스테이트는 제일 아래
 	//case PLAYER_STATE::TEST_STATE:
 	//	switch (m_pPlayerDesc->ePlayerMode)

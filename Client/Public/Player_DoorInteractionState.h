@@ -2,15 +2,17 @@
 
 #include "PlayerState.h"
 
-//저스트 회피용 상태.
-//미리 방향 받아와서 세팅해줘야함.
+NS_BEGIN(Engine)
+class CInteraction_Component;
+NS_END
+
 NS_BEGIN(Client)
 
-class CPlayer_LockonJustEvadeState final : public CPlayerState
+class CPlayer_DoorInteractionState final : public CPlayerState
 {
 private:
-	CPlayer_LockonJustEvadeState();
-	virtual ~CPlayer_LockonJustEvadeState() = default;
+	CPlayer_DoorInteractionState(void* pArg);
+	virtual ~CPlayer_DoorInteractionState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -20,12 +22,13 @@ public:
 	virtual _float End() override;
 
 private:
-	PLAYER_DIRECTION m_eDirection = {};
-	PLAYER_BATTLEWALK_DESC m_tNextStateDesc = {};
+	CInteraction_Component* m_pInteractionCom = { nullptr };
+	_bool					m_isLerpFinished = { false };
 
 public:
-	static	CPlayer_LockonJustEvadeState* Create(void* pArg);
+	static	CPlayer_DoorInteractionState* Create(void* pArg);
 	virtual	void			   Free() override;
+
 };
 
 NS_END

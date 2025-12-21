@@ -1,22 +1,22 @@
 #include "pch.h"
-#include "Player_CorpseInteractionState.h"
+#include "Player_DoorInteractionState.h"
 
 #include "Interaction_Component.h"
 
 #include "Player.h"
 #include "GameInstance.h"
 
-CPlayer_CorpseInteractionState::CPlayer_CorpseInteractionState(void* pArg)
-	: CPlayerState{}
+CPlayer_DoorInteractionState::CPlayer_DoorInteractionState(void* pArg)
+    : CPlayerState{}
 {
-	m_pInteractionCom = static_cast<CInteraction_Component*>(pArg);
+    m_pInteractionCom = static_cast<CInteraction_Component*>(pArg);
 }
 
-void CPlayer_CorpseInteractionState::Start(void* pArg, _float fBlendRatio)
+void CPlayer_DoorInteractionState::Start(void* pArg, _float fBlendRatio)
 {
     m_Desc->isInvincible = true;
     m_Desc->isInteracting = true;
-    m_eState = PLAYER_STATE::CORPSE_INTERACTION;
+    m_eState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
     m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
 
     CGameObject* pTarget = m_pInteractionCom->GetOwner();
@@ -25,11 +25,11 @@ void CPlayer_CorpseInteractionState::Start(void* pArg, _float fBlendRatio)
     _vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
     _vector vTargetLook = pTarget->GetTransform()->Get_State(STATE::LOOK);
     //x z만 타겟 따라감
-    // 타겟의 위치 + 타겟의 룩 * 3.5 방향으로 방향 세팅
-    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSetY(vTargetLook, 0.f) * -1.8f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
+    // 타겟의 위치 + 타겟의 룩 * 3 방향으로 방향 세팅
+    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSetY(vTargetLook, 0.f) * 3.f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
 }
 
-PLAYER_TRANSITION_DESC CPlayer_CorpseInteractionState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_DoorInteractionState::Update(_float fTimeDelta)
 {
     if (true == m_isLerpFinished)
     {
@@ -43,6 +43,7 @@ PLAYER_TRANSITION_DESC CPlayer_CorpseInteractionState::Update(_float fTimeDelta)
             //상호작용 스타트
             m_pInteractionCom->Action_InteractionEvent(fTimeDelta, m_pPlayer);
         }
+
     }
     else
     {
@@ -61,27 +62,27 @@ PLAYER_TRANSITION_DESC CPlayer_CorpseInteractionState::Update(_float fTimeDelta)
 
         {
             m_isLerpFinished = true;
-            m_pPlayer->Set_Animation("P_Eve_Interaction_Corpse", false, 1.2f);
+            m_pPlayer->Set_Animation("P_Eve_Interaction_SupplyBox_Normal", false, 1.2f);
         }
     }
 
     return m_tNextState;
 }
 
-_float CPlayer_CorpseInteractionState::End()
+_float CPlayer_DoorInteractionState::End()
 {
+    m_Desc->isInteracting = false;
     m_Desc->isInvincible = false;
-	m_Desc->isInteracting = false;
 
-	return m_fNextBlendRatio;
+    return m_fNextBlendRatio;
 }
 
-CPlayer_CorpseInteractionState* CPlayer_CorpseInteractionState::Create(void* pArg)
+CPlayer_DoorInteractionState* CPlayer_DoorInteractionState::Create(void* pArg)
 {
-	return new CPlayer_CorpseInteractionState(pArg);
+    return new CPlayer_DoorInteractionState(pArg);
 }
 
-void CPlayer_CorpseInteractionState::Free()
+void CPlayer_DoorInteractionState::Free()
 {
-	__super::Free();
+    __super::Free();
 }
