@@ -236,6 +236,8 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
 };
 
 
@@ -269,7 +271,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
-    
+    Out.vORM = g_ORMTexture.Sample(MirrorSampler, In.vTexcoord);
+    Out.vEmissive = vMtrlDiffuse * g_vColor;
     //Out.vDiffuse = vMtrlDiffuse;
     //Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
@@ -298,45 +301,16 @@ PS_OUT PS_SPRITE(PS_IN In, bool bisFront : SV_IsFrontFace)
     if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.rgb /= 6;
     float3 normal = normalize(In.vNormal);
 
     if (!bisFront)
         normal = -normal;
 
     Out.vNormal = float4(normal * 0.5f + 0.5f, 1.f);
-    //Out.vNormal = float4(In.vNormal * 0.5f + 0.5f, 1.f);
-    //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = g_ORMTexture.Sample(MirrorSampler, In.vTexcoord);
+    Out.vEmissive = vMtrlDiffuse * g_vColor;
     
-    return Out;
-}
-
-/* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
-PS_NONLIGHT_OUT PS_SPRITE_BLOOM(PS_IN In)
-{
-    PS_NONLIGHT_OUT Out;
-    if (In.vLifeTime.x <= 0 || In.vLifeTime.x > In.vLifeTime.y)
-        discard;
-    
-    int i = In.vSeed % (g_fDiffuseUVSize.x * g_fDiffuseUVSize.y);
-    int iU = i % g_fDiffuseUVSize.x;
-    int iV = i / g_fDiffuseUVSize.x;
-    float2 fTexcoord = float2(In.vTexcoord.x / g_fDiffuseUVSize.x + 1.0 / g_fDiffuseUVSize.x * iU, In.vTexcoord.y / g_fDiffuseUVSize.y + 1.0 / g_fDiffuseUVSize.y * iV);
-    
-    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
-    
-    vector vColor = g_vColor;
-    vColor.rgb *= (1 - saturate(exp(-linearDepth * 20))) * 1.5;
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, fTexcoord) * vColor;
-    if (vMtrlDiffuse.a < 0.4f)
-        discard;
-    
-    Out.vDiffuse = vMtrlDiffuse;
-    if (0 >= Out.vDiffuse.a)
-        discard;
-    Out.vDiffuse.rgb *= Out.vDiffuse.a;
-    Out.vDiffuse.a = 1;
     return Out;
 }
 
@@ -361,9 +335,10 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
 
 technique11 Tech
 {
+    // idx 0
     pass Origin_MeshParticle
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
@@ -371,7 +346,7 @@ technique11 Tech
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
+    // idx 1
     pass MeshParticle
     {
         SetRasterizerState(RS_Cull_None);
@@ -381,16 +356,5 @@ technique11 Tech
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SPRITE();
-    }
-
-    pass MeshParticle_Bloom
-    {
-        SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_SPRITE_BLOOM();
     }
 }

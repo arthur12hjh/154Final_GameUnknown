@@ -288,6 +288,7 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Cell.h" />
     <ClInclude Include="..\Public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Instance_MeshParticle.h" />
     <ClInclude Include="..\public\VIBuffer_Instance_Model.h" />
     <ClInclude Include="..\public\VIBuffer_Point.h" />
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h" />
@@ -408,6 +409,7 @@ popd</Command>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Instance_MeshParticle.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance_Model.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp" />

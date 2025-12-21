@@ -130,7 +130,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
-	if(FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))
@@ -153,22 +153,20 @@ HRESULT CPlayer::Initialize(void* pArg)
 	SetVisibility(VISIBILITY::VISIBLE);
 
 
-
-	const _float4x4* pWorldMatrix = GetTransform()->Get_WorldMatrixPtr();
-
-	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-	EffectDesc.fRotationPerSec = 1.f;
-	EffectDesc.fSpeedPerSec = 1.f;
-
-		EffectDesc.pRootMatrix = pWorldMatrix;
-		EffectDesc.pWorldMatrix = nullptr;
-
-	EffectDesc.vPos = XMVectorSet(0,0,0, 1);
-	EffectDesc.fRot = _float3(0,0,0);
-	EffectDesc.fSize = 0.8f;
-
-	static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	//
+	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	//EffectDesc.fRotationPerSec = 1.f;
+	//EffectDesc.fSpeedPerSec = 1.f;
+	//
+	//EffectDesc.pRootMatrix = nullptr;
+	//EffectDesc.pWorldMatrix = nullptr;
+	//
+	//EffectDesc.vPos = GetTransform()->Get_State(STATE::POSITION);
+	//EffectDesc.fRot = _float3(0, 0, 0);
+	//EffectDesc.fSize = 0.9f;
+	//
+	//static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 
 	return S_OK;

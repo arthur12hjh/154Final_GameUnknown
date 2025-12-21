@@ -287,6 +287,7 @@ HRESULT CEffect::Load_Binary(const _char* szFile)
         ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+        ParticleDesc.bisMeshTexture = ReadBool(fileBinaryStream);
         ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
         ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);

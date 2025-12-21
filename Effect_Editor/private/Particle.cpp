@@ -3,6 +3,7 @@
 
 #include "Camera.h"
 #include "GameInstance.h"
+#include "VIBuffer_Instance_MeshParticle.h"
 
 CParticle::CParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -79,7 +80,7 @@ HRESULT CParticle::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
-	if (0 == m_tData.iBegin + m_iRenderCount) {
+	if (m_tData.bisMeshTexture) {
 		for (size_t i = 0; i < iNumMeshes; i++)
 		{
 			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
@@ -88,7 +89,11 @@ HRESULT CParticle::Render()
 			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+			if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+				return E_FAIL;
+
+
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
 				return E_FAIL;
 
 			if (FAILED(m_pVIBufferCom->Render(i)))
@@ -119,7 +124,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Safe_Release(m_pSizeDiagramSRV);
 
 	const char* pModelFilePath;
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC		Desc{};
+	CVIBuffer_Instance_MeshParticle::MESH_PARTICLE_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = tData.iNumInstance;
 	Desc.vCenter = tData.fCenter;
 	Desc.vRange = tData.fRange;
@@ -127,10 +132,8 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Desc.vLifeTime = tData.fLifeTime;
 	Desc.vSpeed = tData.fSpeed;
 	Desc.isLoop = tData.bisLoop;
-	Desc.pModelFilePath = tData.szModel.c_str();
-	Desc.PreModelMatrix = XMMatrixIdentity();
 	m_fLength = 0;
-	m_pVIBufferCom = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom = CVIBuffer_Instance_MeshParticle::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
 	_tchar sztPrototype[256] = { 0, };
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, tData.szModel.c_str(), strlen(tData.szModel.c_str()), sztPrototype, 256);
@@ -332,10 +335,10 @@ HRESULT CParticle::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
 
-	if (m_tData.iBegin != 0) {
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
-			return E_FAIL;
+	if (!m_tData.bisMeshTexture) {
 
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))
@@ -420,8 +423,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Input & Output Base Buffer
 	D3D11_BUFFER_DESC TrialInitBufferDesc = {};
 	TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
-	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE);
+	TrialInitBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_MeshParticle::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
+	TrialInitBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_MeshParticle::VTX_INSTANCE_MODEL_PARTICLE);
 	TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
@@ -437,8 +440,8 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Read Buffer
 	D3D11_BUFFER_DESC ReadBufferDesc = {};
 	ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
-	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_Model::VTX_INSTANCE_MODEL_PARTICLE);
+	ReadBufferDesc.ByteWidth = sizeof(CVIBuffer_Instance_MeshParticle::VTX_INSTANCE_MODEL_PARTICLE) * iNumData;
+	ReadBufferDesc.StructureByteStride = sizeof(CVIBuffer_Instance_MeshParticle::VTX_INSTANCE_MODEL_PARTICLE);
 	ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 
 	if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pReadSource)))

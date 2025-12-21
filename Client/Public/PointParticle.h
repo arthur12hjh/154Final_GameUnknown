@@ -4,7 +4,7 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Instance_Model;
+class CVIBuffer_Instance_MeshParticle;
 class CComputeShader;
 class CModel;
 class CTexture;
@@ -73,6 +73,7 @@ public:
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisLoop;
+		_bool				bisMeshTexture;
 		_bool				bisSphere;
 		_bool				bisCircle;
 		_bool				bisSpectrum;
@@ -96,7 +97,7 @@ public:
 	void    End();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
-	CVIBuffer_Instance_Model* m_pVIBufferCom = { nullptr };
+	CVIBuffer_Instance_MeshParticle* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};

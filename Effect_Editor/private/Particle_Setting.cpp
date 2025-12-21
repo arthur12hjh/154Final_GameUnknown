@@ -724,9 +724,10 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisMeshTexture);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
         WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
+         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
     }
     return S_OK;
 }
@@ -938,6 +939,7 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
         ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+        ParticleDesc.bisMeshTexture = ReadBool(fileBinaryStream);
         ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
         ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
         ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
@@ -1902,6 +1904,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
                     ImGui::TreePop();
                 }
                 ImGui::DragFloat3("Mesh Rotation", reinterpret_cast<_float*>(&m_tParticleData.fMeshRotation), 0.1f, 0.f, 360.f);
+                ImGui::Checkbox("Mesh Texture", &m_tParticleData.bisMeshTexture);
                 string szRender;
                 switch (m_tParticleData.iSelectRender) {
                 case 0:

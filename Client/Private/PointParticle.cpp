@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PointParticle.h"
-
+#include "VIBuffer_Instance_MeshParticle.h"
 #include "GameInstance.h"
 
 CPointParticle::CPointParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -14,7 +14,7 @@ CPointParticle::CPointParticle(const CPointParticle& Prototype)
 	m_eRender{Prototype.m_eRender}
 {
 	m_eTeam = Prototype.m_eTeam;
-	m_pVIBufferCom = dynamic_cast<CVIBuffer_Instance_Model*>(Prototype.m_pVIBufferCom->Clone(nullptr));
+	m_pVIBufferCom = dynamic_cast<CVIBuffer_Instance_MeshParticle*>(Prototype.m_pVIBufferCom->Clone(nullptr));
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
 
@@ -45,7 +45,7 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 		m_eRender = RENDER::DISTORTION;
 		break;
 	}
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC		Desc{};
+	CVIBuffer_Instance_MeshParticle::MESH_PARTICLE_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pPointParticleData->iNumInstance;
 	Desc.vCenter = pPointParticleData->fCenter;
 	Desc.vRange = pPointParticleData->fRange;
@@ -53,7 +53,7 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 	Desc.vLifeTime = pPointParticleData->fLifeTime;
 	Desc.vSpeed = pPointParticleData->fSpeed;
 	Desc.isLoop = pPointParticleData->bisLoop;
-	m_pVIBufferCom = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom = CVIBuffer_Instance_MeshParticle::Create(m_pDevice, m_pContext, &Desc);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
@@ -161,7 +161,7 @@ HRESULT CPointParticle::Render()
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
-	if (0 == m_tData.iBegin + m_iRenderCount) {
+	if (m_tData.bisMeshTexture) {
 		for (size_t i = 0; i < iNumMeshes; i++)
 		{
 			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
@@ -276,10 +276,10 @@ HRESULT CPointParticle::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
+		return E_FAIL;
 
-	if (m_tData.iBegin != 0) {
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))
-			return E_FAIL;
+	if (!m_tData.bisMeshTexture) {
 
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &m_tData.fMaskUV, sizeof(_float2))))

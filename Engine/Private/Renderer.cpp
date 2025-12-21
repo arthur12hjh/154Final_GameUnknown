@@ -1133,6 +1133,8 @@ void CRenderer::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pBlur);
+	Safe_Release(m_pBlackBlend);
+	Safe_Release(m_pMetaball);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pBloom);

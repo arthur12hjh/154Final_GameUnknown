@@ -52,7 +52,7 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
 	m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive"), m_pShader, "g_EmissiveTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
 
 	m_pShader->Begin(1);
@@ -66,7 +66,7 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Emissive_Blur_Final"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_X"), m_pShader, "g_EmissiveTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_X"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
 
 	m_pShader->Begin(2);

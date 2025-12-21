@@ -151,9 +151,6 @@
     <ClInclude Include="..\public\BlendObject.h">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Shadow.h">
-      <Filter>01.Utility\11.Shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
@@ -382,6 +379,11 @@
     </ClInclude>
     <ClInclude Include="..\Public\StaticShadow.h">
       <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BlackBlend.h" />
+    <ClInclude Include="..\public\Metaball.h" />
+    <ClInclude Include="..\public\VIBuffer_Instance_MeshParticle.h">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\MeshParticle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -732,6 +734,11 @@
     </ClCompile>
     <ClCompile Include="..\Private\StaticShadow.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlackBlend.cpp" />
+    <ClCompile Include="..\private\Metaball.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Instance_MeshParticle.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\MeshParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1158,6 +1165,9 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Static">
       <UniqueIdentifier>{f0688259-fb7c-4352-8239-3ab3ba4cf4a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Instance\MeshParticle">
+      <UniqueIdentifier>{96f19e4d-55e8-4c1d-beb8-8eeb3f52a32d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1208,6 +1218,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DepthOnly.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Metaball.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">

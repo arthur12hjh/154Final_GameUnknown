@@ -1197,8 +1197,8 @@ void Tornado(uint3 Gid : SV_GroupID,
         right = RotateAxisAngle(right, up, vfRotation.y);
         look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
-        up = RotateAxisAngle(up, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
+        right = RotateAxisAngle(right, look, vfRotation.z);
+        up = RotateAxisAngle(up, look, vfRotation.z);
         
         right = normalize(right);
         up = normalize(up);
@@ -1416,8 +1416,8 @@ void Tornado(uint3 Gid : SV_GroupID,
         right = RotateAxisAngle(right, up, vfRotation.y);
         look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
-        up = RotateAxisAngle(up, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
+        right = RotateAxisAngle(right, look, vfRotation.z);
+        up = RotateAxisAngle(up, look, vfRotation.z);
         
         right = normalize(right);
         up = normalize(up);
