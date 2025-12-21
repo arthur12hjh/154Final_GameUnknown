@@ -76,7 +76,6 @@ void CCanyon::Late_Update(_float fTimeDelta)
 	{	
 		return;
 	}
-
    
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -88,7 +87,7 @@ void CCanyon::Late_Update(_float fTimeDelta)
    
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	//m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 
@@ -163,8 +162,8 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-
 	/* Com_Shader */
+
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;

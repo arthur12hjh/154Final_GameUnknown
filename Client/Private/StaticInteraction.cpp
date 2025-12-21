@@ -27,6 +27,9 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
         return E_FAIL;
 
     PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+
+    SetCullingCollider(pDesc->iObjectID);
+
     if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
@@ -56,15 +59,20 @@ void CStaticInteraction::Update(_float fTimeDelta)
 
 void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
-    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    
+    if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-#ifdef _DEBUG
-        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-#endif
-
-        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        return;
     }
+
+    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
+#ifdef _DEBUG
+    m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CStaticInteraction::Render()
@@ -176,6 +184,39 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
         return E_FAIL;
 
     return S_OK;
+}
+
+void CStaticInteraction::SetCullingCollider(_uint iObjectID)
+{
+    auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+    switch (iObjectID)
+    {
+    case 1: // VendingMachine_6A (1, 2, 1)
+        pCullingCollider->SetCollision({ 0.f, 1.4f, 0.5f }, {}, { 1.f, 2.f, 1.f });
+        break;
+    case 2: // VendingMachine_7A (2, 3, 2)
+        pCullingCollider->SetCollision({ 0.f, 2.1f, 0.f }, {}, { 2.f, 3.f, 2.f });
+        break;
+    case 3: // Camp_1I (1, 1, 1)
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.f, 1.f, 1.f });
+        break;
+    case 4: // Corpse_1A (1, 1, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.f, -0.5f }, {}, { 1.f, 2.f, 1.5f });
+        break;
+    case 5: // Corpse_1B (1, 1, 2.2)
+        pCullingCollider->SetCollision({ -0.2f, 0.f, 0.1f }, {}, { 1.f, 1.f, 2.2f });
+        break;
+    case 6: // Corpse_2A (2.2, 1, 1.5)
+    case 7: // Corpse_2B (2.2, 1, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.2f, 1.f, 1.5f });
+        break;
+    case 8: // Corpse_2C (1.5, 1.5, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 1.5f, 1.5f, 1.5f });
+        break;
+    case 9: // Corpse_3B (4, 3, 4)
+        pCullingCollider->SetCollision({ 0.f, 2.1f, 0.5f }, {}, { 4.f, 3.f, 4.f });
+        break;
+    }
 }
 
 HRESULT CStaticInteraction::Begin_OverlapCallBack()

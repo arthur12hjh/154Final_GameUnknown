@@ -51,9 +51,11 @@ public :
 	const SCRIPT_DESC*				Get_ScriptData(const _wstring& szScriptTag);
 	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
-#ifdef _DEBUG
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
+
+#ifdef _DEBUG
+	
 	void								Save_CameraAnimationData();
 	void								Save_CinematicData();
 #endif

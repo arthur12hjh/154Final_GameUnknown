@@ -131,19 +131,18 @@ const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
     return m_pDataManager->Find_CinematicData(iCinematicIndex);
 }
 
-
-#ifdef _DEBUG
-
 map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
 {
     return m_pDataManager->Get_CameraAnimationMap();
 }
+
 
 map<_uint, CINEMATIC_DESC>* CGameManager::Get_CinematicDataMap()
 {
     return m_pDataManager->Get_CinematicDataMap();
 }
 
+#ifdef _DEBUG
 
 void CGameManager::Save_CameraAnimationData()
 {

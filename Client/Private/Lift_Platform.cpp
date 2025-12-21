@@ -61,14 +61,17 @@ void CLift_Platform::Update(_float fTimeDelta)
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
 {
+	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		return;
+	}
+
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-#endif // _DEBUG
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		// 얜 움직이니까 업데이트 해줘야합니다
-	}
+#endif
 }
 
 HRESULT CLift_Platform::Render()
@@ -182,7 +185,7 @@ HRESULT CLift_Platform::Ready_Components(const _tchar* pComponentTag)
 		return E_FAIL;
 
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({ 4.f, 2.f, 0.f }, {}, { 5.f, 4.f, 5.f });
 
 	/* Com_Model_COL */
 	_wstring strComponentTag = pComponentTag;

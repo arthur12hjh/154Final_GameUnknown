@@ -35,9 +35,11 @@ HRESULT CDeco::Initialize(void* pArg)
 
 	m_iObjectID = Object_Number(m_ComponentTag);
 
-    //SetCullingCollider(m_iObjectID);
+    SetCullingCollider(m_iObjectID);
     //_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     //m_pCullingCollider->UpdateColiision(worldMatrix);
+    
+    m_bIsOccluderDisabled = true;
 
 	return S_OK;
 }
@@ -48,15 +50,22 @@ void CDeco::Priority_Update(_float fTimeDelta)
 
 void CDeco::Update(_float fTimeDelta)
 {
+   
 }
 
 void CDeco::Late_Update(_float fTimeDelta)
 {
-    SetCullingCollider(m_iObjectID);
     _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(worldMatrix);
 
+    if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    {
+        return;
+    }
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -79,10 +88,8 @@ HRESULT CDeco::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;

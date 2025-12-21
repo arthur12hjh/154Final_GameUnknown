@@ -31,6 +31,9 @@ HRESULT CTop_Roof::Initialize(void* pArg)
 	m_eCurState = IDLE;
 	m_pModelCom->Set_AnimationIndex(m_eCurState);
 
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+
 	return S_OK;
 }
 
@@ -63,8 +66,17 @@ void CTop_Roof::Update(_float fTimeDelta)
 
 void CTop_Roof::Late_Update(_float fTimeDelta)
 {
+	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		return;
+	}
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CTop_Roof::Render()
@@ -108,6 +120,8 @@ HRESULT CTop_Roof::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	pCullingCollider->SetCollision({ 0.f, 3.f, 0.f }, {}, { 4.f, 5.f, 7.f });
 
 	return S_OK;
 }
