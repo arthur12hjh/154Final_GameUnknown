@@ -98,7 +98,10 @@ HRESULT CGraphic_Device::Present()
 		return E_FAIL;
 	
 	/* 전면 버퍼와 후면 버퍼를 교체하여 후면 버퍼를 전면으로 보여주는 역할을 한다. */
-	/* 후면 버퍼를 직접 화면에 보여줄게. */	
+	/* 후면 버퍼를 직접 화면에 보여줄게. */
+
+	//첫 인자를 1로 주면 수직동기화 ON,
+	// 첫 인자를 0으로 주면 수직동기화 OFF
 	return m_pSwapChain->Present(0, 0);	
 }
 

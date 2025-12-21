@@ -33,7 +33,7 @@ HRESULT CPhysx_Manager::Initialize()
     physx::PxSceneDesc sceneDesc(m_PxPhysics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 
-    m_PxDispatcher = physx::PxDefaultCpuDispatcherCreate(4);
+    m_PxDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 
     sceneDesc.cpuDispatcher = m_PxDispatcher;
     sceneDesc.filterShader = MyFilterShader;
