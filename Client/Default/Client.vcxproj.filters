@@ -1789,6 +1789,9 @@
     <ClInclude Include="..\Public\Player_BlinkAttackState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_CorpseInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2658,6 +2661,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_BlinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
