@@ -42,6 +42,10 @@ public:
 	HRESULT Bake_StaticShadow();
 public:
 	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	void Active_DoF(_bool bFlag, _float fLerpTime);
+	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
+	void Set_DoFInfo(_float fFocusDistance);
+
 
 #ifdef _DEBUG
 	//RenderDoc 전용

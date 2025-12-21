@@ -104,6 +104,24 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_SKYBOX(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    
     return Out;
 }
 
@@ -215,7 +233,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN(); 
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN(); 
+        PixelShader = compile ps_5_0 PS_MAIN_SKYBOX();
     }
     // idx 3 
     pass Blend

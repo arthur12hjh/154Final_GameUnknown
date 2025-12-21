@@ -2,13 +2,15 @@
 
 #include "PlayerState.h"
 
+//저스트 회피용 상태.
+//미리 방향 받아와서 세팅해줘야함.
 NS_BEGIN(Client)
 
-class CPlayer_LockonEvadeState final : public CPlayerState
+class CPlayer_LockonJustEvadeState final : public CPlayerState
 {
 private:
-	CPlayer_LockonEvadeState();
-	virtual ~CPlayer_LockonEvadeState() = default;
+	CPlayer_LockonJustEvadeState(PLAYER_DIRECTION ePlayerDir);
+	virtual ~CPlayer_LockonJustEvadeState() = default;
 
 public:
 	// 이거 초기화할때 혹시나 초기값 바뀌는 경우 있을수 있으니
@@ -22,7 +24,7 @@ private:
 	PLAYER_BATTLEWALK_DESC m_tNextStateDesc = {};
 
 public:
-	static	CPlayer_LockonEvadeState* Create(void* pArg);
+	static	CPlayer_LockonJustEvadeState* Create(void* pArg);
 	virtual	void			   Free() override;
 };
 

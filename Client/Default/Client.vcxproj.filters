@@ -880,6 +880,15 @@
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Scarlet">
       <UniqueIdentifier>{f69194f1-2a39-4d1c-b86f-c442b3540ed6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade">
+      <UniqueIdentifier>{b5b809f0-5cf3-4d11-bf1f-db3620849047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse">
+      <UniqueIdentifier>{df882f56-a60d-4305-b7ff-cc86f5d1ea57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Blink">
+      <UniqueIdentifier>{6f395894-96de-487b-a755-8f2c6c7c4d57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1768,6 +1777,18 @@
     <ClInclude Include="..\Public\PlayerState.h">
       <Filter>02.GameObjects\Character\Player\00. State</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonJustEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_RepulseState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BlinkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BlinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2625,6 +2646,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonJustEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_RepulseState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BlinkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BlinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
