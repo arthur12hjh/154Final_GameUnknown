@@ -95,12 +95,26 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintState::Update(_float fTimeDelta)
 		m_isSprintStart = false;
 	}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	{
+		PLAYER_JUMP_DESC Desc;
+		Desc.isSprintJump = true;
+
+		m_tNextState.eNextState = PLAYER_STATE::JUMP;
+		m_tNextState.pArg = &Desc;
+	}
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+		m_tNextState.eNextState = PLAYER_STATE::EVADE;
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+		m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
-		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
 	return m_tNextState;
 }

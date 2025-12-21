@@ -13,7 +13,7 @@ CPlayer_BlinkState::CPlayer_BlinkState()
 //시간 느려지면서 이펙트 나와야하는 모션. ( + 림라이트도 )
 void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 {
-	m_eState = PLAYER_STATE::BLINK;
+	m_eState = PLAYER_STATE::BLINK_START;
 	m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_S", true, 1.2f);
 }
 
