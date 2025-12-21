@@ -334,6 +334,14 @@ void CPlayer::Update_TestSkillInput(_float fTimeDelta)
 
 			m_pFSM->Handle_Transition(Desc);
 		}
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+
 	}
 }
 

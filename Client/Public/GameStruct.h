@@ -177,6 +177,7 @@ namespace Client
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
 		bool   isBossLock = { false };
+		bool   isLockChangable = { true };
 		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
 		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
 		bool   isWeaponVisible = { false };
