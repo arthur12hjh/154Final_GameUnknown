@@ -131,17 +131,6 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-    _float fCamDist = XMVectorGetX(
-        XMVector3Length(
-            m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition()
-        )));
-
-    if (fCamDist < 100.f)
-    {
-        m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
-        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-    }
-
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
