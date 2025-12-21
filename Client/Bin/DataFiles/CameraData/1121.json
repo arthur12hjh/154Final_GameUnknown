@@ -1,0 +1,524 @@
+[
+    {
+        "BonePositionTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    743.7559814453125,
+                    5.736000061035156,
+                    594.4500122070312
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.7843137254901961,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    742.7559814453125,
+                    6.036000061035156,
+                    595.4500122070312
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.9999999813005036,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    740.6370239257812,
+                    8.53600025177002,
+                    599.39501953125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 2.35294126996807,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    746.260986328125,
+                    14.477999687194824,
+                    605.7689819335938
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 2.745097992466945,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    753.5180053710938,
+                    13.324999809265137,
+                    609.0360107421875
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 3.9215686274509802,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    751.969970703125,
+                    18.98900032043457,
+                    618.0369873046875
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 4.588235107122683,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    754.083984375,
+                    14.482999801635742,
+                    613.0230102539062
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 6.333333333333333,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    744.393,
+                    13.079,
+                    599.204
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 8.333333333333332,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    750.6680297851562,
+                    13.026000022888184,
+                    585.701
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 9.470588085698038,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    745.167,
+                    30.855,
+                    590.133
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 12.450980205161898,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    747.0369873046875,
+                    9.340999603271484,
+                    585.5430297851562
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 13.921569001440908,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    747.0369873046875,
+                    9.340999603271484,
+                    575.5430297851562
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 16.274510177911495,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    747.0369873046875,
+                    9.340999603271484,
+                    575.5430297851562
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 17.35294027889476,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    756.8829956054688,
+                    6.579999923706055,
+                    567.1309814453125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 19.6078431372549,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    765.2260131835938,
+                    5.540999889373779,
+                    555.9539794921875
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 26.470588235294116,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    767.39501953125,
+                    6.953000068664551,
+                    560.8809814453125
+                ]
+            }
+        ],
+        "FOVTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 2.35294126996807,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    60.0,
+                    60.0,
+                    60.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 3.9215686274509802,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    60.0,
+                    60.0,
+                    60.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 6.27450989741905,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 7.0588233424168,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 8.235293743657131,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 9.80392156862745,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 12.5490197948381,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 13.72549019607843,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 16.274510177911495,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    60.0,
+                    60.0,
+                    60.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 19.6078431372549,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    60.0,
+                    60.0,
+                    60.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 20.588235294117645,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            }
+        ],
+        "PivotTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    741.02001953125,
+                    5.081600189208984,
+                    605.7760009765625
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 1.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    740.2169799804688,
+                    9.079999923706055,
+                    607.8480224609375
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 2.35294126996807,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    745.051025390625,
+                    15.553999900817871,
+                    612.6710205078125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 3.2745098039215685,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    744.7319946289062,
+                    19.04400062561035,
+                    618.5650024414062
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 3.9215686274509802,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    745.6019897460938,
+                    18.773000717163086,
+                    617.68798828125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 4.607842950259938,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    745.6019897460938,
+                    18.773000717163086,
+                    617.68798828125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 6.333333333333333,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    742.306,
+                    20.062,
+                    613.784
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 7.6470590105243765,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    744.225,
+                    20.238,
+                    611.843
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 8.62745116738712,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    744.225,
+                    20.238,
+                    611.843
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 11.568627637975355,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    737.166015625,
+                    17.07200050354004,
+                    599.3610229492188
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 13.72549019607843,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    737.166015625,
+                    17.07200050354004,
+                    599.3610229492188
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 16.274510177911495,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    737.166015625,
+                    21.07200050354004,
+                    599.3610229492188
+                ]
+            },
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 16.66666591868681,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    777.0369873046875,
+                    5.0929999351501465,
+                    583.218017578125
+                ]
+            },
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 1.0,
+                "fTrackPosition": 17.25490121280446,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    767.1489868164062,
+                    5.0929999351501465,
+                    553.218017578125
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 1.0,
+                "fTrackPosition": 19.6078431372549,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    765.8629760742188,
+                    8.793000221252441,
+                    550.1500244140625
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 20.588235294117645,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    768.0070190429688,
+                    8.159000396728516,
+                    551.9710083007812
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 26.470588235294116,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    768.0070190429688,
+                    8.159000396728516,
+                    551.9710083007812
+                ]
+            }
+        ],
+        "fBaseFOV": 30.0,
+        "iCameraAnimationFlag": 66050,
+        "iCameraAnimationID": 1121,
+        "szCameraAnimationName": "",
+        "vBaseBonePosition": [
+            743.7559814453125,
+            5.736000061035156,
+            596.4500122070312
+        ],
+        "vBaseBoneRotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "vBaseCameraPivot": [
+            741.02001953125,
+            5.081600189208984,
+            605.7760009765625
+        ]
+    }
+]
