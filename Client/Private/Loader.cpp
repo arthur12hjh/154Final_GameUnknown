@@ -608,7 +608,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 #pragma region Nayitba
@@ -688,7 +688,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<string> szPartModelFilePathList;
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test02.binx",
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test03.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 

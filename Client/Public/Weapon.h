@@ -40,6 +40,8 @@ public:
 
 	void						EnableCollider(_bool bIsEnable);
 
+	void						Set_PlayerDesc(PLAYER_DESC* pPlayerDesc);
+
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 

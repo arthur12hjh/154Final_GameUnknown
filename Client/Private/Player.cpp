@@ -769,7 +769,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
 		pNayitba->Damaged(&DamageDesc);
-		m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
+		//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)

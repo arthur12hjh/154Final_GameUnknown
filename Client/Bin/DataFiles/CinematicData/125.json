@@ -12,11 +12,18 @@
                 "fTrackPosition": 0,
                 "iActiveIndex": 1,
                 "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
-            },{
+            },
+	{
                 "eState": 1,
                 "fTrackPosition": 0,
                 "iActiveIndex": 1,
                 "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
+            },
+	{
+                "eState": 3,
+                "fTrackPosition": 0,
+                "iActiveIndex": 1121,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
             }
         ],
         "iCinematicID": 125,

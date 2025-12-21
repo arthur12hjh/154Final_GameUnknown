@@ -139,7 +139,6 @@ StructuredBuffer<BoneInfo> InputBone : register(t0);
 StructuredBuffer<ChannelInfo> InputChannel : register(t1);
 StructuredBuffer<KeyFrameInfo> InputKeyFrame : register(t2);
 StructuredBuffer<BoneTransformMatrixCombined> InputLocalMatrix : register(t3);
-// 애니메이션 보간용. << 여기서 문제가 터진다.
 StructuredBuffer<BoneTransformMatrixCombined> PrevLocalMatrix : register(t4);
 
 RWStructuredBuffer<BoneTransformMatrixCombined> g_CombinedOut : register(u0);
