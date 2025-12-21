@@ -141,7 +141,18 @@ void CNayitba::Late_Update(_float fTimeDelta)
 		if (m_bIsActive == TRUE)
 		{
 			m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-			m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+
+			_float fCamDist = XMVectorGetX(
+				XMVector3Length(
+					m_pTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition()
+			)));
+
+			if (fCamDist < 100.f)
+			{
+				m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+				m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+			}
+
 		}
 		__super::Late_Update(fTimeDelta);
 
@@ -802,16 +813,28 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 
 	pHitBoxDesc.eColType = COLLIDER(pNotify->iNumData02);
 	pHitBoxDesc.eHitBoxType = HIT_TYPE(pNotify->iNumData03);
-	pHitBoxDesc.eHitObjectType = HIT_TYPE(pNotify->iNumData04);
 	pHitBoxDesc.bIsApplyTransform = true;
 	pHitBoxDesc.pAttacker = this;
 
-	pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
-	pHitBoxDesc.fImpactForce = m_fImpactForce;
+	_float fRange = {};
+	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
+	{
+		pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
+		fRange = pSkillData->fRange;
+	}
+	else
+	{
+		pHitBoxDesc.vScale = pNotify->vNotifyScale;
+		fRange = pNotify->fNumData01;
+	}
 
+	pHitBoxDesc.fImpactForce = m_fImpactForce;
 	_vector vCharacterPos = GetTransform()->Get_State(STATE::POSITION);
 	_vector vCharacterLook = GetTransform()->Get_State(STATE::LOOK);
-	vCharacterPos += vCharacterLook * pSkillData->fRange;
+	if (1 == pNotify->iNumData04)
+		vCharacterLook * -1.f;
+
+	vCharacterPos += vCharacterLook * fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
 
 	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
@@ -892,6 +915,15 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 	// 필요하면 작업하면 됩니다.
 	ATK_InteractionDesc.pArg = nullptr;
 	static_cast<CCharacter*>(pTarget)->Attack_Interaction(&ATK_InteractionDesc);
+}
+
+void CNayitba::Change_Color(const AnimNotify* pNotify)
+{
+	_uint iColorIndex = pNotify->iNumData01;
+	//m_p
+
+
+
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

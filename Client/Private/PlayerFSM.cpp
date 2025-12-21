@@ -26,6 +26,8 @@
 #include "Player_IdleLandingState.h"
 #include "Player_LockonEvadeState.h"
 #include "Player_BattleEvadeState.h"
+#include "Player_LockonSprintState.h"
+#include "Player_LockonSprintEndState.h"
 #include "Player_HitState.h"
 //무기 넣/뽑
 #include "Player_DrawHairpin.h"
@@ -40,7 +42,7 @@
 
 //인터랙션 관련 상태들. 당장은 작은 박스만 구현
 #include "Player_SupplyBoxInteractionState.h"
-
+#include "Player_CorpseInteractionState.h"
 //링크 어택
 #include "Player_GigasLinkAttackState.h"
 
@@ -160,7 +162,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		{
 		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintState::Create(tDesc.pArg);
-		case PLAYER_MODE::LOCKON: return nullptr;
+		case PLAYER_MODE::LOCKON: return CPlayer_LockonSprintState::Create(tDesc.pArg);
 		}
 		break;
 
@@ -169,7 +171,7 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		{
 		case PLAYER_MODE::IDLE: return nullptr;
 		case PLAYER_MODE::BATTLE: return CPlayer_BattleSprintEndState::Create(tDesc.pArg);
-		case PLAYER_MODE::LOCKON: return nullptr ;
+		case PLAYER_MODE::LOCKON: return CPlayer_LockonSprintEndState::Create(tDesc.pArg);
 		}
 		break;
 	
@@ -298,7 +300,27 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
 		case PLAYER_MODE::IDLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
+#ifdef _DEBUG
+		case PLAYER_MODE::BATTLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
+#else
 		case PLAYER_MODE::BATTLE: nullptr;
+#endif
+
+
+		case PLAYER_MODE::LOCKON: nullptr;
+		}
+		break;
+
+	case PLAYER_STATE::CORPSE_INTERACTION:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_CorpseInteractionState::Create(tDesc.pArg);
+
+#ifdef _DEBUG
+		case PLAYER_MODE::BATTLE: return CPlayer_CorpseInteractionState::Create(tDesc.pArg);
+#else
+		case PLAYER_MODE::BATTLE: nullptr;
+#endif
 		case PLAYER_MODE::LOCKON: nullptr;
 		}
 		break;
@@ -388,7 +410,7 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 		{
 			m_pPlayerDesc->fModeTimer += fTimeDelta;
 
-			if (m_pPlayerDesc->fModeTimer >= 2.5f)
+			if (m_pPlayerDesc->fModeTimer >= 1.5f)
 			{
 				m_pPlayerDesc->fModeTimer = 0.f;
 				m_pPlayerDesc->ePlayerMode = PLAYER_MODE::IDLE;

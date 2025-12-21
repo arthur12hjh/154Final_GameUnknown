@@ -227,6 +227,9 @@ HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaFinish()
 	return S_OK;
 }
 
+static _bool isDofActivated = false;
+static _float fTimeAcc = { 0.f };
+
 HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
@@ -246,6 +249,30 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 	}
 
+#pragma region GARA_DOF
+	if (false == isDofActivated)
+	{
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+		_float fMaxDist = 5.f;
+		_float fIntensity = 1.5f;
+
+		m_pGameInstance->Active_DoF(true, 0.2f);
+		m_pGameInstance->Set_DoFInfo(fFocusDist, fMaxDist, fIntensity);
+
+		isDofActivated = true;
+	}
+
+	if (true == isDofActivated)
+	{
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+
+		m_pGameInstance->Set_DoFInfo(fFocusDist);
+
+		fTimeAcc += fTimeDelta;
+	}
+#pragma endregion
 	if (isFinished)
 	{
 		++m_iAnimationSequence;
@@ -263,12 +290,16 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 			m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
 			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(743.f, 2.94f, 635.f, 1.f));
 		}
+
+		isDofActivated = false;
+		fTimeAcc = 0.f;
 	}
 
 	if (m_fMoveTime > 7.9f)
 	{
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
+		m_pGameInstance->Active_DoF(false, 0.f);
 	}
 
 	return S_OK;

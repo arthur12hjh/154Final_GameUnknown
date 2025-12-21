@@ -511,7 +511,22 @@ HRESULT CGameInstance::Set_ScreenSize(_uint iSizeX, _uint iSizeY)
 
 void CGameInstance::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
 {
-	return m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
+	m_pRenderer->Active_RadialBlur(fLifeTime, iSampleCount, fSamplePower);
+}
+
+void CGameInstance::Active_DoF(_bool bFlag, _float fLerpTime)
+{
+	m_pRenderer->Active_DoF(bFlag, fLerpTime);
+}
+
+void CGameInstance::Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity)
+{
+	m_pRenderer->Set_DoFInfo(fFocusDistance, fMaxRange, fIntensity);
+}
+
+void CGameInstance::Set_DoFInfo(_float fFocusDistance)
+{
+	m_pRenderer->Set_DoFInfo(fFocusDistance);
 }
 
 HRESULT CGameInstance::Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc)

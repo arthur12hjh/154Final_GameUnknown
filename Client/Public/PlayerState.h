@@ -30,10 +30,9 @@ typedef struct tagLockonWalkStateDesc {
 	_bool isAlreadyRunning = { false }; 
 } PLAYER_LOCKON_WALK_DESC;
 
-typedef struct tagLockonSprintEndStateDesc {
+typedef struct tagPlayerDirectionDesc {
 	PLAYER_DIRECTION eDir = { PLAYER_DIRECTION::END };
-} PLAYER_LOCKON_SPRINT_END_DESC;
-
+} PLAYER_DIRECTION_DESC;
 
 typedef struct tagParryStateDesc {
 	_bool isImmediate = { false };
@@ -73,6 +72,12 @@ protected:
 	PLAYER_STATE   m_eState = { PLAYER_STATE::STATE_END };
 	struct Player_Desc* m_Desc = { nullptr };
 	_float m_fNextBlendRatio = { 0.12f };
+
+protected:
+	//x 성분이 look, y 성분이 right 기준.
+	// (1,1) 이라면 look + right 방향으로 나아가게 처리해줌
+	// 함수 내부에서 노멀라이즈만 처리해서 세팅해주고.
+	_vector Calc_PlayerDirection(_vector vDir);
 
 public:
 	virtual	void					Free() override;

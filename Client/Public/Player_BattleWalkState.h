@@ -20,10 +20,16 @@ public:
 	virtual _float End();
 
 private:
-	_bool	m_isRunStart = { false };
-	_bool   m_isLanding = { false }; 
-	_bool   m_isEvading = {  false };
-	_float	m_fDegree = { 0.f }; 
+	_bool		m_isRunStart = { false };
+	_bool		m_isLanding = { false }; 
+	_bool		m_isEvading = {  false };
+	_float		m_fRadian = { 0.f }; 
+
+	//
+	_bool		m_isTurning = { false };
+	_bool		m_isTurnLocked = { false };
+	_float4		m_vLastMoveLook = { 0.f, 0.f, 1.f, 0.f }; 
+	_float		m_fNoInputTimer = { 0.f };
 
 public:
 	static	CPlayer_BattleWalkState*		Create(void* pArg);

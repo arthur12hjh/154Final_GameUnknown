@@ -154,7 +154,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 		return E_FAIL;
 
 	STATIC_SHADOW_DESC		StaticShadowDesc{};
-	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fFar = 2000.f;
 	StaticShadowDesc.fNear = 0.1f;
 	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
@@ -310,9 +310,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Terrain(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
 	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
 	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))

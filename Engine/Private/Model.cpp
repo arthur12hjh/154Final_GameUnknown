@@ -59,10 +59,7 @@ CModel::CModel(const CModel& Prototype)
     for (auto& pPrototypeAnim : Prototype.m_Animations)
         m_Animations.push_back(pPrototypeAnim->Clone());
 
-
-
     memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
-
 }
 
 _uint CModel::Get_Mesh_MaterialIndex(_uint iIdx) const

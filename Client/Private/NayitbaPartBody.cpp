@@ -131,17 +131,6 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-    _float fCamDist = XMVectorGetX(
-        XMVector3Length(
-            m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition()
-        )));
-
-    if (fCamDist < 100.f)
-    {
-        m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
-        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-    }
-
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
@@ -368,6 +357,12 @@ void CNayitbaPartBody::Play_DeadEffect()
 {
     if (false == m_isDeadEffect)
          m_isDeadEffect = true;
+}
+
+void CNayitbaPartBody::Part_BodyColor(_bool bIsEnable, _float4 vColor)
+{
+    m_bIsChangeBodyColor = bIsEnable;
+    m_vBodyColor = vColor;
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)

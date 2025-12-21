@@ -75,7 +75,12 @@ namespace Client
 		IDLE, WALK_START, WALK, WALK_END, JUMP, LIGHT_ATTACK,
 		EVADE, LANDING, SPRINT, SPRINT_END,
 
-		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
+		// 자판기
+		VENDING_INTERACTION, 
+		// 발로 차서 까는 박스
+		SUPPLYBOX_INTERACTION, 
+		// 시체
+		CORPSE_INTERACTION,
 
 		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
 
@@ -83,9 +88,15 @@ namespace Client
 
 		AERIAL_ATTACK, //미구현
 
+		// 링크 어택 모음
 		GIGAS_LINKATTACK,
 
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
+
+		JUST_EVADE, 
+		REPULSE, 
+		//블링크는 시작 모션 & 공격 모션 둘 나눠서 제어.
+		BLINK, BLINK_ATTACK,
 
 		//여기에 상태들 다 Enum화 해서 올려놔야해.
 		//안쓸것들은 나중에 치워줘
@@ -129,7 +140,11 @@ namespace Client
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
 		float							fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
 
+		// 무적
+		bool							isInvincible = { false }; 
+		// 슈퍼아머
 		bool							isSuperArmor = { false };
+		// 룩벡터 고정.
 		bool							isLookFixed = { false };
 		bool							isInteracting = { false };
 		// 혹시 몰라서 플레이어 데스크에 떄려박앗습니다
