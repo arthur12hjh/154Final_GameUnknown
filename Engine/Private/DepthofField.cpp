@@ -7,9 +7,47 @@ CDepthofField::CDepthofField(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 {
 }
 
-void CDepthofField::Set_Active()
+void CDepthofField::Set_Active(_bool bFlag, _float fLerpTime)
 {
-	m_isActive = !m_isActive;
+	if (true == bFlag && false == m_isActive)
+		m_fLerpTime = fLerpTime;
+
+	if (false == bFlag && true == m_isActive)
+		m_fLerpTime = fLerpTime;
+
+	m_fTimeAcc = 0.f;
+	m_isActive = bFlag;
+}
+
+void CDepthofField::Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity)
+{
+	m_fFocusDistance = fFocusDistance;
+	m_fMaxRange = fMaxRange;
+	m_fIntensity = fIntensity;
+}
+
+void CDepthofField::Set_DoFInfo(_float fFocusDistance)
+{
+	m_fFocusDistance = fFocusDistance;
+}
+
+void CDepthofField::Update(_float fTimeDelta)
+{
+	if(m_fTimeAcc < m_fLerpTime)
+		m_fTimeAcc += fTimeDelta;
+
+	//만약 활성화된 상태고 럴프 타임보다 더 들어가있다면.
+	if (true == m_isActive && m_fTimeAcc >= m_fLerpTime)
+	{
+		// 끄는건 false 입력이 들어온 순간.
+		//m_isActive = false;
+		m_fTimeAcc = m_fLerpTime;
+	}
+	else if (false == m_isActive && m_fTimeAcc >= m_fLerpTime)
+	{
+		m_fTimeAcc = 0.f;
+		m_fLerpTime = 0.f;
+	}
 }
 
 void* CDepthofField::Get_Desc()
@@ -60,12 +98,12 @@ HRESULT CDepthofField::Initialize()
 HRESULT CDepthofField::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTag, const _wstring& strDepthRTTag, const _wstring& strReturnRTTag)
 {
 	//blur X 처리
-	if (false == m_isActive)
+	if (false == m_isActive && 0.f == m_fLerpTime)
 		return S_OK;
 
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SreenBlurX"))))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(strRTTag, m_pShader, "g_SceneTexture")))
 		return E_FAIL;
 
@@ -95,6 +133,19 @@ HRESULT CDepthofField::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTa
 	m_pShader->Bind_RawValue("g_fFocusDistance", &m_fFocusDistance, sizeof(_float));
 	m_pShader->Bind_RawValue("g_fMaxRange", &m_fMaxRange, sizeof(_float));
 	m_pShader->Bind_RawValue("g_fIntensity", &m_fIntensity, sizeof(_float));
+
+	//지금 생각해보니까 CPU에서 넘겨야지?..
+	_float fTimeIntensity = { 0.f };
+	if (true == m_isActive)
+	{
+		fTimeIntensity = m_fTimeAcc / m_fLerpTime;
+		m_pShader->Bind_RawValue("g_fTimeIntensity", &fTimeIntensity, sizeof(_float));
+	}
+	else if (false == m_isActive)
+	{
+		fTimeIntensity = 1.f - m_fTimeAcc / m_fLerpTime;
+		m_pShader->Bind_RawValue("g_fTimeIntensity", &fTimeIntensity, sizeof(_float));
+	}
 
 	m_pShader->Begin(1);
 	pVIBuffer->Bind_Resources();

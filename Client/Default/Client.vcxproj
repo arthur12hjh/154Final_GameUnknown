@@ -225,6 +225,8 @@
     <ClInclude Include="..\Public\Player_BetaChargingSlashState.h" />
     <ClInclude Include="..\Public\Player_BattleEvadeState.h" />
     <ClInclude Include="..\Public\Player_BetaTripletState.h" />
+    <ClInclude Include="..\Public\Player_BlinkAttackState.h" />
+    <ClInclude Include="..\Public\Player_BlinkState.h" />
     <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Hairpin_Player.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
@@ -238,6 +240,7 @@
     <ClInclude Include="..\Public\Player_BattleLandingState.h" />
     <ClInclude Include="..\Public\Player_GigasLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_LockonIdleState.h" />
+    <ClInclude Include="..\Public\Player_LockonJustEvadeState.h" />
     <ClInclude Include="..\Public\Player_LockonSprintEndState.h" />
     <ClInclude Include="..\Public\Player_LockonSprintState.h" />
     <ClInclude Include="..\Public\Player_LockonWalkState.h" />
@@ -247,6 +250,7 @@
     <ClInclude Include="..\Public\Player_ParryState.h" />
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
+    <ClInclude Include="..\Public\Player_RepulseState.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_TestState.h" />
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
@@ -518,6 +522,8 @@
     <ClCompile Include="..\Private\Player_BetaChargingSlashState.cpp" />
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_BetaTripletState.cpp" />
+    <ClCompile Include="..\Private\Player_BlinkAttackState.cpp" />
+    <ClCompile Include="..\Private\Player_BlinkState.cpp" />
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Hairpin_Player.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
@@ -531,6 +537,7 @@
     <ClCompile Include="..\Private\Player_BattleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp" />
+    <ClCompile Include="..\Private\Player_LockonJustEvadeState.cpp" />
     <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp" />
     <ClCompile Include="..\Private\Player_LockonSprintState.cpp" />
     <ClCompile Include="..\Private\Player_LockonWalkState.cpp" />
@@ -540,6 +547,7 @@
     <ClCompile Include="..\Private\Player_ParryState.cpp" />
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
+    <ClCompile Include="..\Private\Player_RepulseState.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_TestState.cpp" />
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
