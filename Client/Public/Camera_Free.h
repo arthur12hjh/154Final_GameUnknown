@@ -50,6 +50,7 @@ private:
 	_float						m_fMouseSensor = {};
 
 	// UITool에서 쓰는 중 나중에 지우겠습니다
+	// 네
 	//CBoxCollider*					m_pColliderCom{ nullptr };
 
 public:

@@ -13,27 +13,25 @@ void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
-	_float fDegree = 0.f;
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.2f);
-		m_eDirection = EVADE_DIR::STRAIGHT;
+		m_eDirection = PLAYER_DIRECTION::STRAIGHT;
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Left", false, 1.2f);
-		m_eDirection = EVADE_DIR::LEFT;
+		m_eDirection = PLAYER_DIRECTION::LEFT;
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Right", false, 1.2f);
-		m_eDirection = EVADE_DIR::RIGHT;
+		m_eDirection = PLAYER_DIRECTION::RIGHT;
 	}
 	else
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false, 1.2f);
-		m_eDirection = EVADE_DIR::BACKWARD;
+		m_eDirection = PLAYER_DIRECTION::BACKWARD;
 	}
 }
 
@@ -46,19 +44,19 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 
 	switch (m_eDirection)
 	{
-	case EVADE_DIR::STRAIGHT:
+	case PLAYER_DIRECTION::STRAIGHT:
 		if (fAnimationRatio <= 0.3f)
 			m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.6f);
 		break;
-	case EVADE_DIR::LEFT:
+	case PLAYER_DIRECTION::LEFT:
 		if (fAnimationRatio <= 0.3f)
 			m_Desc->pPlayerTransform->Go_Left(fTimeDelta * 1.6f);
 		break;
-	case EVADE_DIR::RIGHT:
+	case PLAYER_DIRECTION::RIGHT:
 		if (fAnimationRatio <= 0.3f)
 			m_Desc->pPlayerTransform->Go_Right(fTimeDelta * 1.6f);
 		break;
-	case EVADE_DIR::BACKWARD:
+	case PLAYER_DIRECTION::BACKWARD:
 		if (fAnimationRatio <= 0.3f)
 			m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.6f);
 		break;

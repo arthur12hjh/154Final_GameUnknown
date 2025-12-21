@@ -30,10 +30,9 @@ typedef struct tagLockonWalkStateDesc {
 	_bool isAlreadyRunning = { false }; 
 } PLAYER_LOCKON_WALK_DESC;
 
-typedef struct tagLockonSprintEndStateDesc {
+typedef struct tagPlayerDirectionDesc {
 	PLAYER_DIRECTION eDir = { PLAYER_DIRECTION::END };
-} PLAYER_LOCKON_SPRINT_END_DESC;
-
+} PLAYER_DIRECTION_DESC;
 
 typedef struct tagParryStateDesc {
 	_bool isImmediate = { false };

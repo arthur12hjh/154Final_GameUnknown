@@ -214,13 +214,12 @@ void CRenderer::Update(_float fTimeDelta)
 		m_isFog = !m_isFog;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F7))
 		m_isHDR = !m_isHDR;
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F8))
-		m_pDepthofField->Set_Active();
 	// SSAO Åä±Û.
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
 		m_isSSAO = !m_isSSAO;
 
 	m_pRadialBlur->Update(fTimeDelta);
+	m_pDepthofField->Update(fTimeDelta);
 }
 
 void CRenderer::Update_Shadow(_float fTimeDelta)
@@ -351,6 +350,21 @@ HRESULT CRenderer::Ready_MRTs()
 void CRenderer::Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower)
 {
 	m_pRadialBlur->Set_Active(iSampleCount, fSamplePower, fLifeTime);
+}
+
+void CRenderer::Active_DoF(_bool bFlag, _float fLerpTime)
+{
+	m_pDepthofField->Set_Active(bFlag, fLerpTime);
+}
+
+void CRenderer::Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity)
+{
+	m_pDepthofField->Set_DoFInfo(fFocusDistance, fMaxRange, fIntensity);
+}
+
+void CRenderer::Set_DoFInfo(_float fFocusDistance)
+{
+	m_pDepthofField->Set_DoFInfo(fFocusDistance);
 }
 
 HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObject)

@@ -76,7 +76,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
     _vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
 
     _float fTurnDotThreshold = -0.90f;
-    _float fTurnDotRelease = -0.85f;
+    _float fTurnDotRelease = -0.3f;
 
     _float fDot = XMVectorGetX(XMVector3Dot(vPlayerLook, vCameraLook));
 

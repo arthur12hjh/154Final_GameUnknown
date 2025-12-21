@@ -557,20 +557,25 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			break;
 		case INTERACTION_STATE::CONTACT:
 		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.isChangeMode = false;
+			Desc.pArg = pInteractionCom;
+
 			switch (pInteractionData->eType)
 			{
 			// 만약 서플라이 박스라면 (발로 차는 모션)
 			case INTERACTION_TYPE::SUPPLY_BOX:
 			{
-				PLAYER_TRANSITION_DESC Desc;
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
-				Desc.isChangeMode = false;
-				Desc.pArg = pInteractionCom;
-				// Transition 너무 이곳저곳에서 일어나지 않나?..
-				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
-				// 제어가 안될 것까진 없다고 봄..
 				m_pFSM->Handle_Transition(Desc);
 				break;
+			}
+			case INTERACTION_TYPE::CORPSE:
+			{
+				Desc.eNextState = PLAYER_STATE::CORPSE_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
@@ -663,8 +668,16 @@ void CPlayer::Update_LinkAttack(_float fTimeDelta)
 	}
 }
 
+void CPlayer::Update_ReactionSkills(_float fTimeDelta)
+{
+}
+
 void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
 {
+	//무적이면 충돌처리 안하게 처리
+	if (true == m_PlayerDesc.isInvincible)
+		return;
+
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
 	_float fImpactForce;

@@ -98,6 +98,18 @@ public:
 	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	//Depth Of Field 효과 켜주기
+	//LerpTime은 DoF가 완전히 적용되는데 걸리는 시간.
+	//바로 적용시키고 싶으면 0으로 세팅.
+	//-> 이거 한번켜면 계속 유지되는건 알겠는데, 포커스되는 거리 뭐로 바꿔요?
+	//-> GameInstance Set_DofInfo 참조.
+	void				Active_DoF(_bool bFlag, _float fLerpTime);
+	// fFocusDistance -> 초점 거리
+	// fMaxRange -> 초점 거리로부터 얼마나 떨어져야 블러효과가 최대가 되나요?
+	// fIntensity -> Dof 상수 계수. 보통 1로 두고, DoF가 너무 약해보이면 올리세요
+	void				Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
+	// 초점 거리만 바꿔주는 오버라이딩 함수.
+	void				Set_DoFInfo(_float fFocusDistance);
 
 	HRESULT				Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
 	HRESULT				Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
