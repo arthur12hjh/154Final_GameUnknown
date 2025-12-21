@@ -359,6 +359,12 @@ void CNayitbaPartBody::Play_DeadEffect()
          m_isDeadEffect = true;
 }
 
+void CNayitbaPartBody::Part_BodyColor(_bool bIsEnable, _float4 vColor)
+{
+    m_bIsChangeBodyColor = bIsEnable;
+    m_vBodyColor = vColor;
+}
+
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
 {
     /* Com_Model */
