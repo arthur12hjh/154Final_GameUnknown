@@ -139,8 +139,10 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
 
         return;
     }
-
-    __super::Bind_Matrices(fTimeDelta);
+    else
+    {
+        __super::Bind_Matrices(fTimeDelta);
+    }
 }
 
 void CCamera_Player::Update(_float fTimeDelta)

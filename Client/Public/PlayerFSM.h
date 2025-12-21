@@ -28,6 +28,7 @@ public:
 	void	Handle_Transition(PLAYER_TRANSITION_DESC& Desc);
 	void	Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_DESC& Desc);
 	_bool	Check_CanStateEnter(PLAYER_TRANSITION_DESC& Desc);
+
 private:
 	CGameInstance*					m_pGameInstance = { nullptr };
 	class CGameManager*				m_pGameManager = { nullptr };
