@@ -30,6 +30,9 @@ namespace Client
 #define iFLAG_CAMERA_LOOKAT_TARGET      (1 << 17)
 
 
+	// 특정 상호작용에 대한 타입
+	enum class ATK_INTERACTION_TYPE { PERFECT_DOGE, BLINK, REPULSE, END };
+
 	enum class RECOVERY_TYPE
 	{
 		RECOVERY_HP,		// HP 회복
@@ -75,7 +78,12 @@ namespace Client
 		IDLE, WALK_START, WALK, WALK_END, JUMP, LIGHT_ATTACK,
 		EVADE, LANDING, SPRINT, SPRINT_END,
 
-		VENDING_INTERACTION, SUPPLYBOX_INTERACTION,
+		// 자판기
+		VENDING_INTERACTION, 
+		// 발로 차서 까는 박스
+		SUPPLYBOX_INTERACTION, 
+		// 시체
+		CORPSE_INTERACTION,
 
 		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
 
@@ -91,7 +99,7 @@ namespace Client
 		JUST_EVADE, 
 		REPULSE, 
 		//블링크는 시작 모션 & 공격 모션 둘 나눠서 제어.
-		BLINK, BLINK_ATTACK,
+		BLINK_START, BLINK_ATTACK,
 
 		//여기에 상태들 다 Enum화 해서 올려놔야해.
 		//안쓸것들은 나중에 치워줘
@@ -135,6 +143,13 @@ namespace Client
 		float							fMaxRushCoolTime;			// 러쉬 전체 쿨타임
 		float							fCurrentRushCoolTime;		// 러쉬 현재 쿨타임
 
+#pragma region REACTION_SKILL
+		bool							isReactionSkillUsable = { false };
+		ATK_INTERACTION_TYPE			eReactionType = { ATK_INTERACTION_TYPE::END };
+		//선판정이 들어갈 수 있는, 남은 프레임 수.
+		int								iLeftReactionSkillFrameAcc = { 0 };
+#pragma endregion
+
 		// 무적
 		bool							isInvincible = { false }; 
 		// 슈퍼아머
@@ -162,6 +177,7 @@ namespace Client
 		float  fModeTimer = { 0.f };
 		bool   HasTarget = { false };
 		bool   isBossLock = { false };
+		bool   isLockChangable = { true };
 		// idle일땐 당연히 안보이고, 무기 스왑 애니메이션에서
 		// 해당 값 제어 해서 무기가 보일지, 비녀가 보일지 결정해줄 것
 		bool   isWeaponVisible = { false };
@@ -483,8 +499,6 @@ namespace Client
 		vector<CINEMATIC_NODE_DESC> CinematicNodeTrackList;
 	}CINEMATIC_DESC;
 
-	// 특정 상호작용에 대한 타입
-	enum class ATK_INTERACTION_TYPE { PERFECT_DOGE, BLINK, REPULSE, END};
 	typedef struct Attack_Interaction_Desc
 	{
 		// 공격에대한 상호작용을 하기위해 넘어 오는 구조체

@@ -6,7 +6,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 79,
+                "iNotifyKeyFrame": 78,
                 "iNumData01": 54,
                 "iNumData02": 1,
                 "iNumData03": 4,
@@ -36,9 +36,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
+                    10.0,
+                    3.0,
+                    10.0
                 ]
             },
             {

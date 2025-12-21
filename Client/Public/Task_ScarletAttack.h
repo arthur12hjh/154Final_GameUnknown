@@ -53,10 +53,10 @@ private:
 	void								LinkAttackPattern();
 
 	void								EntranceAttack();
+	void								BackStepPattern();
 
 #pragma region Phase2
 	void								SecondPhaseNormalAttack();
-
 	void								SecondPhaseAttack();
 #pragma endregion
 

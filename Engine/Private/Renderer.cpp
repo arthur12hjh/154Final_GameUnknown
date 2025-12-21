@@ -5,7 +5,6 @@
 #include "BlendObject.h"
 #include "UIObject.h"
 #include "GameInstance.h"
-#include "Occlusion.h"
 
 #include "ColliderRenderer.h"
 
@@ -579,15 +578,6 @@ void CRenderer::Render_MotionBlur()
 
 void CRenderer::Render_Occlusion()
 {
-	//_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
-	//// 나중에 지워주세요
-	//_char szDebugString[256];
-
-	//snprintf(szDebugString, sizeof(szDebugString),
-	//	"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
-
-	//OutputDebugStringA(szDebugString);
-
 	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
 	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
 		return;
@@ -627,13 +617,6 @@ void CRenderer::Render_Occlusion()
 
 				_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
 				_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
-
-				//_vector vPos = matWorld.r[3];
-
-				//matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				//matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
-
-				//matWorld.r[3] = vPos;
 
 				XMStoreFloat4x4(&WorldMatrix, matWorld);
 

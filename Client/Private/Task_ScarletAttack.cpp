@@ -34,7 +34,6 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
-	
 	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
 		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
 	{
@@ -67,14 +66,20 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	{
 		if (m_pSkillData.empty())
 		{
-			Compute_AttackCoolTime();
-			m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
-			m_pBlackBoard->SetAttackData(nullptr);
+			if (10.f > m_pBlackBoard->GetTargetDistance())
+			{
+				BackStepPattern();
+			}
+			else
+			{
+				Compute_AttackCoolTime();
+				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+				m_pBlackBoard->SetAttackData(nullptr);
 
-			if (m_pBlackBoard->IsPhaseLastAttack())
-				m_pBlackBoard->SetPhaseLastAttack(false);
-
-			return NODE_STATE::COMPLETE;
+				if (m_pBlackBoard->IsPhaseLastAttack())
+					m_pBlackBoard->SetPhaseLastAttack(false);
+				return NODE_STATE::COMPLETE;
+			}
 		}
 		else
 			SelectAttackData();
@@ -114,12 +119,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				m_pSkillData.push(m_pGameManager->Find_SkillData(55));
-				SelectAttackData();
-				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				/*m_pSkillData.push(m_pGameManager->Find_SkillData(55));
+				SelectAttackData();*/
+				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();*/
+					NormalAttackPattern();
 			}
 			else
 			{
@@ -202,6 +207,17 @@ void CTask_ScarletAttack::EntranceAttack()
 	m_pBlackBoard->SetEntarnceAttack(false);
 }
 
+void CTask_ScarletAttack::BackStepPattern()
+{
+	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+	if (60.f < fRandom)
+		m_pSkillData.push(m_pGameManager->Find_SkillData(48));
+	else
+		m_pSkillData.push(m_pGameManager->Find_SkillData(28));
+
+	SelectAttackData();
+}
+
 void CTask_ScarletAttack::SecondPhaseNormalAttack()
 {
 	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
@@ -223,23 +239,17 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 	}
 	else if (60 > iRandom)
 	{
-		m_pSkillData.push(m_pGameManager->Find_SkillData(21)); // Approach
-		m_pSkillData.push(m_pGameManager->Find_SkillData(48)); // MoveBack
-		m_pSkillData.push(m_pGameManager->Find_SkillData(33)); // Blink Cut
-		m_pSkillData.push(m_pGameManager->Find_SkillData(41)); // Count Move Attack
-
-		//// 여기서 움직일까 말까 고민되네
-		//// 움직인다고 하면 거리기반으로 피해야하는데
-		//if (50 > m_pGameInstance->Random(0.f, 100.f))
-		//	m_pSkillData.push(m_pGameManager->Find_SkillData(49));
-		//else
-		//	m_pSkillData.push(m_pGameManager->Find_SkillData(50));
+		m_pSkillData.push(m_pGameManager->Find_SkillData(53)); // AreaCombo
 	}
 	else if (90 > iRandom)
 	{
+		m_pSkillData.push(m_pGameManager->Find_SkillData(55)); // AreaSlash2
+	}
+	else if (93 > iRandom)
+	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(42)); // Link Break Chance Attack
 	}
-	else if (95 > iRandom)
+	else if (96 > iRandom)
 	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(44)); // Air Dash SpaceCut
 	}
@@ -369,10 +379,10 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 		{
 			// Length : 48
 			m_fMoveAnimMaxRatio = 1.f;
-			XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
+			XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK) * 3.f);
 			bIsMove = true;
 
-			if (3.f > m_pBlackBoard->GetTargetDistance())
+			if (7.f > m_pBlackBoard->GetTargetDistance())
 			{
 				SelectAttackData();
 				bIsMove = false;
@@ -442,7 +452,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 			if (0.28f >= fAnimationRatio)
 			{
 				m_fMoveAnimMaxRatio = 0.28f;
-				m_fLerpSpeed = 2.f;
+				m_fLerpSpeed = 5.f;
 				if (0.05f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f));
 
@@ -1054,8 +1064,6 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_float fDistance = XMVectorGetX(XMVector3Length(vOwnerPos - XMLoadFloat3(&m_fAttackMovePoint)));
 	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fTimeDelta * m_fLerpSpeed);
-
-	
 
 	if (m_bIsLookAtPoint)
 		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, m_fLerpSpeed);
