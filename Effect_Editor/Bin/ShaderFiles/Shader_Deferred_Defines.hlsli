@@ -62,33 +62,14 @@ struct PS_OUT_LIGHT
     vector vSpecular : SV_TARGET1;
 };
 
-struct PS_OUT_BLUR_X
+struct PS_OUT_BLUR
 {
-    float4 vBlurX : SV_TARGET0;
-    float4 vWeight : SV_TARGET1;
+    float4 vBlur : SV_TARGET0;
 };
 
 struct PS_OUT_SHADOW_BLUR_X
 {
     float vBackBuffer : SV_TARGET0;
-};
-
-struct PS_OUT_BLUR_FINAL
-{
-    float4 vBlurY : SV_TARGET0;
-    float4 vWeight : SV_TARGET1;
-};
-
-struct PS_OUT_GLOW_X
-{
-    float4 vGlowX : SV_TARGET0;
-    float4 vWeight : SV_TARGET1;
-};
-
-struct PS_OUT_GLOW_FINAL
-{
-    float4 vGlowY : SV_TARGET0;
-    float4 vWeight : SV_TARGET1;
 };
 
 struct PS_OUT_FOG

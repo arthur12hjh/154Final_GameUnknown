@@ -18,6 +18,7 @@
 #include "UIScript.h"
 
 #include "SpriteParticle.h"
+#include "Effect.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -418,6 +419,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.vPosition = { 1000.f, 1.f, 1000.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
+
+	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
+	ChargeDesc.fRotationPerSec = 1.f;
+	ChargeDesc.fSpeedPerSec = 1.f;
+	ChargeDesc.vPos = XMVectorSet(1000.f, 1.f, 1000.f, 1);
+	ChargeDesc.fRot = _float3(0, 0, 0);
+	ChargeDesc.fSize = 0.8f;
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ChargeDesc)))
 		return E_FAIL;
 
 	return S_OK;
