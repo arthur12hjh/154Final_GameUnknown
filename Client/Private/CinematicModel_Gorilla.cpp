@@ -158,7 +158,7 @@ HRESULT CCinematicModel_Gorilla::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 {
 	m_bIsActive = TRUE;
 
-	if(m_iCinematicCode == -1)
+	if (m_iCinematicCode != CinematicNodeDesc.iActiveIndex)
 		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
 
 	switch (m_iCinematicCode)

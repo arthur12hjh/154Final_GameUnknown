@@ -54,9 +54,9 @@ PS_OUT_BACKBUFFER PS_MAIN_CURVE(PS_IN In)
     return Out;
 };
 
-PS_OUT_BLUR_X PS_MAIN_SAMPLING_BLUR_X(PS_IN In)
+PS_OUT_BLUR PS_MAIN_SAMPLING_BLUR_X(PS_IN In)
 {
-    PS_OUT_BLUR_X Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0.f;
@@ -69,14 +69,14 @@ PS_OUT_BLUR_X PS_MAIN_SAMPLING_BLUR_X(PS_IN In)
         vColor += g_fBloomWeights[i + 10] * g_SceneTexture.Sample(ClampSampler, vTexcoord);
     }
     
-    Out.vBlurX = vColor / 10.f;
+    Out.vBlur = vColor / 10.f;
     
     return Out;
 }
 
-PS_OUT_BLUR_FINAL PS_MAIN_SAMPLING_BLUR_Y(PS_IN In)
+PS_OUT_BLUR PS_MAIN_SAMPLING_BLUR_Y(PS_IN In)
 {
-    PS_OUT_BLUR_FINAL Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0;
@@ -89,14 +89,14 @@ PS_OUT_BLUR_FINAL PS_MAIN_SAMPLING_BLUR_Y(PS_IN In)
         vColor += g_fBloomWeights[i + 10] * g_SceneTexture.Sample(ClampSampler, vTexcoord);
     }
     
-    Out.vBlurY = vColor / 6.5f;
+    Out.vBlur = vColor / 6.5f;
     
     return Out;
 }
 
-PS_OUT_BLUR_X PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
+PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
 {
-    PS_OUT_BLUR_X Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0.f;
@@ -109,14 +109,14 @@ PS_OUT_BLUR_X PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
         vColor += g_fBloomWeights[i + 10] * (g_SceneTexture.Sample(ClampSampler, vTexcoord) + g_SourTexture.Sample(ClampSampler, vTexcoord));
     }
     
-    Out.vBlurX = vColor / 10.f;
+    Out.vBlur = vColor / 10.f;
     
     return Out;
 }
 
-PS_OUT_BLUR_FINAL PS_MAIN_ADDITIVE_BLUR_Y(PS_IN In)
+PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_Y(PS_IN In)
 {
-    PS_OUT_BLUR_FINAL Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0.f;
@@ -129,7 +129,7 @@ PS_OUT_BLUR_FINAL PS_MAIN_ADDITIVE_BLUR_Y(PS_IN In)
         vColor += g_fBloomWeights[i + 10] * g_SceneTexture.Sample(ClampSampler, vTexcoord);
     }
     
-    Out.vBlurY = vColor / 6.5f;
+    Out.vBlur = vColor / 6.5f;
     
     return Out;
 }
