@@ -68,7 +68,7 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-#endif    
+#endif
     }
 }
 
