@@ -14,10 +14,12 @@ CPlayer_RepulseState::CPlayer_RepulseState()
 void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
 {
     m_Desc->isInvincible = true;
+    m_Desc->isLockChangable = false;
+
     m_eState = PLAYER_STATE::REPULSE;
     m_eAnimState = REPULSE_STATE::ATTACK_START;
 
-    m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ShieldBreak_Charging", false, 1.4f);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_MoveBackAttack1_S", false, 1.4f);
     m_pGameInstance->Active_RadialBlur(2.f, 6, 0.3f);
     m_pGameInstance->Active_DoF(true, 0.3f);
     
@@ -30,38 +32,35 @@ void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
 
 PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
 {
-    _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
+    _bool isAnimFinished = {};
     //ratio 받아와서 세팅
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-    //수그렸다가 썸머솔트킥으로 넘어가는 로직
-    if (REPULSE_STATE::ATTACK_START == m_eAnimState && ((20.f / 54.f) <= fAnimationRatio))
-    {
-        m_eAnimState = REPULSE_STATE::ATTACK_FLOAT;
-        m_pPlayer->Set_Animation("P_Eve_Sword_SlotNormal_ShieldBreak2", false, 1.f, 0.f);
-        m_pGameInstance->Active_DoF(false, 0.2f);
-    }
+    if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && (63.f / 119.f) <= fAnimationRatio)
+        isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta * 1.7f);
+    else
+        isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
-    //중력 로직 
-    if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState &&
-        false == m_isGravityActivated && 0.1f <= fAnimationRatio)
-    {
-        m_Desc->pPlayerController->Set_Gravity(true, 20.f);
-        m_isGravityActivated = true;
-    }
-    if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.1f > fAnimationRatio)
-    {
-        m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.3f);
-    }
-
-    if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.5f >= fAnimationRatio && 0.12f <= fAnimationRatio)
-        m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.5f);
-
-    if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.4f >= fAnimationRatio)
-        m_pGameInstance->SetGameSpeed(1.f);
+ /*   if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && true == isAnimFinished)
+        m_tNextState.eNextState = PLAYER_STATE::IDLE;*/
 
     if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
+
+    //수그렸다가 썸머솔트킥으로 넘어가는 로직
+    if (REPULSE_STATE::ATTACK_START == m_eAnimState && true == isAnimFinished)
+    {
+        m_eAnimState = REPULSE_STATE::ATTACK_FLOAT;
+        m_pPlayer->Set_Animation("P_Eve_Sword_Normal_MoveBackAttack1_E", false, 1.6f, 0.f);
+        m_pGameInstance->Active_DoF(false, 0.2f);
+        m_Desc->pPlayerController->Set_Gravity(true, 14.f);
+    }
+    
+    if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.4f >= fAnimationRatio && 
+        true == m_Desc->pPlayerController->Get_Gravity())
+        m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.8f);
+    if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.3f < fAnimationRatio)
+        m_pGameInstance->SetGameSpeed(1.f);
 
     return m_tNextState;
 }
@@ -70,6 +69,7 @@ _float CPlayer_RepulseState::End()
 {
     m_pGameInstance->SetGameSpeed(1.f);
     m_Desc->isInvincible = false;
+    m_Desc->isLockChangable = true;
 
     return m_fNextBlendRatio;
 }
