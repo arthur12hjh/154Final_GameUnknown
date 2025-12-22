@@ -40,10 +40,8 @@ void CMousePointer::Priority_Update(_float fTimeDelta)
     MousePoint.y += m_pTransformCom->Get_Scale().y * 0.3f;
     ComputeTransform(XMVectorSet(MousePoint.x, MousePoint.y, 0.f, 1.f));
 
-
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
-        m_bIsRendered = !m_bIsRendered;
-
+   /* if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
+        m_bIsRendered = !m_bIsRendered;*/
 } 
 
 void CMousePointer::Update(_float fTimeDelta)
@@ -52,7 +50,7 @@ void CMousePointer::Update(_float fTimeDelta)
 
 void CMousePointer::Late_Update(_float fTimeDelta)
 {
-    if(m_bIsRendered)
+    if(!g_bIsMouseLock)
         m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
 }
 

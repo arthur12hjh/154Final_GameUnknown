@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UICostumePuzzleAnswer.h"
+#include "UICostumePuzzleHint.h"
 
 #include "GameInstance.h"
 #include "UIHUD.h"
@@ -7,28 +7,27 @@
 #include "UIInstanceBuffer.h"
 #include "UIPopup.h"
 
-CUICostumePuzzleAnswer::CUICostumePuzzleAnswer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUICostumePuzzleHint::CUICostumePuzzleHint(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
 }
 
-CUICostumePuzzleAnswer::CUICostumePuzzleAnswer(const CUICostumePuzzleAnswer& Prototype) 
+CUICostumePuzzleHint::CUICostumePuzzleHint(const CUICostumePuzzleHint& Prototype) 
 	: CUIBase{ Prototype }
 {
 }
 
-HRESULT CUICostumePuzzleAnswer::Initialize_Prototype()
+HRESULT CUICostumePuzzleHint::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Initialize(void* pArg)
+HRESULT CUICostumePuzzleHint::Initialize(void* pArg)
 {	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	m_Answer = { 0, 1, 2, 3, 4, 5 };
-	m_SelectedIndices = { 12, 12, 12, 12, 12, 12 };
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
@@ -36,31 +35,49 @@ HRESULT CUICostumePuzzleAnswer::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUICostumePuzzleAnswer::Priority_Update(_float fTimeDelta)
+void CUICostumePuzzleHint::Priority_Update(_float fTimeDelta)
 {
-	__super::Priority_Update(fTimeDelta);
+	if (!m_bPopupOpen)
+	{
+		m_bPopupOpen = static_cast<CUIPopup*>(m_pParent)->Get_IsOpen();
+		
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &m_bPopupOpen;
+
+		__super::Trigger_Event(TEXT("Get_Costume_Puzzle_Hint"), &Arg);
+	}
+
+	if (m_bPopupOpen && m_eVisibility == VISIBILITY::VISIBLE)
+	{
+		__super::Priority_Update(fTimeDelta);
+	}
 }
 
-void CUICostumePuzzleAnswer::Update(_float fTimeDelta)
+void CUICostumePuzzleHint::Update(_float fTimeDelta)
 {
- 	__super::Update(fTimeDelta);
+	if (!m_bPopupOpen && m_eVisibility == VISIBILITY::HIDDEN)
+		return;
+ 	
+	__super::Update(fTimeDelta);
 }
 
-void CUICostumePuzzleAnswer::Late_Update(_float fTimeDelta)
+void CUICostumePuzzleHint::Late_Update(_float fTimeDelta)
 {
+	if (!m_bPopupOpen && m_eVisibility == VISIBILITY::HIDDEN)
+		return;
+
 	__super::Late_Update(fTimeDelta);
 
 	if (FAILED(SetUp_Icons()))
 		return;
-
-	if (!m_isAnswer && Check_Answer())
-	{
-		static_cast<CUIPopup*>(m_pParent)->Close_Popup();
-	}
 }
 
-HRESULT CUICostumePuzzleAnswer::Render()
+HRESULT CUICostumePuzzleHint::Render()
 {
+	if (!m_bPopupOpen && m_eVisibility == VISIBILITY::HIDDEN)
+		return S_OK;
+
 	__super::Render();
 
 	if (FAILED(Bind_ShaderResources()))
@@ -88,7 +105,7 @@ HRESULT CUICostumePuzzleAnswer::Render()
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Ready_Components()
+HRESULT CUICostumePuzzleHint::Ready_Components()
 {
 	__super::Ready_Components();
 
@@ -121,7 +138,7 @@ HRESULT CUICostumePuzzleAnswer::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Bind_ShaderResources()
+HRESULT CUICostumePuzzleHint::Bind_ShaderResources()
 {
 	__super::Bind_ShaderResources();
 
@@ -137,7 +154,7 @@ HRESULT CUICostumePuzzleAnswer::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Execute(const UI_EVENT_DESC& EventDesc)
+HRESULT CUICostumePuzzleHint::Execute(const UI_EVENT_DESC& EventDesc)
 {
 	const _wstring& Type = EventDesc.szTypeTag;
 	const _wstring& Arg = EventDesc.szArg;
@@ -157,25 +174,11 @@ HRESULT CUICostumePuzzleAnswer::Execute(const UI_EVENT_DESC& EventDesc)
 	return S_OK;
 }
 
-void CUICostumePuzzleAnswer::CallbackEvent(void* pArg)
+void CUICostumePuzzleHint::CallbackEvent(void* pArg)
 {
-	if (m_iSubmitAnswerIdx >= m_Answer.size())
-		return;
-
-	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
-	if (!arg) return;
-
-	_int iNum = *static_cast<_int*>(arg->pData);
-
-	m_SelectedIndices[m_iSubmitAnswerIdx] = iNum;
-
-	++m_iSubmitAnswerIdx;
-
-	if (FAILED(SetUp_Icons()))
-		return;
 }
 
-HRESULT CUICostumePuzzleAnswer::Render_Icons()
+HRESULT CUICostumePuzzleHint::Render_Icons()
 {
 	if (FAILED(Bind_IconsResources()))
 		return E_FAIL;
@@ -192,9 +195,9 @@ HRESULT CUICostumePuzzleAnswer::Render_Icons()
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Render_Text()
+HRESULT CUICostumePuzzleHint::Render_Text()
 {
-	_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("Iceberg"), TEXT("Enter Passcode"), true, 1.2f);
+	_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("Iceberg"), TEXT("Passcode"), true, 1.2f);
 
 	_float2 vPivot{
 		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (m_tUIDesc.fSizeX * 0.5f),
@@ -208,13 +211,47 @@ HRESULT CUICostumePuzzleAnswer::Render_Text()
 		1.f
 	);
 
-	m_pGameInstance->Render_Text(TEXT("Iceberg"), TEXT("Enter Passcode"),
+	m_pGameInstance->Render_Text(TEXT("Iceberg"), TEXT("Passcode"),
 		vPivot, vColor, 1.2f);
+
+	fTextSize = m_pGameInstance->Get_Text_Size(TEXT("Iceberg"), TEXT("Location"), true, 1.2f);
+
+	vPivot = _float2{
+		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (m_tUIDesc.fSizeX * 0.5f),
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY + (m_tUIDesc.fSizeY * 0.5f) - (fTextSize.y * 0.5f) + 50.f,
+	};
+
+	vColor = XMVectorSet(
+		1.f,
+		1.f,
+		1.f,
+		1.f
+	);
+
+	m_pGameInstance->Render_Text(TEXT("Iceberg"), TEXT("Location"),
+		vPivot, vColor, 1.2f);
+
+	fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), TEXT("사막 가는 길"), true, 0.7f);
+
+	vPivot = _float2{
+		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (m_tUIDesc.fSizeX * 0.5f),
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY + (m_tUIDesc.fSizeY * 0.5f) - (fTextSize.y * 0.5f) + 90.f,
+	};
+
+	vColor = XMVectorSet(
+		1.f,
+		1.f,
+		1.f,
+		1.f
+	);
+
+	m_pGameInstance->Render_Text(TEXT("KoPub"), TEXT("사막 가는 길"),
+		vPivot, vColor, 0.7f);
 
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::SetUp_Icons()
+HRESULT CUICostumePuzzleHint::SetUp_Icons()
 {
 	m_IconInstances.clear();
 	m_IconInstances.reserve(6);
@@ -225,10 +262,10 @@ HRESULT CUICostumePuzzleAnswer::SetUp_Icons()
 	_float2 vScale = _float2{ 56.f / m_tUIDesc.fSizeX, 56.f / m_tUIDesc.fSizeY };
 	_float fWidth = vScale.x * (ATLAS_COL - 1);
 
-	for (size_t i = 0; i < m_SelectedIndices.size(); ++i)
+	for (size_t i = 0; i < m_Answer.size(); ++i)
 	{
-		_int col = m_SelectedIndices[i] % ATLAS_COL;
-		_int row = m_SelectedIndices[i] / ATLAS_COL;
+		_int col = m_Answer[i] % ATLAS_COL;
+		_int row = m_Answer[i] / ATLAS_COL;
 		
 		_float2 vPos = _float2{ (vScale.x * i) - (fWidth * 0.5f), 0.f };
 
@@ -245,7 +282,7 @@ HRESULT CUICostumePuzzleAnswer::SetUp_Icons()
 	return S_OK;
 }
 
-HRESULT CUICostumePuzzleAnswer::Bind_IconsResources()
+HRESULT CUICostumePuzzleHint::Bind_IconsResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -263,44 +300,9 @@ HRESULT CUICostumePuzzleAnswer::Bind_IconsResources()
 	return S_OK;
 }
 
-_bool CUICostumePuzzleAnswer::Check_Answer()
+CUICostumePuzzleHint* CUICostumePuzzleHint::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	if (m_iSubmitAnswerIdx >= m_Answer.size())
-	{
-		for (size_t i = 0; i < m_Answer.size(); ++i)
-		{
-			if (m_Answer[i] != m_SelectedIndices[i])
-			{
-				m_SelectedIndices.clear();
-				m_SelectedIndices = { 12, 12, 12, 12, 12, 12 };
-				m_iSubmitAnswerIdx = 0;
-				m_isAnswer = false;
-				return false;
-			}
-		}
-		m_isAnswer = true;
-
-		UI_EVENT_ARG_DESC Arg{};
-		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
-		Arg.pData = &m_isAnswer;
-
-		__super::Trigger_Event(TEXT("Get_Costume_Puzzle_Unlock"), &Arg);
-
-		/*CUIPopup* pPopup = static_cast<CUIPopup*>(m_pParent);
-
-		if (pPopup)
-			pPopup->Close_Popup();*/
-
-		return true;
-	}
-
-	m_isAnswer = false;
-	return false;
-}
-
-CUICostumePuzzleAnswer* CUICostumePuzzleAnswer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CUICostumePuzzleAnswer* pInstance = new CUICostumePuzzleAnswer(pDevice, pContext);
+	CUICostumePuzzleHint* pInstance = new CUICostumePuzzleHint(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -311,20 +313,20 @@ CUICostumePuzzleAnswer* CUICostumePuzzleAnswer::Create(ID3D11Device* pDevice, ID
 	return pInstance;
 }
 
-CGameObject* CUICostumePuzzleAnswer::Clone(void* pArg)
+CGameObject* CUICostumePuzzleHint::Clone(void* pArg)
 {
-	CUICostumePuzzleAnswer* pInstance = new CUICostumePuzzleAnswer(*this);
+	CUICostumePuzzleHint* pInstance = new CUICostumePuzzleHint(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CUICostumePuzzleAnswer");
+		MSG_BOX("Failed to Cloned : CUICostumePuzzleHint");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUICostumePuzzleAnswer::Free()
+void CUICostumePuzzleHint::Free()
 {
 	__super::Free();
 

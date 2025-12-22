@@ -10,15 +10,12 @@ NS_END
 NS_BEGIN(Client)
 class CUIInstanceBuffer;
 
-class CUICostumePuzzleButtons final : public CUIBase
+class CUICostumePuzzleHint final : public CUIBase
 {
 private:
-	enum class BTN_STATE { DEFAULT, HOVER, CLICK, SELECT };
-
-private:
-	CUICostumePuzzleButtons(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUICostumePuzzleButtons(const CUICostumePuzzleButtons& Prototype);
-	virtual ~CUICostumePuzzleButtons() = default;
+	CUICostumePuzzleHint(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUICostumePuzzleHint(const CUICostumePuzzleHint& Prototype);
+	virtual ~CUICostumePuzzleHint() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -35,29 +32,25 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	CUIInstanceBuffer* m_pUIButtonsBufferCom{ nullptr };
+	CUIInstanceBuffer* m_pUIIconsBufferCom{ nullptr };
 
 	CTexture* m_pSuitIconsTextureCom{ nullptr };
-	CTexture* m_pButtonsTextureCom{ nullptr };
 
-	vector<VTX_INSTANCE_DESC>   m_ButtonInstances{};
-	vector<_int> m_Buttons{};
-	_int m_iButtonIdx = -1;
+	vector<VTX_INSTANCE_DESC>   m_IconInstances{};
+	vector<_int> m_Answer{};
 
-	BTN_STATE m_eBtnState{ BTN_STATE::DEFAULT };
-	BTN_STATE m_ePrevBtnState{ m_eBtnState };
+	_bool m_bPopupOpen{ false };
 
 private:
-	HRESULT Render_Buttons();
+	HRESULT Render_Icons();
+	HRESULT Render_Text();
 
-	HRESULT SetUp_Buttons();
+	HRESULT SetUp_Icons();
 
-	HRESULT Bind_ButtonsResources();
-
-	_bool MouseEnter(_float2 vPos, _float2 vSize);
+	HRESULT Bind_IconsResources();
 
 public:
-	static CUICostumePuzzleButtons* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUICostumePuzzleHint* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

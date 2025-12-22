@@ -1786,6 +1786,9 @@
     <ClInclude Include="..\public\StaticMap.h">
       <Filter>02.GameObjects\Map\Scarlet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleHint.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2655,6 +2658,9 @@
     </ClCompile>
     <ClCompile Include="..\private\StaticMap.cpp">
       <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleHint.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,28 +3,31 @@
         "Loading": {
             "szAnimTag": "Loading",
             "bCanControl": true,
-          "Scripts": [
-            {
-              "szText": "그럴 리가 없고, 그럴 수도 없다"
-            },
-            {
-              "szText": "대 : 대단한 감각으로 캐릭터에 숨을 불어넣으니"
-            },
-            {
-              "szText": "재 : 재빠른 손놀림 끝에 생동감이 살아나고"
-            },
-            {
-              "szText": "훈 : 훈훈한 결과물로 우리 프로젝트를 완성하시네!"
-            },
-            {
-              "szText": "오오오오오~! 대 재 훈 이시여!"
-            },
-            {
-              "szText": "쥬신에사는 작은 하마는 API 시연회를 지나 SR을 지나 3D개인폴을지나 \n 아직도 작은 장난감을 찾고있습니다 도와주세요."
-            }
-          ]
+            "Scripts": [
+                {
+                    "szText": "그럴 리가 없고, 그럴 수도 없다"
+                },
+                {
+                    "szText": "재훈이형처럼 연애합시다",
+                    "vColor": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                },
+                {
+                    "szText": "정의훈쌤! 짱짱맨! >.<"
+                },
+                {
+                    "szText": "재훈햄의 여자친구 흑련과 테무산 이브는 인게임에서 만날수있습니다."
+                },
+                {
+                    "szText": "쥬신에사는 작은 하마는 API 시연회를 지나 SR을 지나 3D개인폴을지나 \n 아직도 작은 장난감을 찾고있습니다 도와주세요."
+                }
+            ]
         },
-        "TestScript": {
+        "DoorInteractionScript": {
             "szAnimTag": "Default",
             "bCanControl": false,
             "vInitOffset": [
@@ -37,6 +40,19 @@
                 },
                 {
                     "szText": "시체를 뒤져볼까?"
+                }
+            ]
+        },
+        "CorpseInteractionScript": {
+            "szAnimTag": "Default",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "Scripts": [
+                {
+                    "szText": "아무것도 없네..."
                 }
             ]
         }

@@ -61,6 +61,10 @@ public:
 	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
 	CUIBase* Get_UIObject(_wstring szLayerTag, _wstring szUITag);
 
+	void Open_Popup(const _wstring& szPopupTag);
+	void Close_Popup(const _wstring& szPopupTag);
+	_bool Check_isOpenPopup(const _wstring& szPopupTag);
+
 	// 한글 때문에 만듦
 	string WStringToUTF8(const _wstring& wstr);
 	_wstring UTF8ToWString(const string& str);

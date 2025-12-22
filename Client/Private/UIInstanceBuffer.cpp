@@ -112,7 +112,7 @@ HRESULT CUIInstanceBuffer::Initialize_Prototype(const UI_INSTANCE_DESC* pInstanc
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
-		m_pInstanceVertices[i].vUVAtlasSize = _float4(pDesc->vUVAtlasSize.x, pDesc->vUVAtlasSize.y, 0, 0);
+		m_pInstanceVertices[i].vUVAtlasSize = pDesc->vUVAtlasSize;
 		m_pInstanceVertices[i].vUVAtlasOffset = _float4(pDesc->vUVAtlasOffset.x, pDesc->vUVAtlasOffset.y, 0, 0);
 		m_pInstanceVertices[i].vAtlasIndex = _float4(pDesc->vAtlasIndex.x, pDesc->vAtlasIndex.y, 0, 0);
 	}
@@ -132,7 +132,7 @@ HRESULT CUIInstanceBuffer::Initialize(void* pArg)
 
 		if (pDesc != nullptr)
 		{
-			m_pInstanceVertices = nullptr;
+			Safe_Delete_Array(m_pInstanceVertices);
 			m_iNumInstance = pDesc->iNumInstance;
 			m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
 
@@ -141,7 +141,7 @@ HRESULT CUIInstanceBuffer::Initialize(void* pArg)
 
 			for (size_t i = 0; i < m_iNumInstance; i++)
 			{
-				m_pInstanceVertices[i].vUVAtlasSize = _float4(pDesc->vUVAtlasSize.x, pDesc->vUVAtlasSize.y, 0, 0);
+				m_pInstanceVertices[i].vUVAtlasSize = pDesc->vUVAtlasSize;
 				m_pInstanceVertices[i].vUVAtlasOffset = _float4(pDesc->vUVAtlasOffset.x, pDesc->vUVAtlasOffset.y, 0, 0);
 				m_pInstanceVertices[i].vAtlasIndex = _float4(pDesc->vAtlasIndex.x, pDesc->vAtlasIndex.y, 0, 0);
 			}

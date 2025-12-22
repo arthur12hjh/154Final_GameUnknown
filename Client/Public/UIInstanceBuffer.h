@@ -10,7 +10,7 @@ public:
 	typedef struct tagUIInstanceDesc
 	{
 		_uint			iNumInstance = { 0 };
-		_float2			vUVAtlasSize = { 0.f, 0.f };
+		_float4			vUVAtlasSize = { 0.f, 0.f, 0.f, 0.f };
 		_float2			vUVAtlasOffset = { 0.f, 0.f };
 		_float2			vAtlasIndex = { 0.f, 0.f };
 	}UI_INSTANCE_DESC;
