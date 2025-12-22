@@ -22,6 +22,12 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
+#include "Npc.h"
+#include "NpcFSM.h"
+#include "NpcBody.h"
+
+#include "NpcInteractionController.h"
+
 #pragma region Item
 #include "Item.h"
 #pragma endregion
@@ -76,6 +82,7 @@
 #include "TargetComponent.h"
 #include "DropComponent.h"
 #include "AISenceComponent.h"
+#include "RimLight.h"
 #pragma endregion
 
 #pragma region Prob
@@ -619,6 +626,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CNayitba::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Npc */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		CNpc::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_NpcBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_NpcBody"),
+		CNpcBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Nayitba_Body */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"),
 		CNayitbaPartBody::Create(m_pDevice, m_pContext))))
@@ -818,6 +835,13 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_RimLight */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_RimLight");
+	pProtoDesc.pPrototype = CRimLight::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+
+	Desc->pAddObejct.push_back(pProtoDesc);
 	/* For.Prototype_GameObject_Nayitba_Right_Weapon */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Nayitba_Right_Weapon");
 	pProtoDesc.pPrototype = CNaytibaRightWeaponPart::Create(m_pDevice, m_pContext);
@@ -2429,6 +2453,20 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	/* For.Prototype_Component_BossController */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_BossController");
 	pProtoDesc.pPrototype = CBossController::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_NpcInteractionController */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_NpcInteractionController");
+	pProtoDesc.pPrototype = CNpcInteractionController::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Npc_FSM */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Npc_FSM");
+	pProtoDesc.pPrototype = CNpcFSM::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -5343,6 +5381,8 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	
 
 	/* For.Prototype_GameObject_Iron_Floor */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Iron_Floor");

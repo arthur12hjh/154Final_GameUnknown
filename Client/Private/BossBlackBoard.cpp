@@ -173,6 +173,10 @@ _bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
 void CBossBlackBoard::EnterExcution(_bool bIsExcution)
 {
     m_bIsExcution = bIsExcution;
+    if (m_bIsExcution)
+    {
+        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(false);
+    }
 }
 
 _bool CBossBlackBoard::IsAttackEnable()
