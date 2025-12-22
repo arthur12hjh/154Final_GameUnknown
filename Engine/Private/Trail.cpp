@@ -9,13 +9,15 @@ CTrail::CTrail(const CTrail& Prototype)
 	: CComponent(Prototype),
 	m_pIB(Prototype.m_pIB),
 	m_iNumVertices(Prototype.m_iNumVertices),
-	m_iNumIndices(Prototype.m_iNumIndices)
+	m_iNumIndices(Prototype.m_iNumIndices),
+	m_iNumPositions(Prototype.m_iNumPositions)
 {
 	Safe_AddRef(m_pIB);
 }
 
 HRESULT CTrail::Initialize_Prototype()
 {
+	m_iNumPositions = 50;
 	m_iNumVertices = 250;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
@@ -63,8 +65,10 @@ HRESULT CTrail::Initialize_Prototype()
 void CTrail::Initialize_Trail()
 {
 	m_iNumPresent = 0;
+	m_iNumPositionPresent = 0;
 	m_iEndIndex = 0;
 	memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+	memset(m_pPostions, 0, sizeof(_vector) * m_iNumPositions);
 }
 
 void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail)
@@ -75,31 +79,79 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	if (false == bMakeTrail) {
 		_int index = m_fTime / 0.015f;
 		m_fTime -= index * 0.015f;
-		for (_int i = 0; i < index * 4; ++i) {
-			if (2 < m_iNumPresent) {
-
-				m_iNumPresent -= 2;
-				memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+		for (_int i = 0; i < index; ++i) {
+			if (2 < m_iNumPositionPresent) {
+				m_iNumPositionPresent -= 2;
+				memmove(m_pPostions, m_pPostions + 2, sizeof(_vector) * m_iNumPositionPresent);
 			}
 			else {
-				m_iNumPresent = 0;
-				memset(m_pVTXPOSTEXs, 0, 0);
+				m_iNumPositionPresent = 0;
+				memset(m_pPostions, 0, 0);
 			}
 		}
-		if (0 != m_iNumPresent) {
-			D3D11_MAPPED_SUBRESOURCE SubResource{};
-			m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
-			_uint iNumActivatedPairs = m_iNumPresent >> 1;
+		m_iNumPresent = 0;
+		memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+		_vector vHighPositions[4]{};
+		_vector vLowPositions[4]{};
+		_float fValue = {};
+		for (int i = m_iNumPositionPresent; i > 2; i -= 2) {
+			if (i == 4) {
+				for (int j = 0; j < 3; ++j) {
+					vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+					vLowPositions[j] = m_pPostions[i - j * 2];
+				}
+				vHighPositions[3] = vHighPositions[2];
+				vLowPositions[3] = vLowPositions[2];
+			}
+			else if (i == m_iNumPositionPresent) {
+				for (int j = 1; j < 4; ++j) {
+					vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+					vLowPositions[j] = m_pPostions[i - j * 2];
+				}
+
+				vHighPositions[0] = vHighPositions[1];
+				vLowPositions[0] = vLowPositions[1];
+			}
+			else {
+				for (int j = 0; j < 4; ++j) {
+					vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+					vLowPositions[j] = m_pPostions[i - j * 2];
+				}
+			}
+
+			_float fLength = XMVectorGetX(XMVector3Length(vHighPositions[2] - vHighPositions[1]));
+			_int iNum = 1;
+			if (1 < fLength)
+				iNum = fLength;
+			for (int i = 0; i < 4 * iNum; ++i) {
+				fValue = (_float)i / ((4 * iNum) - 1);
+				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
+				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
+				m_iNumPresent += 2;
+				if (m_iNumPresent + 2 >= m_iNumVertices) {
+					break;
+				}
+			}
+			if (m_iNumPresent + 2 >= m_iNumVertices) {
+				break;
+			}
+		}
+		_uint iNumActivatedPairs = m_iNumPositionPresent >> 1;
+		if (iNumActivatedPairs >= 2) {
 			_uint iIndexLow;
 			_uint iIndexHigh;
-			for (_uint iIndex = 0; iIndex < iNumActivatedPairs; ++iIndex) {
-				_float u = (_float)iIndex / (_float)(iNumActivatedPairs - 1);
-				iIndexLow = iIndex << 1;
-				iIndexHigh = iIndexLow + 1;
+			for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
+				_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
+				iIndexLow = iIndex;
+				iIndexHigh = iIndex + 1;
 
 				m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 				m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
 			}
+
+			D3D11_MAPPED_SUBRESOURCE SubResource{};
+			m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+
 			VTXPOSTEX* pVertices = static_cast<VTXPOSTEX*>(SubResource.pData);
 			for (_uint i = 0; i < m_iNumPresent; ++i) {
 				pVertices[i] = m_pVTXPOSTEXs[i];
@@ -114,21 +166,22 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	XMStoreFloat4(&m_vPreHighPositions[2], XMVector3TransformCoord(XMLoadFloat4(&m_vHigh), matCurrentWorld));
 	XMStoreFloat4(&m_vPreLowPositions[2], XMVector3TransformCoord(XMLoadFloat4(&m_vLow), matCurrentWorld));
 
-	_uint iNumActivatedPairs = m_iNumPresent >> 1;
+	_uint iNumActivatedPairs = m_iNumPositionPresent >> 1;
 	if (iNumActivatedPairs < 2) {
 
-		if (m_iNumPresent + 2 >= m_iNumVertices) {
-			m_iNumPresent -= 2;
-			memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+		if (m_iNumPositionPresent + 2 >= m_iNumPositions) {
+			m_iNumPositionPresent -= 2;
+			memmove(m_pPostions, m_pPostions + 2, sizeof(_vector) * m_iNumPositionPresent);
 		}
 
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMLoadFloat4(&m_vPreHighPositions[2]));
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMLoadFloat4(&m_vPreLowPositions[2]));
+		m_pPostions[m_iNumPositionPresent + 1] = XMLoadFloat4(&m_vPreHighPositions[2]);
+		m_pPostions[m_iNumPositionPresent] = XMLoadFloat4(&m_vPreLowPositions[2]);
 
-		m_iNumPresent += 2;
+		m_iNumPositionPresent += 2;
 
 		return;
 	}
+
 
 	_vector vBeforeHigh = XMLoadFloat4(&m_vPreHighPositions[1]);
 	_vector vAfterHigh = XMVector3TransformCoord(XMLoadFloat4(&m_vHigh), matCurrentWorld);
@@ -141,31 +194,64 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	_vector vHighPositions[4]{};
 	_vector vLowPositions[4]{};
 	_float fValue = {};
-	for (int i = 0; i < 3; ++i) {
-		vHighPositions[i] = XMLoadFloat4(&m_vPreHighPositions[i]);
-		vLowPositions[i] = XMLoadFloat4(&m_vPreLowPositions[i]);
-	}
-	for (int i = 0; i < 4 * iNum * index; ++i) {
-		fValue = (_float)i / ((4 * iNum * index) - 1);
-
-		vHighPositions[3] = XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[2] + (vHighPositions[2] - vHighPositions[1]), fValue);
-		vLowPositions[3] = XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[2] + (vLowPositions[2] - vLowPositions[1]), fValue);
-
-		if (m_iNumPresent + 2 >= m_iNumVertices) {
-			m_iNumPresent -= 2;
-			memmove(m_pVTXPOSTEXs, m_pVTXPOSTEXs + 2, sizeof(VTXPOSTEX) * m_iNumPresent);
+		if (m_iNumPositionPresent + 2 >= m_iNumPositions) {
+			m_iNumPositionPresent -= 2;
+			memmove(m_pPostions, m_pPostions + 2, sizeof(_vector) * m_iNumPositionPresent);
 		}
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, vHighPositions[3]);
-		XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, vLowPositions[3]);
 
-		m_iNumPresent += 2;
+		m_pPostions[m_iNumPositionPresent + 1] = XMLoadFloat4(&m_vPreHighPositions[2]);
+		m_pPostions[m_iNumPositionPresent] = XMLoadFloat4(&m_vPreLowPositions[2]);
+		m_iNumPositionPresent += 2;
+
+	m_iNumPresent = 0;
+	memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+	for (int i = m_iNumPositionPresent; i > 2; i -= 2) {
+		if (i == 4) {
+			for (int j = 0; j < 3; ++j) {
+				vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+				vLowPositions[j] = m_pPostions[i - j * 2];
+			}
+			vHighPositions[3] = vHighPositions[2];
+			vLowPositions[3] = vLowPositions[2];
+		}
+		else if (i == m_iNumPositionPresent) {
+			for (int j = 1; j < 4; ++j) {
+				vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+				vLowPositions[j] = m_pPostions[i - j * 2];
+			}
+			vHighPositions[0] = vHighPositions[1];
+			vLowPositions[0] = vLowPositions[1];
+		}
+		else {
+			for (int j = 0; j < 4; ++j) {
+				vHighPositions[j] = m_pPostions[i - j * 2 + 1];
+				vLowPositions[j] = m_pPostions[i - j * 2];
+			}
+		}
+
+		_float fLength = XMVectorGetX(XMVector3Length(vHighPositions[2] - vHighPositions[1]));
+		_int iNum = 1;
+		if (1 < fLength)
+			iNum = fLength;
+		for (int i = 0; i < 4 * iNum; ++i) {
+			fValue = (_float)i / ((4 * iNum) - 1);
+			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
+			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
+			m_iNumPresent += 2;
+			if (m_iNumPresent + 2 >= m_iNumVertices) {
+				break;
+			}
+		}
+		if (m_iNumPresent + 2 >= m_iNumVertices) {
+			break;
+		}
 	}
 	_uint iIndexLow;
 	_uint iIndexHigh;
-	for (_uint iIndex = 0; iIndex < iNumActivatedPairs; ++iIndex) {
-		_float u = (_float)iIndex / (_float)(iNumActivatedPairs - 1);
-		iIndexLow = iIndex << 1;
-		iIndexHigh = iIndexLow + 1;
+	for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
+		_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
+		iIndexLow = iIndex;
+		iIndexHigh = iIndex + 1;
 
 		m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 		m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
@@ -222,6 +308,7 @@ HRESULT CTrail::Initialize(void* pArg)
 	VBDesc.StructureByteStride = sizeof(VTXPOSTEX);
 
 	m_pVTXPOSTEXs = new VTXPOSTEX[m_iNumVertices]{};
+	m_pPostions = new _vector[m_iNumPositions]{};
 	if (FAILED(m_pDevice->CreateBuffer(&VBDesc, nullptr, &m_pVB))) {
 		return E_FAIL;
 	}
@@ -261,6 +348,7 @@ void CTrail::Free()
 	__super::Free();
 
 	Safe_Delete_Array(m_pVTXPOSTEXs);
+	Safe_Delete_Array(m_pPostions);
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);
 }

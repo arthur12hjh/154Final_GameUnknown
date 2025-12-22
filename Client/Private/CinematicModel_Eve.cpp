@@ -81,10 +81,14 @@ HRESULT CCinematicModel_Eve::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	if (FAILED(Ready_PlayerDesc()))
+		return E_FAIL;
+
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pColliderCom->SetOwner(this);
+	//m_pColliderCom->SetOwner(this);
+	m_vRotationQuaternion = _float3(741.8724f, 3.0678f, 596.6966f);
 
 	return S_OK;
 }
@@ -101,6 +105,23 @@ void CCinematicModel_Eve::Priority_Update(_float fTimeDelta)
 
 void CCinematicModel_Eve::Update(_float fTimeDelta)
 {
+	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
+		m_vRotationQuaternion.x += fTimeDelta;
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+		m_vRotationQuaternion.x -= fTimeDelta;
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+		m_vRotationQuaternion.y += fTimeDelta;
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+		m_vRotationQuaternion.y -= fTimeDelta;
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
+		m_vRotationQuaternion.z += fTimeDelta;
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
+		m_vRotationQuaternion.z -= fTimeDelta;
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&m_vRotationQuaternion), 1.f));*/
+
 	if (m_bIsActive == FALSE)
 		return;
 
@@ -116,7 +137,7 @@ void CCinematicModel_Eve::Update(_float fTimeDelta)
 		break;
 	}
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CCinematicModel_Eve::Late_Update(_float fTimeDelta)
@@ -126,10 +147,10 @@ void CCinematicModel_Eve::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	//m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
 	__super::Late_Update(fTimeDelta);
 }
@@ -179,14 +200,57 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 
 HRESULT CCinematicModel_Eve::Ready_Components()
 {
-	/* Com_Collider_AABB */
-	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	///* Com_Collider_AABB */
+	//CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	//AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
+	//AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	//
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+	//	TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	//	return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
-		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Ready_PlayerDesc()
+{
+	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxShield = 100;
+
+	//베타 에너지
+	m_PlayerDesc.iMaxBetaEnergy = 20;
+	m_PlayerDesc.iCurrentBetaEnergy = 0;
+
+	m_PlayerDesc.iCurrentHealth = 100;
+	m_PlayerDesc.iCurrentShield = 100;
+	m_PlayerDesc.iCurrentShieldATK = 100;
+
+	m_PlayerDesc.fCurrentCTDamage = 100.f;
+	m_PlayerDesc.fCurrentCTPercent = 100.f;
+
+	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
+	m_PlayerDesc.iCurrentAttackPoint = 100;
+
+	m_PlayerDesc.iCurrentPotions = 5;
+	m_PlayerDesc.iMaxPotions = 5;
+
+	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.fMaxRushCoolTime = 5.f;
+	m_PlayerDesc.fCurrentRushCoolTime = 0.f;
+
+	//Default가 비활성화 상태
+	memset(m_PlayerDesc.iBetaSkillId, 0, sizeof(_uint) * 4);
+
+	m_PlayerDesc.eBetaSkillState[0] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[1] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
+	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
+
+	m_PlayerDesc.pPlayerController = nullptr;
+	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
+	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
+
+	m_PlayerDesc.iOwnGold = 0;
 
 	return S_OK;
 }
@@ -218,6 +282,7 @@ HRESULT CCinematicModel_Eve::Ready_PartObjects()
 		return E_FAIL;
 
 	m_pWeapon = static_cast<CWeapon*>(Find_PartObject(TEXT("Part_Weapon")));
+	m_pWeapon->Set_PlayerDesc(&m_PlayerDesc);
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -254,6 +319,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = FALSE;
 	m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_EVE_01", FALSE, 1.f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(760.197f, 2.022f, 700.319f, 1.f));
@@ -266,9 +332,10 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("Eve_Gorilla_Finish01_v05_w01_export_fixA_recode_w01", FALSE, 2.f);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 609.569f, 1.f));
+	m_PlayerDesc.isWeaponVisible = TRUE;
+	m_pBodyModelCom->Set_Animation("Eve_Gorilla_Finish01_v05_w01_export_fixB", FALSE, 1.5f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(742.f, 2.8678f, 597.f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(742.f, 2.8678f, 608.6966f, 1.f));
 
 	return S_OK;
 }
@@ -290,10 +357,24 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
+	//static _bool isSkipped = FALSE;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+	
+
+	_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
+
+	if (iCurrentKeyFrameIndex >= 600
+		&& iCurrentKeyFrameIndex <= 660)
+	{
+		_float fRatio = ((_float)iCurrentKeyFrameIndex - 600.f) / 60.f;
+		_vector vPosition = XMVectorLerp(XMVectorSet(742.f, 2.8678f, 597.f, 1.f), XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f), fRatio);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+	}
 
 	if (isFinished)
 	{
+		//isSkipped = FALSE;
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
 	}

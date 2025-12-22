@@ -61,6 +61,7 @@ public:
 	void Set_Channels(vector<CChannel*> Channels) { m_Channels = Channels; }
 
 	void Reset();
+
 private:
 	_char						m_szName[MAX_PATH] = {};
 	_float						m_fCurrentTrackPosition = {};

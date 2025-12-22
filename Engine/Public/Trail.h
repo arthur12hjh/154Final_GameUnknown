@@ -28,8 +28,11 @@ private:
 	ID3D11Buffer*	m_pVB = { nullptr };
 	ID3D11Buffer*	m_pIB = { nullptr };
 	VTXPOSTEX*		m_pVTXPOSTEXs = { nullptr };
+	_vector*		m_pPostions = { nullptr };
+	_uint			m_iNumPositionPresent = {};
 	_uint			m_iNumPresent = {};
 	_uint			m_iEndIndex = {};
+	_uint			m_iNumPositions = {};
 	_uint			m_iNumVertices = {};
 	_uint			m_iNumIndices = {};
 	_float			m_fTime = {};

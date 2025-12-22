@@ -39,12 +39,16 @@ public:
 private:
 	class CWeapon* m_pWeapon = { nullptr };
 
+	Player_Desc			m_PlayerDesc = {};
+
+	_float3		m_vRotationQuaternion = {};
 	_float		m_fMoveTime = 0.f;
 	_int		m_iAnimationSequence = 0;
 
 
 private:
 	HRESULT Ready_Components();
+	HRESULT Ready_PlayerDesc();
 	HRESULT Ready_PartObjects();
 
 	HRESULT Initialize_Cinematic_GorillaMeet();

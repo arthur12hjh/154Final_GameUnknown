@@ -115,13 +115,15 @@ HRESULT CTriggerBox::Ready_Components(const TRIGGER_BOX_DESC& pDesc)
 	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	//m_pCollider->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 
-	m_pColliderCom->SetColliderHitType(HIT_TYPE::STATIC);
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
 	// 일단은 플레이어만 충돌처리 피직스 오브젝트 들어가면 그녀석들 충돌처리
 	// 공통으로 할수있는 Tag 만들어서 하기
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::STATIC);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::OBJECT);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
 	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision(_float3(0.f, pDesc.vScale.y, 0.f), {}, pDesc.vScale);
 	return S_OK;
 }
