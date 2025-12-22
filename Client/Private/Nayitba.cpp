@@ -132,7 +132,7 @@ void CNayitba::Late_Update(_float fTimeDelta)
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
-		//m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+		m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}
 
@@ -900,7 +900,7 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 		if(pBullet)
 			m_pBulletList.push_back(pBullet);
 		else
-			Safe_Release(pBullet);
+			pBullet->Set_Dead(true);
 	}
 		
 }
