@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 
+#include "Effect.h"
+#include "StringHelper.h"
 #include "Player.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -18,6 +20,22 @@ CBody_Player::CBody_Player(const CBody_Player& Prototype)
 _bool CBody_Player::isFinish_Att()
 {
 	return false;
+}
+
+void CBody_Player::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	if (strObjectTag == TEXT("Play_Effect"))
+	{
+
+	}
+	else if (strObjectTag == TEXT("Hand_Blood"))
+	{
+		//m_pBlood->Play();
+	}
+	else if (strObjectTag == TEXT("Hand_Blood_End"))
+	{
+		//m_pBlood->Stop();
+	}
 }
 
 HRESULT CBody_Player::Mapping_Shader_Material(_uint iIdx)

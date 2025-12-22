@@ -433,9 +433,15 @@ void CImGui_Manager::Update_AnimationList()
 		ImGui::SameLine();
 		ImGui::Text("%d   ", m_iSelectedAnimationIndex);
 
-		ImGui::TextColored(vFontColor, "Selected Name:");
-		ImGui::SameLine();
-		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
+		char szAnimName[256];
+		strcpy_s(szAnimName, (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
+
+		ImGui::InputText(
+			"##SelectedAnimName",
+			szAnimName,
+			IM_ARRAYSIZE(szAnimName),
+			ImGuiInputTextFlags_ReadOnly
+		);
 
 		ImGui::TextColored(vFontColor, "Selected KeyFrame Length:");
 		ImGui::SameLine();

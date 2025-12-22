@@ -31,7 +31,7 @@ private:
 public:
 	_bool isFinish_Att();
 
-	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
 	HRESULT Mapping_Shader_Material(_uint iIdx);
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -43,6 +43,8 @@ public:
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
 private:
+	class CEffect* m_pBlood = { nullptr };
+
 	_bool				m_isAnimFinish = { false };	
 	
 private:

@@ -16,7 +16,7 @@ public:
                        PLAY_SOUND, ACTIVE_COLLISION, ACTIVE_PHYSX_COLLISION,
                        ATTACK_INTERACTION, SET_TRANSFORM, ACTIVE_PARTOBJECT_COLLISION,
                        HIT_REACTION, SPAWN_OBJECT, SET_RATIO,
-                       SHOOT_PROJECTILE, PLAY_CINEMATIC, END };
+                       SHOOT_PROJECTILE, PLAY_CINEMATIC, CAMERA_SHAKE, END };
 
     typedef struct tagNotifyDesc
     {
@@ -62,6 +62,8 @@ private:
     HRESULT Notify_Spawn_Object(const ANIM_NOTIFY& AnimNotify);
     HRESULT Notify_Shoot_Projectile(const ANIM_NOTIFY& AnimNotify);
     HRESULT Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify);
+
+    HRESULT Notify_Camera_Shake(const ANIM_NOTIFY& AnimNotify);
     
 public:
 	static CNotify* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
