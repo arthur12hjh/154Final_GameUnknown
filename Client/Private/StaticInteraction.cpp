@@ -59,20 +59,17 @@ void CStaticInteraction::Update(_float fTimeDelta)
 
 void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
-    
-    if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        return;
-    }
+        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
-    m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-#endif
+        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif    
+    }
 }
 
 HRESULT CStaticInteraction::Render()

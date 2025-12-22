@@ -104,7 +104,7 @@ void CLevel_Scarlet::FontRender()
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
-	LIGHT_DESC			LightDesc{};
+	/*LIGHT_DESC			LightDesc{};
 	
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
@@ -113,11 +113,11 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 	
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	//Load_Light_Data();
+	Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 
@@ -366,7 +366,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Load_Map_Data()
 {
-	std::ifstream ifs("../Bin/DataFiles/MapData3.bin", std::ios::binary);
+	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData3.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
