@@ -1402,6 +1402,12 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sakura");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sakura.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDisk.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	
 	
 	/* For.Prototype_Component_TrailEffect_Default_Slash */

@@ -1109,7 +1109,7 @@ PS_NONLIGHT_OUT PS_BLUR(PS_WEIGHT_IN In)
         discard;
     float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
     
-    float weight = saturate(exp(-linearDepth * 10));
+    float weight = saturate(exp(-linearDepth * 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
     Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
     return Out;
@@ -1477,7 +1477,7 @@ PS_NONLIGHT_OUT PS_SIGNAL_POWER(PS_WEIGHT_IN In)
     Out.vDiffuse = g_vColor;
     
     float diffuse = (g_DiffuseTexture.Sample(MirrorSampler, tex).r - 0.5) * 2 * saturate((In.vLifeTime.y - In.vLifeTime.x));
-    Out.vDiffuse = lerp(g_vColor, float4(0.05, 0.1, 1, 1), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.5)), 3));
+    Out.vDiffuse = lerp(g_vColor, float4(0.05, 0.1, 1, 1), pow(saturate(saturate(In.vLifeTime.x - 0.2) / (In.vLifeTime.y - 0.9)), 3));
     
     //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x + diffuse * 0.05, MaskTexcoord.y + diffuse * 0.05)).r * saturate(In.vLifeTime.y - In.vLifeTime.x);
     float2 texcoord = float2(MaskTexcoord.x * 1.2 + diffuse * 0.05 - 0.2 * 0.5, MaskTexcoord.y * 1.2 + diffuse * 0.05 - 0.2 * 0.5);
@@ -1507,7 +1507,7 @@ PS_NONLIGHT_OUT PS_BLUE_PLASMA(PS_WEIGHT_IN In)
         discard;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
 
-    Out.vDiffuse = lerp(g_vColor, float4(0, 0.1, 1, g_vColor.a), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 0.4)), 3));
+    Out.vDiffuse = lerp(g_vColor, float4(0, 0.1, 1, g_vColor.a), pow(saturate(saturate(In.vLifeTime.x - 0.2) / (In.vLifeTime.y - 0.8)), 3));
     if (In.vTexcoord.y <= 0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))
     {
         float a = (((1 - (In.vTexcoord.y * (1 / (0.3 + ((1 - saturate((In.vLifeTime.y - In.vLifeTime.x) * 3)) * 0.2))))) * 4) + 1);

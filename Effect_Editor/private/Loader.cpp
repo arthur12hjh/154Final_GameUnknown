@@ -82,7 +82,7 @@ HRESULT CLoader::Loading_For_Tool()
 		return E_FAIL;
 	/* For.Prototype_Component_Texture_Sky_Box */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Texture_Sky_Box"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/T_Sky_RockyHills_%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/T_Sky_RockyHills_%d.dds"), 3))))
 		return E_FAIL;
 
 
