@@ -1287,9 +1287,6 @@
     <ClInclude Include="..\Public\TestEveHead.h">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\StaticMap.h">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIPlayAnimEvent.h">
       <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
     </ClInclude>
@@ -1397,9 +1394,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Moon.h">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\InstanceModel.h">
-      <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
@@ -1792,6 +1786,12 @@
     <ClInclude Include="..\Public\Player_CorpseInteractionState.h">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\InstanceModel.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2180,9 +2180,6 @@
     <ClCompile Include="..\Private\TestEveHead.cpp">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\StaticMap.cpp">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MonsterAttackState.cpp">
       <Filter>02.GameObjects\Character\Naytiba\PartBody\FSM\State\Attack</Filter>
     </ClCompile>
@@ -2278,9 +2275,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Moon.cpp">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\InstanceModel.cpp">
-      <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
@@ -2664,6 +2658,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceModel.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
