@@ -105,8 +105,11 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 	m_pHairRoot->Update_PxTransform(
 		XMLoadFloat4x4(m_pHairRootBone) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	for (auto& Pair : m_HairRigidBodies)
+	{
+		Pair.second->Update_PxTransform(
+			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true); 
+	}
 	
 #ifdef _DEBUG
 
@@ -237,6 +240,9 @@ HRESULT CPonyTail_Player::Ready_HairJoints()
 		return E_FAIL;
 
 	if (FAILED(Ready_HairBoneMapping()))
+		return E_FAIL;
+
+	if (FAILED(Ready_HairRigidBodies()))
 		return E_FAIL;
 
 	return S_OK;
@@ -401,15 +407,15 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		LinkDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;   // 핵심: SPHERE
 		LinkDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 		LinkDesc.tUserData.szActorTag = TEXT("HairNode_01");
-		LinkDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+		LinkDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 
 		XMStoreFloat4x4(&LinkDesc.StartWorldMatrix, B02World);
 
-		LinkDesc.vSize = _float3(0.05f, 0.05f, 0.f); // SPHERE는 x만 반지름으로 씀
+		LinkDesc.vSize = _float3(0.2f, 0.2f, 0.f); // SPHERE는 x만 반지름으로 씀
 		LinkDesc.fMass = { 0.05f };
 
 		LinkDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-		LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+		LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
 		LinkDesc.isSimulateSync = false;
 		LinkDesc.isQuery = false;
 
@@ -427,6 +433,122 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		Safe_Delete_Array(pSourBoneName);
 		Safe_Delete_Array(pDestBoneName);
 	}
+
+	return S_OK;
+}
+
+HRESULT CPonyTail_Player::Ready_HairRigidBodies()
+{
+	CRigidBody* pRigidBody = { nullptr };
+	_uint i = 0;
+
+	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::SPHERE;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+	RigidBodyDesc.tUserData.szActorTag = TEXT("BodyCollider");
+	RigidBodyDesc.vSize = _float3(0.3f, 0.f, 0.f);
+	RigidBodyDesc.fMass = { 0.f };
+	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+	RigidBodyDesc.isSimulateSync = false;
+	RigidBodyDesc.isQuery = false;
+	RigidBodyDesc.vMaterial = _float3(0.1f, 0.05f, 0.f);
+//##################### HEAD
+	const _float4x4* pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
+	_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	_matrix BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+//##################### SPINE
+	RigidBodyDesc.vSize = _float3(0.4f, 0.f, 0.f);
+
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("BodyLookAt");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+//#####################
+	RigidBodyDesc.vSize = _float3(0.2f, 0.f, 0.f);
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("SC_HitMid_L");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+//##################### LEFT_ARM
+	RigidBodyDesc.vSize = _float3(0.2f, 0.f, 0.f);
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Ab-L-UpperArm-Tw1");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+
+//##################### L_ForeArm
+	RigidBodyDesc.vSize = _float3(0.2f, 0.f, 0.f);
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Ab-L-Forearm-Tw1");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+
+//##################### Bip001-L-Thigh
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+	RigidBodyDesc.vSize = _float3(0.2f, 0.4f, 0.f);
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Ab-L-Thigh-Tw1");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
+
+//##################### Bip001-R-Thigh
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+	RigidBodyDesc.vSize = _float3(0.2f, 0.4f, 0.f);
+	pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Ab-R-Thigh-Tw1");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_Rigid") + to_wstring(i), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+	m_HairRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	i++;
 
 	return S_OK;
 }
@@ -532,4 +654,7 @@ void CPonyTail_Player::Free()
 		Safe_Release(Pair.second);
 	m_HairLinks.clear();
 
+	for (auto& RigidBody : m_HairRigidBodies)
+		Safe_Release(RigidBody.second);
+	m_HairRigidBodies.clear();
 }

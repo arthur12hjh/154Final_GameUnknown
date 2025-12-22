@@ -44,7 +44,8 @@ private:
 	class CJointChain* m_pJointChain = { nullptr };
 	//피직스로 흔들리는 연산을 해주기 위함.
 	class CRigidBody* m_pHairRoot = { nullptr };
-	vector<pair<_wstring ,class CRigidBody*>> m_HairLinks = {};
+	vector<pair<_wstring, class CRigidBody*>> m_HairLinks = {};
+	vector<pair<const _float4x4*, class CRigidBody*>> m_HairRigidBodies = {};
 
 	const _float4x4* m_pHairRootBone = { nullptr };
 	JOINT_CHAIN_DESC* m_tRootDesc = { nullptr };
@@ -60,6 +61,7 @@ private:
 	HRESULT Ready_RootHair();
 	HRESULT Ready_HairBoneMapping();
 	HRESULT Ready_ChildHair();
+	HRESULT Ready_HairRigidBodies(); 
 	HRESULT Bind_ShaderResources();
 	HRESULT Bind_BoneToPartBody(void* pArg);
 
