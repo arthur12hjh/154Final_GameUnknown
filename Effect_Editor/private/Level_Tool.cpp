@@ -33,16 +33,16 @@ HRESULT CLevel_Tool::Initialize()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-
 	CASCADE_SHADOW_DESC		ShadowDesc{};
+
 	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(ShadowDesc)))
 		return E_FAIL;
 
+
 	m_pImgManager = CImg_Manager::GetInstance();
 	m_pImgManager->Ready_Manager(m_pDevice, m_pContext);
-
 	return S_OK;
 }
 

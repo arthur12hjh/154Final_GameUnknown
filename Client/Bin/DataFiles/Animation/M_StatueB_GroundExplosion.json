@@ -144,7 +144,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "B_L_HandCenter_end",
+                "szSocketTag": "B_L_HandCenter",
                 "vNotifyPosition": [
                     0.0,
                     0.0,

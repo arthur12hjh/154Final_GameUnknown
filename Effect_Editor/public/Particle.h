@@ -4,7 +4,8 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Point_Instance;
+class CModel;
+class CVIBuffer_Instance_MeshParticle;
 class CComputeShader;
 class CTexture;
 class CShader;
@@ -20,6 +21,7 @@ public:
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
+		_float4			vRotation;
 		_float4			fTimeDelta;
 		_float2			fCircle;
 		_float2			fTurnPower;
@@ -28,6 +30,7 @@ public:
 	};
 	typedef struct ParticleData
 	{
+		string				szModel = {};
 		string				szMaskTexture;
 		string				szDiffuseTexture;
 		string				szDissolveTexture;
@@ -36,12 +39,13 @@ public:
 
 		_float4				fGravityDiagram;
 		_float4				fPosition;
-		_float4				fColor;         
+		_float4				fColor;
 
-		_float3				fCenter;        
-		_float3				fPivot;         
-		_float3				fRange;         
-		_float3				fRotation;      
+		_float3				fCenter;
+		_float3				fPivot;
+		_float3				fRange;
+		_float3				fRotation;
+		_float3				fMeshRotation;
 
 		_float2				fSize;
 		_float2				fLifeTime;      
@@ -68,8 +72,8 @@ public:
 		_int				iBegin;         
 		_int				iNumInstance;
 		_int				iSelectRender;
-		_bool				bisBillboard;
 		_bool				bisLoop;
+		_bool				bisMeshTexture;
 		_bool				bisSphere;
 		_bool				bisCircle;
 		_bool				bisSpectrum;
@@ -94,11 +98,12 @@ public:
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
 	HRESULT	Set_Texture(_int iIndex, const char* szPrototype);
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
+	void	Set_Model(_wstring szMode);
 	void Stop();
 	void Play();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
-	CVIBuffer_Point_Instance* m_pVIBufferCom = { nullptr };
+	CVIBuffer_Instance_MeshParticle* m_pVIBufferCom = { nullptr };
 	CComputeShader* m_pComputeShader = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
@@ -108,12 +113,14 @@ private:
 
 	PointConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
+	CModel* m_pModelCom = {nullptr};
 	PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_float			m_fLength = {};
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
+	_uint			m_iRenderCount = {};
 	_bool			m_bisLoop = {};
 	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};

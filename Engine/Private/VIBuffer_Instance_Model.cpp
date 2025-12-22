@@ -19,8 +19,8 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 {
 	const MODEL_INSTANCE_DESC* pDesc = static_cast<const MODEL_INSTANCE_DESC*>(pInstanceDesc);
 	m_pModel = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM,
-							pDesc->pModelFilePath,
-							pDesc->PreModelMatrix);
+		pDesc->pModelFilePath,
+		pDesc->PreModelMatrix);
 
 	if (nullptr == m_pModel)
 		return E_FAIL;
@@ -47,8 +47,8 @@ HRESULT CVIBuffer_Instance_Model::Initialize_Prototype(const INSTANCE_DESC* pIns
 	{
 		_matrix			RotationY = XMMatrixRotationY(XMConvertToRadians(m_pGameInstance->Random(0.f, 360.f)));
 		_matrix			TransformMatrix = XMMatrixTranslation(m_pGameInstance->Random(pDesc->vCenter.x - pDesc->vRange.x * 0.5f, pDesc->vCenter.x + pDesc->vRange.x * 0.5f),
-															  m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
-															  m_pGameInstance->Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f));
+			m_pGameInstance->Random(pDesc->vCenter.y - pDesc->vRange.y * 0.5f, pDesc->vCenter.y + pDesc->vRange.y * 0.5f),
+			m_pGameInstance->Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f));
 
 		_matrix			vWorldMat = ScaleMatrix * RotationY * TransformMatrix;
 		XMStoreFloat4(&m_pInstanceVertices[i].vRight, vWorldMat.r[0]);
@@ -72,21 +72,21 @@ HRESULT CVIBuffer_Instance_Model::Initialize(void* pArg)
 
 		if (pLoadDesc->pInstancingData != nullptr)
 		{
-			
+
 			m_pInstanceVertices = nullptr;
 
-			// 인스턴스 개수를 로드된 개수로 재설정
+			// ?ν???? ?????? ?ε?? ?????? ????
 			m_iNumInstance = pLoadDesc->iNumInstance;
 
-			// 인스턴스 버퍼 디스크립션 업데이트
+			// ?ν???? ???? ??????? ???????
 			m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
 
-			// 버퍼 생성 시 사용할 시스템 메모리 포인터를 로드된 데이터의 시작 주소로 변경
+			// ???? ???? ?? ????? ????? ??? ??????? ?ε?? ???????? ???? ???? ????
 			m_InstanceInitialDesc.pSysMem = pLoadDesc->pInstancingData->data();
 		}
 	}
 	Safe_Release(m_pVBInstance);
-	// 2. 인스턴스 버퍼 생성
+	// 2. ?ν???? ???? ????
 	if (FAILED(m_pDevice->CreateBuffer(&m_InstanceBufferDesc, &m_InstanceInitialDesc, &m_pVBInstance)))
 		return E_FAIL;
 
