@@ -292,8 +292,6 @@ void CGameInstance::Kill_Objects()
 
 void CGameInstance::Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype)
 {
-
-
 	if(bIsClearPrototype)
 		m_pPrototype_Manager->Clear(iLevelIndex);
 

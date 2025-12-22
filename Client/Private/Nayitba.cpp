@@ -712,11 +712,7 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
 	{
 		if (!m_pBulletList.empty())
-		{
-			for (auto& iter : m_pBulletList)
-				Safe_Release(iter);
 			m_pBulletList.clear();
-		}
 	}
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
