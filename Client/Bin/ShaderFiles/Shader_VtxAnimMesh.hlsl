@@ -15,12 +15,20 @@ Texture2D g_DissolveTexture;
 vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
+
 float4 g_vRimLightColor;
+
+bool        g_IsPattern;
+bool        g_IsPatternNoise;
+bool        g_IsFade;
+
+float4      g_vCenterPos;
+float       g_fFadeRadius;
+float4      g_vMeshColor;
 
 //디졸브용 변수
 float g_fDeadTime;
 float g_fFar;
-
 
 /* 메시다 ㅇ영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
@@ -204,7 +212,11 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
-    Out.vDiffuse = vMtrlDiffuse;
+    if (g_IsPattern)
+        Out.vDiffuse = g_vMeshColor;
+    else
+        Out.vDiffuse = vMtrlDiffuse;
+    
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
@@ -222,8 +234,12 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
-    Out.vDiffuse = vMtrlDiffuse +
-        Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
+    if (g_IsPattern)
+        Out.vDiffuse = g_vMeshColor;
+    else
+        Out.vDiffuse = vMtrlDiffuse;
+    
+    Out.vDiffuse += Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
@@ -358,6 +374,50 @@ PS_OUT PS_ORSS(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    float4 vColor;
+    
+    vColor = true == g_IsPattern ? g_vMeshColor : g_vMtrlDiffuse;
+    vColor += Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);
+    //if (g_IsPatternNoise)
+    //{
+    //    float3 vPoint = In.vWorldPos.xyz;
+    //    float3 vTargetPoint = g_vCenterPos.xyz;
+        
+    //    vTargetPoint.z = vPoint.z = 0.f;
+    //    float fLength = length(vPoint - vTargetPoint);
+    //    if (g_IsFade)
+    //    {
+    //         // 밖에서 안쪽으로
+    //        if (fLength >= g_fFadeRadius * ( 0.2f - g_fDeadTime / 0.2f))
+    //            discard;
+    //    }
+    //    else
+    //    {
+    //        // 안쪽에서 밖으로
+    //        if (fLength <= g_fFadeRadius * (g_fDeadTime / 0.2f))
+    //            discard;
+    //    }
+    //}
+    
+    Out.vDiffuse = vColor;
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    
+    //림라이트도 더해서 던져.
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -446,6 +506,17 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_GORILLA_DISSOLVE();
     }
+    // 8 Scarlet Change Body Color
+    pass ScarletColorPass
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCARLET_ATK_COLOR();
+    }
+
 }
 
 

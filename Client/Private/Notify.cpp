@@ -141,6 +141,12 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::ATTACK_INTERACTION:
 		return m_pCharacter->CallNotify(CNotify::ATTACK_INTERACTION, &AnimNotify);
 		break;
+	case CNotify::CHANGE_COLOR:
+		return m_pCharacter->CallNotify(CNotify::CHANGE_COLOR, &AnimNotify);
+		break;
+	case CNotify::SET_VISIBLITY:
+		return m_pCharacter->CallNotify(CNotify::SET_VISIBLITY, &AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -165,6 +171,8 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Attack_Interaction")			return ATTACK_INTERACTION;
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
+	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
+	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 
 	return NOTIFY_TYPE::END;
 }

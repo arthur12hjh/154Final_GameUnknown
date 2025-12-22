@@ -18,6 +18,7 @@ public :
 	const NAYTIBA_NETWORK_DESC*				Find_NaytibaData(_uint iID);
 	
 	const BETA_SKILL_DESC*					Find_BetaSkillData(_uint iSkillID);
+	const NPC_DATA_DESC*					Find_NpcData(_uint iSkillID);
 	map<_uint, BETA_SKILL_DESC>*			Get_AllBetaSkillDesc();
 
 	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
@@ -48,6 +49,10 @@ private:
 
 	//플레이어 데이터
 	map<_uint, BETA_SKILL_DESC>							m_pBetaSkills = {};
+
+	//NPC 데이터
+	map<_uint, NPC_DATA_DESC>							m_pNpcDatas = {};
+
 	//보스 데이터
 	map<_uint, NAYTIBA_NETWORK_DESC>					m_pNaytibaDatas = {};
 
@@ -68,6 +73,7 @@ private:
 
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
+	HRESULT									LoadNpcData(void* pArg);
 	HRESULT									LoadInteractionData(void* pArg);
 	HRESULT									LoadScriptData(void* pArg);
 	HRESULT									LoadSkillData();

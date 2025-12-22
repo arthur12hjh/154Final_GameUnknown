@@ -173,6 +173,7 @@
     <ClInclude Include="..\Public\CinematicModel_Scarlet.h" />
     <ClInclude Include="..\Public\CinematicObject.h" />
     <ClInclude Include="..\Public\Cinematic_Manager.h" />
+    <ClInclude Include="..\Public\Clinet_ColorPallet.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -217,6 +218,14 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
     <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
+    <ClInclude Include="..\public\Npc.h" />
+    <ClInclude Include="..\public\NpcBody.h" />
+    <ClInclude Include="..\public\NpcFace.h" />
+    <ClInclude Include="..\public\NpcFSM.h" />
+    <ClInclude Include="..\public\NpcIdleState.h" />
+    <ClInclude Include="..\public\NpcInteractionController.h" />
+    <ClInclude Include="..\public\NpcInteractionState.h" />
+    <ClInclude Include="..\public\NpcPatrolState.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
@@ -514,6 +523,14 @@
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
     <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
+    <ClCompile Include="..\private\Npc.cpp" />
+    <ClCompile Include="..\private\NpcBody.cpp" />
+    <ClCompile Include="..\private\NpcFace.cpp" />
+    <ClCompile Include="..\private\NpcFSM.cpp" />
+    <ClCompile Include="..\private\NpcIdleState.cpp" />
+    <ClCompile Include="..\private\NpcInteractionController.cpp" />
+    <ClCompile Include="..\private\NpcInteractionState.cpp" />
+    <ClCompile Include="..\private\NpcPatrolState.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />

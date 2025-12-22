@@ -513,4 +513,15 @@ namespace Client
 		_float3 vScale;
 	}LEVEL_CINEMATICOBJECT_DESC;
 
+	typedef struct Npc_Data_Desc
+	{
+		_uint						iNpcID;
+		char						szName[MAX_PATH];
+		char						szPrototypeModel[MAX_PATH];
+		char						szAIController[MAX_PATH];
+
+		_float3						vExtents;
+		_uint						iTeamIndex;
+	}NPC_DATA_DESC;
+
 }

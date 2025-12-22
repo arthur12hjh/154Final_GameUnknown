@@ -2,6 +2,8 @@
 
 #include <process.h>
 #include "../Default/framework.h"
+#include "Clinet_ColorPallet.h"
+#include "ClientStruct.h"
 #include "GameStruct.h"
 
 namespace Client

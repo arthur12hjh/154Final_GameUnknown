@@ -517,7 +517,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
-	Update_TextureMap();
+	//Update_TextureMap();
 	Update_EventMaker();
 
 	ImGui::End();
@@ -541,7 +541,7 @@ void CImGui_Manager::Update_TimeLine()
 
 	//ImGui::BeginChild(u8"ChildTimeLine", ImVec2(0, 500), true);
 	
-	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 360.f);
+	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 720.f);
 
 	ImGui::InvisibleButton("Canvas_Timeline", vCanvasSize, ImGuiButtonFlags_MouseButtonLeft);	// 이걸로 타임라인 캔버스 전체를 클릭 가능한 영역으로 만듬
 	

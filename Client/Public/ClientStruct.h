@@ -1,4 +1,5 @@
 #pragma once
+#include "Clinet_ColorPallet.h"
 
 static const char*		g_szVisibility[2] = {  "VISIBLE", "HIDDEN" };
 

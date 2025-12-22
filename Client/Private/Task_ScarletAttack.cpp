@@ -97,7 +97,7 @@ void CTask_ScarletAttack::SelectAttackData()
 	m_pSkillData.pop();
 
 	m_pBlackBoard->SetAttackData(pSkillData);
-	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.12f, true);
+	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.f, true);
 }
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
@@ -119,12 +119,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				/*m_pSkillData.push(m_pGameManager->Find_SkillData(55));
-				SelectAttackData();*/
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				m_pSkillData.push(m_pGameManager->Find_SkillData(28));
+				SelectAttackData();
+				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();
+					NormalAttackPattern();*/
 			}
 			else
 			{
@@ -156,7 +156,7 @@ void CTask_ScarletAttack::NormalAttackPattern()
 		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange)
 			bIsSelectAttack = false;
 	}
-	else if (27 == pSkill_Data->iSkillID)
+	else if (27 == pSkill_Data->iSkillID || 30 == pSkill_Data->iSkillID)
 	{
 		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
 			bIsSelectAttack = false;
@@ -453,8 +453,11 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 			{
 				m_fMoveAnimMaxRatio = 0.28f;
 				m_fLerpSpeed = 5.f;
-				if (0.05f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f));
+				if (0.1f > fAnimationRatio)
+				{
+					_vector vDir = XMVector3Normalize(m_pOwner->GetTransform()->Get_State(STATE::LOOK)) * -10.f;
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + vDir));
+				}
 
 				bIsLerpMove = true;
 			}
@@ -585,7 +588,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				m_fLerpSpeed = 7.f;
 
 				if (0.45f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -13.f));
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -13.f));
 
 				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
@@ -599,7 +602,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				bIsLerpMove = true;
 
 				if (0.545f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTargetPos + vReverseDir));
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
 			}
 		}
 		break;
@@ -1022,6 +1025,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				bIsLerpMove = true;
 			}
 			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
+			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
 			{
 				// Move Frame : 136 ~ 180
 				m_fMoveAnimMaxRatio = 0.5f;
@@ -1063,7 +1067,9 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 {
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_float fDistance = XMVectorGetX(XMVector3Length(vOwnerPos - XMLoadFloat3(&m_fAttackMovePoint)));
-	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fTimeDelta * m_fLerpSpeed);
+
+	_float fRatio = Clamp<_float>(fTimeDelta * m_fLerpSpeed, 0.f, 1.f);
+	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fRatio);
 
 	if (m_bIsLookAtPoint)
 		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, m_fLerpSpeed);
@@ -1099,6 +1105,9 @@ void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
 	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+	if (XMVector3Equal(vDir, XMVectorZero()))
+		return;
+
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 20.f);
 }
 

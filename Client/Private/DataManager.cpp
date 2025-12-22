@@ -26,6 +26,7 @@ HRESULT CDataManager::Initalize()
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNpcData(pArg); });
 
     return S_OK;
 }
@@ -52,6 +53,15 @@ const BETA_SKILL_DESC* CDataManager::Find_BetaSkillData(_uint iSkillID)
 {
     auto iter = m_pBetaSkills.find(iSkillID);
     if (iter == m_pBetaSkills.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const NPC_DATA_DESC* CDataManager::Find_NpcData(_uint iSkillID)
+{
+    auto iter = m_pNpcDatas.find(iSkillID);
+    if (iter == m_pNpcDatas.end())
         return nullptr;
 
     return &iter->second;
@@ -250,7 +260,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     vector<string> BossDataList; 
     BossDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
+    CStringHelper::CSVRead("../Bin/DataFiles/AIData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
     for (auto i = 23; i < iMaxSize;)
@@ -293,6 +303,34 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
 
         m_pNaytibaDatas.emplace(BossDesc.iMonsetID, BossDesc);
     }
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadNpcData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    vector<string> NpcDataList;
+    NpcDataList.reserve(1000);
+
+    CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
+    size_t iMaxSize = NpcDataList.size();
+    for (auto i = 6; i < iMaxSize;)
+    {
+        NPC_DATA_DESC pNpcDesc = {};
+        pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
+
+        strcpy_s(pNpcDesc.szName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szPrototypeModel, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szAIController, NpcDataList[i++].c_str());
+
+        pNpcDesc.vExtents.x = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vExtents.y = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vExtents.z = (_float)atof(NpcDataList[i++].c_str());
+
+        pNpcDesc.iTeamIndex = atoi(NpcDataList[i++].c_str());
+        m_pNpcDatas.emplace(pNpcDesc.iNpcID, pNpcDesc);
+    }
+
     return S_OK;
 }
 
