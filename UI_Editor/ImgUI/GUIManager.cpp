@@ -182,6 +182,11 @@ void CGUIManager::ViewMode()
         }
         GUI::EndCombo();
     }
+
+    _char szFPS[MAX_PATH]{};
+    CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), szFPS);
+    ImGui::Text(szFPS);
+
     GUI::PopID();
     GUI::End();
 }

@@ -999,7 +999,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				// Move Frame : 310 ~ 324
 				m_fMoveAnimMaxRatio = 0.34f;
 
-				if (0.3f > fAnimationRatio)
+				if (0.28f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 15.f);
 				m_fLerpSpeed = 7.f;
 				m_bIsLookAtPoint = false;
@@ -1098,7 +1098,7 @@ void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
-	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
+	_vector vDir = XMVectorSetY(XMVector3Normalize(vTargetPos - vTempOwnerPos), 0.f);
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 20.f);
 }
 

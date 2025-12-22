@@ -410,6 +410,7 @@
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
     <ClInclude Include="..\Public\UICostumePuzzleAnswer.h" />
     <ClInclude Include="..\Public\UICostumePuzzleButtons.h" />
+    <ClInclude Include="..\Public\UICostumePuzzleHint.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInstanceBuffer.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
@@ -721,6 +722,7 @@
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\Private\UICostumePuzzleAnswer.cpp" />
     <ClCompile Include="..\Private\UICostumePuzzleButtons.cpp" />
+    <ClCompile Include="..\Private\UICostumePuzzleHint.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />

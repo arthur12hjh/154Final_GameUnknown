@@ -177,10 +177,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	}
 
 	Kill_Objects();
+
+	m_pInput_Device->UpdateKeyFrame();
+	m_pPicking->Update();
+
 	if (false == m_bIsPause)
 	{
-		m_pInput_Device->UpdateKeyFrame();
-		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
 
 		//Priority Update �����
@@ -242,8 +244,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 
-	m_pPhysx_Manager->Update(fGameSpeed); // isdead üũ�ؼ� ����
-	
+	if (false == m_bIsPause)
+		m_pPhysx_Manager->Update(fGameSpeed); // isdead üũ�ؼ� ����
 
 	m_pRenderer->Update(fTimeDelta);
 

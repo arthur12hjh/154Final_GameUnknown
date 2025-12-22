@@ -53,6 +53,13 @@
                             ],
                             "szTypeTag": "ActionEvent"
                         }
+                    ],
+                    "Get_Costume_Puzzle_Unlock": [
+                        {
+                            "szActionTag": "Get_Costume_Puzzle_Unlock",
+                            "szArg": "Get_Costume_Puzzle_Unlock",
+                            "szTypeTag": "ActionEvent"
+                        }
                     ]
                 },
                 "szLayerTag": "Layer_Popup",
@@ -105,6 +112,15 @@
                 "iLevel": 3,
                 "iRenderGroup": 9,
                 "iVisibility": 0,
+                "szEvents": {
+                    "Get_Costume_Puzzle_Hint": [
+                        {
+                            "szActionTag": "Get_Costume_Puzzle_Hint",
+                            "szArg": "Get_Costume_Puzzle_Hint",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
                 "szLayerTag": "Layer_Popup",
                 "szProtoTag": "Prototype_GameObject_UI_Costume_Puzzle_Hint",
                 "szUIID": "UI_CostumePuzzleHint_2-1",

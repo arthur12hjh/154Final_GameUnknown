@@ -1,0 +1,68 @@
+[
+    {
+        "Children": [
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 498.0,
+                "fOffsetY": -90.0,
+                "fRotation": 0.0,
+                "fSizeX": 356.0,
+                "fSizeY": 80.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 100,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Popup",
+                "szProtoTag": "Prototype_GameObject_UI_Costume_Puzzle_Answer",
+                "szUIID": "UI_CostumePuzzleAnswer_2-1",
+                "szUITag": "UI_CostumePuzzleAnswer"
+            },
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 498.0,
+                "fOffsetY": 90.0,
+                "fRotation": 0.0,
+                "fSizeX": 356.0,
+                "fSizeY": 200.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 100,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Popup",
+                "szProtoTag": "Prototype_GameObject_UI_Costume_Puzzle_Buttons",
+                "szUIID": "UI_CostumePuzzleButtons_2-2",
+                "szUITag": "UI_CostumePuzzleButtons"
+            }
+        ],
+        "PopupDesc": {
+            "fPosX": 1085.0,
+            "fPosY": 200.0,
+            "fSizeX": 400.0,
+            "fSizeY": 500.0,
+            "isDimed": true
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 100,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_Popup",
+        "szProtoTag": "Prototype_GameObject_UI_Popup",
+        "szUIID": "UI_CostumePuzzlePopup_1",
+        "szUITag": "UI_CostumePuzzlePopup"
+    }
+]

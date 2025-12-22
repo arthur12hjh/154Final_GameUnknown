@@ -32,6 +32,9 @@ HRESULT CUIPopup::Initialize(void* pArg)
 
 void CUIPopup::Priority_Update(_float fTimeDelta)
 {
+	if (!m_isOpen)
+		return;
+
 	__super::Priority_Update(fTimeDelta);
 
 	if (m_tUIDesc.fAlpha <= 0.f)
@@ -42,18 +45,28 @@ void CUIPopup::Priority_Update(_float fTimeDelta)
 
 void CUIPopup::Update(_float fTimeDelta)
 {
+	if (!m_isOpen)
+		return;
+
 	__super::Update(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
+		Close_Popup();
 }
 
 void CUIPopup::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
+	if (!m_isOpen)
+		return;
 
-	//m_fAmount = (4 / (_float)6) / 1.f;
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIPopup::Render()
 {
+	if (!m_isOpen)
+		return S_OK;
+
 	__super::Render();
 
 	if (FAILED(Bind_ShaderResources()))
@@ -111,7 +124,7 @@ HRESULT CUIPopup::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isActive", &m_tUIDesc.m_tUIPopupDesc.isDimed, sizeof(_bool))))
 		return E_FAIL;
 
-	if (m_tUIDesc.m_tUIPopupDesc.isDimed)
+	/*if (m_tUIDesc.m_tUIPopupDesc.isDimed)
 	{
 		if (FAILED(m_pDimTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 			return E_FAIL;
@@ -120,30 +133,18 @@ HRESULT CUIPopup::Bind_ShaderResources()
 	{
 		if (FAILED(m_pShaderCom->Bind_SRV("g_Texture0", nullptr)))
 			return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
 		return E_FAIL;
 
-	_float2 vPos = { m_tUIDesc.m_tUIPopupDesc.fPosX, m_tUIDesc.m_tUIPopupDesc.fPosY };
+	/*_float2 vPos = { m_tUIDesc.fX, m_tUIDesc.fY };
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UIPosition", &vPos, sizeof(_float2))))
 		return E_FAIL;
 
-	_float2 vSize = { m_tUIDesc.m_tUIPopupDesc.fSizeX, m_tUIDesc.m_tUIPopupDesc.fSizeY };
+	_float2 vSize = { m_tUIDesc.fSizeX, m_tUIDesc.fSizeY };
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UISize", &vSize, sizeof(_float2))))
-		return E_FAIL;
-
-	//if (FAILED(m_pInnerFrameTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0)))
-	//	return E_FAIL;
-	//if (FAILED(m_pSuitIconsTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture3", 0)))
-	//	return E_FAIL;
-
-	///*int col = iconIndex % ATLAS_COL;
-	//int row = iconIndex / ATLAS_COL;*/
-
-	//_float2 fAtlasCount = { 6.f, 2.f };
-	//if(FAILED(m_pShaderCom->Bind_RawValue("g_AtlasCount", &fAtlasCount, sizeof(_float2))))
-	//	return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -184,6 +185,49 @@ void CUIPopup::CallbackEvent(void* pArg)
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
 	Safe_Release(pHUD);
+}
+
+void CUIPopup::Open_Popup()
+{
+	m_pGameInstance->SetGamePause(true);
+	g_bIsMouseLock = false;
+
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Open"));
+
+	if (AnimTag != m_tUIDesc.m_AnimTags.end())
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+	Safe_Release(pHUD);
+
+	m_eVisibility = VISIBILITY::VISIBLE;
+
+	for (auto& pChild : m_Children)
+		Update_Children(pChild);
+	
+	m_isOpen = true;
+}
+
+void CUIPopup::Close_Popup()
+{
+	m_pGameInstance->SetGamePause(false);
+	g_bIsMouseLock = true;
+
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Close"));
+
+	if (AnimTag != m_tUIDesc.m_AnimTags.end())
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+	Safe_Release(pHUD);
+
+	//m_eVisibility = VISIBILITY::HIDDEN;
+	//m_tUIDesc.fAlpha = 0.f;
+
+	for (auto& pChild : m_Children)
+		Update_Children(pChild);
+
+	m_isOpen = false;
 }
 
 CUIPopup* CUIPopup::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
