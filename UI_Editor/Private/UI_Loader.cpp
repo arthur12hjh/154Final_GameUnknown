@@ -44,6 +44,7 @@
 #include "UIPopup.h"
 #include "UICostumePuzzleAnswer.h"
 #include "UICostumePuzzleButtons.h"
+#include "UICostumePuzzleHint.h"
 
 #pragma endregion
 
@@ -734,6 +735,11 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Buttons */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Buttons"),
 		CUICostumePuzzleButtons::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint"),
+		CUICostumePuzzleHint::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -65,12 +65,14 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;		
 
-	ShowCursor(FALSE);
 
 #ifdef _DEBUG
+	ShowCursor(TRUE);
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)
 		return E_FAIL;
+#else
+	ShowCursor(FALSE);
 #endif
 
 	return S_OK;
@@ -86,9 +88,9 @@ void CMainApp::Update(_float fTimeDelta)
 #endif
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
-		m_bIsMouseLock = !m_bIsMouseLock;
+		g_bIsMouseLock = !g_bIsMouseLock;
 
-	if (m_bIsMouseLock)
+	if (g_bIsMouseLock)
 		MouseLock();
 	m_pEffectSRV->Reset();
 
