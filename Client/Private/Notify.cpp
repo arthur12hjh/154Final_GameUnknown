@@ -43,7 +43,7 @@ HRESULT CNotify::Initialize(void* pArg)
 
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
-	// ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ º¯°æµÉ °æ¿ì, ³ëÆ¼ÆÄÀÌ Å¥¸¦ ÃÊ±âÈ­ÇÏ°í »õ·Î Ã¤¿ö³Ö´Â´Ù.
+	// ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ Å¥ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½Ö´Â´ï¿½.
 	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
@@ -79,7 +79,7 @@ void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
 	{
-		// ÀÌº¥Æ® È£Ãâ
+		// ï¿½Ìºï¿½Æ® È£ï¿½ï¿½
 		_uint index = m_pModelCom->Get_AnimationKeyFrameIndex();
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= index)
 		{
@@ -143,6 +143,11 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 		break;
 	case CNotify::CAMERA_SHAKE:
 		return Notify_Camera_Shake(AnimNotify);
+	case CNotify::CHANGE_COLOR:
+		return m_pCharacter->CallNotify(CNotify::CHANGE_COLOR, &AnimNotify);
+		break;
+	case CNotify::SET_VISIBLITY:
+		return m_pCharacter->CallNotify(CNotify::SET_VISIBLITY, &AnimNotify);
 		break;
 	case Client::CNotify::END:
 		return E_FAIL;
@@ -169,6 +174,8 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
 	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
+	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
+	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 
 	return NOTIFY_TYPE::END;
 }
@@ -303,7 +310,7 @@ HRESULT CNotify::Notify_Set_Transform(const ANIM_NOTIFY& AnimNotify)
 	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
-	/* ¹ÌÀû¿ë
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_pCharacter->Set_Rotation
 	*/
 

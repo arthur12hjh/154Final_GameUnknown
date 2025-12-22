@@ -26,8 +26,8 @@ public:
 
 public:
 	HRESULT Bind_RimLightShaderResources(CShader* pShader, 
-		const _char* pRimColorTag = nullptr, const _char* pRimPowerTag = nullptr,
-		const _char* pRimLightIntensity = nullptr, const _char* pCamPositionTag = nullptr);
+	const _char* pRimColorTag = nullptr, const _char* pRimPowerTag = nullptr,
+	const _char* pRimLightIntensity = nullptr, const _char* pCamPositionTag = nullptr);
 
 private:
 	//_float4		vRimLightColor = { 1.f, 1.f, 1.f, 1.f };

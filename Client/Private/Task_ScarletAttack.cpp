@@ -42,7 +42,7 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 		return NODE_STATE::FAIL;
 	}
 
-	// ÀÏ´Ü ¿©±â¼­ °í¸±¶ó °ø°Ý¿¡´ëÇÑ ÀÌµ¿ Ã³¸®
+	// ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ Ã³ï¿½ï¿½
 	m_pTarget = m_pBlackBoard->GetTarget();
 	m_pBlackBoard->SetTargetDistacne();
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
@@ -97,38 +97,38 @@ void CTask_ScarletAttack::SelectAttackData()
 	m_pSkillData.pop();
 
 	m_pBlackBoard->SetAttackData(pSkillData);
-	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.12f, true);
+	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.f, true);
 }
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
-	// °Å¸® ±â¹ÝÀ¸·Î
-	// ApproachAttackPattern or NormalAttackPattern Áß¿¡¼­ ¼±ÅÃ
-	// Hit Áß¿¡ ÆÐ¸µ »óÅÂ °ø°ÝÀ¸·Î ³Ñ¾î¿ÔÀ»¶§ LinkAttackPatternÀ» Àç»ý
+	// ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ApproachAttackPattern or NormalAttackPattern ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// Hit ï¿½ß¿ï¿½ ï¿½Ð¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ LinkAttackPatternï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
-			// ÆäÀÌÁî ÃÖÃÊ Á¶¿ì ÆÐÅÏ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			EntranceAttack();
 		}
 		else
 		{
-			// ±âº»ÀûÀÎ ÆÐÅÏµé ÇÏ´Â°Å
+			// ï¿½âº»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ïµï¿½ ï¿½Ï´Â°ï¿½
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				/*m_pSkillData.push(m_pGameManager->Find_SkillData(55));
-				SelectAttackData();*/
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				m_pSkillData.push(m_pGameManager->Find_SkillData(28));
+				SelectAttackData();
+				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();
+					NormalAttackPattern();*/
 			}
 			else
 			{
-				// ¿¬°è ÆÐÅÏ 
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 				LinkAttackPattern();
 			}
 		}
@@ -156,7 +156,7 @@ void CTask_ScarletAttack::NormalAttackPattern()
 		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange)
 			bIsSelectAttack = false;
 	}
-	else if (27 == pSkill_Data->iSkillID)
+	else if (27 == pSkill_Data->iSkillID || 30 == pSkill_Data->iSkillID)
 	{
 		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
 			bIsSelectAttack = false;
@@ -183,7 +183,7 @@ void CTask_ScarletAttack::NormalAttackPattern()
 
 void CTask_ScarletAttack::LinkAttackPattern()
 {
-	// ¿©±â´Â °­Á¦·Î ±×·Î±â»óÅÂ¿¡¼­ °­Á¦·Î µé¾î¿ÔÀ»¶§ ½ÇÇàÇÒ ¾×¼Ç
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·Î±ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¼ï¿½
 	
 }
 
@@ -264,16 +264,16 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 
 _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 {
-	// ºí·¢º¸µå¿¡¼­ ¼±ÅÃµÈ Å¸°ÙÀ» °¡Á®¿À°í °Å¸®°¡ °¡±î¿ì¸é ÀÌ³à¼®Àº °Å¸®¸¦ Á¼È÷´Â ÀÌµ¿Àº ÇÏÁö¾Ê´Â´Ù.
-	// ºí·¢ º¸µå¿¡¼­ °Å¸®¸¦ ¹Þ¾Æ¿Í¼­ ÇÏÀÚ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì³à¼®ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê´Â´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿Í¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	auto pNaytibaStaticData = m_pOwner->GetStaticMonsterData();
 	if (nullptr == pNaytibaStaticData)
 		return false;
 
-	// ¿©±â¼­ ¼±ÅÃµÈ ½ºÅ³¿¡ ´ëÇÑ Á¤º¸¸¦ Ã³¸®ÇÑ´Ù.
+	// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Ñ´ï¿½.
 	_bool  bIsMove{ false }, bIsLerpMove{ false };
-	// ÇÃ·¹ÀÌ¾î¿Í ¸ó½ºÅÍÀÇ °Å¸®±â¹ÝÀ¸·Î ÀÌµ¿½ÃÅ°´Â °É·ÎÇÏÀÚ °ø°ÝÇÒ¶§
-	// Å¸ÀÌ¹Ö¿¡ ¸ÂÃç¼­ ÃÖ¼Ò°Å¸® À¯Áö
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½
+	// Å¸ï¿½Ì¹Ö¿ï¿½ ï¿½ï¿½ï¿½ç¼­ ï¿½Ö¼Ò°Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_vector vOwnerPos{}, vTempOwnerPos{};
 	vTempOwnerPos = vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -405,7 +405,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 		break;
 		case 24:  // Swing
 		{
-			// 25(Swing Fast), 26(Swing Triple) ÆÐÅÏÀº ¿ø°Å¸® ÆÐÅÏÀÌ´Ù.
+			// 25(Swing Fast), 26(Swing Triple) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
 			// 
 			// Length : 72
 			// Move Frame :  0 ~ 40
@@ -453,8 +453,11 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 			{
 				m_fMoveAnimMaxRatio = 0.28f;
 				m_fLerpSpeed = 5.f;
-				if (0.05f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f));
+				if (0.1f > fAnimationRatio)
+				{
+					_vector vDir = XMVector3Normalize(m_pOwner->GetTransform()->Get_State(STATE::LOOK)) * -10.f;
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + vDir));
+				}
 
 				bIsLerpMove = true;
 			}
@@ -585,7 +588,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				m_fLerpSpeed = 7.f;
 
 				if (0.45f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -13.f));
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -13.f));
 
 				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
@@ -599,7 +602,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				bIsLerpMove = true;
 
 				if (0.545f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTargetPos + vReverseDir));
+					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
 			}
 		}
 		break;
@@ -1022,6 +1025,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				bIsLerpMove = true;
 			}
 			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
+			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
 			{
 				// Move Frame : 136 ~ 180
 				m_fMoveAnimMaxRatio = 0.5f;
@@ -1063,7 +1067,9 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 {
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_float fDistance = XMVectorGetX(XMVector3Length(vOwnerPos - XMLoadFloat3(&m_fAttackMovePoint)));
-	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fTimeDelta * m_fLerpSpeed);
+
+	_float fRatio = Clamp<_float>(fTimeDelta * m_fLerpSpeed, 0.f, 1.f);
+	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fRatio);
 
 	if (m_bIsLookAtPoint)
 		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, m_fLerpSpeed);
@@ -1099,6 +1105,9 @@ void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 
 	_vector vDir = XMVectorSetY(XMVector3Normalize(vTargetPos - vTempOwnerPos), 0.f);
+	if (XMVector3Equal(vDir, XMVectorZero()))
+		return;
+
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 20.f);
 }
 

@@ -1,0 +1,4 @@
+ ID,Name,ProtoTypeModel,Controller ProtoType,Extents,TeamNumber
+1,Scarlet,Prototype_Component_Model_Scarlet_Body,Prototype_Component_NpcInteractionController,"1, 1, 1",0
+2,Adam,M_Beholder,None,"1, 1, 1",0
+3,Bolt,M_BarnacleA,None,"1, 1, 1",0
