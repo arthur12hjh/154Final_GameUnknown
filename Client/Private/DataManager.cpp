@@ -240,7 +240,7 @@ void CDataManager::Save_CinematicData()
     }
 }
 
-#ifdef _DEBUG
+
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
 {
@@ -251,8 +251,6 @@ map<_uint, CINEMATIC_DESC>* CDataManager::Get_CinematicDataMap()
 {
     return &m_CinematicDatas;
 }
-
-#endif
 
 HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {

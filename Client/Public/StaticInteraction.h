@@ -26,10 +26,13 @@ public:
 private:
 	CModel*								m_pModelCom = { nullptr };
 
+	_bool								m_bHasHint{ true };
+
 private:
 	HRESULT								ADD_Components(const PROB_INTERACTION_DESC& Desc);
 	HRESULT								Ready_COL(const PROB_INTERACTION_DESC& Desc);
 	HRESULT								Bind_ShaderResources();
+	void								SetCullingCollider(_uint iObjectID);
 
 	virtual HRESULT						Begin_OverlapCallBack() override;
 	virtual HRESULT						End_OverlapCallBack() override;

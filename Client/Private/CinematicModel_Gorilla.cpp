@@ -80,7 +80,8 @@ HRESULT CCinematicModel_Gorilla::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pColliderCom->SetOwner(this);
+	//m_pColliderCom->SetOwner(this);
+	//Find_PartObject(TEXT("Part_Body"))->Find_Component(TEXT())
 
 	return S_OK;
 }
@@ -112,7 +113,7 @@ void CCinematicModel_Gorilla::Update(_float fTimeDelta)
 		break;
 	}
 
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
@@ -122,10 +123,10 @@ void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	//m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
 	__super::Late_Update(fTimeDelta);
 }
@@ -175,14 +176,14 @@ HRESULT CCinematicModel_Gorilla::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 
 HRESULT CCinematicModel_Gorilla::Ready_Components()
 {
-	/* Com_Collider_AABB */
-	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
-		return E_FAIL;
+	///* Com_Collider_AABB */
+	//CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
+	//AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
+	//AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	//
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
+	//	TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -215,12 +216,19 @@ HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaMeet()
 	return S_OK;
 }
 
+/// <고릴라 애니메이션>
+/// M_Gorilla_S12_Crush
+/// MV_Quest_Sub_033_Gorilla_NA05_01
+/// M_Gorilla_S20_ParryMode
+/// M_Gorilla_Finish02_nonbreak_v03
+/// </고릴라 애니메이션>
+
 HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaFinish()
 {
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("M_Gorilla_Finish02_v02_w01_export_nonbreak", FALSE, 2.f);
+	m_pBodyModelCom->Set_Animation("M_Gorilla_Finish02_nonbreak_v03", FALSE, 1.5f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
 

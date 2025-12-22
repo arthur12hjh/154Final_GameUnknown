@@ -56,6 +56,8 @@ public:
 	// 테스트용 로직들이라 한군데 모아놧습니다 
 	// 나중에 한번에 정리할게요.
 	void Update_TestLogic(_float fTimeDelta);
+	void Update_TestSkillInput(_float fTimeDelta);
+
 	_float m_fTestTimer = { 0.f };
 
 private:
@@ -85,7 +87,7 @@ private:
 	void Update_Interaction(_float fTimeDelta);
 	void Update_PotionUse(_float fTimeDelta);
 	void Update_LinkAttack(_float fTimeDelta);
-	//블링크, 리펄스, 저회
+	//블링크, 리펄스, 저회 키 선입력용.
 	void Update_ReactionSkills(_float fTimeDelta); 
 
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);

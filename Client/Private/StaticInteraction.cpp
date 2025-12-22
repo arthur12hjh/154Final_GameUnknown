@@ -5,6 +5,8 @@
 #include "UIBase.h"
 #include "GameManager.h"
 #include "Interaction_Component.h"
+#include "UIScript.h"
+#include "UIHUD.h"
 
 CStaticInteraction::CStaticInteraction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CProb_Interaction(pDevice, pContext)
@@ -27,6 +29,9 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
         return E_FAIL;
 
     PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+
+    SetCullingCollider(pDesc->iObjectID);
+
     if (FAILED(ADD_Components(*pDesc)))    
         return E_FAIL;
 
@@ -38,7 +43,6 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
 
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
-
 
     if (m_pRigidBody)
         m_pRigidBody->Update_PxTransform(WorldMat);
@@ -58,12 +62,32 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
+        if (m_eInterState == INTERACTION_STATE::ACTIVE)
+        {
+            if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+            {
+                CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+                if (!pHUD)
+                {
+                    Safe_Release(pHUD);
+                    return;
+                }
+
+                if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzleHintPopup"))
+                    && pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzleHintPopup"))->IsAnimFinished(TEXT("Popup_Close")))
+                    m_eInterState = INTERACTION_STATE::DEFAULT;
+            
+                Safe_Release(pHUD);
+            }
+        }
         m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+      
 #ifdef _DEBUG
         m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-
         m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
     }
 }
 
@@ -76,7 +100,6 @@ HRESULT CStaticInteraction::Render()
 
     for (size_t i = 0; i < iNumMeshes; i++)
     {
-
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
             return E_FAIL;
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -160,7 +183,6 @@ HRESULT CStaticInteraction::Ready_COL(const PROB_INTERACTION_DESC& Desc)
     // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
     // 없으면 충돌 안됨
 
-
     m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
     return S_OK;
@@ -178,11 +200,44 @@ HRESULT CStaticInteraction::Bind_ShaderResources()
     return S_OK;
 }
 
+void CStaticInteraction::SetCullingCollider(_uint iObjectID)
+{
+    auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+    switch (iObjectID)
+    {
+    case 1: // VendingMachine_6A (1, 2, 1)
+        pCullingCollider->SetCollision({ 0.f, 1.4f, 0.5f }, {}, { 1.f, 2.f, 1.f });
+        break;
+    case 2: // VendingMachine_7A (2, 3, 2)
+        pCullingCollider->SetCollision({ 0.f, 2.1f, 0.f }, {}, { 2.f, 3.f, 2.f });
+        break;
+    case 3: // Camp_1I (1, 1, 1)
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.f, 1.f, 1.f });
+        break;
+    case 4: // Corpse_1A (1, 1, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.f, -0.5f }, {}, { 1.f, 2.f, 1.5f });
+        break;
+    case 5: // Corpse_1B (1, 1, 2.2)
+        pCullingCollider->SetCollision({ -0.2f, 0.f, 0.1f }, {}, { 1.f, 1.f, 2.2f });
+        break;
+    case 6: // Corpse_2A (2.2, 1, 1.5)
+    case 7: // Corpse_2B (2.2, 1, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.2f, 1.f, 1.5f });
+        break;
+    case 8: // Corpse_2C (1.5, 1.5, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 1.5f, 1.5f, 1.5f });
+        break;
+    case 9: // Corpse_3B (4, 3, 4)
+        pCullingCollider->SetCollision({ 0.f, 2.1f, 0.5f }, {}, { 4.f, 3.f, 4.f });
+        break;
+    }
+}
+
 HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
     __super::Begin_OverlapCallBack();
 
-    // 임시 테스트
+    // END일 땐 다시 안 보이게
     if (m_eInterState != INTERACTION_STATE::END)
         m_eInterState = INTERACTION_STATE::DEFAULT;
 
@@ -206,6 +261,32 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
     {
         m_eInterState = INTERACTION_STATE::ACTIVE;
         m_fInteractionDuration = 0.f;
+
+        if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+        {
+            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            if (!pHUD)
+            {
+                Safe_Release(pHUD);
+                return;
+            }
+
+            if (m_bHasHint)
+            {
+                pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+            }
+            else
+            {
+                /* CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+                if (!pScript)
+                    return;
+
+                pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("CorpseInteractionScript")));*/
+            }
+            Safe_Release(pHUD);
+        }
     }
 }
 

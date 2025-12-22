@@ -70,6 +70,7 @@ PLAYER_TRANSITION_DESC CPlayer_CorpseInteractionState::Update(_float fTimeDelta)
 
 _float CPlayer_CorpseInteractionState::End()
 {
+    m_Desc->isInvincible = false;
 	m_Desc->isInteracting = false;
 
 	return m_fNextBlendRatio;

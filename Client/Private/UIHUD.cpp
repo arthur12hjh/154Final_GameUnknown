@@ -20,6 +20,8 @@
 #include "Player.h"
 #include "PlayerFSM.h"
 
+#include "UIPopup.h"
+
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
 {
@@ -190,6 +192,57 @@ CUIBase* CUIHUD::Get_UIObject(_wstring szLayerTag, _wstring szUITag)
 	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
 
 	return pUI;
+}
+
+void CUIHUD::Open_Popup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return;
+
+	pPopup->Open_Popup();
+}
+
+void CUIHUD::Close_Popup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return;
+
+	pPopup->Close_Popup();
+}
+
+_bool CUIHUD::Check_isOpenPopup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return false;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return false;
+
+	return pPopup->Get_IsOpen();
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)

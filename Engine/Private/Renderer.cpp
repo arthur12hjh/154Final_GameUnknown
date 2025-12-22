@@ -5,7 +5,6 @@
 #include "BlendObject.h"
 #include "UIObject.h"
 #include "GameInstance.h"
-#include "Occlusion.h"
 
 #include "ColliderRenderer.h"
 
@@ -14,7 +13,9 @@
 #include "RadialBlur.h"
 #include "Blur.h"
 #include "Distortion.h"
+#include "BlackBlend.h"
 #include "Glow.h"
+#include "Metaball.h"
 #include "Bloom.h"
 #include "Fog.h"
 #include "DepthofField.h"
@@ -102,6 +103,14 @@ HRESULT CRenderer::Initialize()
 
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pGlow)
+		return E_FAIL;
+
+	m_pMetaball = CMetaball::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pMetaball)
+		return E_FAIL;
+
+	m_pBlackBlend = CBlackBlend::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pBlackBlend)
 		return E_FAIL;
 
 	m_pBloom = CBloom::Create(m_pDevice, m_pContext);
@@ -383,6 +392,12 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 	case RENDER::GLOW:
 		m_pGlow->Add_RenderObject(pRenderObject);
 		break;
+	case RENDER::BLACKBLEND:
+		m_pBlackBlend->Add_RenderObject(pRenderObject);
+		break;
+	case RENDER::METABALL:
+		m_pMetaball->Add_RenderObject(pRenderObject);
+		break;
 	case RENDER::SHADOW:
 		m_pCascadeShadow->Add_RenderObject(pRenderObject);
 		break;
@@ -579,15 +594,6 @@ void CRenderer::Render_MotionBlur()
 
 void CRenderer::Render_Occlusion()
 {
-	//_uint iOcclusionCount = m_RenderObjects[ENUM_CLASS(RENDER::OCCLUSION)].size();
-	//// 나중에 지워주세요
-	//_char szDebugString[256];
-
-	//snprintf(szDebugString, sizeof(szDebugString),
-	//	"Frame Render Count (Occlusion Group): %u\n", iOcclusionCount);
-
-	//OutputDebugStringA(szDebugString);
-
 	const _float4x4* pViewMatrix = m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW);
 	if (FAILED(m_pOcclusionShader->Bind_Matrix("g_ViewMatrix", pViewMatrix)))
 		return;
@@ -627,13 +633,6 @@ void CRenderer::Render_Occlusion()
 
 				_float4x4 WorldMatrix = *pCollider->Get_WorldMatrixPtr();
 				_matrix matWorld = XMLoadFloat4x4(&WorldMatrix);
-
-				//_vector vPos = matWorld.r[3];
-
-				//matWorld.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				//matWorld = matWorld * XMMatrixScaling(1.1f, 1.1f, 1.1f);
-
-				//matWorld.r[3] = vPos;
 
 				XMStoreFloat4x4(&WorldMatrix, matWorld);
 
@@ -857,9 +856,11 @@ void CRenderer::Render_Blend()
 
 void CRenderer::Render_Deferred()
 {
-	HRESULT hr = m_pBlur->Render(m_pVIBuffer);
-	hr = m_pEmissive->Render(m_pVIBuffer);
+	HRESULT hr = m_pBlackBlend->Render(m_pVIBuffer);
 	hr = m_pGlow->Render(m_pVIBuffer);
+	hr = m_pMetaball->Render(m_pVIBuffer);
+	hr = m_pBlur->Render(m_pVIBuffer);
+	hr = m_pEmissive->Render(m_pVIBuffer);
 	hr = m_pDistortion->Render(m_pVIBuffer);
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
@@ -877,15 +878,19 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pEmissive->Bind_RenderTarget(m_pShader, "g_EmissiveFinalTexture")))
 		return;
 
+	//blackblend
+	if (FAILED(m_pBlackBlend->Bind_RenderTarget(m_pShader, "g_BlackBlendTexture")))
+		return;
 	//blur
 	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurFinalTexture")))
 		return;
-	if (FAILED(m_pBlur->Bind_RenderTarget(m_pShader, "g_BlurWeightTexture")))
-		return;
 	//glow
+	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowBloomTexture")))
+		return;
 	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowFinalTexture")))
 		return;
-	if (FAILED(m_pGlow->Bind_RenderTarget(m_pShader, "g_GlowWeightTexture")))
+	//metaball
+	if (FAILED(m_pMetaball->Bind_RenderTarget(m_pShader, "g_MetaballTexture")))
 		return;
 
 	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
@@ -1125,6 +1130,8 @@ void CRenderer::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pBlur);
+	Safe_Release(m_pBlackBlend);
+	Safe_Release(m_pMetaball);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pBloom);

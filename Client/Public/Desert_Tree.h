@@ -31,6 +31,7 @@ private:
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+	void	SetCullingCollider(_uint iObjectID);
 
 public:
 	static CDesert_Tree* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

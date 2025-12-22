@@ -91,15 +91,17 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		return;
+	}
+
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
-		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-	}
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 }
 
@@ -174,7 +176,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
 	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, { 2.f, 2.f, 2.f });
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({ 0.f, 1.3f, 0.f }, {}, { 1.f, 1.5f, 1.f });
 
 	auto pPlatformList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Lift_Platform"));
 	if (pPlatformList)

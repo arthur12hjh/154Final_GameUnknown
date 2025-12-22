@@ -103,6 +103,7 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
+    float4 vAtlasIndex : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -128,12 +129,12 @@ VS_OUT VS_INSTANCE_MAIN(VS_IN In)
     VS_OUT Out;
 
     float3 pos = In.vPosition.xyz;
-    
+  
     if (In.vUVAtlasSize.z != 0.f && In.vUVAtlasSize.w != 0)
         pos.xy *= In.vUVAtlasSize.zw;
-    
+  
     pos.xy += In.vUVAtlasOffset.zw;
-    
+  
     // Position    
     float4 worldPos = mul(float4(pos, 1.f), g_WorldMatrix);
     float4 viewPos = mul(worldPos, g_ViewMatrix);
@@ -155,8 +156,11 @@ VS_OUT VS_INSTANCE_MAIN(VS_IN In)
     float2 atlasCount = max(g_AtlasCount.xy, float2(1.f, 1.f));
     float2 tileSize = 1.f / atlasCount;
     float2 tileMin = In.vAtlasIndex.xy * tileSize;
-    
-    Out.vTexcoord = tileMin + localUV * tileSize;
+  
+    float2 final = tileMin + localUV * tileSize;
+  
+    Out.vTexcoord = final;
+    Out.vAtlasIndex = In.vAtlasIndex;
 
     return Out;
 }
@@ -170,6 +174,7 @@ struct PS_IN
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
+    float4 vAtlasIndex : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -398,6 +403,9 @@ PS_OUT PS_UI_GLOW_FX(PS_IN In)
     
     Out.vColor = baseColor;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     //Out.vColor.a *= g_Alpha;
     //
     //if(Out.vColor.a <= 0.05f)
@@ -451,6 +459,9 @@ PS_OUT PS_HP_GAUGE(PS_IN In)
     Out.vColor = CombinedColor;
     //Out.vColor.a *= g_Alpha;
 
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -490,6 +501,9 @@ PS_OUT PS_POTION(PS_IN In)
     // ----------------------------
     Out.vColor = GaugeColor *= TintColor;
     //Out.vColor.a *= g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
 
     return Out;
 }
@@ -565,6 +579,9 @@ PS_OUT PS_SHIELD(PS_IN In)
 
     Out.vColor = lerp(bg, fg, fg.a);
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -638,6 +655,10 @@ PS_OUT PS_BETA(PS_IN In)
     fg *= g_vTintColor;
 
     Out.vColor = lerp(bg, fg, fg.a);
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -754,6 +775,8 @@ PS_OUT PS_SKILL_SLOT(PS_IN In)
     result = lerp(result, costDeco, costDeco.a);
     
     Out.vColor = result;
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -783,6 +806,8 @@ PS_OUT PS_SKILL_SLOT_GLOW(PS_IN In)
     result = lerp(result, glow1, glow1.a);
     
     Out.vColor = result;
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -841,6 +866,9 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
     
     Out.vColor = result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -881,6 +909,9 @@ PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
     
     Out.vColor = result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -905,6 +936,9 @@ PS_OUT PS_SKILL_WRAPPER_ON_LINE(PS_IN In)
     float4 result = saturate(glow0 + glow1);
     
     Out.vColor = result * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -931,6 +965,9 @@ PS_OUT PS_SKILL_WRAPPER_ON_FX(PS_IN In)
     glow0.a = alpha;
     
     Out.vColor = glow0 * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -988,6 +1025,9 @@ PS_OUT PS_LOADING_BLUR(PS_IN In)
         Out.vColor.rgb += sum.rgb * g_GlowIntensity;
     }
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -1043,6 +1083,8 @@ PS_OUT PS_SIMPLE_KEY(PS_IN In)
     
     Out.vColor = result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -1097,6 +1139,10 @@ PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
     result += flare.rgb * flare.a * g_GlowIntensity;
     
     Out.vColor = float4(result, 1.f); // additive는 보통 알파 1로 출력
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -1187,6 +1233,10 @@ PS_OUT PS_STAMINA(PS_IN In)
     }
 
     Out.vColor = lerp(bg, fg, fg.a);
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -1289,6 +1339,9 @@ PS_OUT PS_LOCKON(PS_IN In)
     
     Out.vColor = Result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -1314,7 +1367,9 @@ PS_OUT PS_OWNGOLD(PS_IN In)
     Color = lerp(Color, Icon, Icon.a);
     
     Out.vColor = Color * g_Alpha;
-    //Out.vColor.a = g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -1332,61 +1387,54 @@ PS_OUT PS_POPUP(PS_IN In)
     float4 Dim = 0.f;
     float4 Color = 0.f;
     
-    float2 CombineShadowSize = (g_UISize * 1.1f);
-    
-    float2 PopupScaleUV = In.vTexcoord;
-    PopupScaleUV -= float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
-    PopupScaleUV /= CombineShadowSize / g_vWindowSize;
-    PopupScaleUV += float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+    //float2 CombineShadowSize = (g_UISize * 1.1f);
+    //
+    //float2 PopupScaleUV = In.vTexcoord;
+    //PopupScaleUV -= float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+    //PopupScaleUV /= CombineShadowSize / g_vWindowSize;
+    //PopupScaleUV += float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
       
-    float4 Popup = g_Texture1.Sample(ClampSampler, PopupScaleUV);
+    //PopupScaleUV -= float2(0.5f, 0.5f);
+    //PopupScaleUV /= CombineShadowSize;
+    //PopupScaleUV += float2(0.5f, 0.5f);
     
-    //float2 Inner0ScaleUV = In.vTexcoord;
-    //Inner0ScaleUV -= float2((1410.f / 1600.f), (350.f / 900.f));
-    //Inner0ScaleUV.x /= (320.f / 1600.f);
-    //Inner0ScaleUV.y /= (80.f / 900.f);
-    //Inner0ScaleUV += float2((1410.f / 1600.f), (350.f / 900.f));
+    float4 Popup = g_Texture1.Sample(DefaultSampler, uv);
     
-    //float4 Inner0 = g_Texture2.Sample(ClampSampler, Inner0ScaleUV);
-    
-    //float2 Inner1ScaleUV = In.vTexcoord;
-    //Inner1ScaleUV -= float2((1410.f / 1600.f), (550.f / 900.f));
-    //Inner1ScaleUV.x /= (320.f / 1600.f);
-    //Inner1ScaleUV.y /= (200.f / 900.f);
-    //Inner1ScaleUV += float2((1410.f / 1600.f), (550.f / 900.f));
-    
-    //float4 Inner1 = g_Texture2.Sample(ClampSampler, Inner1ScaleUV);
-    
-    //float2 IconsScaleUV = In.vTexcoord;
-    //IconsScaleUV -= float2((1400.f / 1600.f), (350.f / 900.f));
-    //IconsScaleUV.x /= (300.f / 1600.f);
-    //IconsScaleUV.y /= (60.f / 900.f);
-    //IconsScaleUV += float2((1400.f / 1600.f), (350.f / 900.f));
-    
-    //////float4 Answer = g_Texture4.Sample(ClampSampler, AnswerScaleUV);
-    
-    //////if (AnswerScaleUV.x > g_fFillAmount)
-    //////    Answer = float4(0.f, 0.f, 0.f, 0.f);
-    
-    //float4 Icons = g_Texture3.Sample(ClampSampler, IconsScaleUV);
-    
-    if(g_isActive)
-    {
-        Dim = g_Texture0.Sample(DefaultSampler, uv);
-        Color = lerp(Color, Dim, Dim.a * 0.25f);
-    }
+    //if(g_isActive)
+    //{
+    //    Dim = g_Texture0.Sample(DefaultSampler, uv);
+    //    Color = lerp(Color, Dim, Dim.a * 0.25f);
+    //}
     
     Color = lerp(Color, Popup, Popup.a * 2.f);
-    //Color = lerp(Color, Inner0, Inner0.a);
-    ////Color = lerp(Color, Icons, Icons.a);
-    //Color = lerp(Color, Inner1, Inner1.a);
     
     Out.vColor = Color * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
 
 /*------------------[E_POPUP]----------------*/
+
+/*------------------[S_COSTUME_ANSWER]----------------*/
+
+PS_OUT PS_COSTUME_ANSWER(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Icons = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vColor = Icons;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_COSTUME_ANSWER]----------------*/
 
 /*------------------[S_COSTUME_BUTTONS]----------------*/
 
@@ -1394,34 +1442,21 @@ PS_OUT PS_COSTUME_BUTTONS(PS_IN In)
 {
     PS_OUT Out;
     
-    float4 BG = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
-    float4 Button = g_Texture1.Sample(DefaultSampler, In.vTexcoord * float2(4.f, 3.f));
+    float4 Icons = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    Icons *= g_vTintColor;
     
-    float4 Color = BG;
+    if (In.vAtlasIndex.w == 1)
+        Icons.rgb = float3(1.f, 1.f, 1.f);
+        
+    Out.vColor = Icons;
     
-    Color = lerp(Color, Button, Button.a);
-    
-    Out.vColor = Color;
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
 
 /*------------------[E_COSTUME_BUTTONS]----------------*/
-
-/*------------------[S_ANSWER_ICONS]----------------*/
-
-PS_OUT PS_ATLAS(PS_IN In)
-{
-    PS_OUT Out;
-    
-    float4 Icons = g_Texture0.Sample(ClampSampler, In.vTexcoord);
-    
-    Out.vColor = Icons;
-    
-    return Out;
-}
-
-/*------------------[E_ANSWER_ICONS]----------------*/
 
 technique11 DefaultTechnique
 {
@@ -1677,23 +1712,23 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_POPUP();
     }
 
-    pass COSTUME_BUTTONS // 24
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_COSTUME_BUTTONS();
-    }
-
-    pass ATLAS // 25
+    pass COSTUME_ANSWER // 24
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_ATLAS();
+        PixelShader = compile ps_5_0 PS_COSTUME_ANSWER();
+    }
+
+    pass COSTUME_BUTTONS // 25
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COSTUME_BUTTONS();
     }
 }

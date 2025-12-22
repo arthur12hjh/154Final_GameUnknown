@@ -189,6 +189,17 @@ void CModel::Override_CombinedTransformationMatrix(const _char* pBoneName, _fmat
 
 }
 
+HRESULT CModel::Set_AnimationKeyFrameIndex(_uint iKeyFrameIndex)
+{
+	if (m_iCurrentAnimIndex == -1)
+        return E_FAIL;
+
+	_uint iNormalizedKeyFrameIndex = iKeyFrameIndex % (_uint)m_Animations[m_iCurrentAnimIndex]->Get_Duration();
+
+	m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition((_float)iNormalizedKeyFrameIndex);
+    return S_OK;
+}
+
 void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
 {
     *pVIBuffer = m_Meshes[iMeshNum]->GetVIBuffer();
@@ -1031,24 +1042,24 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
     {
         m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
+        
         D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
         if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
         {
             COMPUTE_BONEMATRIX_OUT* pOut =
                 reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
-
+        
             for (auto& BoneCountIndex : m_PartialBoneCountMap)
             {
                 _int iBoneIndex = BoneCountIndex.first;
-
+        
                 m_Bones[iBoneIndex]->Set_TransformationMatrix(
                     XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
-
+        
                 m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
                     XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
             }
-
+        
             m_pContext->Unmap(m_pOutReadBack, 0);
         }
     }
@@ -1283,7 +1294,6 @@ HRESULT CModel::Ready_ComputeShader()
         TEXT("../Bin/ShaderFiles/Shader_Compute_CombinedMatrices.hlsl"),
         "CombinedMatrices",
         iNumData);
-
 
     if (nullptr == m_pComputeShaderCom)
         return E_FAIL;

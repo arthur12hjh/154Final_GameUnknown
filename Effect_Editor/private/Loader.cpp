@@ -80,6 +80,18 @@ HRESULT CLoader::Loading_For_Tool()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
+	/* For.Prototype_Component_Texture_Sky_Box */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Texture_Sky_Box"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/T_Sky_RockyHills_%d.dds"), 3))))
+		return E_FAIL;
+
+
+	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Model_Sky"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
+		return E_FAIL;
+
 
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 

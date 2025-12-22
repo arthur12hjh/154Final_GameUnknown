@@ -105,6 +105,8 @@ namespace Engine
 		NONLIGHT,
 		BLUR,
 		GLOW,
+		METABALL,
+		BLACKBLEND,
 		DISTORTION,
 		BLEND,
 		UI,

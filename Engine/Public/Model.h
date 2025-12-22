@@ -81,7 +81,6 @@ public:
 	_int Get_BoneIndex(const _char* pBoneName) const;
 	// </end>
 
-
 	_uint Get_AnimationKeyFrameIndex() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
@@ -95,6 +94,8 @@ public:
 	void Override_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix);
 	// GPU 스키닝을 위한 ID3D11Buffer 전달함수
 	ID3D11Buffer* Get_BoneMatrixGPUBuffer() { return m_pOutSource; }
+
+	HRESULT Set_AnimationKeyFrameIndex(_uint iKeyFrameIndex);
 
 	// 모델인스턴싱을 위한 최소한의 함수
 	void				Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** VIBuffer, ID3D11Buffer** IndexBuffer);

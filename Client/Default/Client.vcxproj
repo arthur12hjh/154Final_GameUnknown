@@ -346,7 +346,7 @@
     <ClInclude Include="..\public\MousePointer.h" />
     <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\pch.h" />
-    <ClInclude Include="..\Public\PointParticle.h" />
+    <ClInclude Include="..\Public\MeshParticle.h" />
     <ClInclude Include="..\public\Prob_Destory.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\PlayerBehaviorCallback.h" />
@@ -370,7 +370,6 @@
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Snow.h" />
     <ClInclude Include="..\Public\SpriteEffect.h" />
-    <ClInclude Include="..\public\SpriteUVEffect.h" />
     <ClInclude Include="..\public\Stair.h" />
     <ClInclude Include="..\public\Stone1.h" />
     <ClInclude Include="..\public\Stone2.h" />
@@ -420,6 +419,7 @@
     <ClInclude Include="..\Public\UIBossVitalWrapper.h" />
     <ClInclude Include="..\Public\UICostumePuzzleAnswer.h" />
     <ClInclude Include="..\Public\UICostumePuzzleButtons.h" />
+    <ClInclude Include="..\Public\UICostumePuzzleHint.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInstanceBuffer.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
@@ -667,7 +667,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Private\PointParticle.cpp" />
+    <ClCompile Include="..\Private\MeshParticle.cpp" />
     <ClCompile Include="..\private\Prob_Destory.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerBehaviorCallback.cpp" />
@@ -691,7 +691,6 @@
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Snow.cpp" />
     <ClCompile Include="..\Private\SpriteEffect.cpp" />
-    <ClCompile Include="..\private\SpriteUVEffect.cpp" />
     <ClCompile Include="..\private\Stair.cpp" />
     <ClCompile Include="..\private\Stone1.cpp" />
     <ClCompile Include="..\private\Stone2.cpp" />
@@ -740,6 +739,7 @@
     <ClCompile Include="..\Private\UIBossVitalWrapper.cpp" />
     <ClCompile Include="..\Private\UICostumePuzzleAnswer.cpp" />
     <ClCompile Include="..\Private\UICostumePuzzleButtons.cpp" />
+    <ClCompile Include="..\Private\UICostumePuzzleHint.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
@@ -798,11 +798,10 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectParticle.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_InstnaceMesh.hlsl" />

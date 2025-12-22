@@ -30,7 +30,9 @@ private :
 
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
+	HRESULT Ready_Col(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+	void	SetCullingCollider(_uint iObjectID);
 
 public:
 	static CDeco* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

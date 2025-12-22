@@ -27,10 +27,9 @@ public:
 		
 		return m_Joints[iIdx];
 	}
-#ifdef _DEBUG
+
 public:
 	void Update(_float fTimeDelta);
-#endif
 
 private:
 	_uint m_iNumJoints = { 0 };

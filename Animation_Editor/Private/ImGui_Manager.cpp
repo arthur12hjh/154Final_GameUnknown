@@ -469,7 +469,7 @@ void CImGui_Manager::Update_AnimationList()
 	if (m_iSelectedAnimationIndex != m_iBeforeAnimationIndex)
 	{
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex, true, 0.f);
 		Update_AnimNotifyList((*m_pAnimationList)[m_iSelectedAnimationIndex]);
 	}
 

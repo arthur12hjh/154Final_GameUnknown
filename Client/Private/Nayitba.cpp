@@ -83,8 +83,8 @@ HRESULT CNayitba::Initialize(void* pArg)
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
+	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 	m_pAIController->Priority_Update(fTimeDelta);
-	//m_pCCT->Update_PrePxPosition(m_pTransformCom);
 
 	__super::Priority_Update(fTimeDelta);
 }
@@ -584,6 +584,7 @@ HRESULT CNayitba::ADD_Components()
 	m_pAIController = static_cast<CAIController*>(pInstnace);
 
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+
 	return S_OK;
 }
 

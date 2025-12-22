@@ -218,6 +218,7 @@
 #include "UIPopup.h"
 #include "UICostumePuzzleAnswer.h"
 #include "UICostumePuzzleButtons.h"
+#include "UICostumePuzzleHint.h"
 
 #pragma endregion
 
@@ -289,8 +290,9 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Camp(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Corpse_And_Container(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Container_Col(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Container_Col(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Fence_And_Ruin(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Fence_And_Ruin_Col(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Vehicle_And_Wheel(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Building_And_Trash(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Sign_And_Crane(pArg); });
@@ -347,7 +349,7 @@ HRESULT CLoader::Loading()
 	break;
 	case LEVEL::SCARLET:
 	{
-		m_strMessage = TEXT("YeahS~  It Just Fucking Sex And Dopamine");
+		m_strMessage = TEXT("Yeahs~  It Just Feeling Like Fudking Sex with My Sexy Girl!");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Building(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Map_Scarlet_Environment2(pArg); });
@@ -451,7 +453,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	ReedDesc.iNumInstance = 10000;
 	ReedDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	ReedDesc.vRange = _float3(0.f, 0.f, 0.f);
-	ReedDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Reed/Reed5.binx";
+	ReedDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Reed/Reed5.binx";
 	ReedDesc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Reed");
@@ -466,7 +468,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	BambooDesc.iNumInstance = 1;
 	BambooDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	BambooDesc.vRange = _float3(0.f, 0.f, 0.f);
-	BambooDesc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
+	BambooDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
 	BambooDesc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bamboo");
@@ -481,7 +483,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	Rock5Desc.iNumInstance = 1;
 	Rock5Desc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	Rock5Desc.vRange = _float3(0.f, 0.f, 0.f);
-	Rock5Desc.pModelFilePath = "../Bin/Resources/Maps/Scarlet/Rock/Rock5.binx";
+	Rock5Desc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock5.binx";
 	Rock5Desc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock5");
@@ -511,21 +513,21 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
 
-	//// 크리스마스
-	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
-	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
-	//	return E_FAIL;
-
-	// 오피스 스타일
+	// 크리스마스
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
-	
-	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(2, TEXTURE_TYPE::ORSS,
-		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
-		"g_ORSSTexture", TRUE);
+
+	//// 오피스 스타일
+	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
+	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+	//	return E_FAIL;
+	//
+	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(2, TEXTURE_TYPE::ORSS,
+	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
+	//	"g_ORSSTexture", TRUE);
 
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
@@ -615,7 +617,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 #pragma region Nayitba
@@ -705,7 +707,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<string> szPartModelFilePathList;
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test02.binx",
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test03.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
@@ -795,12 +797,12 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxPointParticle */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxPointParticle");
-	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxPointParticle");
+	//pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Collider_AABB */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Collider_AABB");
@@ -862,7 +864,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1244,15 +1246,15 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
-	/* For.Prototype_Component_Shader_VtxSpriteUVEffect */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteUVEffect");
-	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
-	Desc->pAddObejct.push_back(PrototypeDesc);
-	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
-
 	/* For.Prototype_Component_Shader_VtxSpriteParticle */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteParticle");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
+
+	/* For.Prototype_Component_Shader_VtxMeshParticle */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshParticle");
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_PARTICLE_DESC::Elements, VTX_NONEANIM_INSTANCE_PARTICLE_DESC::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
@@ -1262,26 +1264,26 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
-	/* For.Prototype_Component_Effect_Slash */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
+	///* For.Prototype_Component_Effect_Slash */
+	//PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash");
+	//PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Slash.binx");
+	//Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_SheildBreak_Yellow */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_SheildBreak_Yellow");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SheildBreakYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Power_Blue */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Power_Blue");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/PowerBlue.binx");
+	/* For.Prototype_Component_Effect_Power_Yellow */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Power_Yellow");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/PowerYellow.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 
-	/* For.Prototype_Component_Effect_Hit_Spark */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
+	///* For.Prototype_Component_Effect_Hit_Spark */
+	//PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Hit_Spark");
+	//PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Spark.binx");
+	//Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Slash_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Slash_Spark");
@@ -1421,6 +1423,17 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Rock_Hit");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/RockHit.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sakura");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sakura.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDisk.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	
 	
 	/* For.Prototype_Component_TrailEffect_Default_Slash */
@@ -1507,7 +1520,7 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 
 	/* For.Prototype_Component_Texture_Terrain_ORM */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ORM_Texture_Terrain_Desert");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Desert/Terrain/002_A_TAoRM.dds"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Desert/Terrain/002_A_TAoRM.dds"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1554,108 +1567,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 
-
-#pragma region Map_Common
-	/* For.Prototype_GameObject_CM_Rock1 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock1");
-	pProtoDesc.pPrototype = CCM_Rock1::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock2 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock2");
-	pProtoDesc.pPrototype = CCM_Rock2::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock3 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock3");
-	pProtoDesc.pPrototype = CCM_Rock3::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock4 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock4");
-	pProtoDesc.pPrototype = CCM_Rock4::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock5 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock5");
-	pProtoDesc.pPrototype = CCM_Rock5::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock6 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock6");
-	pProtoDesc.pPrototype = CCM_Rock6::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock7 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock7");
-	pProtoDesc.pPrototype = CCM_Rock7::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock8 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock8");
-	pProtoDesc.pPrototype = CCM_Rock8::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock9 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock9");
-	pProtoDesc.pPrototype = CCM_Rock9::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock10 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock10");
-	pProtoDesc.pPrototype = CCM_Rock10::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock11 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock11");
-	pProtoDesc.pPrototype = CCM_Rock11::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock12 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock12");
-	pProtoDesc.pPrototype = CCM_Rock12::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock13 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock13");
-	pProtoDesc.pPrototype = CCM_Rock13::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_CM_Rock14 */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock14");
-	pProtoDesc.pPrototype = CCM_Rock14::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-#pragma endregion 
-
-
 	//Desc->OnCompleted(this_thread::get_id());
 	return S_OK;
 }
@@ -1669,7 +1580,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Stone1 */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/Stone1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/Stone1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1679,7 +1590,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Stone2 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/Stone2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/Stone2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1687,7 +1598,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Stone3 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone3");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/Stone3.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/Stone3.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1695,7 +1606,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Stone4 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stone4");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/Stone4.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/Stone4.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1703,7 +1614,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_StoneWall1 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StoneWall1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/StoneWall1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/StoneWall1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1711,7 +1622,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_StoneWall2 */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StoneWall2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stone/StoneWall2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stone/StoneWall2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1719,7 +1630,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1727,7 +1638,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1735,7 +1646,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock3 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock3");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock3.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock3.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1743,7 +1654,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock4");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock4.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock4.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1751,7 +1662,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock6 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock6");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock6.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock6.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1759,7 +1670,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock7 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock7");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock7.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock7.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1767,7 +1678,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Rock8 */
 	PreTransformMatrix = XMMatrixScaling(0.002f, 0.002f, 0.002f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock8");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Rock/Rock8.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Rock/Rock8.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1775,7 +1686,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_StoneTile */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StoneTile");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tile/StoneTile.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tile/StoneTile.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1783,7 +1694,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_CherryBlossom1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CherryBlossom1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/CherryBlossom1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1791,7 +1702,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_CherryBlossom2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CherryBlossom2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/CherryBlossom2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1799,7 +1710,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_CherryBlossom3 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CherryBlossom3");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom3.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/CherryBlossom3.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1807,7 +1718,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_CherryBlossom4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CherryBlossom4");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom4.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/CherryBlossom4.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1815,7 +1726,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_Grass */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Grass");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Grass/Grass.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Grass/Grass.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1823,7 +1734,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_DryGrass1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_DryGrass1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Grass/DryGrass1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Grass/DryGrass1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1831,7 +1742,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_DryGrass2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_DryGrass2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Grass/DryGrass2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Grass/DryGrass2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1839,7 +1750,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment(void* pArg)
 	/* For.Prototype_Component_Model_DryGrass3 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_DryGrass3");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Grass/DryGrass3.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Grass/DryGrass3.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2002,7 +1913,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock1 */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2010,7 +1921,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock2.binx", PreTransformMatrix);
 
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
@@ -2018,14 +1929,14 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock3 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock3");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock3.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock3.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 	/* For.Prototype_Component_Model_CM_Rock4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock4");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock4.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock4.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2033,7 +1944,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock6 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock6");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock6.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock6.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2041,7 +1952,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock7 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock7");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock7.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock7.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2049,7 +1960,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock8 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock8");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock8.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock8.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2059,7 +1970,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock9 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock9");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock9.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock9.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2067,7 +1978,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock10 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock10");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock10.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock10.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2075,7 +1986,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock11 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock11");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock11.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock11.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2083,7 +1994,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock12 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock12");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock12.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock12.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2091,7 +2002,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock13 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock13");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock13.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock13.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2099,11 +2010,111 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Environment2(void* pArg)
 	/* For.Prototype_Component_Model_CM_Rock14 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CM_Rock14");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Common/Rock/CM_Rock14.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Common/Rock/CM_Rock14.binx", PreTransformMatrix);
 
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+#pragma region Map_Common
+	/* For.Prototype_GameObject_CM_Rock1 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock1");
+	pProtoDesc.pPrototype = CCM_Rock1::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock2 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock2");
+	pProtoDesc.pPrototype = CCM_Rock2::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock3 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock3");
+	pProtoDesc.pPrototype = CCM_Rock3::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock4 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock4");
+	pProtoDesc.pPrototype = CCM_Rock4::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock5 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock5");
+	pProtoDesc.pPrototype = CCM_Rock5::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock6 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock6");
+	pProtoDesc.pPrototype = CCM_Rock6::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock7 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock7");
+	pProtoDesc.pPrototype = CCM_Rock7::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock8 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock8");
+	pProtoDesc.pPrototype = CCM_Rock8::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock9 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock9");
+	pProtoDesc.pPrototype = CCM_Rock9::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock10 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock10");
+	pProtoDesc.pPrototype = CCM_Rock10::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock11 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock11");
+	pProtoDesc.pPrototype = CCM_Rock11::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock12 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock12");
+	pProtoDesc.pPrototype = CCM_Rock12::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock13 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock13");
+	pProtoDesc.pPrototype = CCM_Rock13::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CM_Rock14 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CM_Rock14");
+	pProtoDesc.pPrototype = CCM_Rock14::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+#pragma endregion 
 	return S_OK;
 }
 
@@ -2123,7 +2134,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_TombStone */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_TombStone");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/TombStone/tombstone.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/TombStone/tombstone.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2131,7 +2142,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_Inscription_L */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Inscription_L");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/TombStone/TombStone_L.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/TombStone/TombStone_L.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2139,7 +2150,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_Inscription_R */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Inscription_R");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/TombStone/TombStone_R.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/TombStone/TombStone_R.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2147,7 +2158,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_TombStoneBase1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_TombStoneBase1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/TombStone/TombStoneBase1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/TombStone/TombStoneBase1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2155,7 +2166,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_TombStoneBase2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_TombStoneBase2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/TombStone/TombStoneBase2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/TombStone/TombStoneBase2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2163,7 +2174,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_Stair */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stair");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Stair/Stair.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Stair/Stair.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2171,7 +2182,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_Giwajip */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Giwajip");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Giwajip/Giwajip.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Giwajip/Giwajip.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2179,7 +2190,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_Giwajip2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Giwajip2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Giwajip/Giwajip2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/Giwajip/Giwajip2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2187,7 +2198,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_StoneLantern1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StoneLantern1");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/StoneLantern/StoneLantern1.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/StoneLantern/StoneLantern1.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2195,7 +2206,7 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_Component_Model_StoneLantern2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StoneLantern2");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/StoneLantern/StoneLantern2.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Scarlet/StoneLantern/StoneLantern2.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2380,18 +2391,18 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	//PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
-	ModelDesc.iNumInstance = 100;
-	ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
-	ModelDesc.vRange = _float3(50.f, 5.f, 50.f);
-	ModelDesc.pModelFilePath = "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.bin";
-	ModelDesc.PreModelMatrix = PreTransformMatrix;
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Instance_Model_Dororong");
-	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	//CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC ModelDesc{};
+	//ModelDesc.iNumInstance = 100;
+	//ModelDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
+	//ModelDesc.vRange = _float3(50.f, 5.f, 50.f);
+	//ModelDesc.pModelFilePath = "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.bin";
+	//ModelDesc.PreModelMatrix = PreTransformMatrix;
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Instance_Model_Dororong");
+	//pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &ModelDesc);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 
 	
@@ -4003,6 +4014,14 @@ HRESULT CLoader::Loading_For_Desert_Deco(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_SciFi_Door_COL */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_SciFi_Door_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Door/SciFi_Door_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_Poster_4D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4D");
@@ -4367,12 +4386,18 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
+	/* For.Prototype_Component_Model_Base_1A */
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Base_1A_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Camp/Base_1A_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Container_2A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_2A_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2A_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2A_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4380,7 +4405,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_2B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_2B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2B_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2B_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4388,7 +4413,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_2C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_2C_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2C_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2C_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4396,7 +4421,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_2D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_2D_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2D_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_2D_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4404,7 +4429,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_3A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_3A_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_3A_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_3A_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4412,7 +4437,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_4B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_4B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_4B_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_4B_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4420,7 +4445,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_5A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_5A_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5A_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5A_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4428,7 +4453,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_5B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_5B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5B_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5B_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4436,7 +4461,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_5C */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_5C_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5C_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5C_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4444,7 +4469,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_5D */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_5D_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5D_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5D_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4452,7 +4477,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_5E */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_5E_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5E_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_5E_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4460,7 +4485,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_7B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_7B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_7B_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_7B_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4468,7 +4493,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	/* For.Prototype_Component_Model_Container_7F */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Container_7F_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_7F_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Container/Container_7F_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -4555,6 +4580,50 @@ HRESULT CLoader::Loading_For_Desert_Deco_Fence_And_Ruin(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Desert_Deco_Fence_And_Ruin_Col(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
+
+	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+
+	/* For.Prototype_Component_Model_Fence_1A */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1A_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1A_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1B */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1B_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1B_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1F */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1F_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1F_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Fence_1H */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Fence_1H_COL");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Fence/Fence_1H_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 
 	return S_OK;
 }
@@ -6139,7 +6208,7 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 	/* For.Prototype_Component_Model_Bridge_14A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bridge_14A_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14A_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14A_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6147,7 +6216,7 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 	/* For.Prototype_Component_Model_Bridge_14B */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bridge_14B_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14B_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14B_COL.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6854,6 +6923,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Buttons */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Costume_Puzzle_Buttons");
 	pProtoDesc.pPrototype = CUICostumePuzzleButtons::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint");
+	pProtoDesc.pPrototype = CUICostumePuzzleHint::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

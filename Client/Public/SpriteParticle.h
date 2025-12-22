@@ -15,11 +15,12 @@ class CEffectSRV;
 class CSpriteParticle final : public CGameObject
 {
 public:
-	struct PointConstBufferData
+	struct SpriteConstBufferData
 	{
 		_float4x4		matWorld;
 		_float4			vPivot;
 		_float4			vGravity;
+		_float4			vRotation;
 		_float4			fTimeDelta;
 		_float2			fCircle;
 		_float2			fTurnPower;
@@ -74,6 +75,9 @@ public:
 		_int				iNumInstance;
 		_int				iSelectRender;
 		_bool				bisBillboard;
+		_bool				bisAngleBillboard;
+		_bool				bisStart;
+		_bool				bisAnimation;
 		_bool				bisLoop;
 		_bool				bisSphere;
 		_bool				bisCircle;
@@ -86,7 +90,7 @@ private:
 	virtual ~CSpriteParticle() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPointParticleData);
+	virtual HRESULT Initialize_Prototype(const SPRITE_PARTICLE_DATA* pSpriteParticleData);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
@@ -106,10 +110,11 @@ private:
 
 	CEffectSRV* m_pEffectSRV = { nullptr };
 
-	PointConstBufferData			m_CBData = {};
+	SpriteConstBufferData			m_CBData = {};
 	SPRITE_PARTICLE_DATA	m_tData;
 	_float			m_fTime = {};
 	_float			m_fLength = {};
+	_uint			m_iRenderCount = {};
 	_bool			m_bisStop = { false };
 	_float4x4		m_CombinedWorldMatrix = {};
 	RENDER			m_eRender;
@@ -122,7 +127,7 @@ private:
 	void							Spread(_float fTimeDelta);
 
 public:
-	static CSpriteParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pPointParticleData);
+	static CSpriteParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pSpriteParticleData);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void					Free() override;
 };

@@ -177,10 +177,12 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	}
 
 	Kill_Objects();
+
+	m_pInput_Device->UpdateKeyFrame();
+	m_pPicking->Update();
+
 	if (false == m_bIsPause)
 	{
-		m_pInput_Device->UpdateKeyFrame();
-		m_pPicking->Update();
 		m_pCameraManager->Priority_Update(fGameSpeed);
 
 		//Priority Update �����
@@ -242,8 +244,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pInteract_Manager->Update();
 
-	m_pPhysx_Manager->Update(fGameSpeed); // isdead üũ�ؼ� ����
-	
+	if (false == m_bIsPause)
+		m_pPhysx_Manager->Update(fGameSpeed); // isdead üũ�ؼ� ����
 
 	m_pRenderer->Update(fTimeDelta);
 
@@ -539,6 +541,11 @@ HRESULT CGameInstance::Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc)
 	return m_pRenderer->Ready_StaticShadow_Light(Desc);
 }
 
+void* CGameInstance::Get_Cascade_Desc()
+{
+	return m_pRenderer->Get_Cascade_Desc();
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
@@ -595,10 +602,7 @@ void* CGameInstance::Get_HDR_Desc()
 	return m_pRenderer->Get_HDR_Desc();
 }
 
-void* CGameInstance::Get_Cascade_Desc()
-{
-	return m_pRenderer->Get_Cascade_Desc();
-}
+
 
 void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
 {

@@ -38,6 +38,10 @@ private:
 
 	vector<VTX_INSTANCE_DESC>   m_IconInstances{};
 	vector<_int> m_SelectedIndices{};
+	vector<_int> m_Answer{};
+
+	_bool m_isAnswer{ false };
+	_int m_iSubmitAnswerIdx{ 0 };
 
 private:
 	HRESULT Render_Icons();
@@ -46,6 +50,8 @@ private:
 	HRESULT SetUp_Icons();
 
 	HRESULT Bind_IconsResources();
+
+	_bool Check_Answer();
 
 public:
 	static CUICostumePuzzleAnswer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

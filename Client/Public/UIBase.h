@@ -13,7 +13,6 @@ class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
-class CUIAnimationCom;
 class CUIHUD;
 class CGameManager;
 
@@ -107,6 +106,7 @@ public:
 	}
 
 	_bool IsAnimFinished(const _wstring& szAnimTag) const;
+	_bool IsAnimPlaying() const { return m_bAnimPlaying; }
 
 #ifdef _DEBUG
 	void Render_Debug_Rect();

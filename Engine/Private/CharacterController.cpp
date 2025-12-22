@@ -49,7 +49,7 @@ void CCharacterController::Set_Gravity(_bool bFlag, _float fVelocity)
 	//둘다 true거나 둘다 false면 넘어가
 	m_isGravity = bFlag;
 	m_fGravityTimeAcc = 0.f;
-	m_fJumpVelocity = fVelocity;  // 이제 "현재 속도"로 사용
+	m_fJumpVelocity = fVelocity;  // 이제 현재 속도로 사용
 }
 
 void CCharacterController::Set_Riding(_bool isRiding, CTransform* pTransform,  CRigidBody* pRigidBody)
@@ -174,7 +174,7 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 
 void CCharacterController::Set_Position(_vector vPosition)
 {
-	m_pController->setPosition(PxExtendedVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition)));
+	m_pController->setFootPosition(PxExtendedVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition)));
 }
 
 _vector CCharacterController::Calc_Gravity(_float fTimeDelta)

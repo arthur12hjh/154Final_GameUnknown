@@ -115,12 +115,6 @@
     <Filter Include="03.Effects\MeshEffect">
       <UniqueIdentifier>{6a20e5b2-90b9-436f-8a46-170e59b3d406}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\PointParticle">
-      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Effects\SpriteUVEffect">
-      <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
     </Filter>
@@ -922,6 +916,9 @@
     <Filter Include="02.GameObjects\Character\AI\Controller\Npc\Default">
       <UniqueIdentifier>{d6a77df2-57e7-4a72-979a-b3f7581517d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\Particle\MeshParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1131,11 +1128,8 @@
     <ClInclude Include="..\Public\MeshEffect.h">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PointParticle.h">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SpriteUVEffect.h">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClInclude Include="..\Public\MeshParticle.h">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>06.Event\Notify</Filter>
@@ -1320,9 +1314,6 @@
     <ClInclude Include="..\Public\TestEveHead.h">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\StaticMap.h">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIPlayAnimEvent.h">
       <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
     </ClInclude>
@@ -1430,9 +1421,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Moon.h">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\InstanceModel.h">
-      <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
@@ -1852,6 +1840,15 @@
     <ClInclude Include="..\public\NpcInteractionController.h">
       <Filter>02.GameObjects\Character\AI\Controller\Npc\Default</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\InstanceModel.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleHint.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2045,11 +2042,8 @@
     <ClCompile Include="..\Private\MeshEffect.cpp">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PointParticle.cpp">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SpriteUVEffect.cpp">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClCompile Include="..\Private\MeshParticle.cpp">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>06.Event\Notify</Filter>
@@ -2240,9 +2234,6 @@
     <ClCompile Include="..\Private\TestEveHead.cpp">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\StaticMap.cpp">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MonsterAttackState.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack</Filter>
     </ClCompile>
@@ -2338,9 +2329,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Moon.cpp">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\InstanceModel.cpp">
-      <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
@@ -2749,6 +2737,15 @@
     <ClCompile Include="..\private\NpcInteractionController.cpp">
       <Filter>02.GameObjects\Character\AI\Controller\Npc\Default</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\InstanceModel.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleHint.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
@@ -2761,9 +2758,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
@@ -2787,9 +2781,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
@@ -2809,6 +2800,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

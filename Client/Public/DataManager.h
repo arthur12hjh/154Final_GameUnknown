@@ -35,10 +35,8 @@ public :
 	void									Save_CinematicData();
 
 
-#ifdef _DEBUG
 	map<_uint, CAMERA_ANIMATION_DATA>*		Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*				Get_CinematicDataMap();
-#endif
 
 private:
 	// 캐릭터 구조체는 이거 하나만있으도 될거같아서 픽스
