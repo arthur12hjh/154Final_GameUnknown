@@ -106,9 +106,9 @@ HRESULT CTerrain::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Mask */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Reed_Mask"),
+	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Reed_Mask"),
 		TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pMaskCom))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
@@ -133,24 +133,6 @@ HRESULT CTerrain::Bind_ShaderResources()
 		return E_FAIL;
 
 	
-	//테스트 코드. 나중에 지우셔도 돼요
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
-		m_isORM = !m_isORM;
-
-	if (true == m_isORM)
-	{
-		if (FAILED(m_pORMTextureCom->Bind_ShaderResources(m_pShaderCom, "g_ORMTexture")))
-			return E_FAIL;
-	}
-
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
-	{
-		if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
-			return E_FAIL;
-	}
-	
-
 	return S_OK;
 }
 
@@ -188,6 +170,6 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pMaskCom);
+	//Safe_Release(m_pMaskCom);
 	Safe_Release(m_pORMTextureCom);
 }
