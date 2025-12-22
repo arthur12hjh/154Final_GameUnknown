@@ -9,6 +9,7 @@
 #include "HUDLayer.h"
 #include "GameObject.h"
 #include "ChangeLevelEvent.h"
+#include "UIStruct.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -38,7 +39,11 @@ HRESULT CLevel_Logo::Initialize()
 
 	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_EVETrailer.wav"), 1.f);
 
-	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
+	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { 
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+		});
 	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
 
 	auto pGameManager = CGameManager::GetInstance();

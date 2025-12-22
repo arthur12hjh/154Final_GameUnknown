@@ -21,7 +21,8 @@
 ********************************/
 
 CUI_MainApp::CUI_MainApp()	
-	: m_pGameInstance { CGameInstance::GetInstance() }
+	: m_pGameInstance { CGameInstance::GetInstance() },
+	m_pGameManager{ CGameManager::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
@@ -190,6 +191,7 @@ void CUI_MainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
+	m_pGameManager->Release_GameMgr();
 	CGameManager::DestroyInstance();
 
 	m_pGuiManager->Release_GUI_Manager();

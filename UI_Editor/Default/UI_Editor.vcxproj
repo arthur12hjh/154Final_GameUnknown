@@ -255,6 +255,7 @@
     <ClCompile Include="..\..\Client\Private\UIButton.cpp" />
     <ClCompile Include="..\..\Client\Private\UICostumePuzzleAnswer.cpp" />
     <ClCompile Include="..\..\Client\Private\UICostumePuzzleButtons.cpp" />
+    <ClCompile Include="..\..\Client\Private\UICostumePuzzleHint.cpp" />
     <ClCompile Include="..\..\Client\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIHPFX.cpp" />

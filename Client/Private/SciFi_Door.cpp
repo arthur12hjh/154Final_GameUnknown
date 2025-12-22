@@ -7,6 +7,7 @@
 
 #include "UIHUD.h"
 #include "UIScript.h"
+#include "UIActionEvent.h"
 
 CSciFi_Door::CSciFi_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CProb_Interaction{ pDevice, pContext }
@@ -37,6 +38,21 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
 	m_pModelCom->Set_AnimationIndex(0, false);
 	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	m_pDoorEvent = CUIActionEvent::Create([&](void* pArg) { 
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bCanlock = *static_cast<_bool*>(Desc.pData);
+		});
+	m_pGameInstance->Bind_Observer(TEXT("Get_Costume_Puzzle_Hint"), m_pDoorEvent);
+
+	m_pUnlockEvent = CUIActionEvent::Create([&](void* pArg) {
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bUnlocked = *static_cast<_bool*>(Desc.pData);
+		});
+	m_pGameInstance->Bind_Observer(TEXT("Get_Costume_Puzzle_Unlock"), m_pUnlockEvent);
+
 	return S_OK;
 }
 
@@ -48,23 +64,44 @@ void CSciFi_Door::Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
 	{
-		if (INTERACTION_STATE::ACTIVE == m_eInterState)
+		if (INTERACTION_STATE::ACTIVE == m_eInterState && m_bUnlocked && m_bCanlock)
 		{
 			if (m_pModelCom->Play_Animation(fTimeDelta))
 			{
+				switch (m_eCurState)
+				{
+				case SCIFI_DOOR_STATE::OPEN:
+				{
+					m_pModelCom->Set_AnimationIndex(0, false);
+					m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+				}
+				break;
+				case SCIFI_DOOR_STATE::CLOSE:
+				{
+					m_pModelCom->Set_AnimationIndex(1, false);
+					m_eCurState = SCIFI_DOOR_STATE::OPEN;
+				}
+				break;
+				}
+
 				m_eInterState = INTERACTION_STATE::DEFAULT;
-
-				// [JU]스크립트 테스트 입니다
-				CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-				CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
-
-				if (!pScript)
-					return;
-
-				pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("TestScript")));
-				Safe_Release(pHUD);
 			}
+		}
+		else if (INTERACTION_STATE::ACTIVE == m_eInterState && (!m_bUnlocked || !m_bCanlock))
+		{
+			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+			if (!pHUD)
+			{
+				Safe_Release(pHUD);
+				return;
+			}
+
+			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
+				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close")))
+				m_eInterState = INTERACTION_STATE::DEFAULT; 
+
+			Safe_Release(pHUD);
 		}
 		else
 		{
@@ -94,11 +131,9 @@ void CSciFi_Door::Late_Update(_float fTimeDelta)
 	{
 		if (INTERACTION_STATE::ACTIVE > m_eInterState)
 			m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
-
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
 }
@@ -162,24 +197,44 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	PxUserData tUserData;
-	tUserData.szActorTag = TEXT("KIMETIC_Actor2");
 
-	//리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	/* Com_Model_COL */
+	_wstring strComponentTag = pComponentTag;
+	strComponentTag += TEXT("_COL");
+
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
+		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
+		return E_FAIL;
+
+	PxUserData tUserData;
+	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
+	tUserData.szActorTag = TEXT("Door_Actor");
+
+	// 리지드 바디 Desc 세팅. 
+	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
 	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
-	// 콜라이더 모양
-	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+	// 콜라이더 모양.
+	// ->> 메시는 TRIANGLE, 박스나 캡슐은 BOX, CAPSULE 다 따로 있으니까
+	// F12 타고 들어가서 한번 확인해보세요.
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::TRIANGLE;
 
 	// 충돌처리를 할지말지 
 	// DYNAMIC : 충돌 
 	// KINEMATIC : 충돌 X
-	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+	// STATIC : 충돌 O, 대신 고정되어 있음.
+	// ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
+
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
 	RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-	RigidBodyDesc.vSize = Com_Size;
+	RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
 	RigidBodyDesc.fMass = { 0.3f };
+	// TRIANGLE로 세팅하고 충돌용 메시 작업하는거니까, 충돌용 메시 넣어줘야돼요 
+	// TRIANGLE 타입이 아닌 (충돌용 메시가 아닌) 녀석들은 굳이 안넣어줘도 됩니다.
+	RigidBodyDesc.pColModel = m_pColModelCom;
 
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -189,7 +244,7 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-
+	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
 
 	return S_OK;
 }
@@ -221,28 +276,34 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 			m_eInterState = INTERACTION_STATE::CONTACT;
 		}
 	}
-
-	if (INTERACTION_STATE::CONTACT == m_eInterState)
+	else if (INTERACTION_STATE::CONTACT == m_eInterState)
 	{
-		switch (m_eCurState)
-		{
-		case SCIFI_DOOR_STATE::OPEN:
-		{
-			m_pModelCom->Set_AnimationIndex(1, false);
-			m_eCurState = SCIFI_DOOR_STATE::CLOSE;
-
-		}
-			break;
-		case SCIFI_DOOR_STATE::CLOSE:
-		{
-			m_pModelCom->Set_AnimationIndex(0, false);
-			m_eCurState = SCIFI_DOOR_STATE::OPEN;
-		}
-			break;
-		}
-			
 		m_eInterState = INTERACTION_STATE::ACTIVE;
 		m_fInteractionDuration = 0.f;
+
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		if (!pHUD)
+		{
+			Safe_Release(pHUD);
+			return;
+		}
+
+		if (!m_bUnlocked && m_bCanlock) // 비밀번호 입력 가능 상태일 때
+		{
+			// 퍼즐 팝업 열기
+			pHUD->Open_Popup(TEXT("UI_CostumePuzzlePopup"));
+		}
+		else if (!m_bUnlocked && !m_bCanlock) // 절대 열 수 없을 때
+		{
+			CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+			if (!pScript)
+				return;
+
+			pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("DoorInteractionScript")));
+		}
+		Safe_Release(pHUD);
 	}
 }
 
@@ -277,4 +338,6 @@ void CSciFi_Door::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pDoorEvent);
+	Safe_Release(m_pUnlockEvent);
 }

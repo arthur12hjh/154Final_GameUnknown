@@ -34,6 +34,7 @@ private:
 
 	CGUIManager*			m_pGuiManager = { nullptr };
 	CUIResourceStore*		m_pUIResourceStore = { nullptr };
+	Client::CGameManager*	m_pGameManager = { nullptr };
 
 private:
 	HRESULT Ready_Default_Setting();

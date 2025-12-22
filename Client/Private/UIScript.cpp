@@ -162,7 +162,6 @@ void CUIScript::DefaultAnim(_float fTimeDelta)
 
 		if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
 		{
-			//m_eVisibility = VISIBILITY::HIDDEN;
 			End_Script();
 			return;
 		}

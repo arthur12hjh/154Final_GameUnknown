@@ -30,8 +30,8 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
-	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+	//m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+	//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
 
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
@@ -51,18 +51,18 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+	//	return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	//Load_Map_Desert_Data("../Bin/DataFiles/DaeChanbin.bin"); // 상호작용 종합세트
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
@@ -456,18 +456,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
 		return E_FAIL;
 
-	/*CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
-
-	if (!pScript)
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
 		return E_FAIL;
-
-	auto pGameManager = CGameManager::GetInstance();
-
-	if (!pGameManager)
-		return E_FAIL;
-
-	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("TestScript")));
-	Safe_Release(pGameManager);*/
 
 	return S_OK;
 }
@@ -517,8 +507,8 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	
 	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+#pragma endregion
 
-	
 	ifs.close();
 
 	return S_OK;

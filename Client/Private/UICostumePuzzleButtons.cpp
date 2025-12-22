@@ -51,7 +51,7 @@ void CUICostumePuzzleButtons::Update(_float fTimeDelta)
 void CUICostumePuzzleButtons::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
-
+	
 	if (FAILED(SetUp_Buttons()))
 		return;
 }
@@ -63,7 +63,7 @@ HRESULT CUICostumePuzzleButtons::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::COSTUME_BUTTONS))))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::UI))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Bind_Resources()))
@@ -95,14 +95,11 @@ HRESULT CUICostumePuzzleButtons::Ready_Components()
 	CUIInstanceBuffer::UI_INSTANCE_DESC UIButtonsDesc{};
 	UIButtonsDesc.iNumInstance = 12;
 	UIButtonsDesc.vAtlasIndex = _float2(6.f, 3.f);
-	UIButtonsDesc.vUVAtlasSize = _float2(1.f, 1.f);
+	UIButtonsDesc.vUVAtlasSize = _float4(1.f, 1.f, 1.f, 1.f);
 	UIButtonsDesc.vUVAtlasOffset = _float2(0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
 		TEXT("Com_UI_InstanceBuffer_Buttons"), reinterpret_cast<CComponent**>(&m_pUIButtonsBufferCom), &UIButtonsDesc)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Buttons()))
 		return E_FAIL;
 
 	/* Com_Texture_UI_Popup_Inner_Frame */
@@ -133,10 +130,10 @@ HRESULT CUICostumePuzzleButtons::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
 		return E_FAIL;
-	if (FAILED(m_pButtonsTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
-		return E_FAIL;
+	//if (FAILED(m_pButtonsTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -180,7 +177,7 @@ HRESULT CUICostumePuzzleButtons::Render_Buttons()
 	if (FAILED(Bind_ButtonsResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::ATLAS))))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::COSTUME_BUTTONS))))
 		return E_FAIL;
 
 	if (FAILED(m_pUIButtonsBufferCom->Bind_Resources()))
@@ -197,48 +194,53 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 	m_ButtonInstances.clear();
 	m_ButtonInstances.reserve(12);
 
-	_int iconCount = m_Buttons.size();
+	_int ATLAS_COL = 4;
+	_int ATLAS_ROW = 3;
+	
+	_float2 vUISize = _float2{ 56.f, 56.f };
+	_float fUIWidth = vUISize.x * 1.5f * (ATLAS_COL - 1);
+	_float fUIHeight = vUISize.y * (ATLAS_ROW - 1);
 
-	_int iMaxCol = 4;
-	_int iMaxRow = 3;
+	_float2 vScale = _float2{ 56.f / m_tUIDesc.fSizeX, 56.f / m_tUIDesc.fSizeY };
+	_float fWidth = vScale.x * 1.5f * (ATLAS_COL - 1);
+	_float fHeight = vScale.y * (ATLAS_ROW - 1);
 
-	//_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
-	//_float iconWidth = baseWidth / iMaxCol;
-	//_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
-
-	//_float baseHeight = m_tUIDesc.fSizeY; // 부모 UI 폭
-	//_float iconHeight = baseHeight / iMaxRow;
-	//_float scaleY = iconHeight / baseHeight;   // UI 기준 단위
-
-	//_float startX = -(scaleX * (iMaxCol - 1)) * 0.5f;
-	//_float startY = (scaleY * (iMaxRow - 1)) * 0.5f;
-
-	for (_int i = 0; i < iconCount; ++i)
+	for (size_t i = 0; i < m_Buttons.size(); ++i)
 	{
+		_int col = m_Buttons[i] % 6;
+		_int row = m_Buttons[i] / 6;
+
+		_float2 vPos = _float2{ (vScale.x * 1.5f * (i % 4)) - (fWidth * 0.5f), -((vScale.y * (i / 4)) - (fHeight * 0.5f)) };
+
 		VTX_INSTANCE_DESC inst{};
+		inst.vUVAtlasSize = _float4{ 1.f, 1.f, vScale.x, vScale.y };
+		inst.vUVAtlasOffset = _float4(0.f, 0.f, vPos.x, vPos.y);
 
-		_int atlasIdx = m_Buttons[i];
-
-		_int atlasCol = atlasIdx % 6;
-		_int atlasRow = atlasIdx / 6;
-
-		float cellW = 1.f / iMaxCol; // 로컬 좌표 기준
-		float cellH = 1.f / iMaxRow;
-
-		_int col = i % iMaxCol;
-		_int row = i / iMaxCol;
-
-		float posX = -0.5f + cellW * (col + 0.5f);
-		float posY = 0.5f - cellH * (row + 0.5f);
-
-		inst.vUVAtlasSize = { 1.f, 1.f, cellW - 0.05f, cellH };
-		inst.vUVAtlasOffset = { 0.f, 0.f, posX, posY };
-
-		inst.vAtlasIndex = {
-			static_cast<_float>(atlasCol),
-			static_cast<_float>(atlasRow),
-			0.f, 0.f
+		_float2 vUIPos = _float2{
+			m_tUIDesc.fX + m_tUIDesc.fOffsetX + (vUISize.x * 1.5f * (i % 4)) - (fUIWidth * 0.5f),
+			m_tUIDesc.fY + m_tUIDesc.fOffsetY + (vUISize.y * (i / 4)) - (fUIHeight * 0.5f)
 		};
+
+		int a = 0;
+
+		if (MouseEnter(vUIPos, vUISize))
+		{
+			m_eBtnState = BTN_STATE::HOVER;
+
+			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+			{
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.Type = UI_EVENT_ARG_DESC::INT;
+				Arg.pData = &m_Buttons[i];
+				__super::Trigger_Event(TEXT("Input_Answer"), &Arg);
+			}
+		}
+		else
+		{
+			m_eBtnState = BTN_STATE::DEFAULT;
+		}
+		
+		inst.vAtlasIndex = _float4{ (_float)col, (_float)row, 0.f, (_float)ENUM_CLASS(m_eBtnState) };
 
 		m_ButtonInstances.push_back(inst);
 	}
@@ -263,7 +265,40 @@ HRESULT CUICostumePuzzleButtons::Bind_ButtonsResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_AtlasCount", &atlasCount, sizeof(_float2))))
 		return E_FAIL;
 
+	/*_uint hoverMask = 0;
+
+	if (m_iButtonIdx >= 0)
+		hoverMask |= (1 << m_iButtonIdx);
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_HoverMask", &hoverMask, sizeof(_uint))))
+		return E_FAIL;*/
+
+	//_bool bUseTintColor = true;
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
+	//	return E_FAIL;
+	_float4 TintColor = {0.5f, 0.5f, 0.5f, 1.f};
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &TintColor, sizeof(_float4))))
+		return E_FAIL;
+
 	return S_OK;
+}
+
+_bool CUICostumePuzzleButtons::MouseEnter(_float2 vPos, _float2 vSize)
+{
+	POINT MousePoint = m_pGameInstance->GetMousePoint();
+
+	_float4 fRect = {
+		vPos.x - vSize.x * 0.5f,
+		vPos.y - vSize.y * 0.5f,
+		vPos.x + vSize.x * 0.5f,
+		vPos.y + vSize.y * 0.5f
+	};
+
+	return (
+		MousePoint.x >= fRect.x &&
+		MousePoint.y >= fRect.y &&
+		MousePoint.x <= fRect.z &&
+		MousePoint.y <= fRect.w);
 }
 
 CUICostumePuzzleButtons* CUICostumePuzzleButtons::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -300,3 +335,51 @@ void CUICostumePuzzleButtons::Free()
 	Safe_Release(m_pButtonsTextureCom);
 	Safe_Release(m_pSuitIconsTextureCom);
 }
+
+#pragma region 백업
+//_int iconCount = m_Buttons.size();
+//
+//_int iMaxCol = 4;
+//_int iMaxRow = 3;
+//
+//_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
+//_float iconWidth = baseWidth / iMaxCol;
+//_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
+//
+//_float baseHeight = m_tUIDesc.fSizeY; // 부모 UI 폭
+//_float iconHeight = baseHeight / iMaxRow;
+//_float scaleY = iconHeight / baseHeight;   // UI 기준 단위
+//
+//for (_int i = 0; i < iconCount; ++i)
+//{
+//	VTX_INSTANCE_DESC inst{};
+//
+//	_int atlasIdx = m_Buttons[i];
+//
+//	_int atlasCol = atlasIdx % 6;
+//	_int atlasRow = atlasIdx / 6;
+//
+//	//float cellW = 1.f / iMaxCol; // 로컬 좌표 기준
+//	//float cellH = 1.f / iMaxRow;
+//
+//	//_int col = i % iMaxCol;
+//	//_int row = i / iMaxCol;
+//
+//	//float posX = -0.5f + cellW * (col + 0.5f);
+//	//float posY = 0.5f - cellH * (row + 0.5f);
+//
+//	inst.vUVAtlasSize = { 1.f, 1.f, scaleX, scaleY };
+//	//inst.vUVAtlasOffset = { 0.f, 0.f, posX, posY };
+//	inst.vUVAtlasOffset = { 0.f, 0.f, 0.f, 0.f };
+//
+//	inst.vAtlasIndex = {
+//		static_cast<_float>(atlasCol),
+//		static_cast<_float>(atlasRow),
+//		0.f, 0.f
+//	};
+//
+//	m_ButtonInstances.push_back(inst);
+//}
+//
+//m_pUIButtonsBufferCom->Update_Instance(m_ButtonInstances);
+#pragma endregion

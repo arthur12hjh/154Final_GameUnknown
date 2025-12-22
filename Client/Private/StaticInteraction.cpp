@@ -5,6 +5,8 @@
 #include "UIBase.h"
 #include "GameManager.h"
 #include "Interaction_Component.h"
+#include "UIScript.h"
+#include "UIHUD.h"
 
 CStaticInteraction::CStaticInteraction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CProb_Interaction(pDevice, pContext)
@@ -42,7 +44,6 @@ HRESULT CStaticInteraction::Initialize(void* pArg)
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(WorldMat);
 
-
     if (m_pRigidBody)
         m_pRigidBody->Update_PxTransform(WorldMat);
 
@@ -59,20 +60,35 @@ void CStaticInteraction::Update(_float fTimeDelta)
 
 void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
-    
-    if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        return;
-    }
+        if (m_eInterState == INTERACTION_STATE::ACTIVE)
+        {
+            if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+            {
+                CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+                if (!pHUD)
+                {
+                    Safe_Release(pHUD);
+                    return;
+                }
 
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-    m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
-
+                if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzleHintPopup"))
+                    && pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzleHintPopup"))->IsAnimFinished(TEXT("Popup_Close")))
+                    m_eInterState = INTERACTION_STATE::DEFAULT;
+            
+                Safe_Release(pHUD);
+            }
+        }
+        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+      
 #ifdef _DEBUG
-    m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+    }
 }
 
 HRESULT CStaticInteraction::Render()
@@ -84,7 +100,6 @@ HRESULT CStaticInteraction::Render()
 
     for (size_t i = 0; i < iNumMeshes; i++)
     {
-
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
             return E_FAIL;
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -168,7 +183,6 @@ HRESULT CStaticInteraction::Ready_COL(const PROB_INTERACTION_DESC& Desc)
     // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
     // 없으면 충돌 안됨
 
-
     m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
     return S_OK;
@@ -223,7 +237,7 @@ HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
     __super::Begin_OverlapCallBack();
 
-    // 임시 테스트
+    // END일 땐 다시 안 보이게
     if (m_eInterState != INTERACTION_STATE::END)
         m_eInterState = INTERACTION_STATE::DEFAULT;
 
@@ -247,6 +261,32 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
     {
         m_eInterState = INTERACTION_STATE::ACTIVE;
         m_fInteractionDuration = 0.f;
+
+        if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+        {
+            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            if (!pHUD)
+            {
+                Safe_Release(pHUD);
+                return;
+            }
+
+            if (m_bHasHint)
+            {
+                pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+            }
+            else
+            {
+                /* CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+                if (!pScript)
+                    return;
+
+                pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("CorpseInteractionScript")));*/
+            }
+            Safe_Release(pHUD);
+        }
     }
 }
 

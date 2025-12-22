@@ -195,13 +195,9 @@ CUI_Level_Loading* CUI_Level_Loading::Create(ID3D11Device* pDevice, ID3D11Device
 	return pInstance;
 }
 
-
-
 void CUI_Level_Loading::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pLoader);
-
-
 }

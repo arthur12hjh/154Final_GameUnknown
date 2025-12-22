@@ -9,6 +9,7 @@ float g_fTimeAcc;
 float g_fLifeTime;
 int g_iSampleCount;
 float g_fSamplePower;
+float g_fMin; 
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;

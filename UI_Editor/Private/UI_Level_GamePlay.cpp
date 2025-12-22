@@ -27,16 +27,17 @@ HRESULT CUI_Level_GamePlay::Initialize()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	SHADOW_LIGHT_DESC		ShadowDesc{};
-	ShadowDesc.vEye = _float4(0.f, 15.f, 0.f, 1.f);
-	ShadowDesc.vAt = _float4(10.f, 0.f, 10.f, 1.f);
-	ShadowDesc.fFovy = XMConvertToRadians(120.0f);
-	ShadowDesc.fAspect = static_cast<_float>(g_iWinSizeX) / g_iWinSizeY;
-	ShadowDesc.fNear = 0.1f;
-	ShadowDesc.fFar = 500.f;
-	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
+	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
+		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_Shadow_Light(ShadowDesc)))
+	STATIC_SHADOW_DESC		StaticShadowDesc{};
+	StaticShadowDesc.fFar = 3000.f;
+	StaticShadowDesc.fNear = 0.1f;
+	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
+
+	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
@@ -63,6 +64,23 @@ void CUI_Level_GamePlay::Update(_float fTimeDelta)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
 		m_isOverlay = false;
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_CostumePuzzlePopup"));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_CostumePuzzlePopup"));
 	}
 }
 

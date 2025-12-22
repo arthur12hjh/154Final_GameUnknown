@@ -492,6 +492,19 @@ void CEffect::Play(_float fTime)
 
 void CEffect::End()
 {
+    _vector  vRight = XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14);
+    _vector  vUp = XMVectorSet(m_CombinedWorldMatrix._21, m_CombinedWorldMatrix._22, m_CombinedWorldMatrix._23, m_CombinedWorldMatrix._24);
+    _vector  vLook = XMVectorSet(m_CombinedWorldMatrix._31, m_CombinedWorldMatrix._32, m_CombinedWorldMatrix._33, m_CombinedWorldMatrix._34);
+    _vector  vPosition = XMVectorSet(m_CombinedWorldMatrix._41, m_CombinedWorldMatrix._42, m_CombinedWorldMatrix._43, m_CombinedWorldMatrix._44);
+
+    m_pTransformCom->Set_State(STATE::RIGHT, vRight);
+    m_pTransformCom->Set_State(STATE::UP, vUp);
+    m_pTransformCom->Set_State(STATE::LOOK, vLook);
+    m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+
+    m_pParentMat = nullptr;
+    m_pParentWorldMat = nullptr;
+
     for (auto pSpriteParticle : m_pSpriteParticles)
         pSpriteParticle->End();
     for (auto pMeshParticle : m_pMeshParticles)

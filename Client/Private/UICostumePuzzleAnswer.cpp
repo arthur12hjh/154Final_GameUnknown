@@ -5,6 +5,7 @@
 #include "UIHUD.h"
 
 #include "UIInstanceBuffer.h"
+#include "UIPopup.h"
 
 CUICostumePuzzleAnswer::CUICostumePuzzleAnswer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -26,10 +27,11 @@ HRESULT CUICostumePuzzleAnswer::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_Answer = { 0, 1, 2, 3, 4, 5 };
+	m_SelectedIndices = { 12, 12, 12, 12, 12, 12 };
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	m_SelectedIndices = { 12, 12, 12, 12, 12, 12 };
 
 	return S_OK;
 }
@@ -50,6 +52,11 @@ void CUICostumePuzzleAnswer::Late_Update(_float fTimeDelta)
 
 	if (FAILED(SetUp_Icons()))
 		return;
+
+	if (!m_isAnswer && Check_Answer())
+	{
+		static_cast<CUIPopup*>(m_pParent)->Close_Popup();
+	}
 }
 
 HRESULT CUICostumePuzzleAnswer::Render()
@@ -94,14 +101,11 @@ HRESULT CUICostumePuzzleAnswer::Ready_Components()
 	CUIInstanceBuffer::UI_INSTANCE_DESC UIIconsDesc{};
 	UIIconsDesc.iNumInstance = 6;
 	UIIconsDesc.vAtlasIndex = _float2(6.f, 3.f);
-	UIIconsDesc.vUVAtlasSize = _float2(1.f, 1.f);
+	UIIconsDesc.vUVAtlasSize = _float4(1.f, 1.f, 1.f, 1.f);
 	UIIconsDesc.vUVAtlasOffset = _float2(0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
 		TEXT("Com_UI_InstanceBuffer_Icons"), reinterpret_cast<CComponent**>(&m_pUIIconsBufferCom), &UIIconsDesc)))
-		return E_FAIL;
-
-	if (FAILED(SetUp_Icons()))
 		return E_FAIL;
 
 	/* Com_Texture_UI_Popup_Inner_Frame */
@@ -155,16 +159,20 @@ HRESULT CUICostumePuzzleAnswer::Execute(const UI_EVENT_DESC& EventDesc)
 
 void CUICostumePuzzleAnswer::CallbackEvent(void* pArg)
 {
+	if (m_iSubmitAnswerIdx >= m_Answer.size())
+		return;
+
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
-	
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-	
-	Safe_Release(pHUD);
+
+	_int iNum = *static_cast<_int*>(arg->pData);
+
+	m_SelectedIndices[m_iSubmitAnswerIdx] = iNum;
+
+	++m_iSubmitAnswerIdx;
+
+	if (FAILED(SetUp_Icons()))
+		return;
 }
 
 HRESULT CUICostumePuzzleAnswer::Render_Icons()
@@ -172,7 +180,7 @@ HRESULT CUICostumePuzzleAnswer::Render_Icons()
 	if (FAILED(Bind_IconsResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::ATLAS))))
+	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::COSTUME_ANSWER))))
 		return E_FAIL;
 
 	if (FAILED(m_pUIIconsBufferCom->Bind_Resources()))
@@ -211,28 +219,23 @@ HRESULT CUICostumePuzzleAnswer::SetUp_Icons()
 	m_IconInstances.clear();
 	m_IconInstances.reserve(6);
 
-	_int iconCount = m_SelectedIndices.size();
-	_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
-	_float iconWidth = baseWidth / iconCount;
-	_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
+	_int ATLAS_COL = 6;
+	_int ATLAS_ROW = 1;
 
-	_float startX = -(scaleX * (iconCount - 1)) * 0.5f;
+	_float2 vScale = _float2{ 56.f / m_tUIDesc.fSizeX, 56.f / m_tUIDesc.fSizeY };
+	_float fWidth = vScale.x * (ATLAS_COL - 1);
 
-	for (_int i = 0; i < iconCount; ++i)
+	for (size_t i = 0; i < m_SelectedIndices.size(); ++i)
 	{
+		_int col = m_SelectedIndices[i] % ATLAS_COL;
+		_int row = m_SelectedIndices[i] / ATLAS_COL;
+		
+		_float2 vPos = _float2{ (vScale.x * i) - (fWidth * 0.5f), 0.f };
+
 		VTX_INSTANCE_DESC inst{};
-
-		_int col = m_SelectedIndices[i] % 6;
-		_int row = m_SelectedIndices[i] / 6;
-
-		inst.vUVAtlasSize = { 1.f, 1.f, scaleX, 0.5f };
-		inst.vUVAtlasOffset = { 0.f, 0.f, startX + scaleX * i, 0.f };
-
-		inst.vAtlasIndex = {
-			static_cast<_float>(col),
-			static_cast<_float>(row),
-			0.f, 0.f
-		};
+		inst.vUVAtlasSize = _float4{ 1.f, 1.f, vScale.x, vScale.y };
+		inst.vUVAtlasOffset = _float4(0.f, 0.f, vPos.x, vPos.y);
+		inst.vAtlasIndex = _float4{ (_float)col, (_float)row, 0.f, 0.f };
 
 		m_IconInstances.push_back(inst);
 	}
@@ -258,6 +261,41 @@ HRESULT CUICostumePuzzleAnswer::Bind_IconsResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CUICostumePuzzleAnswer::Check_Answer()
+{
+	if (m_iSubmitAnswerIdx >= m_Answer.size())
+	{
+		for (size_t i = 0; i < m_Answer.size(); ++i)
+		{
+			if (m_Answer[i] != m_SelectedIndices[i])
+			{
+				m_SelectedIndices.clear();
+				m_SelectedIndices = { 12, 12, 12, 12, 12, 12 };
+				m_iSubmitAnswerIdx = 0;
+				m_isAnswer = false;
+				return false;
+			}
+		}
+		m_isAnswer = true;
+
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &m_isAnswer;
+
+		__super::Trigger_Event(TEXT("Get_Costume_Puzzle_Unlock"), &Arg);
+
+		/*CUIPopup* pPopup = static_cast<CUIPopup*>(m_pParent);
+
+		if (pPopup)
+			pPopup->Close_Popup();*/
+
+		return true;
+	}
+
+	m_isAnswer = false;
+	return false;
 }
 
 CUICostumePuzzleAnswer* CUICostumePuzzleAnswer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -293,3 +331,86 @@ void CUICostumePuzzleAnswer::Free()
 	Safe_Release(m_pUIIconsBufferCom);
 	Safe_Release(m_pSuitIconsTextureCom);
 }
+
+#pragma region 백업
+//m_IconInstances.clear();
+	//m_IconInstances.reserve(6);
+
+	//// 이미지 사이즈 x,y
+	//_float2 fImage_Size = { 1536.f, 768.f };
+
+	//// 이미지 몇열 몇행
+	//_uint iCountX = 6;
+	//_uint iCountY = 3;
+
+	//// 이미지 1장당 사이즈
+	//_float iImageX = 256.f;
+	//_float iImageY = 256.f;
+
+	//for (size_t i = 0; i < m_SelectedIndices.size(); ++i)
+	//{
+	//	// 이미지 중 몇번째 이미지를 할건지
+	//	_uint iframeX = m_SelectedIndices[i] % iCountX;
+	//	_uint iframeY = m_SelectedIndices[i] / iCountX;
+
+	//	// 이미지 시작 UV
+	//	_float2 UVStart{};
+	//	UVStart.x = iframeX * iImageX / fImage_Size.x;
+	//	UVStart.y = iframeY * iImageY / fImage_Size.y;
+
+	//	_float ScaleX = iImageX / fImage_Size.x;
+
+	//	_float startX = -(ScaleX * 0.75f * (m_SelectedIndices.size() - 1)) * 0.5f;
+	//	_float posX = startX + (ScaleX * 0.75f) * i;
+
+	//	VTX_INSTANCE_DESC inst{};
+	//	inst.vUVAtlasSize = _float4{ UVStart.x, UVStart.y, 1.f, 1.f };
+	//	inst.vAtlasIndex = _float4{ (_float)iframeX, (_float)iframeY, 0.f, 0.f };
+	//	inst.vUVAtlasOffset = _float4(0.f, 0.f, posX, 0.f);
+
+	//	m_IconInstances.push_back(inst);
+	//}
+
+	//m_pUIIconsBufferCom->Update_Instance(m_IconInstances);
+
+	//_float2 fImage_Size = { 1536.f, 768.f };
+
+	//// 이미지 몇열 몇행
+	//_uint iCountX = 6;
+	//_uint iCountY = 3;
+
+	//// 이미지 1장당 사이즈
+	//_float iImageX = 256.f;
+	//_float iImageY = 256.f;
+
+	//_int iconCount = m_SelectedIndices.size();
+	//_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
+	//_float iconWidth = baseWidth / iconCount;
+	//_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
+	//_float startX = -(scaleX * (iconCount - 1)) * 0.5f;
+
+	//for (_int i = 0; i < iconCount; ++i)
+	//{
+	//	VTX_INSTANCE_DESC inst{};
+
+	//	_int col = m_SelectedIndices[i] % 6;
+	//	_int row = m_SelectedIndices[i] / 6;
+
+	//	_float2 UVStart{};
+	//	UVStart.x = col * iImageX / fImage_Size.x;
+	//	UVStart.y = row * iImageY / fImage_Size.y;
+
+	//	inst.vUVAtlasSize = { UVStart.x, UVStart.y, scaleX, 0.75f };
+	//	inst.vUVAtlasOffset = { 0.f, 0.f, startX + scaleX * i, 0.f };
+
+	//	inst.vAtlasIndex = {
+	//		static_cast<_float>(col),
+	//		static_cast<_float>(row),
+	//		0.f, 0.f
+	//	};
+
+	//	m_IconInstances.push_back(inst);
+	//}
+
+	//m_pUIIconsBufferCom->Update_Instance(m_IconInstances);
+#pragma endregion
