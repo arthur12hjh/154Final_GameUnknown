@@ -177,7 +177,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_fChargeTime -= fTimeDelta;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->End();
+			m_pCharge->End(false);
 		}
 	}
 
@@ -331,7 +331,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 		m_fChargeTime = NotifyReference.fNumData01;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->End();
+			m_pCharge->End(false);
 		}
 	}
 
