@@ -130,7 +130,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
-	if(FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))
@@ -151,6 +151,23 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pColliderCom->SetOwner(this);
 
 	SetVisibility(VISIBILITY::VISIBLE);
+
+
+	//
+	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	//EffectDesc.fRotationPerSec = 1.f;
+	//EffectDesc.fSpeedPerSec = 1.f;
+	//
+	//EffectDesc.pRootMatrix = nullptr;
+	//EffectDesc.pWorldMatrix = nullptr;
+	//
+	//EffectDesc.vPos = GetTransform()->Get_State(STATE::POSITION);
+	//EffectDesc.fRot = _float3(0, 0, 0);
+	//EffectDesc.fSize = 0.9f;
+	//
+	//static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
 
 	return S_OK;
 }
@@ -178,6 +195,9 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_FSM(fTimeDelta);
 	Update_Interaction(fTimeDelta);
 	Update_PotionUse(fTimeDelta);
+	Update_ReactionSkills(fTimeDelta);
+	//일단 테스트 입력 최우선 처리
+	Update_TestSkillInput(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -280,13 +300,21 @@ void CPlayer::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 		return;
 	}
 }
-
+/*
+데스크 받아와서 iFrame 만큼의 프레임 동안은 
+저회, 리펄스, 블링크가 가능한 상태로 바꿔준다.
+*/
 void CPlayer::Attack_Interaction(void* pArg)
 {
-	ATK_INTERACTION_DESC* pATK_Interaction_Desc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+	ATK_INTERACTION_DESC* pNotifyDesc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+	// 보이드 포인터는 혹시 몰라서 받아온거니까 따로 당장 처리하지 않음.
+	// PERFECT_DOGE, BLINK, REPULSE;
+	ATK_INTERACTION_TYPE eType = pNotifyDesc->eInteraction_Type;
+	// 프레임 단위 판정이니까.. 키 입력을 프레임 단위로 판정해야되나?
+	_uint iFrame = pNotifyDesc->iFrameCnt;
 
-	// 일단 데이터는 넘겨놨습니다.
-	// 내일 노티 작업 할 예정 금방 넣어드릴듯
+	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame * 10.f;
+	m_PlayerDesc.eReactionType = eType;
 }
 
 void CPlayer::SetSkillDataID(_uint iSkillID)
@@ -301,12 +329,36 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	m_fTestTimer += fTimeDelta;
+	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
+	}
+}
+
+void CPlayer::Update_TestSkillInput(_float fTimeDelta)
+{
+	// 락온 중이라면
+	if (true == m_PlayerDesc.HasTarget)
+	{
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::REPULSE;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+
 	}
 }
 
@@ -580,6 +632,12 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			case INTERACTION_TYPE::ITEM:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
 			}
 			}
 		}
@@ -670,6 +728,12 @@ void CPlayer::Update_LinkAttack(_float fTimeDelta)
 
 void CPlayer::Update_ReactionSkills(_float fTimeDelta)
 {
+	//0보다 크다면 프레임 계속 감소.
+	if (0 < m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.iLeftReactionSkillFrameAcc--; 
+	// END로 바꿔
+	else if (0 == m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.eReactionType = ATK_INTERACTION_TYPE::END;
 }
 
 void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
@@ -722,7 +786,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
 		pNayitba->Damaged(&DamageDesc);
-		m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
+		//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)

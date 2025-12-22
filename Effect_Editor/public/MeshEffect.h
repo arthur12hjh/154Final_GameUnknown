@@ -73,6 +73,7 @@ private:
 	MESH_DATA	m_tData;
 	_uint	m_iCount = {};
 	_uint	m_iModelCount = {};
+	_uint			m_iRenderCount = {};
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 	RENDER	m_eRender = {};

@@ -57,6 +57,7 @@ private:
 	_uint				m_iCount = {};
 	RENDER				m_eRender = {};
 	class CTrailEffect* m_pTrail;
+	_uint				m_iRenderCount = {};
 
 private:
 	HRESULT							Ready_Components();

@@ -109,6 +109,8 @@ private:
 	class CStaticShadow*				m_pStaticShadow = { nullptr };
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
+	class CMetaball*					m_pMetaball = { nullptr };
+	class CBlackBlend*					m_pBlackBlend = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
 	class CBloom*						m_pBloom = { nullptr };
 	class CFog*							m_pFog = { nullptr };

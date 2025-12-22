@@ -63,11 +63,11 @@ void CCanyon::Priority_Update(_float fTimeDelta)
 void CCanyon::Update(_float fTimeDelta)
 {
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+   /* if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
     {
         if (m_bRender == true) m_bRender = false;
         else m_bRender = true;
-    }
+    }*/
 }
 
 void CCanyon::Late_Update(_float fTimeDelta)
@@ -76,7 +76,6 @@ void CCanyon::Late_Update(_float fTimeDelta)
 	{	
 		return;
 	}
-
    
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -88,7 +87,7 @@ void CCanyon::Late_Update(_float fTimeDelta)
    
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	//m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 
@@ -97,11 +96,11 @@ HRESULT CCanyon::Render()
    /* if (m_eVisibility == VISIBILITY::HIDDEN)
         return S_OK;*/
    
-    if(m_bRender == true && m_iObjectID == 39)
+    /*if(m_bRender == true && m_iObjectID == 39)
     {
         COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCullingCollider);
         pObbCollider->Render_Face(_float4(0.f, 0.f, 1.f, 1.f));
-    }
+    }*/
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -163,8 +162,8 @@ HRESULT CCanyon::Ready_Components(const _tchar* pComponentTag)
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-
 	/* Com_Shader */
+
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;

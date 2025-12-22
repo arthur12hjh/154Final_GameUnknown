@@ -30,6 +30,7 @@ HRESULT CTrailData::Initialize(void* pArg)
 void CTrailData::Add_RenderGroup()
 {
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
 }
 
 HRESULT CTrailData::Render()
@@ -45,39 +46,24 @@ void CTrailData::Set_Data(TRAIL_DATA tData)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 8:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	}
 	Ready_Components();
@@ -94,8 +80,9 @@ HRESULT CTrailData::Bind_Texture(CShader* pShader)
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(pShader, "g_DissolveTexture", 0)))
 		return E_FAIL;
 
-	if (FAILED(pShader->Begin(m_tData.iBegin)))
+	if (FAILED(pShader->Begin(m_tData.iBegin + m_iRenderCount)))
 		return E_FAIL;
+	m_iRenderCount++;
 	return S_OK;
 }
 

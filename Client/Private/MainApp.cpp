@@ -65,6 +65,8 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;		
 
+	ShowCursor(FALSE);
+
 #ifdef _DEBUG
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)

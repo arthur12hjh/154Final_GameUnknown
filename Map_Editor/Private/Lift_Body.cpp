@@ -42,12 +42,20 @@ void CLift_Body::Priority_Update(_float fTimeDelta)
 
 void CLift_Body::Update(_float fTimeDelta)
 {
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	pCullingCollider->SetCollision({ 0.f, 20.f, 0.f }, {}, { 6.f, 30.f, 6.f });
+
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
 void CLift_Body::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CLift_Body::Render()

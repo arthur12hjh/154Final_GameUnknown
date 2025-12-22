@@ -917,6 +917,15 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 	static_cast<CCharacter*>(pTarget)->Attack_Interaction(&ATK_InteractionDesc);
 }
 
+void CNayitba::Change_Color(const AnimNotify* pNotify)
+{
+	_uint iColorIndex = pNotify->iNumData01;
+	//m_p
+
+
+
+}
+
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CNayitba* pNayitba = new CNayitba(pDevice, pContext);

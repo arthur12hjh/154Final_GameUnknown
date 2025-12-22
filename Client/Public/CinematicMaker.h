@@ -29,6 +29,9 @@ private:
 	CImGuiManager* m_pImGuiManager = nullptr;
 
 	map<_uint, CINEMATIC_DESC>* m_pCinematicDatas = { nullptr };
+
+	_bool m_bIsCinematicStarted = FALSE;
+	_float m_fTimer = 0.f;
 #endif // _DEBUG
 
 private:

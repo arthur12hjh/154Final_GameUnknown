@@ -29,8 +29,8 @@ public:
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
-	//void	SetCullingCollider(_uint iObjectID);
-	//_uint	Object_Number(const _tchar* pComponentTag);
+	void	SetCullingCollider(_uint iObjectID);
+	_uint	Object_Number(const _tchar* pComponentTag);
 
 public:
 	static CInteraction_NonAnim* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

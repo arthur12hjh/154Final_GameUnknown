@@ -40,11 +40,12 @@ public:
 
 	void						EnableCollider(_bool bIsEnable);
 
+	void						Set_PlayerDesc(PLAYER_DESC* pPlayerDesc);
+
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 
 	class CTrailEffect*			m_pTrail[4] = {nullptr};
-	class CEffect*				m_pSpark = { nullptr };
 	class CEffect*				m_pBlood = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 	_uint						m_iTrail = {};

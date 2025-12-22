@@ -120,22 +120,22 @@ void CIron_Floor::SetCullingCollider(_uint iObjectID)
 	switch (iObjectID)
 	{
 	case 1:
-		pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 4, 2, 7 });
+		pCullingCollider->SetCollision({ -3.f, 1.5f, -5.5f }, {}, { 4, 2, 7 });
 		break;
 	case 2:
-		pCullingCollider->SetCollision({ 0.f, 3.f, 3.5f }, {}, { 4, 5, 7 });
+		pCullingCollider->SetCollision({ -2.5f, 3.5f, 3.5f }, {}, { 4, 5, 7 });
 		break;
 	case 3:
-		pCullingCollider->SetCollision({ 0.f, 1.8f, 1.5f }, {}, { 10, 3, 3 });
+		pCullingCollider->SetCollision({ 0.f, 1.8f, 3.5f }, {}, { 10, 3, 1 });
 		break;
 	case 4:
-		pCullingCollider->SetCollision({ 0.f, 1.2f, 1.5f }, {}, { 2, 2, 3 });
+		pCullingCollider->SetCollision({ 0.f, 1.2f, 2.5f }, {}, { 1, 2, 3 });
 		break;
 	case 5:
-		pCullingCollider->SetCollision({ 0.f, 108.f, 22.5f }, {}, { 60, 180, 45 });
+		pCullingCollider->SetCollision({ 40.f, -145.f, 22.5f }, {}, { 60, 185, 45 });
 		break;
 	case 6:
-		pCullingCollider->SetCollision({ 0.f, 0.6f, 1.f }, {}, { 4, 1, 2 });
+		pCullingCollider->SetCollision({ -2.5f, 0.6f, -5.f }, {}, { 4, 1, 7 });
 		break;
 	}
 	

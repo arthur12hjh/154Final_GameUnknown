@@ -41,6 +41,8 @@ public:
 	virtual void					Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
 	void							Play_DeadEffect();
 
+	void							Part_BodyColor(_bool bIsEnable, _float4 vColor = {});
+
 private:
 	CCollider*											m_pColliderCom = { nullptr };
 
@@ -49,6 +51,10 @@ private:
 	
 	CTexture*											m_pTexture = {};
 	_bool												m_isDeadEffect = { false };
+
+	_bool												m_bIsChangeBodyColor = { false };
+	_float4												m_vBodyColor = {};
+
 	_float												m_fDeadTime = {};
 	_bool												m_bisSetDeadEffect = { true };
 

@@ -172,6 +172,7 @@ popd</Command>
     <ClInclude Include="..\public\BehaviorNode.h" />
     <ClInclude Include="..\public\BehaviorTree.h" />
     <ClInclude Include="..\Public\BinParser.h" />
+    <ClInclude Include="..\public\BlackBlend.h" />
     <ClInclude Include="..\public\BlackBoard.h" />
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Animation.h" />
@@ -239,6 +240,7 @@ popd</Command>
     <ClInclude Include="..\public\Light_Manager.h" />
     <ClInclude Include="..\public\Material.h" />
     <ClInclude Include="..\Public\Mesh.h" />
+    <ClInclude Include="..\public\Metaball.h" />
     <ClInclude Include="..\public\Model.h" />
     <ClInclude Include="..\Public\MotionBlur.h" />
     <ClInclude Include="..\public\Navigation.h" />
@@ -286,6 +288,7 @@ popd</Command>
     <ClInclude Include="..\Public\VIBuffer_Cell.h" />
     <ClInclude Include="..\Public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Instance_MeshParticle.h" />
     <ClInclude Include="..\public\VIBuffer_Instance_Model.h" />
     <ClInclude Include="..\public\VIBuffer_Point.h" />
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h" />
@@ -299,6 +302,7 @@ popd</Command>
     <ClCompile Include="..\private\BehaviorNode.cpp" />
     <ClCompile Include="..\private\BehaviorTree.cpp" />
     <ClCompile Include="..\Private\BinParser.cpp" />
+    <ClCompile Include="..\private\BlackBlend.cpp" />
     <ClCompile Include="..\private\BlackBoard.cpp" />
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
@@ -358,6 +362,7 @@ popd</Command>
     <ClCompile Include="..\private\Light_Manager.cpp" />
     <ClCompile Include="..\private\Material.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
+    <ClCompile Include="..\private\Metaball.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
     <ClCompile Include="..\Private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
@@ -404,6 +409,7 @@ popd</Command>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Instance_MeshParticle.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance_Model.cpp" />
     <ClCompile Include="..\private\VIBuffer_Point.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp" />
@@ -418,11 +424,13 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_CombinedMatrices.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Metaball.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_SSAO.hlsl" />

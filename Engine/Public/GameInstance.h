@@ -29,6 +29,7 @@ public:
 	_float Random(_float fMin, _float fMax);
 
 	_matrix Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio);
+
 #pragma region GRAPHIC_DEVICE
 public:
 	void Render_Begin(const _float4* pClearColor);
@@ -122,7 +123,7 @@ public:
 	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
 	// 딴데서 실행하면 레고삼킴
 	HRESULT Bake_StaticShadow();
-
+	void*	Get_Cascade_Desc();
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
@@ -135,7 +136,7 @@ public:
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
 	void*  Get_HDR_Desc();
-	void*  Get_Cascade_Desc();
+	
 	//RenderDoc 전용
 	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
 	//RenderDoc 전용

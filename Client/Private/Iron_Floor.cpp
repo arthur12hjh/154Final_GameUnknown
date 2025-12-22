@@ -23,8 +23,14 @@ HRESULT CIron_Floor::Initialize(void* pArg)
 		return E_FAIL;
 
 	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
+
+	SetCullingCollider(pDesc->iObjectID);
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
+
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -39,7 +45,16 @@ void CIron_Floor::Update(_float fTimeDelta)
 
 void CIron_Floor::Late_Update(_float fTimeDelta)
 {
+	if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	{
+		return;
+	}
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CIron_Floor::Render()
@@ -72,6 +87,9 @@ HRESULT CIron_Floor::Render()
 
 HRESULT CIron_Floor::Ready_Components(const _tchar* pComponentTag)
 {
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	_float3 vColliderSize = pCullingCollider->GetBounding().Extents;
+
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -147,6 +165,33 @@ HRESULT CIron_Floor::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CIron_Floor::SetCullingCollider(_uint iObjectID)
+{
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	switch (iObjectID)
+	{
+	case 1:
+		pCullingCollider->SetCollision({ -3.f, 1.5f, -5.5f }, {}, { 4, 2, 7 });
+		break;
+	case 2:
+		pCullingCollider->SetCollision({ -2.5f, 3.5f, 3.5f }, {}, { 4, 5, 7 });
+		break;
+	case 3:
+		pCullingCollider->SetCollision({ 0.f, 1.8f, 3.5f }, {}, { 10, 3, 1 });
+		break;
+	case 4:
+		pCullingCollider->SetCollision({ 0.f, 1.2f, 2.5f }, {}, { 1, 2, 3 });
+		break;
+	case 5:
+		pCullingCollider->SetCollision({ 40.f, -145.f, 22.5f }, {}, { 60, 185, 45 });
+		break;
+	case 6:
+		pCullingCollider->SetCollision({ -2.5f, 0.6f, -5.f }, {}, { 4, 1, 7 });
+		break;
+	}
+
 }
 
 CIron_Floor* CIron_Floor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
