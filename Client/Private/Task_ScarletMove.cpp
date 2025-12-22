@@ -118,13 +118,11 @@ void CTask_ScarletMove::Refresh_MovePoint()
 		{
 			m_eDirection = DIRECTION::LEFT;
 			m_szAnimationName += "_Caution_Lw";
-			m_pOwner->Set_Animation(m_szAnimationName.c_str());
 		}
 		else
 		{
 			m_eDirection = DIRECTION::RIGHT;
 			m_szAnimationName += "_Caution_Rw";
-			m_pOwner->Set_Animation(m_szAnimationName.c_str());
 		}
 		//else
 		//{
@@ -139,10 +137,11 @@ void CTask_ScarletMove::Refresh_MovePoint()
 		// 여기서 달리기 하자
 		m_szAnimationName += "_Run_L";
 		m_eDirection = DIRECTION::FRONT;
-		m_pOwner->Set_Animation(m_szAnimationName.c_str());
 		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 2.f;
 		m_bIsCaution = false;
 	}
+
+	m_pOwner->Set_Animation(m_szAnimationName.c_str(), true, 1.f, 0.f);
 }
 
 CTask_ScarletMove* CTask_ScarletMove::Create(CBehaviorTree* pOwnerTree)

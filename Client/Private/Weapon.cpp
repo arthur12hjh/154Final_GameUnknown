@@ -66,6 +66,7 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 void CWeapon::Update(_float fTimeDelta)
 {
 	m_pBlood->Update(fTimeDelta);
+	m_pGigasSpark->Update(fTimeDelta);
 	//if (!m_bisBlood)
 	//	m_pBlood->Stop();
 	//m_bisBlood = false;
@@ -176,7 +177,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_fChargeTime -= fTimeDelta;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->End();
+			m_pCharge->End(false);
 		}
 	}
 
@@ -185,6 +186,7 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	m_pTrail[2]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 2 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 2 == m_iTrail);
 	m_pTrail[3]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 3 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 3 == m_iTrail);
 	m_pBlood->Late_Update(fTimeDelta);
+	m_pGigasSpark->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
@@ -299,6 +301,14 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		m_pBlood->Stop();
 	}
+	else if (strObjectTag == TEXT("Gigas_Spark"))
+	{
+		m_pGigasSpark->Play();
+	}
+	else if (strObjectTag == TEXT("Gigas_Spark_End"))
+	{
+		m_pGigasSpark->Stop();
+	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
 		if (nullptr == m_pCharge)
@@ -321,7 +331,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 		m_fChargeTime = NotifyReference.fNumData01;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->End();
+			m_pCharge->End(false);
 		}
 	}
 
@@ -402,6 +412,12 @@ HRESULT CWeapon::Ready_Components()
 	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
 	m_pBlood->Play();
 	m_pBlood->Stop();
+
+	desc.vPos = XMVectorSet(0, 2.5f, 0, 1);
+	desc.fSize = 1.f;
+	m_pGigasSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Spark"), &desc));
+	m_pGigasSpark->Play();
+	m_pGigasSpark->Stop();
 
 	return S_OK;
 }
@@ -506,4 +522,5 @@ void CWeapon::Free()
 	Safe_Release(m_pTrail[3]);
 	Safe_Release(m_pCharge);
 	Safe_Release(m_pBlood);
+	Safe_Release(m_pGigasSpark);
 }

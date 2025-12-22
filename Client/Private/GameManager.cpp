@@ -86,6 +86,10 @@ _bool CGameManager::Is_NearCharacter(_vector vPos, _float vRange)
 }
 
 #pragma region DataManager
+const NPC_DATA_DESC* CGameManager::Find_NpcData(_uint iSkillID)
+{
+    return m_pDataManager->Find_NpcData(iSkillID);
+}
 const CHARACTER_SKILL_DESC* CGameManager::Find_SkillData(_uint iSkillID)
 {
     return m_pDataManager->Find_SkillData(iSkillID);

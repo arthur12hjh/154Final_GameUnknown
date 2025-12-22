@@ -61,7 +61,7 @@ private:
 #pragma endregion
 
 
-
+	
 #pragma endregion
 	_bool								AttackActionAmount(_float fTimeDelta);
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);

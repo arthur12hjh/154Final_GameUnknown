@@ -14,7 +14,7 @@ HRESULT CPhysx_Manager::Initialize()
 {
     m_pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(m_pGameInstance);
-    /* ÇÇÁ÷½º ÃÊ±âÈ­ */
+    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ */
     m_pSceneEventCallback = PxDefaultContactCallback::Create();
 
 	m_PxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_DefaultAllocator, m_DefaultErrorCallback);
@@ -57,7 +57,7 @@ HRESULT CPhysx_Manager::Initialize()
 
 void CPhysx_Manager::Update(_float fTimeDelta)
 {
-    /* Dead ¿ÀºêÁ§Æ® Á¦°Å */
+    /* Dead ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ */
     for (auto CCTPair = m_CCTs.begin(); CCTPair != m_CCTs.end();)
     {
         if (CCTPair->first->isDead())
@@ -65,7 +65,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
             Safe_Release(CCTPair->first);
             Safe_Release(CCTPair->second);
 
-            CCTPair = m_CCTs.erase(CCTPair); // erase´Â ´ÙÀ½ iterator ¹ÝÈ¯
+            CCTPair = m_CCTs.erase(CCTPair); // eraseï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ iterator ï¿½ï¿½È¯
         }
         else
         {
@@ -77,12 +77,12 @@ void CPhysx_Manager::Update(_float fTimeDelta)
     {
         if (RigidBodyPair->first->isDead())
         {
-            // ¾À ³»¿¡¼­ °­Ã¼ ¿ì¼± Á¦°Å 
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ 
             m_PxScene->removeActor(*RigidBodyPair->second->Get_PxRigidBody());
             Safe_Release(RigidBodyPair->first);
             Safe_Release(RigidBodyPair->second);
 
-            RigidBodyPair = m_RigidBodies.erase(RigidBodyPair); // erase´Â ´ÙÀ½ iterator ¹ÝÈ¯
+            RigidBodyPair = m_RigidBodies.erase(RigidBodyPair); // eraseï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ iterator ï¿½ï¿½È¯
         }
         else
         {
@@ -90,13 +90,13 @@ void CPhysx_Manager::Update(_float fTimeDelta)
         }
     }
 
-    /* ¾À ½Ã¹Ä·¹ÀÌ¼Ç */
+    /* ï¿½ï¿½ ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ */
     if (nullptr != m_PxScene)
     {
-        m_PxScene->simulate(fTimeDelta);      // ½Ã¹Ä·¹ÀÌ¼Ç ½ÃÀÛ
-        m_PxScene->fetchResults(true);        // °á°ú °¡Á®¿À±â, PVD¿¡ Àü¼ÛµÊ
+        m_PxScene->simulate(1 / 60.f);      // ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+        m_PxScene->fetchResults(true);        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, PVDï¿½ï¿½ ï¿½ï¿½ï¿½Ûµï¿½
 
-        /* À§Ä¡ µ¿±âÈ­ */
+        /* ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½È­ */
         for (auto& Pair : m_RigidBodies)
         {
             CTransform* pTransform = Pair.first->GetTransform();
@@ -175,7 +175,7 @@ HRESULT CPhysx_Manager::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterCont
     if (nullptr == pGameObject || nullptr == pCCT)
         return E_FAIL;
 
-    //ÀÌ°Ç SetOwner µÇ¸é ¼¼ÆÃ
+    //ï¿½Ì°ï¿½ SetOwner ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     //if (pCCT->GetOwner() != pGameObject)
     //    return E_FAIL;
 
@@ -192,7 +192,7 @@ HRESULT CPhysx_Manager::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBo
     if (nullptr == pGameObject || nullptr == pRigidBody)
         return E_FAIL;
 
-    //ÀÌ°Ç SetOwner µÇ¸é ¼¼ÆÃ
+    //ï¿½Ì°ï¿½ SetOwner ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     //if (pRigidBody->GetOwner() != pGameObject)
     //    return E_FAIL;
 
@@ -208,7 +208,7 @@ HRESULT CPhysx_Manager::Add_RigidBody_ToPhysx(CGameObject* pGameObject, CRigidBo
 
 HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 {
-    //¿¹¿Ü Ã³¸®
+    //ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
     if (nullptr == pTerrainVIBuffer)
         return E_FAIL;
 
@@ -222,10 +222,10 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     _uint iNumVerticesZ = pTerrainVIBuffer->Get_NumVerticesZ();
     _float* pHeightData = pTerrainVIBuffer->Get_HeightData();
 
-    //ÅÍ·¹ÀÎ Á¤Á¡ °¹¼ö¸¸Å­ ¼±¾ð.
+    //ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½.
     PxHeightFieldSample* pSamples = new PxHeightFieldSample[iNumVerticesX * iNumVerticesZ];
 
-    //Á¡½É¸Ô°í ÅÍ·¹ÀÎ Ãß°¡ÇÏ´Â ·ÎÁ÷ ÀÛ¼º
+    //ï¿½ï¿½ï¿½É¸Ô°ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½
 
     for (_uint iRow = 0; iRow < iNumVerticesZ; ++iRow)
     {
@@ -235,8 +235,8 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
             // PhysX heightField  = sample[row][col]
 
             // X/Z swap: height[x][z]
-            _uint srcIdx = iCol * iNumVerticesZ + iRow;           // ½º¿ÒµÈ ¼Ò½º ÀÎµ¦½º
-            _uint dstIdx = iRow * iNumVerticesX + iCol;           // PhysX°¡ ¿ä±¸ÇÏ´Â ÀÎµ¦½º
+            _uint srcIdx = iCol * iNumVerticesZ + iRow;           // ï¿½ï¿½ï¿½Òµï¿½ ï¿½Ò½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+            _uint dstIdx = iRow * iNumVerticesX + iCol;           // PhysXï¿½ï¿½ ï¿½ä±¸ï¿½Ï´ï¿½ ï¿½Îµï¿½ï¿½ï¿½
 
 
             _float fHeight = pHeightData[srcIdx] * 100.f;
@@ -275,7 +275,7 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     PxRigidStatic* hfActor = m_PxPhysics->createRigidStatic(pose);
     hfActor->attachShape(*pTerrianShape);
 
-    // ¾À µî·Ï
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½
     m_PxScene->addActor(*hfActor);
     hfActor->setName("TERRAIN");
     
@@ -315,18 +315,18 @@ PxTransform CPhysx_Manager::Convert_Matrix_ToPxTransform(_matrix WorldMatrix)
 
 _matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
 {
-    // À§Ä¡
+    // ï¿½ï¿½Ä¡
     PxVec3  vPxPosition = Transform.p;
     _vector vPosition = XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.0f);
 
-    // È¸Àü (Quaternion)
+    // È¸ï¿½ï¿½ (Quaternion)
     PxQuat  vPxQuaternion = Transform.q;
     _matrix vQuaternion = XMMatrixRotationQuaternion(XMVectorSet(vPxQuaternion.x, vPxQuaternion.y, vPxQuaternion.z, vPxQuaternion.w));
 
-    // ½ºÄÉÀÏÀº 1·Î
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½
     _vector vScale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
 
-    // Çà·Ä »ý¼º
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     return XMMatrixScalingFromVector(vScale) * vQuaternion * XMMatrixTranslationFromVector(vPosition);
 }
 

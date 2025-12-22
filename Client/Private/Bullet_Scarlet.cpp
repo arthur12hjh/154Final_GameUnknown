@@ -31,7 +31,7 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 		return E_FAIL;
 
 	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
-	/*CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 
@@ -40,10 +40,10 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.4f;
+	EffectDesc.fSize = 0.8f;
 	EffectDesc.iFloor = 0;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));*/
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 	return S_OK;
 }
@@ -198,4 +198,5 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
+	Safe_Release(m_pEffect);
 }

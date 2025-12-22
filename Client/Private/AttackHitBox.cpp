@@ -94,8 +94,6 @@ void CAttackHitBox::Update(_float fTimeDelta)
 #ifdef _DEBUG
 	if (!m_bIsDelayDead)
 	{
-		
-
 		m_vAliveTime.x += fTimeDelta;
 		if (m_vAliveTime.x > m_vAliveTime.y)
 			m_bIsDelayDead = true;

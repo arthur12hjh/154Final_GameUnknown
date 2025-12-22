@@ -2,8 +2,11 @@
 #include "NayitbaPartBody.h"
 #include "StringHelper.h"
 #include "Effect.h"
+
 #include "Trail.h"
 #include "TrailEffect.h"
+#include "RimLight.h"
+
 #include "Texture.h"
 #include "Nayitba.h"
 
@@ -34,7 +37,8 @@ HRESULT CNayitbaPartBody::Initialize(void* pArg)
         return E_FAIL;
 
     m_pModelCom->AddCount_PartialBone("Bip001-Spine2");
-
+    m_pSpineMatrix = m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2");
+    m_vDissolveRadius = 3.f;
     return S_OK;
 }
 
@@ -48,6 +52,11 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
     
+    //if (m_bIsChangeColorDissolve)
+    //{
+    //    m_fDeadTime += fTimeDelta * 5.f;
+    //}
+
     if (m_isDeadEffect)
     {
         CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
@@ -156,20 +165,28 @@ HRESULT CNayitbaPartBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
-        if (0 < m_fDeadTime) {
-            if (FAILED(m_pShaderCom->Begin(5)))
+        if (m_bIsChangeBodyColor)
+        {
+            if (FAILED(m_pShaderCom->Begin(8)))
                 return E_FAIL;
         }
-        else {
-            if (FAILED(m_pShaderCom->Begin(0)))
-                return E_FAIL;
+        else
+        {
+            if (0 < m_fDeadTime && m_isDeadEffect) {
+                if (FAILED(m_pShaderCom->Begin(5)))
+                    return E_FAIL;
+            }
+            else {
+                if (FAILED(m_pShaderCom->Begin(0)))
+                    return E_FAIL;
+            }
         }
-
 
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;
     }
-
+    if (FAILED(End_ShaderResources()))
+        return E_FAIL;
     return S_OK;
 }
 
@@ -356,13 +373,38 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
 void CNayitbaPartBody::Play_DeadEffect()
 {
     if (false == m_isDeadEffect)
-         m_isDeadEffect = true;
+    {
+        m_bIsChangeColorDissolve = false;
+        m_isDeadEffect = true;
+        m_fDeadTime = 0.f;
+    }
+        
 }
 
-void CNayitbaPartBody::Part_BodyColor(_bool bIsEnable, _float4 vColor)
+void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
-    m_vBodyColor = vColor;
+    /*m_bIsChangeColorDissolve = bIsDissolve;
+
+    if (bIsDissolve)
+    {
+        _matrix WorldSpineMatrix = XMLoadFloat4x4(m_pSpineMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix);
+       XMStoreFloat4(&m_vColCenterPos, WorldSpineMatrix.r[3]);
+       m_fDeadTime = 0.f;
+       if (m_bIsDissolveFade != bIsDissolveFade)
+       {
+            m_fDeadTime = 0.f;
+            m_bIsDissolveFade = bIsDissolveFade;
+       }
+    }*/
+
+    m_vPatternColor = vColor;
+    m_MonsterLimLightDesc.fRimLightIntensity = 10.f;
+    m_MonsterLimLightDesc.fRimLightPower = 20.f;
+    m_MonsterLimLightDesc.vRimLightColor = vColor;
+
+    m_pRimLight->Set_RimLightDesc(m_MonsterLimLightDesc);
+    m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
@@ -380,6 +422,11 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
     /* Com_Texture */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Dissolve_bullet0.dds"),
         TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
+        return E_FAIL;
+
+    /* Com_Texture */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_RimLight"),
+        TEXT("Com_RimLight"), reinterpret_cast<CComponent**>(&m_pRimLight), &m_MonsterLimLightDesc)))
         return E_FAIL;
 
     ///* Com_Collider_Sphere */
@@ -409,12 +456,44 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
         return E_FAIL;
 
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPattern", &m_bIsChangeBodyColor, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vMeshColor", &m_vPatternColor, sizeof(_float4))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPatternNoise", &m_bIsChangeColorDissolve, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsFade", &m_bIsDissolveFade, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fFadeRadius", &m_vDissolveRadius, sizeof(_float))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_vCenterPos", &m_vColCenterPos, sizeof(_float4))))
+        return E_FAIL;
 
     if (FAILED(m_pTexture->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture", 0)))
         return E_FAIL;
+
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
         return E_FAIL;
 
+    return S_OK;
+}
+
+HRESULT CNayitbaPartBody::End_ShaderResources()
+{
+    _bool bIsFlag = false;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPattern", &bIsFlag, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPatternNoise", &bIsFlag, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsFade", &bIsFlag, sizeof(_bool))))
+        return E_FAIL;
     return S_OK;
 }
 
@@ -457,5 +536,6 @@ void CNayitbaPartBody::Free()
      
     m_pTrailEffects.clear();
 
+    Safe_Release(m_pRimLight);
     Safe_Release(m_pTexture);
 }

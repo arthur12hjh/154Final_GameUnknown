@@ -76,15 +76,16 @@ HRESULT CNayitba::Initialize(void* pArg)
 	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
 
 	return S_OK;
 }
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
-	m_pAIController->Priority_Update(fTimeDelta);
 	m_pCCT->Update_PrePxPosition(m_pTransformCom);
+
+	m_pAIController->Priority_Update(fTimeDelta);
 
 	__super::Priority_Update(fTimeDelta);
 }
@@ -105,7 +106,7 @@ void CNayitba::Update(_float fTimeDelta)
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f) || m_pTargetCom->GetTarget())
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 		m_pAIController->Update(fTimeDelta);
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
@@ -234,6 +235,12 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 		break;
 	case CNotify::ATTACK_INTERACTION:
 		Attack_Interaction(pNotify);
+		break;
+	case CNotify::CHANGE_COLOR:
+		Change_Color(pNotify);
+		break;
+	case CNotify::SET_VISIBLITY:
+		m_bIsActive = pNotify->iNumData01;
 		break;
 	}
 
@@ -468,11 +475,11 @@ HRESULT CNayitba::Ready_CharacterData()
 HRESULT CNayitba::ADD_Components()
 {
 	/* Com_Collider_AABB */
-	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y, 0.f);
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
@@ -578,6 +585,7 @@ HRESULT CNayitba::ADD_Components()
 	m_pAIController = static_cast<CAIController*>(pInstnace);
 
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+
 	return S_OK;
 }
 
@@ -882,11 +890,20 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.iBulletType = pNotify->iNumData04;
 	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
+	m_pBulletList.clear();
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
-	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
+	auto pBase = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
 	
-	if(pBullet)
-		m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+	if (pBase)
+	{
+		auto pBullet = dynamic_cast<CBullet*>(pBase);
+
+		if(pBullet)
+			m_pBulletList.push_back(pBullet);
+		else
+			pBullet->Set_Dead(true);
+	}
+		
 }
 
 void CNayitba::ShootProjectile(const AnimNotify* pNotify)
@@ -919,11 +936,22 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 
 void CNayitba::Change_Color(const AnimNotify* pNotify)
 {
-	_uint iColorIndex = pNotify->iNumData01;
-	//m_p
+	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
+	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
+	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
 
+	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+	if (nullptr == pPartBody)
+		return;
 
+	if (false == pNotify->iNumData01)
+	{
+		if (false == m_bIsActive)
+			m_bIsActive = true;
+	}
 
+	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+	pNaytibaPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
