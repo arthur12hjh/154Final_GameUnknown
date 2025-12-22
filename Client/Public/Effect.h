@@ -13,7 +13,7 @@ NS_END
 NS_BEGIN(Client)
 
 class CMeshEffect;
-class CPointParticle;
+class CMeshParticle;
 class CSpriteParticle;
 class CEffect : public CGameObject
 {
@@ -49,7 +49,6 @@ private:
     HRESULT Load_Binary(const _char* szFile);
     _char* ReadString(ifstream& fileBinaryStream);
     _int    ReadInt(ifstream& fileBinaryStream);
-    RENDER    ReadRENDER(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);
     _float2 ReadFloat2(ifstream& fileBinaryStream);
@@ -64,7 +63,7 @@ private:
     _float	        m_fStopTime = {};
     _int           m_iFloor = {};
     vector<CMeshEffect*> m_pMeshEffects;
-    vector<CPointParticle*> m_pPointParticles;
+    vector<CMeshParticle*> m_pMeshParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
 
 public:

@@ -47,7 +47,7 @@ public:
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
 private:
-    _uint   m_iSelectMeshParticle = { 4 };
+    _uint   m_iSelectMeshParticle = { 0 };
     _uint   m_iLevel = { 0 };
     _float4  m_fPosition;
     _float3  m_fScale;

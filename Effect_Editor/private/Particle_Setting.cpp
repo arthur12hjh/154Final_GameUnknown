@@ -31,7 +31,7 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fSpeed = _float2(1.f, 0.5f);
     m_tParticleData.bisLoop = true;
     m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    m_tParticleData.iSelectRender = 3;
+    m_tParticleData.iSelectRender = 0;
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
     m_tParticleData.fSizeDiagrams.clear();
@@ -300,7 +300,7 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fCircleSpeed = 1.f;
     tParticleData.iBegin = 0;
     tParticleData.iNumInstance = 100;
-    tParticleData.iSelectRender = 3;
+    tParticleData.iSelectRender = 0;
     tParticleData.bisLoop = true;
     tParticleData.bisSphere = false;
     tParticleData.bisCircle = false;
@@ -379,7 +379,7 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.fCircleSpeed = 1.f;
     tSpriteParticleData.iBegin = 0;
     tSpriteParticleData.iNumInstance = 100;
-    tSpriteParticleData.iSelectRender = 3;
+    tSpriteParticleData.iSelectRender = 0;
     tSpriteParticleData.bisBillboard = true;
     tSpriteParticleData.bisAngleBillboard = false;
     tSpriteParticleData.bisStart = false;
@@ -1067,11 +1067,11 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
     ImGui::SameLine();
     ImGui::DragFloat("Speed", &m_fSpeed, 0.1f, 0.1f, 100.f);
-    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "SpriteParticle" : m_iSelectMeshParticle == 1 ? "MeshParticle" : m_iSelectMeshParticle == 2 ? "MeshEffect" : "TrailEffect"))
+    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "MeshEffect" : m_iSelectMeshParticle == 1 ? "SpriteParticle" : m_iSelectMeshParticle == 2 ? "MeshParticle" : "TrailEffect"))
     {
         for (_uint i = 0; i < 4; ++i) {
             _bool sel = i == m_iSelectMeshParticle;
-            if (ImGui::Selectable(i == 0 ? "SpriteParticle" : i == 1 ? "MeshParticle" : i == 2 ? "MeshEffect" : "TrailEffect", sel)) {
+            if (ImGui::Selectable(i == 0 ? "MeshEffect" : i == 1 ? "SpriteParticle" : i == 2 ? "MeshParticle" : "TrailEffect", sel)) {
                 m_iSelectMeshParticle = i;
             }
             if (sel)
@@ -1195,6 +1195,315 @@ void CParticle_Setting::Update(_float fTimeDelta)
     switch (m_iSelectMeshParticle)
     {
     case 0:
+
+        if (ImGui::Button("Add MeshEffect", btn)) {
+            Add_MeshEffect();
+        }
+        if (0 < m_pMeshs.size())
+        {
+            ImGui::SameLine();
+            if (ImGui::Button("Delete MeshEffect", btn)) {
+                Delete_MeshEffect();
+                if (0 >= m_pMeshs.size()) {
+                    ImGui::End();
+                    return;
+                }
+            }
+
+            vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
+            _float fDelayTime = m_tSpriteParticleData.fDelayTime;
+            _float fEndTime = m_tSpriteParticleData.fEndTime;
+
+            _float time = 1.f / 100;
+            _float fMax = 5;
+            float values[100] = {};
+            char str[3];
+            if (ImGui::BeginCombo("Models", m_ModelFilePaths[m_iSelectModel].c_str()))
+            {
+                for (_uint i = 0; i < m_ModelFilePaths.size(); ++i) {
+                    _bool sel = i == m_iSelectModel;
+                    if (ImGui::Selectable(m_ModelFilePaths[i].c_str(), sel)) {
+                        m_iSelectModel = i;
+                        _tchar szPath[256] = { 0, };
+                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[m_iSelectModel].c_str(), strlen(m_ModelFilePaths[m_iSelectModel].c_str()), szPath, 256);
+
+                        char szModelPath[MAX_PATH] = {};
+                        strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[m_iSelectModel].c_str(), _TRUNCATE);
+                        m_tMeshData.szModel = szModelPath;
+                        m_pMeshs[m_iSelectMesh]->Set_Model(szPath);
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            snprintf(str, sizeof(str), "%d", m_iSelectMesh);
+            if (ImGui::BeginCombo("Meshs", str))
+            {
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    _bool sel = i == m_iSelectMesh;
+                    snprintf(str, sizeof(str), "%d", i);
+                    if (ImGui::Selectable(str, sel)) {
+                        m_iSelectMesh = i;
+                        m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::Button("All Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_pMeshs[m_iSelectMesh]->Set_Components(m_pMeshs[m_iSelectMesh]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            m_pMeshs[m_iSelectMesh]->Update(m_tMeshData);
+
+
+            ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tMeshData.fDelayTime), 0.1f, 0.f, 100.f);
+            ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tMeshData.fEndTime), 0.1f, 0.f, 100.f);
+
+            ImGui::ColorPicker4("MyColor", (_float*)&m_tMeshData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+
+            ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f, "%.4f");
+            ImGui::DragFloat3("Effect Position", reinterpret_cast<_float*>(&m_tMeshData.fPosition), 0.1f, -1000.f, 1000.f);
+            ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
+
+            string szRender;
+            switch (m_tMeshData.iSelectRender)
+            {
+            case 0:
+                szRender = "NONBLEND";
+                break;
+            case 1:
+                szRender = "NONLIGHT";
+                break;
+            case 2:
+                szRender = "BLEND";
+                break;
+            case 3:
+                szRender = "BLUR";
+                break;
+            case 4:
+                szRender = "GLOW";
+                break;
+            case 5:
+                szRender = "METABALL";
+                break;
+            case 6:
+                szRender = "DISTORTION";
+                break;
+            }
+            if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+            {
+                for (_uint i = 0; i <= 6; ++i) {
+                    _bool sel = i == m_tMeshData.iSelectRender;
+                    switch (i)
+                    {
+                    case 0:
+                        szRender = "NONBLEND";
+                        break;
+                    case 1:
+                        szRender = "NONLIGHT";
+                        break;
+                    case 2:
+                        szRender = "BLEND";
+                        break;
+                    case 3:
+                        szRender = "BLUR";
+                        break;
+                    case 4:
+                        szRender = "GLOW";
+                        break;
+                    case 5:
+                        szRender = "METABALL";
+                        break;
+                    case 6:
+                        szRender = "DISTORTION";
+                        break;
+                    }
+                    if (ImGui::Selectable(szRender.c_str(), sel))
+                        m_tMeshData.iSelectRender = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::Button("Refresh Shader", btn)) {
+                m_pMeshs[m_iSelectMesh]->Set_Components(m_tMeshData);
+            }
+            ImGui::InputInt("Shader Begine", &m_tMeshData.iBegin);
+            if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+            {
+                for (_uint i = 0; i < 3; ++i) {
+                    _bool sel = i == m_iImageType;
+                    if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                        m_iImageType = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            if (ImGui::TreeNode("MaskUV"))
+            {
+                ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tMeshData.fMaskUV), 0.01f, -100.f, 100.f);
+                ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSpeed), 0.01f, -100.f, 100.f);
+                ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSize), 0.01f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DiffuseUV"))
+            {
+                ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUV), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("DissolveUV"))
+            {
+                ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUV), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+                ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                ImGui::TreePop();
+            }
+
+
+            if (ImGui::TreeNode("Size Diagram")) {
+                m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
+                    _float time = 1.f / 100;
+                    _float fMax = 5;
+                    for (_uint i = 0; i < 100; ++i) {
+                        _float3* in = {};
+                        _float3* out = {};
+                        for (_uint j = 0; j < (_uint)m_tMeshData.fSizeDiagrams.size(); ++j) {
+                            if (m_tMeshData.fSizeDiagrams[j].x <= time * i) {
+                                in = &m_tMeshData.fSizeDiagrams[j];
+                            }
+                            if (m_tMeshData.fSizeDiagrams[j].x > time * i) {
+                                out = &m_tMeshData.fSizeDiagrams[j];
+                                break;
+                            }
+                        }
+                        if (nullptr == out)
+                            values[i] = in->y;
+                        else {
+                            _float t = (time * i - in->x) / (out->x - in->x);
+                            if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                values[i] = in->y;
+                            }
+                            else {
+                                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                    + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                    + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                            }
+                        }
+                        fMax = max(fMax, fabsf(values[i]));
+                    }
+                    ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                    char str[10];
+                    snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tMeshData.fSizeDiagrams[m_iSelectSize].x);
+
+                    if (ImGui::BeginCombo("TimeValue", str))
+                    {
+                        for (_uint i = 0; i < (_uint)m_tMeshData.fSizeDiagrams.size(); ++i) {
+                            _bool sel = i == m_iSelectSize;
+                            snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tMeshData.fSizeDiagrams[i].x);
+                            if (ImGui::Selectable(str, sel))
+                                m_iSelectSize = i;
+                            if (sel)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+                }
+                if (ImGui::Button("AddTime", btn)) {
+                    if (0 < m_tMeshData.fSizeDiagrams.size()) {
+                        _float3 val = m_tMeshData.fSizeDiagrams.back();
+                        val.y = 0;
+                        m_tMeshData.fSizeDiagrams.push_back(val);
+                    }
+                    else {
+                        _float3 val = { 0,0,0 };
+                        m_tMeshData.fSizeDiagrams.push_back(val);
+                    }
+                    m_iSelectSize = m_tMeshData.fSizeDiagrams.size() - 1;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("DeleteTime", btn)) {
+                    _uint iCount = 0;
+                    for (auto i = m_tMeshData.fSizeDiagrams.begin(); i != m_tMeshData.fSizeDiagrams.end();) {
+                        if (iCount == m_iSelectSize) {
+                            m_tMeshData.fSizeDiagrams.erase(i);
+                            break;
+                        }
+                        ++i;
+                        ++iCount;
+                    }
+                    m_iSelectSize = max(m_iSelectSize - 1, 0);
+                }
+
+                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
+                    if (0 < m_iSelectSize)
+                        ImGui::DragFloat("Size Time", &m_tMeshData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tMeshData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tMeshData.fSizeDiagrams.size() - 1 ? m_tMeshData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                    ImGui::DragFloat("Size fx", &m_tMeshData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("Size", &m_tMeshData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                }
+                ImGui::TreePop();
+            }
+
+            ImGui::Separator();
+
+            ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+            if (0 < m_SRVs[m_iImageType].size()) {
+                _uint i = 0;
+                for (auto SRV : m_SRVs[m_iImageType]) {
+                    if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                        m_pMeshs[m_iSelectMesh]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+
+                        switch (m_iImageType) {
+                        case 0:
+                            m_tMeshData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 1:
+                            m_tMeshData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        case 2:
+                            m_tMeshData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                            break;
+                        }
+                    }
+                    if (1 == ++i % 2)
+                        ImGui::SameLine();
+                }
+            }
+            ImGui::EndChild();
+
+        }
+        break;
+    case 1:
         if (ImGui::Button("Add SpriteParticle", btn)) {
             Add_SpriteParticle();
         }
@@ -1643,7 +1952,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
             ImGui::EndChild();
         }
         break;
-    case 1:
+    case 2:
         if (ImGui::Button("Add Mesh Particle", btn)) {
             Add_Particle();
         }
@@ -2057,315 +2366,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
             ImGui::EndChild();
 
-
-        }
-        break;
-    case 2:
-
-        if (ImGui::Button("Add MeshEffect", btn)) {
-            Add_MeshEffect();
-        }
-        if (0 < m_pMeshs.size())
-        {
-            ImGui::SameLine();
-            if (ImGui::Button("Delete MeshEffect", btn)) {
-                Delete_MeshEffect();
-                if (0 >= m_pMeshs.size()) {
-                    ImGui::End();
-                    return;
-                }
-            }
-
-            vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
-            _float fDelayTime = m_tSpriteParticleData.fDelayTime;
-            _float fEndTime = m_tSpriteParticleData.fEndTime;
-
-            _float time = 1.f / 100;
-            _float fMax = 5;
-            float values[100] = {};
-            char str[3];
-            if (ImGui::BeginCombo("Models", m_ModelFilePaths[m_iSelectModel].c_str()))
-            {
-                for (_uint i = 0; i < m_ModelFilePaths.size(); ++i) {
-                    _bool sel = i == m_iSelectModel;
-                    if (ImGui::Selectable(m_ModelFilePaths[i].c_str(), sel)) {
-                        m_iSelectModel = i;
-                        _tchar szPath[256] = { 0, };
-                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[m_iSelectModel].c_str(), strlen(m_ModelFilePaths[m_iSelectModel].c_str()), szPath, 256);
-
-                        char szModelPath[MAX_PATH] = {};
-                        strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[m_iSelectModel].c_str(), _TRUNCATE);
-                        m_tMeshData.szModel = szModelPath;
-                        m_pMeshs[m_iSelectMesh]->Set_Model(szPath);
-                    }
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            snprintf(str, sizeof(str), "%d", m_iSelectMesh);
-            if (ImGui::BeginCombo("Meshs", str))
-            {
-                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-                    _bool sel = i == m_iSelectMesh;
-                    snprintf(str, sizeof(str), "%d", i);
-                    if (ImGui::Selectable(str, sel)) {
-                        m_iSelectMesh = i;
-                        m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
-                    }
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            if (ImGui::Button("All Replay", btn)) {
-                m_bisReplay = true;
-                m_fTime = 0.f;
-                for (_uint i = 0; i < m_pParticles.size(); ++i) {
-                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
-                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
-                }
-                ImGui::End();
-                return;
-            }
-
-            ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
-                m_bisReplay = true;
-                m_pMeshs[m_iSelectMesh]->Set_Components(m_pMeshs[m_iSelectMesh]->Get_Data());
-                ImGui::End();
-                return;
-            }
-            m_pMeshs[m_iSelectMesh]->Update(m_tMeshData);
-
-
-            ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tMeshData.fDelayTime), 0.1f, 0.f, 100.f);
-            ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tMeshData.fEndTime), 0.1f, 0.f, 100.f);
-
-            ImGui::ColorPicker4("MyColor", (_float*)&m_tMeshData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-
-            ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f);
-            ImGui::DragFloat3("Effect Position", reinterpret_cast<_float*>(&m_tMeshData.fPosition), 0.1f, -1000.f, 1000.f);
-            ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
-
-            string szRender;
-            switch (m_tMeshData.iSelectRender)
-            {
-            case 0:
-                szRender = "NONBLEND";
-                break;
-            case 1:
-                szRender = "NONLIGHT";
-                break;
-            case 2:
-                szRender = "BLEND";
-                break;
-            case 3:
-                szRender = "BLUR";
-                break;
-            case 4:
-                szRender = "GLOW";
-                break;
-            case 5:
-                szRender = "METABALL";
-                break;
-            case 6:
-                szRender = "DISTORTION";
-                break;
-            }
-            if (ImGui::BeginCombo("RenderType", szRender.c_str()))
-            {
-                for (_uint i = 0; i <= 6; ++i) {
-                    _bool sel = i == m_tMeshData.iSelectRender;
-                    switch (i)
-                    {
-                    case 0:
-                        szRender = "NONBLEND";
-                        break;
-                    case 1:
-                        szRender = "NONLIGHT";
-                        break;
-                    case 2:
-                        szRender = "BLEND";
-                        break;
-                    case 3:
-                        szRender = "BLUR";
-                        break;
-                    case 4:
-                        szRender = "GLOW";
-                        break;
-                    case 5:
-                        szRender = "METABALL";
-                        break;
-                    case 6:
-                        szRender = "DISTORTION";
-                        break;
-                    }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tMeshData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            if (ImGui::Button("Refresh Shader", btn)) {
-                m_pMeshs[m_iSelectMesh]->Set_Components(m_tMeshData);
-            }
-            ImGui::InputInt("Shader Begine", &m_tMeshData.iBegin);
-            if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
-            {
-                for (_uint i = 0; i < 3; ++i) {
-                    _bool sel = i == m_iImageType;
-                    if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
-                        m_iImageType = i;
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-
-            if (ImGui::TreeNode("MaskUV"))
-            {
-                ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tMeshData.fMaskUV), 0.01f, -100.f, 100.f);
-                ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSpeed), 0.01f, -100.f, 100.f);
-                ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tMeshData.fMaskUVSize), 0.01f, -100.f, 100.f);
-                ImGui::TreePop();
-            }
-            if (ImGui::TreeNode("DiffuseUV"))
-            {
-                ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUV), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
-                ImGui::TreePop();
-            }
-            if (ImGui::TreeNode("DissolveUV"))
-            {
-                ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUV), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
-                ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tMeshData.fDissolveUVSize), 0.1f, -100.f, 100.f);
-                ImGui::TreePop();
-            }
-
-
-            if (ImGui::TreeNode("Size Diagram")) {
-                m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
-                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
-                    _float time = 1.f / 100;
-                    _float fMax = 5;
-                    for (_uint i = 0; i < 100; ++i) {
-                        _float3* in = {};
-                        _float3* out = {};
-                        for (_uint j = 0; j < (_uint)m_tMeshData.fSizeDiagrams.size(); ++j) {
-                            if (m_tMeshData.fSizeDiagrams[j].x <= time * i) {
-                                in = &m_tMeshData.fSizeDiagrams[j];
-                            }
-                            if (m_tMeshData.fSizeDiagrams[j].x > time * i) {
-                                out = &m_tMeshData.fSizeDiagrams[j];
-                                break;
-                            }
-                        }
-                        if (nullptr == out)
-                            values[i] = in->y;
-                        else {
-                            _float t = (time * i - in->x) / (out->x - in->x);
-                            if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
-                                values[i] = in->y;
-                            }
-                            else {
-                                values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
-                                    + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
-                                    + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
-                                    + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
-                            }
-                        }
-                        fMax = max(fMax, fabsf(values[i]));
-                    }
-                    ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
-                        "Size data", -fMax, fMax, ImVec2(0, 100));
-
-
-                    char str[10];
-                    snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tMeshData.fSizeDiagrams[m_iSelectSize].x);
-
-                    if (ImGui::BeginCombo("TimeValue", str))
-                    {
-                        for (_uint i = 0; i < (_uint)m_tMeshData.fSizeDiagrams.size(); ++i) {
-                            _bool sel = i == m_iSelectSize;
-                            snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tMeshData.fSizeDiagrams[i].x);
-                            if (ImGui::Selectable(str, sel))
-                                m_iSelectSize = i;
-                            if (sel)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        ImGui::EndCombo();
-                    }
-                }
-                if (ImGui::Button("AddTime", btn)) {
-                    if (0 < m_tMeshData.fSizeDiagrams.size()) {
-                        _float3 val = m_tMeshData.fSizeDiagrams.back();
-                        val.y = 0;
-                        m_tMeshData.fSizeDiagrams.push_back(val);
-                    }
-                    else {
-                        _float3 val = { 0,0,0 };
-                        m_tMeshData.fSizeDiagrams.push_back(val);
-                    }
-                    m_iSelectSize = m_tMeshData.fSizeDiagrams.size() - 1;
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("DeleteTime", btn)) {
-                    _uint iCount = 0;
-                    for (auto i = m_tMeshData.fSizeDiagrams.begin(); i != m_tMeshData.fSizeDiagrams.end();) {
-                        if (iCount == m_iSelectSize) {
-                            m_tMeshData.fSizeDiagrams.erase(i);
-                            break;
-                        }
-                        ++i;
-                        ++iCount;
-                    }
-                    m_iSelectSize = max(m_iSelectSize - 1, 0);
-                }
-
-                if (m_iSelectSize < m_tMeshData.fSizeDiagrams.size()) {
-                    if (0 < m_iSelectSize)
-                        ImGui::DragFloat("Size Time", &m_tMeshData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tMeshData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tMeshData.fSizeDiagrams.size() - 1 ? m_tMeshData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
-                    ImGui::DragFloat("Size fx", &m_tMeshData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
-                    ImGui::DragFloat("Size", &m_tMeshData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
-                }
-                ImGui::TreePop();
-            }
-
-            ImGui::Separator();
-
-            ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-            if (0 < m_SRVs[m_iImageType].size()) {
-                _uint i = 0;
-                for (auto SRV : m_SRVs[m_iImageType]) {
-                    if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                        m_pMeshs[m_iSelectMesh]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
-
-                        switch (m_iImageType) {
-                        case 0:
-                            m_tMeshData.szMaskTexture = m_ImageFiles[m_iImageType][i];
-                            break;
-                        case 1:
-                            m_tMeshData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
-                            break;
-                        case 2:
-                            m_tMeshData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
-                            break;
-                        }
-                    }
-                    if (1 == ++i % 2)
-                        ImGui::SameLine();
-                }
-            }
-            ImGui::EndChild();
 
         }
         break;

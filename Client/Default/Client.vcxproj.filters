@@ -115,12 +115,6 @@
     <Filter Include="03.Effects\MeshEffect">
       <UniqueIdentifier>{6a20e5b2-90b9-436f-8a46-170e59b3d406}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\PointParticle">
-      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Effects\SpriteUVEffect">
-      <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
     </Filter>
@@ -889,6 +883,9 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Blink">
       <UniqueIdentifier>{6f395894-96de-487b-a755-8f2c6c7c4d57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Effects\Particle\MeshParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1098,11 +1095,8 @@
     <ClInclude Include="..\Public\MeshEffect.h">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PointParticle.h">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SpriteUVEffect.h">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClInclude Include="..\Public\MeshParticle.h">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>06.Event\Notify</Filter>
@@ -1982,11 +1976,8 @@
     <ClCompile Include="..\Private\MeshEffect.cpp">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PointParticle.cpp">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SpriteUVEffect.cpp">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClCompile Include="..\Private\MeshParticle.cpp">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>06.Event\Notify</Filter>
@@ -2673,9 +2664,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
       <Filter>97.ShaderFiles\ComputeShader\Point</Filter>
     </FxCompile>
@@ -2697,9 +2685,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
@@ -2719,6 +2704,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

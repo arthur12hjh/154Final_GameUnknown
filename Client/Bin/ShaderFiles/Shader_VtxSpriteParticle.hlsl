@@ -930,6 +930,7 @@ PS_NONLIGHT_OUT PS_NONLIGHT(PS_NONLIGHT_IN In)
     
     Out.vDiffuse = g_vColor * min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
     Out.vDiffuse *= g_vColor.a;
+    Out.vDiffuse.a = 1;
     if (0 >= Out.vDiffuse.a)
         discard;
     return Out;

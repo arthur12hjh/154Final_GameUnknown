@@ -23,9 +23,9 @@ CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
 
-HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPointParticleData)
+HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pSpriteParticleData)
 {
-	m_tData = *pPointParticleData;
+	m_tData = *pSpriteParticleData;
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
@@ -51,16 +51,16 @@ HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPoint
 		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-	Desc.iNumInstance = pPointParticleData->iNumInstance;
-	Desc.vCenter = pPointParticleData->fCenter;
-	Desc.vPivot = pPointParticleData->fPivot;
-	Desc.vRange = pPointParticleData->fRange;
-	Desc.vSize = pPointParticleData->fSize;
-	Desc.vLifeTime = pPointParticleData->fLifeTime;
-	Desc.vSpeed = pPointParticleData->fSpeed;
-	Desc.isLoop = pPointParticleData->bisLoop;
+	Desc.iNumInstance = pSpriteParticleData->iNumInstance;
+	Desc.vCenter = pSpriteParticleData->fCenter;
+	Desc.vPivot = pSpriteParticleData->fPivot;
+	Desc.vRange = pSpriteParticleData->fRange;
+	Desc.vSize = pSpriteParticleData->fSize;
+	Desc.vLifeTime = pSpriteParticleData->fLifeTime;
+	Desc.vSpeed = pSpriteParticleData->fSpeed;
+	Desc.isLoop = pSpriteParticleData->bisLoop;
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pSpriteParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
 
@@ -333,7 +333,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fTimeDelta.w = 0;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
-	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
+	BufferDesc.ByteWidth = (sizeof(SpriteConstBufferData) + 15) / 16 * 16;
 	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
@@ -433,11 +433,11 @@ void CSpriteParticle::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CSpriteParticle* CSpriteParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pPointParticleData)
+CSpriteParticle* CSpriteParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pSpriteParticleData)
 {
 	CSpriteParticle* pInstance = new CSpriteParticle(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pPointParticleData)))
+	if (FAILED(pInstance->Initialize_Prototype(pSpriteParticleData)))
 	{
 		MSG_BOX("Failed to Created : pGraphic_Device");
 		Safe_Release(pInstance);

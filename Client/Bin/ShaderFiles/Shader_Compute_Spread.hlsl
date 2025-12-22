@@ -43,7 +43,6 @@ float3 RotateAxisAngle(float3 v, float3 axis, float angle)
 
 float Random(float fSeed, float fMin, float fMax)
 {
-    
     return lerp(fMin, fMax, frac(sin(fSeed) * 13524.5313));
 }
 
@@ -245,10 +244,12 @@ void CS(uint3 Gid : SV_GroupID,
                 
                         float4 vRight = float4(g_WorldMatrix._11_12_13 * sin(vfTimeDelta.y), 0);
                         float4 vUp = float4(g_WorldMatrix._31_32_33 * cos(vfTimeDelta.y), 0);
-                        g_Out[DTid.x].vfStart = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
+                        g_Out[DTid.x].vfStart = g_WorldMatrix._41_42_43_44 + Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
                         vRight = float4(g_WorldMatrix._11_12_13 * sin(vfTimeDelta.y - g_Out[DTid.x].vLifeTime.x), 0);
                         vUp = float4(g_WorldMatrix._31_32_33 * cos(vfTimeDelta.y - g_Out[DTid.x].vLifeTime.x), 0);
-                        g_Out[DTid.x].vTranslation = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
+                        g_Out[DTid.x].vTranslation = g_WorldMatrix._41_42_43_44 + Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
+                    
+
                     }
                     break;
             }

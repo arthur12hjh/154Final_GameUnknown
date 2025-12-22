@@ -1,14 +1,14 @@
 #include "pch.h"
-#include "PointParticle.h"
+#include "MeshParticle.h"
 #include "VIBuffer_Instance_MeshParticle.h"
 #include "GameInstance.h"
 
-CPointParticle::CPointParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMeshParticle::CMeshParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CPointParticle::CPointParticle(const CPointParticle& Prototype)
+CMeshParticle::CMeshParticle(const CMeshParticle& Prototype)
 	: CGameObject{ Prototype },
 	m_tData{Prototype.m_tData},
 	m_eRender{Prototype.m_eRender}
@@ -18,9 +18,9 @@ CPointParticle::CPointParticle(const CPointParticle& Prototype)
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
 
-HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointParticleData)
+HRESULT CMeshParticle::Initialize_Prototype(const MESH_PARTICLE_DATA* pMeshParticleData)
 {
-	m_tData = *pPointParticleData;
+	m_tData = *pMeshParticleData;
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
@@ -46,19 +46,19 @@ HRESULT CPointParticle::Initialize_Prototype(const POINT_PARTICLE_DATA* pPointPa
 		break;
 	}
 	CVIBuffer_Instance_MeshParticle::MESH_PARTICLE_INSTANCE_DESC		Desc{};
-	Desc.iNumInstance = pPointParticleData->iNumInstance;
-	Desc.vCenter = pPointParticleData->fCenter;
-	Desc.vRange = pPointParticleData->fRange;
-	Desc.vSize = pPointParticleData->fSize;
-	Desc.vLifeTime = pPointParticleData->fLifeTime;
-	Desc.vSpeed = pPointParticleData->fSpeed;
-	Desc.isLoop = pPointParticleData->bisLoop;
+	Desc.iNumInstance = pMeshParticleData->iNumInstance;
+	Desc.vCenter = pMeshParticleData->fCenter;
+	Desc.vRange = pMeshParticleData->fRange;
+	Desc.vSize = pMeshParticleData->fSize;
+	Desc.vLifeTime = pMeshParticleData->fLifeTime;
+	Desc.vSpeed = pMeshParticleData->fSpeed;
+	Desc.isLoop = pMeshParticleData->bisLoop;
 	m_pVIBufferCom = CVIBuffer_Instance_MeshParticle::Create(m_pDevice, m_pContext, &Desc);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pMeshParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
 
-HRESULT CPointParticle::Initialize(void* pArg)
+HRESULT CMeshParticle::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -104,11 +104,11 @@ HRESULT CPointParticle::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CPointParticle::Priority_Update(_float fTimeDelta)
+void CMeshParticle::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CPointParticle::Update(_float fTimeDelta)
+void CMeshParticle::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
 	if (m_tData.fDelayTime > m_fTime)
@@ -146,7 +146,7 @@ void CPointParticle::Update(_float fTimeDelta)
 	Spread(fTimeDelta);
 }
 
-void CPointParticle::Late_Update(_float fTimeDelta)
+void CMeshParticle::Late_Update(_float fTimeDelta)
 {
 	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		return;
@@ -155,7 +155,7 @@ void CPointParticle::Late_Update(_float fTimeDelta)
 	m_iRenderCount = 0;
 }
 
-HRESULT CPointParticle::Render()
+HRESULT CMeshParticle::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -192,14 +192,14 @@ HRESULT CPointParticle::Render()
 	return S_OK;
 }
 
-void CPointParticle::Stop() {
+void CMeshParticle::Stop() {
 	if (!m_bisStop && !m_tData.bisSpectrum) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 	}
 	m_bisStop = true;
 }
 
-void CPointParticle::Play()
+void CMeshParticle::Play()
 {
 	if (m_bisStop && m_tData.bisSpectrum) {
 		m_CBData.iLoopAndCount.x = 2;
@@ -207,13 +207,13 @@ void CPointParticle::Play()
 	m_bisStop = false;
 }
 
-void CPointParticle::End()
+void CMeshParticle::End()
 {
 	m_tData.fEndTime = m_fTime;
 }
 
 
-HRESULT CPointParticle::Ready_Components()
+HRESULT CMeshParticle::Ready_Components()
 {
 	_tchar sztPrototype[256] = { 0, };
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szMaskTexture.c_str(), strlen(m_tData.szMaskTexture.c_str()), sztPrototype, 256);
@@ -249,7 +249,7 @@ HRESULT CPointParticle::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CPointParticle::Bind_ShaderResources()
+HRESULT CMeshParticle::Bind_ShaderResources()
 {
 	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
 
@@ -319,7 +319,7 @@ HRESULT CPointParticle::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CPointParticle::Ready_ComputeShader()
+HRESULT CMeshParticle::Ready_ComputeShader()
 {
 	D3D11_MAPPED_SUBRESOURCE pIntanceData = {};
 	m_pVIBufferCom->Lock(D3D11_MAP_WRITE_NO_OVERWRITE, &pIntanceData);
@@ -348,7 +348,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 	m_CBData.fTimeDelta.w = 0;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
-	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
+	BufferDesc.ByteWidth = (sizeof(MeshConstBufferData) + 15) / 16 * 16;
 	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
@@ -403,7 +403,7 @@ HRESULT CPointParticle::Ready_ComputeShader()
 	return S_OK;
 }
 
-void CPointParticle::Spread(_float fTimeDelta)
+void CMeshParticle::Spread(_float fTimeDelta)
 {
 	m_CBData.iLoopAndCount.x = m_bisStop ? 5 : m_tData.bisLoop ? m_tData.bisSpectrum ? (4 > m_CBData.iLoopAndCount.x) ? m_CBData.iLoopAndCount.x + 1 : 4 : 1 : 0;
 	m_CBData.fTimeDelta.x = fTimeDelta;
@@ -448,11 +448,11 @@ void CPointParticle::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CPointParticle* CPointParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const POINT_PARTICLE_DATA* pPointParticleData)
+CMeshParticle* CMeshParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const MESH_PARTICLE_DATA* pMeshParticleData)
 {
-	CPointParticle* pInstance = new CPointParticle(pDevice, pContext);
+	CMeshParticle* pInstance = new CMeshParticle(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pPointParticleData)))
+	if (FAILED(pInstance->Initialize_Prototype(pMeshParticleData)))
 	{
 		MSG_BOX("Failed to Created : pGraphic_Device");
 		Safe_Release(pInstance);
@@ -461,20 +461,20 @@ CPointParticle* CPointParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CGameObject* CPointParticle::Clone(void* pArg)
+CGameObject* CMeshParticle::Clone(void* pArg)
 {
-	CPointParticle* pInstance = new CPointParticle(*this);
+	CMeshParticle* pInstance = new CMeshParticle(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CPointParticle");
+		MSG_BOX("Failed to Cloned : CMeshParticle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CPointParticle::Free()
+void CMeshParticle::Free()
 {
 	__super::Free();
 	Safe_Release(m_pVIBufferCom);

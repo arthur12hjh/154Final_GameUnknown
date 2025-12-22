@@ -109,7 +109,8 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 {
 	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime))
 		return;
-	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	if (0 <= m_fTime)
+		m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	m_iRenderCount = 0;
 }
 

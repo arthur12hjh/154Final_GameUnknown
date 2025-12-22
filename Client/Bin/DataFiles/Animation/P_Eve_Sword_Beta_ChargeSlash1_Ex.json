@@ -107,7 +107,7 @@
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    3.0,
+                    4.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -116,9 +116,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.35,
+                    0.35,
+                    0.35
                 ]
             },
             {

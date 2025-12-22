@@ -65,7 +65,6 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	m_pSpark->Update(fTimeDelta);
 	m_pBlood->Update(fTimeDelta);
 	//if (!m_bisBlood)
 	//	m_pBlood->Stop();
@@ -168,7 +167,6 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		if (m_fTrailTime <= 0.f)
 		{
 			m_bIsTrail = FALSE;
-			m_pSpark->Stop();
 		}
 	}
 
@@ -186,7 +184,6 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	m_pTrail[1]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 1 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 1 == m_iTrail);
 	m_pTrail[2]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 2 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 2 == m_iTrail);
 	m_pTrail[3]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 3 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 3 == m_iTrail);
-	m_pSpark->Late_Update(fTimeDelta);
 	m_pBlood->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
@@ -294,10 +291,6 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 		m_bIsTrail = TRUE;
 		m_iTrail = 4 > m_iTrail + 1 ? m_iTrail + 1 : 0;
 	}
-	else if (strObjectTag == TEXT("Spark"))
-	{
-		m_pSpark->Play();
-	}
 	else if (strObjectTag == TEXT("Slash_Blood"))
 	{
 		m_pBlood->Play();
@@ -395,14 +388,6 @@ HRESULT CWeapon::Ready_Components()
 	m_pTrail[3] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
 	CEffect::EFFECT_TRANSFORM_DESC desc;
-	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 5, 0, 1);
-	desc.fRot = _float3(0, 0, 0);
-	desc.fSize = 0.5f;
-
-	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
-	m_pSpark->Play();
-	m_pSpark->Stop();
 
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
 	desc.vPos = XMVectorSet(0, 3, 0, 1);
@@ -514,7 +499,6 @@ void CWeapon::Free()
 	Safe_Release(m_pTrail[1]);
 	Safe_Release(m_pTrail[2]);
 	Safe_Release(m_pTrail[3]);
-	Safe_Release(m_pSpark);
 	Safe_Release(m_pCharge);
 	Safe_Release(m_pBlood);
 }

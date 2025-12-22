@@ -13,10 +13,10 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CPointParticle final : public CGameObject
+class CMeshParticle final : public CGameObject
 {
 public:
-	struct PointConstBufferData
+	struct MeshConstBufferData
 	{
 		_float4x4		matWorld;
 		_float4			vPivot;
@@ -28,7 +28,7 @@ public:
 		_float2			fisSphere;
 		_int2			iLoopAndCount;
 	};
-	typedef struct PointParticleData
+	typedef struct MeshParticleData
 	{
 		string				szModel = {};
 		string				szMaskTexture;
@@ -77,15 +77,15 @@ public:
 		_bool				bisSphere;
 		_bool				bisCircle;
 		_bool				bisSpectrum;
-	}POINT_PARTICLE_DATA;
+	}MESH_PARTICLE_DATA;
 
 private:
-	CPointParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPointParticle(const CPointParticle& Prototype);
-	virtual ~CPointParticle() = default;
+	CMeshParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMeshParticle(const CMeshParticle& Prototype);
+	virtual ~CMeshParticle() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const POINT_PARTICLE_DATA* pPointParticleData);
+	virtual HRESULT Initialize_Prototype(const MESH_PARTICLE_DATA* pMeshParticleData);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Priority_Update(_float fTimeDelta) override;
 	virtual void Update(_float fTimeDelta) override;
@@ -104,10 +104,10 @@ private:
 
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 
-	PointConstBufferData			m_CBData = {};
+	MeshConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	CModel* m_pModelCom = { nullptr };
-	POINT_PARTICLE_DATA	m_tData;
+	MESH_PARTICLE_DATA	m_tData;
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};
 	_uint			m_iSelectRender = {};
@@ -126,7 +126,7 @@ private:
 	void							Spread(_float fTimeDelta);
 
 public:
-	static CPointParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const POINT_PARTICLE_DATA* pPointParticleData);
+	static CMeshParticle* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const MESH_PARTICLE_DATA* pMeshParticleData);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void					Free() override;
 };

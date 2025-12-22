@@ -778,12 +778,12 @@ HRESULT CLoader::Loading_For_GamePlay_Player(void* pArg)
 	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Shader_VtxPointParticle */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxPointParticle");
-	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxPointParticle");
+	//pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
 
 	/* For.Prototype_Component_Collider_AABB */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Collider_AABB");
@@ -1220,19 +1220,13 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
-	/* For.Prototype_Component_Shader_VtxSpriteUVEffect */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteUVEffect");
-	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
-	Desc->pAddObejct.push_back(PrototypeDesc);
-	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
-
 	/* For.Prototype_Component_Shader_VtxSpriteParticle */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxSpriteParticle");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
-	/* For.Prototype_Component_Shader_VtxSpriteParticle */
+	/* For.Prototype_Component_Shader_VtxMeshParticle */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxMeshParticle");
 	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_PARTICLE_DESC::Elements, VTX_NONEANIM_INSTANCE_PARTICLE_DESC::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
