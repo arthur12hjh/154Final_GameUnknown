@@ -65,7 +65,7 @@ HRESULT CItem::Initialize(void* pArg)
 	EffectDesc.iFloor = 2;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-
+	Safe_AddRef(m_pEffect);
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
@@ -311,6 +311,8 @@ void CItem::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	if(nullptr != m_pEffect)
+	if (nullptr != m_pEffect) {
 		m_pEffect->End();
+		Safe_Release(m_pEffect);
+	}
 }

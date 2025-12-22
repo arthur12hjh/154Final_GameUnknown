@@ -47,6 +47,7 @@ private:
 
 	class CTrailEffect*			m_pTrail[4] = {nullptr};
 	class CEffect*				m_pBlood = { nullptr };
+	class CEffect*				m_pGigasSpark = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 	_uint						m_iTrail = {};
 	TCHAR						m_szRotationAngle[MAX_PATH] = {};
@@ -57,6 +58,7 @@ private:
 	_float						m_fChargeTime = -10.f;
 	_bool						m_bIsTrail = FALSE;
 	_bool						m_bisBlood = FALSE;
+	_bool						m_bisGigasSpark = FALSE;
 
 	_bool						m_bIsEnableCollider = { false };
 

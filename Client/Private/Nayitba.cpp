@@ -84,6 +84,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
 	m_pCCT->Update_PrePxPosition(m_pTransformCom);
+
 	m_pAIController->Priority_Update(fTimeDelta);
 
 	__super::Priority_Update(fTimeDelta);
