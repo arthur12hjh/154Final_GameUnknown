@@ -1570,9 +1570,6 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerState.h">
-      <Filter>02.GameObjects\Character\Player\00. State</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player_ParryGuardState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
     </ClInclude>
@@ -1771,6 +1768,9 @@
     <ClInclude Include="..\Public\Player_LockonSprintEndState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PlayerState.h">
+      <Filter>02.GameObjects\Character\Player\00. State</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_LockonJustEvadeState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade</Filter>
     </ClInclude>
@@ -1782,6 +1782,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_BlinkAttackState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_CorpseInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2649,6 +2652,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_BlinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

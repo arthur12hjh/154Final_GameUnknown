@@ -339,14 +339,19 @@ void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const
 	
 		static_cast<CCollider*>(pComponents)->ResetCollision();
 	}
-	else
-		m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+	//else
+	//	m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
 
 }
 
 void CWeapon::EnableCollider(_bool bIsEnable)
 {
 	m_bIsEnableCollider = bIsEnable;
+}
+
+void CWeapon::Set_PlayerDesc(PLAYER_DESC* pPlayerDesc)
+{
+	m_pPlayerDesc = pPlayerDesc;
 }
 
 HRESULT CWeapon::Ready_Components()

@@ -195,6 +195,9 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_FSM(fTimeDelta);
 	Update_Interaction(fTimeDelta);
 	Update_PotionUse(fTimeDelta);
+	Update_ReactionSkills(fTimeDelta);
+	//일단 테스트 입력 최우선 처리
+	Update_TestSkillInput(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -297,13 +300,21 @@ void CPlayer::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 		return;
 	}
 }
-
+/*
+데스크 받아와서 iFrame 만큼의 프레임 동안은 
+저회, 리펄스, 블링크가 가능한 상태로 바꿔준다.
+*/
 void CPlayer::Attack_Interaction(void* pArg)
 {
-	ATK_INTERACTION_DESC* pATK_Interaction_Desc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+	ATK_INTERACTION_DESC* pNotifyDesc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+	// 보이드 포인터는 혹시 몰라서 받아온거니까 따로 당장 처리하지 않음.
+	// PERFECT_DOGE, BLINK, REPULSE;
+	ATK_INTERACTION_TYPE eType = pNotifyDesc->eInteraction_Type;
+	// 프레임 단위 판정이니까.. 키 입력을 프레임 단위로 판정해야되나?
+	_uint iFrame = pNotifyDesc->iFrameCnt;
 
-	// 일단 데이터는 넘겨놨습니다.
-	// 내일 노티 작업 할 예정 금방 넣어드릴듯
+	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame * 10.f;
+	m_PlayerDesc.eReactionType = eType;
 }
 
 void CPlayer::SetSkillDataID(_uint iSkillID)
@@ -318,12 +329,36 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
+
 	m_fTestTimer += fTimeDelta;
 	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
+	}
+}
+
+void CPlayer::Update_TestSkillInput(_float fTimeDelta)
+{
+	// 락온 중이라면
+	if (true == m_PlayerDesc.HasTarget)
+	{
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::REPULSE;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+
 	}
 }
 
@@ -574,24 +609,35 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			break;
 		case INTERACTION_STATE::CONTACT:
 		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.isChangeMode = false;
+			Desc.pArg = pInteractionCom;
+
 			switch (pInteractionData->eType)
 			{
 			// 만약 서플라이 박스라면 (발로 차는 모션)
 			case INTERACTION_TYPE::SUPPLY_BOX:
 			{
-				PLAYER_TRANSITION_DESC Desc;
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
-				Desc.isChangeMode = false;
-				Desc.pArg = pInteractionCom;
-				// Transition 너무 이곳저곳에서 일어나지 않나?..
-				// 기본적으로 FSM Update, 플레이어 클래스 내부에서만 일어나니까
-				// 제어가 안될 것까진 없다고 봄..
 				m_pFSM->Handle_Transition(Desc);
 				break;
+			}
+			case INTERACTION_TYPE::CORPSE:
+			{
+				Desc.eNextState = PLAYER_STATE::CORPSE_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
 			}
 			}
 		}
@@ -682,10 +728,20 @@ void CPlayer::Update_LinkAttack(_float fTimeDelta)
 
 void CPlayer::Update_ReactionSkills(_float fTimeDelta)
 {
+	//0보다 크다면 프레임 계속 감소.
+	if (0 < m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.iLeftReactionSkillFrameAcc--; 
+	// END로 바꿔
+	else if (0 == m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.eReactionType = ATK_INTERACTION_TYPE::END;
 }
 
 void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
 {
+	//무적이면 충돌처리 안하게 처리
+	if (true == m_PlayerDesc.isInvincible)
+		return;
+
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
 	_float fImpactForce;
@@ -730,7 +786,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
 		pNayitba->Damaged(&DamageDesc);
-		m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
+		//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 	}
 	// 가드만 성공
 	else if (true == m_PlayerDesc.isParryable)

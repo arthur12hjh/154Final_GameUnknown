@@ -134,9 +134,10 @@ HRESULT CSciFi_Door::Render()
 
 HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 {
-	_float3 Com_Size = m_pTransformCom->Get_Scale();
-	Com_Size.x *= 2.f;
-	Com_Size.z *= 2.f;
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	pCullingCollider->SetCollision({ 0.f, 5.f, 0.f }, {}, { 10.f, 10.f, 2.f });
+
+	_float3 Com_Size = pCullingCollider->GetBounding().Extents;
 
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,
@@ -188,7 +189,8 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
+
+
 	return S_OK;
 }
 

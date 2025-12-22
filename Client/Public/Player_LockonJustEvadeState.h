@@ -9,7 +9,7 @@ NS_BEGIN(Client)
 class CPlayer_LockonJustEvadeState final : public CPlayerState
 {
 private:
-	CPlayer_LockonJustEvadeState(PLAYER_DIRECTION ePlayerDir);
+	CPlayer_LockonJustEvadeState();
 	virtual ~CPlayer_LockonJustEvadeState() = default;
 
 public:

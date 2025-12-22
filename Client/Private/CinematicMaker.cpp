@@ -38,9 +38,14 @@ void CCinematicMaker::Update(_float fTimeDeleta)
     if (nullptr == m_pCinematicDatas)
         m_pCinematicDatas = m_pGameManager->Get_CinematicDataMap();
 
-
+    if (m_bIsCinematicStarted == TRUE)
+    {
+        m_fTimer += fTimeDeleta * 0.34f;
+    }
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
     ImGui::Begin("Cinematic Maker", &bIsOpen);
+
+    ImGui::Text("Time : %f", m_fTimer);
 
     WriteCinematicDesc();
 
@@ -130,6 +135,8 @@ void CCinematicMaker::WriteCinematicDesc()
 
     if (ImGui::Button("Play Cinematic"))
     {
+        m_fTimer = 0.f;
+        m_bIsCinematicStarted = TRUE;
         Play_Cinematic(iPlayCinematicID);
     }
 #endif // _DEBUG

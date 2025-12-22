@@ -123,6 +123,7 @@ private :
 	void									SpawnObject(const AnimNotify* pNotify);
 	void									ShootProjectile(const AnimNotify* pNotify);
 	void									Attack_Interaction(const AnimNotify* pNotify);
+	void									Change_Color(const AnimNotify* pNotify);
 #pragma endregion
 
 #pragma region Damage Logic

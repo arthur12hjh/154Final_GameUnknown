@@ -34,7 +34,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
 {
     m_fLockonTimer += fTimeDelta;
 
-    if (m_fLockonTimer <= 1.5f)
+    if (m_fLockonTimer <= 1.5f || false == m_pPlayerDesc->isLockChangable)
         return false;
 
     list<CGameObject*>* pTargets =

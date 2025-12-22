@@ -38,7 +38,7 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
     if (FALSE == m_bIsCinematicPlaying)
         return S_OK;
 
-    m_fCinematicTimer += fTimeDelta;
+    m_fCinematicTimer += fTimeDelta * m_pGameInstance->GetGameSpeedfRatio();
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
     {
         if (m_fCinematicTimer >= m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex].fTrackPosition)
@@ -52,17 +52,17 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
 
 	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
-        pCinematicObjectPair.second->Priority_Update(fTimeDelta);
+        pCinematicObjectPair.second->Priority_Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
 
 	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
-        pCinematicObjectPair.second->Update(fTimeDelta);
+        pCinematicObjectPair.second->Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
 
 	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
-        pCinematicObjectPair.second->Late_Update(fTimeDelta);
+        pCinematicObjectPair.second->Late_Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
 
     return S_OK;

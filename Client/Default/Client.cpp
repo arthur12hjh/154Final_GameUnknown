@@ -108,6 +108,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             pGameInstance->SetInputFoucs(KEY_INPUT::MOUSE, false);
         }
 
+        //g_fGameFrame
         if (fTimeAcc >= 1.f / g_fGameFrame)
         {
             pGameInstance->Compute_TimeDelta(TEXT("GameLoopTime"));

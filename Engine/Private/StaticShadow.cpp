@@ -32,7 +32,7 @@ HRESULT CStaticShadow::Ready_Shadow_Light(const STATIC_SHADOW_DESC& Desc)
 {
 	m_tShadowLightDesc = Desc;
 
-	auto* pCascadeDesc = static_cast<CASCADE_SHADOW_DESC*>(m_pGameInstance->Get_Cascade_Desc());
+	auto pCascadeDesc = static_cast<CASCADE_SHADOW_DESC*>(m_pGameInstance->Get_Cascade_Desc());
 	if (nullptr == pCascadeDesc)
 		return E_FAIL;
 

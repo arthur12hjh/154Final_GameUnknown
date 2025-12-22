@@ -83,7 +83,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 5.799999952316284,
+                "fTrackPosition": 5.800000190734863,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     30.0,
@@ -94,7 +94,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 7.299999952316284,
+                "fTrackPosition": 7.300000190734863,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     45.0,
@@ -105,7 +105,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 7.799999952316284,
+                "fTrackPosition": 7.800000190734863,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     60.0,
@@ -181,69 +181,69 @@
                     700.3189697265625
                 ]
             },
-	{
+            {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
                 "fTrackPosition": 2.700000047683716,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     760.197021484375,
-                    120.9119987487793,
+                    120.91200256347656,
                     700.3189697265625
                 ]
             },
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 4.200000047683716,
+                "fTrackPosition": 4.199999809265137,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     760.197021484375,
-                    2.9119987487793,
+                    2.911998748779297,
                     700.3189697265625
                 ]
             },
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 4.700000047683716,
+                "fTrackPosition": 4.699999809265137,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     765.197021484375,
-                    23.9119987487793,
+                    23.911998748779297,
                     700.3189697265625
                 ]
             },
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 5.200000047683716,
+                "fTrackPosition": 5.199999809265137,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     755.197021484375,
-                    26.9119987487793,
+                    26.911998748779297,
                     700.3189697265625
                 ]
             },
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 6.200000047683716,
+                "fTrackPosition": 6.199999809265137,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     760.197021484375,
-                    53.022,
+                    53.02199935913086,
                     700.3189697265625
                 ]
             },
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 8.200000047683716,
+                "fTrackPosition": 8.199999809265137,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     760.197021484375,
-                    54.022,
+                    54.02199935913086,
                     700.3189697265625
                 ]
             }

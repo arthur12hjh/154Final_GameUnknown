@@ -145,6 +145,10 @@ void CCamera_Action::Initialize_CameraAnimationData(_uint iCameraAnimationIndex)
 
     m_pCameraAnimationData = CGameManager::GetInstance()->Find_CameraAnimationData(iCameraAnimationIndex);
 
+    if (nullptr == m_pCameraAnimationData)
+    {
+        return;
+    }
     m_vFOVTracks.clear();
     m_vPivotTracks.clear();
 	m_vPositionTracks.clear();

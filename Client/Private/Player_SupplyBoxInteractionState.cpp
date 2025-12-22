@@ -15,6 +15,7 @@ CPlayer_SupplyBoxInteractionState::CPlayer_SupplyBoxInteractionState(void* pArg)
 
 void CPlayer_SupplyBoxInteractionState::Start(void* pArg, _float fBlendRatio)
 {
+    m_Desc->isInvincible = true;
     m_Desc->isInteracting = true;
     m_eState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
     m_pPlayer->Set_Animation("Proto_Idle", true, 1.2f);
@@ -37,7 +38,9 @@ PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDel
 
         if (true == isAnimationFinished)
         {
+            m_tNextState.eMode = PLAYER_MODE::IDLE;
             m_tNextState.eNextState = PLAYER_STATE::IDLE;
+            m_tNextState.isChangeMode = true;
             //상호작용 스타트
             m_pInteractionCom->Action_InteractionEvent(fTimeDelta, m_pPlayer);
         }
@@ -70,6 +73,7 @@ PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDel
 _float CPlayer_SupplyBoxInteractionState::End()
 {
     m_Desc->isInteracting = false;
+    m_Desc->isInvincible = false;
 
     return m_fNextBlendRatio;
 }

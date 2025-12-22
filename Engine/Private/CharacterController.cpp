@@ -49,7 +49,7 @@ void CCharacterController::Set_Gravity(_bool bFlag, _float fVelocity)
 	//둘다 true거나 둘다 false면 넘어가
 	m_isGravity = bFlag;
 	m_fGravityTimeAcc = 0.f;
-	m_fJumpVelocity = fVelocity;  // 이제 "현재 속도"로 사용
+	m_fJumpVelocity = fVelocity;  // 이제 현재 속도로 사용
 }
 
 void CCharacterController::Set_Riding(_bool isRiding, CTransform* pTransform,  CRigidBody* pRigidBody)
