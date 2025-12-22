@@ -40,7 +40,7 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.8f;
+	EffectDesc.fSize = 1.2f;
 	EffectDesc.iFloor = 0;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));

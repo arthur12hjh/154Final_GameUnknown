@@ -469,7 +469,11 @@ HRESULT CNayitba::Ready_CharacterData()
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		if (8 != m_pInitMonsterInfo->iMonsetID)
+			m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		else
+			m_MonsterInfo.iCurrentShield = 0.f;
+
 		m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
@@ -744,8 +748,31 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
 	{
-		if (0 < m_MonsterInfo.iCurrentStamina)
-			m_MonsterInfo.iCurrentStamina--;
+		_bool bIsScarletParry = false;
+		if (8 == m_pInitMonsterInfo->iMonsetID)
+		{
+			_bool bIsLastAttack = false;
+			_bool bIsEntranceAttack = false;
+
+			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
+			auto pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+				bIsScarletParry = true;
+		}
+
+		if (bIsScarletParry)
+		{
+			_float fDamage = m_pGameInstance->Random(100.f, 150.f);
+			m_MonsterInfo.iCurrentShield -= fDamage;
+
+			if (0 >= m_MonsterInfo.iCurrentShield)
+				m_MonsterInfo.iCurrentShield = 0.f;
+		}
+		else
+		{
+			if (0 < m_MonsterInfo.iCurrentStamina)
+				m_MonsterInfo.iCurrentStamina--;
+		}
 	}
 	else
 	{

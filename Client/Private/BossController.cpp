@@ -6,7 +6,8 @@
 #include "GameManager.h"
 #include "Nayitba.h"
 #include "Player.h"
-#include "BossBlackBoard.h"
+
+#include "ScarletBlackBoard.h"
 
 CBossController::CBossController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CAIController(pDevice, pContext)
@@ -168,6 +169,21 @@ void CBossController::Damage(void* pArg)
 
 void CBossController::ActionSuccess(void* pArg)
 {
+}
+
+_bool CBossController::bIsLastAttack()
+{
+    return  m_pBlackBoard->IsPhaseLastAttack();
+}
+
+_bool CBossController::bIsEntranceAttack()
+{
+    if (8 == m_pBlackBoard->GetBossDefaultInfo()->iMonsetID)
+    {
+        return static_cast<CScarletBlackBoard*>(m_pBlackBoard)->bIsEnableEntarnceAttack();
+    }
+
+    return false;
 }
 
 HRESULT CBossController::Ready_Behavior(const BOSS_CONTROLLER_DESC& pDesc)

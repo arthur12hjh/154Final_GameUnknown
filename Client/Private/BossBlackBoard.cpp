@@ -152,6 +152,9 @@ void CBossBlackBoard::SetPhaseLastAttack(_bool bIsFlag)
 
     if (bIsFlag)
     {
+        if(8 == m_BossDefualtInfo->iMonsetID)
+            static_cast<CNayitba*>(m_pOwner)->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
+
         m_bIsPhaseLastAttack = bIsFlag;
         m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack = false;
     }
