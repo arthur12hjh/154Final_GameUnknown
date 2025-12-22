@@ -57,8 +57,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+		return E_FAIL;
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");

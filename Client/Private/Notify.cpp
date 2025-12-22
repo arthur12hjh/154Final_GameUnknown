@@ -141,6 +141,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::ATTACK_INTERACTION:
 		return m_pCharacter->CallNotify(CNotify::ATTACK_INTERACTION, &AnimNotify);
 		break;
+	case CNotify::CAMERA_SHAKE:
+		return Notify_Camera_Shake(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -165,6 +168,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Attack_Interaction")			return ATTACK_INTERACTION;
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
+	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
 
 	return NOTIFY_TYPE::END;
 }
@@ -267,6 +271,13 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
 
 	Safe_Release(pCamera);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Camera_Shake(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pGameInstance->Shake_Camera(AnimNotify.fNumData01, AnimNotify.fNumData02);
 
 	return S_OK;
 }
