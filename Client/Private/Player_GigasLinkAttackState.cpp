@@ -35,7 +35,6 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
     m_isEndList.push_back(FALSE);
     m_iAnimationIndex = 0;
 
-
     // 클래스의 상태를 변경해준다.
     //m_eState = PLAYER_STATE::TEST_STATE;
     m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
@@ -51,7 +50,6 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 {
     m_isEndList[m_iAnimationIndex] = m_pPlayer->Play_Animation(fTimeDelta);
-
     if (true == m_isEndList[0])
     {
         m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
@@ -68,7 +66,6 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
         DEFAULT_DAMAGE_DESC Desc;
         Desc.pSkillData = m_pGameManager->Find_SkillData(1011);
         m_Desc->pLinkAttackTarget->Damaged(&Desc);
-
     }
 
     _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);

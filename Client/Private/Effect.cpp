@@ -323,7 +323,6 @@ void CEffect::Update(_float fTimeDelta)
 
 void CEffect::Late_Update(_float fTimeDelta)
 {
-
     if (nullptr != m_pParentMat) {
         if (nullptr != m_pParentWorldMat) {
             XMStoreFloat4x4(&m_CombinedWorldMatrix, 

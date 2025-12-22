@@ -36,6 +36,8 @@ public:
 	virtual HRESULT					Render() override;
 	virtual void					Shoot_Projectile(_vector vTargetPoint, _float fSpeed);
 
+	_bool							bIsHit() { return !m_bIsEnableCollider; }
+
 protected :
 	const	_float4x4*				m_pSocketMatrix = { nullptr };
 	BULLET_TYPE						m_eBulletType = { BULLET_TYPE::END };
@@ -44,7 +46,7 @@ protected :
 	CCollider*						m_pColliderCom = { nullptr };
 	const Character_Skill_Desc*		m_pSkillData = { nullptr };
 
-	_bool							m_bIsEnableCollider = { false };
+	_bool							m_bIsEnableCollider = { true };
 	_float3							m_vProjectileDir = {};
 	_float3							m_vTargetPoint = {};
 

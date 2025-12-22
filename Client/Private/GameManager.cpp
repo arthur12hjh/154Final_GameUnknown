@@ -262,9 +262,9 @@ _bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& i
 
     return true;
 }
-HRESULT CGameManager::Play_Cinematic(_uint iCinematicID)
+HRESULT CGameManager::Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc)
 {
-    return m_pCinematicManager->Play_Cinematic(iCinematicID);
+    return m_pCinematicManager->Play_Cinematic(iCinematicID, FinishedFunc);
 }
 HRESULT CGameManager::Load_Level_CinematicObjectData(const _char* szFilePath)
 {

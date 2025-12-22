@@ -84,7 +84,10 @@ void CBullet_Scarlet::Late_Update(_float fTimeDelta)
 			m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}
 	else
+	{
+		m_pEffect->Set_Dead(true);
 		Set_Dead(true);
+	}
 }
 
 HRESULT CBullet_Scarlet::Render()
@@ -168,6 +171,7 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
+	m_pEffect->Set_Dead(true);
 	Set_Dead(true);
 }
 
@@ -198,5 +202,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
+	
 	Safe_Release(m_pEffect);
 }

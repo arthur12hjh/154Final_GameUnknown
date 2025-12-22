@@ -170,13 +170,21 @@ _bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
     return   m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack;
 }
 
-void CBossBlackBoard::EnterExcution(_bool bIsExcution)
+void CBossBlackBoard::EnterExcution(EXCUTION_TYPE eExcution)
 {
-    m_bIsExcution = bIsExcution;
-    if (m_bIsExcution)
+    m_eExcution = eExcution;
+    if (EXCUTION_TYPE::END != m_eExcution)
     {
-        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(false);
+        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(EXCUTION_TYPE::END);
     }
+}
+
+_bool CBossBlackBoard::bIsExcution()
+{
+    if (EXCUTION_TYPE::END != m_eExcution)
+        return true;
+
+    return false;
 }
 
 _bool CBossBlackBoard::IsAttackEnable()

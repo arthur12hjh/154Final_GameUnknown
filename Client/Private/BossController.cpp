@@ -74,6 +74,12 @@ void CBossController::Damage(void* pArg)
     _float fLimitPercent = m_pBlackBoard->Get_CurrentPhaseLitmitPercent();
     _float fCurHealthRatio = (_float)pNayitba->GetMonsterData().iCurrentHealth / (_float)pNayitba->GetStaticMonsterData()->iMaxHealth;
 
+    if (fLimitPercent > fCurHealthRatio)
+    {
+        _float RecoveryHealth = (pNayitba->GetStaticMonsterData()->iMaxHealth * fLimitPercent) - pNayitba->GetMonsterData().iCurrentHealth;
+        pNayitba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_HP, (long long)RecoveryHealth);
+    }
+
     if (10 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // 이거 죽는모션 나옴 죽으면 
@@ -82,23 +88,20 @@ void CBossController::Damage(void* pArg)
         {
             if (0 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
             {
-                m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
-                m_pBlackBoard->SetHitData(pDamageDesc);
-            }
-            else
+                auto pGameManger = CGameManager::GetInstance();
+                pGameManger->Play_Cinematic(125, [&]() {
+                    auto pNayitba = static_cast<CNayitba*>(m_pParent);
+                    pNayitba->Excution();
+                });
+
                 m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+            }
         }
         else
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::THESHOLD);
     }
     else if(false == m_pBlackBoard->IsPhaseLastAttack())
     {
-        if (fLimitPercent > fCurHealthRatio)
-        {
-            _float RecoveryHealth = (pNayitba->GetStaticMonsterData()->iMaxHealth * fLimitPercent) - pNayitba->GetMonsterData().iCurrentHealth;
-            pNayitba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_HP, (long long)RecoveryHealth);
-        }
-
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
         _bool bIsHitAble = true;
@@ -117,7 +120,7 @@ void CBossController::Damage(void* pArg)
                     // 원작은 뒤로 물러나면서 들어가는거 같음
                     bIsHitAble = false;
                     m_pBlackBoard->EnterGroggy();
-                    pNayitba->SetThesholdAction(true);
+                    pNayitba->SetThesholdAction(EXCUTION_TYPE::LINK_ATTACK);
                 }
                 else
                 {
@@ -147,7 +150,7 @@ void CBossController::Damage(void* pArg)
         else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
         {
             if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
-                m_pBlackBoard->EnterExcution(true);
+                m_pBlackBoard->EnterExcution(EXCUTION_TYPE::LINK_ATTACK);
             else
             {
                 bIsHitAble = false;
