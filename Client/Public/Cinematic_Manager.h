@@ -33,6 +33,8 @@ public:
 
 	HRESULT						Change_MainCamera();
 
+	_bool						Is_CinematicPlaying() const { return m_bIsCinematicPlaying; }
+
 private:
 	CGameInstance*				m_pGameInstance = { nullptr };
 	class CPlayer*				m_pPlayer = { nullptr };
