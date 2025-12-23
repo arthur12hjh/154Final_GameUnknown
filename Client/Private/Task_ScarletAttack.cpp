@@ -181,7 +181,6 @@ void CTask_ScarletAttack::NormalAttackPattern()
 
 void CTask_ScarletAttack::LinkAttackPattern()
 {
-	// ����� ������ �׷α���¿��� ������ �������� ������ �׼�
 	
 }
 
@@ -261,16 +260,12 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 
 _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 {
-	// �������忡�� ���õ� Ÿ���� �������� �Ÿ��� ������ �̳༮�� �Ÿ��� ������ �̵��� �����ʴ´�.
-	// ���� ���忡�� �Ÿ��� �޾ƿͼ� ����
 	auto pNaytibaStaticData = m_pOwner->GetStaticMonsterData();
 	if (nullptr == pNaytibaStaticData)
 		return false;
 
-	// ���⼭ ���õ� ��ų�� ���� ������ ó���Ѵ�.
 	_bool  bIsMove{ false }, bIsLerpMove{ false };
-	// �÷��̾�� ������ �Ÿ�������� �̵���Ű�� �ɷ����� �����Ҷ�
-	// Ÿ�ֿ̹� ���缭 �ּҰŸ� ����
+
 	_vector vOwnerPos{}, vTempOwnerPos{};
 	vTempOwnerPos = vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 

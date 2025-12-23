@@ -112,7 +112,7 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 		XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Ab-R-Calf-Tw1")) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
 	m_pColliderCom->UpdateColiision(vResult);
 
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
+	//m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);

@@ -6,6 +6,10 @@
 #include "StringHelper.h"
 #include "Interaction_Component.h"
 
+#include "PlayerCCTHitReporter.h"
+#include "PlayerBehaviorCallback.h"
+#include "PlayerCCTQueryFilterCallback.h"
+
 #include "AIController.h"
 #include "NpcBody.h"
 #include "NpcFace.h"
@@ -46,6 +50,7 @@ void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
     
+    m_pCCT->Update_PrePxPosition(m_pTransformCom);
     m_pAIController->Priority_Update(fTimeDelta);
 }
 
@@ -61,7 +66,9 @@ void CNpc::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
+        m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
         m_pAIController->Late_Update(fTimeDelta);
+        m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
         if (m_bIsActive == TRUE)
         {
@@ -149,40 +156,35 @@ HRESULT CNpc::Ready_Components()
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
 
 
+    /* Com_CCT */
+    CCharacterController::CCT_DESC Desc;
     PxUserData tUserData;
-    tUserData.szActorTag = TEXT("KIMETIC_Actor2");
+    tUserData.szActorTag = TEXT("Player_CCT");
 
-    //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
-    CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
-    // 콜라이더 모양
-    RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::BOX;
+    Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
+    Desc.tUserData = tUserData;
+    //캡슐 컨트롤러에서 x는 구 성분 y는 기둥 성분
+    Desc.vSize = { m_NpcDesc->vExtents.x, m_NpcDesc->vExtents.y, 0.f };
+    XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
+    Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
+    Desc.pHitReporter = CPlayerCCTHitReporter::Create();
+    Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+    Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
+    Desc.iCollisionGroup = PHYSX_CCT;
+    Desc.fStepOffset = 0.05f;
 
-    // 충돌처리를 할지말지 
-    // DYNAMIC : 충돌 
-    // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
-
-    RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
-    RigidBodyDesc.tUserData = tUserData;
-    RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-    RigidBodyDesc.vSize = Com_Size;
-    RigidBodyDesc.fMass = { 0.3f };
-
-    /* Com_RigidBody */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
-        TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
+        TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
         return E_FAIL;
 
-    // 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
-    // 없으면 충돌 안됨
-
-    m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
+    m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
     static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, InteractionDesc.vSize);
     return S_OK;
 }
 
 void CNpc::Begin_Interaction()
 {
+    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
@@ -192,6 +194,7 @@ void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
 
 void CNpc::End_Interaction()
 {
+    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }
 
 CNpc* CNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -220,7 +223,6 @@ void CNpc::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pRigidBody);
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);
     Safe_Release(m_pInteractionCom);
