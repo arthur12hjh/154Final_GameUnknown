@@ -173,18 +173,18 @@ _bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
     return   m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack;
 }
 
-void CBossBlackBoard::EnterExcution(EXCUTION_TYPE eExcution)
+void CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 {
     m_eExcution = eExcution;
-    if (EXCUTION_TYPE::END != m_eExcution)
+    if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
     {
-        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(EXCUTION_TYPE::END);
+        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
     }
 }
 
 _bool CBossBlackBoard::bIsExcution()
 {
-    if (EXCUTION_TYPE::END != m_eExcution)
+    if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
         return true;
 
     return false;

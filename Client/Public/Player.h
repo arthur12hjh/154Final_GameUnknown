@@ -94,6 +94,9 @@ private:
 
 	void CreateHitBox(const AnimNotify* pNotify);
 
+private:
+	void Execution_Nayitba();
+	void LinkAttack_Nayitba();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
