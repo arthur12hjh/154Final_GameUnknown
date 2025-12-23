@@ -34,6 +34,9 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
+		return E_FAIL;
+
 	m_eInterState = INTERACTION_STATE::DEFAULT;
 	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
 	m_pModelCom->Set_AnimationIndex(0, false);
@@ -123,6 +126,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			m_pModelCom->Play_Animation(0.f);
 		}
 	}
+
 }
 
 void CSciFi_Door::Late_Update(_float fTimeDelta)
@@ -197,7 +201,11 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	return S_OK;
+}
 
+HRESULT CSciFi_Door::Ready_Col(const _tchar* pComponentTag)
+{
 	/* Com_Model_COL */
 	_wstring strComponentTag = pComponentTag;
 	strComponentTag += TEXT("_COL");
@@ -244,8 +252,6 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-	static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
-
 	return S_OK;
 }
 

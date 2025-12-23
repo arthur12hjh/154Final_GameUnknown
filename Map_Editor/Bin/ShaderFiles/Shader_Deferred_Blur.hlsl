@@ -9,7 +9,6 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_BlurTexture;
-texture2D g_WeightTexture;
 
 texture2D g_EmissiveTexture;
 
@@ -28,159 +27,113 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-PS_OUT_BLUR_X PS_MAIN_BLUR_X(PS_IN In)
+PS_OUT_BLUR PS_BLUR_WEIGHT(PS_IN In)
 {
-    PS_OUT_BLUR_X Out;
+    PS_OUT_BLUR Out;
+    float4 BlurColor = g_BlurTexture.Sample(ClampSampler, In.vTexcoord);
+    if (0 >= BlurColor.a)
+        discard;
+    Out.vBlur.rgb = BlurColor.rgb / BlurColor.a;
+    Out.vBlur.a = saturate(BlurColor.a);
+    return Out;
+}
+
+PS_OUT_BLUR PS_MAIN_BLUR_X(PS_IN In)
+{
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0.f;
-    float4 vWeight = 0.f;
-    float vSize;
-    
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x + (float)i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
     }
     
-    Out.vBlurX = vColor / vSize;
-    Out.vWeight = vWeight / vSize;
-    
+    Out.vBlur = vColor / vSize;
     return Out;    
 }
 
-PS_OUT_BLUR_FINAL PS_MAIN_BLUR_FINAL(PS_IN In)
+PS_OUT_BLUR PS_MAIN_BLUR_FINAL(PS_IN In)
 {
-    PS_OUT_BLUR_FINAL Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight = 0.f;
-    float vSize;
+    float4 vColor = 0.f;
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
 
     }
     
-    Out.vBlurY = vColor / vSize;
-    Out.vWeight = (vWeight / vSize);
+    Out.vBlur = vColor / vSize;
     
     return Out;
 }
 
-PS_OUT_BACKBUFFER PS_MAIN_EMISSIVE_BLUR_X(PS_IN In)
+PS_OUT_BLUR PS_MAIN_SMOK_X(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
     float4 vColor = 0.f;
-    float vSize;
-    
-    for (int i = -6; i < 7; ++i)
-    {
-        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
-        vTexcoord.y = In.vTexcoord.y;
-        
-        vColor += g_fWeights[i + 6] * g_EmissiveTexture.Sample(ClampSampler, vTexcoord);
-        vSize += g_fWeights[i + 6];
-    }
-    
-    Out.vBackBuffer = vColor / vSize;
-    
-    return Out;
-}
-
-PS_OUT_BACKBUFFER PS_MAIN_EMISSIVE_BLUR_FINAL(PS_IN In)
-{
-    PS_OUT_BACKBUFFER Out;
-    
-    float2 vTexcoord;
-    float4 vColor = 0.f;
-    float vSize;
-    
-    for (int i = -6; i < 7; ++i)
-    {
-        vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
-        
-        vColor += g_fWeights[i + 6] * g_EmissiveTexture.Sample(ClampSampler, vTexcoord);
-        vSize += g_fWeights[i + 6];
-    }
-    
-    Out.vBackBuffer = vColor / vSize;
-    
-    return Out;
-}
-
-PS_OUT_BLUR_X PS_MAIN_METABALL_BLUR_X(PS_IN In)
-{
-    PS_OUT_BLUR_X Out;
-    
-    float2 vTexcoord;
-    float4 vColor = 0.f;
-    float4 vWeight = 0.f;
-    float vSize;
-    
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
     }
     
-    Out.vBlurX = vColor / vSize;
-    Out.vWeight = vWeight / vSize;
-    
+    Out.vBlur = vColor / vSize;
     return Out;
 }
 
-PS_OUT_BLUR_FINAL PS_MAIN_METABALL_BLUR_FINAL(PS_IN In)
+PS_OUT_BLUR PS_MAIN_SMOK_FINAL(PS_IN In)
 {
-    PS_OUT_BLUR_FINAL Out;
+    PS_OUT_BLUR Out;
     
     float2 vTexcoord;
-    float4 vColor;
-    float4 vWeight = 0.f;
-    float vSize;
+    float4 vColor = 0.f;
+    float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
         
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
-        vWeight += g_fWeights[i + 6] * g_WeightTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
 
     }
-    
-    Out.vBlurY = vColor / vSize;
-    Out.vWeight = (vWeight / vSize);
-    float fAlpha = saturate(Out.vWeight.g);
-    Out.vWeight.g = saturate(pow(saturate(Out.vWeight.g * 2), 5));
-    if (0 < fAlpha)
-    {
-        Out.vWeight *= Out.vWeight.g / fAlpha;
-    }
+    Out.vBlur = vColor / vSize;
     
     return Out;
 }
 
 technique11 DefaultTechnique
-{ 
+{
     // idx 0
+    pass Blur_Weight
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLUR_WEIGHT();
+    }
+    // idx 1
     pass Blur_X
     {
         SetRasterizerState(RS_Default);
@@ -190,7 +143,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_X();
     }
-    // idx 1
+    // idx 2
     pass Blur_Final
     {
         SetRasterizerState(RS_Default);
@@ -199,45 +152,5 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLUR_FINAL();
-    }
-    // idx 2
-    pass Emissive_Blur_X
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE_BLUR_X();
-    }
-    // idx 3
-    pass Emissive_Blur_Final
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE_BLUR_FINAL();
-    }
-    // idx 4
-    pass MetaBall_Blur_X
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_METABALL_BLUR_X();
-    }
-    // idx 5
-    pass MetaBall_Blur_Final
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_METABALL_BLUR_FINAL();
     }
 }
