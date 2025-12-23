@@ -77,12 +77,14 @@ void CSciFi_Door::Update(_float fTimeDelta)
 				{
 					m_pModelCom->Set_AnimationIndex(0, false);
 					m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+					m_pRigidBody->Set_Simulation(true);
 				}
 				break;
 				case SCIFI_DOOR_STATE::CLOSE:
 				{
 					m_pModelCom->Set_AnimationIndex(1, false);
 					m_eCurState = SCIFI_DOOR_STATE::OPEN;
+					m_pRigidBody->Set_Simulation(false);
 				}
 				break;
 				}
@@ -109,7 +111,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 		else
 		{
 			auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
-			if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+			if (PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode || PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
 			{
 				if (INTERACTION_STATE::LOCK == m_eInterState)
 				{
