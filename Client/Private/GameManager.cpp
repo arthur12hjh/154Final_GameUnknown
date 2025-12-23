@@ -270,6 +270,10 @@ HRESULT CGameManager::Load_Level_CinematicObjectData(const _char* szFilePath)
 {
     return m_pCinematicManager->Load_Level_CinematicObjectData(szFilePath);
 }
+_bool CGameManager::Is_CinematicPlaying()
+{
+    return m_pCinematicManager->Is_CinematicPlaying();
+}
 #pragma endregion
 
 void CGameManager::Release_GameMgr()

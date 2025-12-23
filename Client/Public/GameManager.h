@@ -101,6 +101,7 @@ public:
 #pragma region CINEMATIC_MANAGER
 	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc = nullptr);
 	HRESULT						Load_Level_CinematicObjectData(const _char* szFilePath);
+	_bool						Is_CinematicPlaying();
 #pragma endregion
 
 

@@ -51,6 +51,7 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
 
         if (m_iCurrentCinematicNodeIndex >= m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
         {
+            m_bIsCinematicPlaying = FALSE;
             if (m_FinishedCinematic)
                 m_FinishedCinematic();
         }
