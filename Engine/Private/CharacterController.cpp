@@ -174,7 +174,7 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 
 void CCharacterController::Set_Position(_vector vPosition)
 {
-	m_pController->setPosition(PxExtendedVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition)));
+	m_pController->setFootPosition(PxExtendedVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition)));
 }
 
 _vector CCharacterController::Calc_Gravity(_float fTimeDelta)

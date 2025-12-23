@@ -246,10 +246,10 @@ void CBullet_Rock::Free()
 		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 		EffectDesc.fRotationPerSec = 1.f;
 		EffectDesc.fSpeedPerSec = 1.f;
-
+	
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
-
+	
 		EffectDesc.vPos = XMVectorSet(m_CombinedWorldMatrix._41, m_CombinedWorldMatrix._42, m_CombinedWorldMatrix._43, 1);
 		EffectDesc.fRot = _float3(0, 0, 0);
 		EffectDesc.fSize = 1.f;

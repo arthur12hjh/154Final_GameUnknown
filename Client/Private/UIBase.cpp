@@ -396,6 +396,11 @@ void CUIBase::Update_Children(CUIBase* pObj)
 	}
 }
 
+_bool CUIBase::IsAnimFinished(const _wstring& szAnimTag) const
+{
+	auto it = m_AnimFinishStates.find(szAnimTag);
+	return it != m_AnimFinishStates.end() && it->second;
+}
 #ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
@@ -406,11 +411,6 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 	return S_OK;
 }
 
-_bool CUIBase::IsAnimFinished(const _wstring& szAnimTag) const
-{
-	auto it = m_AnimFinishStates.find(szAnimTag);
-	return it != m_AnimFinishStates.end() && it->second;
-}
 
 void CUIBase::Render_Debug_Rect()
 {

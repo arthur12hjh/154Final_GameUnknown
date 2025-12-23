@@ -24,6 +24,11 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Open_Popup();
+	void Close_Popup();
+
+	_bool Get_IsOpen() const { return m_isOpen; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -38,6 +43,8 @@ private:
 	CTexture* m_pSuitIconsTextureCom{ nullptr };
 
 	_float m_fAmount{ 0.f };
+
+	_bool m_isOpen{ false };
 
 public:
 	static CUIPopup* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -40,8 +40,8 @@ HRESULT CImGuiMain::Initialize()
 void CImGuiMain::Update(_float fTimeDelta)
 {
 #ifdef _DEBUG
-
 	ImGui::Begin("Debug Tool", nullptr, m_ImGuiWindowFlags);
+	ImGui::IsWindowCollapsed();
 	CStringHelper::ConvertWideToUTF(m_pGameInstance->GetFrameText(), m_szFPS);
 	ImGui::Text(m_szFPS);
 	ImGui::SameLine();
@@ -63,7 +63,7 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	if (ImGui::Checkbox("GamePause", &m_bIsGamePause))
 		m_pGameInstance->SetGamePause(m_bIsGamePause);
-	
+
 	if (ImGui::Button("Show Profiler"))
 		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_Profiler"), VISIBILITY::VISIBLE);
 
@@ -100,6 +100,7 @@ void CImGuiMain::Update(_float fTimeDelta)
 
 	m_pImGuiManager->Update(fTimeDelta);
 	ImGui::End();
+
 #endif
 }
 

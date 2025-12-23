@@ -93,7 +93,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
     /* 씬 시뮬레이션 */
     if (nullptr != m_PxScene)
     {
-        m_PxScene->simulate(fTimeDelta);      // 시뮬레이션 시작
+        m_PxScene->simulate(1 / 60.f);      // 시뮬레이션 시작
         m_PxScene->fetchResults(true);        // 결과 가져오기, PVD에 전송됨
 
         /* 위치 동기화 */

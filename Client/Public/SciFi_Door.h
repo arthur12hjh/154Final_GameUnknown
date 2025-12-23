@@ -10,6 +10,7 @@ class CCollider;
 NS_END
 
 NS_BEGIN(Client)
+class CUIActionEvent;
 
 class CSciFi_Door final : public CProb_Interaction
 {
@@ -36,9 +37,16 @@ private:
 
 private:
 	CModel*						m_pModelCom = { nullptr };
+	CUIActionEvent*				m_pDoorEvent = { nullptr };
+	CUIActionEvent*				m_pUnlockEvent = { nullptr };
+	_bool						m_bUnlocked = false;
+	_bool						m_bCanlock = false;
+
+	_tchar						m_szComponentTag[256] = {};
 
 private:
 	HRESULT						Ready_Components(const _tchar* pComponentTag);
+	HRESULT						Ready_Col(const _tchar* pComponentTag);
 	HRESULT						Bind_ShaderResources();
 
 	virtual void				Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
