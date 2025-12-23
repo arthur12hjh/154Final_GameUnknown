@@ -55,8 +55,8 @@ public:
 	void Return_WorldUI(CUIBase*& pUI);
 
 	// Interaction UI
-	HRESULT Add_InteractionUI(_int iIdx);
-	void Remove_InteractionUI(CUIBase* pUI);
+	/*HRESULT Add_InteractionUI(_int iIdx);
+	void Remove_InteractionUI(CUIBase* pUI);*/
 
 	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
 	CUIBase* Get_UIObject(_wstring szLayerTag, _wstring szUITag);
@@ -81,6 +81,7 @@ private:
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
 
 	unordered_map<_wstring, vector<CUIBase*>> m_WorldUIs{};
+	unordered_map<_wstring, vector<CUIBase*>> m_RentWorldUIs{};
 	vector<CUIBase*> m_InteractionUIs{};
 
 	CGameInstance* m_pGameInstance{ nullptr };

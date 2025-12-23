@@ -397,7 +397,7 @@ namespace Client
 	}DEFAULT_DAMAGE_DESC;
 
 	//인터랙션 타입.
-	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, TRANSPORT, CORPSE, END };
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, LIFT_CONTROLLER, CORPSE, END };
 	//인터랙션 상태(상호작용 중, 닿았는지 등)
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
