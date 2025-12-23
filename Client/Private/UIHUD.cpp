@@ -110,7 +110,16 @@ void CUIHUD::Update(_float fTimeDelta)
 			for (auto& pUI : *m_pLayers[TEXT("Layer_World")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
 		}
-		else
+		else if (m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth > 0.f)
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_World")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+		}
+		else if(m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth <= 0.f)
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
@@ -176,6 +185,7 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 		return;
 
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
+	m_pNaytibaDesc = pNaytibaDesc;
 	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
 }

@@ -86,6 +86,8 @@ private:
 	CGameInstance* m_pGameInstance{ nullptr };
 	CGameManager* m_pGameManager{ nullptr };
 
+	const NAYTIBA_DESC* m_pNaytibaDesc{ nullptr };
+
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
