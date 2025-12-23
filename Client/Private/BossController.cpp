@@ -121,7 +121,7 @@ void CBossController::Damage(void* pArg)
                     // 원작은 뒤로 물러나면서 들어가는거 같음
                     bIsHitAble = false;
                     m_pBlackBoard->EnterGroggy();
-                    pNayitba->SetThesholdAction(EXCUTION_TYPE::LINK_ATTACK);
+                    pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
                 }
                 else
                 {
@@ -151,7 +151,7 @@ void CBossController::Damage(void* pArg)
         else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
         {
             if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
-                m_pBlackBoard->EnterExcution(EXCUTION_TYPE::LINK_ATTACK);
+                m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
             else
             {
                 bIsHitAble = false;
