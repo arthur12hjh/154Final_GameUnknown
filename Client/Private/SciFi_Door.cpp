@@ -176,7 +176,7 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
 	pCullingCollider->SetCollision({ 0.f, 5.f, 0.f }, {}, { 10.f, 10.f, 2.f });
 
-	_float3 Com_Size = pCullingCollider->GetBounding().Extents;
+	_float3 Com_Size = pCullingCollider->GetOrizinBounding().Extents;
 
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,

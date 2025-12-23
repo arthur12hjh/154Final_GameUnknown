@@ -42,7 +42,6 @@ private:
 
 	CInteraction_Component*		m_pInteractionCom = { nullptr };
 	CAIController*				m_pAIController = { nullptr };
-	CRigidBody*					m_pRigidBody = { nullptr };
 
 private :
 	HRESULT						Ready_PartObjects();

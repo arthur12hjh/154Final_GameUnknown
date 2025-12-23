@@ -12,13 +12,12 @@ void CCollisionManager::ADD_CollisionList(CCollider* pObject)
 	if (iter == m_ColList.end())
 	{
 		m_ColList.push_back(pObject);
-		Safe_AddRef(pObject);
+		//Safe_AddRef(pObject);
 	}
 }
 
 void CCollisionManager::Compute_Collision()
 {
-	m_ColHash.clear();
 	for (auto& pSrc : m_ColList)
 	{
 		for (auto& pDest : m_ColList)
@@ -45,9 +44,10 @@ void CCollisionManager::Compute_Collision()
 	for (auto& iter : m_ColList)
 	{
 		iter->CallFunction();
-		Safe_Release(iter);
+		//Safe_Release(iter);
 	}
 
+	m_ColHash.clear();
 	m_ColList.clear();
 }
 

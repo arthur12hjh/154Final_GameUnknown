@@ -585,7 +585,7 @@ HRESULT CNayitba::ADD_Components()
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-
+		
 	}
 
 	/* Com_CCT */
