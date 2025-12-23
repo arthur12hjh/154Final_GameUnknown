@@ -36,6 +36,7 @@ namespace Engine
 								  STATIC,
 								  PLAYER,
 								  MONSTER,
+								  NPC,
 								  SENCE,
 								  INTERACTION,
 								  END };

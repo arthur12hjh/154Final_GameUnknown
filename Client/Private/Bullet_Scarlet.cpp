@@ -40,7 +40,7 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.8f;
+	EffectDesc.fSize = 1.2f;
 	EffectDesc.iFloor = 0;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
@@ -84,7 +84,10 @@ void CBullet_Scarlet::Late_Update(_float fTimeDelta)
 			m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}
 	else
+	{
+		m_pEffect->Set_Dead(true);
 		Set_Dead(true);
+	}
 }
 
 HRESULT CBullet_Scarlet::Render()
@@ -168,6 +171,7 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
+	m_pEffect->Set_Dead(true);
 	Set_Dead(true);
 }
 
@@ -198,5 +202,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
+	
 	Safe_Release(m_pEffect);
 }

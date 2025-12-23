@@ -36,7 +36,7 @@ CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
         {
             if (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty)
             {
-                m_pBlackBoard->EnterExcution(true);
+                m_pBlackBoard->EnterExcution(EXCUTION_TYPE::LINK_ATTACK2);
                 m_pBlackBoard->SetHitData(pHitData);
                 return NODE_STATE::FAIL;
             }
@@ -55,7 +55,7 @@ CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
         if (0 == m_iNumSelection)
         {
             m_pOwner->Set_Animation("Result_State_Groggy_L");
-            m_pOwner->SetThesholdAction(true);
+            m_pOwner->SetThesholdAction(EXCUTION_TYPE::LINK_ATTACK2);
         }
         m_iNumSelection++;
     }

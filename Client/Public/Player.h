@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Character.h"
-#include "ClientStruct.h"
 
 NS_BEGIN(Engine)
 class CCollider;

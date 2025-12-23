@@ -3,6 +3,8 @@
 #include "Decorator.h"
 
 NS_BEGIN(Client)
+class CBossBlackBoard;
+
 class CDeco_CheckAlive final : public CDecorator
 {
 protected:
@@ -14,6 +16,7 @@ public:
 	virtual		NODE_STATE				Update(_float fTimeDelta) override;
 	
 private :
+	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	_float								m_fDeadPercent = { 0.f };
 
 public:

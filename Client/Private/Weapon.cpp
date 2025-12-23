@@ -223,6 +223,9 @@ HRESULT CWeapon::Render()
 
 HRESULT CWeapon::Render_Shadow()
 {
+	if (false == isVisible())
+		return S_OK;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
@@ -248,6 +251,9 @@ HRESULT CWeapon::Render_Shadow()
 
 HRESULT CWeapon::Render_MotionBlur()
 {
+	if (false == isVisible())
+		return S_OK;
+
 	/* 이전 프레임 월드매트릭스도 바인딩 */
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;

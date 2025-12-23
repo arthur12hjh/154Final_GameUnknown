@@ -80,6 +80,9 @@ void CBullet_Rock::Update(_float fTimeDelta)
 
 void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
+	if (false == m_bIsEnableCollider)
+		return;
+
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 8000.f))
 	{
 #ifdef _DEBUG
@@ -179,7 +182,7 @@ void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	}
 
-	Set_Dead(true);
+	m_bIsEnableCollider = false;
 }
 
 HRESULT CBullet_Rock::ADD_Components(BULLET_DESC& pDesc)

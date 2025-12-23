@@ -41,6 +41,7 @@ public :
 #pragma endregion
 
 #pragma region DataManager
+	const NPC_DATA_DESC*			Find_NpcData(_uint iSkillID);
 	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
 	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
 	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
@@ -98,7 +99,7 @@ public:
 #pragma endregion
 
 #pragma region CINEMATIC_MANAGER
-	HRESULT						Play_Cinematic(_uint iCinematicID);
+	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc = nullptr);
 	HRESULT						Load_Level_CinematicObjectData(const _char* szFilePath);
 #pragma endregion
 

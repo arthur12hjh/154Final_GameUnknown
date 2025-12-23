@@ -11,18 +11,26 @@ Texture2D g_ORMTexture;
 Texture2D g_ORSSTexture;
 Texture2D g_DissolveTexture;
 
-//¸²¶óÀÌÆ®¿ë º¯¼ö
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
+
 float4 g_vRimLightColor;
 
-//µðÁ¹ºê¿ë º¯¼ö
+bool        g_IsPattern;
+bool        g_IsPatternNoise;
+bool        g_IsFade;
+
+float4      g_vCenterPos;
+float       g_fFadeRadius;
+float4      g_vMeshColor;
+
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 float g_fDeadTime;
 float g_fFar;
 
-
-/* ¸Þ½Ã´Ù ¤·¿µÇâÀ» ÁÖ´Â »ÀµéÀÇ ÁýÇÕ*/
+/* ï¿½Þ½Ã´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 matrix g_OffsetMatrices[512];
 
 // for cascade 
@@ -32,9 +40,9 @@ matrix g_LightProjMatrix[CASCADE_LEVEL];
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
 
-/* Á¤Á¡ ½¦ÀÌ´õ : */
-/* Á¤Á¡¿¡ ´ëÇÑ ¼ÎÀÌµù == Á¤Á¡¿¡ ÇÊ¿äÇÑ ¿¬»êÀ» ¼öÇàÇÑ´Ù == Á¤Á¡ÀÇ »óÅÂº¯È¯(¿ùµå, ºä, Åõ¿µ) + Ãß°¡º¯È¯ */
-/* Á¤Á¡ÀÇ ±¸¼º Á¤º¸¸¦ ¼öÁ¤, º¯°æÇÑ´Ù */ 
+/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ == ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ == ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Âºï¿½È¯(ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½) + ï¿½ß°ï¿½ï¿½ï¿½È¯ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ */ 
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -42,7 +50,7 @@ VS_OUT VS_MAIN(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
           
-// CPU¿Í µ¿ÀÏÇÑ Çà·Ä ¼ø¼­
+// CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -53,13 +61,13 @@ VS_OUT VS_MAIN(VS_IN In)
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
     
-    /* ½ºÅ°´× */
+    /* ï¿½ï¿½Å°ï¿½ï¿½ */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
     float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
     float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
 
-    // ¿ùµå º¯È¯
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     
     matrix matWV, matWVP;
     
@@ -67,8 +75,8 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vPosition, matWVP);
-    /* Out.vPosition.xy => ½Ã¾ß°¢¿¡ ÀÖ´Â Á¡µéÀ» 90¿¡ ¸ÂÃçÁØ´Ù */ 
-    /* Out.vPosition.z => n~f»çÀÌ¿¡ ÀÖ´Â Á¡µéÀÇ z¸¦ 0 ~ f·Î ¹Ù²ãÁØ´Ù. */   
+    /* Out.vPosition.xy => ï¿½Ã¾ß°ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 90ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ */ 
+    /* Out.vPosition.z => n~fï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ zï¿½ï¿½ 0 ~ fï¿½ï¿½ ï¿½Ù²ï¿½ï¿½Ø´ï¿½. */   
     Out.vNormal = float4(normalize(mul(float4(vSkinnedNormal, 0.f), g_WorldMatrix).xyz), 0.f);
     Out.vTangent = float4(normalize(mul(float4(vSkinnedTangent, 0.f), g_WorldMatrix).xyz), 0.f);
     Out.vBinormal = float4(normalize(mul(float4(vSkinnedBinorm, 0.f), g_WorldMatrix).xyz), 0.f);
@@ -96,7 +104,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 
     float4 vSkinnedLocal = mul(float4(In.vPosition, 1.f), BoneMatrix);
 
-    // ¿ùµå±îÁö¸¸
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     Out.vPosition = mul(vSkinnedLocal, g_WorldMatrix);
 
     return Out;
@@ -108,7 +116,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
     
-    // CPU¿Í µ¿ÀÏÇÑ Çà·Ä ¼ø¼­
+    // CPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -129,7 +137,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
         PreMatrixZ * In.vBlendWeight.z +
         PreMatrixW * In.vBlendWeight.w;
    
-    /* ½ºÅ°´× */
+    /* ï¿½ï¿½Å°ï¿½ï¿½ */
     vector vCurrentPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     vector vPrePosition = mul(vector(In.vPosition, 1.f), PreBoneMatrix);
     
@@ -170,7 +178,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
 [maxvertexcount(CASCADE_LEVEL * 3)]
 void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT_SHADOW> OutStream)
 {
-    //CASCADE LEVEL ¼øÈ¸ÇÏ¸é¼­ ÇÑ¹ø¿¡ Âï°Ô ÇÏ±â
+    //CASCADE LEVEL ï¿½ï¿½È¸ï¿½Ï¸é¼­ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ï±ï¿½
     [unroll]
     for (uint iCount = 0; iCount < CASCADE_LEVEL; ++iCount)
     {
@@ -178,8 +186,8 @@ void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT
 
         GS_OUT_SHADOW Out;
 
-        // Á¤Á¡ 3°³´ç »ï°¢Çü ÇÏ³ª·Î 
-        // Ãë±ÞÇØ¼­ ¼¼ÆÃÇØÁÖ±â
+        // ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ï¿½ï¿½ ï¿½ï°¢ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ 
+        // ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½
         [unroll]
         for (int iTri = 0; iTri < 3; ++iTri)
         {
@@ -196,7 +204,7 @@ void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT
     }
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
@@ -204,7 +212,11 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
    
-    Out.vDiffuse = vMtrlDiffuse;
+    if (g_IsPattern)
+        Out.vDiffuse = g_vMeshColor;
+    else
+        Out.vDiffuse = vMtrlDiffuse;
+    
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
@@ -213,7 +225,7 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-/* ¸²¶óÀÌÆ® Àû¿ë ¹öÀü. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
 PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
 {
     PS_OUT Out;
@@ -227,7 +239,7 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    //¸²¶óÀÌÆ®µµ ´õÇØ¼­ ´øÁ®.
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     
     return Out;
@@ -264,7 +276,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 
 PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 {
-    //³ë¸»¸ÊÀº ¾È..¾²Áö.
+    //ï¿½ë¸»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½..ï¿½ï¿½ï¿½ï¿½.
     PS_OUT_MOTIONBLUR Out;
     Out.vDirection = In.vDirection;
     
@@ -358,6 +370,50 @@ PS_OUT PS_ORSS(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    float4 vColor;
+    
+    vColor = true == g_IsPattern ? g_vMeshColor : g_vMtrlDiffuse;
+    vColor += Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);
+    //if (g_IsPatternNoise)
+    //{
+    //    float3 vPoint = In.vWorldPos.xyz;
+    //    float3 vTargetPoint = g_vCenterPos.xyz;
+        
+    //    vTargetPoint.z = vPoint.z = 0.f;
+    //    float fLength = length(vPoint - vTargetPoint);
+    //    if (g_IsFade)
+    //    {
+    //         // ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //        if (fLength >= g_fFadeRadius * ( 0.2f - g_fDeadTime / 0.2f))
+    //            discard;
+    //    }
+    //    else
+    //    {
+    //        // ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //        if (fLength <= g_fFadeRadius * (g_fDeadTime / 0.2f))
+    //            discard;
+    //    }
+    //}
+    
+    Out.vDiffuse = vColor;
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½.
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -381,7 +437,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
-    // ¸² ¶óÀÌÆ® ÄÒ ¹öÀü
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     // 2
     pass RimLight
     {
@@ -393,7 +449,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_RIMLIGHT();
     }
 
-    // ´« ¸¶½ºÅ·¿ë.
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½.
     // 3 
     pass Mask
     {
@@ -404,7 +460,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EYEMASKING();
     }
-    // ¸ð¼Ç ºí·¯
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     // 4
     pass MotionBlur
     {
@@ -415,7 +471,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MOTIONBLUR();
     }
-    // ¸ó½ºÅÍ µðÁ¹ºê
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     // 5
     pass Dissolve
     {
@@ -446,6 +502,17 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_GORILLA_DISSOLVE();
     }
+    // 8 Scarlet Change Body Color
+    pass ScarletColorPass
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCARLET_ATK_COLOR();
+    }
+
 }
 
 

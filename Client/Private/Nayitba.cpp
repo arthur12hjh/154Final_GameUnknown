@@ -76,7 +76,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
 
 	return S_OK;
 }
@@ -106,7 +106,7 @@ void CNayitba::Update(_float fTimeDelta)
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f) || m_pTargetCom->GetTarget())
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 		m_pAIController->Update(fTimeDelta);
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
@@ -182,9 +182,14 @@ HRESULT CNayitba::Render_Shadow()
 
 HRESULT CNayitba::Damaged(void* pArg)
 {
-	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+	if (nullptr == pArg)
+		return E_FAIL;
 
+	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	if (nullptr == pDesc->pSkillData)
+		return E_FAIL;
+
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
@@ -197,7 +202,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
-		m_bIsTheshold = false;
+		m_eExcution = EXCUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		m_pCCT->Set_Active(false);
 	}
@@ -235,6 +240,12 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 		break;
 	case CNotify::ATTACK_INTERACTION:
 		Attack_Interaction(pNotify);
+		break;
+	case CNotify::CHANGE_COLOR:
+		Change_Color(pNotify);
+		break;
+	case CNotify::SET_VISIBLITY:
+		m_bIsActive = pNotify->iNumData01;
 		break;
 	}
 
@@ -305,6 +316,15 @@ void CNayitba::Attack_Interaction(void* pArg)
 _uint CNayitba::GetMonsterID()
 {
 	return m_iMonsterID;
+}
+
+void CNayitba::Excution()
+{
+	m_MonsterInfo.iCurrentHealth = 0.f;
+	m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
+
 }
 
 CGameObject* CNayitba::GetTarget()
@@ -382,9 +402,9 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 	m_iComboCount = 0;
 }
 
-void CNayitba::SetThesholdAction(_bool bIsTheshold)
+void CNayitba::SetThesholdAction(EXCUTION_TYPE eExcution)
 {
-	m_bIsTheshold = bIsTheshold;
+	m_eExcution = eExcution;
 }
 
 void CNayitba::EnablePhysxController(_bool bEnable)
@@ -401,6 +421,11 @@ _bool CNayitba::bIsHitReaction()
 		return true;
 
 	return false;
+}
+
+EXCUTION_TYPE CNayitba::bIsThesholdAction()
+{
+	return m_eExcution;
 }
 
 CAIController* CNayitba::GetController()
@@ -444,7 +469,11 @@ HRESULT CNayitba::Ready_CharacterData()
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		if (8 != m_pInitMonsterInfo->iMonsetID)
+			m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		else
+			m_MonsterInfo.iCurrentShield = 0.f;
+
 		m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
@@ -469,11 +498,11 @@ HRESULT CNayitba::Ready_CharacterData()
 HRESULT CNayitba::ADD_Components()
 {
 	/* Com_Collider_AABB */
-	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y, 0.f);
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
+	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
@@ -570,6 +599,7 @@ HRESULT CNayitba::ADD_Components()
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
 	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
 	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.fStepOffset = 0.05f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
@@ -707,11 +737,7 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
 	{
 		if (!m_pBulletList.empty())
-		{
-			for (auto& iter : m_pBulletList)
-				Safe_Release(iter);
 			m_pBulletList.clear();
-		}
 	}
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
@@ -723,8 +749,31 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
 	{
-		if (0 < m_MonsterInfo.iCurrentStamina)
-			m_MonsterInfo.iCurrentStamina--;
+		_bool bIsScarletParry = false;
+		if (8 == m_pInitMonsterInfo->iMonsetID)
+		{
+			_bool bIsLastAttack = false;
+			_bool bIsEntranceAttack = false;
+
+			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
+			auto pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+				bIsScarletParry = true;
+		}
+
+		if (bIsScarletParry)
+		{
+			_float fDamage = m_pGameInstance->Random(100.f, 150.f);
+			m_MonsterInfo.iCurrentShield -= fDamage;
+
+			if (0 >= m_MonsterInfo.iCurrentShield)
+				m_MonsterInfo.iCurrentShield = 0.f;
+		}
+		else
+		{
+			if (0 < m_MonsterInfo.iCurrentStamina)
+				m_MonsterInfo.iCurrentStamina--;
+		}
 	}
 	else
 	{
@@ -884,11 +933,20 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.iBulletType = pNotify->iNumData04;
 	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
 
+	m_pBulletList.clear();
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);
-	auto pBullet = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
+	auto pBase = m_pGameInstance->Add_Get_GameObject(iLevel, szPrototypeName.c_str(), iLevel, szLayerName.c_str(), &pBulletDesc);
 	
-	if(pBullet)
-		m_pBulletList.push_back(static_cast<CBullet *>(pBullet));
+	if (pBase)
+	{
+		auto pBullet = dynamic_cast<CBullet*>(pBase);
+
+		if(pBullet)
+			m_pBulletList.push_back(pBullet);
+		else
+			pBullet->Set_Dead(true);
+	}
+		
 }
 
 void CNayitba::ShootProjectile(const AnimNotify* pNotify)
@@ -898,7 +956,12 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// false : 비활성화
 	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(vTargetPos, 10000.f);
+	{
+		if (iter->bIsHit())
+			iter->Set_Dead(true);
+		else
+			iter->Shoot_Projectile(vTargetPos, 10000.f);
+	}
 
 	m_pBulletList.clear();
 }
@@ -921,11 +984,22 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 
 void CNayitba::Change_Color(const AnimNotify* pNotify)
 {
-	_uint iColorIndex = pNotify->iNumData01;
-	//m_p
+	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
+	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
+	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
 
+	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+	if (nullptr == pPartBody)
+		return;
 
+	if (false == pNotify->iNumData01)
+	{
+		if (false == m_bIsActive)
+			m_bIsActive = true;
+	}
 
+	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+	pNaytibaPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -35,6 +35,7 @@ public:
 		class CCTBehaviorCallback* pBehaviorCallback = { nullptr };
 		class CCTQueryFilterCallback* pQueryFilterCallback = { nullptr };
 
+		_float			fStepOffset = { 0.7f };
 		PxUserData		tUserData = {};
 		// 자신의 충돌쌍
 		PxU32 iCollisionGroup = { PHYSX_CCT };

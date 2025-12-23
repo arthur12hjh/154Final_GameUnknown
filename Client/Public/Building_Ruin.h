@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "ClientStruct.h"
 #include "Actor.h"
 
 NS_BEGIN(Engine)

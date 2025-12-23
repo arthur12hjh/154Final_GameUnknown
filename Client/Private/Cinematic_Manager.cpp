@@ -48,6 +48,12 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         }
         else
             break;
+
+        if (m_iCurrentCinematicNodeIndex >= m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
+        {
+            if (m_FinishedCinematic)
+                m_FinishedCinematic();
+        }
     }
 
 	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
@@ -68,7 +74,7 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
     return S_OK;
 }
 
-HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID)
+HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc)
 {   
 	auto iter = m_pCinematicDatas->find(iCinematicID);
 	if (iter == m_pCinematicDatas->end())
@@ -78,6 +84,7 @@ HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID)
     m_iCurrentCinematicID = iCinematicID;
     m_iCurrentCinematicNodeIndex = 0;
     m_pCurrentCinematicDesc = &iter->second;
+    m_FinishedCinematic = FinishedFunc;
     m_bIsCinematicPlaying = TRUE;
 
     return S_OK;

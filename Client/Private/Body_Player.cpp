@@ -38,6 +38,22 @@ void CBody_Player::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& N
 	}
 }
 
+void CBody_Player::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pComponents = Find_Component(strColliderTag);
+	if (nullptr == pComponents)
+		return;
+
+	m_bIsEnableCollider = NotifyRef.iNumData01;
+	if (false == m_bIsEnableCollider)
+	{
+
+		static_cast<CCollider*>(pComponents)->ResetCollision();
+	}
+	//else
+	//	m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+}
+
 HRESULT CBody_Player::Mapping_Shader_Material(_uint iIdx)
 {
 	if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_Basebody_V02_F1") == 0)
@@ -91,6 +107,16 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 {
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	_matrix vResult = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
+		XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Ab-R-Calf-Tw1")) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	m_pColliderCom->UpdateColiision(vResult);
+
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 	
@@ -205,6 +231,20 @@ HRESULT CBody_Player::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+
+	OBBDesc.vSize = _float3(0.1f, 0.3f, 0.1f);
+	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
+	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+		return E_FAIL;
+
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+
 	return S_OK;
 }
 
@@ -252,4 +292,6 @@ CGameObject* CBody_Player::Clone(void* pArg)
 void CBody_Player::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pColliderCom);
 }
