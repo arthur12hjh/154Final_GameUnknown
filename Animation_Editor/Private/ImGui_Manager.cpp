@@ -92,7 +92,7 @@ void CImGui_Manager::Update(_float fTimeDelta)
 
 	if (nullptr != m_pSelectedObject)
 	{
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate,
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
 	}
 
@@ -357,8 +357,6 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 	static _bool bIsDebugPhysicsIndex = FALSE;
 	static _bool bIsGridActive = FALSE;
 
-	static _float fTimeMultiply = 1.f;
-
 	if (ImGui::BeginPopup("EditorPreferences"))
 	{
 		ImGui::Text("RenderTargets");
@@ -374,9 +372,9 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 			m_pGameInstance->Set_DebugColliderVisible(bIsDebugPhysicsIndex);
 		}
 		ImGui::Text("Timer");
-		if (ImGui::DragFloat("DeltaTime", &fTimeMultiply, 0.01f, 0.f, 3.f, "%.2f"))
+		if (ImGui::DragFloat("DeltaTime", &m_fTimeMultiply, 0.01f, 0.f, 3.f, "%.2f"))
 		{
-			m_pGameInstance->SetGameSpeed(fTimeMultiply);
+			m_pGameInstance->SetGameSpeed(m_fTimeMultiply);
 		}
 		if (ImGui::DragFloat("RootMotion", &m_fRootMagnification, 0.01f, 0.f, 3.f, "%.2f"))
 		{
