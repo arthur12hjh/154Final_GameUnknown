@@ -28,6 +28,7 @@ void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
 
     m_pGameInstance->Set_DoFInfo(fDist, 2.f, 1.f);
     m_pGameInstance->SetGameSpeed(0.4f);
+    m_pPlayer->SetSkillDataID(2001);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
@@ -70,6 +71,7 @@ _float CPlayer_RepulseState::End()
     m_pGameInstance->SetGameSpeed(1.f);
     m_Desc->isInvincible = false;
     m_Desc->isLockChangable = true;
+    m_pPlayer->SetSkillDataID(-1);
 
     return m_fNextBlendRatio;
 }

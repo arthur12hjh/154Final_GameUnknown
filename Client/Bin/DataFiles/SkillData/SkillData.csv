@@ -85,3 +85,5 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,S
 1009,Player_Parry,Result_Hit_JustParry2,None,30,7,"8,6,8",0,4,0,64
 1010,StartExcution,Hit_Sword_Normal_LinkAttack1,None,0,7,"8,6,8",0,4,0,16
 1011,EndExcution,M_Finish_DeadLink,None,30,7,"8,6,8",0,4,0,16
+2000,P_Eve_Sword_Normal_MoveBackAttack1_E,None,None,30,3,"2,2,2",0,1,0,0
+2001,P_Eve_Sword_SlotNormal_PushBackAttackRangeReady1_1,None,None,30,3,"2,2,2",0,1,0,0
