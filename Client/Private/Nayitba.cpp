@@ -599,6 +599,7 @@ HRESULT CNayitba::ADD_Components()
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
 	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
 	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.fStepOffset = 0.05f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
