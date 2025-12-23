@@ -74,7 +74,8 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
 
 inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
 { 
-    float2 vTexcoord;
+/*
+        float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
@@ -100,10 +101,11 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     
     fSum /= 9.0f; // 평균 (3x3)
     return lerp(1.0f, 0.6f, fSum); // 그림자 강도 적용
+    */
     
     //################################# NONE PCF
-    /*
-        float2 vTexcoord;
+    
+    float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
@@ -115,7 +117,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float2(vTexcoord));
     
     return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.6f : 1.f;
-    */
+    
 }
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)
