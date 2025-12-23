@@ -182,9 +182,14 @@ HRESULT CNayitba::Render_Shadow()
 
 HRESULT CNayitba::Damaged(void* pArg)
 {
-	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+	if (nullptr == pArg)
+		return E_FAIL;
 
+	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	if (nullptr == pDesc->pSkillData)
+		return E_FAIL;
+
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
@@ -197,7 +202,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
-		m_bIsTheshold = false;
+		m_eExcution = EXCUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		m_pCCT->Set_Active(false);
 	}
@@ -313,6 +318,15 @@ _uint CNayitba::GetMonsterID()
 	return m_iMonsterID;
 }
 
+void CNayitba::Excution()
+{
+	m_MonsterInfo.iCurrentHealth = 0.f;
+	m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
+
+}
+
 CGameObject* CNayitba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
@@ -388,9 +402,9 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 	m_iComboCount = 0;
 }
 
-void CNayitba::SetThesholdAction(_bool bIsTheshold)
+void CNayitba::SetThesholdAction(EXCUTION_TYPE eExcution)
 {
-	m_bIsTheshold = bIsTheshold;
+	m_eExcution = eExcution;
 }
 
 void CNayitba::EnablePhysxController(_bool bEnable)
@@ -407,6 +421,11 @@ _bool CNayitba::bIsHitReaction()
 		return true;
 
 	return false;
+}
+
+EXCUTION_TYPE CNayitba::bIsThesholdAction()
+{
+	return m_eExcution;
 }
 
 CAIController* CNayitba::GetController()
@@ -450,7 +469,11 @@ HRESULT CNayitba::Ready_CharacterData()
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		if (8 != m_pInitMonsterInfo->iMonsetID)
+			m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		else
+			m_MonsterInfo.iCurrentShield = 0.f;
+
 		m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
@@ -713,11 +736,7 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
 	{
 		if (!m_pBulletList.empty())
-		{
-			for (auto& iter : m_pBulletList)
-				Safe_Release(iter);
 			m_pBulletList.clear();
-		}
 	}
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
@@ -729,8 +748,31 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
 	{
-		if (0 < m_MonsterInfo.iCurrentStamina)
-			m_MonsterInfo.iCurrentStamina--;
+		_bool bIsScarletParry = false;
+		if (8 == m_pInitMonsterInfo->iMonsetID)
+		{
+			_bool bIsLastAttack = false;
+			_bool bIsEntranceAttack = false;
+
+			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
+			auto pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+				bIsScarletParry = true;
+		}
+
+		if (bIsScarletParry)
+		{
+			_float fDamage = m_pGameInstance->Random(100.f, 150.f);
+			m_MonsterInfo.iCurrentShield -= fDamage;
+
+			if (0 >= m_MonsterInfo.iCurrentShield)
+				m_MonsterInfo.iCurrentShield = 0.f;
+		}
+		else
+		{
+			if (0 < m_MonsterInfo.iCurrentStamina)
+				m_MonsterInfo.iCurrentStamina--;
+		}
 	}
 	else
 	{
@@ -913,7 +955,12 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// false : 비활성화
 	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(vTargetPos, 10000.f);
+	{
+		if (iter->bIsHit())
+			iter->Set_Dead(true);
+		else
+			iter->Shoot_Projectile(vTargetPos, 10000.f);
+	}
 
 	m_pBulletList.clear();
 }

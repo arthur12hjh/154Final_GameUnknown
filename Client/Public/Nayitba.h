@@ -50,6 +50,7 @@ public:
 	virtual void							Attack_Interaction(void* pArg = nullptr);
 
 	_uint									GetMonsterID();
+	void									Excution();
 	CGameObject*							GetTarget();
 
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
@@ -63,11 +64,11 @@ public:
 	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
 	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
-	void									SetThesholdAction(_bool bIsTheshold);
+	void									SetThesholdAction(EXCUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);
 
 	_bool									bIsHitReaction();
-	_bool									bIsThesholdAction() { return m_bIsTheshold; }
+	EXCUTION_TYPE							bIsThesholdAction();
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
@@ -89,7 +90,7 @@ private:
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
 	NAYTIBA_STATE							m_MonsterPreState = {};
-	_bool									m_bIsTheshold = { false };
+	EXCUTION_TYPE							m_eExcution = { EXCUTION_TYPE::END };
 
 	_bool									m_bIsSuperMonster = { false };
 	_float2									m_vHitVisibleDuration = { 0, 5.f };

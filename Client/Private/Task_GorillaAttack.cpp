@@ -112,64 +112,64 @@ _bool CTask_GorillaAttack::SelectPattern()
 	m_pBlackBoard->SetTargetDistacne();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 
-	m_pSkillData.push(m_pGameManager->Find_SkillData(13));
-	SelectAttack();
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(13));
+	//SelectAttack();
 
-	//if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.4f)
-	//{
-	//	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 1.4f)
+	{
+		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 
-	//	/*if (30.f > fRandomIndex)
-	//		BboyStepPattern();
-	//	else*/ if (30.f > fRandomIndex)
-	//	{
-	//		m_CurPatternIndex = 1;
-	//	}
-	//	else
-	//	{
-	//		m_PrePatternIndex = 0;
-	//		if(65 > fRandomIndex)
-	//			m_CurPatternIndex = 2;
-	//		else
-	//			m_CurPatternIndex = 3;
-	//	}
-	//	bIsAttack = true;
-	//}
-	//else if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 3.0f)
-	//{
-	//	SelectRandomPattern(true);
-	//}
-	//else
-	//{
-	//	m_PrePatternIndex = 0;
-	//	m_CurPatternIndex = 4;
-	//	bIsAttack = true;
-	//} 
+		/*if (30.f > fRandomIndex)
+			BboyStepPattern();
+		else*/ if (30.f > fRandomIndex)
+		{
+			m_CurPatternIndex = 1;
+		}
+		else
+		{
+			m_PrePatternIndex = 0;
+			if(65 > fRandomIndex)
+				m_CurPatternIndex = 2;
+			else
+				m_CurPatternIndex = 3;
+		}
+		bIsAttack = true;
+	}
+	else if (fDistance <= m_pOwner->GetMonsterData().fAttackRange * 3.0f)
+	{
+		SelectRandomPattern(true);
+	}
+	else
+	{
+		m_PrePatternIndex = 0;
+		m_CurPatternIndex = 4;
+		bIsAttack = true;
+	} 
 
-	//if (bIsAttack)
-	//{
-	//	if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
-	//	{
-	//		m_PrePatternIndex = m_CurPatternIndex;
-	//		switch (m_CurPatternIndex)
-	//		{
-	//		case 1:
-	//			BackStepPattern();
-	//			break;
-	//		case 2:
-	//			SelectRandomPattern();
-	//			break;
-	//		case 3:
-	//			MoveAttackPattern();
-	//			break;
-	//		case 4:
-	//			CrushPattern();
-	//			break;
-	//		}
-	//	}
-	//	else
-	//		SelectPattern();
-	//}
+	if (bIsAttack)
+	{
+		if (m_PrePatternIndex != m_CurPatternIndex || 0 == m_PrePatternIndex)
+		{
+			m_PrePatternIndex = m_CurPatternIndex;
+			switch (m_CurPatternIndex)
+			{
+			case 1:
+				BackStepPattern();
+				break;
+			case 2:
+				SelectRandomPattern();
+				break;
+			case 3:
+				MoveAttackPattern();
+				break;
+			case 4:
+				CrushPattern();
+				break;
+			}
+		}
+		else
+			SelectPattern();
+	}
 
 	if (nullptr == m_pBlackBoard->GetAttackData())
 		return false;

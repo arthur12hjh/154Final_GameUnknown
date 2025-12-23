@@ -78,6 +78,10 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 
 				if (m_pBlackBoard->IsPhaseLastAttack())
 					m_pBlackBoard->SetPhaseLastAttack(false);
+
+				if (m_pBlackBoard->bIsEnableEntarnceAttack())
+					m_pBlackBoard->SetEntarnceAttack(false);
+
 				return NODE_STATE::COMPLETE;
 			}
 		}
@@ -102,33 +106,26 @@ void CTask_ScarletAttack::SelectAttackData()
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
-	// �Ÿ� �������
-	// ApproachAttackPattern or NormalAttackPattern �߿��� ����
-	// Hit �߿� �и� ���� �������� �Ѿ������ LinkAttackPattern�� ���
-
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
-			// ������ ���� ���� ����
 			EntranceAttack();
 		}
 		else
 		{
-			// �⺻���� ���ϵ� �ϴ°�
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				m_pSkillData.push(m_pGameManager->Find_SkillData(28));
-				SelectAttackData();
-				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				//m_pSkillData.push(m_pGameManager->Find_SkillData(28));
+				//SelectAttackData();
+				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();*/
+					NormalAttackPattern();
 			}
 			else
 			{
-				// ���� ���� 
 				LinkAttackPattern();
 			}
 		}
@@ -140,6 +137,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+		SelectAttackData();
 	}
 
 	return true;
@@ -204,7 +202,6 @@ void CTask_ScarletAttack::EntranceAttack()
 	}
 
 	SelectAttackData();
-	m_pBlackBoard->SetEntarnceAttack(false);
 }
 
 void CTask_ScarletAttack::BackStepPattern()

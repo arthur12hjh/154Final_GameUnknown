@@ -533,4 +533,7 @@ namespace Client
 		_uint						iTeamIndex;
 	}NPC_DATA_DESC;
 
+	//  LINK_ATTACK -> 그로기 상태에서 들어가는값
+	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
+	enum class EXCUTION_TYPE { LINK_ATTACK, LINK_ATTACK2, END};
 }

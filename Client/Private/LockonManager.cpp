@@ -191,7 +191,7 @@ void CLockonManager::Start_Lockon()
 
 void CLockonManager::Check_LinkAttack()
 {
-    if (true == m_pPlayerDesc->isBossLock && true == m_pTarget->bIsThesholdAction())
+    if (true == m_pPlayerDesc->isBossLock && EXCUTION_TYPE::END != m_pTarget->bIsThesholdAction())
     {
 		m_pPlayerDesc->pLinkAttackTarget = m_pTarget;
         m_pPlayerDesc->isLinkAttackAvailable = true;
