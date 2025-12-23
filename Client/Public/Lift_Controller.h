@@ -45,6 +45,9 @@ public:
     virtual HRESULT                     Render() override;
     void                                SetControllPlatform(CLift_Platform* pControllPlatform);
 
+    const _float4x4*                    Get_CombinedMatrix() { return m_bIsControllLift ? &m_CombinedMatrix : nullptr; }
+    const _vector*                      Get_LiftPlatformPosition() { return m_bIsControllLift ? &m_vLiftPlatformPos : nullptr; }
+
 private:
     LIFT_ANIM_STATE                     m_eCurState = { LIFT_ANIM_STATE::LIFT_ANIM_END };
     LIFT_CONTROLL_STATE                 m_eControllState = { LIFT_CONTROLL_STATE::LIFT_END };
@@ -58,6 +61,7 @@ private:
     // 진성햄이 Platform 이라고해둬서 제가 Platform으로 했어요
     _float4x4                           m_CombinedMatrix = {};
     CLift_Platform*                     m_pLiftPlatform = { nullptr };
+    _vector                             m_vLiftPlatformPos = {};
 
     CModel*                             m_pModelCom = { nullptr };
 

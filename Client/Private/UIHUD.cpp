@@ -21,6 +21,8 @@
 #include "PlayerFSM.h"
 
 #include "UIPopup.h"
+#include "UILockOn.h"
+#include "Lift_Controller.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -60,13 +62,30 @@ void CUIHUD::Update(_float fTimeDelta)
 				if (pOwner->Get_InterDesc())
 					vPivot = pOwner->Get_InterDesc()->vUIPivot;
 
-				XMStoreFloat3(&newPos,
-					XMVectorSet(
-						XMVectorGetX(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
-						XMVectorGetY(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
-						XMVectorGetZ(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
-						1.f
-					));
+				if (dynamic_cast<CLift_Controller*>(pOwner)
+					&& dynamic_cast<CLift_Controller*>(pOwner)->Get_CombinedMatrix()
+					&& dynamic_cast<CLift_Controller*>(pOwner)->Get_LiftPlatformPosition())
+				{
+					CLift_Controller* pLiftController = dynamic_cast<CLift_Controller*>(pOwner);
+
+					XMStoreFloat3(&newPos,
+						XMVectorSet(
+							pLiftController->Get_CombinedMatrix()->m[3][0] + vPivot.x,
+							pLiftController->Get_CombinedMatrix()->m[3][1] + vPivot.y,
+							pLiftController->Get_CombinedMatrix()->m[3][2] + vPivot.z,
+							1.f
+						));
+				}
+				else
+				{
+					XMStoreFloat3(&newPos,
+						XMVectorSet(
+							XMVectorGetX(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
+							XMVectorGetY(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
+							XMVectorGetZ(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
+							1.f
+						));
+				}
 
 				Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
 				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(pOwner);
@@ -101,25 +120,37 @@ void CUIHUD::Update(_float fTimeDelta)
 
 	if (dynamic_cast<CPlayer*>(pPlayer))
 	{
-		if (PLAYER_STATE::GIGAS_LINKATTACK == pPlayer->Get_PlayerFSM()->Get_StateEnum())
+		if (PLAYER_STATE::GIGAS_LINKATTACK == pPlayer->Get_PlayerFSM()->Get_StateEnum() || m_pGameManager->Is_CinematicPlaying())
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
-			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+			for (auto& 넼pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
-			for (auto& pUI : *m_pLayers[TEXT("Layer_World")]->Get_UserInterfaces())
-				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pWorldUIs : m_RentWorldUIs)
+			{
+				for (auto& pUI : pWorldUIs.second)
+				{
+					//if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::HIDDEN);
+				}
+			}
 		}
 		else if (m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth > 0.f)
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
-			for (auto& pUI : *m_pLayers[TEXT("Layer_World")]->Get_UserInterfaces())
-				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pWorldUIs : m_RentWorldUIs)
+			{
+				for (auto& pUI : pWorldUIs.second)
+				{
+					if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::VISIBLE);
+				}
+			}
 		}
-		else if(m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth <= 0.f)
+		else
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
@@ -1055,40 +1086,40 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	return S_OK;
 }
 
-HRESULT CUIHUD::Add_InteractionUI(_int iIdx)
-{
-	auto itLayer = m_pLayers.find(TEXT("Layer_World"));
-	if (itLayer == m_pLayers.end()) return E_FAIL;
-
-	auto pObj = itLayer->second->Get_UserInterfaces()->find(TEXT("UI_Simple_Interaction"));
-
-	if (pObj->second == nullptr)
-		return E_FAIL;
-
- 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
-
-	if (!pUIBase)
-		return E_FAIL;
-	Safe_AddRef(pUIBase);
-
-	CUIBase* pUI = pUIBase->Clone_UI(this, iIdx);
-
-	m_InteractionUIs.push_back(pUI);
-
-	Safe_Release(pUIBase);
-
-	return S_OK;
-}
-
-void CUIHUD::Remove_InteractionUI(CUIBase* pUI)
-{
-	auto iter = find(m_InteractionUIs.begin(), m_InteractionUIs.end(), pUI);
-	if (iter != m_InteractionUIs.end())
-	{
-		pUI->SetVisibility(VISIBILITY::HIDDEN);
-		m_InteractionUIs.erase(iter);
-	}
-}
+//HRESULT CUIHUD::Add_InteractionUI(_int iIdx)
+//{
+//	auto itLayer = m_pLayers.find(TEXT("Layer_World"));
+//	if (itLayer == m_pLayers.end()) return E_FAIL;
+//
+//	auto pObj = itLayer->second->Get_UserInterfaces()->find(TEXT("UI_Simple_Interaction"));
+//
+//	if (pObj->second == nullptr)
+//		return E_FAIL;
+//
+// 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
+//
+//	if (!pUIBase)
+//		return E_FAIL;
+//	Safe_AddRef(pUIBase);
+//
+//	CUIBase* pUI = pUIBase->Clone_UI(this, iIdx);
+//
+//	m_InteractionUIs.push_back(pUI);
+//
+//	Safe_Release(pUIBase);
+//
+//	return S_OK;
+//}
+//
+//void CUIHUD::Remove_InteractionUI(CUIBase* pUI)
+//{
+//	auto iter = find(m_InteractionUIs.begin(), m_InteractionUIs.end(), pUI);
+//	if (iter != m_InteractionUIs.end())
+//	{
+//		pUI->SetVisibility(VISIBILITY::HIDDEN);
+//		m_InteractionUIs.erase(iter);
+//	}
+//}
 
 CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3* vTargetPos, _bool bBillboard)
 {
@@ -1097,6 +1128,7 @@ CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, con
 
 	// 맨 뒤에서 꺼내기
 	CUIBase* pUI = it->second.back();
+	m_RentWorldUIs[poolKey].push_back(pUI);
 	it->second.pop_back();
 
 	// 상태 초기화 후 사용할 준비
@@ -1129,6 +1161,14 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	pUI->Set_TargetPos(nullptr );
 
 	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag;
+
+	for (auto iter = m_RentWorldUIs[szPoolTag].begin(); iter == m_RentWorldUIs[szPoolTag].end();)
+	{
+		if (*iter == pUI)
+			iter = m_RentWorldUIs[szPoolTag].erase(iter);
+		else
+			++iter;
+	}
 
 	m_WorldUIs[szPoolTag].push_back(pUI);
 
@@ -1174,16 +1214,5 @@ void CUIHUD::Free()
 
 	Safe_Release(m_pUIAnimMgr);
 	Safe_Release(m_pGameManager);
-
-	/*for (auto& pPools : m_WorldUIs)
-	{
-		for (auto& pPool : pPools.second)
-			Safe_Release(pPool);
-	}
-
-	for (auto& pUI : m_InteractionUIs)
-	{
-		Safe_Release(pUI);
-	}*/
 }
 
