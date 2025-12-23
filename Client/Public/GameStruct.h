@@ -535,5 +535,5 @@ namespace Client
 
 	//  LINK_ATTACK -> 그로기 상태에서 들어가는값
 	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
-	enum class EXCUTION_TYPE { LINK_ATTACK, LINK_ATTACK2, END};
+	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, EXECUTION_ATTACK, END};
 }

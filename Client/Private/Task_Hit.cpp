@@ -59,7 +59,7 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 		if (m_pBlackBoard->bIsExcution())
 		{
 			m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
-			m_pBlackBoard->EnterExcution(EXCUTION_TYPE::END);
+			m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::END);
 		}
 
 		return NODE_STATE::COMPLETE;

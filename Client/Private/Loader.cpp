@@ -519,7 +519,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 	//	return E_FAIL;
 
-	// 오피스 스타일
+	//// 오피스 스타일
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))

@@ -202,7 +202,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
-		m_eExcution = EXCUTION_TYPE::END;
+		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		m_pCCT->Set_Active(false);
 	}
@@ -402,7 +402,7 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 	m_iComboCount = 0;
 }
 
-void CNayitba::SetThesholdAction(EXCUTION_TYPE eExcution)
+void CNayitba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
 	m_eExcution = eExcution;
 }
@@ -423,7 +423,7 @@ _bool CNayitba::bIsHitReaction()
 	return false;
 }
 
-EXCUTION_TYPE CNayitba::bIsThesholdAction()
+NAYITBA_EXECUTION_TYPE CNayitba::bIsThesholdAction()
 {
 	return m_eExcution;
 }
@@ -599,6 +599,7 @@ HRESULT CNayitba::ADD_Components()
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
 	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
 	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.fStepOffset = 0.05f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))

@@ -11,8 +11,8 @@ CCollider::CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 CCollider::CCollider(const CCollider& rhs) :
     CComponent(rhs),
     m_eType(rhs.m_eType)
-#ifdef _DEBUG
     , m_pBatch{ rhs.m_pBatch }
+#ifdef _DEBUG
     , m_pEffect{ rhs.m_pEffect }
     , m_pInputLayout{ rhs.m_pInputLayout }
 #endif
@@ -24,8 +24,8 @@ CCollider::CCollider(const CCollider& rhs) :
 
 HRESULT CCollider::Initialize_Prototype()
 {
-#ifdef _DEBUG
     m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
+#ifdef _DEBUG
     m_pEffect = new BasicEffect(m_pDevice);
     m_pEffect->SetVertexColorEnabled(true);
 

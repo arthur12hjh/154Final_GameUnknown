@@ -142,6 +142,21 @@ BlendState BS_Blend
     BlendOp = Add;
 };
 
+/* alpha 값도 One, One, Add 모드 켜기 */
+BlendState BS_BlendAlpha
+{
+    BlendEnable[0] = true;
+    BlendEnable[1] = true;
+
+    SrcBlend = one;
+    DestBlend = one;
+    BlendOp = add;
+    SrcBlendAlpha = one;
+    DestBlendAlpha = one;
+    BlendOpAlpha = add;
+};
+
+
 /* One, One, Add 모드로 블렌드 켜기.*/
 BlendState BS_Override
 {

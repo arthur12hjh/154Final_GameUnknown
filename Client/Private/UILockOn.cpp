@@ -49,7 +49,7 @@ void CUILockOn::Update(_float fTimeDelta)
 	auto pMonster = dynamic_cast<CNayitba*>(m_pParent);
 	if (pMonster)
 	{
-		if (EXCUTION_TYPE::END != pMonster->bIsThesholdAction())
+		if (NAYITBA_EXECUTION_TYPE::END != pMonster->bIsThesholdAction())
 			m_isFinisher = true;
 		else
 			m_isFinisher = false;
