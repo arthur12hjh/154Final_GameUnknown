@@ -183,6 +183,7 @@ HRESULT CNpc::Ready_Components()
 
 void CNpc::Begin_Interaction()
 {
+    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
@@ -192,6 +193,7 @@ void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
 
 void CNpc::End_Interaction()
 {
+    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 }
 
 CNpc* CNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
