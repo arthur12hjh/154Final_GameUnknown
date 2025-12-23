@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 
 #include "Effect.h"
+#include "GameManager.h"
+#include "Nayitba.h"
 #include "StringHelper.h"
 #include "Player.h"
 
@@ -47,7 +49,6 @@ void CBody_Player::Activate_PartObject_Collider(const _wstring& strColliderTag, 
 	m_bIsEnableCollider = NotifyRef.iNumData01;
 	if (false == m_bIsEnableCollider)
 	{
-
 		static_cast<CCollider*>(pComponents)->ResetCollision();
 	}
 	//else
@@ -110,9 +111,13 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 
 	_matrix vResult = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
 		XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Ab-R-Calf-Tw1")) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+
 	m_pColliderCom->UpdateColiision(vResult);
 
-	//m_pGameInstance->ADD_Collider(m_pColliderCom);
+	if (m_bIsEnableCollider)
+	{
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -240,6 +245,8 @@ HRESULT CBody_Player::Ready_Components()
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
+	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
@@ -261,6 +268,27 @@ HRESULT CBody_Player::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CBody_Player::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	if (pNaytiba)
+	{
+		DEFAULT_DAMAGE_DESC pDamageDesc = {};
+		pDamageDesc.pAttacker = m_pParent;
+		pDamageDesc.vHitPoint = vHitPoint;
+		pDamageDesc.vHitDir = vHitDir;
+
+		_uint iSkillID = static_cast<CPlayer*>(m_pParent)->GetSkillDataID();
+		if (-1 == iSkillID)
+			return;
+
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
+		pNaytiba->Damaged(&pDamageDesc);
+	}
+
+
 }
 
 CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

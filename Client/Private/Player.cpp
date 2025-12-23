@@ -344,7 +344,7 @@ void CPlayer::Update_TestSkillInput(_float fTimeDelta)
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -743,7 +743,6 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
 
 	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
