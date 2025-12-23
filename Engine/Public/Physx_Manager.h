@@ -29,7 +29,7 @@ public:
 	PxControllerManager* Get_PxCCTManager() { return m_pPxCCTManager; }
 	PxPhysics*	Get_PxPhysics() { return m_PxPhysics; }
 	PxScene*	Get_PxScene() { return m_PxScene; }
-
+	
 	/* CCT는 생성한 순간 씬에 들어가므로, 피직스에서 충돌쌍만 들고 있게 한다. (쓸지도 모름) */
 	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
