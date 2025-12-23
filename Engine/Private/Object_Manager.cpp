@@ -161,8 +161,6 @@ void CObject_Manager::Clear_DeadObj()
 		m_pLayers[m_iPreLevel].clear();
 		m_iPreLevel = -1;
 	}
-	
-
 }
 
 

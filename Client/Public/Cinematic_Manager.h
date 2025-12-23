@@ -24,7 +24,7 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Update(_float fTimeDelta);
 
-	HRESULT						Play_Cinematic(_uint iCinematicID);
+	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc );
 
 	HRESULT						Emplace_CinematicObject(CCinematicObject* pObject);
 	HRESULT						Emplace_ActionCamera(const _tchar* strCameraTag);
@@ -34,9 +34,9 @@ public:
 	HRESULT						Change_MainCamera();
 
 private:
-	CGameInstance* m_pGameInstance = { nullptr };
-	class CPlayer* m_pPlayer = { nullptr };
-	PLAYER_DESC* m_pPlayerDesc = { nullptr };
+	CGameInstance*				m_pGameInstance = { nullptr };
+	class CPlayer*				m_pPlayer = { nullptr };
+	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
 
 	// 시네마틱 전용 데이터
 	map<_uint, CINEMATIC_DESC>* m_pCinematicDatas = { nullptr };
@@ -48,8 +48,10 @@ private:
 	_float						m_fCinematicTimer = 0.f;
 	_uint						m_iCurrentCinematicID = -1;
 	_uint						m_iCurrentCinematicNodeIndex = 0;
-	CINEMATIC_DESC* m_pCurrentCinematicDesc = { nullptr };
+	CINEMATIC_DESC*				m_pCurrentCinematicDesc = { nullptr };
 	_bool						m_bIsCinematicPlaying = false;
+	function<void()>			m_FinishedCinematic = {nullptr};
+
 
 private:
 	void Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);

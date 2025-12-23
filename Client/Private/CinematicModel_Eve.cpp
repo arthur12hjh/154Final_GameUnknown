@@ -182,7 +182,7 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 {
 	m_bIsActive = TRUE;
 
-	if (m_iCinematicCode == -1)
+	if (m_iCinematicCode != CinematicNodeDesc.iActiveIndex)
 		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
 
 	switch (m_iCinematicCode)
@@ -347,6 +347,7 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 
 	if (isFinished)
 	{
+		m_fMoveTime = 0.f;
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
 	}
@@ -356,7 +357,6 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 
 HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 {
-	m_fMoveTime += fTimeDelta;
 	//static _bool isSkipped = FALSE;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 	
@@ -364,16 +364,21 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 	_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
 
 	if (iCurrentKeyFrameIndex >= 600
-		&& iCurrentKeyFrameIndex <= 660)
+		&& iCurrentKeyFrameIndex <= 675)
 	{
-		_float fRatio = ((_float)iCurrentKeyFrameIndex - 600.f) / 60.f;
+		m_fMoveTime += fTimeDelta;
+
+		_float fRatio = Clamp(m_fMoveTime / 1.f, 0.f, 1.f);
 		_vector vPosition = XMVectorLerp(XMVectorSet(742.f, 2.8678f, 597.f, 1.f), XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f), fRatio);
 
 		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 	}
+	else if (iCurrentKeyFrameIndex > 675)
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f));
 
 	if (isFinished)
 	{
+		m_fMoveTime = 0.f;
 		//isSkipped = FALSE;
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;

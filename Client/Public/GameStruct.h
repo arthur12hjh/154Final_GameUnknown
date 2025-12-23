@@ -522,4 +522,18 @@ namespace Client
 		_float3 vScale;
 	}LEVEL_CINEMATICOBJECT_DESC;
 
+	typedef struct Npc_Data_Desc
+	{
+		_uint						iNpcID;
+		char						szName[MAX_PATH];
+		char						szPrototypeModel[MAX_PATH];
+		char						szAIController[MAX_PATH];
+
+		_float3						vExtents;
+		_uint						iTeamIndex;
+	}NPC_DATA_DESC;
+
+	//  LINK_ATTACK -> 그로기 상태에서 들어가는값
+	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
+	enum class EXCUTION_TYPE { LINK_ATTACK, LINK_ATTACK2, END};
 }

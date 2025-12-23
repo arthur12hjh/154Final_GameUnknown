@@ -44,7 +44,7 @@ HRESULT CBullet_Rock::Initialize(void* pArg)
 	EffectDesc.iFloor = 0;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-
+	Safe_AddRef(m_pEffect);
 	return S_OK;
 }
 
@@ -80,6 +80,9 @@ void CBullet_Rock::Update(_float fTimeDelta)
 
 void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
+	if (false == m_bIsEnableCollider)
+		return;
+
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 8000.f))
 	{
 #ifdef _DEBUG
@@ -162,10 +165,24 @@ void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 	pDamageDesc.pSkillData = m_pSkillData;
 
 	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-	if(pCharacter)
+	if (pCharacter) {
 		pCharacter->Damaged(&pDamageDesc);
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
 
-	Set_Dead(true);
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+
+		EffectDesc.vPos = XMVectorSet(m_CombinedWorldMatrix._41, m_CombinedWorldMatrix._42, m_CombinedWorldMatrix._43, 1);
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 1.f;
+		EffectDesc.iFloor = 0;
+		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Rock_Hit"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+	}
+
+	m_bIsEnableCollider = false;
 }
 
 HRESULT CBullet_Rock::ADD_Components(BULLET_DESC& pDesc)
@@ -243,19 +260,7 @@ void CBullet_Rock::Free()
 	__super::Free();
 	if (nullptr != m_pEffect) {
 		m_pEffect->End();
-		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-		EffectDesc.fRotationPerSec = 1.f;
-		EffectDesc.fSpeedPerSec = 1.f;
-	
-		EffectDesc.pRootMatrix = nullptr;
-		EffectDesc.pWorldMatrix = nullptr;
-	
-		EffectDesc.vPos = XMVectorSet(m_CombinedWorldMatrix._41, m_CombinedWorldMatrix._42, m_CombinedWorldMatrix._43, 1);
-		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 1.f;
-		EffectDesc.iFloor = 0;
-		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Rock_Hit"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+		Safe_Release(m_pEffect);
 	}
 	
 }
