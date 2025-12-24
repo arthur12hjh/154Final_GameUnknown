@@ -56,7 +56,7 @@ HRESULT CLevel_Scarlet::Initialize()
 
 	Load_Map_Data();
 
-	CGameManager::GetInstance()->Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	CGameManager::GetInstance()->Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Scarlet.json");
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);

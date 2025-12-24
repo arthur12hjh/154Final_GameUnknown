@@ -364,16 +364,16 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 	_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
 
 	if (iCurrentKeyFrameIndex >= 600
-		&& iCurrentKeyFrameIndex <= 675)
+		&& iCurrentKeyFrameIndex <= 720)
 	{
 		m_fMoveTime += fTimeDelta;
 
-		_float fRatio = Clamp(m_fMoveTime / 1.f, 0.f, 1.f);
+		_float fRatio = Clamp(m_fMoveTime / 2.f, 0.f, 1.f);
 		_vector vPosition = XMVectorLerp(XMVectorSet(742.f, 2.8678f, 597.f, 1.f), XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f), fRatio);
 
 		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 	}
-	else if (iCurrentKeyFrameIndex > 675)
+	else if (iCurrentKeyFrameIndex > 720)
 		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f));
 
 	if (isFinished)

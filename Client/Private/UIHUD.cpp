@@ -124,7 +124,7 @@ void CUIHUD::Update(_float fTimeDelta)
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
-			for (auto& 넼pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
 			for (auto& pWorldUIs : m_RentWorldUIs)
 			{
