@@ -106,25 +106,30 @@ void CNayitba::Update(_float fTimeDelta)
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
+	_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
+
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 		m_pAIController->Update(fTimeDelta);
+
+	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		if (m_pLockOnMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (SpineMatrix * WorldMatrix).r[3]);
+
+		if (m_pHeadBoneMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+	}
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
 		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 		m_pTargetCom->Target_Search(m_pAISenceCom->GetSearchAllObject());
 
-		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+		WorldMatrix.r[3] += SpineMatrix.r[3];
+		m_pColliderCom->UpdateColiision(WorldMatrix);
 	}
 	
-	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
-	{
-		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		if(m_pLockOnMatrix)
-			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
-		if(m_pHeadBoneMatrix)
-			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
-	}
 	__super::Update(fTimeDelta);
 }
 
@@ -500,7 +505,6 @@ HRESULT CNayitba::ADD_Components()
 	/* Com_Collider_AABB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 	OBBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
-	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
@@ -581,7 +585,7 @@ HRESULT CNayitba::ADD_Components()
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-
+		
 	}
 
 	/* Com_CCT */

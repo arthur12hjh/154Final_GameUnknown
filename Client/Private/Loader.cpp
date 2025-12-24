@@ -1493,6 +1493,12 @@ HRESULT CLoader::Loading_For_GamePlay_Map(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 	
+	/* For.Prototype_Component_Texture_Terrain */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Terrain_Desert_Normal");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Desert/Terrain/009_A_TN.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 
 	/* For.Prototype_Component_Texture_Terrain */

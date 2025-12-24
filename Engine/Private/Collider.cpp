@@ -144,6 +144,9 @@ void CCollider::Clear_HitObjectTypeList()
 
 void CCollider::CallFunction()
 {
+    if (m_pOwner->isDead())
+        return;
+
     list<CGameObject*> ExitObject;
     for (auto& HitObject : m_HitList)
     {

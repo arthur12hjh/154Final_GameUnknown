@@ -77,12 +77,14 @@ void CSciFi_Door::Update(_float fTimeDelta)
 				{
 					m_pModelCom->Set_AnimationIndex(0, false);
 					m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+					m_pRigidBody->Set_Simulation(true);
 				}
 				break;
 				case SCIFI_DOOR_STATE::CLOSE:
 				{
 					m_pModelCom->Set_AnimationIndex(1, false);
 					m_eCurState = SCIFI_DOOR_STATE::OPEN;
+					m_pRigidBody->Set_Simulation(false);
 				}
 				break;
 				}
@@ -109,7 +111,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 		else
 		{
 			auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
-			if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+			if (PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode || PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
 			{
 				if (INTERACTION_STATE::LOCK == m_eInterState)
 				{
@@ -176,7 +178,7 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
 	pCullingCollider->SetCollision({ 0.f, 5.f, 0.f }, {}, { 10.f, 10.f, 2.f });
 
-	_float3 Com_Size = pCullingCollider->GetBounding().Extents;
+	_float3 Com_Size = pCullingCollider->GetOrizinBounding().Extents;
 
 	/* Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), pComponentTag,

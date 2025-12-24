@@ -75,6 +75,7 @@ HRESULT CAttackHitBox::Initialize(const HIT_BOX_DESC& pArg)
 	m_pColliderCom->ADD_IgnoreObjectType(pArg.eHitBoxType);
 	
 	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pColliderCom->ResetCollision();
 	m_pCullingCollider->UpdateColiision(worldMatrix);
 	m_pColliderCom->UpdateColiision(worldMatrix);
 
@@ -118,22 +119,24 @@ void CAttackHitBox::Update(_float fTimeDelta)
 	m_pColliderCom->UpdateColiision(worldMatrix);
 
 	m_vAliveTime.x += fTimeDelta;
-	if (m_vAliveTime.x > m_vAliveTime.y)
-		ReturnObjectPool();;
+
 #endif
 }
 
 void CAttackHitBox::Late_Update(_float fTimeDelta)
 {
+	if (m_vAliveTime.x > m_vAliveTime.y)
+		ReturnObjectPool();
+	else
+	{
 #ifdef _DEBUG
-	if (!m_bIsDelayDead)
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
-
-	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #else
-	if(!m_isDead)
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 #endif // _DEBUG
+	}
+
 
 }
 
@@ -188,7 +191,6 @@ HRESULT CAttackHitBox::Ready_Components(const HIT_BOX_DESC& pDesc)
 	// 충돌 끝낫을때 이벤트는 사용해야하는 때가 오면 그때 만들게요
 	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
-	//m_pCollider->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 
 	m_pColliderCom->SetColliderHitType(pDesc.eHitBoxType);
 
@@ -246,10 +248,12 @@ void CAttackHitBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 
 void CAttackHitBox::ReturnObjectPool()
 {
-	static_cast<COBBCollider*>(m_pColliderCom)->ResetCollision();
+	
 
 #ifdef _DEBUG
 	m_vDelayDead.x = m_vAliveTime.x = 0.f;
+#else
+	m_vAliveTime.x = 0.f;
 #endif
 
 	auto pGameManager = CGameManager::GetInstance();
