@@ -2508,7 +2508,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp"));
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
