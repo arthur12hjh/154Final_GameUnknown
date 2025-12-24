@@ -38,8 +38,8 @@ CPlayer_GigasExecutionState* CPlayer_GigasExecutionState::Create(void* pArg)
 {
     CPlayer_GigasExecutionState* pState = new CPlayer_GigasExecutionState();
 
-    if (FAILED(pState->Initialize(pArg)))
-        return nullptr;
+   /* if (FAILED(pState->Initialize(pArg)))
+        return nullptr;*/
 
     return pState;
 }

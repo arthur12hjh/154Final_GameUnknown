@@ -56,6 +56,20 @@ void CUIPopup::Update(_float fTimeDelta)
 
 void CUIPopup::Late_Update(_float fTimeDelta)
 {
+	if (m_isOpen && m_isClosing && IsAnimFinished(TEXT("Popup_Close")))
+	{
+		m_pGameInstance->SetGamePause(false);
+		g_bIsMouseLock = true;
+
+		m_eVisibility = VISIBILITY::HIDDEN;
+
+		for (auto& pChild : m_Children)
+			Update_Children(pChild);
+
+		m_isOpen = false;
+		m_isClosing = false;
+	}
+
 	if (!m_isOpen)
 		return;
 
@@ -166,9 +180,6 @@ HRESULT CUIPopup::Execute(const UI_EVENT_DESC& EventDesc)
 
 		Safe_Release(pHUD);
 	}
-	if (Type == TEXT("ActionEvent"))
-	{
-	}
 
 	return S_OK;
 }
@@ -210,9 +221,6 @@ void CUIPopup::Open_Popup()
 
 void CUIPopup::Close_Popup()
 {
-	m_pGameInstance->SetGamePause(false);
-	g_bIsMouseLock = true;
-
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Close"));
 
@@ -221,13 +229,15 @@ void CUIPopup::Close_Popup()
 
 	Safe_Release(pHUD);
 
+	m_isClosing = true;
+
 	//m_eVisibility = VISIBILITY::HIDDEN;
 	//m_tUIDesc.fAlpha = 0.f;
 
-	for (auto& pChild : m_Children)
-		Update_Children(pChild);
+	/*for (auto& pChild : m_Children)
+		Update_Children(pChild);*/
 
-	m_isOpen = false;
+	//m_isOpen = false;
 }
 
 CUIPopup* CUIPopup::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

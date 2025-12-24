@@ -4,19 +4,16 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect;
-class CTexture;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUIInteractionFX final : public CUIBase
+class CUIUnlockFX final : public CUIBase
 {
 private:
-	CUIInteractionFX(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CUIInteractionFX(const CUIInteractionFX& Prototype);
-	virtual ~CUIInteractionFX() = default;
+	CUIUnlockFX(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CUIUnlockFX(const CUIUnlockFX& Prototype);
+	virtual ~CUIUnlockFX() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -33,14 +30,12 @@ protected:
 	virtual void CallbackEvent(void* pArg) override;
 
 private:
-	virtual HRESULT Glow_Render();
-	virtual HRESULT Bind_GlowShaderResources();
-
-private:
-	CVIBuffer_Rect* m_pVIGlowBufferCom{ nullptr };
+	_bool m_bPlay = false;
+	_uint m_iTextureIdx = 0;
+	_float m_fTimeAcc = 0.f;
 
 public:
-	static CUIInteractionFX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUIUnlockFX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
