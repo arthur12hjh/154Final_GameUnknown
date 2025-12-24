@@ -55,6 +55,9 @@ HRESULT CLevel_Scarlet::Initialize()
 		return E_FAIL;
 
 	Load_Map_Data();
+
+	CGameManager::GetInstance()->Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);

@@ -24,7 +24,7 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Update(_float fTimeDelta);
 
-	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc );
+	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc);
 
 	HRESULT						Emplace_CinematicObject(CCinematicObject* pObject);
 	HRESULT						Emplace_ActionCamera(const _tchar* strCameraTag);
