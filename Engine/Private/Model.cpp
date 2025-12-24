@@ -97,6 +97,11 @@ _int CModel::Get_BoneIndex(const _char* pBoneName) const
     return iBoneIndex;
 }
 
+vector<class CAnimation*>* CModel::Get_Animations()
+{
+    return &m_Animations;
+}
+
 vector<class CBone*>* CModel::Get_Bones()
 {
     return &m_Bones;

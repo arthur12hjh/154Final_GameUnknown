@@ -146,6 +146,8 @@ void CCinematicMaker::Play_Cinematic(_uint iSelectedCinematicIndex)
 {
 #ifdef _DEBUG
 	m_pGameManager->Play_Cinematic(iSelectedCinematicIndex);
+#else
+    m_pGameManager->Play_Cinematic(iSelectedCinematicIndex);
 #endif
 }
 
