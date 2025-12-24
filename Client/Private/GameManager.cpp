@@ -11,6 +11,7 @@
 #include "Interaction_Manager.h"
 
 #include "Player.h"
+#include "ReserveDeferred.h"
 
 IMPLEMENT_SINGLETON(CGameManager);
 
@@ -191,6 +192,26 @@ HRESULT CGameManager::Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, C
 CShader* CGameManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag)
 {
     return m_pShaderManager->Get_Shader(eLevelID, strShaderTag);
+}
+
+HRESULT CGameManager::Bind_CamInfo(LEVEL eLevelID)
+{
+    return m_pShaderManager->Bind_CamInfo(eLevelID);
+}
+
+HRESULT CGameManager::Add_ReserveDeferred(const _wstring& strReserveDeferredTag, CReserveDeferred* pReserveDeferred)
+{
+    return m_pShaderManager->Add_ReserveDeferred(strReserveDeferredTag, pReserveDeferred);
+}
+
+void CGameManager::Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag)
+{
+    m_pShaderManager->Set_Active_ReserveDeferred(strReserveDeferredTag, bFlag);
+}
+
+void CGameManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg)
+{
+    m_pShaderManager->Set_Desc_ReserveDeferred(strReserveDeferredTag, pArg);
 }
 
 #pragma region LOCKON

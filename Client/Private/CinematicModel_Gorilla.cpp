@@ -308,7 +308,6 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 	{
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
-		m_pGameInstance->Active_DoF(false, 0.f);
 	}
 
 	return S_OK;

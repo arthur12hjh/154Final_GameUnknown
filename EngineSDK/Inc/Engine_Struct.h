@@ -513,6 +513,27 @@ namespace Engine
 		float fMaxAngularVelocity;
 		float fMaxDepenetrationVelocity;
 	} JOINT_CHAIN_DESC;
+
+	// 이 객체는 WVP 행렬, 렌더타겟 이름까지만 바인딩해줘.
+	// 나머진 클라에서 알아서 바인딩하거나 처리해야 돼.
+	// Reserve 객체 추가할떄 바인딩해놓으면 되긴 하는데 
+	// 렌더링 이후 초기화 타이밍은 알아서 잘 잡아봐.
+	typedef struct tagClientScreenShaderReserve {
+		//클라쪽에서 사용할 셰이더 파일
+		class CShader* pShaderCom = { nullptr };
+		//셰이더 패스 번호. 기본적으로 0번 세팅
+		unsigned int iShaderPassIdx = { 0 };
+		//클라쪽에서 받아낼 텍스쳐 전역변수 이름
+		const char* pRTNameTag = { nullptr };
+		//클라쪽에서 받아낼 월드행렬 전역변수 이름
+		const char* pWorldMatrixTag = { nullptr };
+		//클라쪽에서 받아낼 뷰행렬 전역변수 이름
+		const char* pViewMatrixTag = { nullptr };
+		//클라쪽에서 받아낼 투영행렬 전역변수 이름
+		const char* pProjMatrixTag = { nullptr };
+	} CLIENT_SHADER_RESERVE;
+
+
 #pragma endregion
 }
 

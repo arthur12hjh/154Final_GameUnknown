@@ -389,6 +389,9 @@
     <ClInclude Include="..\public\BlackBlend.h">
       <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ReserveDeferred.h">
+      <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -747,6 +750,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BlackBlend.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ReserveDeferred.cpp">
+      <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1187,6 +1193,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile">
       <UniqueIdentifier>{f17e8010-0159-438e-b71e-89b32bc1c84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\ReserveDeferred">
+      <UniqueIdentifier>{c0558339-073d-42f2-834c-125a12823cb0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
