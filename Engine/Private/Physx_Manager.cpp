@@ -19,21 +19,21 @@ HRESULT CPhysx_Manager::Initialize()
 
 	m_PxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_DefaultAllocator, m_DefaultErrorCallback);
 
-    m_Pvd = physx::PxCreatePvd(*m_PxFoundation);
+    m_Pvd = PxCreatePvd(*m_PxFoundation);
     
-    m_PxTransport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-	m_Pvd->connect(*m_PxTransport, physx::PxPvdInstrumentationFlag::eALL);
+    m_PxTransport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+	m_Pvd->connect(*m_PxTransport, PxPvdInstrumentationFlag::eALL);
 
-    m_PxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_PxFoundation, physx::PxTolerancesScale(), true, m_Pvd);
+    m_PxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_PxFoundation, PxTolerancesScale(), true, m_Pvd);
 	if (nullptr == m_PxPhysics)
 		return E_FAIL;
 
     PxInitExtensions(*m_PxPhysics, m_Pvd);
 
-    physx::PxSceneDesc sceneDesc(m_PxPhysics->getTolerancesScale());
-    sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+    PxSceneDesc sceneDesc(m_PxPhysics->getTolerancesScale());
+    sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 
-    m_PxDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+    m_PxDispatcher = PxDefaultCpuDispatcherCreate(2);
 
     sceneDesc.cpuDispatcher = m_PxDispatcher;
     sceneDesc.filterShader = MyFilterShader;
@@ -43,13 +43,13 @@ HRESULT CPhysx_Manager::Initialize()
 
     m_pPxCCTManager = PxCreateControllerManager(*m_PxScene);
 
-    physx::PxPvdSceneClient* pvdClient = m_PxScene->getScenePvdClient();
+    PxPvdSceneClient* pvdClient = m_PxScene->getScenePvdClient();
    
     if (pvdClient)
     {
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
 
     return S_OK;
@@ -57,7 +57,7 @@ HRESULT CPhysx_Manager::Initialize()
 
 void CPhysx_Manager::Update(_float fTimeDelta)
 {
-    /* Dead ������Ʈ ���� */
+    /* Dead Pair Remove */
     for (auto CCTPair = m_CCTs.begin(); CCTPair != m_CCTs.end();)
     {
         if (CCTPair->first->isDead())
@@ -65,7 +65,7 @@ void CPhysx_Manager::Update(_float fTimeDelta)
             Safe_Release(CCTPair->first);
             Safe_Release(CCTPair->second);
 
-            CCTPair = m_CCTs.erase(CCTPair); // erase�� ���� iterator ��ȯ
+            CCTPair = m_CCTs.erase(CCTPair); // Erase Pair CCT
         }
         else
         {
@@ -77,12 +77,11 @@ void CPhysx_Manager::Update(_float fTimeDelta)
     {
         if (RigidBodyPair->first->isDead())
         {
-            // �� ������ ��ü �켱 ���� 
             m_PxScene->removeActor(*RigidBodyPair->second->Get_PxRigidBody());
             Safe_Release(RigidBodyPair->first);
             Safe_Release(RigidBodyPair->second);
 
-            RigidBodyPair = m_RigidBodies.erase(RigidBodyPair); // erase�� ���� iterator ��ȯ
+            RigidBodyPair = m_RigidBodies.erase(RigidBodyPair);
         }
         else
         {
@@ -90,13 +89,13 @@ void CPhysx_Manager::Update(_float fTimeDelta)
         }
     }
 
-    /* �� �ùķ��̼� */
+    //피직스 시뮬레이션 실행
     if (nullptr != m_PxScene)
     {
-        m_PxScene->simulate(1 / 60.f);      // �ùķ��̼� ����
-        m_PxScene->fetchResults(true);        // ��� ��������, PVD�� ���۵�
+        m_PxScene->simulate(1 / 60.f);      // 고정상수 슛~
+        m_PxScene->fetchResults(true);        // true로 해야 PVD에서 볼 수 있음.
 
-        /* ��ġ ����ȭ */
+        //트랜스폼 동기화 세팅
         for (auto& Pair : m_RigidBodies)
         {
             CTransform* pTransform = Pair.first->GetTransform();
@@ -174,10 +173,6 @@ HRESULT CPhysx_Manager::Add_CCT_ToPhysx(CGameObject* pGameObject, CCharacterCont
 {
     if (nullptr == pGameObject || nullptr == pCCT)
         return E_FAIL;
-
-    //�̰� SetOwner �Ǹ� ����
-    //if (pCCT->GetOwner() != pGameObject)
-    //    return E_FAIL;
 
     m_CCTs.push_back(make_pair(pGameObject, pCCT));
 

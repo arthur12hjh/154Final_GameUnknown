@@ -46,14 +46,14 @@ public:
 	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
 	void Set_DoFInfo(_float fFocusDistance);
 
-
 #ifdef _DEBUG
-	//RenderDoc 전용
+	//RenderDoc 전용 로깅 코드
 	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
-	//RenderDoc 전용
+	//RenderDoc 전용 로깅 코드
 	void		EndMarker(ID3D11DeviceContext* pContext);
 #endif
 public:
+	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	HRESULT				Initialize();
@@ -105,6 +105,8 @@ private:
 	ID3D11RasterizerState*				m_pRS_OcclusionQuery = { nullptr };
 
 private:
+	vector<class CReserveDeferred*>		m_ClientShaderReserves = {};
+
 	class CCascadeShadow*				m_pCascadeShadow = { nullptr };
 	class CStaticShadow*				m_pStaticShadow = { nullptr };
 	class CBlur*						m_pBlur = { nullptr };
@@ -140,12 +142,12 @@ private:
 	void		ToneMapping();
 	void		Render_BackBuffer();
 	void		Render_UI();
-
 	void		Update_Occlusion_Visibility();
+
 private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
-	HRESULT		Bind_WVP_Matrices();
+	HRESULT		Bind_PreValues();
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

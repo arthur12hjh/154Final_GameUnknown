@@ -22,8 +22,6 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
-
- 
 #include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -337,6 +335,23 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
+	}
 }
 
 void CPlayer::Update_TestSkillInput(_float fTimeDelta)
@@ -639,6 +654,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
@@ -702,27 +722,14 @@ void CPlayer::Update_LinkAttack(_float fTimeDelta)
 		return;
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
-	{		
-		PLAYER_TRANSITION_DESC TransitionDesc{};
-		SOCKETMATRIX_DESC TargetDesc{};
-		_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;		
+	{
+		NAYITBA_EXECUTION_TYPE eExecutionState = m_PlayerDesc.pLinkAttackTarget->bIsThesholdAction();
 
-		TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
-		TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+		if (NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK == eExecutionState)
+			Execution_Nayitba();
 
-		switch (iMonsterID)
-		{
-		case 1:
-			TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
-			//여기서 기가스 정보 꺼내와서 넘겨줘야함
-			TransitionDesc.pArg = &TargetDesc;
-			break;
-
-		default:
-			return;
-		}
-
-		m_pFSM->Handle_Transition(TransitionDesc);
+		else if(NAYITBA_EXECUTION_TYPE::LINK_ATTACK == eExecutionState)
+			LinkAttack_Nayitba();
 	}
 }
 
@@ -854,6 +861,38 @@ void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
 	if(pHitBox)
 		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
+}
+
+void CPlayer::Execution_Nayitba()
+{
+	DEFAULT_DAMAGE_DESC Desc;
+	Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
+
+	m_PlayerDesc.pLinkAttackTarget->Damaged(&Desc);
+}
+
+void CPlayer::LinkAttack_Nayitba()
+{
+	PLAYER_TRANSITION_DESC TransitionDesc{};
+	SOCKETMATRIX_DESC TargetDesc{};
+
+	_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;
+
+	TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
+	TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+
+	switch (iMonsterID)
+	{
+	case 1:
+		TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
+		//여기서 기가스 정보 꺼내와서 넘겨줘야함
+		TransitionDesc.pArg = &TargetDesc;
+		break;
+	default:
+		return;
+	}
+
+	m_pFSM->Handle_Transition(TransitionDesc);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -64,11 +64,11 @@ public:
 	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
 	
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
-	void									SetThesholdAction(EXCUTION_TYPE eExcution);
+	void									SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);
 
 	_bool									bIsHitReaction();
-	EXCUTION_TYPE							bIsThesholdAction();
+	NAYITBA_EXECUTION_TYPE							bIsThesholdAction();
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
@@ -90,7 +90,7 @@ private:
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
 	NAYTIBA_STATE							m_MonsterPreState = {};
-	EXCUTION_TYPE							m_eExcution = { EXCUTION_TYPE::END };
+	NAYITBA_EXECUTION_TYPE							m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
 
 	_bool									m_bIsSuperMonster = { false };
 	_float2									m_vHitVisibleDuration = { 0, 5.f };

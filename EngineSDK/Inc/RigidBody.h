@@ -73,6 +73,9 @@
 
 			return m_vDeltaMove; 
 		}
+		// 리지드 바디의 활성화 여부를 세팅합니다.
+		// 끌때는 false 넣어주고, 켤떄는 True 넣어주면 돼요.
+		void Set_Simulation(_bool bFlag);
 
 	public:
 		virtual HRESULT Initialize_Prototype() override;

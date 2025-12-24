@@ -41,7 +41,8 @@ private:
 	HRESULT					Start_Level(LEVEL eLevelID);
 	HRESULT					Ready_Prototypes();
 	HRESULT					Ready_Mouse();
-
+	//클라단에서 사용할 후처리 준비
+	HRESULT					Ready_ClientDeferred();
 	void					MouseLock();
 
 public:

@@ -26,6 +26,8 @@
 
 #include "UIInstanceBuffer.h"
 
+#include "ColorChange.h"
+
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
 	, m_pGameManager { CGameManager::GetInstance() },
@@ -60,6 +62,9 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Mouse()))
+		return E_FAIL;
+
+	if (FAILED(Ready_ClientDeferred()))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
@@ -290,6 +295,18 @@ HRESULT CMainApp::Ready_Mouse()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_S.dds"), 1))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_ClientDeferred()
+{
+	/* 테스트용으로 ColorChange 추가. */
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange_2"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
 		return E_FAIL;
 
 	return S_OK;

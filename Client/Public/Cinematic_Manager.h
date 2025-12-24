@@ -24,7 +24,7 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Update(_float fTimeDelta);
 
-	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc );
+	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc);
 
 	HRESULT						Emplace_CinematicObject(CCinematicObject* pObject);
 	HRESULT						Emplace_ActionCamera(const _tchar* strCameraTag);
@@ -32,6 +32,8 @@ public:
 	HRESULT						Load_Level_CinematicObjectData(const _char* szFilePath);
 
 	HRESULT						Change_MainCamera();
+
+	_bool						Is_CinematicPlaying() const { return m_bIsCinematicPlaying; }
 
 private:
 	CGameInstance*				m_pGameInstance = { nullptr };

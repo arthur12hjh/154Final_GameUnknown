@@ -191,7 +191,7 @@ CUIInstanceBuffer* CUIInstanceBuffer::Create(ID3D11Device* pDevice, ID3D11Device
 
 CComponent* CUIInstanceBuffer::Clone(void* pArg)
 {
-	m_pInstanceVertices = nullptr;
+	Safe_Delete_Array(m_pInstanceVertices);
 
     CUIInstanceBuffer* pUIInstanceBuffer = new CUIInstanceBuffer(*this);
     if (FAILED(pUIInstanceBuffer->Initialize(pArg)))
@@ -206,8 +206,5 @@ void CUIInstanceBuffer::Free()
 {
     __super::Free();
 
-	if (false == m_isCloned)
-	{
-		Safe_Delete_Array(m_pInstanceVertices);
-	}
+	Safe_Delete_Array(m_pInstanceVertices);
 }

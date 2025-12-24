@@ -76,7 +76,7 @@ HRESULT CLoader::Loading()
 	case LEVEL::EDITOR:
 	{
 		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}
@@ -422,7 +422,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
  	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test01.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test04.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 

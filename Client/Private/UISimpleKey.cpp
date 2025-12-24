@@ -10,6 +10,7 @@
 #include "StringHelper.h"
 #include "SciFi_Door.h"
 #include "GameManager.h"
+#include "Lift_Controller.h"
 
 CUISimpleKey::CUISimpleKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -91,13 +92,37 @@ void CUISimpleKey::Update(_float fTimeDelta)
 			if (m_pTargetOwner->Get_InterDesc())
 				vPivot = m_pInterDesc.vUIPivot;
 
-			XMStoreFloat3(&m_vNewPivot,
+			/*XMStoreFloat3(&m_vNewPivot,
 				XMVectorSet(
-					XMVectorGetX(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
-					XMVectorGetY(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
-					XMVectorGetZ(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
+					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][0] + vPivot.x,
+					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][1] + vPivot.y,
+					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][2] + vPivot.z,
 					1.f
-				));
+				));*/
+			if (dynamic_cast<CLift_Controller*>(m_pTargetOwner)
+				&& dynamic_cast<CLift_Controller*>(m_pTargetOwner)->Get_CombinedMatrix()
+				&& dynamic_cast<CLift_Controller*>(m_pTargetOwner)->Get_LiftPlatformPosition())
+			{
+				CLift_Controller* pLiftController = dynamic_cast<CLift_Controller*>(m_pTargetOwner);
+
+				XMStoreFloat3(&m_vNewPivot,
+					XMVectorSet(
+						pLiftController->Get_CombinedMatrix()->m[3][0] + vPivot.x,
+						pLiftController->Get_CombinedMatrix()->m[3][1] + vPivot.y,
+						pLiftController->Get_CombinedMatrix()->m[3][2] + vPivot.z,
+						1.f
+					));
+			}
+			else
+			{
+				XMStoreFloat3(&m_vNewPivot,
+					XMVectorSet(
+						XMVectorGetX(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
+						XMVectorGetY(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
+						XMVectorGetZ(m_pTargetOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
+						1.f
+					));
+			}
 
 			m_pParent = m_pTargetOwner;
 			m_pTargetPos = &m_vNewPivot;
