@@ -544,6 +544,11 @@ void* CGameInstance::Get_Cascade_Desc()
 	return m_pRenderer->Get_Cascade_Desc();
 }
 
+HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
+{
+	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)

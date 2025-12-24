@@ -202,6 +202,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
     _tchar szText[MAX_PATH];
     _wstring strObjectName;
     CCamera* pCamera = nullptr;
+    list<CGameObject*>* pObjectList = nullptr;
 
     switch (CinematicNodeDesc.eState)
     {
@@ -219,10 +220,13 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             break;
         case CINEMATICNODE_STATE::ACTIVE_CHARACTER:
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-
-            for (auto& pObject : *m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szText))
+            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+            if (pObjectList != nullptr)
             {
-				pObject->SetActive(TRUE);
+                for (auto& pObject : *pObjectList)
+                {
+                    pObject->SetActive(TRUE);
+                }
             }
             break;
         case CINEMATICNODE_STATE::ACTIVE_CAMERA:
@@ -240,10 +244,13 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             break;
         case CINEMATICNODE_STATE::DEACTIVE_CHARACTER:
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-
-            for (auto& pObject : *m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), szText))
+			pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+            if (pObjectList != nullptr)
             {
-                pObject->SetActive(FALSE);
+                for (auto& pObject : *pObjectList)
+                {
+                    pObject->SetActive(FALSE);
+                }
             }
             break;
         case CINEMATICNODE_STATE::DEACTIVE_CAMERA:

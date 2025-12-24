@@ -263,6 +263,7 @@ popd</Command>
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\EffectResourceManager.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
+    <ClInclude Include="..\Public\ReserveDeferred.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\public\SelectNode.h" />
     <ClInclude Include="..\public\Service.h" />
@@ -384,6 +385,7 @@ popd</Command>
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\EffectResourceManager.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
+    <ClCompile Include="..\Private\ReserveDeferred.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\private\SelectNode.cpp" />
     <ClCompile Include="..\private\Service.cpp" />

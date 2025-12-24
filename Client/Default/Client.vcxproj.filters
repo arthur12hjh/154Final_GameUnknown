@@ -919,6 +919,12 @@
     <Filter Include="03.Effects\Particle\MeshParticle">
       <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. ReserveDeferred">
+      <UniqueIdentifier>{82b0837e-9118-478f-878d-65733b5e58d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred\ShaderFiles">
+      <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1849,6 +1855,9 @@
     <ClInclude Include="..\Public\UICostumePuzzleHint.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ColorChange.h">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2746,6 +2755,9 @@
     <ClCompile Include="..\Private\UICostumePuzzleHint.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ColorChange.cpp">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
@@ -2804,6 +2816,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl">
+      <Filter>07. ReserveDeferred\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
