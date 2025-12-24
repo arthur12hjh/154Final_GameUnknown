@@ -925,6 +925,9 @@
     <Filter Include="07. ReserveDeferred\ShaderFiles">
       <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
+      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1858,6 +1861,9 @@
     <ClInclude Include="..\Public\ColorChange.h">
       <Filter>07. ReserveDeferred</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIUnlockFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2757,6 +2763,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ColorChange.cpp">
       <Filter>07. ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIUnlockFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
