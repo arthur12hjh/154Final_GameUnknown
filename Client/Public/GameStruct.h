@@ -209,12 +209,14 @@ namespace Client
 
 	// Skill Type
 	enum class SKILL_TYPE {
-		DEFAULT_SKILL,			// Default Attack
-		INTERACTION_SKILL,		// Interaction Skill
-		BETA_SKILL,				// Beta Skill
-		ALPHA_SKILL,			// Alpha Skill
-		MIMESIS_SKILL,			// Mimesis Skill
-		SECOND_PHASE_SKILL,		// Seconde Phase Skill
+		DEFAULT_SKILL,	
+		INTERACTION_SKILL,
+		BETA_SKILL,		
+		ALPHA_SKILL,	
+		MIMESIS_SKILL,	
+		SECOND_PHASE_SKILL,
+		BLINK_SKILL,			
+		REPULSE_SKILL,
 		END
 	};
 
@@ -255,7 +257,7 @@ namespace Client
 		// Skill Hit Box Size
 		_float3						vHitBoxExtents;				// 스킬 히트박스 크기
 		_uint						iMaxComboCount;
-
+		_uint						iMaxRepulseCount;
 
 		// Attack Dir
 		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT

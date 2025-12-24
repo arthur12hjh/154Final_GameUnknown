@@ -30,8 +30,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
+
 mt19937 CGameInstance::m_RandomDevice(random_device{}());
-uniform_real_distribution<_float> CGameInstance::m_distribution(0.f, 1.f);
+uniform_real_distribution<float> CGameInstance::m_distribution(0.f, 1.f);
 
 CGameInstance::CGameInstance()
 {

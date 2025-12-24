@@ -405,6 +405,7 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
 	m_iComboCount = 0;
+	m_iRepulseCount = 0;
 }
 
 void CNayitba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
@@ -417,12 +418,23 @@ void CNayitba::EnablePhysxController(_bool bEnable)
 	m_pCCT->Set_CCTCollision(bEnable);
 }
 
-_bool CNayitba::bIsHitReaction()
+_bool CNayitba::bIsParryHitReaction()
 {
 	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxComboCount)
 		return false;
 
 	if (0 == m_pAttack_Data->iMaxComboCount - m_iComboCount)
+		return true;
+
+	return false;
+}
+
+_bool CNayitba::bIsRepulseHitReaction()
+{
+	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxRepulseCount)
+		return false;
+
+	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
 		return true;
 
 	return false;
@@ -660,8 +672,6 @@ HRESULT CNayitba::ADD_PartObjects()
 			return E_FAIL;
 	}
 
-	
-
 	return S_OK;
 }
 
@@ -746,7 +756,6 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
 	{
-		// 이제 진짜라고 합니다.
 		m_pAISenceCom->Add_SenceTargetObject(pDamageDesc->pAttacker);
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::BATTLE;
 	}
@@ -980,6 +989,10 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 	ATK_INTERACTION_DESC  ATK_InteractionDesc = {};
 	ATK_InteractionDesc.eInteraction_Type = ATK_INTERACTION_TYPE(pNotify->iNumData01);
 	ATK_InteractionDesc.iFrameCnt = pNotify->iNumData02;
+	ATK_InteractionDesc.pArg = (void *)pNotify;
+	
+	if (ATK_INTERACTION_TYPE::REPULSE == ATK_InteractionDesc.eInteraction_Type)
+		m_iRepulseCount ++;
 
 	// 필요하면 작업하면 됩니다.
 	ATK_InteractionDesc.pArg = nullptr;

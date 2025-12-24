@@ -31,6 +31,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 {
+	_bool bIsTaskFinished = false;
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
@@ -42,7 +43,6 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 		return NODE_STATE::FAIL;
 	}
 
-	// �ϴ� ���⼭ ������ ���ݿ����� �̵� ó��
 	m_pTarget = m_pBlackBoard->GetTarget();
 	m_pBlackBoard->SetTargetDistacne();
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
@@ -66,27 +66,41 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	{
 		if (m_pSkillData.empty())
 		{
+			m_fMaxDelayTime = 3.5f;
 			if (10.f > m_pBlackBoard->GetTargetDistance())
 			{
-				BackStepPattern();
+				if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
+				{
+					_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+					if (30.f > fRandom)
+					{
+						BackStepPattern();
+					}
+					else
+					{
+						m_fMaxDelayTime = 1.7f;
+						bIsTaskFinished = true;
+					}
+				}
+				else
+					bIsTaskFinished = true;
 			}
 			else
-			{
-				Compute_AttackCoolTime();
-				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
-				m_pBlackBoard->SetAttackData(nullptr);
+				bIsTaskFinished = true;
 
-				if (m_pBlackBoard->IsPhaseLastAttack())
-					m_pBlackBoard->SetPhaseLastAttack(false);
-
-				if (m_pBlackBoard->bIsEnableEntarnceAttack())
-					m_pBlackBoard->SetEntarnceAttack(false);
-
-				return NODE_STATE::COMPLETE;
-			}
+			Clear_ScarletAttackTask();
 		}
 		else
 			SelectAttackData();
+	}
+
+	if (bIsTaskFinished)
+	{
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+		m_pBlackBoard->SetAttackData(nullptr);
+		Compute_AttackCoolTime();
+
+		return NODE_STATE::COMPLETE;
 	}
 
 	return NODE_STATE::RUNNING;
@@ -117,12 +131,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				//m_pSkillData.push(m_pGameManager->Find_SkillData(28));
-				//SelectAttackData();
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+				m_pSkillData.push(m_pGameManager->Find_SkillData(55));
+				SelectAttackData();
+				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();
+					NormalAttackPattern();*/
 			}
 			else
 			{
@@ -316,7 +330,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				m_fMoveAnimMaxRatio = 0.35f;
 				m_fLerpSpeed = 5.f;
 
-				if(0.325f > fAnimationRatio)
+				if(0.32f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 30.f);
 
 				bIsLerpMove = true;
@@ -451,6 +465,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + vDir));
 				}
 
+				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
 			}
 		}
@@ -668,6 +683,16 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 
 				if (0.05f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+				m_fLerpSpeed = 5.f;
+				bIsLerpMove = true;
+			}
+			else if (0.52f <= fAnimationRatio && 0.78f >= fAnimationRatio)
+			{
+				// Move Frame : 80 ~ 120
+				m_fMoveAnimMaxRatio = 0.78f;
+				if (0.53f > fAnimationRatio)
+					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
+
 				m_fLerpSpeed = 5.f;
 				bIsLerpMove = true;
 			}
@@ -975,7 +1000,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				// Move Frame : 310 ~ 324
 				m_fMoveAnimMaxRatio = 0.57f;
 
-				if (0.525f > fAnimationRatio)
+				if (0.522f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 10.f);
 
 				m_bIsLookAtPoint = false;
@@ -994,7 +1019,7 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 				// Move Frame : 310 ~ 324
 				m_fMoveAnimMaxRatio = 0.34f;
 
-				if (0.28f > fAnimationRatio)
+				if (0.27f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 15.f);
 				m_fLerpSpeed = 7.f;
 				m_bIsLookAtPoint = false;
@@ -1010,13 +1035,12 @@ _bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
 			{
 				m_fMoveAnimMaxRatio = 0.14f;
 
-				if (0.085f > fAnimationRatio)
+				if (0.08f > fAnimationRatio)
 					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 15.f);
 				m_fLerpSpeed = 7.f;
 				m_bIsLookAtPoint = false;
 				bIsLerpMove = true;
 			}
-			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
 			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
 			{
 				// Move Frame : 136 ~ 180
@@ -1111,6 +1135,15 @@ void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)
 	while (!m_pSkillData.empty())
 		m_pSkillData.pop();
 
+}
+
+void CTask_ScarletAttack::Clear_ScarletAttackTask()
+{
+	if (m_pBlackBoard->IsPhaseLastAttack())
+		m_pBlackBoard->SetPhaseLastAttack(false);
+
+	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		m_pBlackBoard->SetEntarnceAttack(false);
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)

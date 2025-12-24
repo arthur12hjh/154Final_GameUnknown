@@ -56,10 +56,19 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 	if (m_pOwner->Play_Animation(fTimeDelta))
 	{
 		m_pHit_Data = nullptr;
-		if (m_pBlackBoard->bIsExcution())
+		if (m_bIsHitRepulse)
 		{
-			m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
-			m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::END);
+			m_bIsHitRepulse = false;
+			m_pOwner->Set_Animation("Result_State_Groggy_E", false, 1.f, 0.12f);
+			return NODE_STATE::RUNNING;
+		}
+		else
+		{
+			if (m_pBlackBoard->bIsExcution())
+			{
+				m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
+				m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::END);
+			}
 		}
 
 		return NODE_STATE::COMPLETE;
@@ -83,12 +92,20 @@ void CTask_Hit::Refresh_HitMotion()
 	_vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
 
 	auto pSkill_Data = static_cast<const CHARACTER_SKILL_DESC *>(m_pHit_Data->pSkillData);
-	if (!strcmp(pSkill_Data->szHitAnimationName, "None"))
+	Damaged_Attack(pSkill_Data, vDir);
+
+	m_pBlackBoard->SetAttackData(nullptr);
+	m_pBlackBoard->SetHitData(nullptr);
+}
+
+void CTask_Hit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector vDir)
+{
+	if (!strcmp(pData->szHitAnimationName, "None"))
 	{
 		_float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
 		if (0 <= fScalar)
 		{
-			switch (pSkill_Data->eATK_Direction)
+			switch (pData->eATK_Direction)
 			{
 			case ATTACK_DIRECTION::ATK_LEFT:
 				m_szAnimationName = "Result_Hit_Stand_Light_Fw_Lw";
@@ -109,26 +126,26 @@ void CTask_Hit::Refresh_HitMotion()
 	}
 	else
 	{
-		XMStoreFloat3(&m_vImpactDir, XMVectorZero());
-		m_fImpactForce = 0.f;
-		m_szAnimationName = pSkill_Data->szHitAnimationName;
+		if (SKILL_TYPE::REPULSE_SKILL != pData->eSkillType)
+		{
+			XMStoreFloat3(&m_vImpactDir, XMVectorZero());
+			m_fImpactForce = 0.f;
+			m_szAnimationName = pData->szHitAnimationName;
+		}
+		else
+		{
+			m_bIsHitRepulse = true;
+
+			XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+			m_fImpactForce = 10.f;
+			m_szAnimationName = "Result_State_Groggy_S";
+		}
 	}
 
 	if (m_pBlackBoard->bIsExcution())
-	{
-		if (0 < pSkill_Data->iSkillDamage)
-		{
-			if(0 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
-				m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
-		}
-		else
-			m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
-	}
+		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
 	else
 		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
-
-	m_pBlackBoard->SetAttackData(nullptr);
-	m_pBlackBoard->SetHitData(nullptr);
 }
 
 CTask_Hit* CTask_Hit::Create(CBehaviorTree* pOwnerTree)

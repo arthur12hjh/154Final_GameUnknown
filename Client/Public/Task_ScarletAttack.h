@@ -72,6 +72,8 @@ private:
 	void								LookAtPoint(_float fTimeDelta);
 	void								ResetAttackTask(_bool bIsCoolTime = true);
 
+	void								Clear_ScarletAttackTask();
+
 public:
 	static	CTask_ScarletAttack*		Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;

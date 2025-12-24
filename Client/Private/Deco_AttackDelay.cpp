@@ -33,11 +33,7 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 		auto pState = m_pBlackBoard->GetCurState();
 		if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
 		{
-			if (false == m_pBlackBoard->IsAttackEnable())
-			{
-				return NODE_STATE::FAIL;
-			}
-			else if (fDistance > fATKRange * 4.f)
+			if (fDistance > fATKRange * 4.f)
 			{
 				if (m_pBlackBoard->IsAttackEnable())
 				{
@@ -47,6 +43,9 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 			}
 		}
 	}
+	if (false == m_pBlackBoard->IsAttackEnable())
+		return NODE_STATE::FAIL;
+
 
 	return NODE_STATE::COMPLETE;
 }

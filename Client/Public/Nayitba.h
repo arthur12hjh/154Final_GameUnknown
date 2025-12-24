@@ -67,12 +67,13 @@ public:
 	void									SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);
 
-	_bool									bIsHitReaction();
-	NAYITBA_EXECUTION_TYPE							bIsThesholdAction();
+	_bool									bIsParryHitReaction();
+	_bool									bIsRepulseHitReaction();
+
+	NAYITBA_EXECUTION_TYPE					bIsThesholdAction();
 
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
-
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
@@ -90,14 +91,16 @@ private:
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
 	NAYTIBA_STATE							m_MonsterPreState = {};
-	NAYITBA_EXECUTION_TYPE							m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
+	NAYITBA_EXECUTION_TYPE					m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
 
 	_bool									m_bIsSuperMonster = { false };
-	_float2									m_vHitVisibleDuration = { 0, 5.f };
 	_bool									m_bIsTimeVisible = { false };
+	_float2									m_vHitVisibleDuration = { 0, 5.f };
 	CUIBase*								m_pStatusUI = { nullptr };
 
 	_uint									m_iComboCount = { };
+	_uint									m_iRepulseCount = { };
+
 	const _float4x4*						m_pLockOnMatrix = { nullptr };
 	const _float4x4*						m_pHeadBoneMatrix = { nullptr };
 	const _float4x4*						m_pLinkTargetBoneMatrix = { nullptr };

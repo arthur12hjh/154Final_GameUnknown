@@ -125,26 +125,35 @@ void CBossController::Damage(void* pArg)
                 }
                 else
                 {
-                    if (false == pNayitba->bIsHitReaction())
+                    if (false == pNayitba->bIsParryHitReaction())
                         bIsHitAble = false;
                 }
             }
             else
             {
-                if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
+                if (SKILL_TYPE::REPULSE_SKILL != pDamageSKillDesc->eSkillType)
                 {
-                    if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                    if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
                     {
-                        bIsHitAble = false;
+                        if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                        {
+                            bIsHitAble = false;
+                        }
+                    }
+
+                    if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+                    {
+                        if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
+                        {
+                            bIsHitAble = false;
+                        }
                     }
                 }
-
-                if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+                else
                 {
-                    if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
-                    {
+                    // 여기서 리펄스 공격에서 마지막 리펄스인지를 확인한다.
+                    if(false == pNayitba->bIsRepulseHitReaction())
                         bIsHitAble = false;
-                    }
                 }
             }
         }
@@ -158,7 +167,6 @@ void CBossController::Damage(void* pArg)
             }
         }
           
-
         if (bIsHitAble)
         {
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);

@@ -142,7 +142,7 @@ void CMonsterController::Damage(void* pDesc)
 				}
 				else
 				{
-					if (false == pNayitba->bIsHitReaction())
+					if (false == pNayitba->bIsParryHitReaction())
 						bIsHitAble = false;
 				}
 			}

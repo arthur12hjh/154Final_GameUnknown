@@ -1,89 +1,89 @@
-ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,Dir,Skill Type  ,Properity
-1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,1,0,11
-2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,4,3,139
-3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,1,0,11
-4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,3,2,11
-5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,1,2,11
-6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,1,2,11
-7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,1,11
-8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,1,11
-9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,11
-10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,4,3,10
-11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,1,2,11
-12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,4,1,138
-13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,5,3,11
-14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,1,1,136
-20,M_Scarlet_AirDashCut,None,None,20,4,"1, 1, 2",0,1,4,136
-21,M_Scarlet_SwingApproach,None,None,20,4,"1, 1, 2",4,1,0,136
-22,M_Scarlet_SwingCombo1,None,None,20,4,"1, 1, 2",0,1,3,136
-23,M_Scarlet_SwingCombo2,None,None,20,4,"1, 1, 2",5,1,0,136
-24,M_Scarlet_Swing,None,None,20,4,"1, 1, 2",0,1,0,136
-25,M_Scarlet_SwingFast,None,None,20,4,"1, 1, 2",0,1,0,136
-26,M_Scarlet_SwingTriple,None,None,20,4,"1, 1, 2",3,1,0,136
-27,M_Scarlet_Airspin,None,None,20,4,"1, 1, 2",9,1,0,136
-28,M_Scarlet_MoveBackShot2,None,None,20,4,"1, 1, 2",3,1,0,136
-29,M_Scarlet_JumpStampSlash,None,None,20,4,"1, 1, 2",0,1,0,136
-30,M_Scarlet_KickStamp,None,None,20,4,"1, 1, 2",0,1,0,136
-31,M_Scarlet_ParryRangeDash,None,None,20,4,"1, 1, 2",0,1,0,136
-32,M_Scarlet_BackDashSpaceCut,None,None,20,4,"1, 1, 2",5,1,0,136
-33,M_Scarlet_BlinkCut,None,None,20,4,"1, 1, 2",0,1,0,136
-34,M_Scarlet_PhaseChange1L_Attack1,None,None,20,4,"1, 1, 2",0,1,4,136
-35,M_Scarlet_PhaseChange1L_Attack2,None,None,20,4,"1, 1, 2",0,1,4,136
-36,M_Scarlet_PhaseChange1L_Attack3,None,None,20,4,"1, 1, 2",0,1,4,136
-37,M_Scarlet_PhaseChange1L_Attack4,None,None,20,4,"1, 1, 2",0,1,4,136
-38,M_Scarlet_BlinkShot1,None,None,20,4,"1, 1, 2",0,1,5,136
-39,M_Scarlet_BlinkShot2,None,None,20,4,"1, 1, 2",0,1,5,136
-40,M_Scarlet_GroggyCounter,None,None,20,4,"1, 1, 2",0,1,5,136
-41,M_Scarlet_CounterMoveAttack,None,None,20,4,"1, 1, 2",0,1,5,136
-42,M_Scarlet_LinkBreakChanceAttack,None,None,0,4,"1, 1, 2",0,1,1,136
-43,M_Scarlet_LinkBreakChanceAttachHit,None,None,20,4,"1, 1, 2",0,1,4,136
-44,M_Scarlet_AirDashSpaceCut,None,None,20,4,"1, 1, 2",0,1,5,136
-45,M_Scarlet_BlinkCombo1,None,None,20,4,"1, 1, 2",0,1,5,136
-46,M_Scarlet_BlinkCombo2,None,None,20,4,"1, 1, 2",0,1,4,136
-47,M_Scarlet_PhaseChange1E_ShieldZeroFail,None,None,20,4,"1, 1, 2",0,1,4,136
-48,M_Scarlet_MoveBack,None,None,0,0,"0,0,0",0,1,4,136
-49,M_Scarlet_MoveSideL,None,None,0,0,"0,0,0",0,1,4,136
-50,M_Scarlet_MoveSideR,None,None,0,0,"0,0,0",0,1,4,136
-51,M_Scarlet_PhaseChange2_Attack,None,None,20,4,"1, 1, 2",0,1,4,136
-52,M_Scarlet_Stinger,None,None,20,4,"1, 1, 2",5,1,0,136
-53,M_Scarlet_AreaCombo,None,None,20,4,"1, 1, 2",5,1,0,136
-54,M_Scarlet_AreaSlash,None,None,20,5,"2, 5, 10",5,1,0,136
-55,M_Scarlet_AreaSlash2,None,None,20,5,"2, 5, 10",5,1,0,136
-511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",2,4,0,11
-512,M_Beholder_Swing,None,None,12,5,"1,1,2",1,4,0,1
-513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",1,4,0,8
-521,M_StatueA_Grab,None,None,14,4,"1,1,2",1,4,1,11
-522,M_StatueA_Slash,None,None,15,4,"1,1,2",1,4,0,1
-523,M_StatueA_RushSlash,None,None,15,4,"1,1,2",1,4,0,9
-524,M_StatueA_SlashDouble,None,None,15,4,"1,1,2",2,4,0,9
-525,M_StatueA_StanbyToAttack_01,None,None,15,4,"1,1,2",1,4,4,9
-526,M_StatueA_GrabSuccess,Hit_StatueA_Grab,SC_LinkTarget,15,4,"1,1,2",1,4,0,9
-531,M_StatueB_GroundExplosion,None,None,14,4,"1,1,2",1,4,0,11
-532,M_StatueB_Slash,None,None,15,4,"1,1,2",1,4,0,1
-533,M_StatueB_RushSlash,None,None,15,4,"1,1,2",1,4,0,9
-534,M_StatueB_SlashDouble,None,None,16,4,"1,1,2",2,4,0,9
-535,M_StatueB_SlashTriple,None,None,17,4,"1,1,2",3,4,0,9
-536,M_StatueB_StanbyToAttack_01,None,None,18,4,"1,1,2",1,4,4,9
-541,M_BarnacleA_PunchAttack,None,None,15,3,"1,1,2",1,4,0,1
-542,M_BarnacleA_GrabAttack,Hit_BarnacleA_Beta_GrabAttack1,R_Hand_ex_01,15,3,"1,1,2",1,4,0,10
-543,M_BarnacleA_ComboAttack,None,None,16,3,"1,1,2",2,4,0,9
-544,M_BarnacleA_Shield,None,None,17,3,"1,1,2",0,4,0,32
-631,M_SunFlower_Swing,None,None,18,4,"1,1,3",1,4,0,11
-632,M_SunFlower_SwingChain,None,None,19,4,"1,1,3",4,4,0,11
-633,M_SunFlower_Spit,None,None,20,4,"1,1,2",1,4,0,11
-731,M_Antlion_PawAttack,None,None,21,4,"1,1,7",1,0,0,11
-732,M_AntlionC_SwingTriple,None,None,22,4,"1,1,7",3,0,0,11
-1000,Player_Light_Attack_Root1,None,None,1000,3,"2,2,2",0,0,0,0
-1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,1,0,0
-1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,1,0,0
-1003,Player_Light_Attack_Root4,None,None,30,3,"2,2,2",0,0,0,0
-1004,Player_Beta_Skill,None,None,30,4,"2,2,3",0,0,2,0
-1005,Player_Beta_Skill,None,None,30,3,"1,1,2",0,4,2,0
-1006,P_Eve_Sword_SlotNormal_ChainStab,None,None,50,7,"3,3,5",0,4,2,0
-1007,P_Eve_Sword_Beta_ChargeSlash1_Ex,None,None,150,7,"8,6,8",0,4,2,0
-1008,Player_Parry,Result_Hit_JustParry,None,30,7,"8,6,8",0,4,0,64
-1009,Player_Parry,Result_Hit_JustParry2,None,30,7,"8,6,8",0,4,0,64
-1010,StartExcution,Hit_Sword_Normal_LinkAttack1,None,0,7,"8,6,8",0,4,0,16
-1011,EndExcution,M_Finish_DeadLink,None,30,7,"8,6,8",0,4,0,16
-2000,P_Eve_Sword_Normal_MoveBackAttack1_E,None,None,30,3,"2,2,2",0,1,0,0
-2001,P_Eve_Sword_SlotNormal_PushBackAttackRangeReady1_1,None,None,30,3,"2,2,2",0,1,0,0
+ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePulse Count,Dir,Skill Type  ,Properity
+1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,0,1,0,11
+2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,0,4,3,139
+3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,0,1,0,11
+4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,3,2,11
+5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,0,1,2,11
+6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,0,1,2,11
+7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,0,1,11
+8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,0,1,11
+9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,0,11
+10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,0,4,3,10
+11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,0,1,2,11
+12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,1,138
+13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,0,5,3,11
+14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,1,136
+20,M_Scarlet_AirDashCut,None,None,20,4,"1, 1, 2",0,0,1,4,136
+21,M_Scarlet_SwingApproach,None,None,20,4,"1, 1, 2",4,0,1,0,136
+22,M_Scarlet_SwingCombo1,None,None,20,4,"1, 1, 2",0,0,1,3,136
+23,M_Scarlet_SwingCombo2,None,None,20,4,"1, 1, 2",5,0,1,0,136
+24,M_Scarlet_Swing,None,None,20,4,"1, 1, 2",0,0,1,0,136
+25,M_Scarlet_SwingFast,None,None,20,4,"1, 1, 2",0,0,1,0,136
+26,M_Scarlet_SwingTriple,None,None,20,4,"1, 1, 2",3,0,1,0,136
+27,M_Scarlet_Airspin,None,None,20,4,"1, 1, 2",9,0,1,0,136
+28,M_Scarlet_MoveBackShot2,None,None,20,4,"1, 1, 2",3,0,1,0,136
+29,M_Scarlet_JumpStampSlash,None,None,20,4,"1, 1, 2",0,0,1,0,136
+30,M_Scarlet_KickStamp,None,None,20,4,"1, 1, 2",0,0,1,0,136
+31,M_Scarlet_ParryRangeDash,None,None,20,4,"1, 1, 2",0,0,1,0,136
+32,M_Scarlet_BackDashSpaceCut,None,None,20,4,"1, 1, 2",5,0,1,0,136
+33,M_Scarlet_BlinkCut,None,None,20,4,"1, 1, 2",0,0,1,0,136
+34,M_Scarlet_PhaseChange1L_Attack1,None,None,20,4,"1, 1, 2",0,0,1,4,136
+35,M_Scarlet_PhaseChange1L_Attack2,None,None,20,4,"1, 1, 2",0,0,1,4,136
+36,M_Scarlet_PhaseChange1L_Attack3,None,None,20,4,"1, 1, 2",0,0,1,4,136
+37,M_Scarlet_PhaseChange1L_Attack4,None,None,20,4,"1, 1, 2",0,0,1,4,136
+38,M_Scarlet_BlinkShot1,None,None,20,4,"1, 1, 2",0,0,1,5,136
+39,M_Scarlet_BlinkShot2,None,None,20,4,"1, 1, 2",0,0,1,5,136
+40,M_Scarlet_GroggyCounter,None,None,20,4,"1, 1, 2",0,0,1,5,136
+41,M_Scarlet_CounterMoveAttack,None,None,20,4,"1, 1, 2",0,0,1,5,136
+42,M_Scarlet_LinkBreakChanceAttack,None,None,0,4,"1, 1, 2",0,0,1,1,136
+43,M_Scarlet_LinkBreakChanceAttachHit,None,None,20,4,"1, 1, 2",0,0,1,4,136
+44,M_Scarlet_AirDashSpaceCut,None,None,20,4,"1, 1, 2",0,0,1,5,136
+45,M_Scarlet_BlinkCombo1,None,None,20,4,"1, 1, 2",0,0,1,5,136
+46,M_Scarlet_BlinkCombo2,None,None,20,4,"1, 1, 2",0,0,1,4,136
+47,M_Scarlet_PhaseChange1E_ShieldZeroFail,None,None,20,4,"1, 1, 2",0,0,1,4,136
+48,M_Scarlet_MoveBack,None,None,0,0,"0,0,0",0,0,1,4,136
+49,M_Scarlet_MoveSideL,None,None,0,0,"0,0,0",0,0,1,4,136
+50,M_Scarlet_MoveSideR,None,None,0,0,"0,0,0",0,0,1,4,136
+51,M_Scarlet_PhaseChange2_Attack,None,None,20,4,"1, 1, 2",0,0,1,4,136
+52,M_Scarlet_Stinger,None,None,20,4,"1, 1, 2",5,0,1,0,136
+53,M_Scarlet_AreaCombo,None,None,20,4,"1, 1, 2",5,0,1,0,136
+54,M_Scarlet_AreaSlash,None,None,20,5,"2, 5, 10",5,0,1,0,136
+55,M_Scarlet_AreaSlash2,None,None,20,5,"2, 5, 10",5,2,1,0,136
+511,M_Beholder_SwingDouble,None,None,0,5,"1,1,2",2,0,4,0,11
+512,M_Beholder_Swing,None,None,12,5,"1,1,2",1,0,4,0,1
+513,M_Beholder_SpinSwing,None,None,13,5,"1,1,2",1,0,4,0,8
+521,M_StatueA_Grab,None,None,14,4,"1,1,2",1,0,4,1,11
+522,M_StatueA_Slash,None,None,15,4,"1,1,2",1,0,4,0,1
+523,M_StatueA_RushSlash,None,None,15,4,"1,1,2",1,0,4,0,9
+524,M_StatueA_SlashDouble,None,None,15,4,"1,1,2",2,0,4,0,9
+525,M_StatueA_StanbyToAttack_01,None,None,15,4,"1,1,2",1,0,4,4,9
+526,M_StatueA_GrabSuccess,Hit_StatueA_Grab,SC_LinkTarget,15,4,"1,1,2",1,0,4,0,9
+531,M_StatueB_GroundExplosion,None,None,14,4,"1,1,2",1,0,4,0,11
+532,M_StatueB_Slash,None,None,15,4,"1,1,2",1,0,4,0,1
+533,M_StatueB_RushSlash,None,None,15,4,"1,1,2",1,0,4,0,9
+534,M_StatueB_SlashDouble,None,None,16,4,"1,1,2",2,0,4,0,9
+535,M_StatueB_SlashTriple,None,None,17,4,"1,1,2",3,0,4,0,9
+536,M_StatueB_StanbyToAttack_01,None,None,18,4,"1,1,2",1,0,4,4,9
+541,M_BarnacleA_PunchAttack,None,None,15,3,"1,1,2",1,0,4,0,1
+542,M_BarnacleA_GrabAttack,Hit_BarnacleA_Beta_GrabAttack1,R_Hand_ex_01,15,3,"1,1,2",1,0,4,0,10
+543,M_BarnacleA_ComboAttack,None,None,16,3,"1,1,2",2,0,4,0,9
+544,M_BarnacleA_Shield,None,None,17,3,"1,1,2",0,0,4,0,32
+631,M_SunFlower_Swing,None,None,18,4,"1,1,3",1,0,4,0,11
+632,M_SunFlower_SwingChain,None,None,19,4,"1,1,3",4,0,4,0,11
+633,M_SunFlower_Spit,None,None,20,4,"1,1,2",1,0,4,0,11
+731,M_Antlion_PawAttack,None,None,21,4,"1,1,7",1,0,0,0,11
+732,M_AntlionC_SwingTriple,None,None,22,4,"1,1,7",3,0,0,0,11
+1000,Player_Light_Attack_Root1,None,None,100,3,"2,2,2",0,0,0,0,0
+1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,0,1,0,0
+1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,0,1,0,0
+1003,Player_Light_Attack_Root4,None,None,30,3,"2,2,2",0,0,0,0,0
+1004,Player_Beta_Skill,None,None,30,4,"2,2,3",0,0,0,2,0
+1005,Player_Beta_Skill,None,None,30,3,"1,1,2",0,0,4,2,0
+1006,P_Eve_Sword_SlotNormal_ChainStab,None,None,50,7,"3,3,5",0,0,4,2,0
+1007,P_Eve_Sword_Beta_ChargeSlash1_Ex,None,None,150,7,"8,6,8",0,0,4,2,0
+1008,Player_Parry,Result_Hit_JustParry,None,30,7,"8,6,8",0,0,4,0,64
+1009,Player_Parry,Result_Hit_JustParry2,None,30,7,"8,6,8",0,0,4,0,64
+1010,StartExcution,Hit_Sword_Normal_LinkAttack1,None,0,7,"8,6,8",0,0,4,0,16
+1011,EndExcution,M_Finish_DeadLink,None,30,7,"8,6,8",0,0,4,0,16
+2000,P_Eve_Sword_Normal_MoveBackAttack1_E,None,None,30,3,"2,2,2",0,0,1,6,0
+2001,P_Eve_Sword_SlotNormal_PushBackAttackRangeReady1_1,Result_State_Groggy_S,None,30,3,"2,2,2",0,0,1,7,0
