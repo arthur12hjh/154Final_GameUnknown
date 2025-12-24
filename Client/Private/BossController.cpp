@@ -177,6 +177,13 @@ void CBossController::Damage(void* pArg)
 
 void CBossController::ActionSuccess(void* pArg)
 {
+    // pArg에 들어온 Interaction 타입을 통해서
+    // 잡기인지 특정 패턴 성공해서 진입한건지 확인 그다음 컷씬이든 
+    // 행동 진행
+    m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK);
+
+
+
 }
 
 _bool CBossController::bIsLastAttack()

@@ -36,9 +36,14 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
 	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
-		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
+		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState ||
+		CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == eCurState)
 	{
-		ResetAttackTask();
+		if (CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK != eCurState)
+			ResetAttackTask();
+		else
+			ResetAttackTask(false);
+		
 		m_pBlackBoard->AccAttackDelay(fTimeDelta);
 		return NODE_STATE::FAIL;
 	}
@@ -47,7 +52,8 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	m_pBlackBoard->SetTargetDistacne();
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
-		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState ||
+		CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == ePreState)
 	{
 		ResetAttackTask(false);
 		return NODE_STATE::RUNNING;
@@ -67,6 +73,7 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 		if (m_pSkillData.empty())
 		{
 			m_fMaxDelayTime = 3.5f;
+		
 			if (10.f > m_pBlackBoard->GetTargetDistance())
 			{
 				if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -83,7 +90,10 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 					}
 				}
 				else
+				{
+					
 					bIsTaskFinished = true;
+				}
 			}
 			else
 				bIsTaskFinished = true;
@@ -131,9 +141,9 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				m_pSkillData.push(m_pGameManager->Find_SkillData(55));
+				m_pSkillData.push(m_pGameManager->Find_SkillData(42));
 				SelectAttackData();
-				/*if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+			/*	if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
 					NormalAttackPattern();*/

@@ -220,6 +220,13 @@ HRESULT CNayitba::Damaged(void* pArg)
 
 HRESULT CNayitba::ActionSuccess(void* pArg)
 {
+	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+	if (nullptr == pPartBody)
+		return false;
+
+	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+	pNaytibaPartBody->SetPart_BodyColor(false);
+
 	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
@@ -433,9 +440,17 @@ _bool CNayitba::bIsRepulseHitReaction()
 {
 	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxRepulseCount)
 		return false;
-
+	
 	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
+	{
+		auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+		if (nullptr == pPartBody)
+			return false;
+
+		auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+		pNaytibaPartBody->SetPart_BodyColor(false);
 		return true;
+	}
 
 	return false;
 }

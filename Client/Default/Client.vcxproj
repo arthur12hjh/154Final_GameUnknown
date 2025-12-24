@@ -387,6 +387,7 @@
     <ClInclude Include="..\public\Task_ScarletAttack.h" />
     <ClInclude Include="..\public\Task_ScarletDead.h" />
     <ClInclude Include="..\public\Task_ScarletMove.h" />
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h" />
     <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
@@ -709,6 +710,7 @@
     <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
     <ClCompile Include="..\private\Task_ScarletDead.cpp" />
     <ClCompile Include="..\private\Task_ScarletMove.cpp" />
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp" />
     <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
