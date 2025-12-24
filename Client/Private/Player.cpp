@@ -639,6 +639,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
