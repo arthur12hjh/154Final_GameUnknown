@@ -32,6 +32,9 @@ private:
 
 private:
 	class CBase* Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	HRESULT Add_FbxSkeletalAnimation(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
+
+	_bool isExistAnimation(class CModel* pModel, const _char* szAnimationTag);
 
 public:
 	static CPrototype_Manager* Create(_uint iNumLevels);

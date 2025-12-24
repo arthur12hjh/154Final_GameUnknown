@@ -74,15 +74,20 @@ HRESULT CTerrain_Desert::Ready_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
+	/* Com_NormalTexture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Terrain_Desert_Normal"),
+		TEXT("Com_NormalTexture"), reinterpret_cast<CComponent**>(&m_pNormalTextureCom))))
+
+		return E_FAIL;
 	/* Com_Texture */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Terrain_Desert"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
-	/* Com_Texture */
+	/* Com_Texture_Red */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Terrain_Desert_Red"),
 		TEXT("Com_Texture_Red"), reinterpret_cast<CComponent**>(&m_pTextureCom_Red))))
 		return E_FAIL;
-	/* Com_Texture */
+	/* Com_Texture_Green */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Terrain_Desert_Green"),
 		TEXT("Com_Texture_Green"), reinterpret_cast<CComponent**>(&m_pTextureCom_Green))))
 		return E_FAIL;
@@ -121,6 +126,9 @@ HRESULT CTerrain_Desert::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom_Green->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Green")))
 		return E_FAIL;
+	if (FAILED(m_pNormalTextureCom->Bind_ShaderResources(m_pShaderCom, "g_NormalTexture")))
+		return E_FAIL;
+
 	/*if (FAILED(m_pORMTextureCom->Bind_ShaderResources(m_pShaderCom, "g_ORMTexture")))
 		return E_FAIL;*/
 
@@ -168,4 +176,5 @@ void CTerrain_Desert::Free()
 	Safe_Release(m_pMaskCom);
 	//Safe_Release(m_pORMTextureCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pNormalTextureCom);
 }

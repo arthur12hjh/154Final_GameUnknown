@@ -59,83 +59,69 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     4. View Point�� Pitch�� XM_PIDIV2�� ������� ���� �־����Ŷ�, ī�޶� ���� �̿� ���߾� �÷��̾ ��������ž�
     */
 
-    _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
-    _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
+    if (!m_bIsTransition)
+    {
+        _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
+        _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
 
-    // 1) ���� ���� (Yaw / Pitch �и�)
-    m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
-    m_fYaw = XMScalarModAngle(m_fYaw);
+        // 1) ���� ���� (Yaw / Pitch �и�)
+        m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
+        m_fYaw = XMScalarModAngle(m_fYaw);
 
-    m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
+        m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
 
-    // ��� �ִ밢��  
-    _float fPitchLimit = XM_PIDIV2 - 0.2f;
-    if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
-    if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
+        // ��� �ִ밢��  
+        _float fPitchLimit = XM_PIDIV2 - 0.2f;
+        if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
+        if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
 
-    _float3 vViewPoint = {};
+        _float3 vViewPoint = {};
 
-    float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
-	fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
-    vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
+        float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+        fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
+        vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
 
-    // ī�޶�� ViewPoint �Ÿ�.
-    _float fCamDist = m_fDistance;
-    
-    // �÷��̾� ��ġ �޾ƿ���.
-    _float3 vPlayerPos = {};
-    if (nullptr == m_pPlayerTransform)
-        return;
+        // ī�޶�� ViewPoint �Ÿ�.
+        _float fCamDist = m_fDistance;
 
-    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
-    // �ǹ� ��ġ�� �޾ƿ´�.
-    _float3 vPivotPos = {};
-    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
-    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
-    vPivotPos.x += fPitchRatio * -1.6f;
-    vPivotPos.y += fPitchRatio * 2.f;
+        // �÷��̾� ��ġ �޾ƿ���.
+        _float3 vPlayerPos = {};
+        if (nullptr == m_pPlayerTransform)
+            return;
 
-    // ViewPoint�� ���ϱ� ���� ���⺤��
-    _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
+        XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
+        // �ǹ� ��ġ�� �޾ƿ´�.
+        _float3 vPivotPos = {};
+        //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
+        XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+        vPivotPos.x += fPitchRatio * -1.6f;
+        vPivotPos.y += fPitchRatio * 2.f;
 
-    XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
+        // ViewPoint�� ���ϱ� ���� ���⺤��
+        _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
 
-    if (fPitchRatio > 0.5)
-        fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
+        XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
 
-    _float3 vCamPos = {};
-    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
+        if (fPitchRatio > 0.5)
+            fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
 
-    //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
-    m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
+        _float3 vCamPos = {};
+        XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
 
-    memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
+        //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
+        m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
+        m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
+
+        //memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
+        memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
+    }
 
     if (false == m_pGameInstance->IsMainCamera(this))
         return;
 
     if (m_bIsTransition)
     {
-        m_fTransitionLerpTime.x += fTimeDelta;
-
-        // Smooth Lerp
-        _matrix StartMat = XMLoadFloat4x4(&m_PreLerpMatrix);
-        _matrix EndMat = XMLoadFloat4x4(&m_BeforeMatrix);
-
-        _float fRatio = m_fTransitionLerpTime.x / m_fTransitionLerpTime.y;
-        _vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
-        _vector vLookPos = vPosition + XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);
-
-        m_pTransformCom->Set_State(STATE::POSITION, vPosition);
-        m_pTransformCom->LookAt(vLookPos);
-
-        __super::Bind_Matrices(fTimeDelta);
-
-        if (m_fTransitionLerpTime.x >= m_fTransitionLerpTime.y)
-        {
-            m_bIsTransition = FALSE;
-        }
+		Transition_Camera(fTimeDelta);
 
         return;
     }
@@ -163,6 +149,29 @@ HRESULT CCamera_Player::Render()
 void CCamera_Player::Set_Pivot(_vector vPivot)
 {
 	XMStoreFloat3(&m_vPivot, vPivot);   
+}
+
+void CCamera_Player::Transition_Camera(_float fTimeDelta)
+{
+    m_fTransitionLerpTime.x += fTimeDelta;
+
+    // Smooth Lerp
+    _matrix StartMatrix = XMLoadFloat4x4(&m_PreLerpMatrix);
+    _matrix EndMatrix = XMLoadFloat4x4(&m_BeforeMatrix);
+
+    _float fRatio = m_fTransitionLerpTime.x / m_fTransitionLerpTime.y;
+    _vector vPosition = XMVectorLerp(StartMatrix.r[3], EndMatrix.r[3], fRatio);
+    _vector vLookPos = vPosition + XMVectorLerp(StartMatrix.r[2], EndMatrix.r[2], fRatio);
+
+    m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+    m_pTransformCom->LookAt(vLookPos);
+
+    __super::Bind_Matrices(fTimeDelta);
+
+    if (m_fTransitionLerpTime.x >= m_fTransitionLerpTime.y)
+    {
+        m_bIsTransition = FALSE;
+    }
 }
 
 CCamera_Player* CCamera_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

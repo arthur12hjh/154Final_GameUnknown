@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "Camera.h"
+//셰이더 매니저 통해서 리저브 해두면.. 꺼내쓰기 불편하지 않나?
+#include "ReserveDeferred.h"
 
 CShaderManager::CShaderManager()
     : m_pGameInstance { CGameInstance::GetInstance()}
@@ -34,12 +36,19 @@ CShader* CShaderManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag
     return iter->second;
 }
 
+/* 등록된 후처리들은 일단 다 처리해준다. */
 void CShaderManager::Update(_float fTimeDelta)
 {
     LEVEL eLevel = static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID());
 
     if(eLevel != LEVEL::END && eLevel != LEVEL::LOADING)
         Bind_CamInfo(eLevel);
+
+    for (auto iter : m_ReserveDeferredShaders)
+    {
+        if(true == iter.second->Get_Active())
+            m_pGameInstance->Reserve_Deferred(iter.second);
+    }
 }
 
 void CShaderManager::Clear(LEVEL eLevelID)
@@ -65,6 +74,38 @@ HRESULT CShaderManager::Bind_CamInfo(LEVEL eLevelID)
     }
 
     return S_OK;
+}
+
+HRESULT CShaderManager::Add_ReserveDeferred(const _wstring& strReserveDeferredTag, CReserveDeferred* pReserveDeferred)
+{
+    if (nullptr == pReserveDeferred)
+        return E_FAIL;
+
+    auto iter = m_ReserveDeferredShaders.find(strReserveDeferredTag);
+    if (iter != m_ReserveDeferredShaders.end())
+        return E_FAIL;
+
+    m_ReserveDeferredShaders.emplace(make_pair(strReserveDeferredTag, pReserveDeferred));
+
+    return S_OK;
+}
+
+void CShaderManager::Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag)
+{
+    auto iter = m_ReserveDeferredShaders.find(strReserveDeferredTag);
+    if (iter == m_ReserveDeferredShaders.end())
+        return;
+
+    iter->second->Set_Active(bFlag);
+}
+
+void CShaderManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg)
+{
+    auto iter = m_ReserveDeferredShaders.find(strReserveDeferredTag);
+    if (iter == m_ReserveDeferredShaders.end())
+        return;
+
+    iter->second->Set_Desc(pArg);
 }
 
 CShaderManager* CShaderManager::Create()
@@ -95,4 +136,10 @@ void CShaderManager::Free()
         m_Shaders[i].clear();
     }
     Safe_Delete_Array(m_Shaders);
+
+    for (auto& iter : m_ReserveDeferredShaders)
+    {
+        Safe_Release(iter.second);
+    }
+    m_ReserveDeferredShaders.clear();
 }

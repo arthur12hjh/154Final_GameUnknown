@@ -22,8 +22,6 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
-
- 
 #include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -337,6 +335,23 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
+	}
 }
 
 void CPlayer::Update_TestSkillInput(_float fTimeDelta)
@@ -635,6 +650,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				break;
 			}
 			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
