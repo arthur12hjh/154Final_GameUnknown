@@ -44,16 +44,21 @@ private:
 	_float		m_fMoveTime = 0.f;
 	_int		m_iAnimationSequence = 0;
 
+	_bool		m_bIsPrevActivated = FALSE;
 
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 
-	HRESULT Initialize_Cinematic_GorillaMeet();
-	HRESULT Initialize_Cinematic_GorillaFinish();
+	HRESULT Initialize_Cinematic_Scarlet_Battle_Enter();
+	HRESULT Initialize_Cinematic_Scarlet_Battle_PhaseChange();
+	HRESULT Initialize_Cinematic_Scarlet_Battle_Finish();
 
-	HRESULT Play_Cinematic_GorillaMeet(_float fTimeDelta);
-	HRESULT Play_Cinematic_GorillaFinish(_float fTimeDelta);
+	HRESULT Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta);
+	HRESULT Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta);
+	HRESULT Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDelta);
+
+	void Reset_CinematicChanges();
 
 
 public:

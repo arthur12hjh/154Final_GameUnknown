@@ -95,6 +95,9 @@ HRESULT CCinematicModel_Eve::Initialize(void* pArg)
 
 void CCinematicModel_Eve::Priority_Update(_float fTimeDelta)
 {
+
+	Reset_CinematicChanges();
+
 	if (m_bIsActive == FALSE)
 		return;
 
@@ -134,6 +137,15 @@ void CCinematicModel_Eve::Update(_float fTimeDelta)
 		break;
 	case 1: // 고릴라 처형 시네마틱
 		Play_Cinematic_GorillaFinish(fTimeDelta);
+		break;
+	case 20: // 홍련 전투 조우
+		Play_Cinematic_Scarlet_Battle_Enter(fTimeDelta);
+		break;
+	case 21: // 홍련 전투 페이즈 전환
+		Play_Cinematic_Scarlet_Battle_PhaseChange(fTimeDelta);
+		break;
+	case 22: // 홍련 전투 마무리
+		Play_Cinematic_Scarlet_Battle_Finish(fTimeDelta);
 		break;
 	}
 
@@ -192,6 +204,15 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 			break;
 		case 1: // 고릴라 처형 시네마틱
 			Initialize_Cinematic_GorillaFinish();
+			break;
+		case 20: // 홍련 전투 조우
+			Initialize_Cinematic_Scarlet_Battle_Enter();
+			break;
+		case 21: // 홍련 전투 페이즈 전환
+			Initialize_Cinematic_Scarlet_Battle_PhaseChange();
+			break;
+		case 22: // 홍련 전투 마무리
+			Initialize_Cinematic_Scarlet_Battle_Finish();
 			break;
 	}
 
@@ -340,6 +361,45 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Enter()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = TRUE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_EVE_01", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(251.874f, 8.f, 235.907f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_PhaseChange()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = TRUE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_eve_ani01", FALSE, 2.f, 0.f, false);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Finish()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = TRUE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_EVE_01", FALSE, 2.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
@@ -364,17 +424,17 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 	_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
 
 	if (iCurrentKeyFrameIndex >= 600
-		&& iCurrentKeyFrameIndex <= 720)
+		&& iCurrentKeyFrameIndex <= 660)
 	{
 		m_fMoveTime += fTimeDelta;
 
-		_float fRatio = Clamp(m_fMoveTime / 2.f, 0.f, 1.f);
+		_float fRatio = Clamp((iCurrentKeyFrameIndex - 600)/ 60.f, 0.f, 1.f);
 		_vector vPosition = XMVectorLerp(XMVectorSet(742.f, 2.8678f, 597.f, 1.f), XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f), fRatio);
 
 		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 	}
-	else if (iCurrentKeyFrameIndex > 720)
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f));
+	//else if (iCurrentKeyFrameIndex > 1600)
+	//	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f));
 
 	if (isFinished)
 	{
@@ -385,6 +445,100 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 	}
 
 	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 2)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_EVE_02", FALSE, 1.f, 0.f);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 214.907f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(251.874f, 8.f, 215.907f, 1.f));
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (m_fMoveTime > 34.5f)
+	{
+		if (isFinished)
+		{
+			++m_iAnimationSequence;
+			if (m_iAnimationSequence == 2)
+			{
+				m_bIsActive = FALSE;
+				m_iCinematicCode = -1;
+			}
+			else if (m_iAnimationSequence == 1)
+			{
+				m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_eve_ani01", FALSE, 1.f, 0.f, TRUE, -1.f, 620.f);
+				m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+				m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+			}
+
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 3)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani02", FALSE, 2.f, 0.f, FALSE);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(249.289f, 8.f, 247.987f, 1.f));
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani03", FALSE, 2.f, 0.f, FALSE);
+		}
+
+	}
+
+	return S_OK;
+}
+
+void CCinematicModel_Eve::Reset_CinematicChanges()
+{
+	if (m_bIsPrevActivated == TRUE
+		&& m_bIsActive == FALSE)
+	{
+		m_iCinematicCode = -1;
+		m_pGameInstance->Active_DoF(false, 0.f);
+	}
+
+	m_bIsPrevActivated = m_bIsActive;
+
 }
 
 CCinematicModel_Eve* CCinematicModel_Eve::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

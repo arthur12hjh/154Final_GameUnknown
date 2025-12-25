@@ -33,6 +33,7 @@ HRESULT CScabbard_Scarlet::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	//m_vRotationQuaternion = { 90.f, -81.5f, 0.f };
 	m_vRotationQuaternion = { 90.f, -81.5f, 0.f };
 
 	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
@@ -44,25 +45,25 @@ HRESULT CScabbard_Scarlet::Initialize(void* pArg)
 
 void CScabbard_Scarlet::Priority_Update(_float fTimeDelta)
 {
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
-		m_vRotationQuaternion.x += fTimeDelta * 30.f;
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
-		m_vRotationQuaternion.x -= fTimeDelta * 30.f;
-	
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
-		m_vRotationQuaternion.y += fTimeDelta * 30.f;
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
-		m_vRotationQuaternion.y -= fTimeDelta * 30.f;
-	
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
-		m_vRotationQuaternion.z += fTimeDelta * 30.f;
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
-		m_vRotationQuaternion.z -= fTimeDelta * 30.f;
-	
-	
-	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
-	
-	swprintf_s(m_szRotationAngle, L"%.1f, %.1f, %.1f", m_vRotationQuaternion.x, m_vRotationQuaternion.y, m_vRotationQuaternion.z);*/
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
+	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	//	m_vRotationQuaternion.x -= fTimeDelta * 30.f;
+	//
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	//	m_vRotationQuaternion.y += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+	//	m_vRotationQuaternion.y -= fTimeDelta * 30.f;
+	//
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
+	//	m_vRotationQuaternion.z += fTimeDelta * 30.f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
+	//	m_vRotationQuaternion.z -= fTimeDelta * 30.f;
+	//
+	//
+	//m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
+	//
+	//swprintf_s(m_szRotationAngle, L"%.1f, %.1f, %.1f", m_vRotationQuaternion.x, m_vRotationQuaternion.y, m_vRotationQuaternion.z);
 
 }
 
@@ -110,7 +111,7 @@ HRESULT CScabbard_Scarlet::Render()
 			return E_FAIL;
 	}
 
-	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 100), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
+	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 300), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
 
 
 
