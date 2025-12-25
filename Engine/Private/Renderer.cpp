@@ -766,8 +766,8 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pStaticShadow->Bind_Shader_Resource(m_pShader, "g_StaticLightProjMatrix", D3DTS::PROJ)))
 		return;
-	//if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
-	//	return;
+	if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
+		return;
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));

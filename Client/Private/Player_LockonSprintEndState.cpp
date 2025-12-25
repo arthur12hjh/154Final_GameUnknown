@@ -40,7 +40,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintEndState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
     {
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
@@ -49,24 +49,24 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintEndState::Update(_float fTimeDelta)
     }
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)) &&
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1) &&
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2) &&
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E) && 
-        0.08f <= fAnimationRatio)
+        0.12f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
     if (true == isAnimFinished)

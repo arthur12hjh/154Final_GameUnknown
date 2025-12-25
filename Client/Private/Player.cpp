@@ -195,7 +195,7 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
-	Update_TestSkillInput(fTimeDelta);
+	Update_ReactionSkillInput(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -354,8 +354,9 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Update_TestSkillInput(_float fTimeDelta)
+void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
+	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
@@ -373,8 +374,30 @@ void CPlayer::Update_TestSkillInput(_float fTimeDelta)
 
 			m_pFSM->Handle_Transition(Desc);
 		}
-
 	}
+
+	/* 실제 로직 */
+	//if (true == m_PlayerDesc.HasTarget)
+	//{
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::REPULSE;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//}
 }
 
 HRESULT CPlayer::Ready_Components()
