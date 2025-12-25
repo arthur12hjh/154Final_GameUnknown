@@ -32,7 +32,7 @@ private:
 	CGameObject*							m_pBaseObject = { nullptr };
 
 	vector<CInteraction_Component*>			m_pInteractionList;
-	list< CInteraction_Component*>			m_pCandidates;
+	list<CInteraction_Component*>			m_pCandidates;
 
 	CInteraction_Component*					m_pNearInteraction = { nullptr };
 

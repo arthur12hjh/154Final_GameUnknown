@@ -2,7 +2,7 @@
 #include "Item.h"
 
 #include "GameInstance.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Effect.h"
 #include "UIHUD.h"
 #include "UIGetterQueue.h"
@@ -150,7 +150,7 @@ HRESULT CItem::Render()
 HRESULT CItem::Begin_OverlapCallBack()
 {
 	__super::Begin_OverlapCallBack();
-	m_eInterState = INTERACTION_STATE::DEFAULT;
+	m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 
 	return S_OK;
 }
@@ -165,17 +165,17 @@ HRESULT CItem::End_OverlapCallBack()
 void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
-	if (!IsInteractionEnable())
-		m_fInteractionDuration += fTimeDelta;
+	if (!m_pInteractionCom->IsInteractionEnable())
+		m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
-	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
 	{
-		if (IsInteractionEnable())
+		if (m_pInteractionCom->IsInteractionEnable())
 		{
-			m_eInterState = INTERACTION_STATE::CONTACT;
+			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 		if (pHUD)
@@ -197,8 +197,8 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		}
 		Safe_Release(pHUD);
 
-		m_eInterState = INTERACTION_STATE::ACTIVE;
-		m_fInteractionDuration = 0.f;
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
 		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 		Set_Dead(true);
 	}
@@ -218,16 +218,17 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 		return E_FAIL;
 
 	/* Com_Interaction */
-	CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+	CInteractionUIBinder::INTERACTION_DESC InteractionDesc = {};
 	InteractionDesc.vSize = Com_Size;
 	InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
 	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 
+	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(0));
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
 	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 

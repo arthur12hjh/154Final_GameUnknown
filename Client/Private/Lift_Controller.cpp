@@ -2,7 +2,7 @@
 #include "Lift_Controller.h"
 
 #include "GameInstance.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Lift_Platform.h"
 
 #include "UIBase.h"
@@ -42,13 +42,12 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	ResetAction(true);
 
+	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(pDesc->iInteractionID));
 
 	if(m_iPosition == 0)
 		m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 	else if(m_iPosition == 1)
 		m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
-
-
 
 	return S_OK;
 }
@@ -78,10 +77,10 @@ void CLift_Controller::Update(_float fTimeDelta)
 	m_pInteractionCom->Update_Com(WorldMat);
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
-	if (m_pLiftPlatform && m_eInterState == INTERACTION_STATE::ACTIVE)
+	if (m_pLiftPlatform && m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
 	{
 		if (!m_pLiftPlatform->GetPlatformMove())
-			m_eInterState = INTERACTION_STATE::DEFAULT;
+			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	}
 
 	//m_pRigidBody->Update_PxTransform(WorldMat);
@@ -168,7 +167,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
 	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
@@ -272,20 +271,20 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 
 void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-	if (!IsInteractionEnable())
-		m_fInteractionDuration += fTimeDelta;
+	if (!m_pInteractionCom->IsInteractionEnable())
+		m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
-	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
 	{
-		if (IsInteractionEnable())
+		if (m_pInteractionCom->IsInteractionEnable())
 		{
- 			m_eInterState = INTERACTION_STATE::CONTACT;
+			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
 	{
-		m_eInterState = INTERACTION_STATE::ACTIVE;
-		m_fInteractionDuration = 0.f;
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
 
 		if (m_bIsControllLift)
 		{
